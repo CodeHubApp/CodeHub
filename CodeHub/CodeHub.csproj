@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A5033D97-EDDE-45FA-BBA6-527959DF3044}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CodeHub</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CodeHub</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer: Dillon Buchanan (BD3M6C4CAK)</CodesignKey>
+    <MtouchI18n />
+    <MtouchArch>ARMv7</MtouchArch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BuildIpa>true</BuildIpa>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <ConsolePause>false</ConsolePause>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="GoogleAnalytics">
+      <HintPath>..\CodeFramework\CodeFramework\lib\GoogleAnalytics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Images\" />
+    <Folder Include="Data\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Controllers\GitHub\" />
+    <Folder Include="Images\Buttons\" />
+    <Folder Include="Images\Controls\" />
+    <Folder Include="Images\Logos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Controllers\StartupController.cs" />
+    <Compile Include="Controllers\SlideoutNavigationController.cs" />
+    <Compile Include="Controllers\MenuViewController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="Controllers\AboutController.cs" />
+    <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\GitHub\Accounts\ProfileController.cs" />
+    <Compile Include="Controllers\GitHub\Branches\BranchController.cs" />
+    <Compile Include="Controllers\GitHub\Branches\TagController.cs" />
+    <Compile Include="Controllers\GitHub\Changesets\ChangesetController.cs" />
+    <Compile Include="Controllers\GitHub\Changesets\ChangesetDiffController.cs" />
+    <Compile Include="Controllers\GitHub\Changesets\ChangesetInfoController.cs" />
+    <Compile Include="Controllers\GitHub\Events\EventsController.cs" />
+    <Compile Include="Controllers\GitHub\Events\RepoEventsController.cs" />
+    <Compile Include="Controllers\GitHub\Followers\FollowersController.cs" />
+    <Compile Include="Controllers\GitHub\Followers\RepoFollowersController.cs" />
+    <Compile Include="Controllers\GitHub\Followers\UserFollowersController.cs" />
+    <Compile Include="Controllers\GitHub\Gists\GistFileController.cs" />
+    <Compile Include="Controllers\GitHub\Gists\GistInfoController.cs" />
+    <Compile Include="Controllers\GitHub\Gists\GistsController.cs" />
+    <Compile Include="Controllers\GitHub\Notifications\NotificationsController.cs" />
+    <Compile Include="Controllers\GitHub\Organizations\OrganizationInfoController.cs" />
+    <Compile Include="Controllers\GitHub\Organizations\OrganizationsController.cs" />
+    <Compile Include="Controllers\GitHub\Readme\ReadmeController.cs" />
+    <Compile Include="Controllers\GitHub\Repositories\ExploreController.cs" />
+    <Compile Include="Controllers\GitHub\Repositories\RepositoryController.cs" />
+    <Compile Include="Controllers\GitHub\Repositories\RepositoryInfoController.cs" />
+    <Compile Include="Controllers\GitHub\Source\SourceController.cs" />
+    <Compile Include="Controllers\GitHub\Source\SourceInfoController.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="Utils\Login.cs" />
+    <Compile Include="Controllers\GitHub\Repositories\StarredRepositoryController.cs" />
+    <Compile Include="Controllers\GitHub\Repositories\WatchedRepositoryController.cs" />
+    <Compile Include="Controllers\GitHub\FileViewController.cs" />
+    <Compile Include="Controllers\GitHub\Accounts\LoginController.cs" />
+    <Compile Include="Controllers\GitHub\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="Data\Accounts.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\CodeFramework\CodeFramework\CodeFramework.csproj">
+      <Project>{FECA9DCA-3B0B-4C0E-B7B4-E826C1BFDDB2}</Project>
+      <Name>CodeFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GitHubSharp\GitHubSharp\GitHubSharp.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\OHAttributedLabel\OHAttributedLabel.csproj">
+      <Project>{1FD1BA85-25F8-460D-B588-0E753CFF578D}</Project>
+      <Name>OHAttributedLabel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GitHubSharp\RestSharp\RestSharp.MonoTouch\RestSharp.MonoTouch.csproj">
+      <Project>{E9A9D1C5-4E06-4D31-9809-A97188C70B2C}</Project>
+      <Name>RestSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeFramework\monotouch-uservoice\UserVoice\UserVoice\UserVoice.csproj">
+      <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
+      <Name>UserVoice</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <InterfaceDefinition Include="Controllers\GitHub\Accounts\LoginViewController.xib" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Images\anonymous.png" />
+    <BundleResource Include="Images\anonymous%402x.png" />
+    <BundleResource Include="Images\bin_closed.png" />
+    <BundleResource Include="Images\bin_closed%402x.png" />
+    <BundleResource Include="Images\branch.png" />
+    <BundleResource Include="Images\branch%402x.png" />
+    <BundleResource Include="Images\changes.png" />
+    <BundleResource Include="Images\changes%402x.png" />
+    <BundleResource Include="Images\comment_add.png" />
+    <BundleResource Include="Images\comment_add%402x.png" />
+    <BundleResource Include="Images\create.png" />
+    <BundleResource Include="Images\create%402x.png" />
+    <BundleResource Include="Images\file.png" />
+    <BundleResource Include="Images\file%402x.png" />
+    <BundleResource Include="Images\folder.png" />
+    <BundleResource Include="Images\folder%402x.png" />
+    <BundleResource Include="Images\fork.png" />
+    <BundleResource Include="Images\fork%402x.png" />
+    <BundleResource Include="Images\heart_add.png" />
+    <BundleResource Include="Images\heart_add%402x.png" />
+    <BundleResource Include="Images\heart_delete.png" />
+    <BundleResource Include="Images\heart_delete%402x.png" />
+    <BundleResource Include="Images\heart.png" />
+    <BundleResource Include="Images\heart%402x.png" />
+    <BundleResource Include="Images\language.png" />
+    <BundleResource Include="Images\language%402x.png" />
+    <BundleResource Include="Images\locked.png" />
+    <BundleResource Include="Images\locked%402x.png" />
+    <BundleResource Include="Images\milestone.png" />
+    <BundleResource Include="Images\milestone%402x.png" />
+    <BundleResource Include="Images\pencil.png" />
+    <BundleResource Include="Images\pencil%402x.png" />
+    <BundleResource Include="Images\plus.png" />
+    <BundleResource Include="Images\plus%402x.png" />
+    <BundleResource Include="Images\priority.png" />
+    <BundleResource Include="Images\priority%402x.png" />
+    <BundleResource Include="Images\repo_follow.png" />
+    <BundleResource Include="Images\repo_follow%402x.png" />
+    <BundleResource Include="Images\repo.png" />
+    <BundleResource Include="Images\repo%402x.png" />
+    <BundleResource Include="Images\report_edit.png" />
+    <BundleResource Include="Images\report_edit%402x.png" />
+    <BundleResource Include="Images\scm_type.png" />
+    <BundleResource Include="Images\scm_type%402x.png" />
+    <BundleResource Include="Images\script.png" />
+    <BundleResource Include="Images\script%402x.png" />
+    <BundleResource Include="Images\server_components.png" />
+    <BundleResource Include="Images\server_components%402x.png" />
+    <BundleResource Include="Images\sitemap_color.png" />
+    <BundleResource Include="Images\sitemap_color%402x.png" />
+    <BundleResource Include="Images\size.png" />
+    <BundleResource Include="Images\size%402x.png" />
+    <BundleResource Include="Images\tablecell_red.png" />
+    <BundleResource Include="Images\TableCell.png" />
+    <BundleResource Include="Images\tag.png" />
+    <BundleResource Include="Images\tag%402x.png" />
+    <BundleResource Include="Images\team.png" />
+    <BundleResource Include="Images\team%402x.png" />
+    <BundleResource Include="Images\unlocked.png" />
+    <BundleResource Include="Images\unlocked%402x.png" />
+    <BundleResource Include="Images\webpage.png" />
+    <BundleResource Include="Images\webpage%402x.png" />
+    <BundleResource Include="Images\Buttons\cog.png" />
+    <BundleResource Include="Images\Buttons\cog%402x.png" />
+    <BundleResource Include="Images\Buttons\events.png" />
+    <BundleResource Include="Images\Buttons\events%402x.png" />
+    <BundleResource Include="Images\Buttons\explore.png" />
+    <BundleResource Include="Images\Buttons\explore%402x.png" />
+    <BundleResource Include="Images\Buttons\flag.png" />
+    <BundleResource Include="Images\Buttons\flag%402x.png" />
+    <BundleResource Include="Images\Buttons\group.png" />
+    <BundleResource Include="Images\Buttons\group%402x.png" />
+    <BundleResource Include="Images\Buttons\info.png" />
+    <BundleResource Include="Images\Buttons\info%402x.png" />
+    <BundleResource Include="Images\Buttons\person.png" />
+    <BundleResource Include="Images\Buttons\person%402x.png" />
+    <BundleResource Include="Images\Buttons\user.png" />
+    <BundleResource Include="Images\Buttons\user%402x.png" />
+    <BundleResource Include="Images\Controls\backbutton-landscape.png" />
+    <BundleResource Include="Images\Controls\backbutton-landscape%402x.png" />
+    <BundleResource Include="Images\Controls\backbutton.png" />
+    <BundleResource Include="Images\Controls\backbutton%402x.png" />
+    <BundleResource Include="Images\Controls\background.png" />
+    <BundleResource Include="Images\Controls\barbutton-land.png" />
+    <BundleResource Include="Images\Controls\barbutton-land%402x.png" />
+    <BundleResource Include="Images\Controls\barbutton.png" />
+    <BundleResource Include="Images\Controls\barbutton%402x.png" />
+    <BundleResource Include="Images\Controls\bottombar.png" />
+    <BundleResource Include="Images\Controls\divider.png" />
+    <BundleResource Include="Images\Controls\divider%402x.png" />
+    <BundleResource Include="Images\Controls\searchbar.png" />
+    <BundleResource Include="Images\Controls\titlebar.png" />
+    <BundleResource Include="Images\Logos\github.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default-Landscape.png" />
+    <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Icon-72.png" />
+    <BundleResource Include="Resources\Icon-72%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-50.png" />
+    <BundleResource Include="Resources\Icon-Small-50%402x.png" />
+    <BundleResource Include="Resources\Icon-Small.png" />
+    <BundleResource Include="Resources\Icon-Small%402x.png" />
+    <BundleResource Include="Resources\Icon.png" />
+    <BundleResource Include="Resources\Icon%402x.png" />
+    <BundleResource Include="Resources\iTunesArtwork%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="Resources\iTunesArtwork.png" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,6 @@
+[submodule "CodeFramework"]
+	path = CodeFramework
+	url = git@github.com:thedillonb/CodeFramework.git
+[submodule "GitHubSharp"]
+	path = GitHubSharp
+	url = git@github.com:thedillonb/GitHubSharp.git
