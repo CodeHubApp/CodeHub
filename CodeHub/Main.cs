@@ -7,6 +7,8 @@ using CodeHub.Controllers;
 using CodeFramework.Elements;
 using CodeFramework.Cells;
 using CodeFramework.Views;
+using CodeFramework.Controllers;
+using CodeHub.ViewControllers;
 
 namespace CodeHub
 {
@@ -48,7 +50,7 @@ namespace CodeHub
 			Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
 			//Always start into the Startup controller
-			Window.RootViewController = new StartupController();
+			Window.RootViewController = new StartupViewController();
 
 			//Make what ever window visible.
 			Window.MakeKeyAndVisible();
@@ -93,6 +95,8 @@ namespace CodeHub
 
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
 			TableViewSectionView.BackgroundImage = Images.Searchbar;
+            DropbarView.BackgroundImage = Images.Dropbar;
+            RepositoryCellView.RoundImages = false;
 
 			IssueCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
 			IssueCellView.Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);

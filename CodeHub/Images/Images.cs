@@ -62,6 +62,12 @@ namespace CodeHub
 
         //Size agnostic
         public static UIImage Background { get { return UIImage.FromFile("Images/Controls/background.png"); } }
+        public static UIImage Dropbar { get { return UIImageHelper.FromFileAuto("Images/Controls/dropbar"); } }
+
+        public static System.Uri GitHubRepoUrl
+        {
+            get { return new System.Uri(System.IO.Path.Combine(MonoTouch.Foundation.NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }
+        }
 		
         public static class Logos
         {

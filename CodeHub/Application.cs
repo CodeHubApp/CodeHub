@@ -23,7 +23,14 @@ namespace CodeHub
             Accounts = new Accounts(Database.Main);
         }
 
-        public static void SetUser(CodeHub.Data.Account account)
+        public static void UnsetUser()
+        {
+            Account = null;
+            Client = null;
+            Accounts.SetDefault(null);
+        }
+
+        public static void SetUser(CodeHub.Data.Account account, GitHubSharp.Client client)
         {
             if (account == null)
             {
@@ -36,14 +43,14 @@ namespace CodeHub
             Accounts.ActiveAccount = account;
             Accounts.SetDefault(account);
 
-            Client = new GitHubSharp.Client(account.Username, account.Password) { 
-				Timeout = 1000 * 30, //30 seconds
-                CacheProvider = new AppCache(),
-			};
+            //Assign the client
+            Client = client;
+            Client.Timeout = 1000 * 30;
+            Client.CacheProvider = new AppCache();
         }
 
         /// <summary>
-        /// A cache provider for BitBucketSharp.
+        /// A cache provider for GitHubSharp.
         /// Since the CodeFramework.Data.WebCacheProvider was modeled directly after the interface
         /// it can just inherit both and be alright. Otherwise, i'd have to do a little bit of work to make
         /// the proxy class.

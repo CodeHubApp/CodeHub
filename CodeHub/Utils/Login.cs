@@ -10,7 +10,7 @@ namespace CodeHub.Utils
 {
     public class Login
     {
-        public static void LoginAccount(string user, string pass, UIViewController ctrl, Action error = null)
+        public static void LoginAccount(string user, string pass, UIViewController ctrl, Action<Exception> error = null)
         {
             //Does this user exist?
             var account = Application.Accounts.Find(user);
@@ -21,34 +21,33 @@ namespace CodeHub.Utils
             ctrl.DoWork("Logging in...", () => {
 
                 var client = new GitHubSharp.Client(user, pass) { Timeout = 30 * 1000 };
-                var userInfo = client.API.GetAuthenticatedUser().Data;
+                var userInfo = client.AuthenticatedUser.GetInfo().Data;
 
-                account.FullName = userInfo.Name;
                 account.Username = userInfo.Login;
                 account.AvatarUrl = userInfo.AvatarUrl;
-                account.Organizations = client.API.GetOrganizations().Data;
+                account.Organizations = client.AuthenticatedUser.GetOrganizations().Data;
 
                 if (exists)
                     Application.Accounts.Update(account);
                 else
                     Application.Accounts.Insert(account);
 
-                Application.SetUser(account);
+                Application.SetUser(account, client);
                 ctrl.InvokeOnMainThread(TransitionToSlideout);
 
             }, (ex) => {
                 //If there is a login failure, unset the user
-                Application.SetUser(null);
+                Application.UnsetUser();
                 Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + account.Username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
                 if (error != null)
-                    error();
+                    error(ex);
             });
         }
 
         private static void TransitionToSlideout()
         {
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            var controller = new CodeHub.Controllers.SlideoutNavigationController();
+            var controller = new CodeHub.ViewControllers.SlideoutNavigationViewController();
             if (appDelegate != null)
                 appDelegate.Slideout = controller;
             Transitions.Transition(controller, UIViewAnimationOptions.TransitionFlipFromRight);

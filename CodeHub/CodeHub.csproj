@@ -92,10 +92,11 @@
     <Folder Include="Images\" />
     <Folder Include="Data\" />
     <Folder Include="Utils\" />
-    <Folder Include="Controllers\GitHub\" />
     <Folder Include="Images\Buttons\" />
     <Folder Include="Images\Controls\" />
     <Folder Include="Images\Logos\" />
+    <Folder Include="ViewControllers\" />
+    <Folder Include="Filters\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -105,53 +106,81 @@
     <Compile Include="Application.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Database.cs" />
-    <Compile Include="Controllers\StartupController.cs" />
-    <Compile Include="Controllers\SlideoutNavigationController.cs" />
-    <Compile Include="Controllers\MenuViewController.cs" />
-    <Compile Include="Controllers\SettingsController.cs" />
-    <Compile Include="Controllers\AboutController.cs" />
-    <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\ProfileController.cs" />
-    <Compile Include="Controllers\GitHub\Branches\BranchController.cs" />
-    <Compile Include="Controllers\GitHub\Branches\TagController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetDiffController.cs" />
-    <Compile Include="Controllers\GitHub\Changesets\ChangesetInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Events\EventsController.cs" />
-    <Compile Include="Controllers\GitHub\Events\RepoEventsController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\FollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\RepoFollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Followers\UserFollowersController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistFileController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Gists\GistsController.cs" />
-    <Compile Include="Controllers\GitHub\Notifications\NotificationsController.cs" />
-    <Compile Include="Controllers\GitHub\Organizations\OrganizationInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Organizations\OrganizationsController.cs" />
-    <Compile Include="Controllers\GitHub\Readme\ReadmeController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\ExploreController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\RepositoryController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\RepositoryInfoController.cs" />
-    <Compile Include="Controllers\GitHub\Source\SourceController.cs" />
-    <Compile Include="Controllers\GitHub\Source\SourceInfoController.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Utils\Login.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\StarredRepositoryController.cs" />
-    <Compile Include="Controllers\GitHub\Repositories\WatchedRepositoryController.cs" />
-    <Compile Include="Controllers\GitHub\FileViewController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\LoginController.cs" />
-    <Compile Include="Controllers\GitHub\Accounts\LoginViewController.designer.cs" />
     <Compile Include="Data\Accounts.cs" />
+    <Compile Include="ViewControllers\AboutViewController.cs" />
+    <Compile Include="ViewControllers\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\BranchesViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetDiffViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetInfoViewController.cs" />
+    <Compile Include="ViewControllers\ChangesetViewController.cs" />
+    <Compile Include="ViewControllers\EventsViewController.cs" />
+    <Compile Include="ViewControllers\FileSourceViewController.cs" />
+    <Compile Include="ViewControllers\FollowersViewController.cs" />
+    <Compile Include="ViewControllers\FollowingRepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\IssuesViewController.cs" />
+    <Compile Include="ViewControllers\MenuViewController.cs" />
+    <Compile Include="ViewControllers\ProfileViewController.cs" />
+    <Compile Include="ViewControllers\RepoEventsViewController.cs" />
+    <Compile Include="ViewControllers\RepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\SettingsViewController.cs" />
+    <Compile Include="ViewControllers\SingleItemSelectViewController.cs" />
+    <Compile Include="ViewControllers\SlideoutNavigationViewController.cs" />
+    <Compile Include="ViewControllers\SourceInfoViewController.cs" />
+    <Compile Include="ViewControllers\SourceViewController.cs" />
+    <Compile Include="ViewControllers\StartupViewController.cs" />
+    <Compile Include="ViewControllers\TagsViewController.cs" />
+    <Compile Include="ViewControllers\TeamViewController.cs" />
+    <Compile Include="ViewControllers\WikiViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="Controllers\BranchesController.cs" />
+    <Compile Include="Controllers\ChangesetController.cs" />
+    <Compile Include="Controllers\ChangesetInfoController.cs" />
+    <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\IssueInfoController.cs" />
+    <Compile Include="Controllers\IssuesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\RepositoriesController.cs" />
+    <Compile Include="Controllers\RepositoryInfoController.cs" />
+    <Compile Include="Controllers\SourceController.cs" />
+    <Compile Include="Controllers\TagsController.cs" />
+    <Compile Include="Controllers\TeamController.cs" />
+    <Compile Include="Controllers\UserFollowersController.cs" />
+    <Compile Include="Filters\Models\IssuesFilterModel.cs" />
+    <Compile Include="Filters\Models\RepositoriesFilterModel.cs" />
+    <Compile Include="Filters\Models\SourceFilterModel.cs" />
+    <Compile Include="Filters\ViewControllers\IssuesFilterViewController.cs" />
+    <Compile Include="Filters\ViewControllers\RepositoriesFilterViewController.cs" />
+    <Compile Include="Filters\ViewControllers\SourceFilterViewController.cs" />
+    <Compile Include="Data\Filter.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Controllers\OrganizationsController.cs" />
+    <Compile Include="Controllers\GistsController.cs" />
+    <Compile Include="ViewControllers\GistsViewController.cs" />
+    <Compile Include="ViewControllers\GistFileViewController.cs" />
+    <Compile Include="Controllers\OrganizationMembersController.cs" />
+    <Compile Include="Controllers\GistInfoController.cs" />
+    <Compile Include="Controllers\RepositoriesStarredController.cs" />
+    <Compile Include="Controllers\RepositoriesWatchedConroller.cs" />
+    <Compile Include="Controllers\RepositoriesExploreController.cs" />
+    <Compile Include="ViewControllers\ReadmeViewController.cs" />
+    <Compile Include="ViewControllers\OrganizationMembersViewController.cs" />
+    <Compile Include="ViewControllers\OrganizationsViewController.cs" />
+    <Compile Include="Controllers\RepositoryEventsController.cs" />
+    <Compile Include="ViewControllers\RepositoriesExploreViewController.cs" />
+    <Compile Include="ViewControllers\GistInfoViewController.cs" />
+    <Compile Include="Utils\ListControllerExtensions.cs" />
+    <Compile Include="Controllers\RepositoryStarredController.cs" />
+    <Compile Include="Utils\RepositoryIdentifier.cs" />
+    <Compile Include="ViewControllers\RepositoryInfoViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\CodeFramework\CodeFramework\CodeFramework.csproj">
       <Project>{FECA9DCA-3B0B-4C0E-B7B4-E826C1BFDDB2}</Project>
       <Name>CodeFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GitHubSharp\GitHubSharp\GitHubSharp.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\CodeFramework\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
@@ -173,6 +202,10 @@
       <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
       <Name>UserVoice</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GitHubSharp\GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj">
+      <Project>{9D501802-E873-44FA-96D9-335AEED3FD66}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -184,7 +217,7 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <InterfaceDefinition Include="Controllers\GitHub\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\LoginViewController.xib" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Images\anonymous.png" />
@@ -296,9 +329,13 @@
     <BundleResource Include="Resources\Icon.png" />
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
+    <BundleResource Include="Images\repository.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\Controls\dropbar.png" />
   </ItemGroup>
 </Project>

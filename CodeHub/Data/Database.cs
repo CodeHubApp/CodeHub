@@ -27,6 +27,8 @@ namespace CodeHub.Data
         {
             //Execute the typical stuff
 			CreateTable<CodeHub.Data.Account>();
+            CreateTable<CodeHub.Data.PinnedRepository>();
+            CreateTable<CodeHub.Data.Filter>();
         }
     }
 }
