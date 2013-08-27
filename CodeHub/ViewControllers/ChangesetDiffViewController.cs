@@ -148,13 +148,13 @@ namespace CodeHub.ViewControllers
         private void AddComments(List<CommentModel> comments)
         {
 //            //Convert it to something light weight
-//            var slimComments = comments.Where(x => x.Deleted == false && string.Equals(x.Filename, _path)).Select(x => new { 
-//                Id = x.CommentId, User = x.Username, Avatar = x.UserAvatarUrl, LineTo = x.LineTo, LineFrom = x.LineFrom,
-//                Content = x.ContentRendered, Date = x.UtcLastUpdated, Parent = x.ParentId
-//            }).ToList();
-//
-//            var c = new RestSharp.Serializers.JsonSerializer().Serialize(slimComments);
-//            BeginInvokeOnMainThread(() => Web.EvaluateJavascript("var a = " + c + "; addComments(a);"));
+            var slimComments = comments.Where(x => string.Equals(x.Path, _path)).Select(x => new { 
+                Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Line, LineFrom = x.Line,
+                Content = x.Body, Date = x.UpdatedAt
+            }).ToList();
+
+            var c = new RestSharp.Serializers.JsonSerializer().Serialize(slimComments);
+            BeginInvokeOnMainThread(() => Web.EvaluateJavascript("var a = " + c + "; addComments(a);"));
         }
     }
 }

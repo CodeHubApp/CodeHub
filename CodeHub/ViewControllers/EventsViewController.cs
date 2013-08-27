@@ -69,7 +69,7 @@ namespace CodeHub.ViewControllers
             {
                 img = Images.Plus;
                 var pushEvent = (EventModel.PushEvent)eventModel.PayloadObject;
-                var desc = pushEvent.Commits[0].Message ?? "".Replace('\n', ' ');
+                var desc = (pushEvent.Commits[0].Message ?? "").Replace('\n', ' ');
 
                 if (eventModel.Repo != null)
                     elementAction = () => NavigationController.PushViewController(new ChangesetInfoViewController(repoId.Owner, repoId.Name, pushEvent.Commits[0].Sha) { Repo = repoId }, true);
@@ -85,13 +85,13 @@ namespace CodeHub.ViewControllers
             }
             else if (eventModel.PayloadObject is EventModel.CreateEvent)
             {
-                img = Images.Create;
                 var createModel = (EventModel.CreateEvent)eventModel.PayloadObject;
 
                 if (createModel.RefType.Equals("repository"))
                 {
                     if (ReportRepository)
                     {
+                        img = Images.Repo;
                         elementAction = RepoAction(eventModel.Repo);
                         blocks.Add(new NewsFeedElement.TextBlock("Created repository ".t()));
                         blocks.AddRange(RepoName(eventModel.Repo));
@@ -101,6 +101,7 @@ namespace CodeHub.ViewControllers
                 }
                 else if (createModel.RefType.Equals("branch"))
                 {
+                    img = Images.Branch;
                     var act = elementAction = () => NavigationController.PushViewController(new BranchesViewController(repoId.Owner, repoId.Name), true);
                     blocks.Add(new NewsFeedElement.TextBlock("Created branch ".t()));
                     blocks.Add(new NewsFeedElement.TextBlock(createModel.Ref, () => act()));
@@ -113,6 +114,7 @@ namespace CodeHub.ViewControllers
                 }
                 else if (createModel.RefType.Equals("tag"))
                 {
+                    img = Images.Tag;
                     var act = elementAction = () => NavigationController.PushViewController(new TagsViewController(repoId.Owner, repoId.Name), true);
                     blocks.Add(new NewsFeedElement.TextBlock("Created tag ".t()));
                     blocks.Add(new NewsFeedElement.TextBlock(createModel.Ref, () => act()));
@@ -156,9 +158,117 @@ namespace CodeHub.ViewControllers
             }
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
             {
-                img = Images.BinClosed;
+                img = Images.Buttons.User;
                 var followEvent = (EventModel.FollowEvent)eventModel.PayloadObject;
+                var action = elementAction = () => NavigationController.PushViewController(new ProfileViewController(followEvent.Target.Login), true);
+                blocks.Add(new NewsFeedElement.TextBlock("Started following ".t()));
+                blocks.Add(new NewsFeedElement.TextBlock(followEvent.Target.Login, () => action()));
             }
+            else if (eventModel.PayloadObject is EventModel.WatchEvent)
+            {
+                var watchEvent = (EventModel.WatchEvent)eventModel.PayloadObject;
+                elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(repoId.Owner, repoId.Name), true);
+                if (watchEvent.Action.Equals("started"))
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Started watching ".t()));
+                    img = Images.HeartAdd;
+                }
+                else
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Stopped watching ".t()));
+                    img = Images.HeartDelete;
+                }
+
+                blocks.AddRange(RepoName(eventModel.Repo));
+            }
+            else if (eventModel.PayloadObject is EventModel.ForkEvent)
+            {
+                img = Images.Fork;
+                var forkEvent = (EventModel.ForkEvent)eventModel.PayloadObject;
+                elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(forkEvent.Forkee.Owner.Login, forkEvent.Forkee.Name), true);
+                blocks.Add(new NewsFeedElement.TextBlock("Forked ".t()));
+                blocks.AddRange(RepoName(eventModel.Repo));
+            }
+            else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
+            {
+                var pullEvent = (EventModel.PullRequestEvent)eventModel.PayloadObject;
+                if (pullEvent.Action.Equals("closed"))
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Closed pull request branch".t()));
+                    blocks.Add(new NewsFeedElement.TextBlock(pullEvent.PullRequest.Title, () => { }));
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" in ".t()));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+                else if (pullEvent.Action.Equals("opened"))
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Opened pull request ".t()));
+                    blocks.Add(new NewsFeedElement.TextBlock(pullEvent.PullRequest.Title, () => { }));
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" in ".t()));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+            }
+            else if (eventModel.PayloadObject is EventModel.MemberEvent)
+            {
+                var memberEvent = (EventModel.MemberEvent)eventModel.PayloadObject;
+                img = Images.Buttons.Group;
+                elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(repoId.Owner, repoId.Name), true);
+                if (memberEvent.Action.Equals("added"))
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Added as a collaborator".t()));
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" to ".t()));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+                else if (memberEvent.Action.Equals("removed"))
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock("Removed as a collaborator".t()));
+                    if (ReportRepository)
+                    {
+                        blocks.Add(new NewsFeedElement.TextBlock(" to ".t()));
+                        blocks.AddRange(RepoName(eventModel.Repo));
+                    }
+                }
+            }
+            else if (eventModel.PayloadObject is EventModel.PublicEvent)
+            {
+                var memberEvent = (EventModel.MemberEvent)eventModel.PayloadObject;
+                img = Images.Heart;
+                elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(repoId.Owner, repoId.Name), true);
+                if (ReportRepository)
+                {
+                    blocks.AddRange(RepoName(eventModel.Repo));
+                    blocks.Add(new NewsFeedElement.TextBlock(" has been open sourced!".t()));
+                }
+                else
+                    blocks.Add(new NewsFeedElement.TextBlock("Has been open sourced!".t()));
+            }
+            else if (eventModel.PayloadObject is EventModel.CommitCommentEvent)
+            {
+                var commitEvent = (EventModel.CommitCommentEvent)eventModel.PayloadObject;
+                img = Images.CommentAdd;
+                var action = elementAction = () => NavigationController.PushViewController(new ChangesetInfoViewController(repoId.Owner, repoId.Name, commitEvent.Comment.CommitId), true);
+                var node = commitEvent.Comment.CommitId.Substring(0, commitEvent.Comment.CommitId.Length > 10 ? 10 : commitEvent.Comment.CommitId.Length);
+                blocks.Add(new NewsFeedElement.TextBlock("Commented on commit ".t()));
+                blocks.Add(new NewsFeedElement.TextBlock(node, () => action()));
+
+                if (ReportRepository)
+                {
+                    blocks.Add(new NewsFeedElement.TextBlock(" in ".t()));
+                    blocks.AddRange(RepoName(eventModel.Repo));
+                }
+
+                blocks.Add(new NewsFeedElement.TextBlock(": "));
+                blocks.Add(new NewsFeedElement.TextBlock(commitEvent.Comment.Body));
+            }
+
 //            else if (eventModel.Event == EventModel.Type.WikiUpdated)
 //            {
 //                img = Images.Pencil;
@@ -203,22 +313,6 @@ namespace CodeHub.ViewControllers
 //            {
 //                img = Images.HeartAdd;
 //                blocks.Add(new NewsFeedElement.TextBlock("Started following a user"));
-//            }
-//            else if (eventModel.Event == EventModel.Type.StartFollowRepo)
-//            {
-//                img = Images.HeartAdd;
-//                if (eventModel.Repository != null)
-//                    elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(eventModel.Repository), true);
-//                blocks.Add(new NewsFeedElement.TextBlock("Started following "));
-//                blocks.AddRange(RepoName(eventModel));
-//            }
-//            else if (eventModel.Event == EventModel.Type.StopFollowRepo)
-//            {
-//                img = Images.HeartDelete;
-//                if (eventModel.Repository != null)
-//                    elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(eventModel.Repository), true);
-//                blocks.Add(new NewsFeedElement.TextBlock("Stopped following "));
-//                blocks.AddRange(RepoName(eventModel));
 //            }
 //            else if (eventModel.Event == EventModel.Type.IssueComment)
 //            {

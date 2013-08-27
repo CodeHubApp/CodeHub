@@ -115,28 +115,29 @@ namespace CodeHub.ViewControllers
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
-//                var commentSection = new Section();
-//                foreach (var comment in model.Comments)
-//                {
-//                    if (comment.Deleted || !string.IsNullOrEmpty(comment.Filename))
-//                        continue;
-//
-//                    commentSection.Add(new CommentElement {
-//                        Name = comment.DisplayName,
-//                        Time = comment.UtcCreatedOn.ToDaysAgo(),
-//                        String = comment.Content,
-//                        Image = CodeFramework.Images.Misc.Anonymous,
-//                        ImageUri = new Uri(comment.UserAvatarUrl),
-//                        BackgroundColor = UIColor.White,
-//                    });
-//                }
-//
-//                if (commentSection.Elements.Count > 0)
-//                    root.Add(commentSection);
-//
-//                var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
-//                addComment.Tapped += AddCommentTapped;
-//                root.Add(new Section { addComment });
+                var commentSection = new Section();
+                foreach (var comment in model.Comments)
+                {
+                    //The path should be empty to indicate it's a comment on the entire commit, not a specific file
+                    if (!string.IsNullOrEmpty(comment.Path))
+                        continue;
+
+                    commentSection.Add(new CommentElement {
+                        Name = comment.User.Login,
+                        Time = comment.CreatedAt.ToDaysAgo(),
+                        String = comment.Body,
+                        Image = CodeFramework.Images.Misc.Anonymous,
+                        ImageUri = new Uri(comment.User.AvatarUrl),
+                        BackgroundColor = UIColor.White,
+                    });
+                }
+
+                if (commentSection.Elements.Count > 0)
+                    root.Add(commentSection);
+
+                var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
+                addComment.Tapped += AddCommentTapped;
+                root.Add(new Section { addComment });
             }
 
             Root = root; 
