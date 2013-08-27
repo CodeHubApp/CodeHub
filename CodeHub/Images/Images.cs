@@ -68,6 +68,11 @@ namespace CodeHub
         {
             get { return new System.Uri(System.IO.Path.Combine(MonoTouch.Foundation.NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }
         }
+
+        public static System.Uri GitHubRepoForkUrl
+        {
+            get { return new System.Uri(System.IO.Path.Combine(MonoTouch.Foundation.NSBundle.MainBundle.ResourcePath, "Images/repository_fork.png")); }
+        }
 		
         public static class Logos
         {

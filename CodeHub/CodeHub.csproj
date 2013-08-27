@@ -330,6 +330,7 @@
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\repository.png" />
+    <BundleResource Include="Images\repository_fork.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

@@ -84,7 +84,8 @@ namespace CodeHub.ViewControllers
                 var pinnedRepo = Application.Account.GetPinnedRepository(model.Owner.Login, model.Name);
                 if (pinnedRepo == null)
                 {
-                    Application.Account.AddPinnedRepository(model.Owner.Login, model.Name, model.Name, Images.GitHubRepoUrl.AbsoluteUri);
+					var imageUrl = model.Fork ? CodeHub.Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
+					Application.Account.AddPinnedRepository(model.Owner.Login, model.Name, model.Name, imageUrl.AbsolutePath);
                 }
                 else
                     Application.Account.RemovePinnedRepository(pinnedRepo.Id);
@@ -139,7 +140,8 @@ namespace CodeHub.ViewControllers
             Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
             _header.Subtitle = "Updated ".t() + (model.UpdatedAt).ToDaysAgo();
-            _header.Image = ImageLoader.DefaultRequestImage(Images.GitHubRepoUrl, this);
+            var imageUrl = model.Fork ? CodeHub.Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
+            _header.Image = ImageLoader.DefaultRequestImage(imageUrl, this);
 
             root.Add(new Section(_header));
             var sec1 = new Section();
