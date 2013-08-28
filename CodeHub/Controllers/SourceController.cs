@@ -39,7 +39,9 @@ namespace CodeHub.Controlleres
             IEnumerable<ContentModel> ret = model;
             var order = (SourceFilterModel.Order)filter.OrderBy;
             if (order == SourceFilterModel.Order.Alphabetical)
-                 ret = model.OrderBy(x => x.Name);
+                ret = model.OrderBy(x => x.Name);
+            else if (order == SourceFilterModel.Order.FoldersThenFiles)
+                ret = model.OrderBy(x => x.Type).ThenBy(x => x.Name);
             return filter.Ascending ? ret.ToList() : ret.Reverse().ToList();
         }
   
