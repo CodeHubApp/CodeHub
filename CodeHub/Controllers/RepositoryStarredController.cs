@@ -20,7 +20,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[_owner].Repositories[_name].GetStargazers();
+            var response = Application.Client.Users[_owner].Repositories[_name].GetStargazers(force);
             Model = new ListModel<BasicUserModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

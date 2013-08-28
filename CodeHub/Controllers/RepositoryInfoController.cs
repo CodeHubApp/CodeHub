@@ -19,7 +19,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            Model = Application.Client.Users[User].Repositories[Repo].GetInfo().Data;
+            Model = Application.Client.Users[User].Repositories[Repo].Get(force).Data;
         }
     }
 }

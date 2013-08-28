@@ -45,7 +45,7 @@ namespace CodeHub.Controlleres
   
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].GetContent(_path, _branch);
+            var response = Application.Client.Users[_username].Repositories[_slug].GetContent(force, _path, _branch);
             Model = new ListModel<ContentModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

@@ -16,7 +16,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Organizations[Name].GetMembers();
+            var response = Application.Client.Organizations[Name].GetMembers(force);
             Model = new ListModel<BasicUserModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

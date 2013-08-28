@@ -16,9 +16,9 @@ namespace CodeHub.Controllers
             _username = username;
         }
 
-        public override void Update(bool forced)
+        public override void Update(bool force)
         {
-            Model = Application.Client.Users[_username].GetInfo().Data;
+            Model = Application.Client.Users[_username].Get(force).Data;
         }
     }
 }

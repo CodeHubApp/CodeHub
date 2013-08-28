@@ -22,7 +22,7 @@ namespace CodeHub.Controllers
 
         protected override GitHubResponse<List<EventModel>> GetData(int start = 0, int limit = DataLimit)
         {
-            return Application.Client.Users[Username].Repositories[Slug].GetEvents(start, limit);
+            return Application.Client.Users[Username].Repositories[Slug].GetEvents(true, start, limit);
         }
     }
 }

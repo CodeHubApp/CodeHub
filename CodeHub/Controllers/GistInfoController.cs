@@ -17,7 +17,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            Model = Application.Client.Gists[Id].GetInfo().Data;
+            Model = Application.Client.Gists[Id].Get(force).Data;
         }
     }
 }

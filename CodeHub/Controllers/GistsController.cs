@@ -22,7 +22,7 @@ namespace CodeHub.GitHub.Controllers.Gists
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[_username].Gists.GetGists();
+            var response = Application.Client.Users[_username].Gists.GetGists(force);
             Model = new ListModel<GistModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

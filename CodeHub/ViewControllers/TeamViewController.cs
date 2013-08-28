@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace CodeHub.ViewControllers
 {
-    public class TeamViewController : BaseListControllerDrivenViewController, IListView<TeamController.TeamModel>
+    public class TeamViewController : BaseListControllerDrivenViewController, IListView<TeamShortModel>
     {
         public TeamViewController() 
         {
             Title = "Teams".t();
             SearchPlaceholder = "Search Teams".t();
             NoItemsText = "No Teams".t();
-            Controller = new TeamController(this);
+            Controller = new TeamsController(this);
         }
 
-        public void Render(ListModel<TeamController.TeamModel> model)
+        public void Render(ListModel<TeamShortModel> model)
         {
             RenderList(model, o => new StyledStringElement(o.Name, () => NavigationController.PushViewController(new ProfileViewController(o.Name), true)));
         }

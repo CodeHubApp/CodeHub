@@ -20,7 +20,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].GetTags();
+            var response = Application.Client.Users[_username].Repositories[_slug].GetTags(force);
             Model = new ListModel<TagModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

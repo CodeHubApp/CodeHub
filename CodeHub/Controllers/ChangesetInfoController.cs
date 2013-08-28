@@ -35,13 +35,13 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var model = new ChangesetInfoController.ChangesetInfoModel();
-            var x = Application.Client.Users[User].Repositories[Slug].Commits[Node].GetInfo().Data;
+            var x = Application.Client.Users[User].Repositories[Slug].Commits[Node].Get(force).Data;
             x.Files = x.Files.OrderBy(y => y.Filename.Substring(y.Filename.LastIndexOf('/') + 1)).ToList();
             model.Changeset = x;
 
             try
             {
-                model.Comments = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.GetAll().Data;
+                model.Comments = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.GetAll(force).Data;
             }
             catch (Exception e)
             {
@@ -55,7 +55,7 @@ namespace CodeHub.Controllers
  
         public void AddComment(string text)
         {
-            var c = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.Create(new CreateCommentModel { Body = text });
+            var c = Application.Client.Users[User].Repositories[Slug].Comments.Create(text);
             Model.Comments.Add(c.Data);
             Render();
         }

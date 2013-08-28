@@ -29,14 +29,14 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = GetData();
+            var response = GetData(force);
             Model = new ListModel<CommitModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }
 
-        protected GitHubResponse<List<CommitModel>> GetData(string startNode = null)
+        protected GitHubResponse<List<CommitModel>> GetData(bool force, string startNode = null)
         {
-            return Application.Client.Users[User].Repositories[Slug].Commits.GetAll(startNode);
+            return Application.Client.Users[User].Repositories[Slug].Commits.GetAll(startNode, force);
         }
     }
 }

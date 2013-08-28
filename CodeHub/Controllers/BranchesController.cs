@@ -20,7 +20,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].GetBranches();
+            var response = Application.Client.Users[_username].Repositories[_slug].GetBranches(force);
             Model = new ListModel<BranchModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }

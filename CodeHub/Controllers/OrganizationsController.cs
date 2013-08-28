@@ -22,7 +22,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Users[Username].GetOrganizations();
+            var response = Application.Client.Users[Username].GetOrganizations(force);
             Model = new ListModel<BasicUserModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }
