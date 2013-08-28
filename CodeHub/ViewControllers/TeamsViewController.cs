@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace CodeHub.ViewControllers
 {
-    public class TeamViewController : BaseListControllerDrivenViewController, IListView<TeamShortModel>
+    public class TeamsViewController : BaseListControllerDrivenViewController, IListView<TeamShortModel>
     {
-        public TeamViewController() 
+        public TeamsViewController() 
         {
             Title = "Teams".t();
             SearchPlaceholder = "Search Teams".t();

@@ -45,7 +45,7 @@ namespace CodeHub.ViewControllers
                 var description = Application.Account.HideRepositoryDescriptionInList ? string.Empty : repo.Description;
                 var imageUrl = repo.Fork ? CodeHub.Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
                 var sse = new RepositoryElement(repo.Name, repo.Watchers, repo.Forks, description, repo.Owner.Login, imageUrl) { ShowOwner = ShowOwner };
-                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoViewController(repo), true);
+                sse.Tapped += () => NavigationController.PushViewController(new RepositoryInfoViewController(repo.Owner.Login, repo.Name), true);
                 return sse;
             });
         }

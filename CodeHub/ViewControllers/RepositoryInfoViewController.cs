@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CodeHub.ViewControllers
 {
-    public class RepositoryInfoViewController : BaseControllerDrivenViewController, IImageUpdated, IView<RepositoryModel>
+    public class RepositoryInfoViewController : BaseControllerDrivenViewController, IImageUpdated, IView<RepositoryInfoController.ViewModel>
     {
         private HeaderView _header;
 
@@ -45,98 +45,106 @@ namespace CodeHub.ViewControllers
         {
         }
 
-
-        public RepositoryInfoViewController(RepositoryModel model)
-            : this(model.Owner.Login, model.Name, model.Name)
-        {
-            ((RepositoryInfoController)Controller).Model = model;
-        }
-
         private void ShowExtraMenu()
         {
-            var model = Controller.Model;
-            var sheet = MonoTouch.Utilities.GetSheet(model.Name);
+            var repoModel = Controller.Model.RepositoryModel;
+            var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
 
-            if (Application.Account.GetPinnedRepository(model.Owner.Login, model.Name) == null)
-                sheet.AddButton("Pin to Slideout Menu".t());
-            else
-                sheet.AddButton("Unpin from Slideout Menu".t());
-
-            //sheet.AddButton("Watch This Repo");
-            sheet.AddButton("Fork Repository".t());
-            sheet.AddButton("Show in GitHub".t());
+            var pinButton = sheet.AddButton(Application.Account.GetPinnedRepository(repoModel.Owner.Login, repoModel.Name) == null ? "Pin to Slideout Menu".t() : "Unpin from Slideout Menu".t());
+            var starButton = sheet.AddButton(Controller.Model.IsStarred ? "Unstar This Repo".t() : "Star This Repo".t());
+            var watchButton = sheet.AddButton(Controller.Model.IsWatched ? "Unwatch This Repo".t() : "Watch This Repo".t());
+            //var forkButton = sheet.AddButton("Fork Repository".t());
+            var showButton = sheet.AddButton("Show in GitHub".t());
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += HandleSheetButtonClick;
+            sheet.Clicked += (s, e) => {
+                // Pin to menu
+                if (e.ButtonIndex == pinButton)
+                {
+                    //Is it pinned already or not?
+                    var pinnedRepo = Application.Account.GetPinnedRepository(repoModel.Owner.Login, repoModel.Name);
+                    if (pinnedRepo == null)
+                    {
+                        var imageUrl = repoModel.Fork ? CodeHub.Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
+                        Application.Account.AddPinnedRepository(repoModel.Owner.Login, repoModel.Name, repoModel.Name, imageUrl.AbsolutePath);
+                    }
+                    else
+                        Application.Account.RemovePinnedRepository(pinnedRepo.Id);
+                }
+                // Watch this repo
+                else if (e.ButtonIndex == starButton)
+                {
+                    this.DoWork(() => {
+                        if (Controller.Model.IsStarred)
+                            Controller.Unstar();
+                        else
+                            Controller.Star();
+                    }, ex => {
+                        MonoTouch.Utilities.ShowAlert("Error".t(), ex.Message);
+                    });
+                }
+                // Watch this repo
+                else if (e.ButtonIndex == watchButton)
+                {
+                    this.DoWork(() => {
+                        if (Controller.Model.IsWatched)
+                            Controller.StopWatching();
+                        else
+                            Controller.Watch();
+                    }, ex => {
+                        MonoTouch.Utilities.ShowAlert("Error".t(), ex.Message);
+                    });
+                }
+                // Fork this repo
+//                else if (e.ButtonIndex == forkButton)
+//                {
+//                    ForkRepository();
+//                }
+                // Show in Bitbucket
+                else if (e.ButtonIndex == showButton)
+                {
+                    try { UIApplication.SharedApplication.OpenUrl(new NSUrl(repoModel.HtmlUrl)); } catch { }
+                }
+            };
 
             sheet.ShowInView(this.View);
         }
 
-        void HandleSheetButtonClick (object sender, UIButtonEventArgs e)
+//        private void ForkRepository()
+//        {
+//            var repoModel = Controller.Model.RepositoryModel;
+//            var alert = new UIAlertView();
+//            alert.Title = "Fork".t();
+//            alert.Message = "What would you like to name your fork?".t();
+//            alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+//            var forkButton = alert.AddButton("Fork!".t());
+//            var cancelButton = alert.AddButton("Cancel".t());
+//            alert.CancelButtonIndex = cancelButton;
+//            alert.DismissWithClickedButtonIndex(cancelButton, true);
+//            alert.GetTextField(0).Text = repoModel.Name;
+//            alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
+//                if (e2.ButtonIndex == forkButton)
+//                {
+//                    var text = alert.GetTextField(0).Text;
+//                    this.DoWork("Forking...".t(), () => {
+//                        //var fork = Application.Client.Users[model.Owner.Login].Repositories[model.Name].Fo(text);
+//                        BeginInvokeOnMainThread(() => {
+//                            //  NavigationController.PushViewController(new RepositoryInfoViewController(fork), true);
+//                        });
+//                    }, (ex) => {
+//                        //We typically get a 'BAD REQUEST' but that usually means that a repo with that name already exists
+//                        MonoTouch.Utilities.ShowAlert("Unable to fork".t(), "A repository by that name may already exist in your collection or an internal error has occured.".t());
+//                    });
+//                }
+//            };
+//
+//            alert.Show();
+//        }
+
+        public void Render(RepositoryInfoController.ViewModel viewModel)
         {
-            var model = Controller.Model;
-
-            // Pin to menu
-            if (e.ButtonIndex == 0)
-            {
-                //Is it pinned already or not?
-                var pinnedRepo = Application.Account.GetPinnedRepository(model.Owner.Login, model.Name);
-                if (pinnedRepo == null)
-                {
-					var imageUrl = model.Fork ? CodeHub.Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
-					Application.Account.AddPinnedRepository(model.Owner.Login, model.Name, model.Name, imageUrl.AbsolutePath);
-                }
-                else
-                    Application.Account.RemovePinnedRepository(pinnedRepo.Id);
-            }
-            // Watch this repo
-//            else if (e.ButtonIndex == 1)
-//            {
-//            }
-            // Fork this repo
-            else if (e.ButtonIndex == 1)
-            {
-                var alert = new UIAlertView();
-                alert.Title = "Fork".t();
-                alert.Message = "What would you like to name your fork?".t();
-                alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-                var forkButton = alert.AddButton("Fork!".t());
-                var cancelButton = alert.AddButton("Cancel".t());
-                alert.CancelButtonIndex = cancelButton;
-                alert.DismissWithClickedButtonIndex(cancelButton, true);
-                alert.GetTextField(0).Text = model.Name;
-                alert.Clicked += (object sender2, UIButtonEventArgs e2) => {
-                    if (e2.ButtonIndex == forkButton)
-                    {
-                        var text = alert.GetTextField(0).Text;
-                        this.DoWork("Forking...".t(), () => {
-                            //var fork = Application.Client.Users[model.Owner.Login].Repositories[model.Name].Fo(text);
-                            BeginInvokeOnMainThread(() => {
-                              //  NavigationController.PushViewController(new RepositoryInfoViewController(fork), true);
-                            });
-                        }, (ex) => {
-                            //We typically get a 'BAD REQUEST' but that usually means that a repo with that name already exists
-                            MonoTouch.Utilities.ShowAlert("Unable to fork".t(), "A repository by that name may already exist in your collection or an internal error has occured.".t());
-                        });
-                    }
-                };
-
-                alert.Show();
-            }
-            // Show in Bitbucket
-            else if (e.ButtonIndex == 2)
-            {
-                try 
-                {
-                    UIApplication.SharedApplication.OpenUrl(new NSUrl(model.HtmlUrl));
-                }
-                catch { }
-            }
-        }
-
-        void IView<RepositoryModel>.Render(RepositoryModel model)
-        {
+            var model = viewModel.RepositoryModel;
             Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
             _header.Subtitle = "Updated ".t() + (model.UpdatedAt).ToDaysAgo();

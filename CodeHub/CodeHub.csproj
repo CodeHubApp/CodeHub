@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG; SIMPLE_JSON_DATACONTRACT;</DefineConstants>
+    <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -146,7 +146,6 @@
     <Compile Include="Controllers\RepositoryInfoController.cs" />
     <Compile Include="Controllers\SourceController.cs" />
     <Compile Include="Controllers\TagsController.cs" />
-    <Compile Include="Controllers\TeamController.cs" />
     <Compile Include="Controllers\UserFollowersController.cs" />
     <Compile Include="Filters\Models\IssuesFilterModel.cs" />
     <Compile Include="Filters\Models\RepositoriesFilterModel.cs" />
@@ -175,6 +174,7 @@
     <Compile Include="Controllers\RepositoryStarredController.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewControllers\RepositoryInfoViewController.cs" />
+    <Compile Include="Controllers\TeamsController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
