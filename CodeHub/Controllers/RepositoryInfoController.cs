@@ -22,6 +22,11 @@ namespace CodeHub.Controllers
             Model = new ViewModel { RepositoryModel = Application.Client.Users[User].Repositories[Repo].Get(force).Data };
             Model.IsWatched = Application.Client.Users[User].Repositories[Repo].IsWatching();
             Model.IsStarred = Application.Client.Users[User].Repositories[Repo].IsStarred();
+
+            try {
+                Model.Readme = Application.Client.Users[User].Repositories[Repo].GetReadme(force).Data;
+            }
+            catch { }
         }
 
         public void Watch()
@@ -53,6 +58,7 @@ namespace CodeHub.Controllers
             public RepositoryModel RepositoryModel;
             public bool IsWatched;
             public bool IsStarred;
+            public ContentModel Readme;
         }
     }
 }

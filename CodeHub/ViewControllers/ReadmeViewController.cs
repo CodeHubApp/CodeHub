@@ -6,11 +6,11 @@ using MonoTouch;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 
-namespace CodeHub.GitHub.Controllers.Readme
+namespace CodeHub.ViewControllers
 {
     public class ReadmeViewController : WebViewController
     {
-        private static readonly string WikiCache = Utilities.BaseDir + "/tmp/WikiCache/";
+        private readonly string _tempFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
         private readonly string _user;
         private readonly string _slug;
         private ErrorView _errorView;
@@ -18,12 +18,12 @@ namespace CodeHub.GitHub.Controllers.Readme
         private bool _isLoaded;
 
         public ReadmeViewController(string user, string slug)
+            : base(true)
         {
             _user = user;
             _slug = slug;
             Title = "Readme";
             Web.ScalesPageToFit = true;
-            Web.DataDetectorTypes = UIDataDetectorType.None;
         }
 
         private string RequestAndSave(bool forceInvalidation)
@@ -41,16 +41,8 @@ namespace CodeHub.GitHub.Controllers.Readme
             markup.Append(data);
             markup.Append("</body></html>");
 
-            var url = WikiCache  + "readme.html";
-            using (var file = System.IO.File.Create(url))
-            {
-                using (var writer = new System.IO.StreamWriter(file, System.Text.Encoding.UTF8))
-                {
-                    writer.Write(markup.ToString());
-                }
-            }
-
-            return url;
+            System.IO.File.WriteAllText(_tempFile, markup.ToString(), System.Text.Encoding.UTF8);
+            return _tempFile;
         }
         
         private void Load(bool forceInvalidation = false)
@@ -64,11 +56,7 @@ namespace CodeHub.GitHub.Controllers.Readme
                     });
                 }
                 
-                var url = RequestAndSave(forceInvalidation);
-                var escapedUrl = Uri.EscapeUriString("file://" + url);
-                var request = NSUrlRequest.FromUrl(new NSUrl(escapedUrl));
-                NSUrlCache.SharedCache.RemoveCachedResponse(request);
-                InvokeOnMainThread(() => Web.LoadRequest(request));
+                LoadFile(RequestAndSave(forceInvalidation));
             },
             ex => {
                 if (_isVisible)
@@ -93,20 +81,10 @@ namespace CodeHub.GitHub.Controllers.Readme
                 Load();
             _isLoaded = true;
         }
-        
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            
-            //Delete the cache directory just incase it already exists..
-            if (System.IO.Directory.Exists(WikiCache))
-                System.IO.Directory.Delete(WikiCache, true);
-            System.IO.Directory.CreateDirectory(WikiCache);
-        }
 
         protected override void Refresh()
         {
-            if (Web.Request.Url.AbsoluteString.StartsWith("file://"))
+            if (Web.Request.Url.AbsoluteString.StartsWith("file://" + _tempFile))
             {
                 if (RefreshButton != null)
                     RefreshButton.Enabled = false;

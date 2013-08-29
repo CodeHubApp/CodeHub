@@ -212,6 +212,9 @@ namespace CodeHub.ViewControllers
             if (model.HasIssues)
                 sec2.Add(new StyledStringElement("Issues".t(), () => NavigationController.PushViewController(new IssuesViewController(model.Owner.Login, model.Name), true), Images.Buttons.Flag));
 
+            if (viewModel.Readme != null)
+                sec2.Add(new StyledStringElement("Readme".t(), () => NavigationController.PushViewController(new ReadmeViewController(model.Owner.Login, model.Name), true), Images.File));
+
             if (model.HasWiki)
                 sec2.Add(new StyledStringElement("Wiki".t(), () => NavigationController.PushViewController(new WikiViewController(model.Owner.Login, model.Name), true), Images.Pencil));
 

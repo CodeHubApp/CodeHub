@@ -57,7 +57,7 @@ namespace CodeHub.ViewControllers
                         data = Application.Client.Markdown.GetMarkdown(data);
 
                     var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-                    System.IO.File.WriteAllText(path, data);
+                    System.IO.File.WriteAllText(path, data, System.Text.Encoding.UTF8);
                     LoadFile(path);
                     _loaded = true;
                 });
