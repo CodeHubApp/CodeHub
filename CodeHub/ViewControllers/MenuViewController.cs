@@ -20,7 +20,7 @@ namespace CodeHub.ViewControllers
             var root = new RootElement(username);
             root.Add(new Section() {
                 new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Buttons.Person),
-                //new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.Buttons.Person),
+                new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.CommentAdd)
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };

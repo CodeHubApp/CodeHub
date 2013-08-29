@@ -90,6 +90,13 @@ namespace CodeHub
             public static UIImage Person { get { return UIImage.FromBundle("/Images/Buttons/person"); } }
             public static UIImage Cog { get { return UIImage.FromBundle("/Images/Buttons/cog"); } }
         }
+
+        public static class Notifications
+        {
+            public static UIImage Commit { get { return UIImageHelper.FromFileAuto("Images/Notifications/commit"); } }
+            public static UIImage Issue { get { return UIImageHelper.FromFileAuto("Images/Notifications/issue"); } }
+            public static UIImage PullRequest { get { return UIImageHelper.FromFileAuto("Images/Notifications/pull_request"); } }
+        }
     }
 }
 

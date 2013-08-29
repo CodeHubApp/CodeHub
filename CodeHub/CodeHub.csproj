@@ -97,6 +97,7 @@
     <Folder Include="Images\Logos\" />
     <Folder Include="ViewControllers\" />
     <Folder Include="Filters\" />
+    <Folder Include="Images\Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -131,7 +132,6 @@
     <Compile Include="ViewControllers\SourceViewController.cs" />
     <Compile Include="ViewControllers\StartupViewController.cs" />
     <Compile Include="ViewControllers\TagsViewController.cs" />
-    <Compile Include="ViewControllers\TeamViewController.cs" />
     <Compile Include="ViewControllers\WikiViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs" />
@@ -175,6 +175,10 @@
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewControllers\RepositoryInfoViewController.cs" />
     <Compile Include="Controllers\TeamsController.cs" />
+    <Compile Include="ViewControllers\TeamsViewController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
+    <Compile Include="Filters\Models\NotificationsFilterModel.cs" />
+    <Compile Include="ViewControllers\NotificationsViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -331,6 +335,12 @@
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\repository.png" />
     <BundleResource Include="Images\repository_fork.png" />
+    <BundleResource Include="Images\Notifications\commit.png" />
+    <BundleResource Include="Images\Notifications\commit%402x.png" />
+    <BundleResource Include="Images\Notifications\issue.png" />
+    <BundleResource Include="Images\Notifications\issue%402x.png" />
+    <BundleResource Include="Images\Notifications\pull_request.png" />
+    <BundleResource Include="Images\Notifications\pull_request%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

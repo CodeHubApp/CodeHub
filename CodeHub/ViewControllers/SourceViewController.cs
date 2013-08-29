@@ -48,8 +48,21 @@ namespace CodeHub.ViewControllers
                 }
                 else if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
                 {
-                    return new StyledStringElement(x.Name, () => NavigationController.PushViewController(
-                        new SourceInfoViewController(_username, _slug, _branch, x.Path) { Title = x.Name }, true), Images.File);
+                    //If there's a size, it's a file
+                    if (x.Size != null)
+                    {
+                        return new StyledStringElement(x.Name, () => NavigationController.PushViewController(
+                            new SourceInfoViewController(_username, _slug, _branch, x.Path) { Title = x.Name }, true), Images.File);
+                    }
+                    //If there is no size, it's most likey a submodule
+                    else
+                    {
+                        var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/") + 7);
+                        var repoId = new CodeHub.Utils.RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git")));
+                        var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/") + 1);
+                        return new StyledStringElement(x.Name, () => NavigationController.PushViewController(
+                            new SourceViewController(repoId.Owner, repoId.Name, sha) { Title = x.Name }, true), Images.Repo);
+                    }
                 }
                 else
                 {
