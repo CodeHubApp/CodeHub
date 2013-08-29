@@ -71,7 +71,7 @@ namespace CodeHub.ViewControllers
 
                 sse.Name = (x.User == null) ? "Anonymous" : x.User.Login;
                 sse.ImageUri = (x.User == null) ? null : new Uri(x.User.AvatarUrl);
-                //sse.Tapped += () => NavigationController.PushViewController(new GistInfoController(x.Id) { Model = x }, true);
+                sse.Tapped += () => NavigationController.PushViewController(new GistInfoViewController(x), true);
                 return sse;
             });
         }

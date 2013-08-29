@@ -17,7 +17,6 @@ namespace CodeHub.ViewControllers
         private readonly string _username;
         private readonly string _slug;
         private readonly string _branch;
-        private readonly string _path;
 
         public new SourceController Controller
         {
@@ -30,7 +29,6 @@ namespace CodeHub.ViewControllers
             _username = username;
             _slug = slug;
             _branch = branch;
-            _path = path;
             EnableSearch = true;
             EnableFilter = true;
             SearchPlaceholder = "Search Files & Folders".t();

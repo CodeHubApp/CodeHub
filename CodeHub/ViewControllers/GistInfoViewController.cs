@@ -19,8 +19,13 @@ namespace CodeHub.ViewControllers
         {
             Title = "Gist";
             Controller = new GistInfoController(this, id);
-            
             _header = new HeaderView(0f) { Title = "Gist: " + id };
+        }
+
+        public GistInfoViewController(GistModel model)
+            : this (model.Id)
+        {
+            ((GistInfoController)Controller).Model = model;
         }
 
         public void Render(GistModel model)
@@ -56,7 +61,13 @@ namespace CodeHub.ViewControllers
                 };
 
                 var fileSaved = file;
-                sse.Tapped += () => NavigationController.PushViewController(new GistFileViewController(model.Files[fileSaved]), true);
+                var gistFileModel = model.Files[fileSaved];
+
+                if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
+                    sse.Tapped += () => NavigationController.PushViewController(new GistViewableFileController(gistFileModel), true);
+                else
+                    sse.Tapped += () => NavigationController.PushViewController(new GistFileViewController(gistFileModel), true);
+
                 sec2.Add(sse);
             }
 
