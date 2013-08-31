@@ -15,7 +15,7 @@ namespace CodeHub.Controllers
         {
             var response = Application.Client.Users[Application.Account.Username].GetReceivedEvents(force);
             Model = new ListModel<EventModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model.More = this.CreateMore(response, EventsController.ExpandConsolidatedEvents);
         }
     }
 }

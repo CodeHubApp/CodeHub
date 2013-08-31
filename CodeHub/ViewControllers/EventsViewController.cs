@@ -191,7 +191,7 @@ namespace CodeHub.ViewControllers
                 var pullEvent = (EventModel.PullRequestEvent)eventModel.PayloadObject;
                 if (pullEvent.Action.Equals("closed"))
                 {
-                    blocks.Add(new NewsFeedElement.TextBlock("Closed pull request branch".t()));
+                    blocks.Add(new NewsFeedElement.TextBlock("Closed pull request branch ".t()));
                     blocks.Add(new NewsFeedElement.TextBlock(pullEvent.PullRequest.Title, () => { }));
                     if (ReportRepository)
                     {

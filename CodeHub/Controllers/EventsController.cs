@@ -31,7 +31,7 @@ namespace CodeHub.Controllers
         }
 
         
-        private static List<EventModel> ExpandConsolidatedEvents(List<EventModel> events)
+        public static List<EventModel> ExpandConsolidatedEvents(List<EventModel> events)
         {
             //This is a cheap hack to seperate out events that contain more than one peice of information
             var newEvents = new List<EventModel>();
