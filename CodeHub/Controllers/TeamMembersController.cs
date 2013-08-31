@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Controllers
 {
-    public class TeamsController : ListController<TeamShortModel>
+    public class TeamMembersController : ListController<BasicUserModel>
     {
-        public string OrganizationName { get; private set; }
+        public long Id { get; private set; }
 
-        public TeamsController(IListView<TeamShortModel> view, string organizationName)
+		public TeamMembersController(IListView<BasicUserModel> view, long id)
             : base(view)
         {
-            OrganizationName = organizationName;
+            Id = id;
         }
 
         public override void Update(bool force)
         {
-            var response = Application.Client.Organizations[OrganizationName].GetTeams(force);
-            Model = new ListModel<TeamShortModel> { Data = response.Data };
+            var response = Application.Client.Teams[Id].GetMembers(force);
+			Model = new ListModel<BasicUserModel> { Data = response.Data };
             Model.More = this.CreateMore(response);
         }
     }

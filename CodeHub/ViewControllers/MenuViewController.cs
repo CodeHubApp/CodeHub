@@ -20,7 +20,8 @@ namespace CodeHub.ViewControllers
             var root = new RootElement(username);
             root.Add(new Section() {
                 new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Buttons.Person),
-                new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.CommentAdd)
+                new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.CommentAdd),
+                new MenuElement("News", () => NavPush(new NewsViewController()), Images.CommentAdd)
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
@@ -45,6 +46,7 @@ namespace CodeHub.ViewControllers
             }
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
+            groupsTeamsSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Buttons.Group));
             //if (Application.Accounts.ActiveAccount.Organizations != null)
                 //Application.Accounts.ActiveAccount.Organizations.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationInfoViewController(x.Login)), Images.Team)));
 

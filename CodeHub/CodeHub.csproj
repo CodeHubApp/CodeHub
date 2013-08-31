@@ -179,6 +179,12 @@
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Filters\Models\NotificationsFilterModel.cs" />
     <Compile Include="ViewControllers\NotificationsViewController.cs" />
+    <Compile Include="ViewControllers\OrganizationViewController.cs" />
+    <Compile Include="Controllers\OrganizationController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="ViewControllers\NewsViewController.cs" />
+    <Compile Include="Controllers\TeamMembersController.cs" />
+    <Compile Include="ViewControllers\TeamMembersViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

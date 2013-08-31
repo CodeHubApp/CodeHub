@@ -52,8 +52,8 @@ namespace CodeHub.ViewControllers
             RenderList(model, x => {
                 var assigned = x.Assignee != null ? x.Assignee.Login : "unassigned";
                 var kind = string.Empty;
-
-                var el = new IssueElement(x.Number.ToString(), x.Title, assigned, x.State, string.Empty, kind, x.UpdatedAt);
+                var commentString = x.Comments == 1 ? "1 comment".t() : x.Comments + " comments".t();
+                var el = new IssueElement(x.Number.ToString(), x.Title, assigned, x.State, commentString, kind, x.UpdatedAt);
                 el.Tag = x;
                 el.Tapped += () => {
                     //Make sure the first responder is gone.

@@ -29,19 +29,9 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-//            var totalCount = GetData(0, 0).Count;
-//            var moreEvents = GetData();
-//            Model = new ListModel<IssueModel> { Data = moreEvents.Issues };
-//            if (moreEvents.Count < totalCount)
-//            {
-//                Model.More = () => {
-//                    var data = GetData(Model.Data.Count);
-//                    Model.Data.AddRange(data.Issues);
-//                    if (data.Count == 0 || Model.Data.Count >= totalCount)
-//                        Model.More = null;
-//                    Render();
-//                };
-//            }
+            var data = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(force);
+            Model = new ListModel<IssueModel> { Data = data.Data };
+            Model.More = this.CreateMore(data);
         }
 
         protected override List<IssueModel> FilterModel(List<IssueModel> model, IssuesFilterModel filter)

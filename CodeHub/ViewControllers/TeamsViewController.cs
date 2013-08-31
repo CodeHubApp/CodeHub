@@ -12,17 +12,17 @@ namespace CodeHub.ViewControllers
 {
     public class TeamsViewController : BaseListControllerDrivenViewController, IListView<TeamShortModel>
     {
-        public TeamsViewController() 
+        public TeamsViewController(string organizationName) 
         {
             Title = "Teams".t();
             SearchPlaceholder = "Search Teams".t();
             NoItemsText = "No Teams".t();
-            Controller = new TeamsController(this);
+            Controller = new TeamsController(this, organizationName);
         }
 
         public void Render(ListModel<TeamShortModel> model)
         {
-            RenderList(model, o => new StyledStringElement(o.Name, () => NavigationController.PushViewController(new ProfileViewController(o.Name), true)));
+            RenderList(model, o => new StyledStringElement(o.Name, () => NavigationController.PushViewController(new TeamMembersViewController(o.Name, o.Id), true)));
         }
     }
 }

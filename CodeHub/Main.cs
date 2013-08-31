@@ -99,7 +99,7 @@ namespace CodeHub
             RepositoryCellView.RoundImages = false;
 
 			IssueCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
-			IssueCellView.Priority = new UIImage(Images.Priority.CGImage, 1.3f, UIImageOrientation.Up);
+			IssueCellView.Priority = new UIImage(Images.CommentAdd.CGImage, 1.3f, UIImageOrientation.Up);
 			IssueCellView.Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
 			IssueCellView.Cog = new UIImage(Images.Buttons.Cog.CGImage, 1.3f, UIImageOrientation.Up);
 

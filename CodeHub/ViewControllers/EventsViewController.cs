@@ -15,14 +15,11 @@ namespace CodeHub.ViewControllers
 {
     public class EventsViewController : BaseListControllerDrivenViewController, IListView<EventModel>
     {
-        public string Username { get; private set; }
-
         public bool ReportRepository { get; set; }
 
         public EventsViewController(string username)
         {
             Title = "Events".t();
-            Username = username;
             Root.UnevenRows = true;
             ReportRepository = true;
             EnableSearch = false;

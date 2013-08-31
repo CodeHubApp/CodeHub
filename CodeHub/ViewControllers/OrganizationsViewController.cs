@@ -23,7 +23,7 @@ namespace CodeHub.ViewControllers
         public void Render(ListModel<BasicUserModel> model)
         {
             RenderList(model, x => {
-                return new StyledStringElement(x.Login, () => NavigationController.PushViewController(new OrganizationMembersViewController(_username) { Title = x.Login }, true));
+                return new StyledStringElement(x.Login, () => NavigationController.PushViewController(new OrganizationViewController(x.Login), true));
             });
         }
 	}
