@@ -1,8 +1,5 @@
-using System;
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CodeHub.Controllers
 {
@@ -21,8 +18,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Users[_username].Repositories[_slug].GetTags(force);
-            Model = new ListModel<TagModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<TagModel> {Data = response.Data, More = this.CreateMore(response)};
         }
     }
 }

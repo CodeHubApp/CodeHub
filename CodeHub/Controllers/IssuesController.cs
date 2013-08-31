@@ -1,15 +1,9 @@
 using System;
 using GitHubSharp.Models;
-using MonoTouch.UIKit;
 using System.Collections.Generic;
 using MonoTouch.Dialog;
 using System.Linq;
-using MonoTouch.Foundation;
-using MonoTouch;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Views;
-using CodeFramework.Elements;
 using CodeHub.Filters.Models;
 
 namespace CodeHub.Controllers
@@ -30,17 +24,13 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var data = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(force);
-            Model = new ListModel<IssueModel> { Data = data.Data };
-            Model.More = this.CreateMore(data);
+            Model = new ListModel<IssueModel> {Data = data.Data, More = this.CreateMore(data)};
         }
 
         protected override List<IssueModel> FilterModel(List<IssueModel> model, IssuesFilterModel filter)
         {
             var order = (IssuesFilterModel.Order)Filter.OrderBy;
-            if (order == IssuesFilterModel.Order.Local_Id)
-                return model.OrderBy(x => x.Number).ToList();
-            else
-                return model.OrderBy(x => x.Title).ToList();
+            return order == IssuesFilterModel.Order.Local_Id ? model.OrderBy(x => x.Number).ToList() : model.OrderBy(x => x.Title).ToList();
         }
 
         protected override List<IGrouping<string, IssueModel>> GroupModel(List<IssueModel> model, IssuesFilterModel filter)

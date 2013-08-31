@@ -1,20 +1,12 @@
 using System;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using System.Linq;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Views;
-using CodeFramework.Elements;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
-using MonoTouch;
-using MonoTouch.Foundation;
-using CodeHub.ViewControllers;
 
 namespace CodeHub.Controllers
 {
-    public class ChangesetInfoController : Controller<ChangesetInfoController.ChangesetInfoModel>
+    public class ChangesetInfoController : Controller<ChangesetInfoController.ViewModel>
     {
         public string Node { get; private set; }
 
@@ -24,7 +16,7 @@ namespace CodeHub.Controllers
 
         public RepositoryModel Repo { get; set; }
 
-        public ChangesetInfoController(IView<ChangesetInfoController.ChangesetInfoModel> view, string user, string slug, string node)
+        public ChangesetInfoController(IView<ViewModel> view, string user, string slug, string node)
             : base(view)
         {
             Node = node;
@@ -34,7 +26,7 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            var model = new ChangesetInfoController.ChangesetInfoModel();
+            var model = new ViewModel();
             var x = Application.Client.Users[User].Repositories[Slug].Commits[Node].Get(force).Data;
             x.Files = x.Files.OrderBy(y => y.Filename.Substring(y.Filename.LastIndexOf('/') + 1)).ToList();
             model.Changeset = x;
@@ -63,12 +55,12 @@ namespace CodeHub.Controllers
         /// <summary>
         /// An inner class that combines two external models
         /// </summary>
-        public class ChangesetInfoModel
+        public class ViewModel
         {
             public CommitModel Changeset { get; set; }
             public List<CommentModel> Comments { get; set; }
 
-            public ChangesetInfoModel()
+            public ViewModel()
             {
                 Comments = new List<CommentModel>();
             }

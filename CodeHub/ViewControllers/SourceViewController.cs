@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using CodeHub.Filters.Models;
-using CodeHub.Controlleres;
 using System;
 
 namespace CodeHub.ViewControllers

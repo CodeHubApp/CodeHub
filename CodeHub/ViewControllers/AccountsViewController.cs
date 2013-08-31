@@ -1,12 +1,7 @@
-using System;
 using MonoTouch.UIKit;
-using MonoTouch.Dialog;
 using CodeHub.Data;
-using CodeFramework.Elements;
 using CodeFramework.Controllers;
-using CodeFramework.Views;
 using CodeFramework.Data;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace CodeHub.ViewControllers

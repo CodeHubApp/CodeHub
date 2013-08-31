@@ -1,9 +1,7 @@
-using System;
 using CodeFramework.Controllers;
 using CodeHub.Filters.Models;
 using MonoTouch.Dialog;
 using CodeFramework.Filters.Controllers;
-using CodeFramework.Filters.Models;
 using MonoTouch.UIKit;
 
 namespace CodeHub.Filters.ViewControllers
@@ -16,7 +14,7 @@ namespace CodeHub.Filters.ViewControllers
         private MultipleChoiceElement<IssuesFilterModel.KindModel> _kindChoice;
         private MultipleChoiceElement<IssuesFilterModel.PriorityModel> _priorityChoice;
         private EnumChoiceElement _orderby;
-        private IFilterController<IssuesFilterModel> _filterController;
+        private readonly IFilterController<IssuesFilterModel> _filterController;
 
         public IssuesFilterViewController(IFilterController<IssuesFilterModel> filterController)
         {

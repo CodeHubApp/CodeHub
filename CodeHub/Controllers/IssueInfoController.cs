@@ -1,28 +1,18 @@
 using System;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.Foundation;
-using System.Linq;
-using MonoTouch;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Views;
-using CodeFramework.Elements;
-using CodeHub.ViewControllers;
 
 namespace CodeHub.Controllers
 {
-    public class IssueInfoController : Controller<IssueInfoController.IssueInfoModel>
+    public class IssueInfoController : Controller<IssueInfoController.ViewModel>
     {
         public int Id { get; private set; }
         public string User { get; private set; }
         public string Slug { get; private set; }
         public Action<IssueModel> ModelChanged;
 
-        public IssueInfoController(IView<IssueInfoController.IssueInfoModel> view, string user, string slug, int id)
+        public IssueInfoController(IView<ViewModel> view, string user, string slug, int id)
             : base(view)
         {
             User = user;
@@ -57,7 +47,7 @@ namespace CodeHub.Controllers
 //            Render();
         }
 
-        public class IssueInfoModel
+        public class ViewModel
         {
             public IssueModel Issue { get; set; }
             public List<CommentModel> Comments { get; set; }

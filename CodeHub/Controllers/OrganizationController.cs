@@ -1,12 +1,5 @@
-using MonoTouch.Dialog;
 using GitHubSharp.Models;
-using System.Collections.Generic;
-using MonoTouch.UIKit;
-using System.Linq;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
-using System.Threading.Tasks;
 
 namespace CodeHub.Controllers
 {

@@ -1,16 +1,9 @@
-using MonoTouch.Dialog;
-using MonoTouch.UIKit;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using System.Drawing;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
-using CodeFramework.Views;
-using CodeFramework.Filters.Controllers;
 using CodeHub.Filters.Models;
-using CodeFramework.Filters.Models;
 
 
 namespace CodeHub.Controllers
@@ -32,8 +25,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Users[Username].Repositories.GetAll(force);
-            Model = new ListModel<RepositoryModel>() { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<RepositoryModel> {Data = response.Data, More = this.CreateMore(response)};
         }
 
         protected override List<RepositoryModel> FilterModel(List<RepositoryModel> model, RepositoriesFilterModel filter)
@@ -50,25 +42,25 @@ namespace CodeHub.Controllers
                 a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return CreateNumberedGroup(a, "Forks");
             }
-            else if (order == RepositoriesFilterModel.Order.LastUpdated)
+            if (order == RepositoriesFilterModel.Order.LastUpdated)
             {
                 var a = model.OrderByDescending(x => x.UpdatedAt).GroupBy(x => IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
                 a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return CreateNumberedGroup(a, "Days Ago", "Updated");
             }
-            else if (order == RepositoriesFilterModel.Order.CreatedOn)
+            if (order == RepositoriesFilterModel.Order.CreatedOn)
             {
                 var a = model.OrderByDescending(x => x.CreatedAt).GroupBy(x => IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
                 a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return CreateNumberedGroup(a, "Days Ago", "Created");
             }
-            else if (order == RepositoriesFilterModel.Order.Followers)
+            if (order == RepositoriesFilterModel.Order.Followers)
             {
                 var a = model.OrderBy(x => x.Watchers).GroupBy(x => IntegerCeilings.First(r => r > x.Watchers));
                 a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
                 return CreateNumberedGroup(a, "Followers");
             }
-            else if (order == RepositoriesFilterModel.Order.Owner)
+            if (order == RepositoriesFilterModel.Order.Owner)
             {
                 var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner.Login);
                 a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);

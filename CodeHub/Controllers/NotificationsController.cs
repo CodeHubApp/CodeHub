@@ -1,4 +1,3 @@
-using System;
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
 using CodeHub.Filters.Models;
@@ -21,8 +20,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Notifications.GetAll(force, all: _all, participating: _participating);
-            Model = new ListModel<NotificationModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<NotificationModel> {Data = response.Data, More = this.CreateMore(response)};
         }
 
         public void Read(NotificationModel model)

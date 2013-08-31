@@ -1,6 +1,5 @@
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
-using System.Collections.Generic;
 
 namespace CodeHub.Controllers
 {
@@ -17,8 +16,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Organizations[Name].GetMembers(force);
-            Model = new ListModel<BasicUserModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<BasicUserModel> {Data = response.Data, More = this.CreateMore(response)};
         }
     }
 }

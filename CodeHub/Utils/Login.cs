@@ -1,7 +1,6 @@
 using System;
 using MonoTouch.UIKit;
 using CodeFramework.Controllers;
-using System.Linq;
 using MonoTouch;
 using CodeFramework.Utils;
 using CodeHub.Data;
@@ -35,7 +34,7 @@ namespace CodeHub.Utils
                 Application.SetUser(account, client);
                 ctrl.InvokeOnMainThread(TransitionToSlideout);
 
-            }, (ex) => {
+            }, ex => {
                 //If there is a login failure, unset the user
                 Application.UnsetUser();
                 Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + account.Username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
@@ -47,7 +46,7 @@ namespace CodeHub.Utils
         private static void TransitionToSlideout()
         {
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            var controller = new CodeHub.ViewControllers.SlideoutNavigationViewController();
+            var controller = new ViewControllers.SlideoutNavigationViewController();
             if (appDelegate != null)
                 appDelegate.Slideout = controller;
             Transitions.Transition(controller, UIViewAnimationOptions.TransitionFlipFromRight);

@@ -1,8 +1,8 @@
 using System;
 using CodeFramework.Controllers;
+using CodeHub.Controllers;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using CodeHub.GitHub.Controllers.Gists;
 
 namespace CodeHub.ViewControllers
 {

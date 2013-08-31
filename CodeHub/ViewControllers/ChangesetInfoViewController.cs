@@ -14,7 +14,7 @@ using CodeHub.ViewControllers;
 
 namespace CodeHub.ViewControllers
 {
-    public class ChangesetInfoViewController : BaseControllerDrivenViewController, IView<ChangesetInfoController.ChangesetInfoModel>
+    public class ChangesetInfoViewController : BaseControllerDrivenViewController, IView<ChangesetInfoController.ViewModel>
     {
         public string Node { get; private set; }
         
@@ -64,7 +64,7 @@ namespace CodeHub.ViewControllers
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
 
-        public void Render(ChangesetInfoController.ChangesetInfoModel model)
+        public void Render(ChangesetInfoController.ViewModel model)
         {
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 

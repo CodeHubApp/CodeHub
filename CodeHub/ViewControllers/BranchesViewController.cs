@@ -1,7 +1,5 @@
 using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
-using System.Threading.Tasks;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 

@@ -1,7 +1,4 @@
 using GitHubSharp.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CodeFramework.Controllers;
 
 namespace CodeHub.Controllers
@@ -21,8 +18,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Users[_owner].Repositories[_name].GetStargazers(force);
-            Model = new ListModel<BasicUserModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<BasicUserModel> { Data = response.Data, More = this.CreateMore(response) };
         }
     }
 }

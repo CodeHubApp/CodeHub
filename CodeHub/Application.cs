@@ -1,5 +1,4 @@
 using CodeHub.Data;
-using CodeFramework.Data;
 
 namespace CodeHub
 {
@@ -30,7 +29,7 @@ namespace CodeHub
             Accounts.SetDefault(null);
         }
 
-        public static void SetUser(CodeHub.Data.Account account, GitHubSharp.Client client)
+        public static void SetUser(Account account, GitHubSharp.Client client)
         {
             if (account == null)
             {

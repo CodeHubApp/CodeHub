@@ -1,4 +1,3 @@
-using System;
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
 
@@ -10,7 +9,7 @@ namespace CodeHub.Controllers
 
         public string Repo { get; private set; }
 
-        public RepositoryInfoController(IView<RepositoryInfoController.ViewModel> view, string user, string repo)
+        public RepositoryInfoController(IView<ViewModel> view, string user, string repo)
             : base(view)
         {
             User = user;
@@ -19,11 +18,14 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            Model = new ViewModel { RepositoryModel = Application.Client.Users[User].Repositories[Repo].Get(force).Data };
-            Model.IsWatched = Application.Client.Users[User].Repositories[Repo].IsWatching();
-            Model.IsStarred = Application.Client.Users[User].Repositories[Repo].IsStarred();
+            Model = new ViewModel {
+                    RepositoryModel = Application.Client.Users[User].Repositories[Repo].Get(force).Data,
+                    IsWatched = Application.Client.Users[User].Repositories[Repo].IsWatching(),
+                    IsStarred = Application.Client.Users[User].Repositories[Repo].IsStarred()
+            };
 
-            try {
+            try 
+            {
                 Model.Readme = Application.Client.Users[User].Repositories[Repo].GetReadme(force).Data;
             }
             catch { }

@@ -2,7 +2,6 @@ using System;
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using CodeHub.GitHub.Controllers.Gists;
 using CodeHub.Controllers;
 
 namespace CodeHub.ViewControllers

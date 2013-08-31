@@ -1,14 +1,11 @@
 using System;
-using System.Linq;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using MonoTouch;
 using CodeHub.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Elements;
-using CodeHub.ViewControllers;
 using MonoTouch.Foundation;
 
 namespace CodeHub.ViewControllers

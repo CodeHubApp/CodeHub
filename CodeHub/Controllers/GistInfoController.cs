@@ -1,5 +1,3 @@
-using System;
-using GitHubSharp.Controllers;
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
 

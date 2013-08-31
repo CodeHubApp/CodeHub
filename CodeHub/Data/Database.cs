@@ -1,9 +1,5 @@
-using System.IO;
 using SQLite;
 using MonoTouch;
-using System.Linq;
-using System.Collections.Generic;
-using System;
 
 namespace CodeHub.Data
 {
@@ -14,21 +10,16 @@ namespace CodeHub.Data
 
         public static Database Main
         {
-            get 
-            {
-                if (_database == null)
-                    _database = new Database(DatabaseFilePath);
-                return _database;
-            }
+            get { return _database ?? (_database = new Database(DatabaseFilePath)); }
         }
 
         private Database(string file) 
 			: base(file)
         {
             //Execute the typical stuff
-			CreateTable<CodeHub.Data.Account>();
-            CreateTable<CodeHub.Data.PinnedRepository>();
-            CreateTable<CodeHub.Data.Filter>();
+			CreateTable<Account>();
+            CreateTable<PinnedRepository>();
+            CreateTable<Filter>();
         }
     }
 }

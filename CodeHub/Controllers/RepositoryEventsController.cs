@@ -1,11 +1,6 @@
-using System;
-using System.Linq;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
-using CodeHub.ViewControllers;
 using GitHubSharp;
 
 namespace CodeHub.Controllers

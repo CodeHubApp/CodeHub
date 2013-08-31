@@ -1,9 +1,6 @@
 using System;
-using System.Text;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
-using GitHubSharp;
-using RestSharp.Contrib;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +10,11 @@ namespace CodeHub.ViewControllers
 {
     public class ChangesetDiffViewController : FileSourceViewController
     {
-        private string _parent;
-        private string _user, _slug, _branch, _path;
+        private readonly string _parent;
+        private readonly string _user;
+        private readonly string _slug;
+        private readonly string _branch;
+        private readonly string _path;
         private string _baseText, _newText;
         public bool Removed { get; set; }
         public bool Added { get; set; }

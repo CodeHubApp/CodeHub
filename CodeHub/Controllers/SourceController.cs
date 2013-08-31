@@ -1,15 +1,10 @@
-using MonoTouch.Dialog;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using CodeHub.Filters.Models;
-using CodeHub.ViewControllers;
 using GitHubSharp.Models;
 
-namespace CodeHub.Controlleres
+namespace CodeHub.Controllers
 {
     public class SourceController : ListController<ContentModel, SourceFilterModel>
     {
@@ -48,8 +43,7 @@ namespace CodeHub.Controlleres
         public override void Update(bool force)
         {
             var response = Application.Client.Users[_username].Repositories[_slug].GetContent(force, _path, _branch);
-            Model = new ListModel<ContentModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<ContentModel> {Data = response.Data, More = this.CreateMore(response)};
         }
     }
 }

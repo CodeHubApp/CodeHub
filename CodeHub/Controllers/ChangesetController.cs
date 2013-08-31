@@ -1,12 +1,6 @@
-using System;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using System.Collections.Generic;
-using System.Linq;
-using MonoTouch;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
-using CodeFramework.Elements;
 using GitHubSharp;
 
 
@@ -14,8 +8,6 @@ namespace CodeHub.Controllers
 {
     public class ChangesetController : ListController<CommitModel>
     {
-        private const int RequestLimit = 30;
-
         public string User { get; private set; }
 
         public string Slug { get; private set; }
@@ -30,8 +22,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = GetData(force);
-            Model = new ListModel<CommitModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<CommitModel> {Data = response.Data, More = this.CreateMore(response)};
         }
 
         protected GitHubResponse<List<CommitModel>> GetData(bool force, string startNode = null)

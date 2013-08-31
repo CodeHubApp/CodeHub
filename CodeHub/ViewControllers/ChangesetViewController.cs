@@ -25,7 +25,7 @@ namespace CodeHub.ViewControllers
         {
             RenderList(model, x => {
                 var desc = (x.Commit.Message ?? "").Replace("\n", " ").Trim();
-                var login = string.Empty;
+                string login;
                 var date = DateTime.MinValue;
 
                 if (x.Committer != null)

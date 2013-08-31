@@ -1,4 +1,3 @@
-using System;
 using CodeHub.Controllers;
 
 namespace CodeHub.ViewControllers

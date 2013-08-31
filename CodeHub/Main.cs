@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeHub.Controllers;
-using CodeFramework.Elements;
 using CodeFramework.Cells;
 using CodeFramework.Views;
 using CodeFramework.Controllers;

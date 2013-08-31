@@ -1,4 +1,3 @@
-using System;
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             //Don't do anything here...
-            Model = new ListModel<RepositorySearchModel.RepositoryModel>() { Data = new List<RepositorySearchModel.RepositoryModel>() };
+            Model = new ListModel<RepositorySearchModel.RepositoryModel> { Data = new List<RepositorySearchModel.RepositoryModel>() };
         }
 
         public void Search(string text)

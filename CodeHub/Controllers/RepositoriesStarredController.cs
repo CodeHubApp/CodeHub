@@ -1,4 +1,3 @@
-using System;
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
 
@@ -14,8 +13,7 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.AuthenticatedUser.Repositories.GetStarred(force);
-            Model = new ListModel<RepositoryModel> { Data = response.Data };
-            Model.More = this.CreateMore(response);
+            Model = new ListModel<RepositoryModel> {Data = response.Data, More = this.CreateMore(response)};
         }
     }
 }
