@@ -39,12 +39,13 @@ namespace CodeHub.ViewControllers
             Root.Add(new Section(_header));
 
             var followers = new StyledStringElement("Followers".t(), () => NavigationController.PushViewController(new UserFollowersViewController(Username), true), Images.Heart);
+            var following = new StyledStringElement("Following".t(), () => NavigationController.PushViewController(new UserFollowingsViewController(Username), true), Images.Heart);
             var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsViewController(Username), true), Images.Buttons.Event);
-            var groups = new StyledStringElement("Groups".t(), () => NavigationController.PushViewController(new OrganizationsViewController(Username), true), Images.Buttons.Group);
+            var organizations = new StyledStringElement("Organizations".t(), () => NavigationController.PushViewController(new OrganizationsViewController(Username), true), Images.Buttons.Group);
             var repos = new StyledStringElement("Repositories".t(), () => NavigationController.PushViewController(new RepositoriesViewController(Username), true), Images.Repo);
             var gists = new StyledStringElement("Gists", () => NavigationController.PushViewController(new AccountGistsViewController(Username), true), Images.Script);
 
-            Root.Add(new [] { new Section { followers, events, groups }, new Section { repos, gists } });
+            Root.Add(new [] { new Section { events, organizations, followers, following }, new Section { repos, gists } });
         }
 
         public void UpdatedImage (System.Uri uri)

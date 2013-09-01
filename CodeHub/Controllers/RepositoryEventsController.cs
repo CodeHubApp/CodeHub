@@ -5,19 +5,24 @@ using GitHubSharp;
 
 namespace CodeHub.Controllers
 {
-    public class RepositoryEventsController : EventsController
+    public class RepositoryEventsController : ListController<EventModel>
     {
+        public string User { get; private set; }
+
         public string Slug { get; private set; }
 
-        public RepositoryEventsController(IListView<EventModel> view, string username, string slug)
-            : base(view, username)
+        public RepositoryEventsController(IListView<EventModel> view, string user, string slug)
+            : base(view)
         {
+            User = user;
             Slug = slug;
         }
 
-        protected override GitHubResponse<List<EventModel>> GetData(int start = 0, int limit = DataLimit)
+        public override void Update(bool force)
         {
-            return Application.Client.Users[Username].Repositories[Slug].GetEvents(true, start, limit);
+            var response = Application.Client.Users[User].Repositories[Slug].GetEvents(force);
+            Model = new ListModel<EventModel> {Data = EventsController.ExpandConsolidatedEvents(response.Data), 
+                More = this.CreateMore(response, EventsController.ExpandConsolidatedEvents)};
         }
     }
 }

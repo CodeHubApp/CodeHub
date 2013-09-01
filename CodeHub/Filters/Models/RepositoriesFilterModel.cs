@@ -5,12 +5,12 @@ namespace CodeHub.Filters.Models
 {
     public class RepositoriesFilterModel : FilterModel<RepositoriesFilterModel>
     {
-        public int OrderBy { get; set; }
+        public Order OrderBy { get; set; }
         public bool Ascending { get; set; }
 
         public RepositoriesFilterModel()
         {
-            OrderBy = (int)Order.Name;
+            OrderBy = Order.Name;
             Ascending = true;
         }
 

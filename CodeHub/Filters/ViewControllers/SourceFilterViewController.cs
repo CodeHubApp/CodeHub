@@ -8,7 +8,7 @@ namespace CodeHub.Filters.ViewControllers
 {
     public class SourceFilterViewController : FilterViewController
     {
-        private EnumChoiceElement _orderby;
+        private EnumChoiceElement<SourceFilterModel.Order> _orderby;
         private TrueFalseElement _ascendingElement;
         private readonly IFilterController<SourceFilterModel> _filterController;
 
@@ -30,7 +30,7 @@ namespace CodeHub.Filters.ViewControllers
             //Load the root
             var root = new RootElement(Title) {
                 new Section("Order By") {
-                    (_orderby = CreateEnumElement("Type", currentModel.OrderBy, typeof(SourceFilterModel.Order))),
+                    (_orderby = CreateEnumElement("Type", currentModel.OrderBy)),
                     (_ascendingElement = new TrueFalseElement("Ascending", currentModel.Ascending)),
                 },
                 new Section {
@@ -46,7 +46,7 @@ namespace CodeHub.Filters.ViewControllers
 
         private SourceFilterModel CreateFilterModel()
         {
-            var model = new SourceFilterModel {OrderBy = _orderby.Obj, Ascending = _ascendingElement.Value};
+            var model = new SourceFilterModel {OrderBy = _orderby.Value, Ascending = _ascendingElement.Value};
             return model;
         }
     }

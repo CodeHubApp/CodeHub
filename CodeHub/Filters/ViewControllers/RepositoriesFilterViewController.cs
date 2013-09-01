@@ -8,8 +8,8 @@ namespace CodeHub.Filters.ViewControllers
 {
     public class RepositoriesFilterViewController : FilterViewController
     {
-        private EnumChoiceElement _orderby;
         private TrueFalseElement _ascendingElement;
+        private EnumChoiceElement<RepositoriesFilterModel.Order> _orderby;
         private readonly IFilterController<RepositoriesFilterModel> _filterController;
 
         public RepositoriesFilterViewController(IFilterController<RepositoriesFilterModel> filterController)
@@ -31,7 +31,7 @@ namespace CodeHub.Filters.ViewControllers
             //Load the root
             var root = new RootElement(Title) {
                 new Section("Order By") {
-                    (_orderby = CreateEnumElement("Field", currentModel.OrderBy, typeof(RepositoriesFilterModel.Order))),
+                    (_orderby = CreateEnumElement("Field", currentModel.OrderBy)),
                     (_ascendingElement = new TrueFalseElement("Ascending", currentModel.Ascending)),
                 },
                 new Section {
@@ -47,7 +47,7 @@ namespace CodeHub.Filters.ViewControllers
 
         private RepositoriesFilterModel CreateFilterModel()
         {
-            var model = new RepositoriesFilterModel {OrderBy = _orderby.Obj, Ascending = _ascendingElement.Value};
+            var model = new RepositoriesFilterModel {OrderBy = _orderby.Value, Ascending = _ascendingElement.Value};
             return model;
         }
 

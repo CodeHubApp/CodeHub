@@ -7,7 +7,7 @@ using CodeHub.Data;
 using CodeFramework.Elements;
 using CodeFramework.Controllers;
 
-namespace CodeHub.Controllers
+namespace CodeHub.ViewControllers
 {
     public class SettingsViewController : BaseDialogViewController
     {

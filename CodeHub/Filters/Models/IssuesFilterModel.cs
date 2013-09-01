@@ -10,14 +10,14 @@ namespace CodeHub.Filters.Models
         public StatusModel Status { get; set; }
         public KindModel Kind { get; set; }
         public PriorityModel Priority { get; set; }
-        public int OrderBy { get; set; }
+        public Order OrderBy { get; set; }
 
         public IssuesFilterModel()
         {
             Kind = new KindModel();
             Status = new StatusModel();
             Priority = new PriorityModel();
-            OrderBy = (int)Order.Local_Id;
+            OrderBy = Order.Local_Id;
         }
 
         /// <summary>

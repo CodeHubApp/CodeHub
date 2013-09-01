@@ -4,7 +4,6 @@ using MonoTouch.Foundation;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
-using CodeHub.Controllers;
 using CodeFramework.Controllers;
 using CodeFramework.Views;
 using CodeFramework.Utils;
@@ -21,13 +20,14 @@ namespace CodeHub.ViewControllers
             root.Add(new Section() {
                 new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Buttons.Person),
                 new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.CommentAdd),
-                new MenuElement("News", () => NavPush(new NewsViewController()), Images.CommentAdd)
+                new MenuElement("News", () => NavPush(new NewsViewController()), Images.CommentAdd),
+                new MenuElement("Issues", () => NavPush(new MyIssuesViewController()), Images.CommentAdd)
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsViewController(Application.Account.Username)), Images.Buttons.Event));
             if (Application.Accounts.ActiveAccount.Organizations != null && !Application.Accounts.ActiveAccount.DontShowTeamEvents)
-                Application.Accounts.ActiveAccount.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new EventsViewController(x.Login)), Images.Buttons.Event)));
+                Application.Accounts.ActiveAccount.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Buttons.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };

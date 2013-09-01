@@ -1,4 +1,6 @@
 using SQLite;
+using System;
+using System.Runtime.Serialization;
 
 namespace CodeHub.Data
 {
@@ -25,10 +27,18 @@ namespace CodeHub.Data
         {
             try
             {
-                return RestSharp.SimpleJson.DeserializeObject<T>(RawData);
+                using (var stream = new System.IO.MemoryStream())
+                {
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(RawData);
+                    stream.Write(buffer, 0, buffer.Length);
+                    stream.Position = 0;
+                    var d = new DataContractSerializer(typeof(T));
+                    return (T)d.ReadObject(stream);
+                }
             }
-            catch
+            catch (Exception e)
             {
+                MonoTouch.Utilities.LogException("Unable to deseriaize filter", e);
                 return default(T);
             }
         }
@@ -39,7 +49,16 @@ namespace CodeHub.Data
         /// <param name="o">O.</param>
         public void SetData(object o)
         {
-            RawData = RestSharp.SimpleJson.SerializeObject(o);
+            using (var stream = new System.IO.MemoryStream())
+            {
+                var d = new DataContractSerializer(o.GetType());
+                d.WriteObject(stream, o);
+                stream.Position = 0;
+                using (var sr = new System.IO.StreamReader(stream))
+                {
+                    RawData = sr.ReadToEnd();
+                }
+            }
         }
     }
 }

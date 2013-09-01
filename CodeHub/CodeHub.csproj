@@ -85,6 +85,7 @@
     <Reference Include="GoogleAnalytics">
       <HintPath>..\CodeFramework\CodeFramework\lib\GoogleAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -185,6 +186,17 @@
     <Compile Include="ViewControllers\NewsViewController.cs" />
     <Compile Include="Controllers\TeamMembersController.cs" />
     <Compile Include="ViewControllers\TeamMembersViewController.cs" />
+    <Compile Include="ViewControllers\OrganizationEventsViewController.cs" />
+    <Compile Include="ViewControllers\BaseEventsViewController.cs" />
+    <Compile Include="Controllers\OrganizationEventsController.cs" />
+    <Compile Include="Controllers\UserFollowingsController.cs" />
+    <Compile Include="ViewControllers\UserFollowingsViewController.cs" />
+    <Compile Include="Controllers\BaseIssuesController.cs" />
+    <Compile Include="Controllers\MyIssuesController.cs" />
+    <Compile Include="ViewControllers\MyIssuesViewController.cs" />
+    <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
+    <Compile Include="Filters\Models\MyIssuesFilterModel.cs" />
+    <Compile Include="Filters\ViewControllers\MyIssuesFilterViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
