@@ -14,9 +14,6 @@ namespace CodeHub.ViewControllers
     {
         protected FollowersViewController()
 		{
-            Title = "Followers".t();
-            SearchPlaceholder = "Search Followers".t();
-            NoItemsText = "No Followers".t();
 		}
 
         public void Render(ListModel<BasicUserModel> model)
@@ -34,6 +31,9 @@ namespace CodeHub.ViewControllers
         public UserFollowersViewController(string username)
         {
             Controller = new UserFollowersController(this, username);
+            Title = "Followers".t();
+            SearchPlaceholder = "Search Followers".t();
+            NoItemsText = "No Followers".t();
         }
     }
 
@@ -42,6 +42,9 @@ namespace CodeHub.ViewControllers
         public RepoFollowersViewController(string username, string slug)
         {
             Controller = new RepositoryStarredController(this, username, slug);
+            Title = "Stargazers".t();
+            SearchPlaceholder = "Search Stargazers".t();
+            NoItemsText = "No Stargazers".t();
         }
     }
 }

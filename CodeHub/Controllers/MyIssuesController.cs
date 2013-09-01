@@ -37,6 +37,19 @@ namespace CodeHub.Controllers
             base.ApplyFilter(filter, saveAsDefault, false);
             UpdateAndRender(true);
         }
+
+        public void DeleteIssue(IssueModel issue)
+        {
+            Model.Data.RemoveAll(a => a.Number == issue.Number);
+            Render();
+        }
+
+        public void UpdateIssue(IssueModel issue)
+        {
+            Model.Data.RemoveAll(a => a.Number == issue.Number);
+            Model.Data.Add(issue);
+            Render();
+        }
     }
 }
 

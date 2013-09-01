@@ -197,6 +197,7 @@
     <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
     <Compile Include="Filters\Models\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\ViewControllers\MyIssuesFilterViewController.cs" />
+    <Compile Include="ViewControllers\IssueViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

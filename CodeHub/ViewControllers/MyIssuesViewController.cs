@@ -43,9 +43,11 @@ namespace CodeHub.ViewControllers
                 el.Tapped += () => {
                     //Make sure the first responder is gone.
                     View.EndEditing(true);
-                    //                    var info = new IssueInfoViewController(Controller.User, Controller.Slug, x.LocalId);
-                    //                    info.Controller.ModelChanged = newModel => ChildChangedModel(newModel, x);
-                    //                    NavigationController.PushViewController(info, true);
+                    var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
+                    var repoId = new CodeHub.Utils.RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
+                    var info = new IssueViewController(repoId.Owner, repoId.Name, x.Number);
+                    info.Controller.ModelChanged = newModel => ChildChangedModel(newModel, x);
+                    NavigationController.PushViewController(info, true);
                 };
                 return el;
             });
@@ -111,6 +113,15 @@ namespace CodeHub.ViewControllers
             base.ViewWillDisappear(animated);
             if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(true, animated);
+        }
+
+        private void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
+        {
+            //If null then it's been deleted!
+            if (changedModel == null)
+                Controller.DeleteIssue(oldModel);
+            else
+                Controller.UpdateIssue(changedModel);
         }
     }
 }
