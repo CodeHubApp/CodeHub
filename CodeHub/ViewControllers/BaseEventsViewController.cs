@@ -166,7 +166,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
             {
-                img = Images.Buttons.User;
+                img = Images.User;
                 var followEvent = (EventModel.FollowEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new ProfileViewController(followEvent.Target.Login), true);
                 blocks.Add(new NewsFeedElement.TextBlock("Started following ".t()));
@@ -258,7 +258,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
             {
-                img = Images.Buttons.Flag;
+                img = Images.Flag;
                 var issueEvent = (EventModel.IssuesEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new IssueViewController(repoId.Owner, repoId.Name, issueEvent.Issue.Number), true);
 
@@ -277,7 +277,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
             {
-                img = Images.Buttons.Group;
+                img = Images.Group;
                 var memberEvent = (EventModel.MemberEvent)eventModel.PayloadObject;
                 elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(repoId.Owner, repoId.Name), true);
 

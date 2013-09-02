@@ -40,8 +40,8 @@ namespace CodeHub.ViewControllers
 
             var followers = new StyledStringElement("Followers".t(), () => NavigationController.PushViewController(new UserFollowersViewController(Username), true), Images.Heart);
             var following = new StyledStringElement("Following".t(), () => NavigationController.PushViewController(new UserFollowingsViewController(Username), true), Images.Heart);
-            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsViewController(Username), true), Images.Buttons.Event);
-            var organizations = new StyledStringElement("Organizations".t(), () => NavigationController.PushViewController(new OrganizationsViewController(Username), true), Images.Buttons.Group);
+            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsViewController(Username), true), Images.Event);
+            var organizations = new StyledStringElement("Organizations".t(), () => NavigationController.PushViewController(new OrganizationsViewController(Username), true), Images.Group);
             var repos = new StyledStringElement("Repositories".t(), () => NavigationController.PushViewController(new RepositoriesViewController(Username), true), Images.Repo);
             var gists = new StyledStringElement("Gists", () => NavigationController.PushViewController(new AccountGistsViewController(Username), true), Images.Script);
 

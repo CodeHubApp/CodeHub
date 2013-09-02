@@ -87,19 +87,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Images\" />
-    <Folder Include="Data\" />
-    <Folder Include="Utils\" />
-    <Folder Include="Images\Buttons\" />
-    <Folder Include="Images\Controls\" />
-    <Folder Include="Images\Logos\" />
-    <Folder Include="ViewControllers\" />
-    <Folder Include="Filters\" />
-    <Folder Include="Images\Notifications\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Info.plist" />
   </ItemGroup>
@@ -109,6 +97,7 @@
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Images\Images.cs" />
+    <Compile Include="Theme.cs" />
     <Compile Include="Utils\Login.cs" />
     <Compile Include="Data\Accounts.cs" />
     <Compile Include="ViewControllers\AboutViewController.cs" />
@@ -313,22 +302,6 @@
     <BundleResource Include="Images\unlocked%402x.png" />
     <BundleResource Include="Images\webpage.png" />
     <BundleResource Include="Images\webpage%402x.png" />
-    <BundleResource Include="Images\Buttons\cog.png" />
-    <BundleResource Include="Images\Buttons\cog%402x.png" />
-    <BundleResource Include="Images\Buttons\events.png" />
-    <BundleResource Include="Images\Buttons\events%402x.png" />
-    <BundleResource Include="Images\Buttons\explore.png" />
-    <BundleResource Include="Images\Buttons\explore%402x.png" />
-    <BundleResource Include="Images\Buttons\flag.png" />
-    <BundleResource Include="Images\Buttons\flag%402x.png" />
-    <BundleResource Include="Images\Buttons\group.png" />
-    <BundleResource Include="Images\Buttons\group%402x.png" />
-    <BundleResource Include="Images\Buttons\info.png" />
-    <BundleResource Include="Images\Buttons\info%402x.png" />
-    <BundleResource Include="Images\Buttons\person.png" />
-    <BundleResource Include="Images\Buttons\person%402x.png" />
-    <BundleResource Include="Images\Buttons\user.png" />
-    <BundleResource Include="Images\Buttons\user%402x.png" />
     <BundleResource Include="Images\Controls\backbutton-landscape.png" />
     <BundleResource Include="Images\Controls\backbutton-landscape%402x.png" />
     <BundleResource Include="Images\Controls\backbutton.png" />

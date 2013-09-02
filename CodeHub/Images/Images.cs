@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
 namespace CodeHub
@@ -38,7 +41,14 @@ namespace CodeHub
         public static UIImage Create { get { return UIImage.FromBundle("/Images/create"); } }
 
         public static UIImage Changes { get { return UIImage.FromBundle("/Images/changes"); } }
-
+        public static UIImage Info { get { return UIImage.FromBundle("/Images/Buttons/info"); } }
+        public static UIImage Flag { get { return UIImage.FromBundle("/Images/Buttons/flag"); } }
+        public static UIImage User { get { return UIImage.FromBundle("/Images/Buttons/user"); } }
+        public static UIImage Explore { get { return UIImage.FromBundle("/Images/Buttons/explore"); } }
+        public static UIImage Group { get { return UIImage.FromBundle("/Images/Buttons/group"); } }
+        public static UIImage Event { get { return UIImage.FromBundle("/Images/Buttons/events"); } }
+        public static UIImage Person { get { return UIImage.FromBundle("/Images/Buttons/person"); } }
+        public static UIImage Cog { get { return UIImage.FromBundle("/Images/Buttons/cog"); } }
 
 
         public static UIImage BackButton { get { return UIImage.FromBundle("/Images/Controls/backbutton"); } }
@@ -59,36 +69,19 @@ namespace CodeHub
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
         public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
-
-        //Size agnostic
-        public static UIImage Background { get { return UIImage.FromFile("Images/Controls/background.png"); } }
-        public static UIImage Dropbar { get { return UIImageHelper.FromFileAuto("Images/Controls/dropbar"); } }
-
-        public static System.Uri GitHubRepoUrl
+        public static Uri GitHubRepoUrl
         {
-            get { return new System.Uri(System.IO.Path.Combine(MonoTouch.Foundation.NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }
+            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }
         }
 
-        public static System.Uri GitHubRepoForkUrl
+        public static Uri GitHubRepoForkUrl
         {
-            get { return new System.Uri(System.IO.Path.Combine(MonoTouch.Foundation.NSBundle.MainBundle.ResourcePath, "Images/repository_fork.png")); }
+            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository_fork.png")); }
         }
 		
         public static class Logos
         {
             public static UIImage GitHub { get { return UIImage.FromFile("Images/Logos/github.png"); } }
-        }
-
-        public static class Buttons
-        {
-            public static UIImage Info { get { return UIImage.FromBundle("/Images/Buttons/info"); } }
-            public static UIImage Flag { get { return UIImage.FromBundle("/Images/Buttons/flag"); } }
-            public static UIImage User { get { return UIImage.FromBundle("/Images/Buttons/user"); } }
-            public static UIImage Explore { get { return UIImage.FromBundle("/Images/Buttons/explore"); } }
-            public static UIImage Group { get { return UIImage.FromBundle("/Images/Buttons/group"); } }
-            public static UIImage Event { get { return UIImage.FromBundle("/Images/Buttons/events"); } }
-            public static UIImage Person { get { return UIImage.FromBundle("/Images/Buttons/person"); } }
-            public static UIImage Cog { get { return UIImage.FromBundle("/Images/Buttons/cog"); } }
         }
 
         public static class Notifications

@@ -30,7 +30,7 @@ namespace CodeHub.ViewControllers
 
             Root.UnevenRows = true;
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Buttons.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
+            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
         }
 
         public void Render(PullRequestController.ViewModel model)

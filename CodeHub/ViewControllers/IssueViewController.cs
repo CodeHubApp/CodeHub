@@ -55,7 +55,7 @@ namespace CodeHub.ViewControllers
             Style = UITableViewStyle.Grouped;
             Root.UnevenRows = true;
             _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Buttons.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
+            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
         }
 
         public void Render(IssueInfoController.ViewModel model)
@@ -90,7 +90,7 @@ namespace CodeHub.ViewControllers
             var responsible = new StyledStringElement(model.Issue.Assignee != null ? model.Issue.Assignee.Login : "Unassigned".t()) {
                 Font = StyledStringElement.DefaultDetailFont,
                 TextColor = StyledStringElement.DefaultDetailColor,
-                Image = Images.Buttons.Person
+                Image = Images.Person
             };
             if (model.Issue.Assignee != null)
             {

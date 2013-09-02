@@ -205,12 +205,12 @@ namespace CodeHub.ViewControllers
             sec1.Add(followers);
 
 
-            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new RepoEventsViewController(model.Owner.Login, model.Name), true), Images.Buttons.Event);
+            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new RepoEventsViewController(model.Owner.Login, model.Name), true), Images.Event);
 
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-                sec2.Add(new StyledStringElement("Issues".t(), () => NavigationController.PushViewController(new IssuesViewController(model.Owner.Login, model.Name), true), Images.Buttons.Flag));
+                sec2.Add(new StyledStringElement("Issues".t(), () => NavigationController.PushViewController(new IssuesViewController(model.Owner.Login, model.Name), true), Images.Flag));
 
             if (viewModel.Readme != null)
                 sec2.Add(new StyledStringElement("Readme".t(), () => NavigationController.PushViewController(new ReadmeViewController(model.Owner.Login, model.Name), true), Images.File));

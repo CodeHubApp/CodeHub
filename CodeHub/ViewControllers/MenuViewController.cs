@@ -18,23 +18,23 @@ namespace CodeHub.ViewControllers
             var username = Application.Account.Username;
             var root = new RootElement(username);
             root.Add(new Section() {
-                new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Buttons.Person),
+                new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Person),
                 new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.CommentAdd),
                 new MenuElement("News", () => NavPush(new NewsViewController()), Images.CommentAdd),
                 new MenuElement("Issues", () => NavPush(new MyIssuesViewController()), Images.CommentAdd)
             });
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsViewController(Application.Account.Username)), Images.Buttons.Event));
+            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsViewController(Application.Account.Username)), Images.Event));
             if (Application.Accounts.ActiveAccount.Organizations != null && !Application.Accounts.ActiveAccount.DontShowTeamEvents)
-                Application.Accounts.ActiveAccount.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Buttons.Event)));
+                Application.Accounts.ActiveAccount.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
             repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoriesViewController(Application.Accounts.ActiveAccount.Username) { Title = "Owned" }), Images.Repo));
             //repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
             repoSection.Add(new MenuElement("Starred", () => NavPush(new RepositoriesStarredViewController()), Images.Heart));
-            repoSection.Add(new MenuElement("Explore", () => NavPush(new RepositoriesExploreViewController()), Images.Buttons.Explore));
+            repoSection.Add(new MenuElement("Explore", () => NavPush(new RepositoriesExploreViewController()), Images.Explore));
             root.Add(repoSection);
             
             var pinnedRepos = Application.Account.GetPinnedRepositories();
@@ -46,7 +46,7 @@ namespace CodeHub.ViewControllers
             }
 
             var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
-            groupsTeamsSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Buttons.Group));
+            groupsTeamsSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Group));
             //if (Application.Accounts.ActiveAccount.Organizations != null)
                 //Application.Accounts.ActiveAccount.Organizations.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationInfoViewController(x.Login)), Images.Team)));
 
@@ -62,10 +62,10 @@ namespace CodeHub.ViewControllers
 
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings".t(), () => NavPush(new SettingsViewController()), Images.Buttons.Cog));
-            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Buttons.Info));
-            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Buttons.Flag));
-            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.Buttons.User));
+            infoSection.Add(new MenuElement("Settings".t(), () => NavPush(new SettingsViewController()), Images.Cog));
+            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
+            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
+            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
 		}
 

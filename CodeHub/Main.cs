@@ -86,21 +86,8 @@ namespace CodeHub
 
 			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
 
-			CodeFramework.Images.Views.Background = Images.Background;
-
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-			TableViewSectionView.BackgroundImage = Images.Searchbar;
-            DropbarView.BackgroundImage = Images.Dropbar;
             RepositoryCellView.RoundImages = false;
-
-			IssueCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
-			IssueCellView.Priority = new UIImage(Images.CommentAdd.CGImage, 1.3f, UIImageOrientation.Up);
-			IssueCellView.Pencil = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up);
-			IssueCellView.Cog = new UIImage(Images.Buttons.Cog.CGImage, 1.3f, UIImageOrientation.Up);
-
-			RepositoryCellView.User = new UIImage(Images.Buttons.Person.CGImage, 1.3f, UIImageOrientation.Up);
-			RepositoryCellView.Heart = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up);
-			RepositoryCellView.Fork = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up);
 
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

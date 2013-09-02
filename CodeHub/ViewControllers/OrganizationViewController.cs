@@ -38,11 +38,11 @@ namespace CodeHub.ViewControllers
             _header = new HeaderView(View.Bounds.Width) { Title = Name };
             Root.Add(new Section(_header));
 
-            var members = new StyledStringElement("Members".t(), () => NavigationController.PushViewController(new OrganizationMembersViewController(Name), true), Images.Buttons.Person);
+            var members = new StyledStringElement("Members".t(), () => NavigationController.PushViewController(new OrganizationMembersViewController(Name), true), Images.Person);
             var teams = new StyledStringElement("Teams".t(), () => NavigationController.PushViewController(new TeamsViewController(Name), true), Images.Team);
 
             var followers = new StyledStringElement("Followers".t(), () => NavigationController.PushViewController(new UserFollowersViewController(Name), true), Images.Heart);
-            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsViewController(Name), true), Images.Buttons.Event);
+            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new EventsViewController(Name), true), Images.Event);
             var repos = new StyledStringElement("Repositories".t(), () => NavigationController.PushViewController(new RepositoriesViewController(Name), true), Images.Repo);
             var gists = new StyledStringElement("Gists", () => NavigationController.PushViewController(new AccountGistsViewController(Name), true), Images.Script);
 
