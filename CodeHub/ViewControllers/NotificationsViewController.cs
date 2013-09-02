@@ -39,7 +39,14 @@ namespace CodeHub.ViewControllers
                     };
                 }
                 else if (subject.Equals("pullrequest"))
+                {
                     el.Image = Images.Notifications.PullRequest;
+                    el.Tapped += () => {
+                        this.DoWorkNoHud(() => Controller.Read(x));
+                        var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
+                        NavigationController.PushViewController(new PullRequestViewController(x.Repository.Owner.Login, x.Repository.Name, long.Parse(node)), true);
+                    };
+                }
                 else if (subject.Equals("commit"))
                 {
                     el.Image = Images.Notifications.Commit;

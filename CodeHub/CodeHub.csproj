@@ -194,7 +194,6 @@
     <Compile Include="Controllers\BaseIssuesController.cs" />
     <Compile Include="Controllers\MyIssuesController.cs" />
     <Compile Include="ViewControllers\MyIssuesViewController.cs" />
-    <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
     <Compile Include="Filters\Models\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\ViewControllers\MyIssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\IssueViewController.cs" />
@@ -206,6 +205,7 @@
     <Compile Include="Controllers\PullRequestFilesController.cs" />
     <Compile Include="ViewControllers\PullRequestFilesViewController.cs" />
     <Compile Include="Controllers\PullRequestCommitsController.cs" />
+    <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

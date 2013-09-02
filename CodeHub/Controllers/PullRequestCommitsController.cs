@@ -1,6 +1,9 @@
 using System;
 using CodeFramework.Controllers;
 using GitHubSharp.Models;
+using CodeFramework.Filters.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeHub.Controllers
 {

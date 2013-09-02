@@ -71,7 +71,7 @@ namespace CodeHub.ViewControllers
 
         private void PresentUserVoice()
         {
-            var config = UserVoice.UVConfig.Create("http://CodeHub.uservoice.com", "pnuDmPENErDiDpXrms1DTg", "iDboMdCIwe2E5hJFa8hy9K9I5wZqnjKCE0RPHLhZIk");
+            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
             UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
         }
 

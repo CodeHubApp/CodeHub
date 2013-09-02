@@ -7,7 +7,6 @@ namespace CodeHub.ViewControllers
     {
         public OrganizationEventsViewController(string userName, string orgName)
         {
-            Title = userName;
             Controller = new OrganizationEventsController(this, userName, orgName);
         }
     }

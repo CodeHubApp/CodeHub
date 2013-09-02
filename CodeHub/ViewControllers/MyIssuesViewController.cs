@@ -9,7 +9,7 @@ using CodeHub.Filters.ViewControllers;
 
 namespace CodeHub.ViewControllers
 {
-    public class MyIssuesViewController : BaseListControllerDrivenViewController, IListView<IssueModel>
+    public class MyIssuesViewController : BaseIssuesViewController
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
@@ -22,35 +22,11 @@ namespace CodeHub.ViewControllers
 
         public MyIssuesViewController()
         {
-            Root.UnevenRows = true;
-            Title = "Issues".t();
-            SearchPlaceholder = "Search Issues".t();
             Controller = new MyIssuesController(this);
 
             _viewSegment = new UISegmentedControl(new string[] { "Open".t(), "Closed".t(), "Custom".t() });
             _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
-        }
-
-        public void Render(ListModel<IssueModel> model)
-        {
-            RenderList(model, x => {
-                var assigned = x.Assignee != null ? x.Assignee.Login : "unassigned";
-                var kind = string.Empty;
-                var commentString = x.Comments == 1 ? "1 comment".t() : x.Comments + " comments".t();
-                var el = new IssueElement(x.Number.ToString(), x.Title, assigned, x.State, commentString, kind, x.UpdatedAt);
-                el.Tag = x;
-                el.Tapped += () => {
-                    //Make sure the first responder is gone.
-                    View.EndEditing(true);
-                    var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-                    var repoId = new CodeHub.Utils.RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
-                    var info = new IssueViewController(repoId.Owner, repoId.Name, x.Number);
-                    info.Controller.ModelChanged = newModel => ChildChangedModel(newModel, x);
-                    NavigationController.PushViewController(info, true);
-                };
-                return el;
-            });
         }
 
         public override void ViewDidLoad()
@@ -115,7 +91,7 @@ namespace CodeHub.ViewControllers
                 NavigationController.SetToolbarHidden(true, animated);
         }
 
-        private void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
+        protected override void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
         {
             //If null then it's been deleted!
             if (changedModel == null)
