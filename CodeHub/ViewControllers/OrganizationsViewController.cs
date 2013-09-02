@@ -9,11 +9,8 @@ namespace CodeHub.ViewControllers
 {
     public class OrganizationsViewController : BaseListControllerDrivenViewController, IListView<BasicUserModel>
 	{
-        private readonly string _username;
-
 		public OrganizationsViewController(string username) 
 		{
-            _username = username;
             Title = "Groups".t();
             SearchPlaceholder = "Search Groups".t();
             NoItemsText = "No Groups".t();

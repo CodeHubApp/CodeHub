@@ -198,6 +198,14 @@
     <Compile Include="Filters\Models\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\ViewControllers\MyIssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\IssueViewController.cs" />
+    <Compile Include="Controllers\PullRequestController.cs" />
+    <Compile Include="Controllers\PullRequestsController.cs" />
+    <Compile Include="Filters\Models\PullRequestsFilterModel.cs" />
+    <Compile Include="ViewControllers\PullRequestsViewController.cs" />
+    <Compile Include="ViewControllers\PullRequestViewController.cs" />
+    <Compile Include="Controllers\PullRequestFilesController.cs" />
+    <Compile Include="ViewControllers\PullRequestFilesViewController.cs" />
+    <Compile Include="Controllers\PullRequestCommitsController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

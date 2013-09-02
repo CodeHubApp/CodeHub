@@ -47,7 +47,7 @@ namespace CodeHub.Controllers
  
         public void AddComment(string text)
         {
-            var c = Application.Client.Users[User].Repositories[Slug].Comments.Create(text);
+            var c = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.Create(text);
             Model.Comments.Add(c.Data);
             Render();
         }

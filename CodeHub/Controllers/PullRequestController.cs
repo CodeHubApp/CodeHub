@@ -22,13 +22,25 @@ namespace CodeHub.Controllers
 
         public override void Update(bool force)
         {
-            
+            var pull = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId];
+            var comments = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments(force);
+            Model = new ViewModel {
+                PullRequest = pull.Get(force).Data,
+                Comments = comments.Data
+            };
+        }
+
+        public void AddComment(string text)
+        {
+            var comment = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].CreateComment(text);
+            Model.Comments.Add(comment.Data);
+            Render();
         }
 
         public class ViewModel
         {
             public PullRequestModel PullRequest { get; set; }
-            public List<CommentModel> Comments { get; set; }
+            public List<IssueCommentModel> Comments { get; set; }
         }
     }
 }

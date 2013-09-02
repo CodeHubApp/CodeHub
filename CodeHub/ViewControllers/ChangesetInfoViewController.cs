@@ -75,7 +75,13 @@ namespace CodeHub.ViewControllers
             var detailSection = new Section();
             root.Add(detailSection);
 
-            var d = new MultilinedElement(model.Changeset.Author.Login, model.Changeset.Commit.Message);
+            var user = "Unknown";
+            if (model.Changeset.Author != null)
+                user = model.Changeset.Author.Login;
+            if (model.Changeset.Commit.Author != null)
+                user = model.Changeset.Commit.Author.Name;
+
+            var d = new MultilinedElement(user, model.Changeset.Commit.Message);
             detailSection.Add(d);
 
             if (Repo != null)

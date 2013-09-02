@@ -8,17 +8,27 @@ namespace CodeHub.ViewControllers
 {
     public class ChangesetViewController : BaseListControllerDrivenViewController, IListView<CommitModel>
     {
-        private readonly string _user;
-        private readonly string _slug;
+        private readonly string _user, _slug;
 
-        public ChangesetViewController(string user, string slug)
+        private ChangesetViewController()
         {
-            _user = user;
-            _slug = slug;
             Title = "Changes".t();
             Root.UnevenRows = true;
             EnableSearch = false;
+        }
+
+        public ChangesetViewController(string user, string slug) : this()
+        {
+            _user = user;
+            _slug = slug;
             Controller = new ChangesetController(this, user, slug);
+        }
+
+        public ChangesetViewController(string user, string slug, long pullRequestId) : this()
+        {
+            _user = user;
+            _slug = slug;
+            Controller = new PullRequestCommitsController(this, user, slug, pullRequestId);
         }
 
         public void Render(ListModel<CommitModel> model)

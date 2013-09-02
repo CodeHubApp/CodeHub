@@ -221,6 +221,7 @@ namespace CodeHub.ViewControllers
             var sec3 = new Section
             {
                 new StyledStringElement("Changes".t(), () => NavigationController.PushViewController(new ChangesetViewController(model.Owner.Login, model.Name), true), Images.Changes),
+                new StyledStringElement("Pull Requests".t(), () => NavigationController.PushViewController(new PullRequestsViewController(model.Owner.Login, model.Name), true), Images.Branch),
                 new StyledStringElement("Branches".t(), () => NavigationController.PushViewController(new BranchesViewController(model.Owner.Login, model.Name), true), Images.Branch),
                 new StyledStringElement("Tags".t(), () => NavigationController.PushViewController(new TagsViewController(model.Owner.Login, model.Name), true), Images.Tag)
             };

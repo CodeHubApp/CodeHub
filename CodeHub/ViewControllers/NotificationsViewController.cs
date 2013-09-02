@@ -30,17 +30,24 @@ namespace CodeHub.ViewControllers
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
+                {
                     el.Image = Images.Notifications.Issue;
+                    el.Tapped += () => {
+                        this.DoWorkNoHud(() => Controller.Read(x));
+                        var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
+                        NavigationController.PushViewController(new IssueViewController(x.Repository.Owner.Login, x.Repository.Name, long.Parse(node)), true);
+                    };
+                }
                 else if (subject.Equals("pullrequest"))
                     el.Image = Images.Notifications.PullRequest;
                 else if (subject.Equals("commit"))
                 {
+                    el.Image = Images.Notifications.Commit;
                     el.Tapped += () => {
                         this.DoWorkNoHud(() => Controller.Read(x));
                         var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
                         NavigationController.PushViewController(new ChangesetInfoViewController(x.Repository.Owner.Login, x.Repository.Name, node), true);
                     };
-                    el.Image = Images.Notifications.Commit;
                 }
 
                 return el;
