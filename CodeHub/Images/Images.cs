@@ -41,14 +41,14 @@ namespace CodeHub
         public static UIImage Create { get { return UIImage.FromBundle("/Images/create"); } }
 
         public static UIImage Changes { get { return UIImage.FromBundle("/Images/changes"); } }
-        public static UIImage Info { get { return UIImage.FromBundle("/Images/Buttons/info"); } }
-        public static UIImage Flag { get { return UIImage.FromBundle("/Images/Buttons/flag"); } }
-        public static UIImage User { get { return UIImage.FromBundle("/Images/Buttons/user"); } }
-        public static UIImage Explore { get { return UIImage.FromBundle("/Images/Buttons/explore"); } }
-        public static UIImage Group { get { return UIImage.FromBundle("/Images/Buttons/group"); } }
-        public static UIImage Event { get { return UIImage.FromBundle("/Images/Buttons/events"); } }
-        public static UIImage Person { get { return UIImage.FromBundle("/Images/Buttons/person"); } }
-        public static UIImage Cog { get { return UIImage.FromBundle("/Images/Buttons/cog"); } }
+        public static UIImage Info { get { return UIImage.FromBundle("/Images/info"); } }
+        public static UIImage Flag { get { return UIImage.FromBundle("/Images/flag"); } }
+        public static UIImage User { get { return UIImage.FromBundle("/Images/user"); } }
+        public static UIImage Explore { get { return UIImage.FromBundle("/Images/explore"); } }
+        public static UIImage Group { get { return UIImage.FromBundle("/Images/group"); } }
+        public static UIImage Event { get { return UIImage.FromBundle("/Images/events"); } }
+        public static UIImage Person { get { return UIImage.FromBundle("/Images/person"); } }
+        public static UIImage Cog { get { return UIImage.FromBundle("/Images/cog"); } }
 
 
         public static UIImage BackButton { get { return UIImage.FromBundle("/Images/Controls/backbutton"); } }

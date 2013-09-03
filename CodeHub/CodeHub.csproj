@@ -195,6 +195,7 @@
     <Compile Include="ViewControllers\PullRequestFilesViewController.cs" />
     <Compile Include="Controllers\PullRequestCommitsController.cs" />
     <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
+    <Compile Include="Images\Images\Images.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -311,7 +312,6 @@
     <BundleResource Include="Images\Controls\barbutton-land%402x.png" />
     <BundleResource Include="Images\Controls\barbutton.png" />
     <BundleResource Include="Images\Controls\barbutton%402x.png" />
-    <BundleResource Include="Images\Controls\bottombar.png" />
     <BundleResource Include="Images\Controls\divider.png" />
     <BundleResource Include="Images\Controls\divider%402x.png" />
     <BundleResource Include="Images\Controls\searchbar.png" />
@@ -341,6 +341,48 @@
     <BundleResource Include="Images\Notifications\issue%402x.png" />
     <BundleResource Include="Images\Notifications\pull_request.png" />
     <BundleResource Include="Images\Notifications\pull_request%402x.png" />
+    <BundleResource Include="Images\cog.png" />
+    <BundleResource Include="Images\cog%402x.png" />
+    <BundleResource Include="Images\events.png" />
+    <BundleResource Include="Images\events%402x.png" />
+    <BundleResource Include="Images\explore.png" />
+    <BundleResource Include="Images\explore%402x.png" />
+    <BundleResource Include="Images\flag.png" />
+    <BundleResource Include="Images\flag%402x.png" />
+    <BundleResource Include="Images\group.png" />
+    <BundleResource Include="Images\group%402x.png" />
+    <BundleResource Include="Images\info.png" />
+    <BundleResource Include="Images\info%402x.png" />
+    <BundleResource Include="Images\person.png" />
+    <BundleResource Include="Images\person%402x.png" />
+    <BundleResource Include="Images\user.png" />
+    <BundleResource Include="Images\user%402x.png" />
+    <BundleResource Include="Images\Buttons\add.png" />
+    <BundleResource Include="Images\Buttons\add%402x.png" />
+    <BundleResource Include="Images\Buttons\back.png" />
+    <BundleResource Include="Images\Buttons\back%402x.png" />
+    <BundleResource Include="Images\Buttons\cancel.png" />
+    <BundleResource Include="Images\Buttons\cancel%402x.png" />
+    <BundleResource Include="Images\Buttons\edit.png" />
+    <BundleResource Include="Images\Buttons\edit%402x.png" />
+    <BundleResource Include="Images\Buttons\filter.png" />
+    <BundleResource Include="Images\Buttons\filter%402x.png" />
+    <BundleResource Include="Images\Buttons\gear.png" />
+    <BundleResource Include="Images\Buttons\gear%402x.png" />
+    <BundleResource Include="Images\Buttons\save.png" />
+    <BundleResource Include="Images\Buttons\save%402x.png" />
+    <BundleResource Include="Images\Buttons\three_lines.png" />
+    <BundleResource Include="Images\Buttons\three_lines%402x.png" />
+    <BundleResource Include="Images\Buttons\view.png" />
+    <BundleResource Include="Images\Buttons\view%402x.png" />
+    <BundleResource Include="Images\Controls\menu_navbar.png" />
+    <BundleResource Include="Images\Controls\menu_navbar%402x.png" />
+    <BundleResource Include="Images\Controls\menu_section_bg.png" />
+    <BundleResource Include="Images\Controls\menu_section_bg%402x.png" />
+    <BundleResource Include="Images\Controls\warning.png" />
+    <BundleResource Include="Images\Web\back_button%402x.png" />
+    <BundleResource Include="Images\Web\forward_button%402x.png" />
+    <BundleResource Include="Images\Controls\bottombar.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

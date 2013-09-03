@@ -89,6 +89,9 @@ namespace CodeHub
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             RepositoryCellView.RoundImages = false;
 
+            //Set the theme
+            Theme.Setup();
+
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
 			{

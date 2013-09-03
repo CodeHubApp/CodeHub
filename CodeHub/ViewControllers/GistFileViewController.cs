@@ -37,7 +37,7 @@ namespace CodeHub.ViewControllers
             _model = model;
             Title = model.Filename;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.View, () => {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.ViewButton, () => {
                 NavigationController.PushViewController(new GistFileViewController(model, _rawContent), true);
             }));
         }

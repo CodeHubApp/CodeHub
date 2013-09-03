@@ -69,7 +69,7 @@ namespace CodeHub.ViewControllers
                             Name = x.User.Login,
                             Time = x.CreatedAt.ToDaysAgo(),
                             String = x.Body,
-                            Image = CodeFramework.Images.Misc.Anonymous,
+                            Image = Theme.CurrentTheme.AnonymousUserImage,
                             ImageUri = new Uri(x.User.AvatarUrl),
                             BackgroundColor = UIColor.White,
                         });

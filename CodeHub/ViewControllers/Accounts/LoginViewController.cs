@@ -28,7 +28,7 @@ namespace CodeHub.ViewControllers
             : base("LoginViewController", null)
         {
             Title = "Login".t();
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Back, () => NavigationController.PopViewControllerAnimated(true)));
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
         public override void ViewWillLayoutSubviews()

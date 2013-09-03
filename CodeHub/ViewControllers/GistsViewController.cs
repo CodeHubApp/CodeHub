@@ -66,7 +66,7 @@ namespace CodeHub.ViewControllers
                     Time = x.UpdatedAt.ToDaysAgo(), 
                     String = str, 
                     Lines = 4, 
-                    Image = CodeFramework.Images.Misc.Anonymous
+                    Image = Theme.CurrentTheme.AnonymousUserImage
                 };
 
                 sse.Name = (x.User == null) ? "Anonymous" : x.User.Login;

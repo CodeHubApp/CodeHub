@@ -35,7 +35,7 @@ namespace CodeHub.ViewControllers
                     String = s.Body.Replace('\n', ' ').Replace("\r", ""),
                     Lines = 3,
                     Time = s.CreatedAt.ToDaysAgo(),
-                    Image = CodeFramework.Images.Misc.Anonymous,
+                    Image = Theme.CurrentTheme.AnonymousUserImage,
                     ImageUri = new Uri(s.User.AvatarUrl)
                 };
                 sse.Tapped += () => NavigationController.PushViewController(new PullRequestViewController(Controller.User, Controller.Repo, s.Number), true);

@@ -39,7 +39,7 @@ namespace CodeHub.ViewControllers
             var d = new NameTimeStringElement() { 
                 Time = model.UpdatedAt.ToDaysAgo(), 
                 String = str, 
-                Image = CodeFramework.Images.Misc.Anonymous,
+                Image = Theme.CurrentTheme.AnonymousUserImage,
                 BackgroundColor = UIColor.White,
                 UseBackgroundColor = true,
             };

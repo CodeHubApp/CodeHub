@@ -39,7 +39,7 @@ namespace CodeHub.ViewControllers
             Title = "Issue #" + id;
             Controller = new IssueInfoController(this, user, slug, id);
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Edit, () => {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => {
 //                var m = Controller.Model;
 //                var editController = new IssueEditViewController {
 //                    ExistingIssue = m.Issue,
@@ -110,7 +110,7 @@ namespace CodeHub.ViewControllers
                             Name = x.User.Login,
                             Time = x.CreatedAt.ToDaysAgo(),
                             String = x.Body,
-                            Image = CodeFramework.Images.Misc.Anonymous,
+                            Image = Theme.CurrentTheme.AnonymousUserImage,
                             ImageUri = new Uri(x.User.AvatarUrl),
                             BackgroundColor = UIColor.White,
                         });

@@ -34,7 +34,7 @@ namespace CodeHub.ViewControllers
 
             _header = new HeaderView(View.Bounds.Width) { Title = name, ShadowImage = false };
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Gear, ShowExtraMenu));
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.GearButton, ShowExtraMenu));
             NavigationItem.RightBarButtonItem.Enabled = false;
 
             Controller = new RepositoryInfoController(this, username, slug);

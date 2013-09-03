@@ -56,7 +56,7 @@ namespace CodeHub.ViewControllers
             Web.DataDetectorTypes = UIDataDetectorType.None;
             Web.ShouldStartLoad = ShouldStartLoad;
 
-            _editButton = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Edit, HandleEditButton)) { Enabled = false };
+            _editButton = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, HandleEditButton)) { Enabled = false };
         }
 
         private void HandleEditButton()

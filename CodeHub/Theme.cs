@@ -2,8 +2,17 @@
 
 namespace CodeHub
 {
-    public class CodeFrameworkTheme : CodeFramework.ICodeFrameworkTheme
+    public class Theme : CodeFramework.ICodeFrameworkTheme
     {
+        public static Theme CurrentTheme { get; private set; }
+
+        public static void Setup()
+        {
+            var theme = new Theme();
+            CurrentTheme = theme;
+            CodeFramework.Theme.CurrentTheme = theme;
+        }
+
         public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
         public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
         public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
@@ -17,7 +26,7 @@ namespace CodeHub
         public UIImage WebBackButton { get { return UIImage.FromFile("Images/Web/back_button@2x.png"); } }
         public UIImage WebFowardButton { get { return UIImage.FromFile("Images/Web/forward_button@2x.png"); } }
 
-        public UIImage AnonymousUserImage { get { return UIImageHelper.FromFileAuto("Images/anonymous"); } }
+        public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 
         public UIImage ViewBackground { get { return UIImage.FromFile("Images/Controls/background.png"); } }
 

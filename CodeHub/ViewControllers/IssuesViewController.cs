@@ -25,7 +25,7 @@ namespace CodeHub.ViewControllers
         {
             Controller = new IssuesController(this, user, slug);
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Add, () => {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => {
 //                var b = new IssueEditViewController {
 //                    Username = Controller.User,
 //                    RepoSlug = Controller.Slug,

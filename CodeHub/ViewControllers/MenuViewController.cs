@@ -79,7 +79,7 @@ namespace CodeHub.ViewControllers
         {
             var accounts = new AccountsViewController();
             var nav = new UINavigationController(accounts);
-            accounts.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Images.Buttons.Cancel, () => {
+            accounts.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.CancelButton, () => {
                 var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
                 Transitions.Transition(appDelegate.Slideout, UIViewAnimationOptions.TransitionFlipFromRight);
             }));

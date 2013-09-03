@@ -132,7 +132,7 @@ namespace CodeHub.ViewControllers
                         Name = comment.User.Login,
                         Time = comment.CreatedAt.ToDaysAgo(),
                         String = comment.Body,
-                        Image = CodeFramework.Images.Misc.Anonymous,
+                        Image = Images.Anonymous,
                         ImageUri = new Uri(comment.User.AvatarUrl),
                         BackgroundColor = UIColor.White,
                     });
