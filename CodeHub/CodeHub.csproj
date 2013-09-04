@@ -223,8 +223,8 @@
       <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
       <Name>UserVoice</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GitHubSharp\GitHubSharp.MonoTouch\GitHubSharp.MonoTouch.csproj">
-      <Project>{9D501802-E873-44FA-96D9-335AEED3FD66}</Project>
+    <ProjectReference Include="..\GitHubSharp\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
