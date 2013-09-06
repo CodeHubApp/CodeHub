@@ -81,8 +81,11 @@ namespace CodeHub.ViewControllers
             if (model.Changeset.Commit.Author != null)
                 user = model.Changeset.Commit.Author.Name;
 
-            var d = new MultilinedElement(user, model.Changeset.Commit.Message);
-            detailSection.Add(d);
+            detailSection.Add(new MultilinedElement(user, model.Changeset.Commit.Message)
+            {
+                CaptionColor = Theme.CurrentTheme.MainTitleColor,
+                ValueColor = Theme.CurrentTheme.MainTextColor
+            });
 
             if (Repo != null)
             {

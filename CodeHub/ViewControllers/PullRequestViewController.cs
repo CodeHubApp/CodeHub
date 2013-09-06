@@ -25,7 +25,7 @@ namespace CodeHub.ViewControllers
 
         public PullRequestViewController(string user, string slug, long id)
         {
-            Title = "Pull Request".t();
+            Title = "Pull Request #".t() + id;
             Controller = new PullRequestController(this, user, slug, id);
 
             Root.UnevenRows = true;
@@ -35,8 +35,8 @@ namespace CodeHub.ViewControllers
 
         public void Render(PullRequestController.ViewModel model)
         {
-            var root = new RootElement(model.PullRequest.Title);
-            _header.Title = Title;
+            var root = new RootElement(Title);
+            _header.Title = model.PullRequest.Title;
             _header.Subtitle = "Updated " + (model.PullRequest.UpdatedAt).ToDaysAgo();
             _header.SetNeedsDisplay();
             root.Add(new Section(_header));
@@ -44,7 +44,12 @@ namespace CodeHub.ViewControllers
             var secDetails = new Section();
             if (!string.IsNullOrEmpty(model.PullRequest.Body))
             {
-                var desc = new MultilinedElement(model.PullRequest.Body.Trim()) { BackgroundColor = UIColor.White };
+                var desc = new MultilinedElement(model.PullRequest.Body.Trim()) 
+                { 
+                    BackgroundColor = UIColor.White,
+                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
+                    ValueColor = Theme.CurrentTheme.MainTextColor
+                };
                 desc.CaptionFont = desc.ValueFont;
                 desc.CaptionColor = desc.ValueColor;
                 secDetails.Add(desc);
@@ -56,7 +61,7 @@ namespace CodeHub.ViewControllers
             root.Add(secDetails);
 
             root.Add(new Section {
-                new StyledStringElement("Commits", () => NavigationController.PushViewController(new ChangesetViewController(Controller.User, Controller.Repo, Controller.PullRequestId), true), Images.Changes),
+                new StyledStringElement("Commits", () => NavigationController.PushViewController(new ChangesetViewController(Controller.User, Controller.Repo, Controller.PullRequestId), true), Images.Commit),
                 new StyledStringElement("Files", () => NavigationController.PushViewController(new PullRequestFilesViewController(Controller.User, Controller.Repo, Controller.PullRequestId), true), Images.File),
             });
 

@@ -38,7 +38,7 @@ namespace CodeHub.ViewControllers
             _header = new HeaderView(View.Bounds.Width) { Title = Name };
             Root.Add(new Section(_header));
 
-            var members = new StyledStringElement("Members".t(), () => NavigationController.PushViewController(new OrganizationMembersViewController(Name), true), Images.Person);
+            var members = new StyledStringElement("Members".t(), () => NavigationController.PushViewController(new OrganizationMembersViewController(Name), true), Images.Following);
             var teams = new StyledStringElement("Teams".t(), () => NavigationController.PushViewController(new TeamsViewController(Name), true), Images.Team);
 
             var followers = new StyledStringElement("Followers".t(), () => NavigationController.PushViewController(new UserFollowersViewController(Name), true), Images.Heart);

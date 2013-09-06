@@ -89,6 +89,7 @@ namespace CodeHub
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             RepositoryCellView.RoundImages = false;
 
+
             //Set the theme
             Theme.Setup();
 

@@ -35,7 +35,6 @@ namespace CodeHub.Controllers
             //We'll typically just rerender what we have, however, issues require a backend query.
             //So, we'll need to update then render.
             base.ApplyFilter(filter, saveAsDefault, false);
-            UpdateAndRender(true);
         }
 
         public void DeleteIssue(IssueModel issue)

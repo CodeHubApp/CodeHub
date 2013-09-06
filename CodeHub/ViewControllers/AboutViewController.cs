@@ -29,7 +29,7 @@ namespace CodeHub.ViewControllers
             {
                 new Section()
                 {
-                    new MultilinedElement("CodeHub".t()) { Value = About }
+                    new MultilinedElement("CodeHub".t()) { Value = About, CaptionColor = Theme.CurrentTheme.MainTitleColor, ValueColor = Theme.CurrentTheme.MainTextColor }
                 },
                 new Section()
                 {

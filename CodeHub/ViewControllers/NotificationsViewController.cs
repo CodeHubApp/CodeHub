@@ -31,7 +31,7 @@ namespace CodeHub.ViewControllers
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
                 {
-                    el.Image = Images.Notifications.Issue;
+                    el.Image = Images.Flag;
                     el.Tapped += () => {
                         this.DoWorkNoHud(() => Controller.Read(x));
                         var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
@@ -40,7 +40,7 @@ namespace CodeHub.ViewControllers
                 }
                 else if (subject.Equals("pullrequest"))
                 {
-                    el.Image = Images.Notifications.PullRequest;
+                    el.Image = Images.Hand;
                     el.Tapped += () => {
                         this.DoWorkNoHud(() => Controller.Read(x));
                         var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
@@ -49,7 +49,7 @@ namespace CodeHub.ViewControllers
                 }
                 else if (subject.Equals("commit"))
                 {
-                    el.Image = Images.Notifications.Commit;
+                    el.Image = Images.Commit;
                     el.Tapped += () => {
                         this.DoWorkNoHud(() => Controller.Read(x));
                         var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);

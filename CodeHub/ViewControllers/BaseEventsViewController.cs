@@ -63,7 +63,7 @@ namespace CodeHub.ViewControllers
             if (eventModel.PayloadObject is EventModel.CommitCommentEvent)
             {
                 var commitEvent = (EventModel.CommitCommentEvent)eventModel.PayloadObject;
-                img = Images.CommentAdd;
+                img = Images.Comments;
                 var action = elementAction = () => NavigationController.PushViewController(new ChangesetInfoViewController(repoId.Owner, repoId.Name, commitEvent.Comment.CommitId), true);
                 var node = commitEvent.Comment.CommitId.Substring(0, commitEvent.Comment.CommitId.Length > 10 ? 10 : commitEvent.Comment.CommitId.Length);
                 blocks.Add(new NewsFeedElement.TextBlock("Commented on commit ".t()));
@@ -166,7 +166,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
             {
-                img = Images.User;
+                img = Images.Following;
                 var followEvent = (EventModel.FollowEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new ProfileViewController(followEvent.Target.Login), true);
                 blocks.Add(new NewsFeedElement.TextBlock("Started following ".t()));
@@ -203,7 +203,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.GistEvent)
             {
-                img = Images.Language;
+                img = Images.Script;
                 var gistEvent = (EventModel.GistEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new GistInfoViewController(gistEvent.Gist.Id), true);
 
@@ -241,7 +241,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.IssueCommentEvent)
             {
-                img = Images.CommentAdd;
+                img = Images.Comments;
                 var commentEvent = (EventModel.IssueCommentEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new IssueViewController(repoId.Owner, repoId.Name, commentEvent.Issue.Number), true);
 
@@ -312,7 +312,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
             {
-                img = Images.Fork;
+                img = Images.Hand;
                 var pullEvent = (EventModel.PullRequestEvent)eventModel.PayloadObject;
                 var action = elementAction = () => NavigationController.PushViewController(new PullRequestViewController(repoId.Owner, repoId.Name, pullEvent.Number), true);
 
@@ -333,7 +333,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.PullRequestReviewCommentEvent)
             {
-                img = Images.CommentAdd;
+                img = Images.Comments;
                 var commentEvent = (EventModel.PullRequestReviewCommentEvent)eventModel.PayloadObject;
                 elementAction = () => NavigationController.PushViewController(new PullRequestsViewController(repoId.Owner, repoId.Name), true);
                 blocks.Add(new NewsFeedElement.TextBlock("Commented on pull request ".t()));
@@ -350,7 +350,7 @@ namespace CodeHub.ViewControllers
              */
             else if (eventModel.PayloadObject is EventModel.PushEvent)
             {
-                img = Images.Plus;
+                img = Images.Commit;
                 var pushEvent = (EventModel.PushEvent)eventModel.PayloadObject;
 
                 if (eventModel.Repo != null)
@@ -404,17 +404,13 @@ namespace CodeHub.ViewControllers
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
             {
                 var watchEvent = (EventModel.WatchEvent)eventModel.PayloadObject;
+                img = Images.Eye;
                 elementAction = () => NavigationController.PushViewController(new RepositoryInfoViewController(repoId.Owner, repoId.Name), true);
+
                 if (watchEvent.Action.Equals("started"))
-                {
                     blocks.Add(new NewsFeedElement.TextBlock("Started watching ".t()));
-                    img = Images.HeartAdd;
-                }
                 else
-                {
                     blocks.Add(new NewsFeedElement.TextBlock("Stopped watching ".t()));
-                    img = Images.HeartDelete;
-                }
 
                 blocks.Add(RepoName(eventModel.Repo));
             }

@@ -77,7 +77,12 @@ namespace CodeHub.ViewControllers
             var secDetails = new Section();
             if (!string.IsNullOrEmpty(model.Issue.Body))
             {
-                var desc = new MultilinedElement(model.Issue.Body.Trim()) { BackgroundColor = UIColor.White };
+                var desc = new MultilinedElement(model.Issue.Body.Trim()) 
+                { 
+                    BackgroundColor = UIColor.White,
+                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
+                    ValueColor = Theme.CurrentTheme.MainTextColor
+                };
                 desc.CaptionFont = desc.ValueFont;
                 desc.CaptionColor = desc.ValueColor;
                 secDetails.Add(desc);
