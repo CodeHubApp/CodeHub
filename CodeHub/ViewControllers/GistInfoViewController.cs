@@ -54,7 +54,7 @@ namespace CodeHub.ViewControllers
 
             foreach (var file in model.Files.Keys)
             {
-                var sse = new SubcaptionElement(file, model.Files[file].Size + " bytes") { 
+                var sse = new StyledStringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
                     Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation,
                     Lines = 1 

@@ -195,7 +195,6 @@
     <Compile Include="ViewControllers\PullRequestFilesViewController.cs" />
     <Compile Include="Controllers\PullRequestCommitsController.cs" />
     <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
-    <Compile Include="Images\Images\Images.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -289,7 +288,6 @@
     <BundleResource Include="Images\Controls\backbutton-landscape%402x.png" />
     <BundleResource Include="Images\Controls\backbutton.png" />
     <BundleResource Include="Images\Controls\backbutton%402x.png" />
-    <BundleResource Include="Images\Controls\background.png" />
     <BundleResource Include="Images\Controls\barbutton-land.png" />
     <BundleResource Include="Images\Controls\barbutton-land%402x.png" />
     <BundleResource Include="Images\Controls\barbutton.png" />
@@ -381,6 +379,9 @@
     <BundleResource Include="Images\eye.png" />
     <BundleResource Include="Images\hand%402x.png" />
     <BundleResource Include="Images\hand.png" />
+    <BundleResource Include="Images\Controls\titlebar%402x.png" />
+    <BundleResource Include="Images\Controls\bottombar%402x.png" />
+    <BundleResource Include="Images\Controls\searchbar%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

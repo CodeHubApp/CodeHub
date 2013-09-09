@@ -83,8 +83,9 @@ namespace CodeHub.ViewControllers
 
             detailSection.Add(new MultilinedElement(user, model.Changeset.Commit.Message)
             {
-                CaptionColor = Theme.CurrentTheme.MainTitleColor,
-                ValueColor = Theme.CurrentTheme.MainTextColor
+                CaptionColor = Theme.CurrentTheme.MainTextColor,
+                ValueColor = Theme.CurrentTheme.MainTextColor,
+                BackgroundColor = UIColor.White
             });
 
             if (Repo != null)

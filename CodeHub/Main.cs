@@ -80,18 +80,38 @@ namespace CodeHub
 			UIToolbar.Appearance.SetBackgroundImage(Images.Bottombar.CreateResizableImage(new UIEdgeInsets(0, 0, 0, 0)), UIToolbarPosition.Bottom, UIBarMetrics.Default);
 			UISearchBar.Appearance.BackgroundImage = Images.Searchbar;
 
-			var textAttrs = new UITextAttributes { TextColor = UIColor.White, TextShadowColor = UIColor.DarkGray, TextShadowOffset = new UIOffset(0, -1) };
-			UINavigationBar.Appearance.SetTitleTextAttributes(textAttrs);
-			UISegmentedControl.Appearance.SetTitleTextAttributes(textAttrs, UIControlState.Normal);
-
 			SearchFilterBar.ButtonBackground = Images.BarButton.CreateResizableImage(new UIEdgeInsets(0, 6, 0, 6));
 
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
-            RepositoryCellView.RoundImages = false;
+            MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(14f); //UIColor.FromPatternImage(Images.TableCell);
+            MonoTouch.Dialog.StyledStringElement.DefaultDetailFont = UIFont.SystemFontOfSize(12f); //UIColor.FromPatternImage(Images.TableCell);
 
+            RepositoryCellView.RoundImages = false;
 
             //Set the theme
             Theme.Setup();
+
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { 
+                Font = UIFont.SystemFontOfSize(20f), 
+                TextColor = Theme.CurrentTheme.NavigationTextColor,
+                TextShadowColor = UIColor.White, 
+                TextShadowOffset = new UIOffset(0, 1) 
+            });
+
+            UISegmentedControl.Appearance.SetTitleTextAttributes(new UITextAttributes { 
+                Font = UIFont.SystemFontOfSize(14f), 
+                TextColor = UIColor.FromRGB(87, 85, 85), 
+                TextShadowColor = UIColor.FromRGBA(255, 255, 255, 125), 
+                TextShadowOffset = new UIOffset(0, 1) 
+            }, UIControlState.Normal);
+
+//            try
+//            {
+//                UINavigationBar.Appearance.ShadowImage = new UIImage();
+//                UIToolbar.Appearance.SetShadowImage(new UIImage(), UIToolbarPosition.Bottom);
+//            }
+//            catch {
+//            }
 
 			//Resize the back button only on the iPhone
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

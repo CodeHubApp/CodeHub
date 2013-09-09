@@ -32,7 +32,7 @@ namespace CodeHub
 
         public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 
-        public UIImage ViewBackground { get { return UIImage.FromFile("Images/Controls/background.png"); } }
+        public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
         public UIImage MenuSectionBackground { get { return UIImageHelper.FromFileAuto("Images/Controls/menu_section_bg"); } }
         public UIImage MenuNavbarBackground { get { return UIImageHelper.FromFileAuto("Images/Controls/menu_navbar"); } }
@@ -81,7 +81,11 @@ namespace CodeHub
             get { return _repoCell3 ?? (_repoCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
         }
 
-        public UIColor MainTitleColor { get { return UIColor.FromRGB(0x34, 0x68, 0x9c); } }
+        public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
+        public UIColor WebViewButtonsColor { get { return UIColor.FromRGB(127, 125, 125); } }
+
+
+        public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
         public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
         public UIColor MainTextColor { get { return UIColor.FromRGB(41, 41, 41); } }
 

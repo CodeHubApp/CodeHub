@@ -199,10 +199,10 @@ namespace CodeHub.ViewControllers
             }));
 
 
-            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => NavigationController.PushViewController(new ProfileViewController(model.Owner.Login), true);
             sec1.Add(owner);
-            var followers = new StyledStringElement("Stargazers".t(), "" + model.Watchers) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var followers = new StyledStringElement("Stargazers".t(), "" + model.Watchers) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
             followers.Tapped += () => NavigationController.PushViewController(new RepoFollowersViewController(model.Owner.Login, model.Name), true);
             sec1.Add(followers);
 
