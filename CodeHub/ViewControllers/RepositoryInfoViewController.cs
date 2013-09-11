@@ -217,8 +217,8 @@ namespace CodeHub.ViewControllers
             if (viewModel.Readme != null)
                 sec2.Add(new StyledStringElement("Readme".t(), () => NavigationController.PushViewController(new ReadmeViewController(model.Owner.Login, model.Name), true), Images.File));
 
-            if (model.HasWiki)
-                sec2.Add(new StyledStringElement("Wiki".t(), () => NavigationController.PushViewController(new WikiViewController(model.Owner.Login, model.Name), true), Images.Pencil));
+            //if (model.HasWiki)
+            //    sec2.Add(new StyledStringElement("Wiki".t(), () => NavigationController.PushViewController(new WikiViewController(model.Owner.Login, model.Name), true), Images.Pencil));
 
             var sec3 = new Section
             {

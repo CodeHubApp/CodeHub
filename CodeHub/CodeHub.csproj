@@ -122,7 +122,6 @@
     <Compile Include="ViewControllers\SourceViewController.cs" />
     <Compile Include="ViewControllers\StartupViewController.cs" />
     <Compile Include="ViewControllers\TagsViewController.cs" />
-    <Compile Include="ViewControllers\WikiViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs" />
     <Compile Include="Controllers\BranchesController.cs" />
