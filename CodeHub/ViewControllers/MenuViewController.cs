@@ -13,13 +13,16 @@ namespace CodeHub.ViewControllers
 {
 	public class MenuViewController : MenuBaseController
     {
+        private MenuElement _notifications;
+
 		protected override void CreateMenuRoot()
 		{
             var username = Application.Account.Username;
             var root = new RootElement(username);
+
             root.Add(new Section() {
                 new MenuElement("Profile", () => NavPush(new ProfileViewController(username) { Title = "Profile" }), Images.Person),
-                new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.Notifications),
+                (_notifications = new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.Notifications) { NotificationNumber = Application.Account.Notifications }),
                 new MenuElement("News", () => NavPush(new NewsViewController()), Images.News),
                 new MenuElement("Issues", () => NavPush(new MyIssuesViewController()), Images.Flag)
             });
@@ -99,7 +102,14 @@ namespace CodeHub.ViewControllers
 
         private void LoadExtras()
         {
-
+            this.DoWorkNoHud(() => {
+                //Don't bother saving the result. This get's cached in memory so there's no reason to save it twice. Just save the number of entires
+                Application.Account.Notifications = Application.Client.Notifications.GetAll().Data.Count;
+                _notifications.NotificationNumber = Application.Account.Notifications;
+                InvokeOnMainThread(() => {
+                    ReloadData();
+                });
+            });
         }
     }
 }

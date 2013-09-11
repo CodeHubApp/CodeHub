@@ -84,7 +84,7 @@ namespace CodeHub
 
             MonoTouch.Dialog.StyledStringElement.BgColor = UIColor.FromPatternImage(Images.TableCell);
             MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(14f); //UIColor.FromPatternImage(Images.TableCell);
-            MonoTouch.Dialog.StyledStringElement.DefaultDetailFont = UIFont.SystemFontOfSize(12f); //UIColor.FromPatternImage(Images.TableCell);
+            MonoTouch.Dialog.StyledStringElement.DefaultDetailFont = UIFont.SystemFontOfSize(14f); //UIColor.FromPatternImage(Images.TableCell);
 
             RepositoryCellView.RoundImages = false;
 

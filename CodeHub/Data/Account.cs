@@ -65,6 +65,13 @@ namespace CodeHub.Data
         [Ignore]
         public List<BasicUserModel> Organizations { get; set; }
 
+        /// <summary>
+        /// A list of the current notifications
+        /// </summary>
+        /// <value>The notifications.</value>
+        [Ignore]
+        public int Notifications { get; set; }
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Account"/> class.
 		/// </summary>
@@ -74,6 +81,8 @@ namespace CodeHub.Data
 			DontRemember = false;
             DontShowTeamEvents = false;
             DontExpandTeamsAndGroups = false;
+            Organizations = new List<BasicUserModel>();
+            Notifications = 0;
 		}
 
         

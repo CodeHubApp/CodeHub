@@ -20,7 +20,8 @@ namespace CodeHub.Controllers
         public override void Update(bool force)
         {
             var response = Application.Client.Notifications.GetAll(force, all: _all, participating: _participating);
-            Model = new ListModel<NotificationModel> {Data = response.Data, More = this.CreateMore(response)};
+            Model = new ListModel<NotificationModel> {Data = response.Data, More = this.CreateMore(response, callback: UpdateAccountNotificationsCount)};
+            UpdateAccountNotificationsCount();
         }
 
         public void Read(NotificationModel model)
@@ -30,7 +31,15 @@ namespace CodeHub.Controllers
                 //We just read it
                 model.Unread = false;
                 Render();
+
+                //Update the notifications count on the account
+                UpdateAccountNotificationsCount();
             }
+        }
+
+        private void UpdateAccountNotificationsCount()
+        {
+            Application.Account.Notifications = Model.Data.Count(x => x.Unread == true);
         }
 
         protected override List<IGrouping<string, NotificationModel>> GroupModel(List<NotificationModel> model, NotificationsFilterModel filter)
@@ -43,7 +52,7 @@ namespace CodeHub.Controllers
 
         protected override void SaveFilterAsDefault(NotificationsFilterModel filter)
         {
-
+            //Do nothing
         }
     }
 }
