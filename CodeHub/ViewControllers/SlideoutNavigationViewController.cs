@@ -27,7 +27,7 @@ namespace CodeHub.ViewControllers
 
 
             //Select a view based on the account type
-            SelectView(new EventsViewController(Application.Account.Username));
+            SelectView(new NewsViewController());
 		}
 	}
 }
