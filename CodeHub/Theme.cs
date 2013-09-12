@@ -68,7 +68,7 @@ namespace CodeHub
 
         public UIImage RepositoryCellFollowers
         {
-            get { return _repoCell1 ?? (_repoCell1 = new UIImage(Images.Heart.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return _repoCell1 ?? (_repoCell1 = new UIImage(Images.Star.CGImage, 1.3f, UIImageOrientation.Up)); }
         }
 
         public UIImage RepositoryCellForks
