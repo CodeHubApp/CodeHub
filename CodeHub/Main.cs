@@ -60,11 +60,14 @@ namespace CodeHub
 		/// </summary>
 		private void SetTheme()
 		{
+            //Set the theme
+            Theme.Setup();
+
 			//Set the status bar
 			UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.BlackOpaque, false);
 
 			//Set the theming
-			UINavigationBar.Appearance.SetBackgroundImage(Images.Titlebar.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
+			UINavigationBar.Appearance.SetBackgroundImage(Theme.CurrentTheme.MenuNavbarBackground.CreateResizableImage(new UIEdgeInsets(0, 0, 1, 0)), UIBarMetrics.Default);
 
 			UIBarButtonItem.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
 			UISegmentedControl.Appearance.SetBackgroundImage(Images.BarButton.CreateResizableImage(new UIEdgeInsets(8, 7, 8, 7)), UIControlState.Normal, UIBarMetrics.Default);
@@ -88,13 +91,10 @@ namespace CodeHub
 
             RepositoryCellView.RoundImages = false;
 
-            //Set the theme
-            Theme.Setup();
 
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { 
-                Font = UIFont.SystemFontOfSize(20f), 
-                TextColor = Theme.CurrentTheme.NavigationTextColor,
-                TextShadowColor = UIColor.White, 
+                TextColor = UIColor.White,
+                TextShadowColor = UIColor.Black, 
                 TextShadowOffset = new UIOffset(0, 1) 
             });
 
@@ -122,9 +122,9 @@ namespace CodeHub
 
 		public override void ReceiveMemoryWarning(UIApplication application)
 		{
-			//Remove everything from the cache
-            if (Application.Client != null && Application.Client.CacheProvider != null)
-                Application.Client.CacheProvider.DeleteAll();
+            //Remove everything from the cache
+//            if (Application.Client != null && Application.Client.CacheProvider != null)
+//                Application.Client.CacheProvider.DeleteAll();
 
 			//Pop back to the root view...
 //			if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
