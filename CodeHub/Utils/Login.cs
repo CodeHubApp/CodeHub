@@ -16,15 +16,27 @@ namespace CodeHub.Utils
             //Fill these variables in during the proceeding try/catch
             Account account;
             bool exists;
+            string apiUrl = domain;
 
             try
             {
+                //Assume the user just put the domain in. Add the defaults.
+                if (apiUrl != null)
+                {
+                    if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
+                        apiUrl = "https://" + apiUrl;
+                    if (!apiUrl.EndsWith("/"))
+                        apiUrl += "/";
+                    if (!apiUrl.Contains("/api/"))
+                        apiUrl += "api/v3/";
+                }
+
                 //Make some valid checks
                 if (string.IsNullOrEmpty(user))
                     throw new ArgumentException("Username is invalid".t());
                 if (string.IsNullOrEmpty(pass))
                     throw new ArgumentException("Password is invalid".t());
-                if (domain != null && !Uri.IsWellFormedUriString(domain, UriKind.Absolute))
+                if (apiUrl != null && !Uri.IsWellFormedUriString(apiUrl, UriKind.Absolute))
                     throw new ArgumentException("Domain is invalid".t());
 
                 //Does this user exist?
@@ -33,12 +45,12 @@ namespace CodeHub.Utils
                 if (!exists)
                     account = new Account { Username = user, Password = pass };
 
-                var client = (domain == null) ? new GitHubSharp.Client(user, pass) : new GitHubSharp.Client(user, pass, domain);
+                var client = (apiUrl == null) ? new GitHubSharp.Client(user, pass) : new GitHubSharp.Client(user, pass, apiUrl);
                 client.Timeout = 30 * 1000;
 
                 await ctrl.DoWorkAsync("Logging in...", () => {
                     var userInfo = client.AuthenticatedUser.GetInfo().Data;
-                    account.Domain = domain;
+                    account.Domain = apiUrl;
                     account.Username = userInfo.Login;
                     account.AvatarUrl = userInfo.AvatarUrl;
                 });
