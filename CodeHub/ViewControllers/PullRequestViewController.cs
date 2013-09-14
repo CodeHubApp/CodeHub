@@ -15,8 +15,6 @@ namespace CodeHub.ViewControllers
         private readonly HeaderView _header;
         private readonly SplitElement _split1;
 
-        private bool _scrollToLastComment;
-
         public new PullRequestController Controller
         {
             get { return (PullRequestController)base.Controller; }
@@ -115,7 +113,6 @@ namespace CodeHub.ViewControllers
                     Controller.AddComment(text);
                     InvokeOnMainThread(() => {
                         composer.CloseComposer();
-                        _scrollToLastComment = true;
                     });
                 }, ex =>
                 {

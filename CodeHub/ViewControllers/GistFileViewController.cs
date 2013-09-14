@@ -7,12 +7,14 @@ namespace CodeHub.ViewControllers
 {
     public class GistFileViewController : FileSourceController
     {
+        GistFileModel _model;
         private string _url;
         private string _content;
 
         public GistFileViewController(GistFileModel model, string content = null)
         {
             _url = model.RawUrl;
+            _model = model;
             Title = model.Filename;
             _content = content;
         }
@@ -21,7 +23,8 @@ namespace CodeHub.ViewControllers
         {
             if (_content == null)
                 _content = Application.Client.Gists.GetFile(_url);
-            LoadRawData(System.Security.SecurityElement.Escape(_content));
+            var ext = System.IO.Path.GetExtension(_model.Filename).TrimStart('.');
+            LoadRawData(System.Security.SecurityElement.Escape(_content), ext);
         }
     }
 

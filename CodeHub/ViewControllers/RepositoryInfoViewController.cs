@@ -168,8 +168,8 @@ namespace CodeHub.ViewControllers
             }
 
             sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = "git",
-                Image1 = Images.Brick,
+                Text1 = model.Private ? "Private".t() : "Public".t(),
+                Image1 = model.Private ? Images.Locked : Images.Unlocked,
                 Text2 = model.Language,
                 Image2 = Images.Language
             }));
@@ -185,17 +185,17 @@ namespace CodeHub.ViewControllers
                 size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
 
             sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = model.Private ? "Private".t() : "Public".t(),
-                Image1 = model.Private ? Images.Locked : Images.Unlocked,
-                Text2 = size,
-                Image2 = Images.Size
+                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue".t() : " Issues".t()),
+                Image1 = Images.Flag,
+                Text2 = model.Forks.ToString() + (model.Forks == 1 ? " Fork".t() : " Forks".t()),
+                Image2 = Images.Fork
             }));
 
             sec1.Add(new SplitElement(new SplitElement.Row {
                 Text1 = (model.CreatedAt).ToString("MM/dd/yy"),
                 Image1 = Images.Create,
-                Text2 = model.Forks.ToString() + (model.Forks == 1 ? " Fork".t() : " Forks".t()),
-                Image2 = Images.Fork
+                Text2 = size,
+                Image2 = Images.Size
             }));
 
 

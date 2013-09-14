@@ -26,11 +26,12 @@ namespace CodeHub.ViewControllers
         public void Render(ListModel<CommitModel.CommitFileModel> model)
         {
             RenderList(model, x => {
-                var el = new StyledStringElement(x.Filename, x.Status, MonoTouch.UIKit.UITableViewCellStyle.Subtitle);
+                var name = x.Filename.Substring(x.Filename.LastIndexOf("/") + 1);
+                var el = new StyledStringElement(name, x.Status, MonoTouch.UIKit.UITableViewCellStyle.Subtitle);
                 el.Image = Images.File;
                 el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
-//                el.Tapped += () => NavigationController.PushViewController(
-//                    new SourceInfoViewController(_username, _slug, _branch, x.Path) { Title = x.Filename });
+                el.Tapped += () => NavigationController.PushViewController(
+                    new RawContentViewController(x.RawUrl) { Title = x.Filename }, true);
                 return el;
             });
         }

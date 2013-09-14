@@ -21,8 +21,24 @@ namespace CodeHub.ViewControllers
             //Find
             using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
             {
-                var response = Application.Client.Users[user].Repositories[slug].GetFileRaw(branch, path, stream);
-                mime = response.ContentType;
+                mime = Application.Client.Users[user].Repositories[slug].GetFileRaw(branch, path, stream);
+            }
+
+            return filepath;
+        }
+
+        protected static string DownloadFile(string rawUrl, out string mime)
+        {
+            //Create a temporary filename
+            var ext = System.IO.Path.GetExtension(rawUrl).TrimStart('.');
+            if (ext == null) ext = string.Empty;
+            var filename = Environment.TickCount + ext;
+            var filepath = System.IO.Path.Combine(TempDir, filename);
+
+            //Find
+            using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+            {
+                mime = Application.Client.DownloadRawResource(rawUrl, stream);
             }
 
             return filepath;

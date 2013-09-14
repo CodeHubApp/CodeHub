@@ -22,7 +22,6 @@ namespace CodeHub.ViewControllers
         private readonly HeaderView _header;
         private readonly SplitElement _split1;
 
-        private bool _scrollToLastComment;
         private bool _issueRemoved;
 
         public new IssueInfoController Controller
@@ -172,7 +171,6 @@ namespace CodeHub.ViewControllers
                     Controller.AddComment(text);
                     InvokeOnMainThread(() => {
                         composer.CloseComposer();
-                        _scrollToLastComment = true;
                     });
                 }, ex =>
                 {

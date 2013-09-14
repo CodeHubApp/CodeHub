@@ -36,7 +36,7 @@ namespace CodeHub
 		public override bool FinishedLaunching (UIApplication app, NSDictionary options)
 		{
             //Start the analytics tracker
-            MonoTouch.Utilities.SetupAnalytics("", "CodeHub");
+            MonoTouch.Utilities.SetupAnalytics("UA-44040302-1", "CodeHub");
 
 			//Set the theme
 			SetTheme();
