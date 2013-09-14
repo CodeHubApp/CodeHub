@@ -31,7 +31,7 @@ namespace CodeHub.ViewControllers
                 el.Image = Images.File;
                 el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
                 el.Tapped += () => NavigationController.PushViewController(
-                    new RawContentViewController(x.RawUrl) { Title = x.Filename }, true);
+                    new RawContentViewController(x.RawUrl) { Title = name }, true);
                 return el;
             });
         }

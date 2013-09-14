@@ -69,12 +69,10 @@ namespace CodeHub.ViewControllers
             if (_viewSegment.SelectedSegment == 0)
             {
                 Controller.ApplyFilter(MyIssuesFilterModel.CreateOpenFilter(), true, false);
-                UpdateAndRender();
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
                 Controller.ApplyFilter(MyIssuesFilterModel.CreateClosedFilter(), true, false);
-                UpdateAndRender();
             }
             else if (_viewSegment.SelectedSegment == 2)
             {

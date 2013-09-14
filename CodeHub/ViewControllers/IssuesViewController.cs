@@ -26,12 +26,10 @@ namespace CodeHub.ViewControllers
             Controller = new IssuesController(this, user, slug);
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => {
-//                var b = new IssueEditViewController {
-//                    Username = Controller.User,
-//                    RepoSlug = Controller.Slug,
-//                    Success = (issue) => Controller.CreateIssue(issue)
-//                };
-//                NavigationController.PushViewController(b, true);
+                var b = new IssueEditViewController(Controller.User, Controller.Slug) {
+                    Success = (issue) => Controller.CreateIssue(issue)
+                };
+                NavigationController.PushViewController(b, true);
             }));
         }
 
@@ -80,17 +78,14 @@ namespace CodeHub.ViewControllers
             if (_viewSegment.SelectedSegment == 0)
             {
                 Controller.ApplyFilter(IssuesFilterModel.CreateAllFilter(), true, false);
-                UpdateAndRender();
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
                 Controller.ApplyFilter(IssuesFilterModel.CreateOpenFilter(), true, false);
-                UpdateAndRender();
             }
             else if (_viewSegment.SelectedSegment == 2)
             {
                 Controller.ApplyFilter(IssuesFilterModel.CreateMineFilter(Application.Account.Username), true, false);
-                UpdateAndRender();
             }
             else if (_viewSegment.SelectedSegment == 3)
             {

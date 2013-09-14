@@ -7,11 +7,10 @@ namespace CodeHub
 {
     public static class Images
     {
-        public static UIImage Brick { get { return UIImage.FromBundle("/Images/brick"); } }
+        public static UIImage Merge { get { return UIImage.FromBundle("/Images/merge"); } }
         public static UIImage Language { get { return UIImage.FromBundle("/Images/language"); } }
         public static UIImage Webpage { get { return UIImage.FromBundle("/Images/webpage"); } }
         public static UIImage Repo { get { return UIImage.FromBundle("/Images/repo"); } }
-        public static UIImage RepoFollow { get { return UIImageHelper.FromFileAuto("Images/repo_follow"); } }
         public static UIImage Team { get { return UIImageHelper.FromFileAuto("Images/team"); } }
         public static UIImage Size { get { return UIImage.FromBundle("/Images/size"); } }
         public static UIImage Locked { get { return UIImage.FromBundle("/Images/locked"); } }
@@ -47,6 +46,7 @@ namespace CodeHub
         public static UIImage Notifications { get { return UIImage.FromBundle("/Images/notifications"); } }
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
         public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
+
 
         public static UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Controls/backbutton"); } }
         public static UIImage BackButtonLandscape { get { return UIImageHelper.FromFileAuto("Images/Controls/backbutton-landscape"); } }

@@ -184,7 +184,6 @@
     <Compile Include="Controllers\OrganizationEventsController.cs" />
     <Compile Include="Controllers\UserFollowingsController.cs" />
     <Compile Include="ViewControllers\UserFollowingsViewController.cs" />
-    <Compile Include="Controllers\BaseIssuesController.cs" />
     <Compile Include="Controllers\MyIssuesController.cs" />
     <Compile Include="ViewControllers\MyIssuesViewController.cs" />
     <Compile Include="Filters\Models\MyIssuesFilterModel.cs" />
@@ -204,6 +203,13 @@
       <DependentUpon>AccountTypeViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\GitHubAccount.cs" />
+    <Compile Include="ViewControllers\IssueEditViewController.cs" />
+    <Compile Include="ViewControllers\IssueMilestonesViewController.cs" />
+    <Compile Include="Controllers\IssueMilestonesController.cs" />
+    <Compile Include="ViewControllers\IssueAssigneesViewController.cs" />
+    <Compile Include="Controllers\RepositoryCollaboratorsController.cs" />
+    <Compile Include="Controllers\RepositoryLabelsController.cs" />
+    <Compile Include="ViewControllers\IssueLabelsViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -276,8 +282,6 @@
     <BundleResource Include="Images\pencil%402x.png" />
     <BundleResource Include="Images\priority.png" />
     <BundleResource Include="Images\priority%402x.png" />
-    <BundleResource Include="Images\repo_follow.png" />
-    <BundleResource Include="Images\repo_follow%402x.png" />
     <BundleResource Include="Images\repo.png" />
     <BundleResource Include="Images\repo%402x.png" />
     <BundleResource Include="Images\script.png" />
@@ -377,8 +381,6 @@
     <BundleResource Include="Images\public%402x.png" />
     <BundleResource Include="Images\notifications%402x.png" />
     <BundleResource Include="Images\notifications.png" />
-    <BundleResource Include="Images\brick.png" />
-    <BundleResource Include="Images\brick%402x.png" />
     <BundleResource Include="Images\comments.png" />
     <BundleResource Include="Images\comments%402x.png" />
     <BundleResource Include="Images\commit%402x.png" />
@@ -396,6 +398,8 @@
     <BundleResource Include="Images\Buttons\black_button%402x.png" />
     <BundleResource Include="Images\Buttons\grey_button.png" />
     <BundleResource Include="Images\Buttons\grey_button%402x.png" />
+    <BundleResource Include="Images\merge%402x.png" />
+    <BundleResource Include="Images\merge.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

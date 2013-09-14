@@ -9,6 +9,7 @@ namespace CodeHub.Filters.Models
 
         public PullRequestsFilterModel()
         {
+            IsOpen = true;
         }
 
         public override PullRequestsFilterModel Clone()

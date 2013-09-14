@@ -8,13 +8,13 @@ namespace CodeHub.Filters.ViewControllers
 {
     public class IssuesFilterViewController : FilterViewController
     {
-        private EntryElement _assignedTo;
-        private EntryElement _reportedBy;
-        private MultipleChoiceElement<IssuesFilterModel.StatusModel> _statusChoice;
-        private MultipleChoiceElement<IssuesFilterModel.KindModel> _kindChoice;
-        private MultipleChoiceElement<IssuesFilterModel.PriorityModel> _priorityChoice;
-        private EnumChoiceElement<IssuesFilterModel.Order> _orderby;
         private readonly IFilterController<IssuesFilterModel> _filterController;
+
+        private TrueFalseElement _open;
+        private EntryElement _labels;
+        private EnumChoiceElement<IssuesFilterModel.Sort> _sort;
+        private TrueFalseElement _asc;
+
 
         public IssuesFilterViewController(IFilterController<IssuesFilterModel> filterController)
         {
@@ -29,31 +29,27 @@ namespace CodeHub.Filters.ViewControllers
         private IssuesFilterModel CreateFilterModel()
         {
             var model = new IssuesFilterModel();
-            model.AssignedTo = _assignedTo.Value;
-            model.ReportedBy = _reportedBy.Value;
-            model.Status = _statusChoice.Obj;
-            model.Priority = _priorityChoice.Obj;
-            model.Kind = _kindChoice.Obj;
-            model.OrderBy = _orderby.Value;
+            model.Open = _open.Value;
+            model.Labels = _labels.Value;
+            model.SortType = _sort.Value;
+            model.Ascending = _asc.Value;
             return model;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            var issuesFilterModel = _filterController.Filter.Clone();
+            var model = _filterController.Filter.Clone();
 
             //Load the root
             var root = new RootElement(Title) {
                 new Section("Filter") {
-                    (_assignedTo = new InputElement("Assigned To", "Anybody", issuesFilterModel.AssignedTo) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
-                    (_reportedBy = new InputElement("Reported By", "Anybody", issuesFilterModel.ReportedBy) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
-                    (_kindChoice = CreateMultipleChoiceElement("Kind", issuesFilterModel.Kind)),
-                    (_statusChoice = CreateMultipleChoiceElement("Status", issuesFilterModel.Status)),
-                    (_priorityChoice = CreateMultipleChoiceElement("Priority", issuesFilterModel.Priority)),
+                    (_open = new TrueFalseElement("Open?", model.Open)),
+                    (_labels = new InputElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                 },
                 new Section("Order By") {
-                    (_orderby = CreateEnumElement("Field", issuesFilterModel.OrderBy)),
+                    (_sort = CreateEnumElement("Field", model.SortType)),
+                    (_asc = new TrueFalseElement("Ascending", model.Ascending))
                 },
                 new Section() {
                     new StyledStringElement("Save as Default", () =>{

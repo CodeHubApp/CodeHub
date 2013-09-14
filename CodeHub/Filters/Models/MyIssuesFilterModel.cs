@@ -23,7 +23,7 @@ namespace CodeHub.Filters.Models
             Ascending = false;
             Open = true;
             FilterType = Filter.All;
-            SortType = Sort.Created;
+            SortType = Sort.None;
         }
 
         /// <summary>
@@ -69,6 +69,7 @@ namespace CodeHub.Filters.Models
         
         public enum Sort : int
         {
+            None,
             Created,
             Updated,
             Comments
