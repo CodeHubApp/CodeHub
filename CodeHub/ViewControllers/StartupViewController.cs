@@ -34,18 +34,19 @@ namespace CodeHub.ViewControllers
             //If the user wanted to remember the account
             else
             {
-                try
-                {
-                    await Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this);
-                }
-                catch (Exception e)
-                {
-                    MonoTouch.Utilities.ShowAlert("Error".t(), e.Message, () => ShowAccountsAndSelectedUser(defaultAccount));
-                }
+                    try
+                    {
+                        await Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this);
+                    }
+                    catch (Exception e)
+                    {
+                        //Wow, what a surprise that there's issues using await and a catch here...
+                        MonoTouch.Utilities.ShowAlert("Error".t(), e.Message, () => ShowAccountsAndSelectedUser(defaultAccount));
+                    }
             }
         }
 
-        private void ShowAccountsAndSelectedUser(Account account)
+        private void ShowAccountsAndSelectedUser(GitHubAccount account)
         {
             var accountsController = new AccountsViewController();
             accountsController.NavigationItem.LeftBarButtonItem = null;
@@ -61,7 +62,7 @@ namespace CodeHub.ViewControllers
         /// If there isn't one, it'll just return null.
         /// </summary>
         /// <returns>The default account.</returns>
-        private Account GetDefaultAccount()
+        private GitHubAccount GetDefaultAccount()
         {
             var defaultAccount = Application.Accounts.GetDefault();
             if (defaultAccount == null)

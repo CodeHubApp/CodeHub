@@ -14,7 +14,7 @@ namespace CodeHub.ViewControllers
     public partial class LoginViewController : UIViewController
     {
         private bool _enterprise;
-        private Account _attemptedAccount;
+        private GitHubAccount _attemptedAccount;
 
         public LoginViewController(bool enterprise)
             : base("LoginViewController", null)
@@ -24,7 +24,7 @@ namespace CodeHub.ViewControllers
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
-        public LoginViewController(Account attemptedAccount)
+        public LoginViewController(GitHubAccount attemptedAccount)
             : this(attemptedAccount.Domain != null)
         {
             _attemptedAccount = attemptedAccount;
@@ -98,7 +98,7 @@ namespace CodeHub.ViewControllers
             };
             Password.ShouldReturn = delegate {
                 Password.ResignFirstResponder();
-                DoLogin();
+                InvokeOnMainThread(() => DoLogin());
                 return true;
             };
 

@@ -1,4 +1,5 @@
 using CodeHub.Data;
+using CodeFramework.Data;
 
 namespace CodeHub
 {
@@ -7,19 +8,14 @@ namespace CodeHub
     /// </summary>
     public static class Application
     {
+        public static readonly Accounts<GitHubAccount> Accounts = new Accounts<GitHubAccount>();
+
         public static GitHubSharp.Client Client { get; private set; }
 
-        public static Accounts Accounts { get; private set; }
-
-        public static Account Account
+        public static GitHubAccount Account
         {
-            get { return Accounts.ActiveAccount; }
-            set { Accounts.ActiveAccount = value; }
-        }
-
-        static Application()
-        {
-            Accounts = new Accounts(Database.Main);
+            get { return Accounts.ActiveAccount as GitHubAccount; }
+            set { Accounts.SetActiveAccount(value); }
         }
 
         public static void UnsetUser()
@@ -29,7 +25,7 @@ namespace CodeHub
             Accounts.SetDefault(null);
         }
 
-        public static void SetUser(Account account, GitHubSharp.Client client)
+        public static void SetUser(GitHubAccount account, GitHubSharp.Client client)
         {
             if (account == null)
             {
@@ -39,7 +35,7 @@ namespace CodeHub
                 return;
             }
 
-            Accounts.ActiveAccount = account;
+            Accounts.SetActiveAccount(account);
             Accounts.SetDefault(account);
 
             //Assign the client
@@ -54,7 +50,7 @@ namespace CodeHub
         /// it can just inherit both and be alright. Otherwise, i'd have to do a little bit of work to make
         /// the proxy class.
         /// </summary>
-        private class AppCache : CodeFramework.Data.WebCacheProvider, GitHubSharp.ICacheProvider
+        private class AppCache : CodeFramework.Cache.WebCacheProvider, GitHubSharp.ICacheProvider
         {
         }
     }

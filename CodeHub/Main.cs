@@ -41,6 +41,9 @@ namespace CodeHub
 			//Set the theme
 			SetTheme();
 
+            //Create the accounts holder
+            CodeFramework.Data.Accounts.Instance = Application.Accounts;
+
 			//Create the window
 			Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
@@ -125,10 +128,6 @@ namespace CodeHub
             //Remove everything from the cache
 //            if (Application.Client != null && Application.Client.CacheProvider != null)
 //                Application.Client.CacheProvider.DeleteAll();
-
-			//Pop back to the root view...
-//			if (Slideout != null && Slideout.TopView != null && Slideout.TopView.NavigationController != null)
-//				Slideout.TopView.NavigationController.PopToRootViewController(false);
 		}
 	}
 }

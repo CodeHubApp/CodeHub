@@ -94,7 +94,6 @@
     <Reference Include="GoogleAnalytics">
       <HintPath>..\CodeFramework\CodeFramework\lib\GoogleAnalytics.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -103,12 +102,9 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="Application.cs" />
-    <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\Database.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="Utils\Login.cs" />
-    <Compile Include="Data\Accounts.cs" />
     <Compile Include="ViewControllers\AboutViewController.cs" />
     <Compile Include="ViewControllers\AccountsViewController.cs" />
     <Compile Include="ViewControllers\BranchesViewController.cs" />
@@ -153,8 +149,6 @@
     <Compile Include="Filters\ViewControllers\IssuesFilterViewController.cs" />
     <Compile Include="Filters\ViewControllers\RepositoriesFilterViewController.cs" />
     <Compile Include="Filters\ViewControllers\SourceFilterViewController.cs" />
-    <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Controllers\OrganizationsController.cs" />
     <Compile Include="Controllers\GistsController.cs" />
     <Compile Include="ViewControllers\GistsViewController.cs" />
@@ -209,6 +203,7 @@
     <Compile Include="ViewControllers\Accounts\AccountTypeViewController.designer.cs">
       <DependentUpon>AccountTypeViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\GitHubAccount.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

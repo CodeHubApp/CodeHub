@@ -7,7 +7,7 @@ namespace CodeHub.ViewControllers
 {
 	public class SlideoutNavigationViewController : CodeFramework.Controllers.SlideoutNavigationController
 	{
-		private Account _previousUser;
+		private GitHubAccount _previousUser;
 
 		public override void ViewWillAppear(bool animated)
 		{

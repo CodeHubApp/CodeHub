@@ -29,12 +29,12 @@ namespace CodeHub.ViewControllers
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsViewController(Application.Account.Username)), Images.Event));
-            if (Application.Accounts.ActiveAccount.Organizations != null && !Application.Accounts.ActiveAccount.DontShowTeamEvents)
-                Application.Accounts.ActiveAccount.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
+            if (Application.Account.Organizations != null && !Application.Account.DontShowTeamEvents)
+                Application.Account.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-            repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoriesViewController(Application.Accounts.ActiveAccount.Username) { Title = "Owned" }), Images.Repo));
+            repoSection.Add(new MenuElement("Owned", () => NavPush(new RepositoriesViewController(Application.Account.Username) { Title = "Owned" }), Images.Repo));
             //repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
             repoSection.Add(new MenuElement("Starred", () => NavPush(new RepositoriesStarredViewController()), Images.Star));
             repoSection.Add(new MenuElement("Explore", () => NavPush(new RepositoriesExploreViewController()), Images.Explore));
@@ -58,7 +58,7 @@ namespace CodeHub.ViewControllers
                 root.Add(groupsTeamsSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => NavPush(new AccountGistsViewController(Application.Accounts.ActiveAccount.Username)), Images.Script));
+            gistsSection.Add(new MenuElement("My Gists", () => NavPush(new AccountGistsViewController(Application.Account.Username)), Images.Script));
             gistsSection.Add(new MenuElement("Starred", () => NavPush(new StarredGistsViewController()), Images.Star2));
             gistsSection.Add(new MenuElement("Public", () => NavPush(new PublicGistsViewController()), Images.Public));
             root.Add(gistsSection);

@@ -11,10 +11,10 @@ namespace CodeHub.Utils
 {
     public class Login
     {
-        public async static Task LoginAccount(string domain, string user, string pass, UIViewController ctrl)
+        public static async Task LoginAccount(string domain, string user, string pass, UIViewController ctrl)
         {
             //Fill these variables in during the proceeding try/catch
-            Account account;
+            GitHubAccount account;
             bool exists;
             string apiUrl = domain;
 
@@ -43,7 +43,7 @@ namespace CodeHub.Utils
                 account = Application.Accounts.Find(user);
                 exists = account != null;
                 if (!exists)
-                    account = new Account { Username = user, Password = pass };
+                    account = new GitHubAccount { Username = user, Password = pass };
 
                 var client = (apiUrl == null) ? new GitHubSharp.Client(user, pass) : new GitHubSharp.Client(user, pass, apiUrl);
                 client.Timeout = 30 * 1000;
@@ -62,6 +62,7 @@ namespace CodeHub.Utils
 
                 Application.SetUser(account, client);
                 TransitionToSlideout();
+
             }
             catch (StatusCodeException)
             {
