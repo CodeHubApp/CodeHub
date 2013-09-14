@@ -30,6 +30,12 @@ namespace CodeHub.Data
 		/// <value>The password.</value>
         public string Password { get; set; }
 
+        /// <summary>
+        /// Gets or sets the domain
+        /// </summary>
+        /// <value>The domain.</value>
+        public string Domain { get; set; }
+
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="Account"/> dont remember.
 		/// THIS HAS TO BE A NEGATIVE STATEMENT SINCE IT DEFAULTS TO 'FALSE' WHEN RETRIEVING A NULL VIA SQLITE

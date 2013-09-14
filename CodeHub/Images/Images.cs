@@ -76,6 +76,12 @@ namespace CodeHub
             public static UIImage GitHub { get { return UIImage.FromFile("Images/Logos/github.png"); } }
         }
 
+        public static class Buttons
+        {
+            public static UIImage BlackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/black_button"); } }
+            public static UIImage GreyButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/grey_button"); } }
+        }
+
 //        public static class Notifications
 //        {
 //            public static UIImage Commit { get { return UIImageHelper.FromFileAuto("Images/Notifications/commit"); } }

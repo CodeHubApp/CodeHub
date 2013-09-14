@@ -9,7 +9,7 @@ namespace CodeHub.Utils
 {
     public class Login
     {
-        public static void LoginAccount(string user, string pass, UIViewController ctrl, Action<Exception> error = null)
+        public static void LoginAccount(string domain, string user, string pass, UIViewController ctrl, Action<Exception> error = null)
         {
             //Does this user exist?
             var account = Application.Accounts.Find(user);
@@ -22,6 +22,7 @@ namespace CodeHub.Utils
                 var client = new GitHubSharp.Client(user, pass) { Timeout = 30 * 1000 };
                 var userInfo = client.AuthenticatedUser.GetInfo().Data;
 
+                account.Domain = domain;
                 account.Username = userInfo.Login;
                 account.AvatarUrl = userInfo.AvatarUrl;
                 account.Organizations = client.AuthenticatedUser.GetOrganizations().Data;

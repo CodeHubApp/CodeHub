@@ -123,7 +123,9 @@
     <Compile Include="ViewControllers\StartupViewController.cs" />
     <Compile Include="ViewControllers\TagsViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
-    <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs">
+      <DependentUpon>LoginViewController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\BranchesController.cs" />
     <Compile Include="Controllers\ChangesetController.cs" />
     <Compile Include="Controllers\ChangesetInfoController.cs" />
@@ -194,6 +196,10 @@
     <Compile Include="ViewControllers\PullRequestFilesViewController.cs" />
     <Compile Include="Controllers\PullRequestCommitsController.cs" />
     <Compile Include="ViewControllers\BaseIssuesViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountTypeViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountTypeViewController.designer.cs">
+      <DependentUpon>AccountTypeViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -237,6 +243,7 @@
   </ProjectExtensions>
   <ItemGroup>
     <InterfaceDefinition Include="ViewControllers\Accounts\LoginViewController.xib" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\AccountTypeViewController.xib" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Images\anonymous.png" />
@@ -381,6 +388,10 @@
     <BundleResource Include="Images\Controls\titlebar%402x.png" />
     <BundleResource Include="Images\Controls\bottombar%402x.png" />
     <BundleResource Include="Images\Controls\searchbar%402x.png" />
+    <BundleResource Include="Images\Buttons\black_button.png" />
+    <BundleResource Include="Images\Buttons\black_button%402x.png" />
+    <BundleResource Include="Images\Buttons\grey_button.png" />
+    <BundleResource Include="Images\Buttons\grey_button%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />

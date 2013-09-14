@@ -6,29 +6,28 @@ using MonoTouch;
 using CodeHub.Data;
 using CodeFramework.Views;
 using System.Linq;
+using System.Drawing;
+using MonoTouch.Foundation;
 
 namespace CodeHub.ViewControllers
 {
     public partial class LoginViewController : UIViewController
     {
-        public Action<string, string> Login;
+        private bool _enterprise;
+        private Account _attemptedAccount;
 
-        private string _username;
-
-        public string Username {
-            get { return _username; }
-            set {
-                _username = value;
-                if (User != null)
-                    User.Text = _username;
-            }
-        }
-
-        public LoginViewController()
+        public LoginViewController(bool enterprise)
             : base("LoginViewController", null)
         {
             Title = "Login".t();
+            _enterprise = enterprise;
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
+        }
+
+        public LoginViewController(Account attemptedAccount)
+            : this(attemptedAccount.Domain != null)
+        {
+            _attemptedAccount = attemptedAccount;
         }
 
         public override void ViewWillLayoutSubviews()
@@ -37,12 +36,9 @@ namespace CodeHub.ViewControllers
 
             try
             {
-                var backgroundImage = CreateRepeatingBackground();
-                if (backgroundImage != null)
-                {
-                    View.BackgroundColor = UIColor.FromPatternImage(backgroundImage);
-                    backgroundImage.Dispose();
-                }
+                var color = Utilities.CreateRepeatingBackground();
+                if (color != null)
+                    View.BackgroundColor = color;
             }
             catch (Exception e)
             {
@@ -50,46 +46,51 @@ namespace CodeHub.ViewControllers
             }
         }
 
-        private UIImage CreateRepeatingBackground()
-        {
-            UIImage bgImage = null;
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-            {
-                bgImage = UIImageHelper.FromFileAuto(MonoTouch.Utilities.IsTall ? "Default-568h" : "Default");
-            }
-            else
-            {
-                if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.Portrait || UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.PortraitUpsideDown)
-                    bgImage = UIImageHelper.FromFileAuto("Default-Portrait");
-                else
-                    bgImage = UIImageHelper.FromFileAuto("Default-Landscape");
-            }
-
-            if (bgImage == null)
-                return null;
-
-            UIGraphics.BeginImageContext(new System.Drawing.SizeF(40f, bgImage.Size.Height));
-            var ctx = UIGraphics.GetCurrentContext();
-            ctx.TranslateCTM (0, bgImage.Size.Height);
-            ctx.ScaleCTM (1f, -1f);
-
-            ctx.DrawImage(new System.Drawing.RectangleF(-10, 0, bgImage.Size.Width, bgImage.Size.Height), bgImage.CGImage);
-
-            var img = UIGraphics.GetImageFromCurrentImageContext();
-            UIGraphics.EndImageContext();
-            bgImage.Dispose();
-            bgImage = null;
-
-            return img;
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             Logo.Image = Images.Logos.GitHub;
-            if (Username != null)
-                User.Text = Username;
+
+            if (_enterprise)
+            {
+                LoginButton.SetTitleColor(UIColor.White, UIControlState.Normal);
+                LoginButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
+            }
+            else
+            {
+                LoginButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
+
+                //Hide the domain, slide everything up
+                Domain.Hidden = true;
+                var f = User.Frame;
+                f.Y -= 39;
+                User.Frame = f;
+
+                var p = Password.Frame;
+                p.Y -= 39;
+                Password.Frame = p;
+
+                var l = LoginButton.Frame;
+                l.Y -= 39;
+                LoginButton.Frame = l;
+            }
+
+            //Set some generic shadowing
+            LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
+            LoginButton.Layer.ShadowOffset = new SizeF(0, 1);
+            LoginButton.Layer.ShadowOpacity = 0.3f;
+
+            if (_attemptedAccount != null)
+            {
+                Domain.Text = _attemptedAccount.Domain;
+                User.Text = _attemptedAccount.Username;
+            }
+
+            Domain.ShouldReturn = delegate {
+                User.BecomeFirstResponder();
+                return true;
+            };
 
             User.ShouldReturn = delegate {
                 Password.BecomeFirstResponder();
@@ -97,48 +98,87 @@ namespace CodeHub.ViewControllers
             };
             Password.ShouldReturn = delegate {
                 Password.ResignFirstResponder();
-
-                //Run this in another thread
-                Login(User.Text, Password.Text);
+                DoLogin();
                 return true;
             };
+
+            LoginButton.TouchUpInside += (object sender, EventArgs e) => DoLogin();
+            ScrollView.ContentSize = new SizeF(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
-        [Obsolete("Deprecated in iOS 6.0")]
-        public override void ViewDidUnload()
+        private void DoLogin()
         {
-            base.ViewDidUnload();
-
-            // Clear any references to subviews of the main view in order to
-            // allow the Garbage Collector to collect them sooner.
-            //
-            // e.g. myOutlet.Dispose (); myOutlet = null;
-
-            ReleaseDesignerOutlets();
+            Utils.Login.LoginAccount(_enterprise ? Domain.Text : null, User.Text, Password.Text, this);
         }
 
-        public override bool ShouldAutorotate()
+        NSObject hideNotification, showNotification;
+        public override void ViewWillAppear(bool animated)
         {
-            return true;
+            base.ViewWillAppear(animated);
+            hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
+            showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
         }
 
-        public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+        public override void ViewWillDisappear(bool animated)
         {
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-                return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
-            return UIInterfaceOrientationMask.All;
+            base.ViewWillDisappear(animated);
+            NSNotificationCenter.DefaultCenter.RemoveObserver(hideNotification);
+            NSNotificationCenter.DefaultCenter.RemoveObserver(showNotification);
         }
 
-        [Obsolete]
-        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+        private void OnKeyboardNotification (NSNotification notification)
         {
-            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-            {
-                if (toInterfaceOrientation == UIInterfaceOrientation.Portrait || toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown)
-                    return true;
-                return false;
+            if (IsViewLoaded) {
+
+                //Check if the keyboard is becoming visible
+                bool visible = notification.Name == UIKeyboard.WillShowNotification;
+
+                //Start an animation, using values from the keyboard
+                UIView.BeginAnimations ("AnimateForKeyboard");
+                UIView.SetAnimationBeginsFromCurrentState (true);
+                UIView.SetAnimationDuration (UIKeyboard.AnimationDurationFromNotification (notification));
+                UIView.SetAnimationCurve ((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification (notification));
+
+                //Pass the notification, calculating keyboard height, etc.
+                bool landscape = InterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || InterfaceOrientation == UIInterfaceOrientation.LandscapeRight;
+                if (visible) {
+                    var keyboardFrame = UIKeyboard.FrameEndFromNotification (notification);
+
+                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
+                } else {
+                    var keyboardFrame = UIKeyboard.FrameBeginFromNotification (notification);
+
+                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
+                }
+
+                //Commit the animation
+                UIView.CommitAnimations (); 
             }
-            return true;
+        }
+
+        /// <summary>
+        /// Override this method to apply custom logic when the keyboard is shown/hidden
+        /// </summary>
+        /// <param name='visible'>
+        /// If the keyboard is visible
+        /// </param>
+        /// <param name='keyboardHeight'>
+        /// Calculated height of the keyboard (width not generally needed here)
+        /// </param>
+        protected virtual void OnKeyboardChanged (bool visible, float keyboardHeight)
+        {
+            if (visible)
+            {
+                var frame = ScrollView.Frame;
+                frame.Height -= keyboardHeight;
+                ScrollView.Frame = frame;
+            }
+            else
+            {
+                var frame = ScrollView.Frame;
+                frame.Height = View.Bounds.Height;
+                ScrollView.Frame = frame;
+            }
         }
     }
 }

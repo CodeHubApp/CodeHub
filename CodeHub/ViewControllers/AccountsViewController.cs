@@ -49,7 +49,6 @@ namespace CodeHub.ViewControllers
             }
         }
 
-
         private void AccountSelected(Account account)
         {
             var a = account as Account;
@@ -61,7 +60,7 @@ namespace CodeHub.ViewControllers
             //Change the user!
             else
             {
-                Utils.Login.LoginAccount(account.Username, a.Password, this, (ex) => {
+                Utils.Login.LoginAccount(account.Domain, account.Username, a.Password, this, (ex) => {
                     DoLoginStuff(account.Username);
                 });
             }
@@ -69,13 +68,8 @@ namespace CodeHub.ViewControllers
 
         private void DoLoginStuff(string user)
         {
-            var loginController = new LoginViewController();
-            if (user != null)
-                loginController.Username = user;
-            loginController.Login = (username, password) => {
-                Utils.Login.LoginAccount(username, password, loginController);
-            };
-            NavigationController.PushViewController(loginController, true);
+            var accountTypeController = new AccountTypeViewController();
+            NavigationController.PushViewController(accountTypeController, true);
         }
     }
 }

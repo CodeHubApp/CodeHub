@@ -1,11 +1,11 @@
 // WARNING
 //
 // This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the Xcode designer. If it is removed, they will be lost.
+// actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-
 using MonoTouch.Foundation;
+using System.CodeDom.Compiler;
 
 namespace CodeHub.ViewControllers
 {
@@ -13,19 +13,33 @@ namespace CodeHub.ViewControllers
 	partial class LoginViewController
 	{
 		[Outlet]
-		protected virtual MonoTouch.UIKit.UITextField User { get; set; }
+		MonoTouch.UIKit.UITextField Domain { get; set; }
 
 		[Outlet]
-		protected virtual MonoTouch.UIKit.UITextField Password { get; set; }
+		MonoTouch.UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
-		protected virtual MonoTouch.UIKit.UIImageView Logo { get; set; }
+		MonoTouch.UIKit.UIImageView Logo { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UITextField Password { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UIScrollView ScrollView { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UITextField User { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (User != null) {
-				User.Dispose ();
-				User = null;
+			if (LoginButton != null) {
+				LoginButton.Dispose ();
+				LoginButton = null;
+			}
+
+			if (Logo != null) {
+				Logo.Dispose ();
+				Logo = null;
 			}
 
 			if (Password != null) {
@@ -33,9 +47,19 @@ namespace CodeHub.ViewControllers
 				Password = null;
 			}
 
-			if (Logo != null) {
-				Logo.Dispose ();
-				Logo = null;
+			if (ScrollView != null) {
+				ScrollView.Dispose ();
+				ScrollView = null;
+			}
+
+			if (User != null) {
+				User.Dispose ();
+				User = null;
+			}
+
+			if (Domain != null) {
+				Domain.Dispose ();
+				Domain = null;
 			}
 		}
 	}

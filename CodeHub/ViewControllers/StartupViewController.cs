@@ -19,12 +19,8 @@ namespace CodeHub.ViewControllers
             //There's no accounts... or something bad has happened to the default
             if (Application.Accounts.Count == 0 || defaultAccount == null)
             {
-                var login = new LoginViewController();
+                var login = new AccountTypeViewController();
                 login.NavigationItem.LeftBarButtonItem = null;
-                login.Login = (username, password) => {
-                    Utils.Login.LoginAccount(username, password, login);
-                };
-
                 var navCtrl = new CustomNavigationController(this, login);
                 Transitions.TransitionToController(navCtrl);
                 return;
@@ -33,25 +29,22 @@ namespace CodeHub.ViewControllers
             //Don't remember, prompt for password
             if (defaultAccount.DontRemember)
             {
-                ShowAccountsAndSelectedUser(defaultAccount.Username);
+                ShowAccountsAndSelectedUser(defaultAccount);
             }
             //If the user wanted to remember the account
             else
             {
-                Utils.Login.LoginAccount(defaultAccount.Username, defaultAccount.Password, this, (ex) => {
-                    ShowAccountsAndSelectedUser(defaultAccount.Username);
+                Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this, (ex) => {
+                    ShowAccountsAndSelectedUser(defaultAccount);
                 });
             }
         }
 
-        private void ShowAccountsAndSelectedUser(string user)
+        private void ShowAccountsAndSelectedUser(Account account)
         {
             var accountsController = new AccountsViewController();
             accountsController.NavigationItem.LeftBarButtonItem = null;
-            var login = new LoginViewController { Username = user };
-            login.Login = (username, password) => {
-                Utils.Login.LoginAccount(username, password, login);
-            };
+            var login = new LoginViewController(account);
 
             var navigationController = new CustomNavigationController(this, accountsController);
             navigationController.PushViewController(login, false);
