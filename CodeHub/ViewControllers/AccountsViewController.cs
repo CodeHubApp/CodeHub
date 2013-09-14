@@ -3,6 +3,7 @@ using CodeHub.Data;
 using CodeFramework.Controllers;
 using CodeFramework.Data;
 using System.Collections.Generic;
+using System;
 
 namespace CodeHub.ViewControllers
 {
@@ -32,9 +33,8 @@ namespace CodeHub.ViewControllers
 
         protected override void AddAccountClicked()
         {
-            DoLoginStuff(null);
+            NavigationController.PushViewController(new AccountTypeViewController(), true);
         }
-
 
         protected override void AccountDeleted(IAccount account)
         {
@@ -49,27 +49,27 @@ namespace CodeHub.ViewControllers
             }
         }
 
-        private void AccountSelected(Account account)
+        private async void AccountSelected(Account account)
         {
             var a = account as Account;
             //If the account doesn't remember the password we need to prompt
             if (a.DontRemember)
             {
-                DoLoginStuff(account.Username);
+                NavigationController.PushViewController(new LoginViewController(account), true);
             }
             //Change the user!
             else
             {
-                Utils.Login.LoginAccount(account.Domain, account.Username, a.Password, this, (ex) => {
-                    DoLoginStuff(account.Username);
-                });
+                try
+                {
+                    await Utils.Login.LoginAccount(account.Domain, account.Username, a.Password, this);
+                }
+                catch (Exception e)
+                {
+                    MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                    NavigationController.PushViewController(new LoginViewController(account), true);
+                }
             }
-        }
-
-        private void DoLoginStuff(string user)
-        {
-            var accountTypeController = new AccountTypeViewController();
-            NavigationController.PushViewController(accountTypeController, true);
         }
     }
 }

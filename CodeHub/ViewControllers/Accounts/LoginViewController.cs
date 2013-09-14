@@ -106,9 +106,16 @@ namespace CodeHub.ViewControllers
             ScrollView.ContentSize = new SizeF(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
-        private void DoLogin()
+        private async void DoLogin()
         {
-            Utils.Login.LoginAccount(_enterprise ? Domain.Text : null, User.Text, Password.Text, this);
+            try
+            {
+                await Utils.Login.LoginAccount(_enterprise ? Domain.Text : null, User.Text, Password.Text, this);
+            }
+            catch (Exception e)
+            {
+                MonoTouch.Utilities.ShowAlert("Error".t(), e.Message);
+            }
         }
 
         NSObject hideNotification, showNotification;

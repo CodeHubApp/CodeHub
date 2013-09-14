@@ -4,28 +4,44 @@ using CodeFramework.Controllers;
 using MonoTouch;
 using CodeFramework.Utils;
 using CodeHub.Data;
+using GitHubSharp;
+using System.Threading.Tasks;
 
 namespace CodeHub.Utils
 {
     public class Login
     {
-        public static void LoginAccount(string domain, string user, string pass, UIViewController ctrl, Action<Exception> error = null)
+        public async static Task LoginAccount(string domain, string user, string pass, UIViewController ctrl)
         {
-            //Does this user exist?
-            var account = Application.Accounts.Find(user);
-            var exists = account != null;
-            if (!exists)
-                account = new Account { Username = user, Password = pass };
+            //Fill these variables in during the proceeding try/catch
+            Account account;
+            bool exists;
 
-            ctrl.DoWork("Logging in...", () => {
+            try
+            {
+                //Make some valid checks
+                if (string.IsNullOrEmpty(user))
+                    throw new ArgumentException("Username is invalid".t());
+                if (string.IsNullOrEmpty(pass))
+                    throw new ArgumentException("Password is invalid".t());
+                if (domain != null && !Uri.IsWellFormedUriString(domain, UriKind.Absolute))
+                    throw new ArgumentException("Domain is invalid".t());
 
-                var client = new GitHubSharp.Client(user, pass) { Timeout = 30 * 1000 };
-                var userInfo = client.AuthenticatedUser.GetInfo().Data;
+                //Does this user exist?
+                account = Application.Accounts.Find(user);
+                exists = account != null;
+                if (!exists)
+                    account = new Account { Username = user, Password = pass };
 
-                account.Domain = domain;
-                account.Username = userInfo.Login;
-                account.AvatarUrl = userInfo.AvatarUrl;
-                account.Organizations = client.AuthenticatedUser.GetOrganizations().Data;
+                var client = (domain == null) ? new GitHubSharp.Client(user, pass) : new GitHubSharp.Client(user, pass, domain);
+                client.Timeout = 30 * 1000;
+
+                await ctrl.DoWorkAsync("Logging in...", () => {
+                    var userInfo = client.AuthenticatedUser.GetInfo().Data;
+                    account.Domain = domain;
+                    account.Username = userInfo.Login;
+                    account.AvatarUrl = userInfo.AvatarUrl;
+                });
 
                 if (exists)
                     Application.Accounts.Update(account);
@@ -33,15 +49,12 @@ namespace CodeHub.Utils
                     Application.Accounts.Insert(account);
 
                 Application.SetUser(account, client);
-                ctrl.InvokeOnMainThread(TransitionToSlideout);
-
-            }, ex => {
-                //If there is a login failure, unset the user
-                Application.UnsetUser();
-                Utilities.ShowAlert("Unable to Authenticate", "Unable to login as user " + account.Username + ". Please check your credentials and try again. Remember, credentials are case sensitive!");
-                if (error != null)
-                    error(ex);
-            });
+                TransitionToSlideout();
+            }
+            catch (StatusCodeException)
+            {
+                throw new Exception("Unable to login as user " + user + ". Please check your credentials and try again.");
+            }
         }
 
         private static void TransitionToSlideout()

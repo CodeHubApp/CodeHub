@@ -12,7 +12,7 @@ namespace CodeHub.ViewControllers
         /// <summary>
         /// Processes the accounts.
         /// </summary>
-        protected override void ProcessAccounts()
+        protected async override void ProcessAccounts()
         {
             var defaultAccount = GetDefaultAccount();
 
@@ -34,9 +34,14 @@ namespace CodeHub.ViewControllers
             //If the user wanted to remember the account
             else
             {
-                Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this, (ex) => {
-                    ShowAccountsAndSelectedUser(defaultAccount);
-                });
+                try
+                {
+                    await Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this);
+                }
+                catch (Exception e)
+                {
+                    MonoTouch.Utilities.ShowAlert("Error".t(), e.Message, () => ShowAccountsAndSelectedUser(defaultAccount));
+                }
             }
         }
 
