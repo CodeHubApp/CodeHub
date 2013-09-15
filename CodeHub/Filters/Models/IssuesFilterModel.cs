@@ -48,15 +48,6 @@ namespace CodeHub.Filters.Models
         }
 
         /// <summary>
-        /// Predefined 'All' filter
-        /// </summary>
-        /// <returns>The all filter.</returns>
-        public static IssuesFilterModel CreateAllFilter()
-        {
-            return new IssuesFilterModel();
-        }
-
-        /// <summary>
         /// Predefined 'Mine' filter
         /// </summary>
         /// <returns>The mine filter.</returns>

@@ -11,9 +11,9 @@ namespace CodeHub.ViewControllers
 	{
 		public OrganizationsViewController(string username) 
 		{
-            Title = "Groups".t();
-            SearchPlaceholder = "Search Groups".t();
-            NoItemsText = "No Groups".t();
+            Title = "Organizations".t();
+            SearchPlaceholder = "Search Organizations".t();
+            NoItemsText = "No Organizations".t();
             Controller = new OrganizationsController(this, username);
 		}
 

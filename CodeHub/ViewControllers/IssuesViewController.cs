@@ -37,7 +37,7 @@ namespace CodeHub.ViewControllers
         {
             base.ViewDidLoad();
 
-            _viewSegment = new UISegmentedControl(new string[] { "All".t(), "Open".t(), "Mine".t(), "Custom".t() });
+            _viewSegment = new UISegmentedControl(new string[] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() });
             _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
@@ -61,9 +61,9 @@ namespace CodeHub.ViewControllers
             _viewSegment.ValueChanged -= SegmentValueChanged;
 
             //Select which one is currently selected
-            if (Controller.Filter.Equals(IssuesFilterModel.CreateAllFilter()))
+            if (Controller.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
                 _viewSegment.SelectedSegment = 0;
-            else if (Controller.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
+            else if (Controller.Filter.Equals(IssuesFilterModel.CreateClosedFilter()))
                 _viewSegment.SelectedSegment = 1;
             else if (Controller.Filter.Equals(IssuesFilterModel.CreateMineFilter(Application.Account.Username)))
                 _viewSegment.SelectedSegment = 2;
@@ -77,11 +77,11 @@ namespace CodeHub.ViewControllers
         {
             if (_viewSegment.SelectedSegment == 0)
             {
-                Controller.ApplyFilter(IssuesFilterModel.CreateAllFilter(), true, false);
+                Controller.ApplyFilter(IssuesFilterModel.CreateOpenFilter(), true, false);
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
-                Controller.ApplyFilter(IssuesFilterModel.CreateOpenFilter(), true, false);
+                Controller.ApplyFilter(IssuesFilterModel.CreateClosedFilter(), true, false);
             }
             else if (_viewSegment.SelectedSegment == 2)
             {

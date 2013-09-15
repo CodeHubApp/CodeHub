@@ -121,7 +121,6 @@
     <Compile Include="ViewControllers\RepoEventsViewController.cs" />
     <Compile Include="ViewControllers\RepositoriesViewController.cs" />
     <Compile Include="ViewControllers\SettingsViewController.cs" />
-    <Compile Include="ViewControllers\SingleItemSelectViewController.cs" />
     <Compile Include="ViewControllers\SlideoutNavigationViewController.cs" />
     <Compile Include="ViewControllers\SourceInfoViewController.cs" />
     <Compile Include="ViewControllers\SourceViewController.cs" />
