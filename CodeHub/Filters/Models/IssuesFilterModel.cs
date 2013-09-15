@@ -66,7 +66,6 @@ namespace CodeHub.Filters.Models
             return new IssuesFilterModel { Assignee = username, Open = true };
         }
 
-
         public override IssuesFilterModel Clone()
         {
             return (IssuesFilterModel)this.MemberwiseClone();
@@ -81,14 +80,14 @@ namespace CodeHub.Filters.Models
             if (obj.GetType() != typeof(IssuesFilterModel))
                 return false;
             IssuesFilterModel other = (IssuesFilterModel)obj;
-            return Ascending == other.Ascending && Labels == other.Labels && Open == other.Open && Since == other.Since && SortType == other.SortType;
+            return Ascending == other.Ascending && Labels == other.Labels && Open == other.Open && Since == other.Since && SortType == other.SortType && Mentioned == other.Mentioned && Creator == other.Creator && Assignee == other.Assignee && Milestone == other.Milestone;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Ascending.GetHashCode() ^ (Labels != null ? Labels.GetHashCode() : 0) ^ Open.GetHashCode() ^ Since.GetHashCode() ^ SortType.GetHashCode();
+                return Ascending.GetHashCode() ^ (Labels != null ? Labels.GetHashCode() : 0) ^ Open.GetHashCode() ^ Since.GetHashCode() ^ SortType.GetHashCode() ^ (Mentioned != null ? Mentioned.GetHashCode() : 0) ^ (Creator != null ? Creator.GetHashCode() : 0) ^ (Assignee != null ? Assignee.GetHashCode() : 0) ^ (Milestone != null ? Milestone.GetHashCode() : 0);
             }
         }
 

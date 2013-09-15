@@ -11,10 +11,9 @@ namespace CodeHub.Filters.ViewControllers
         private readonly IFilterController<IssuesFilterModel> _filterController;
 
         private TrueFalseElement _open;
-        private EntryElement _labels;
+        private EntryElement _labels, _mentioned, _creator, _assignee;
         private EnumChoiceElement<IssuesFilterModel.Sort> _sort;
         private TrueFalseElement _asc;
-
 
         public IssuesFilterViewController(IFilterController<IssuesFilterModel> filterController)
         {
@@ -33,6 +32,10 @@ namespace CodeHub.Filters.ViewControllers
             model.Labels = _labels.Value;
             model.SortType = _sort.Value;
             model.Ascending = _asc.Value;
+            model.Mentioned = _mentioned.Value;
+            model.Creator = _creator.Value;
+            model.Assignee = _assignee.Value;
+            //model.Milestone = _milestone.Value;
             return model;
         }
 
@@ -46,6 +49,9 @@ namespace CodeHub.Filters.ViewControllers
                 new Section("Filter") {
                     (_open = new TrueFalseElement("Open?", model.Open)),
                     (_labels = new InputElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
+                    (_mentioned = new InputElement("Mentioned", "User", model.Mentioned) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
+                    (_creator = new InputElement("Creator", "User", model.Creator) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
+                    (_assignee = new InputElement("Assignee", "User", model.Assignee) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                 },
                 new Section("Order By") {
                     (_sort = CreateEnumElement("Field", model.SortType)),

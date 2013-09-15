@@ -82,8 +82,6 @@ namespace CodeHub
         }
 
         public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
-        public UIColor WebViewButtonsColor { get { return UIColor.FromRGB(127, 125, 125); } }
-
 
         public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
         public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
@@ -93,5 +91,7 @@ namespace CodeHub
         public UIColor RepositoryTitleColor { get { return MainTitleColor; } }
         public UIColor HeaderViewTitleColor { get { return MainTitleColor; } }
         public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
+
+        public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
     }
 }

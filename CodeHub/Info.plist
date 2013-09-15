@@ -25,8 +25,6 @@
 	<string>5.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>CodeHub</string>
-	<key>CFBundleIdentifier</key>
-	<string>codehub</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleIconFiles</key>
@@ -42,5 +40,7 @@
 	</array>
 	<key>UIPrerenderedIcon</key>
 	<true/>
+	<key>CFBundleIdentifier</key>
+	<string>com.dillonbuchanan.codehub</string>
 </dict>
 </plist>

@@ -39,15 +39,12 @@ namespace CodeHub.ViewControllers
             Controller = new IssueInfoController(this, user, slug, id);
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => {
-//                var m = Controller.Model;
-//                var editController = new IssueEditViewController {
-//                    ExistingIssue = m.Issue,
-//                    Username = User,
-//                    RepoSlug = Slug,
-//                    Title = "Edit Issue",
-//                    Success = EditingComplete,
-//                };
-//                NavigationController.PushViewController(editController, true);
+                var editController = new IssueEditViewController(Controller.User, Controller.Slug) {
+                    ExistingIssue = Controller.Model.Issue,
+                    Title = "Edit Issue",
+                    Success = EditingComplete,
+                };
+                NavigationController.PushViewController(editController, true);
             }));
             NavigationItem.RightBarButtonItem.Enabled = false;
 

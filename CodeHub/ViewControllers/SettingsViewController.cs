@@ -31,22 +31,22 @@ namespace CodeHub.ViewControllers
             });
 
             root.Add(new Section(string.Empty, "If enabled, your teams will be shown in the CodeHub slideout menu under Events".t()) {
-                new TrueFalseElement("Show Teams in Events".t(), !currentAccount.DontShowTeamEvents, (e) => { 
-                    currentAccount.DontShowTeamEvents = !e.Value; 
+                new TrueFalseElement("Show Organizations in Events".t(), currentAccount.ShowOrganizationsInEvents, (e) => { 
+                    currentAccount.ShowOrganizationsInEvents = e.Value; 
                     Application.Accounts.Update(currentAccount);
                 })
             });
 
-            root.Add(new Section(string.Empty, "If enabled, your teams and groups will be listed under Collaborations".t()) {
-                new TrueFalseElement("List Collaborations".t(), !currentAccount.DontExpandTeamsAndGroups, (e) => { 
-                    currentAccount.DontExpandTeamsAndGroups = !e.Value; 
+            root.Add(new Section(string.Empty, "If enabled, every organization will be listed under Organizations".t()) {
+                new TrueFalseElement("List Organizations".t(), currentAccount.ExpandOrganizations, (e) => { 
+                    currentAccount.ExpandOrganizations = e.Value; 
                     Application.Accounts.Update(currentAccount);
                 })
             });
 
             root.Add(new Section(string.Empty, "If enabled, repository descriptions will be shown in the list of repositories".t()) {
-                new TrueFalseElement("Show Repo Descriptions".t(), !currentAccount.HideRepositoryDescriptionInList, (e) => { 
-                    currentAccount.HideRepositoryDescriptionInList = !e.Value; 
+                new TrueFalseElement("Show Repo Descriptions".t(), currentAccount.ShowRepositoryDescriptionInList, (e) => { 
+                    currentAccount.ShowRepositoryDescriptionInList = e.Value; 
                     Application.Accounts.Update(currentAccount);
                 })
             });

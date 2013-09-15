@@ -29,7 +29,7 @@ namespace CodeHub.ViewControllers
 
             var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
             eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new EventsViewController(Application.Account.Username)), Images.Event));
-            if (Application.Account.Organizations != null && !Application.Account.DontShowTeamEvents)
+            if (Application.Account.Organizations != null && Application.Account.ShowOrganizationsInEvents)
                 Application.Account.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
             root.Add(eventsSection);
 
@@ -48,14 +48,15 @@ namespace CodeHub.ViewControllers
                 root.Add(pinnedRepoSection);
             }
 
-            var groupsTeamsSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
-            groupsTeamsSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Group));
-            //if (Application.Accounts.ActiveAccount.Organizations != null)
-                //Application.Accounts.ActiveAccount.Organizations.ForEach(x => groupsTeamsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationInfoViewController(x.Login)), Images.Team)));
+            var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
+            if (Application.Accounts.ActiveAccount.Organizations != null && Application.Account.ExpandOrganizations)
+                Application.Accounts.ActiveAccount.Organizations.ForEach(x => orgSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationViewController(x.Login)), Images.Team)));
+            else
+                orgSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Group));
 
             //There should be atleast 1 thing...
-            if (groupsTeamsSection.Elements.Count > 0)
-                root.Add(groupsTeamsSection);
+            if (orgSection.Elements.Count > 0)
+                root.Add(orgSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
             gistsSection.Add(new MenuElement("My Gists", () => NavPush(new AccountGistsViewController(Application.Account.Username)), Images.Script));
@@ -89,26 +90,32 @@ namespace CodeHub.ViewControllers
             Transitions.Transition(nav, UIViewAnimationOptions.TransitionFlipFromLeft);
         }
 
-        public override void ViewDidLoad()
+        private bool _extrasLoaded = false;
+        public override void ViewWillAppear(bool animated)
         {
-            ProfileButton.Uri = new System.Uri(Application.Account.AvatarUrl);
+            base.ViewWillAppear(animated);
 
-            //Must be in the middle
-            base.ViewDidLoad();
-
-            //Load optional stuff
-            LoadExtras();
+            if (_extrasLoaded == false)
+            {
+                LoadExtras();
+                _extrasLoaded = true;
+            }
         }
 
         private void LoadExtras()
         {
+            ProfileButton.Uri = new System.Uri(Application.Account.AvatarUrl);
+
             this.DoWorkNoHud(() => {
                 //Don't bother saving the result. This get's cached in memory so there's no reason to save it twice. Just save the number of entires
                 Application.Account.Notifications = Application.Client.Notifications.GetAll().Data.Count;
                 _notifications.NotificationNumber = Application.Account.Notifications;
-                InvokeOnMainThread(() => {
-                    ReloadData();
-                });
+                InvokeOnMainThread(() => Root.Reload(_notifications, UITableViewRowAnimation.None));
+            });
+
+            this.DoWorkNoHud(() => {
+                Application.Account.Organizations = Application.Client.AuthenticatedUser.GetOrganizations().Data;
+                InvokeOnMainThread(() => CreateMenuRoot());
             });
         }
     }

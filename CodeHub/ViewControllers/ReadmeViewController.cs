@@ -24,10 +24,6 @@ namespace CodeHub.ViewControllers
             _slug = slug;
             Title = "Readme";
             Web.ScalesPageToFit = true;
-
-            BackButton.TintColor = Theme.CurrentTheme.WebViewButtonsColor;
-            ForwardButton.TintColor = Theme.CurrentTheme.WebViewButtonsColor;
-            RefreshButton.TintColor = Theme.CurrentTheme.WebViewButtonsColor;
         }
 
         private string RequestAndSave(bool forceInvalidation)

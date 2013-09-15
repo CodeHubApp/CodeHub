@@ -18,7 +18,6 @@ namespace CodeHub.Controllers
         {
             User = user;
             Slug = slug;
-
             Filter = Application.Account.GetFilter<IssuesFilterModel>(this);
         }
 
@@ -26,10 +25,14 @@ namespace CodeHub.Controllers
         {
             string direction = Filter.Ascending ? "asc" : "desc";
             string state = Filter.Open ? "open" : "closed";
-            string sort = Filter.SortType.ToString().ToLower();
+            string sort = Filter.SortType == IssuesFilterModel.Sort.None ? null : Filter.SortType.ToString().ToLower();
             string labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
+            string assignee = string.IsNullOrEmpty(Filter.Assignee) ? null : Filter.Assignee;
+            string creator = string.IsNullOrEmpty(Filter.Creator) ? null : Filter.Creator;
+            string mentioned = string.IsNullOrEmpty(Filter.Mentioned) ? null : Filter.Mentioned;
 
-            var response = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(force, sort: sort, labels: labels, state: state, direction: direction);
+            var response = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(force, sort: sort, labels: labels, state: state, direction: direction, 
+                                                                                           assignee: assignee, creator: creator, mentioned: mentioned);
             Model = new ListModel<IssueModel> { Data = response.Data, More = this.CreateMore(response) };
         }
 
@@ -53,38 +56,26 @@ namespace CodeHub.Controllers
 
         protected override List<IGrouping<string, IssueModel>> GroupModel(List<IssueModel> model, IssuesFilterModel filter)
         {
-            //            var order = (IssuesFilterModel.Order)Filter.OrderBy;
-            //            if (order == IssuesFilterModel.Order.Status)
-            //            {
-            //                return model.GroupBy(x => x.Status).ToList();
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Priority)
-            //            {
-            //                return model.GroupBy(x => x.Priority).ToList();
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Utc_Last_Updated)
-            //            {
-            //                var a = model.OrderByDescending(x => x.UtcLastUpdated).GroupBy(x => IntegerCeilings.First(r => r > x.UtcLastUpdated.TotalDaysAgo()));
-            //                return CreateNumberedGroup(a, "Days Ago", "Updated");
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Created_On)
-            //            {
-            //                var a = model.OrderByDescending(x => x.UtcCreatedOn).GroupBy(x => IntegerCeilings.First(r => r > x.UtcCreatedOn.TotalDaysAgo()));
-            //                return CreateNumberedGroup(a, "Days Ago", "Created");
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Version)
-            //            {
-            //                return model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Version)) ? x.Metadata.Version : "No Version").ToList();
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Component)
-            //            {
-            //                return model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Component)) ? x.Metadata.Component : "No Component").ToList();
-            //            }
-            //            else if (order == IssuesFilterModel.Order.Milestone)
-            //            {
-            //                return model.GroupBy(x => (x.Metadata != null && !string.IsNullOrEmpty(x.Metadata.Milestone)) ? x.Metadata.Milestone : "No Milestone").ToList();
-            //            }
-            //
+            var order = filter.SortType;
+            if (order == IssuesFilterModel.Sort.Comments)
+            {
+                var a = filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
+                var g = a.GroupBy(x => IntegerCeilings.First(r => r > x.Comments)).ToList();
+                return CreateNumberedGroup(g, "Comments");
+            }
+            else if (order == IssuesFilterModel.Sort.Updated)
+            {
+                var a = filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
+                var g = a.GroupBy(x => IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
+                return CreateNumberedGroup(g, "Days Ago", "Updated");
+            }
+            else if (order == IssuesFilterModel.Sort.Created)
+            {
+                var a = filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
+                var g = a.GroupBy(x => IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
+                return CreateNumberedGroup(g, "Days Ago", "Created");
+            }
+
             return null;
         }
 

@@ -20,7 +20,7 @@ namespace CodeHub.Controllers
             string filter = Filter.FilterType.ToString().ToLower();
             string direction = Filter.Ascending ? "asc" : "desc";
             string state = Filter.Open ? "open" : "closed";
-            string sort = Filter.SortType.ToString().ToLower();
+            string sort = Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Filter.SortType.ToString().ToLower();
             string labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
 
             var response = Application.Client.AuthenticatedUser.Issues.GetAll(force, sort: sort, labels: labels, state: state, direction: direction, filter: filter);
