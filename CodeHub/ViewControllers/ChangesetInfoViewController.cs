@@ -112,10 +112,7 @@ namespace CodeHub.ViewControllers
                         if (model.Changeset.Parents != null && model.Changeset.Parents.Count > 0)
                             parent = model.Changeset.Parents[0].Sha;
 
-                        var type = x.Status.ToLower();
-                        NavigationController.PushViewController(new ChangesetDiffViewController(User, Slug, model.Changeset.Sha, parent, x.Filename) { 
-                            Removed = type.Equals("removed"), Added = type.Equals("added"), Comments = Controller.Model.Comments
-                        }, true);
+                        NavigationController.PushViewController(new ChangesetDiffViewController(User, Slug, model.Changeset.Sha, x) { Comments = Controller.Model.Comments }, true);
                     };
                     fileSection.Add(sse);
                 });

@@ -10,73 +10,45 @@ namespace CodeHub.ViewControllers
 {
     public class ChangesetDiffViewController : FileSourceViewController
     {
-        private readonly string _parent;
+        private readonly CommitModel.CommitFileModel _commit;
+        public List<CommentModel> Comments;
         private readonly string _user;
         private readonly string _slug;
         private readonly string _branch;
-        private readonly string _path;
-        private string _baseText, _newText;
-        public bool Removed { get; set; }
-        public bool Added { get; set; }
-        public List<CommentModel> Comments;
 
-        public ChangesetDiffViewController(string user, string slug, string branch, string parent, string path)
+        public ChangesetDiffViewController(string user, string slug, string branch, CommitModel.CommitFileModel commit)
         {
-            _parent = parent;
+            _commit = commit;
             _user = user;
             _slug = slug;
             _branch = branch;
-            _path = path;
 
             //Create the filename
-            var fileName = System.IO.Path.GetFileName(path);
+            var fileName = System.IO.Path.GetFileName(commit.Filename);
             if (fileName == null)
-                fileName = path.Substring(path.LastIndexOf('/') + 1);
+                fileName = commit.Filename.Substring(commit.Filename.LastIndexOf('/') + 1);
             Title = fileName;
         }
 
         protected override void Request()
         {
-            if (Removed && _parent == null)
+            // Must be a binary file
+            if (_commit.Patch == null)
             {
-                throw new InvalidOperationException("File does not exist!");
+                string mime;
+                var file = DownloadFile(_commit.RawUrl, out mime);
+                LoadFile(file);
+                return;
             }
-
-            RequestSourceDiff();
+            else
+            {
+                LoadDiffData();
+            }
         }
 
-        private void RequestSourceDiff()
+        private class JavascriptCommentModel
         {
-            var newSource = "";
-            var mime = "";
-            if (!Removed)
-            {
-                var file = DownloadFile(_user, _slug, _branch, _path, out mime);
-                if (mime.StartsWith("text/plain"))
-                    newSource = System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8);
-                else
-                {
-                    LoadFile(file);
-                    return;
-                }
-            }
-            
-            var oldSource = "";
-            if (_parent != null && !Added)
-            {
-                var file = DownloadFile(_user, _slug, _parent, _path, out mime);
-                if (mime.StartsWith("text/plain"))
-                    oldSource = System.IO.File.ReadAllText(file, System.Text.Encoding.UTF8);
-                else
-                {
-                    LoadFile(file);
-                    return;
-                }
-            }
-
-            _baseText = JavaScriptStringEncode(oldSource);
-            _newText = JavaScriptStringEncode(newSource);
-            LoadDiffData();
+            public int Line { get; set; }
         }
 
         protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
@@ -85,8 +57,7 @@ namespace CodeHub.ViewControllers
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
                 if(func.Equals("comment")) {
-                    //var r = new RestSharp.Deserializers.JsonDeserializer().Deserialize<CreateChangesetCommentModel>(new RestSharp.RestResponse { Content = Decode(url.Fragment) });
-                    //PromptForComment(r);
+                    PromptForComment(new RestSharp.Deserializers.JsonDeserializer().Deserialize<JavascriptCommentModel>(new RestSharp.RestResponse { Content = Decode(url.Fragment) }).Line);
                     return false;
                 }
             }
@@ -94,11 +65,10 @@ namespace CodeHub.ViewControllers
             return base.ShouldStartLoad(request, navigationType);
         }
 
-        private void PromptForComment(CreateCommentModel model)
+        private void PromptForComment(int line)
         {
             string title = string.Empty;
-            if (model.Position != null)
-                title = "Line ".t() + model.Position;
+            title = "Line ".t() + line;
 
             var sheet = MonoTouch.Utilities.GetSheet(title);
             var addButton = sheet.AddButton("Add Comment".t());
@@ -107,28 +77,27 @@ namespace CodeHub.ViewControllers
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += (sender, e) => {
                 if (e.ButtonIndex == addButton)
-                    ShowCommentComposer(model);
+                    ShowCommentComposer(line);
             };
 
             sheet.ShowInView(this.View);
         }
 
-        private void ShowCommentComposer(CreateCommentModel model)
+        private void ShowCommentComposer(int line)
         {
             var composer = new Composer();
             composer.NewComment(this, () => {
-                model.Body = composer.Text;
-                model.Path = _path;
+                var text = composer.Text;
                 composer.DoWork(() => {
-//                    var c = Application.Client.Users[_user].Repositories[_slug].Changesets[_branch].Comments.Create(model.Content, model.LineFrom, model.LineTo, model.ParentId, model.Filename);
-//
-//                    //This will inheriently add it to the controller's comments which we're referencing
-//                    if (Comments != null)
-//                        Comments.Add(c);
-//
-//                    var a = new List<ChangesetCommentModel>();
-//                    a.Add(c);
-//                    AddComments(a);
+                    var c = Application.Client.Users[_user].Repositories[_slug].Commits[_branch].Comments.Create(text, _commit.Filename, line).Data;
+
+                    //This will inheriently add it to the controller's comments which we're referencing
+                    if (Comments != null)
+                        Comments.Add(c);
+
+                    var a = new List<CommentModel>();
+                    a.Add(c);
+                    AddComments(a);
 
                     InvokeOnMainThread(() => composer.CloseComposer());
                 }, ex => {
@@ -140,16 +109,20 @@ namespace CodeHub.ViewControllers
 
         protected override void DOMReady()
         {
-            InvokeOnMainThread(() => Web.EvaluateJavascript("var a = \"" + _baseText + "\"; var b = \"" + _newText + "\"; diff(a, b);"));
-            _baseText = _newText = null;
+            //Binary file, nothing to do..
+            if (_commit.Patch == null)
+                return;
+
+            var patch = JavaScriptStringEncode(_commit.Patch);
+            InvokeOnMainThread(() => Web.EvaluateJavascript("var a = \"" + patch + "\"; patch(a);"));
             AddComments(Comments);
         }
 
         private void AddComments(List<CommentModel> comments)
         {
-//            //Convert it to something light weight
-            var slimComments = comments.Where(x => string.Equals(x.Path, _path)).Select(x => new { 
-                Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Line, LineFrom = x.Line,
+            //Convert it to something light weight
+            var slimComments = comments.Where(x => string.Equals(x.Path, _commit.Filename)).Select(x => new { 
+                Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
                 Content = x.Body, Date = x.UpdatedAt
             }).ToList();
 

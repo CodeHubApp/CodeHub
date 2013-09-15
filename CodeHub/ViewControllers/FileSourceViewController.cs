@@ -30,7 +30,7 @@ namespace CodeHub.ViewControllers
         protected static string DownloadFile(string rawUrl, out string mime)
         {
             //Create a temporary filename
-            var ext = System.IO.Path.GetExtension(rawUrl).TrimStart('.');
+            var ext = System.IO.Path.GetExtension(rawUrl);
             if (ext == null) ext = string.Empty;
             var filename = Environment.TickCount + ext;
             var filepath = System.IO.Path.Combine(TempDir, filename);
