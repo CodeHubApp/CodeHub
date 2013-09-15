@@ -96,96 +96,19 @@ namespace CodeHub.Controllers
         public void UpdateIssue(IssueModel issue)
         {
             Model.Data.RemoveAll(a => a.Number == issue.Number);
-            Model.Data.Add(issue);
+            if (DoesIssueBelong(issue))
+                Model.Data.Add(issue);
             Render();
         }
-
 
         private bool DoesIssueBelong(IssueModel model)
         {
             if (Filter == null)
                 return true;
-
-            //            if (Filter.Status != null && !Filter.Status.IsDefault())
-            //                if (!FieldToUrl(null, Filter.Status).Any(x => x.Item2.Equals(model.Status)))
-            //                    return false;
-            //            if (Filter.Kind != null && !Filter.Kind.IsDefault())
-            //                if (!FieldToUrl(null, Filter.Kind).Any(x => x.Item2.Equals(model.Metadata.Kind)))
-            //                    return false;
-            //            if (Filter.Priority != null && !Filter.Priority.IsDefault())
-            //                if (!FieldToUrl(null, Filter.Priority).Any(x => x.Item2.Equals(model.Priority)))
-            //                    return false;
-            //            if (!string.IsNullOrEmpty(Filter.AssignedTo))
-            //                if (!object.Equals(Filter.AssignedTo, (model.Responsible == null ? "unassigned" : model.Responsible.Username)))
-            //                    return false;
-            //            if (!string.IsNullOrEmpty(Filter.ReportedBy))
-            //                if (model.ReportedBy == null || !object.Equals(Filter.ReportedBy, model.ReportedBy.Username))
-            //                    return false;
-            //
+            if (Filter.Open != model.State.Equals("open"))
+                return false;
             return true;
         }
-
-        private void ChildChangedModel(IssueModel changedModel, IssueModel oldModel)
-        {
-            //            //If null then it's been deleted!
-            //            if (changedModel == null)
-            //            {
-            //                var c = TableView.ContentOffset;
-            //                var m = Model as List<IssueModel>;
-            //                m.RemoveAll(a => a.LocalId == oldModel.LocalId);
-            //
-            //                Render();
-            //                TableView.ContentOffset = c;
-            //            }
-            //            else
-            //            {
-            //                if (DoesIssueBelong(changedModel))
-            //                {
-            //                    AddItems(new List<IssueModel>(1) { changedModel });
-            //                    ScrollToModel(oldModel);
-            //                }
-            //                else
-            //                {
-            //                    var c = TableView.ContentOffset;
-            //                    var m = Model as List<IssueModel>;
-            //                    m.RemoveAll(a => a.LocalId == changedModel.LocalId);
-            //                    Render();
-            //                    TableView.ContentOffset = c;
-            //                }
-            //            }
-        }
-
-        private List<Section> CreateSection(IEnumerable<IGrouping<string, IssueModel>> results)
-        {
-            var sections = new List<Section>();
-            //            InvokeOnMainThread(() => {
-            //                foreach (var groups in results)
-            //                {
-            //                    var sec = new Section(new TableViewSectionView(groups.Key));
-            //                    sections.Add(sec);
-            //                    foreach (var y in groups)
-            //                        sec.Add(CreateElement(y));
-            //                }
-            //            });
-            return sections;
-        }
-
-        private void AddItems(List<IssueModel> issues)
-        {
-            //            if (Model == null)
-            //                Model = issues;
-            //            else
-            //            {
-            //                //Remove any duplicates
-            //                var model = Model as List<IssueModel>;
-            //                model.RemoveAll(x => issues.Any(y => y.LocalId == x.LocalId));
-            //                model.AddRange(issues);
-            //            }
-            //
-            //            //Refresh this 
-            //            Render();
-        }
-
     }
 }
 

@@ -149,18 +149,15 @@ namespace CodeHub.ViewControllers
             //See if it's an existing issue or not...
             if (ExistingIssue != null)
             {
-//                _title.Value = ExistingIssue.Title;
-//                if (ExistingIssue.Responsible != null)
-//                    _assignedTo.Value = ExistingIssue.Responsible.Username;
-//                _issueType.Value = ExistingIssue.Metadata.Kind;
-//                _priority.Value = ExistingIssue.Priority;
-//                if (!string.IsNullOrEmpty(ExistingIssue.Content))
-//                    _content.Value = ExistingIssue.Content;
-//
-//                _status = CreateEnumElement("Status", ExistingIssue.Status, Statuses);
-//
-//                //Insert the status thing inbetween title and assigned to elements
-//                root[0].Insert(1, _status);
+                _title.Value = ExistingIssue.Title;
+                _selectedAssignee = ExistingIssue.Assignee;
+                _selectedMilestone = ExistingIssue.Milestone;
+                _selectedLabels = ExistingIssue.Labels;
+                _content.Value = ExistingIssue.Body;
+                _state.Value = ExistingIssue.State.Equals("open");
+
+                //Insert the status thing inbetween title and assigned to elements
+                root.Insert(1, new Section() { _state });
             }
 
             Root = root;
