@@ -110,7 +110,18 @@ namespace CodeHub.ViewControllers
         {
             try
             {
-                await Utils.Login.LoginAccount(_enterprise ? Domain.Text : null, User.Text, Password.Text, this);
+                var apiUrl = _enterprise ? Domain.Text : null;
+                if (apiUrl != null)
+                {
+                    if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
+                        apiUrl = "https://" + apiUrl;
+                    if (!apiUrl.EndsWith("/"))
+                        apiUrl += "/";
+                    if (!apiUrl.Contains("/api/"))
+                        apiUrl += "api/v3/";
+                }
+
+                await Utils.Login.Authenticate(apiUrl, User.Text, Password.Text, null, this);
             }
             catch (Exception e)
             {

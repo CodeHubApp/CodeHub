@@ -4,6 +4,7 @@ using CodeHub.Data;
 using System.Linq;
 using CodeFramework.Utils;
 using CodeFramework.Controllers;
+using CodeHub.ViewControllers.Accounts;
 
 namespace CodeHub.ViewControllers
 {
@@ -36,7 +37,7 @@ namespace CodeHub.ViewControllers
             {
                     try
                     {
-                        await Utils.Login.LoginAccount(defaultAccount.Domain, defaultAccount.Username, defaultAccount.Password, this);
+                        await Utils.Login.LoginAccount(defaultAccount, this);
                     }
                     catch (Exception e)
                     {

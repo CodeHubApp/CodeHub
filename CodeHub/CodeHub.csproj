@@ -212,6 +212,7 @@
     <Compile Include="Controllers\RepositoryLabelsController.cs" />
     <Compile Include="ViewControllers\IssueLabelsViewController.cs" />
     <Compile Include="Utils\ControllerExtensions.cs" />
+    <Compile Include="ViewControllers\Accounts\WebLoginViewController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

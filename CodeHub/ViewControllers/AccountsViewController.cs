@@ -30,7 +30,7 @@ namespace CodeHub.ViewControllers
             {
                 try
                 {
-                    await Utils.Login.LoginAccount(a.Domain, a.Username, a.Password, this);
+                    await Utils.Login.LoginAccount(a, this);
                 }
                 catch (Exception e)
                 {
