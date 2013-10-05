@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace CodeHub.ViewControllers
 {
-	public class MenuViewController : MenuBaseController
+	public class MenuViewController : MenuBaseViewController
     {
         private MenuElement _notifications;
 
@@ -108,13 +108,13 @@ namespace CodeHub.ViewControllers
 
             this.DoWorkNoHud(() => {
                 //Don't bother saving the result. This get's cached in memory so there's no reason to save it twice. Just save the number of entires
-                Application.Account.Notifications = Application.Client.Notifications.GetAll().Data.Count;
+                Application.Account.Notifications = Application.Client.Execute(Application.Client.Notifications.GetAll()).Data.Count;
                 _notifications.NotificationNumber = Application.Account.Notifications;
                 InvokeOnMainThread(() => Root.Reload(_notifications, UITableViewRowAnimation.None));
             });
 
             this.DoWorkNoHud(() => {
-                Application.Account.Organizations = Application.Client.AuthenticatedUser.GetOrganizations().Data;
+                Application.Account.Organizations = Application.Client.Execute(Application.Client.AuthenticatedUser.GetOrganizations()).Data;
                 InvokeOnMainThread(() => CreateMenuRoot());
             });
         }

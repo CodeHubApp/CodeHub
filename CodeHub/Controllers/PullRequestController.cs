@@ -20,21 +20,21 @@ namespace CodeHub.Controllers
             PullRequestId = pullRequestId;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             var pull = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId];
-            var comments = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments(force);
+            var comments = Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments());
             Model = new ViewModel {
-                PullRequest = pull.Get(force).Data,
+                PullRequest = Application.Client.Execute(pull.Get()).Data,
                 Comments = comments.Data
             };
         }
 
         public void AddComment(string text)
         {
-            var comment = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].CreateComment(text);
+            var comment = Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].CreateComment(text));
             Model.Comments.Add(comment.Data);
-            Render();
+            RenderView();
         }
 
         public class ViewModel

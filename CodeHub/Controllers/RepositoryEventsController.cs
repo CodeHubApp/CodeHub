@@ -18,11 +18,11 @@ namespace CodeHub.Controllers
             Slug = slug;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[User].Repositories[Slug].GetEvents(force);
-            Model = new ListModel<EventModel> {Data = EventsController.ExpandConsolidatedEvents(response.Data), 
-                More = this.CreateMore(response, EventsController.ExpandConsolidatedEvents)};
+            this.RequestModel(Application.Client.Users[User].Repositories[Slug].GetEvents(), forceDataRefresh, response => {
+                RenderView(new ListModel<EventModel>(EventsController.ExpandConsolidatedEvents(response.Data), this.CreateMore(response, EventsController.ExpandConsolidatedEvents)));
+            });
         }
     }
 }

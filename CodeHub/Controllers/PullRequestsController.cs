@@ -19,11 +19,13 @@ namespace CodeHub.Controllers
             Filter = Application.Account.GetFilter<PullRequestsFilterModel>(this);
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             var state = Filter.IsOpen ? "open" : "closed";
-            var data = Application.Client.Users[User].Repositories[Repo].PullRequests.GetAll(force, state: state);
-            Model = new ListModel<PullRequestModel> {Data = data.Data, More = this.CreateMore(data)};
+            var request = Application.Client.Users[User].Repositories[Repo].PullRequests.GetAll(state: state);
+            this.RequestModel(request, forceDataRefresh, response => {
+                RenderView(new ListModel<PullRequestModel>(response.Data, this.CreateMore(response)));
+            });
         }
 
         protected override void SaveFilterAsDefault(PullRequestsFilterModel filter)

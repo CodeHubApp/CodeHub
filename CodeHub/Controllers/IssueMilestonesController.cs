@@ -15,9 +15,9 @@ namespace CodeHub.Controllers
             _slug = slug;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].Milestones.GetAll(force);
+            var response = Application.Client.Execute(Application.Client.Users[_username].Repositories[_slug].Milestones.GetAll());
             Model = new ListModel<MilestoneModel> {Data = response.Data, More = this.CreateMore(response)};
         }
     }

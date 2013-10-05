@@ -15,10 +15,11 @@ namespace CodeHub.Controllers
             _owner = owner;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[_owner].Repositories[_name].GetStargazers(force);
-            Model = new ListModel<BasicUserModel> { Data = response.Data, More = this.CreateMore(response) };
+            this.RequestModel(Application.Client.Users[_owner].Repositories[_name].GetStargazers(), forceDataRefresh, response => {
+                RenderView(new ListModel<BasicUserModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

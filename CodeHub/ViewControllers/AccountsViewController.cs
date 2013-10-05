@@ -10,7 +10,7 @@ namespace CodeHub.ViewControllers
 	/// <summary>
 	/// A list of the accounts that are currently listed with the application
 	/// </summary>
-    public class AccountsViewController : BaseAccountsController
+    public class AccountsViewController : BaseAccountsViewController
 	{
         protected override void AddAccountClicked()
         {

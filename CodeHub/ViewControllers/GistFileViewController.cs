@@ -5,7 +5,7 @@ using CodeFramework.Views;
 
 namespace CodeHub.ViewControllers
 {
-    public class GistFileViewController : FileSourceController
+    public class GistFileViewController : FileSourceViewController
     {
         GistFileModel _model;
         private string _url;
@@ -22,7 +22,15 @@ namespace CodeHub.ViewControllers
         protected override void Request()
         {
             if (_content == null)
-                _content = Application.Client.Gists.GetFile(_url);
+            {
+                using (var ms = new System.IO.MemoryStream())
+                {
+                    Application.Client.DownloadRawResource(_url, ms);
+                    ms.Position = 0;
+                    var sr = new System.IO.StreamReader(ms);
+                    _content = sr.ReadToEnd();
+                }
+            }
             var ext = System.IO.Path.GetExtension(_model.Filename).TrimStart('.');
             LoadRawData(System.Security.SecurityElement.Escape(_content), ext);
         }
@@ -55,7 +63,15 @@ namespace CodeHub.ViewControllers
                 this.DoWork(() => {
                     string data = _rawContent;
                     if (data == null)
-                        data = _rawContent = Application.Client.Gists.GetFile(_model.RawUrl);
+                    {
+                        using (var ms = new System.IO.MemoryStream())
+                        {
+                            Application.Client.DownloadRawResource(_model.RawUrl, ms);
+                            ms.Position = 0;
+                            var sr = new System.IO.StreamReader(ms);
+                            data = _rawContent = sr.ReadToEnd();
+                        }
+                    }
                     if (_model.Language.Equals("Markdown"))
                         data = Application.Client.Markdown.GetMarkdown(data);
 

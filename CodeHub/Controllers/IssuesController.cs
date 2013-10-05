@@ -21,7 +21,7 @@ namespace CodeHub.Controllers
             Filter = Application.Account.GetFilter<IssuesFilterModel>(this);
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             string direction = Filter.Ascending ? "asc" : "desc";
             string state = Filter.Open ? "open" : "closed";
@@ -31,8 +31,9 @@ namespace CodeHub.Controllers
             string creator = string.IsNullOrEmpty(Filter.Creator) ? null : Filter.Creator;
             string mentioned = string.IsNullOrEmpty(Filter.Mentioned) ? null : Filter.Mentioned;
 
-            var response = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(force, sort: sort, labels: labels, state: state, direction: direction, 
+            var request = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
                                                                                            assignee: assignee, creator: creator, mentioned: mentioned);
+            var response = Application.Client.Execute(request);
             Model = new ListModel<IssueModel> { Data = response.Data, More = this.CreateMore(response) };
         }
 
@@ -47,11 +48,7 @@ namespace CodeHub.Controllers
             //So, we'll need to update then render.
             base.ApplyFilter(filter, saveAsDefault, false);
 
-            //This is a hack... Cause I want to display the "loading..." which is on the view
-            if (View is BaseControllerDrivenViewController)
-                ((BaseControllerDrivenViewController)View).UpdateAndRender();
-            else
-                UpdateAndRender(false);
+            Update(false);
         }
 
         protected override List<IGrouping<string, IssueModel>> GroupModel(List<IssueModel> model, IssuesFilterModel filter)
@@ -84,13 +81,13 @@ namespace CodeHub.Controllers
             if (!DoesIssueBelong(issue))
                 return;
             Model.Data.Add(issue);
-            Render();
+            RenderView();
         }
 
         public void DeleteIssue(IssueModel issue)
         {
             Model.Data.RemoveAll(a => a.Number == issue.Number);
-            Render();
+            RenderView();
         }
 
         public void UpdateIssue(IssueModel issue)
@@ -98,7 +95,7 @@ namespace CodeHub.Controllers
             Model.Data.RemoveAll(a => a.Number == issue.Number);
             if (DoesIssueBelong(issue))
                 Model.Data.Add(issue);
-            Render();
+            RenderView();
         }
 
         private bool DoesIssueBelong(IssueModel model)

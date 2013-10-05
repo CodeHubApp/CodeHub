@@ -10,10 +10,11 @@ namespace CodeHub.Controllers
         {
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.AuthenticatedUser.Repositories.GetStarred(force);
-            Model = new ListModel<RepositoryModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.AuthenticatedUser.Repositories.GetStarred(), forceDataRefresh, response => {
+                RenderView(new ListModel<RepositoryModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

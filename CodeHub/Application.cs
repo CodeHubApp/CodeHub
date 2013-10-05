@@ -12,6 +12,8 @@ namespace CodeHub
 
         public static GitHubSharp.Client Client { get; private set; }
 
+        public static CodeFramework.Cache.CacheProvider ClientCache { get; private set; }
+
         public static GitHubAccount Account
         {
             get { return Accounts.ActiveAccount as GitHubAccount; }
@@ -41,17 +43,50 @@ namespace CodeHub
             //Assign the client
             Client = client;
             Client.Timeout = 1000 * 30;
-            Client.CacheProvider = new AppCache();
+
+            //Set the cache
+            var cacheDB = new SQLite.SQLiteConnection(System.IO.Path.Combine(account.AccountDirectory, "cache.db"));
+            ClientCache = new CodeFramework.Cache.CacheProvider(cacheDB);
+            Client.Cache = new GitHubCache(ClientCache);
+        }
+    }
+
+    public class GitHubCache : GitHubSharp.ICache
+    {
+        private CodeFramework.Cache.CacheProvider _provider;
+
+        public GitHubCache(CodeFramework.Cache.CacheProvider provider)
+        {
+            _provider = provider;
         }
 
-        /// <summary>
-        /// A cache provider for GitHubSharp.
-        /// Since the CodeFramework.Data.WebCacheProvider was modeled directly after the interface
-        /// it can just inherit both and be alright. Otherwise, i'd have to do a little bit of work to make
-        /// the proxy class.
-        /// </summary>
-        private class AppCache : CodeFramework.Cache.WebCacheProvider, GitHubSharp.ICacheProvider
+        public string GetETag(string url)
         {
+            var data = _provider.GetEntry(url);
+            if (data == null)
+                return null;
+            return data.CacheTag;
+        }
+
+        public T Get<T>(string url) where T : new()
+        {
+            var data = _provider.Get<T>(url);
+            if (data == null)
+                return default(T);
+
+            System.Console.WriteLine("[GET] cache: {0}", url);
+            return data;
+        }
+
+        public void Set(string url, object data, string etag)
+        {
+            System.Console.WriteLine("[SET] cache: {0}", url);
+            _provider.Set(url, data, etag);
+        }
+
+        public bool Exists(string url)
+        {
+            return _provider.GetEntry(url) != null;
         }
     }
 }

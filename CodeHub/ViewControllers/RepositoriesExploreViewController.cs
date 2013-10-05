@@ -115,7 +115,7 @@ namespace CodeHub.ViewControllers
         public override void SearchButtonClicked(string text)
         {
             View.EndEditing(true);
-            this.DoWork(() => Controller.Search(text));
+            Controller.Search(text);
         }
     }
 }

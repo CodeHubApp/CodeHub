@@ -13,9 +13,12 @@ namespace CodeHub.Controllers
             Id = id;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            Model = Application.Client.Gists[Id].Get(force).Data;
+            this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => {
+                Model = response.Data;
+                Refresh();
+            });
         }
     }
 }

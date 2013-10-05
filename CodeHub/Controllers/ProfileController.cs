@@ -1,5 +1,6 @@
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
+using GitHubSharp;
 
 namespace CodeHub.Controllers
 {
@@ -13,9 +14,11 @@ namespace CodeHub.Controllers
             _username = username;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            Model = Application.Client.Users[_username].Get(force).Data;
+            this.RequestModel(Application.Client.Users[_username].Get(), forceDataRefresh, response => {
+                RenderView(response.Data);
+            });
         }
     }
 }

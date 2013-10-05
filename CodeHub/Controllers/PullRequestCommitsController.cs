@@ -23,10 +23,11 @@ namespace CodeHub.Controllers
             PullRequestId = pullRequestId;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetCommits(force);
-            Model = new ListModel<CommitModel> { Data = response.Data, More = this.CreateMore(response) };
+            this.RequestModel(Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].GetCommits(), forceDataRefresh, response => {
+                RenderView(new ListModel<CommitModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

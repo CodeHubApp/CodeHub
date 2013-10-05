@@ -48,7 +48,8 @@ namespace CodeHub.ViewControllers
 
         private class JavascriptCommentModel
         {
-            public int Line { get; set; }
+            public int PatchLine { get; set; }
+            public int FileLine { get; set; }
         }
 
         protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
@@ -57,7 +58,7 @@ namespace CodeHub.ViewControllers
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
                 if(func.Equals("comment")) {
-                    PromptForComment(new RestSharp.Deserializers.JsonDeserializer().Deserialize<JavascriptCommentModel>(new RestSharp.RestResponse { Content = Decode(url.Fragment) }).Line);
+                    PromptForComment(new RestSharp.Deserializers.JsonDeserializer().Deserialize<JavascriptCommentModel>(new RestSharp.RestResponse { Content = Decode(url.Fragment) }));
                     return false;
                 }
             }
@@ -65,10 +66,10 @@ namespace CodeHub.ViewControllers
             return base.ShouldStartLoad(request, navigationType);
         }
 
-        private void PromptForComment(int line)
+        private void PromptForComment(JavascriptCommentModel model)
         {
             string title = string.Empty;
-            title = "Line ".t() + line;
+            title = "Line ".t() + model.FileLine;
 
             var sheet = MonoTouch.Utilities.GetSheet(title);
             var addButton = sheet.AddButton("Add Comment".t());
@@ -77,7 +78,7 @@ namespace CodeHub.ViewControllers
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += (sender, e) => {
                 if (e.ButtonIndex == addButton)
-                    ShowCommentComposer(line);
+                    ShowCommentComposer(model.PatchLine);
             };
 
             sheet.ShowInView(this.View);
@@ -89,7 +90,7 @@ namespace CodeHub.ViewControllers
             composer.NewComment(this, () => {
                 var text = composer.Text;
                 composer.DoWork(() => {
-                    var c = Application.Client.Users[_user].Repositories[_slug].Commits[_branch].Comments.Create(text, _commit.Filename, line).Data;
+                    var c = Application.Client.Execute(Application.Client.Users[_user].Repositories[_slug].Commits[_branch].Comments.Create(text, _commit.Filename, line)).Data;
 
                     //This will inheriently add it to the controller's comments which we're referencing
                     if (Comments != null)

@@ -82,12 +82,12 @@ namespace CodeHub.ViewControllers
             if (_viewSegment.SelectedSegment == 0)
             {
                 Controller.ApplyFilter(new CodeHub.Filters.Models.PullRequestsFilterModel { IsOpen = true }, true, false);
-                UpdateAndRender();
+                Controller.Update(false);
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
                 Controller.ApplyFilter(new CodeHub.Filters.Models.PullRequestsFilterModel { IsOpen = false }, true, false);
-                UpdateAndRender();
+                Controller.Update(false);
             }
         }
 

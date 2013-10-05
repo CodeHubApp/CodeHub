@@ -40,10 +40,11 @@ namespace CodeHub.Controllers
             return filter.Ascending ? ret.ToList() : ret.Reverse().ToList();
         }
   
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].GetContent(force, _path, _branch);
-            Model = new ListModel<ContentModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Users[_username].Repositories[_slug].GetContent(_path, _branch), forceDataRefresh, response => {
+                RenderView(new ListModel<ContentModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

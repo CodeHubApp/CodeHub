@@ -16,7 +16,7 @@ namespace CodeHub
 		// class-level declarations
         public new UIWindow Window { get; set; }
 
-		public SlideoutNavigationController Slideout { get; set; }
+		public CodeFramework.Controllers.SlideoutNavigationViewController Slideout { get; set; }
 
 		// This is the main entry point of the application.
 		static void Main (string[] args)
@@ -48,7 +48,7 @@ namespace CodeHub
 			Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
 			//Always start into the Startup controller
-			Window.RootViewController = new StartupViewController();
+			Window.RootViewController = new CodeHub.ViewControllers.StartupViewController();
 
 			//Make what ever window visible.
 			Window.MakeKeyAndVisible();

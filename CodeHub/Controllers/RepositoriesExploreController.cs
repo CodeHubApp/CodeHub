@@ -1,6 +1,7 @@
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CodeHub.Controllers
 {
@@ -13,7 +14,7 @@ namespace CodeHub.Controllers
         {
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             //Don't do anything here...
             Model = new ListModel<RepositorySearchModel.RepositoryModel> { Data = new List<RepositorySearchModel.RepositoryModel>() };
@@ -22,9 +23,13 @@ namespace CodeHub.Controllers
         public void Search(string text)
         {
             Searched = true;
-			var response = Application.Client.Repositories.SearchRepositories(text);
-			Model = new ListModel<RepositorySearchModel.RepositoryModel> { Data = response.Data.Repositories };
-            Render();
+            View.ShowLoading(false, () => {
+                var request = Application.Client.Repositories.SearchRepositories(text);
+                request.RequestFromCache = false;
+
+                var response = Application.Client.Execute(request);
+                RenderView(new ListModel<RepositorySearchModel.RepositoryModel>(response.Data.Repositories, null));
+            });
         }
 
     }

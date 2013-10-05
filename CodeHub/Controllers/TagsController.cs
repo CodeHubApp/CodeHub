@@ -15,10 +15,11 @@ namespace CodeHub.Controllers
             _slug = slug;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[_username].Repositories[_slug].GetTags(force);
-            Model = new ListModel<TagModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Users[_username].Repositories[_slug].GetTags(), forceDataRefresh, response => {
+                RenderView(new ListModel<TagModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

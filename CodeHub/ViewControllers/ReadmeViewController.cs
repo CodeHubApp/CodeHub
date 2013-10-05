@@ -28,7 +28,7 @@ namespace CodeHub.ViewControllers
 
         private string RequestAndSave(bool forceInvalidation)
         {
-            var wiki = Application.Client.Users[_user].Repositories[_slug].GetReadme().Data;
+            var wiki = Application.Client.Execute(Application.Client.Users[_user].Repositories[_slug].GetReadme()).Data;
             var d = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Content));
             var data = Application.Client.Markdown.GetMarkdown(d);
 

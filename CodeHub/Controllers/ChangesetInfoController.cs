@@ -24,32 +24,29 @@ namespace CodeHub.Controllers
             Slug = slug;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var model = new ViewModel();
-            var x = Application.Client.Users[User].Repositories[Slug].Commits[Node].Get(force).Data;
-            x.Files = x.Files.OrderBy(y => y.Filename.Substring(y.Filename.LastIndexOf('/') + 1)).ToList();
-            model.Changeset = x;
+            Model = new ViewModel();
 
-            try
-            {
-                model.Comments = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.GetAll(force).Data;
-            }
-            catch (Exception e)
-            {
-                MonoTouch.Utilities.LogException("Unable to get comments", e);
-            }
+            this.RequestModel(Application.Client.Users[User].Repositories[Slug].Commits[Node].Get(), forceDataRefresh, response => {
+                var data = response.Data;
+                data.Files = data.Files.OrderBy(y => y.Filename.Substring(y.Filename.LastIndexOf('/') + 1)).ToList();
+                Model.Changeset = data;
+                RenderView();
+            });
 
-            Model = model;
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.GetAll(), forceDataRefresh, response => {
+                Model.Comments = response.Data;
+                RenderView();
+            });
         }
-
-
  
         public void AddComment(string text)
         {
-            var c = Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.Create(text);
+            var c = Application.Client.Execute(Application.Client.Users[User].Repositories[Slug].Commits[Node].Comments.Create(text));
             Model.Comments.Add(c.Data);
-            Render();
+            RenderView();
         }
 
         /// <summary>

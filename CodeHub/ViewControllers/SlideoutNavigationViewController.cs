@@ -5,7 +5,7 @@ using CodeHub.Controllers;
 
 namespace CodeHub.ViewControllers
 {
-	public class SlideoutNavigationViewController : CodeFramework.Controllers.SlideoutNavigationController
+	public class SlideoutNavigationViewController : CodeFramework.Controllers.SlideoutNavigationViewController
 	{
 		private GitHubAccount _previousUser;
 

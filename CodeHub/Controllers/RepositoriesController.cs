@@ -4,6 +4,8 @@ using System.Linq;
 using System;
 using CodeFramework.Controllers;
 using CodeHub.Filters.Models;
+using System.Threading.Tasks;
+using GitHubSharp;
 
 
 namespace CodeHub.Controllers
@@ -22,10 +24,11 @@ namespace CodeHub.Controllers
             Filter = Application.Account.GetFilter<RepositoriesFilterModel>(_filterKey);
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[Username].Repositories.GetAll(force);
-            Model = new ListModel<RepositoryModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Users[Username].Repositories.GetAll(), forceDataRefresh, response => {
+                RenderView(new ListModel<RepositoryModel>(response.Data, this.CreateMore(response)));
+            });
         }
 
         protected override List<RepositoryModel> FilterModel(List<RepositoryModel> model, RepositoriesFilterModel filter)

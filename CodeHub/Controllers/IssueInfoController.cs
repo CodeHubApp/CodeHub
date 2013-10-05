@@ -20,29 +20,29 @@ namespace CodeHub.Controllers
             Id = id;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             var l = Application.Client.Users[User].Repositories[Slug].Issues[Id];
-            var comments = l.GetComments(force);
+            var comments = Application.Client.Execute(l.GetComments());
             Model = new IssueInfoController.ViewModel {
                 Comments = comments.Data,
                 MoreComments = HandleMoreComments(comments.More),
-                Issue = l.Get(force).Data,
+                Issue = Application.Client.Execute(l.Get()).Data,
             };
         }
 
         //Custome more handler
-        private Action HandleMoreComments(Func<GitHubSharp.GitHubResponse<List<IssueCommentModel>>> func)
+        private Action HandleMoreComments(GitHubSharp.GitHubRequest<List<IssueCommentModel>> request)
         {
-            if (func == null)
+            if (request == null)
                 return null;
 
             return () => {
-                var data = func();
+                var data = Application.Client.Execute(request);
                 var items = data.Data;
                 Model.Comments.AddRange(items);
                 Model.MoreComments = HandleMoreComments(data.More);
-                Render();
+                RenderView();
             };
         }
 
@@ -54,14 +54,14 @@ namespace CodeHub.Controllers
 
             //If model == null then it has been deleted. No need to render.
             if (model != null)
-                Render();
+                RenderView();
         }
 
         public void AddComment(string text)
         {
-            var comment = Application.Client.Users[User].Repositories[Slug].Issues[Id].CreateComment(text);
+            var comment = Application.Client.Execute(Application.Client.Users[User].Repositories[Slug].Issues[Id].CreateComment(text));
             Model.Comments.Add(comment.Data);
-            Render();
+            RenderView();
         }
 
         public class ViewModel

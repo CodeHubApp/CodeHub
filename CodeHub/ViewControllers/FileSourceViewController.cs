@@ -8,7 +8,7 @@ using CodeFramework.Views;
 
 namespace CodeHub.ViewControllers
 {
-    public abstract class FileSourceViewController : CodeFramework.Controllers.FileSourceController
+    public abstract class FileSourceViewController : CodeFramework.Controllers.FileSourceViewController
     {
         protected static string DownloadFile(string user, string slug, string branch, string path, out string mime)
         {

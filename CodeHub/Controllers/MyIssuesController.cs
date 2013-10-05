@@ -15,7 +15,7 @@ namespace CodeHub.Controllers
             Filter = Application.Account.GetFilter<MyIssuesFilterModel>(this);
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
             string filter = Filter.FilterType.ToString().ToLower();
             string direction = Filter.Ascending ? "asc" : "desc";
@@ -23,7 +23,8 @@ namespace CodeHub.Controllers
             string sort = Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Filter.SortType.ToString().ToLower();
             string labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
 
-            var response = Application.Client.AuthenticatedUser.Issues.GetAll(force, sort: sort, labels: labels, state: state, direction: direction, filter: filter);
+            var request = Application.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
+            var response = Application.Client.Execute(request);
             Model = new ListModel<IssueModel> { Data = response.Data, More = this.CreateMore(response) };
         }
         
@@ -62,25 +63,20 @@ namespace CodeHub.Controllers
             //We'll typically just rerender what we have, however, issues require a backend query.
             //So, we'll need to update then render.
             base.ApplyFilter(filter, saveAsDefault, false);
-
-            //This is a hack... Cause I want to display the "loading..." which is on the view
-            if (View is BaseControllerDrivenViewController)
-                ((BaseControllerDrivenViewController)View).UpdateAndRender();
-            else
-                UpdateAndRender(false);
+            Update(false);
         }
 
         public void DeleteIssue(IssueModel issue)
         {
             Model.Data.RemoveAll(a => a.Number == issue.Number);
-            Render();
+            RenderView();
         }
 
         public void UpdateIssue(IssueModel issue)
         {
             Model.Data.RemoveAll(a => a.Number == issue.Number);
             Model.Data.Add(issue);
-            Render();
+            RenderView();
         }
     }
 }

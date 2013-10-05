@@ -19,15 +19,16 @@ namespace CodeHub.Controllers
             Slug = slug;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = GetData(force);
-            Model = new ListModel<CommitModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(CreateRequest(), forceDataRefresh, response => {
+                RenderView(new ListModel<CommitModel>(response.Data, this.CreateMore(response)));
+            });
         }
 
-        protected GitHubResponse<List<CommitModel>> GetData(bool force, string startNode = null)
+        protected GitHubRequest<List<CommitModel>> CreateRequest(string startNode = null)
         {
-            return Application.Client.Users[User].Repositories[Slug].Commits.GetAll(startNode, force);
+            return Application.Client.Users[User].Repositories[Slug].Commits.GetAll(startNode);
         }
     }
 }

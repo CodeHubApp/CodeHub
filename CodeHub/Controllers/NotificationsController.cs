@@ -17,20 +17,22 @@ namespace CodeHub.Controllers
         {
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Notifications.GetAll(force, all: _all, participating: _participating);
-            Model = new ListModel<NotificationModel> {Data = response.Data, More = this.CreateMore(response, callback: UpdateAccountNotificationsCount)};
-            UpdateAccountNotificationsCount();
+            this.RequestModel(Application.Client.Notifications.GetAll(all: _all, participating: _participating), forceDataRefresh, response => {
+                RenderView(new ListModel<NotificationModel>(response.Data, this.CreateMore(response, callback: UpdateAccountNotificationsCount)));
+                UpdateAccountNotificationsCount();
+            });
         }
 
         public void Read(NotificationModel model)
         {
-            if (Application.Client.Notifications[model.Id].MarkAsRead())
+            var response = Application.Client.Execute(Application.Client.Notifications[model.Id].MarkAsRead());
+            if (response.Data) 
             {
                 //We just read it
                 model.Unread = false;
-                Render();
+                RenderView();
 
                 //Update the notifications count on the account
                 UpdateAccountNotificationsCount();

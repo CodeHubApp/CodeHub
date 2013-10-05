@@ -13,10 +13,11 @@ namespace CodeHub.Controllers
             OrganizationName = organizationName;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Organizations[OrganizationName].GetTeams(force);
-            Model = new ListModel<TeamShortModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh, response => {
+                RenderView(new ListModel<TeamShortModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

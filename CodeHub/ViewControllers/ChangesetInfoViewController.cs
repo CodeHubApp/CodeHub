@@ -57,7 +57,7 @@ namespace CodeHub.ViewControllers
             BeginInvokeOnMainThread(delegate {
                 _viewSegment.SelectedSegment = 1;
                 _viewSegment.SelectedSegment = 0;
-                _viewSegment.ValueChanged += (sender, e) => Controller.Render();
+                _viewSegment.ValueChanged += (sender, e) => Controller.Refresh();
             });
 
             _segmentBarButton.Width = View.Frame.Width - 10f;
@@ -155,6 +155,7 @@ namespace CodeHub.ViewControllers
             var composer = new Composer();
             composer.NewComment(this, () => {
                 var text = composer.Text;
+
                 composer.DoWork(() => {
                     Controller.AddComment(text);
                     InvokeOnMainThread(() => composer.CloseComposer());

@@ -7,7 +7,7 @@ using CodeFramework.Controllers;
 
 namespace CodeHub.ViewControllers
 {
-    public class StartupViewController : CodeFramework.Controllers.StartupController
+    public class StartupViewController : CodeFramework.Controllers.StartupViewController
     {
         /// <summary>
         /// Processes the accounts.

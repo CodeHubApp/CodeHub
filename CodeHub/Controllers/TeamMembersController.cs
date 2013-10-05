@@ -13,10 +13,11 @@ namespace CodeHub.Controllers
             Id = id;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Teams[Id].GetMembers(force);
-            Model = new ListModel<BasicUserModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Teams[Id].GetMembers(), forceDataRefresh, response => {
+                RenderView(new ListModel<BasicUserModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

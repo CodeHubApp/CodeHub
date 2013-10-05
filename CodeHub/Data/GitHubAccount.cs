@@ -16,6 +16,11 @@ namespace CodeHub.Data
         public string Password { get; set; }
 
         /// <summary>
+        /// Gets or sets the OAuth string
+        /// </summary>
+        public string OAuth { get; set; }
+
+        /// <summary>
         /// Gets or sets the domain
         /// </summary>
         /// <value>The domain.</value>

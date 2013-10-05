@@ -17,11 +17,11 @@ namespace CodeHub.Controllers
             Name = name;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[User].GetOrganizationEvents(Name, force);
-            Model = new ListModel<EventModel> { Data = EventsController.ExpandConsolidatedEvents(response.Data) };
-            Model.More = this.CreateMore(response, EventsController.ExpandConsolidatedEvents);
+            this.RequestModel(Application.Client.Users[User].GetOrganizationEvents(Name), forceDataRefresh, response => {
+                RenderView(new ListModel<EventModel>(EventsController.ExpandConsolidatedEvents(response.Data), this.CreateMore(response, EventsController.ExpandConsolidatedEvents)));
+            });
         }
     }
 }

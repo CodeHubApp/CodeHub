@@ -16,9 +16,9 @@ namespace CodeHub.Controllers
         }
 
 
-        protected override GitHubResponse<List<GistModel>> GetData(bool force)
+        protected override GitHubRequest<List<GistModel>> GetData()
         {
-            return Application.Client.Users[_username].Gists.GetGists(force);
+            return Application.Client.Users[_username].Gists.GetGists();
         }
     }
 
@@ -29,7 +29,7 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected override GitHubResponse<List<GistModel>> GetData(bool force)
+        protected override GitHubRequest<List<GistModel>> GetData()
         {
             return Application.Client.Gists.GetStarredGists();
         }
@@ -42,7 +42,7 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected override GitHubResponse<List<GistModel>> GetData(bool force)
+        protected override GitHubRequest<List<GistModel>> GetData()
         {
             return Application.Client.Gists.GetPublicGists();
         }
@@ -56,12 +56,14 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected abstract GitHubResponse<List<GistModel>> GetData(bool force);
+        protected abstract GitHubRequest<List<GistModel>> GetData();
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = GetData(force);
-            Model = new ListModel<GistModel> { Data = response.Data, More = this.CreateMore(response) };
+            this.RequestModel(GetData(), forceDataRefresh, response => {
+                Model = new ListModel<GistModel>(response.Data, this.CreateMore(response));
+                Refresh();
+            });
         }
     }
 }

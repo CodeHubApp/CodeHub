@@ -1,3 +1,4 @@
+
 using GitHubSharp.Models;
 using CodeFramework.Controllers;
 
@@ -13,10 +14,11 @@ namespace CodeHub.Controllers
             _name = name;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Users[_name].GetFollowing(force);
-            Model = new ListModel<BasicUserModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Users[_name].GetFollowing(), forceDataRefresh, response => {
+                RenderView(new ListModel<BasicUserModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

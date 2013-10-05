@@ -49,7 +49,7 @@ namespace CodeHub.Utils
                 client.Timeout = 30 * 1000;
 
                 await ctrl.DoWorkAsync("Logging in...", () => {
-                    var userInfo = client.AuthenticatedUser.GetInfo().Data;
+                    var userInfo = client.Execute(client.AuthenticatedUser.GetInfo()).Data;
                     account.Domain = apiUrl;
                     account.Username = userInfo.Login;
                     account.AvatarUrl = userInfo.AvatarUrl;
@@ -64,7 +64,7 @@ namespace CodeHub.Utils
                 TransitionToSlideout();
 
             }
-            catch (StatusCodeException)
+            catch (StatusCodeException e)
             {
                 throw new Exception("Unable to login as user " + user + ". Please check your credentials and try again.");
             }

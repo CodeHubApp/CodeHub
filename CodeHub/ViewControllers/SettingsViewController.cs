@@ -6,6 +6,7 @@ using MonoTouch.MessageUI;
 using CodeHub.Data;
 using CodeFramework.Elements;
 using CodeFramework.Controllers;
+using System.Linq;
 
 namespace CodeHub.ViewControllers
 {
@@ -56,6 +57,16 @@ namespace CodeHub.ViewControllers
                     MonoTouch.Utilities.AnalyticsEnabled = e.Value;
                 })
             });
+
+            var totalCacheSize = Application.ClientCache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
+            var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f).ToString("0.##");
+            var cacheSection = new Section(string.Empty, string.Format("{0} MB of cache".t(), totalCacheSizeMB)); 
+            cacheSection.Add(new StyledStringElement("Delete Cache".t(), () => { 
+                Application.ClientCache.DeleteAll();
+                cacheSection.Footer = string.Format("{0} MB of cache".t(), 0);
+                ReloadData();
+            }));
+            root.Add(cacheSection);
 
 			//Assign the root
 			Root = root;

@@ -73,9 +73,9 @@ namespace CodeHub.ViewControllers
 
                 //New
                 if (ExistingIssue == null)
-                    model = Application.Client.Users[Username].Repositories[RepoSlug].Issues.Create(title, content, assignedTo, milestone, labels).Data; 
+                    model = Application.Client.Execute(Application.Client.Users[Username].Repositories[RepoSlug].Issues.Create(title, content, assignedTo, milestone, labels)).Data;
                 else
-                    model = Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.Number].Update(title, content, state, assignedTo, milestone, labels).Data; 
+                    model = Application.Client.Execute(Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.Number].Update(title, content, state, assignedTo, milestone, labels)).Data; 
 
                 InvokeOnMainThread(() => {
                     if (Success != null)

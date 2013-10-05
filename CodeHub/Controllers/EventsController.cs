@@ -19,11 +19,11 @@ namespace CodeHub.Controllers
             Username = username;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = GetData();
-            Model = new ListModel<EventModel> { Data = ExpandConsolidatedEvents(response.Data) };
-            Model.More = this.CreateMore(response, ExpandConsolidatedEvents);
+            this.RequestModel(CreateRequest(), forceDataRefresh, response => {
+                RenderView(ExpandConsolidatedEvents(response.Data), this.CreateMore(response, ExpandConsolidatedEvents));
+            });
         }
 
         
@@ -63,9 +63,9 @@ namespace CodeHub.Controllers
             return events;
         }
 
-        protected virtual GitHubResponse<List<EventModel>> GetData(int start = 0, int limit = DataLimit)
+        protected virtual GitHubRequest<List<EventModel>> CreateRequest(int start = 0, int limit = DataLimit)
         {
-            return Application.Client.Users[Username].GetEvents(true, page: start, perPage: limit);
+            return Application.Client.Users[Username].GetEvents(start, limit);
         }
     }
 }

@@ -16,19 +16,26 @@ namespace CodeHub.Controllers
             Repo = repo;
         }
 
-        public override void Update(bool force)
+        protected override void OnUpdate(bool forceDataRefresh)
         {
-            Model = new ViewModel {
-                    RepositoryModel = Application.Client.Users[User].Repositories[Repo].Get(force).Data,
-                    IsWatched = Application.Client.Users[User].Repositories[Repo].IsWatching(),
-                    IsStarred = Application.Client.Users[User].Repositories[Repo].IsStarred()
-            };
+            Model = new ViewModel();
 
-            try 
-            {
-                Model.Readme = Application.Client.Users[User].Repositories[Repo].GetReadme(force).Data;
-            }
-            catch { }
+            this.RequestModel(Application.Client.Users[User].Repositories[Repo].Get(), forceDataRefresh, response => {
+                Model.RepositoryModel = response.Data;
+                RenderView();
+            });
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Repo].IsWatching(), forceDataRefresh, response => {
+                Model.IsWatched = response.Data;
+            });
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Repo].IsStarred(), forceDataRefresh, response => {
+                Model.IsStarred = response.Data;
+            });
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Repo].GetReadme(), forceDataRefresh, response => {
+                Model.Readme = response.Data;
+            });
         }
 
         public void Watch()
