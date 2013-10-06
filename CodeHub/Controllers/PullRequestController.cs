@@ -22,12 +22,19 @@ namespace CodeHub.Controllers
 
         protected override void OnUpdate(bool forceDataRefresh)
         {
-            var pull = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId];
-            var comments = Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments());
-            Model = new ViewModel {
-                PullRequest = Application.Client.Execute(pull.Get()).Data,
-                Comments = comments.Data
-            };
+            Model = new ViewModel();
+            var pull = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
+            var comments = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
+
+            this.RequestModel(pull, forceDataRefresh, response => {
+                Model.PullRequest = response.Data;
+                RenderView();
+            });
+
+            this.RequestModel(comments, forceDataRefresh, response => {
+                Model.Comments = response.Data;
+                RenderView();
+            });
         }
 
         public void AddComment(string text)

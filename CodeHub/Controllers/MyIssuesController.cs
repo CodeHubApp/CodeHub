@@ -24,8 +24,9 @@ namespace CodeHub.Controllers
             string labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
 
             var request = Application.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
-            var response = Application.Client.Execute(request);
-            Model = new ListModel<IssueModel> { Data = response.Data, More = this.CreateMore(response) };
+            this.RequestModel(request, forceDataRefresh, response => {
+                RenderView(new ListModel<IssueModel>(response.Data, this.CreateMore(response)));
+            });
         }
         
         protected override List<IGrouping<string, IssueModel>> GroupModel(List<IssueModel> model, MyIssuesFilterModel filter)

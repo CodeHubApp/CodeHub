@@ -16,8 +16,7 @@ namespace CodeHub.Controllers
         protected override void OnUpdate(bool forceDataRefresh)
         {
             this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => {
-                Model = response.Data;
-                Refresh();
+                RenderView(response.Data);
             });
         }
     }

@@ -17,8 +17,9 @@ namespace CodeHub.Controllers
 
         protected override void OnUpdate(bool forceDataRefresh)
         {
-            var response = Application.Client.Execute(Application.Client.Users[_username].Repositories[_slug].Milestones.GetAll());
-            Model = new ListModel<MilestoneModel> {Data = response.Data, More = this.CreateMore(response)};
+            this.RequestModel(Application.Client.Users[_username].Repositories[_slug].Milestones.GetAll(), forceDataRefresh, response => {
+                RenderView(new ListModel<MilestoneModel>(response.Data, this.CreateMore(response)));
+            });
         }
     }
 }

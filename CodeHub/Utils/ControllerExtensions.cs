@@ -83,6 +83,11 @@ namespace CodeHub.Controllers
                         }
                         catch (GitHubSharp.NotModifiedException)
                         {
+                            Console.WriteLine("Not modified: " + request.Url);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("SHIT! " + request.Url);
                         }
                     });
                 }

@@ -35,30 +35,31 @@ namespace CodeHub.Controllers
 
             this.RequestModel(Application.Client.Users[User].Repositories[Repo].GetReadme(), forceDataRefresh, response => {
                 Model.Readme = response.Data;
+                RenderView();
             });
         }
 
         public void Watch()
         {
-            Application.Client.Users[User].Repositories[Repo].Watch();
+            Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Watch());
             Model.IsWatched = true;
         }
 
         public void StopWatching()
         {
-            Application.Client.Users[User].Repositories[Repo].StopWatching();
+            Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].StopWatching());
             Model.IsWatched = false;
         }
 
         public void Star()
         {
-            Application.Client.Users[User].Repositories[Repo].Star();
+            Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Star());
             Model.IsStarred = true;
         }
 
         public void Unstar()
         {
-            Application.Client.Users[User].Repositories[Repo].Unstar();
+            Application.Client.Execute(Application.Client.Users[User].Repositories[Repo].Unstar());
             Model.IsStarred = false;
         }
 

@@ -16,7 +16,7 @@ namespace CodeHub.Controllers
         }
 
 
-        protected override GitHubRequest<List<GistModel>> GetData()
+        protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
             return Application.Client.Users[_username].Gists.GetGists();
         }
@@ -29,7 +29,7 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected override GitHubRequest<List<GistModel>> GetData()
+        protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
             return Application.Client.Gists.GetStarredGists();
         }
@@ -42,7 +42,7 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected override GitHubRequest<List<GistModel>> GetData()
+        protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
             return Application.Client.Gists.GetPublicGists();
         }
@@ -56,13 +56,12 @@ namespace CodeHub.Controllers
         {
         }
 
-        protected abstract GitHubRequest<List<GistModel>> GetData();
+        protected abstract GitHubRequest<List<GistModel>> CreateRequest();
 
         protected override void OnUpdate(bool forceDataRefresh)
         {
-            this.RequestModel(GetData(), forceDataRefresh, response => {
-                Model = new ListModel<GistModel>(response.Data, this.CreateMore(response));
-                Refresh();
+            this.RequestModel(CreateRequest(), forceDataRefresh, response => {
+                RenderView(new ListModel<GistModel>(response.Data, this.CreateMore(response)));
             });
         }
     }

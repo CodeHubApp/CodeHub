@@ -102,7 +102,7 @@ namespace CodeHub.ViewControllers
             secDetails.Add(responsible);
             root.Add(secDetails);
 
-            if (model.Comments.Count > 0)
+            if (model.Comments != null && model.Comments.Count > 0)
             {
                 var commentsSec = new Section();
                 model.Comments.OrderBy(x => (x.CreatedAt)).ToList().ForEach(x => {

@@ -22,13 +22,18 @@ namespace CodeHub.Controllers
 
         protected override void OnUpdate(bool forceDataRefresh)
         {
-            var l = Application.Client.Users[User].Repositories[Slug].Issues[Id];
-            var comments = Application.Client.Execute(l.GetComments());
-            Model = new IssueInfoController.ViewModel {
-                Comments = comments.Data,
-                MoreComments = HandleMoreComments(comments.More),
-                Issue = Application.Client.Execute(l.Get()).Data,
-            };
+            Model = new IssueInfoController.ViewModel();
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Slug].Issues[Id].Get(), forceDataRefresh, response => {
+                Model.Issue = response.Data;
+                RenderView();
+            });
+
+            this.RequestModel(Application.Client.Users[User].Repositories[Slug].Issues[Id].GetComments(), forceDataRefresh, response => {
+                Model.Comments = response.Data;
+                Model.MoreComments = HandleMoreComments(response.More);
+                RenderView();
+            });
         }
 
         //Custome more handler

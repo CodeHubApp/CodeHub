@@ -33,8 +33,10 @@ namespace CodeHub.Controllers
 
             var request = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
                                                                                            assignee: assignee, creator: creator, mentioned: mentioned);
-            var response = Application.Client.Execute(request);
-            Model = new ListModel<IssueModel> { Data = response.Data, More = this.CreateMore(response) };
+
+            this.RequestModel(request, forceDataRefresh, response => {
+                RenderView(new ListModel<IssueModel>(response.Data, this.CreateMore(response)));
+            });
         }
 
         protected override void SaveFilterAsDefault(IssuesFilterModel filter)
