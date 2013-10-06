@@ -26,7 +26,13 @@ namespace CodeHub.Controllers
 
         protected override void OnUpdate(bool forceDataRefresh)
         {
-            this.RequestModel(Application.Client.Users[Username].Repositories.GetAll(), forceDataRefresh, response => {
+            GitHubRequest<List<RepositoryModel>> request;
+            if (string.Equals(Application.Account.Username, Username, StringComparison.OrdinalIgnoreCase))
+                request = Application.Client.AuthenticatedUser.Repositories.GetAll();
+            else
+                request = Application.Client.Users[Username].Repositories.GetAll();
+
+            this.RequestModel(request, forceDataRefresh, response => {
                 RenderView(new ListModel<RepositoryModel>(response.Data, this.CreateMore(response)));
             });
         }

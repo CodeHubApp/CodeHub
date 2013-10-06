@@ -45,9 +45,8 @@ namespace CodeHub
             Client.Timeout = 1000 * 30;
 
             //Set the cache
-            var cacheDB = new SQLite.SQLiteConnection(System.IO.Path.Combine(account.AccountDirectory, "cache.db"));
-            ClientCache = new CodeFramework.Cache.CacheProvider(cacheDB);
-            Client.Cache = new GitHubCache(ClientCache);
+            ClientCache = account.Cache;
+            Client.Cache = new GitHubCache(account.Cache);
         }
     }
 
