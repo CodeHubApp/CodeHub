@@ -3,12 +3,17 @@ using CodeHub.Controllers;
 using MonoTouch.Dialog;
 using GitHubSharp.Models;
 using System;
+using CodeHub.ViewModels;
 
 namespace CodeHub.ViewControllers
 {
-    public class ChangesetViewController : BaseListControllerDrivenViewController, IListView<CommitModel>
+    public class ChangesetViewController : ViewModelCollectionDrivenViewController
     {
-        private readonly string _user, _slug;
+        public new ChangesetViewModel ViewModel
+        {
+            get { return (ChangesetViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
 
         private ChangesetViewController()
         {
@@ -19,21 +24,19 @@ namespace CodeHub.ViewControllers
 
         public ChangesetViewController(string user, string slug) : this()
         {
-            _user = user;
-            _slug = slug;
-            Controller = new ChangesetController(this, user, slug);
+            ViewModel = new ChangesetViewModel(user, slug);
+            DoBinding();
         }
 
         public ChangesetViewController(string user, string slug, long pullRequestId) : this()
         {
-            _user = user;
-            _slug = slug;
-            Controller = new PullRequestCommitsController(this, user, slug, pullRequestId);
+            //Controller = new PullRequestCommitsController(this, user, slug, pullRequestId);
+            DoBinding();
         }
 
-        public void Render(ListModel<CommitModel> model)
+        private void DoBinding()
         {
-            RenderList(model, x => {
+            BindCollection(ViewModel.Items, () => ViewModel.More, x => {
                 var desc = (x.Commit.Message ?? "").Replace("\n", " ").Trim();
                 string login;
                 var date = DateTime.MinValue;
@@ -51,7 +54,7 @@ namespace CodeHub.ViewControllers
                     date = x.Commit.Committer.Date;
 
                 var el = new NameTimeStringElement { Name = login, Time = date.ToDaysAgo(), String = desc, Lines = 4 };
-                el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoViewController(_user, _slug, x.Sha), true);
+                el.Tapped += () => NavigationController.PushViewController(new ChangesetInfoViewController(ViewModel.Username, ViewModel.Repository, x.Sha), true);
                 return el;
             });
         }

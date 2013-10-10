@@ -133,8 +133,6 @@
     <Compile Include="ViewControllers\Accounts\LoginViewController.designer.cs">
       <DependentUpon>LoginViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\BranchesController.cs" />
-    <Compile Include="Controllers\ChangesetController.cs" />
     <Compile Include="Controllers\ChangesetInfoController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\IssueInfoController.cs" />
@@ -156,7 +154,6 @@
     <Compile Include="ViewControllers\GistsViewController.cs" />
     <Compile Include="ViewControllers\GistFileViewController.cs" />
     <Compile Include="Controllers\OrganizationMembersController.cs" />
-    <Compile Include="Controllers\GistInfoController.cs" />
     <Compile Include="Controllers\RepositoriesStarredController.cs" />
     <Compile Include="Controllers\RepositoriesWatchedConroller.cs" />
     <Compile Include="Controllers\RepositoriesExploreController.cs" />
@@ -213,6 +210,10 @@
     <Compile Include="ViewControllers\IssueLabelsViewController.cs" />
     <Compile Include="Utils\ControllerExtensions.cs" />
     <Compile Include="ViewControllers\Accounts\WebLoginViewController.cs" />
+    <Compile Include="ViewModels\GistViewModel.cs" />
+    <Compile Include="Utils\ViewModelExtensions.cs" />
+    <Compile Include="ViewModels\BranchesViewModel.cs" />
+    <Compile Include="ViewModels\ChangesetViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -403,6 +404,14 @@
     <BundleResource Include="Images\Buttons\grey_button%402x.png" />
     <BundleResource Include="Images\merge%402x.png" />
     <BundleResource Include="Images\merge.png" />
+    <BundleResource Include="Images\Gist\share%402x.png" />
+    <BundleResource Include="Images\Gist\share.png" />
+    <BundleResource Include="Images\Gist\star.png" />
+    <BundleResource Include="Images\Gist\star%402x.png" />
+    <BundleResource Include="Images\Gist\star_highlighted.png" />
+    <BundleResource Include="Images\Gist\star_highlighted%402x.png" />
+    <BundleResource Include="Images\Gist\user.png" />
+    <BundleResource Include="Images\Gist\user%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="Resources\iTunesArtwork.png" />
@@ -410,5 +419,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Controls\dropbar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Images\Gist\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 </Project>
