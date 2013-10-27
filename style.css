@@ -1,0 +1,297 @@
+body
+{
+    font-family: 'Open Sans' , sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.top
+{
+    background: #555 url('assets/top_bg.png') repeat;
+    border-bottom: 1px solid #000;
+}
+
+header
+{
+    background-color: rgba(0,0,0,0.3);
+    height: 80px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #000;
+}
+
+header .logo h1
+{
+    font-size: 40px;
+    line-height: 45px;
+    color: #fff;
+    text-shadow: 1px 1px 1px #777;
+}
+
+.tblue
+{
+    color: #69b8e5;
+}
+
+header .logo h1 a
+{
+    color: #fff;
+    text-decoration: none;
+    padding-left: 10px;
+}
+
+header .navigation a
+{
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 80px;
+    margin-right: 15px;
+    background: rgba(0,0,0,0.3);
+    padding: 10px 15px;
+    border-radius: 5px;
+    -webkit-transition: background 1s ease;
+    -moz-transition: background 1s ease;
+    -o-transition: background 1s ease;
+    -ms-transition: background 1s ease;
+    transition: background 1s ease;
+}
+
+@media (max-width: 991px)
+{
+    header
+    {
+        height: auto;
+    }
+    
+    header .navigation
+    {
+        float: none !important;
+        text-align: center;
+    }
+    
+    header .logo {
+        text-align: center;
+    }
+    
+    .hero .intro
+    {
+        text-align: center;
+        max-width: 500px;
+        margin: 0px auto;
+    }
+    
+    .container {
+        width: 100%;
+    }
+    
+    .shots {
+        text-align: center;
+        max-width: 400px;
+        margin: 0px auto;
+    }
+}
+
+.hero
+{
+    padding-top: 40px;
+}
+
+.hero .intro
+{
+    margin-top: 70px;
+}
+
+.hero .intro h2
+{
+    color: #fff;
+    font-family: 'Open Sans' , sans-serif;
+    font-size: 40px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.hero .intro a.download
+{
+    display: inline-block;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.hero .intro p
+{
+    color: #eee;
+    font-size: 22px;
+}
+
+.hero .intro strong
+{
+    color: #fff;
+    font-size: 15px;
+    margin-left: 5px;
+}
+
+.hero .shot img
+{
+    width: 300px;
+    height: auto;
+    margin: 0px auto;
+}
+
+.contact
+{
+    background: #eee url('assets/feature_bg.png') repeat;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    border-top: 1px solid #ddd;
+}
+
+.features
+{
+    background: #eee url('assets/feature_bg.png') repeat;
+    padding-top: 40px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid #ddd;
+}
+
+.features .feat {
+    text-align: center;
+    color: #888;
+    -webkit-transition: color 1s ease;
+    -moz-transition: color 1s ease;
+    -o-transition: color 1s ease;
+    -ms-transition: color 1s ease;
+    transition: color 1s ease;
+    cursor: pointer;
+}
+
+.features .feat p {
+    font-size: 14px;
+    line-height: 28px;
+    font-weight: normal;
+    font-style: italic;
+    font-family: 'Droid Serif', serif;
+}
+
+.features .feat i {
+    font-size: 30px;
+}
+
+.features .feat h4 {
+    color: #666;
+    font-weight: 400 !important;
+}
+
+.features .feat p {
+    font-size: 14px;
+    line-height: 28px;
+    font-weight: normal;
+    font-style: italic;
+    font-family: 'Droid Serif', serif;
+}
+
+.shots
+{
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.shots .screenshot img {
+    width: 300px;
+    margin: 0px auto;
+}
+
+.shots .shotcontent
+{
+    margin-top: 80px;
+}
+
+.shots .shotcontent h3
+{
+    font-size: 35px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.shots .shotcontent p.shot-para
+{
+    font-size: 16px;
+    font-style: italic;
+    font-family: 'Droid Serif' , serif;
+    font-weight: normal;
+    line-height: 35px;
+}
+
+.shots .shotcontent .shot-content-body i
+{
+    font-size: 20px;
+    line-height: 25px;
+    margin-right: 5px;
+}
+
+p
+{
+    margin: 0;
+    padding: 0;
+}
+
+.shots .shot-content-body p
+{
+    font-family: 'Open Sans' , sans-serif !important;
+    line-height: 28px !important;
+}
+
+footer
+{
+    padding-top: 30px;
+    color: #ccc;
+    background: #000 url('assets/bottom_bg.png') repeat;
+}
+
+footer .footer-link
+{
+    padding-top: 15px;
+}
+
+footer hr
+{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-top: #101010 1px solid;
+    border-bottom: #222 1px solid;
+}
+
+footer .copy
+{
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.contact a.button {
+    color: #fff;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 0px 25px;
+    border-radius: 5px;
+    background: #39a5e2;
+    line-height: 50px;
+    box-shadow: 0 2px 0 0 rgba(255,255,255,0.2) inset,0 2px 3px rgba(0,0,0,0.3);
+    -webkit-transition: background 1s ease;
+    -moz-transition: background 1s ease;
+    -o-transition: background 1s ease;
+    -ms-transition: background 1s ease;
+    transition: background 1s ease;
+}
+
+.contact .cont {
+    text-align: center;
+    color: #888;
+}
+
+.contact .cont p 
+{
+    margin-top: 15px;   
+    margin-bottom: 15px;
+}
