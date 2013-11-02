@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B7970173-9022-466B-B57A-7AB1E1F3145F}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CodeHub.Core</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CodeHub.Core</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App.cs" />
+    <Compile Include="Data\GitHubAccount.cs" />
+    <Compile Include="Filters\IssuesFilterModel.cs" />
+    <Compile Include="Filters\MyIssuesFilterModel.cs" />
+    <Compile Include="Filters\NotificationsFilterModel.cs" />
+    <Compile Include="Filters\PullRequestsFilterModel.cs" />
+    <Compile Include="Filters\RepositoriesFilterModel.cs" />
+    <Compile Include="Filters\SourceFilterModel.cs" />
+    <Compile Include="Markdown\MarkdownParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IApplicationService.cs" />
+    <Compile Include="Utils\RepositoryIdentifier.cs" />
+    <Compile Include="ViewModels\UserRepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelExtensions.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\BranchesViewModel.cs" />
+    <Compile Include="ViewModels\ChangesetInfoViewModel.cs" />
+    <Compile Include="ViewModels\ChangesetViewModel.cs" />
+    <Compile Include="ViewModels\EventsViewModel.cs" />
+    <Compile Include="ViewModels\FirstViewModel.cs" />
+    <Compile Include="ViewModels\GistsViewModel.cs" />
+    <Compile Include="ViewModels\GistViewModel.cs" />
+    <Compile Include="ViewModels\IssueMilestonesViewModel.cs" />
+    <Compile Include="ViewModels\IssuesViewModel.cs" />
+    <Compile Include="ViewModels\IssueViewModel.cs" />
+    <Compile Include="ViewModels\MyIssuesViewModel.cs" />
+    <Compile Include="ViewModels\NewsViewModel.cs" />
+    <Compile Include="ViewModels\NotificationsViewModel.cs" />
+    <Compile Include="ViewModels\OrganizationMembersViewModel.cs" />
+    <Compile Include="ViewModels\OrganizationRepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\OrganizationsViewModel.cs" />
+    <Compile Include="ViewModels\OrganizationViewModel.cs" />
+    <Compile Include="ViewModels\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\PullRequestCommitsViewModel.cs" />
+    <Compile Include="ViewModels\PullRequestFilesViewModel.cs" />
+    <Compile Include="ViewModels\PullRequestsViewModel.cs" />
+    <Compile Include="ViewModels\PullRequestViewModel.cs" />
+    <Compile Include="ViewModels\RepositoriesExploreViewModel.cs" />
+    <Compile Include="ViewModels\RepositoriesStarredViewModel.cs" />
+    <Compile Include="ViewModels\RepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\RepositoriesWatchedViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryCollaboratorsViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryEventsViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryLabelsViewModel.cs" />
+    <Compile Include="ViewModels\RepositoryViewModel.cs" />
+    <Compile Include="ViewModels\SourceViewModel.cs" />
+    <Compile Include="ViewModels\StargazersViewModel.cs" />
+    <Compile Include="ViewModels\TagsViewModel.cs" />
+    <Compile Include="ViewModels\TeamMembersViewModel.cs" />
+    <Compile Include="ViewModels\TeamsViewModel.cs" />
+    <Compile Include="ViewModels\UserFollowersViewModel.cs" />
+    <Compile Include="ViewModels\UserFollowingsViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Cirrious.CrossCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e16445fd9b451819, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e16445fd9b451819, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{c99fe7e3-0985-48f1-9ebb-91680a795f0f}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89e14828-85bb-4790-9b4e-e44dd4ce000e}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+</Project>
