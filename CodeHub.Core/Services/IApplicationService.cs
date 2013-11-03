@@ -1,4 +1,5 @@
-﻿using CodeHub.Core.Data;
+﻿using CodeFramework.Core.Services;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
@@ -7,5 +8,7 @@ namespace CodeHub.Core.Services
         GitHubSharp.Client Client { get; }
  
         GitHubAccount Account { get; }
+
+        IAccountsService Accounts { get; }
     }
 }

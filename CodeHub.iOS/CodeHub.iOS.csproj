@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B061316A-F386-4FE2-93B7-555584234FF8}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CodeHub.iOS</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>CodeHubiOS</AssemblyName>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <BuildIpa>True</BuildIpa>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="Images\Images.cs" />
+    <Compile Include="LinkerPleaseInclude.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Setup.cs" />
+    <Compile Include="Views\App\AboutViewController.cs" />
+    <Compile Include="Views\User\ProfileView.cs" />
+    <None Include="app.config" />
+    <None Include="Info.plist" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
+      <Project>{b7970173-9022-466b-b57a-7ab1e1f3145f}</Project>
+      <Name>CodeHub.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{c99fe7e3-0985-48f1-9ebb-91680a795f0f}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
+      <Project>{2698b412-26a3-4269-aa01-ac3bc79a0f14}</Project>
+      <Name>CodeFramework.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89e14828-85bb-4790-9b4e-e44dd4ce000e}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.CrossCore.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Localization">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Touch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Dialog">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Dialog.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\anonymous%402x.png" />
+    <Content Include="Images\anonymous.png" />
+    <Content Include="Images\bin_closed%402x.png" />
+    <Content Include="Images\bin_closed.png" />
+    <Content Include="Images\branch%402x.png" />
+    <Content Include="Images\branch.png" />
+    <Content Include="Images\Buttons\add%402x.png" />
+    <Content Include="Images\Buttons\add.png" />
+    <Content Include="Images\Buttons\back%402x.png" />
+    <Content Include="Images\Buttons\back.png" />
+    <Content Include="Images\Buttons\black_button%402x.png" />
+    <Content Include="Images\Buttons\black_button.png" />
+    <Content Include="Images\Buttons\cancel%402x.png" />
+    <Content Include="Images\Buttons\cancel.png" />
+    <Content Include="Images\Buttons\edit%402x.png" />
+    <Content Include="Images\Buttons\edit.png" />
+    <Content Include="Images\Buttons\filter%402x.png" />
+    <Content Include="Images\Buttons\filter.png" />
+    <Content Include="Images\Buttons\fork%402x.png" />
+    <Content Include="Images\Buttons\fork.png" />
+    <Content Include="Images\Buttons\gear%402x.png" />
+    <Content Include="Images\Buttons\gear.png" />
+    <Content Include="Images\Buttons\grey_button%402x.png" />
+    <Content Include="Images\Buttons\grey_button.png" />
+    <Content Include="Images\Buttons\save%402x.png" />
+    <Content Include="Images\Buttons\save.png" />
+    <Content Include="Images\Buttons\three_lines%402x.png" />
+    <Content Include="Images\Buttons\three_lines.png" />
+    <Content Include="Images\Buttons\view%402x.png" />
+    <Content Include="Images\Buttons\view.png" />
+    <Content Include="Images\cog%402x.png" />
+    <Content Include="Images\cog.png" />
+    <Content Include="Images\comments%402x.png" />
+    <Content Include="Images\comments.png" />
+    <Content Include="Images\commit%402x.png" />
+    <Content Include="Images\commit.png" />
+    <Content Include="Images\Controls\backbutton%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
+    <Content Include="Images\Controls\backbutton-landscape.png" />
+    <Content Include="Images\Controls\backbutton.png" />
+    <Content Include="Images\Controls\barbutton%402x.png" />
+    <Content Include="Images\Controls\barbutton-land%402x.png" />
+    <Content Include="Images\Controls\barbutton-land.png" />
+    <Content Include="Images\Controls\barbutton.png" />
+    <Content Include="Images\Controls\bottombar%402x.png" />
+    <Content Include="Images\Controls\bottombar.png" />
+    <Content Include="Images\Controls\divider%402x.png" />
+    <Content Include="Images\Controls\divider.png" />
+    <Content Include="Images\Controls\dropbar.png" />
+    <Content Include="Images\Controls\menu_navbar%402x.png" />
+    <Content Include="Images\Controls\menu_navbar.png" />
+    <Content Include="Images\Controls\menu_section_bg%402x.png" />
+    <Content Include="Images\Controls\menu_section_bg.png" />
+    <Content Include="Images\Controls\searchbar%402x.png" />
+    <Content Include="Images\Controls\searchbar.png" />
+    <Content Include="Images\Controls\titlebar%402x.png" />
+    <Content Include="Images\Controls\titlebar.png" />
+    <Content Include="Images\Controls\warning.png" />
+    <Content Include="Images\create%402x.png" />
+    <Content Include="Images\create.png" />
+    <Content Include="Images\events%402x.png" />
+    <Content Include="Images\events.png" />
+    <Content Include="Images\explore%402x.png" />
+    <Content Include="Images\explore.png" />
+    <Content Include="Images\eye%402x.png" />
+    <Content Include="Images\eye.png" />
+    <Content Include="Images\file%402x.png" />
+    <Content Include="Images\file.png" />
+    <Content Include="Images\flag%402x.png" />
+    <Content Include="Images\flag.png" />
+    <Content Include="Images\folder%402x.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\following%402x.png" />
+    <Content Include="Images\following.png" />
+    <Content Include="Images\fork%402x.png" />
+    <Content Include="Images\fork.png" />
+    <Content Include="Images\Gist\share%402x.png" />
+    <Content Include="Images\Gist\share.png" />
+    <Content Include="Images\Gist\star%402x.png" />
+    <Content Include="Images\Gist\star.png" />
+    <Content Include="Images\Gist\star_highlighted%402x.png" />
+    <Content Include="Images\Gist\star_highlighted.png" />
+    <Content Include="Images\Gist\user%402x.png" />
+    <Content Include="Images\Gist\user.png" />
+    <Content Include="Images\group%402x.png" />
+    <Content Include="Images\group.png" />
+    <Content Include="Images\hand%402x.png" />
+    <Content Include="Images\hand.png" />
+    <Content Include="Images\heart%402x.png" />
+    <Content Include="Images\heart.png" />
+    <Content Include="Images\info%402x.png" />
+    <Content Include="Images\info.png" />
+    <Content Include="Images\language%402x.png" />
+    <Content Include="Images\language.png" />
+    <Content Include="Images\locked%402x.png" />
+    <Content Include="Images\locked.png" />
+    <Content Include="Images\Logos\github.png" />
+    <Content Include="Images\merge%402x.png" />
+    <Content Include="Images\merge.png" />
+    <Content Include="Images\milestone%402x.png" />
+    <Content Include="Images\milestone.png" />
+    <Content Include="Images\news%402x.png" />
+    <Content Include="Images\news.png" />
+    <Content Include="Images\notifications%402x.png" />
+    <Content Include="Images\notifications.png" />
+    <Content Include="Images\pencil%402x.png" />
+    <Content Include="Images\pencil.png" />
+    <Content Include="Images\person%402x.png" />
+    <Content Include="Images\person.png" />
+    <Content Include="Images\priority%402x.png" />
+    <Content Include="Images\priority.png" />
+    <Content Include="Images\public%402x.png" />
+    <Content Include="Images\public.png" />
+    <Content Include="Images\repo%402x.png" />
+    <Content Include="Images\repo.png" />
+    <Content Include="Images\repository.png" />
+    <Content Include="Images\repository_fork.png" />
+    <Content Include="Images\script%402x.png" />
+    <Content Include="Images\script.png" />
+    <Content Include="Images\size%402x.png" />
+    <Content Include="Images\size.png" />
+    <Content Include="Images\star%402x.png" />
+    <Content Include="Images\star.png" />
+    <Content Include="Images\star2%402x.png" />
+    <Content Include="Images\star2.png" />
+    <Content Include="Images\TableCell.png" />
+    <Content Include="Images\tablecell_red.png" />
+    <Content Include="Images\tag%402x.png" />
+    <Content Include="Images\tag.png" />
+    <Content Include="Images\team%402x.png" />
+    <Content Include="Images\team.png" />
+    <Content Include="Images\unlocked%402x.png" />
+    <Content Include="Images\unlocked.png" />
+    <Content Include="Images\user%402x.png" />
+    <Content Include="Images\user.png" />
+    <Content Include="Images\webpage%402x.png" />
+    <Content Include="Images\webpage.png" />
+    <Content Include="Images\Web\back_button%402x.png" />
+    <Content Include="Images\Web\forward_button%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+</Project>

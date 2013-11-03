@@ -20,7 +20,7 @@ namespace CodeHub.Core
                 .RegisterAsLazySingleton();
 
             //// Start the app with the First View Model.
-            this.RegisterAppStart<FirstViewModel>();
+            this.RegisterAppStart<StartupViewModel>();
         }
     }
 }
