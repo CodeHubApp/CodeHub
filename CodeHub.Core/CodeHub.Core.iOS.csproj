@@ -44,9 +44,10 @@
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Markdown\MarkdownParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
-    <Compile Include="ViewModels\StartupViewModel.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\BranchesViewModel.cs" />

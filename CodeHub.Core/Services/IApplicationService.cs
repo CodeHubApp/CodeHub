@@ -1,4 +1,5 @@
-﻿using CodeFramework.Core.Services;
+﻿using CodeFramework.Core.Data;
+using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
@@ -9,6 +10,6 @@ namespace CodeHub.Core.Services
  
         GitHubAccount Account { get; }
 
-        IAccountsService Accounts { get; }
+        IAccountsService<IAccount> Accounts { get; }
     }
 }

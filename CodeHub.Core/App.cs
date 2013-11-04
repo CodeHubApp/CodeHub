@@ -1,6 +1,7 @@
-﻿using Cirrious.CrossCore.IoC;
+﻿using System.Linq;
+using Cirrious.CrossCore.IoC;
 using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.ViewModels;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core
 {
@@ -14,13 +15,8 @@ namespace CodeHub.Core
         /// </summary>
         public override void Initialize()
         {
-            this.CreatableTypes()
-                .EndingWith("Service")
-                .AsInterfaces()
-                .RegisterAsLazySingleton();
-
             //// Start the app with the First View Model.
-            this.RegisterAppStart<StartupViewModel>();
+            this.RegisterAppStart<AccountsViewModel>();
         }
     }
 }

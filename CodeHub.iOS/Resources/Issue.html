@@ -1,0 +1,343 @@
+<html>
+	<head>
+		<title></title>
+		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0"/>
+    	<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript">
+			function setDescription(data) {
+				$('#description').html(data);
+			}
+			
+			function setData(data) {
+				$('#description').html(data.description);
+				$('#title').text(data.title);
+				$('#updated').text(data.updated_at);
+				$('#state_text').text(data.state);
+				$('#milestone_text').text(data.milestone);
+				$('#assigned_text').text(data.assigned_to);
+				
+				$('#assignee_link').attr('href','codehub://assignee/' + data.assigned_to_login);
+				
+				$('body').show();
+			}
+			
+			function setComments(data) {
+				$('#comments .container').html('');
+				$('body').show();
+				
+				for (var i = 0; i < data.length; i++) {
+					addComment(data[i]);
+				}
+			}
+			
+			function addComment(data) {
+				$('#comments .container').append('<div class="comment">' +
+									  '<img src="' + data.avatarUrl + '" class="person" />' +
+								      '<div class="content">' +
+									  '<h1>' + data.login + '</h1>' + 
+								      '<span class="updated">' + data.updated_at + '</span>' +
+									  '<div class="body markdown">' + data.body + '</div></div></div>');
+									  
+			  	$('#comments .container').show();
+			}
+			
+			/*
+			$(function() {
+				setComments([{"avatarUrl":"https://0.gravatar.com/avatar/1a359dbeb65b797f39f2af713d024ea8?d=https%3A%2F%2Fidenticons.github.com%2Ffc797c5a6b5537c045cd2ae03095f114.png&r=x","login":"slodge","updated_at":"12 hours ago","body":"<p>Why are PCL v4.6 and Profile 44 linked together?</p>\n\n<p>We don't have any solid information on what profiles will/won't be supported when Xamarin release their PCL support. At one point (July) one Xamarin employee indicated that we should move to profile 78 - which is why I posted http://slodge.blogspot.co.uk/2013/07/mvvmcross-wp7-tombstoned.html</p>\n\n<p>However, since then we have had no technical information - so we're staying with profile 104 until we do...</p>\n\n<p>Afaik currently Xamarin will support Profile 104 - and profile 78 projects will be able to consume profile 104 libraries - so we don't currently need to change anything.... but that's only \"afaik\"</p>\n"},{"avatarUrl":"https://2.gravatar.com/avatar/53d78f0c086cb23375849308b9b6bd43?d=https%3A%2F%2Fidenticons.github.com%2F24d8c8e908761d6cfb76dffdd0acc558.png&r=x","login":"xperiandri","updated_at":"11 hours ago","body":"<p>As far as I understand, Microsoft changed license only for PCL v4.6 which has only one profile - Profile44.\nMaybe I'm not right.</p>\n"},{"avatarUrl":"https://2.gravatar.com/avatar/f780d57997526876b0625e517c1e0884?d=https%3A%2F%2Fidenticons.github.com%2F5bb62948014c4be7f77fe27a1a06b63f.png&r=x","login":"Cheesebaron","updated_at":"10 hours ago","body":"<p>In the latest alpha, this is which profile Xamarin claim to have support for</p>\n\n<p></p>\n"}]);
+			});
+			*/
+			
+			function invokeNative(functionName, args) {
+			    var iframe = document.createElement('IFRAME');
+			    iframe.setAttribute('src', 'codehub://' + functionName + '#' + JSON.stringify(args));
+			    document.documentElement.appendChild(iframe);
+			    iframe.parentNode.removeChild(iframe);
+			    iframe = null;  
+			}
+			
+			$(function() {
+   				invokeNative("ready");
+			});
+		</script>
+		
+		<style>
+			* {
+			    -webkit-touch-callout: none;
+			    -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+			}
+
+			.container {
+				margin-top: 20px;
+				width: 100%;
+				border: 1px solid #b6b6b6;
+				background-color: white;
+				border-radius:10px;
+			}
+			
+			* {
+				font-family: Helvetica;
+				font-size: 12px;
+			}
+			
+			body
+			{
+				background-color: #eaeaea;
+				margin: 0;
+				font-family: Helvetica;
+				font-size: 12px;
+				margin-left: 15px;
+				margin-right: 15px;
+				margin-bottom: 15px;
+				margin-top: 80px;
+			}
+			
+			#top
+			{
+				position: absolute;
+				left: 0px;
+				right: 0px;
+				top: 0px;
+				height: 60px;
+				background: white;
+				padding: 0 20px;
+				box-shadow: 0px 0px 5px #888888;
+			}
+			
+			#top h1
+			{
+				font-size: 16px;
+				margin: 8px 0 5px 0;
+				color: #406fb9;
+				white-space: nowrap;
+  				overflow: hidden;
+				text-overflow:ellipsis;
+			}
+			
+			#top span
+			{
+				font-size: 13px;
+				color: #404040;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			#description
+			{
+				padding: 12px;
+				overflow-x:hidden;
+			}
+			
+			
+			pre, li, ul
+			{
+			    white-space: pre-wrap; /* css-3 */
+			    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+			    word-wrap: break-word; /* Internet Explorer 5.5+ */
+			    white-space : normal;
+			}
+			
+			ul {
+				padding-left: 1em;
+			}
+			
+			#btn1
+			{
+				border-top: 1px solid #b6b6b6;
+				color: #6d6d6d;
+				font-size: 13px;
+				background: url(../Images/TableCell.png);
+				border-radius: 0 0 10px 10px;
+			}
+			
+			#btn1 > a
+			{
+				display: block;
+				padding: 14px 12px;
+				text-decoration: none;
+				color: #222;
+			}
+			
+			#btn1 img, #split1 img, #add_comment img
+			{
+				width: 16px;
+				height: 16px;
+				margin-right: 8px;
+			}
+			
+			#split1
+			{
+				color: #6d6d6d;
+				font-size: 13px;
+				position: relative;
+				height: 39px;
+			}
+						
+			#split1 > div
+			{
+				padding: 10px 12px;
+				border-top: 1px solid #b6b6b6;
+				height: 100%;
+				box-sizing: border-box;
+			}
+			
+			#state
+			{
+				position: absolute;
+				left: 0;
+				top: 0;
+				right: 50%;
+				display: inline-block;
+				border-right: 1px solid #b6b6b6;
+				text-overflow:ellipsis;
+				vertical-align:text-top;
+			}
+			
+			#milestone
+			{
+				position: absolute;
+				top: 0;
+				left: 50%;
+				right: 0;
+				height: 44px;
+				display: inline-block;
+				text-overflow:ellipsis;
+			}
+			
+			#milestone_text
+			{
+				position: absolute;
+				left: 38px;
+				top: 11px;
+				right: 12px;
+				display: block;
+				text-overflow:ellipsis;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			#state_text
+			{
+				position: absolute;
+				left: 38px;
+				top: 11px;
+				right: 12px;
+				display: block;
+				text-overflow:ellipsis;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			.text_adjust
+			{
+				position: relative;
+				top: -3px;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			.comment:first-child {
+				border-top: none;
+			}
+			
+			.comment {
+				border-top: 1px solid #b6b6b6;
+				box-sizing: border-box; 
+				padding: 8px;
+			}
+			
+			.comment > img
+			{
+				position: absolute;
+				width: 32px;
+				height: 32px;
+				box-shadow: 0px 0px 6px #888;
+			}
+			
+			.comment > .content {
+				display: inline-block;
+				padding-left: 48px;
+				box-sizing: border-box;
+				width: 100%;
+				overflow-x:hidden;
+			}
+			
+			.comment > .content > h1 {
+				font-size: 12px;
+				margin: 1px 0 2px 0;
+				color: #406fb9;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			.comment > .content > span {
+				font-size: 10px;
+				margin: 0px 0 0px 0;
+				color: #404040;
+				white-space: nowrap;
+  				overflow: hidden;
+			}
+			
+			.comment > .content > .body {
+				margin: 10px 0 0px 0;
+			}
+			
+			.button {
+				box-sizing: border-box; 
+				background: url(Images/TableCell.png);
+			}
+			
+			.button a {
+				display: block;
+				padding: 15px 12px;
+				text-decoration: none;
+				color: #222;
+			}
+			
+			.markdown {
+				word-wrap: break-word;
+			}
+			
+			.markdown img {
+				max-width: 100%;
+			}
+		
+		</style>
+	</head>
+	<body style="">
+		<div id="top">
+			<h1 id="title"></h1>
+			<span id="updated"></span>
+		</div>
+		<div class="container">
+			<div id="description" class="markdown">
+
+			</div>
+			<div id="split1">
+				<div id="state">
+					<img src="Images/cog@2x.png" /> <span id="state_text">Open</span>
+				</div>
+				<div id="milestone">
+					<img src="Images/milestone@2x.png" /> <span id="milestone_text">No Milestone</span>
+				</div>
+			</div>
+			
+			<div id="btn1">
+				<a id="assignee_link" href="codehub://assignee">
+					<img src="Images/person@2x.png" /> <span id="assigned_text" class="text_adjust">Unassigned</span>
+				</a>
+			</div>
+		</div>
+		
+		<div id="comments">
+			<div class="container" style="display: none;">
+				
+			</div>
+		</div>
+		
+		<div id="add_comment" class="container button">
+			<a href="codehub://add_comment">
+				<img src="Images/pencil@2x.png" /> <span class="text_adjust">Add Comment</span>
+			</a>
+		</div>
+	</body>
+</html>

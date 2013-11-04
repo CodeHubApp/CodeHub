@@ -9,7 +9,6 @@ using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views
 {
-    [Register("ProfileView")]
     public class ProfileView : MvxTableViewController
     {
         private HeaderView _header;
@@ -20,9 +19,9 @@ namespace CodeHub.iOS.Views
 
             base.ViewDidLoad();
 
-            var set = this.CreateBindingSet<ProfileView, ProfileViewModel>();
-            set.Bind(_header).To(x => x.Username).For(x => x.Title);
-            set.Apply();
+//            var set = this.CreateBindingSet<ProfileView, ProfileViewModel>();
+//            set.Bind(_header).To(x => x.Username).For(x => x.Title);
+//            set.Apply();
 
             //Root.Add(new Section(_header));
 

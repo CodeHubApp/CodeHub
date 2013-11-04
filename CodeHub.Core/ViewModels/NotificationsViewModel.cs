@@ -1,12 +1,11 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
-using System.Linq;
-using System.Threading.Tasks;
-using CodeHub.Core.ViewModels;
-using System;
 
-namespace CodeHub.Controllers
+namespace CodeHub.Core.ViewModels
 {
     public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -59,19 +58,19 @@ namespace CodeHub.Controllers
 
         public async Task Read(NotificationModel model)
         {
-            var response = await Application.Client.ExecuteAsync(Application.Client.Notifications[model.Id].MarkAsRead());
-            if (response.Data) 
-            {
-                //We just read it
-                model.Unread = false;
-
-                // Only remove if we're not looking at all
-                if (Notifications.Filter.All == false)
-                    Notifications.Items.Remove(model);
-
-                //Update the notifications count on the account
-                UpdateAccountNotificationsCount();
-            }
+//            var response = await Application.Client.ExecuteAsync(Application.Client.Notifications[model.Id].MarkAsRead());
+//            if (response.Data) 
+//            {
+//                //We just read it
+//                model.Unread = false;
+//
+//                // Only remove if we're not looking at all
+//                if (Notifications.Filter.All == false)
+//                    Notifications.Items.Remove(model);
+//
+//                //Update the notifications count on the account
+//                UpdateAccountNotificationsCount();
+//            }
         }
 
         private void UpdateAccountNotificationsCount()

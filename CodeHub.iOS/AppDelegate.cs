@@ -5,6 +5,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using Cirrious.MvvmCross.Views;
+using CodeFramework.Core.Data;
+using CodeFramework.Core.Services;
+using CodeFramework.Core.ViewModels;
+using CodeFramework.iOS;
+using CodeFramework.iOS.ViewControllers;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
 
@@ -40,15 +47,20 @@ namespace CodeHub.iOS
         {
             this.window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            MvxTouchViewPresenter presenter = new MvxTouchViewPresenter(this, this.window);
+            // Setup theme
+            Theme.Setup();
 
-            Setup setup = new Setup(this, presenter);
+            var presenter = new TouchViewPresenter(this.window);
+
+            var setup = new Setup(this, presenter);
             setup.Initialize();
 
-            var views = Mvx.Resolve<IMvxViewsContainer>();
-            views.Add(typeof(ProfileViewModel), typeof(ProfileView));
+            IAccountsService<IAccount> a = new GitHubAccountsService(null, null);
 
-            IMvxAppStart startup = Mvx.Resolve<IMvxAppStart>();
+            var accountsService = Mvx.Resolve<IAccountsService<GitHubAccount>>();
+            Mvx.RegisterSingleton(typeof(IAccountsService<IAccount>), accountsService);
+
+            var startup = Mvx.Resolve<IMvxAppStart>();
             startup.Start();
 
             this.window.MakeKeyAndVisible();
