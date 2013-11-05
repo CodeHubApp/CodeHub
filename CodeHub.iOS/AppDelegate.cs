@@ -4,22 +4,12 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using Cirrious.MvvmCross.Views;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
-using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS;
-using CodeFramework.iOS.ViewControllers;
-using CodeHub.Core.Data;
-using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels;
-using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS
 {
     using Cirrious.CrossCore;
     using Cirrious.MvvmCross.Touch.Platform;
-    using Cirrious.MvvmCross.Touch.Views.Presenters;
     using Cirrious.MvvmCross.ViewModels;
     using MonoTouch.Foundation;
     using MonoTouch.UIKit;
@@ -54,11 +44,6 @@ namespace CodeHub.iOS
 
             var setup = new Setup(this, presenter);
             setup.Initialize();
-
-            IAccountsService<IAccount> a = new GitHubAccountsService(null, null);
-
-            var accountsService = Mvx.Resolve<IAccountsService<GitHubAccount>>();
-            Mvx.RegisterSingleton(typeof(IAccountsService<IAccount>), accountsService);
 
             var startup = Mvx.Resolve<IMvxAppStart>();
             startup.Start();

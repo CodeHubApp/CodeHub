@@ -35,7 +35,7 @@ namespace CodeHub.Core.ViewModels
 
         public void Init(NavObject navObject)
         {
-            Name = navObject.Name;
+            Name = navObject.Username;
         }
 
         public Task Load(bool forceDataRefresh)
@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels
 
         public class NavObject
         {
-            public string Name { get; set; }
+            public string Username { get; set; }
         }
     }
 }

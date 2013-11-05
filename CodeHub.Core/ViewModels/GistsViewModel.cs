@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class AccountGistsViewModel : GistsViewModel
+    public class UserGistsViewModel : GistsViewModel
     {
         public string Username
         {
@@ -14,15 +14,19 @@ namespace CodeHub.Core.ViewModels
             private set;
         }
 
-        public AccountGistsViewModel(string username)
+        public void Init(NavObject navObject)
         {
-            Username = username;
+            Username = navObject.Username;
         }
-
 
         protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
             return Application.Client.Users[Username].Gists.GetGists();
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
         }
     }
 

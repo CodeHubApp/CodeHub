@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels
             get { return _orgs; }
         }
 
-        public string OrganizationName 
+        public string Username 
         { 
             get; 
             private set; 
@@ -21,18 +21,18 @@ namespace CodeHub.Core.ViewModels
 
         public void Init(NavObject navObject)
         {
-            OrganizationName = navObject.Name;
+            Username = navObject.Username;
         }
 
 
         public Task Load(bool forceDataRefresh)
         {
-            return Organizations.SimpleCollectionLoad(Application.Client.Users[OrganizationName].GetOrganizations(), forceDataRefresh);
+            return Organizations.SimpleCollectionLoad(Application.Client.Users[Username].GetOrganizations(), forceDataRefresh);
         }
 
         public class NavObject
         {
-            public string Name { get; set; }
+            public string Username { get; set; }
         }
 	}
 }

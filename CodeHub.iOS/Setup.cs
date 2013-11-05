@@ -7,9 +7,12 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Cirrious.CrossCore.IoC;
+using Cirrious.CrossCore.Platform;
+using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS;
 using CodeFramework.iOS.ViewControllers;
+using MonoTouch.Dialog;
 
 namespace CodeHub.iOS
 {
@@ -46,6 +49,17 @@ namespace CodeHub.iOS
             list.AddRange(base.GetViewModelAssemblies());
             list.Add(typeof(StartupViewModel).Assembly);
             return list.ToArray();
+        }
+
+        protected override IMvxTrace CreateDebugTrace()
+        {
+            return new MvxDebugTrace();
+        }
+
+        protected override void FillBindingNames(IMvxBindingNameRegistry obj)
+        {
+            base.FillBindingNames(obj);
+            obj.AddOrOverwrite(typeof(StyledStringElement), "Tapped");
         }
 
         /// <summary>

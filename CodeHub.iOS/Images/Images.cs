@@ -3,7 +3,7 @@ using System.IO;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace CodeHub.iOS.Images
+namespace CodeHub.iOS
 {
     public static class Images
     {

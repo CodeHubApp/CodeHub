@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using Cirrious.CrossCore.IoC;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+﻿using Cirrious.MvvmCross.ViewModels;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core
 {

@@ -82,11 +82,26 @@
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
+    <Compile Include="Views\Accounts\NewAccountView.cs" />
+    <Compile Include="Views\Accounts\NewAccountView.designer.cs">
+      <DependentUpon>NewAccountView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\AddAccountView.cs" />
+    <Compile Include="Views\Accounts\AddAccountView.designer.cs">
+      <DependentUpon>AddAccountView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\WebLoginViewController.cs" />
     <Compile Include="Views\App\AboutViewController.cs" />
+    <Compile Include="Views\App\MenuView.cs" />
+    <Compile Include="Views\User\BaseFollowersView.cs" />
     <Compile Include="Views\User\ProfileView.cs" />
+    <Compile Include="Views\User\UserFollowersView.cs" />
+    <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="app.config" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
+    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
