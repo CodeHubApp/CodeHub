@@ -1,12 +1,12 @@
-using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Gists;
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.User
 {
     public class ProfileViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -69,7 +69,6 @@ namespace CodeHub.Core.ViewModels
         {
             return Task.Run(() => this.RequestModel(_application.Client.Users[Username].Get(), forceDataRefresh, response => User = response.Data));
         }
-
 
         public class NavObject
         {

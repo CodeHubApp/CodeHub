@@ -13,6 +13,11 @@ namespace CodeHub.Core.ViewModels
     {
         private readonly FilterableCollectionViewModel<RepositoryModel, RepositoriesFilterModel> _repositories;
 
+        public bool ShowRepositoryDescription
+        {
+            get { return Application.Account.ShowRepositoryDescriptionInList; }
+        }
+
         public FilterableCollectionViewModel<RepositoryModel, RepositoriesFilterModel> Repositories
         {
             get { return _repositories; }
@@ -21,14 +26,14 @@ namespace CodeHub.Core.ViewModels
         protected RepositoriesViewModel(string filterKey = "RepositoryController")
         {
             _repositories = new FilterableCollectionViewModel<RepositoryModel, RepositoriesFilterModel>(filterKey);
-            _repositories.FilteringFunction = x => _repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
-            _repositories.GroupingFunction = CreateGroupedItems;
+            //_repositories.FilteringFunction = x => _repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
+            //_repositories.GroupingFunction = CreateGroupedItems;
             _repositories.Bind(x => x.Filter, () => Repositories.Refresh());
         }
 
         private IEnumerable<IGrouping<string, RepositoryModel>> CreateGroupedItems(IEnumerable<RepositoryModel> model)
         {
-            var order = (RepositoriesFilterModel.Order)Repositories.Filter.OrderBy;
+            var order = Repositories.Filter.OrderBy;
             if (order == RepositoriesFilterModel.Order.Forks)
             {
                 var a = model.OrderBy(x => x.Forks).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Forks));

@@ -1,3 +1,5 @@
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
@@ -25,6 +27,11 @@ namespace CodeHub.Core.ViewModels
         public CollectionViewModel<BranchModel> Branches
         {
             get { return _items; }
+        }
+
+        public ICommand GoToSourceCommand
+        {
+            get { return new MvxCommand<BranchModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Name })); }
         }
 
         public BranchesViewModel(IApplicationService application)

@@ -93,6 +93,12 @@
     <Compile Include="Views\Accounts\WebLoginViewController.cs" />
     <Compile Include="Views\App\AboutViewController.cs" />
     <Compile Include="Views\App\MenuView.cs" />
+    <Compile Include="Views\Repositories\ReadmeView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
+    <Compile Include="Views\Repositories\RepositoriesView.cs" />
+    <Compile Include="Views\Repositories\RepositoryViewController.cs" />
+    <Compile Include="Views\User\StargazersView.cs" />
     <Compile Include="Views\User\BaseFollowersView.cs" />
     <Compile Include="Views\User\ProfileView.cs" />
     <Compile Include="Views\User\UserFollowersView.cs" />

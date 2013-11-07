@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
-using GitHubSharp.Models;
 using System.Collections.Generic;
-using GitHubSharp;
 using System.Threading.Tasks;
+using CodeFramework.Core.ViewModels;
+using GitHubSharp;
+using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Events
 {
     public abstract class EventsViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -61,50 +61,5 @@ namespace CodeHub.Core.ViewModels
         }
 
         protected abstract GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage);
-    }
-
-    public class UserEventsViewModel : EventsViewModel
-    {
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
-
-        public UserEventsViewModel(string username)
-        {
-            Username = username;
-        }
-
-        protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
-        {
-            return Application.Client.Users[Username].GetEvents(page, perPage);
-        }
-    }
-
-    public class OrganizationEventsViewModel : EventsViewModel
-    {
-        public string Name 
-        { 
-            get; 
-            private set; 
-        }
-
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
-
-        public OrganizationEventsViewModel(string username, string name)
-        {
-            Username = username;
-            Name = name;
-        }
-
-        protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
-        {
-            return Application.Client.Users[Username].GetOrganizationEvents(Name, page, perPage);
-        }
     }
 }

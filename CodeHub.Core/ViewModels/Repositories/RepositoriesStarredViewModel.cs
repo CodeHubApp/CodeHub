@@ -1,7 +1,6 @@
-using GitHubSharp.Models;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesStarredViewModel : RepositoriesViewModel
     {

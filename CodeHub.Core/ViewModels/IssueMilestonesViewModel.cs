@@ -27,7 +27,7 @@ namespace CodeHub.Core.ViewModels
 
         public void Init(NavObject navObject)
         {
-            Username = navObject.User;
+            Username = navObject.Username;
             Repository = navObject.Repository;
         }
 
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels
 
         public class NavObject
         {
-            public string User { get; set; }
+            public string Username { get; set; }
             public string Repository { get; set; }
         }
     }

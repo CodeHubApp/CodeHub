@@ -1,9 +1,9 @@
-using CodeFramework.Core.ViewModels;
-using GitHubSharp.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using CodeFramework.Core.ViewModels;
+using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -15,7 +15,9 @@ namespace CodeHub.Core.ViewModels
         }
 
         public ulong PullRequestId { get; private set; }
+
         public string Username { get; private set; }
+
         public string Repository { get; private set; }
 
         public PullRequestFilesViewModel(string username, string repository, ulong pullRequestId)

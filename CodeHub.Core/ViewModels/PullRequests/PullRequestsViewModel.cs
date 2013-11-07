@@ -1,10 +1,10 @@
-﻿using CodeFramework.Core.ViewModels;
+﻿using System;
+using System.Threading.Tasks;
+using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
-using System.Threading.Tasks;
-using System;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {

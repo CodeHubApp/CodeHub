@@ -73,13 +73,13 @@ namespace CodeHub.Core.ViewModels
                 var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Comments)).ToList();
                 return FilterGroup.CreateNumberedGroup(g, "Comments");
             }
-            else if (order == MyIssuesFilterModel.Sort.Updated)
+            if (order == MyIssuesFilterModel.Sort.Updated)
             {
                 var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
                 var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
                 return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
             }
-            else if (order == MyIssuesFilterModel.Sort.Created)
+            if (order == MyIssuesFilterModel.Sort.Created)
             {
                 var a = Issues.Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
                 var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));

@@ -1,7 +1,7 @@
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
 using MonoTouch.Dialog;
 using MonoTouch.Dialog.Utilities;
 
@@ -19,6 +19,8 @@ namespace CodeHub.iOS.Views.User
 
         public override void ViewDidLoad()
         {
+            Title = "Profile";
+
             base.ViewDidLoad();
 
             _header = new HeaderView(View.Bounds.Width);

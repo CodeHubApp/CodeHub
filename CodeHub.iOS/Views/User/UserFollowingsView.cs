@@ -1,5 +1,5 @@
 using CodeFramework.iOS.Elements;
-using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.iOS.Views.User
 {

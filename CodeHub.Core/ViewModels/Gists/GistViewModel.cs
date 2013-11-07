@@ -1,8 +1,8 @@
+using System.Threading.Tasks;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
-using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -49,12 +49,8 @@ namespace CodeHub.Core.ViewModels
 
         public Task Load(bool forceDataRefresh)
         {
-            var t1 = Task.Run(() => this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => {
-                Gist = response.Data;
-            }));
-
+            var t1 = Task.Run(() => this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => Gist = response.Data));
             FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Gists[Id].IsGistStarred(), forceDataRefresh, response => IsStarred = response.Data));
-
             return t1;
         }
 

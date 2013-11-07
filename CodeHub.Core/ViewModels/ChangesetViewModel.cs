@@ -33,11 +33,11 @@ namespace CodeHub.Core.ViewModels
             get { return _commits; }
         }
         
-        public ChangesetViewModel(string username, string repository, string branch = null)
+        public void Init(NavObject navObject)
         {
-            Username = username;
-            Repository = repository;
-            Branch = branch;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            Branch = navObject.Branch;
         }
 
         public Task Load(bool forceDataRefresh)
@@ -48,6 +48,13 @@ namespace CodeHub.Core.ViewModels
         protected virtual GitHubRequest<List<CommitModel>> GetRequest()
         {
             return Application.Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public string Branch { get; set; }
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
@@ -23,6 +25,11 @@ namespace CodeHub.Core.ViewModels
         {
             get;
             private set;
+        }
+
+        public ICommand GoToSourceCommand
+        {
+            get { return new MvxCommand<TagModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Commit.Sha }));}
         }
 
         public void Init(NavObject navObject)

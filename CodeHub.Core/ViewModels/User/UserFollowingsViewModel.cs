@@ -1,11 +1,11 @@
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
-using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.User
 {
     public class UserFollowingsViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -49,4 +49,3 @@ namespace CodeHub.Core.ViewModels
         }
     }
 }
-

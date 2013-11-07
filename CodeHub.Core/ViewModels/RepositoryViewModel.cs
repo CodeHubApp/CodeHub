@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 
@@ -7,8 +10,8 @@ namespace CodeHub.Core.ViewModels
 {
     public class RepositoryViewModel : BaseViewModel, ILoadableViewModel
     {
-        private bool _starred;
-        private bool _watched;
+        private bool? _starred;
+        private bool? _watched;
         private RepositoryModel _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
@@ -25,7 +28,7 @@ namespace CodeHub.Core.ViewModels
             private set; 
         }
 
-        public bool IsStarred
+        public bool? IsStarred
         {
             get { return _starred; }
             private set
@@ -35,7 +38,7 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-        public bool IsWatched
+        public bool? IsWatched
         {
             get { return _watched; }
             private set
@@ -75,18 +78,54 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-        public RepositoryViewModel(string user, string repo)
+        public void Init(NavObject navObject)
         {
-            Username = user;
-            RepositoryName = repo;
+            Username = navObject.Username;
+            RepositoryName = navObject.Repository;
+        }
+
+        public ICommand ShowCommitsCommand
+        {
+            get { return new MvxCommand(ShowCommits);}
+        }
+
+        private void ShowCommits()
+        {
+            if (Branches != null && Branches.Count == 1)
+                ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject {Username = Username, Repository = RepositoryName});
+            else
+            {
+#warning Need to fix this
+                throw new Exception("Need to fix");
+                ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject {Username = Username, Repository = RepositoryName});
+            }
+        }
+
+        public ICommand PinCommand
+        {
+            get { return new MvxCommand(PinRepository, () => Repository != null); }
+        }
+
+        private void PinRepository()
+        {
+            var repoOwner = Repository.Owner.Login;
+            var repoName = Repository.Name;
+
+            //Is it pinned already or not?
+            var pinnedRepo = Application.Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
+            if (pinnedRepo == null)
+            {
+                //var imageUrl = Repository.Fork ? Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
+                //Application.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, imageUrl.AbsolutePath);
+            }
+            else
+                Application.Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }
 
 
         public Task Load(bool forceDataRefresh)
         {
-            var t1 = Task.Run(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].Get(), forceDataRefresh, response => {
-                Repository = response.Data;
-            }));
+            var t1 = Task.Run(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].Get(), forceDataRefresh, response => Repository = response.Data));
 
             FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
                     forceDataRefresh, response => Readme = response.Data));
@@ -103,28 +142,44 @@ namespace CodeHub.Core.ViewModels
             return t1;
         }
 
-        public async Task Watch()
+        public ICommand ToggleWatchCommand
         {
-            await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Watch());
-            IsWatched = true;
+            get { return new MvxCommand(ToggleWatch, () => IsWatched != null); }
         }
 
-        public async Task StopWatching()
+        private async void ToggleWatch()
         {
-            await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].StopWatching());
-            IsWatched = false;
+            if (IsWatched == null)
+                return;
+
+            if (IsWatched.Value)
+                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].StopWatching());
+            else
+                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Watch());
+
+            IsWatched = !IsWatched;
         }
 
-        public async Task Star()
+        public ICommand ToggleStarCommand
         {
-            await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Star());
-            IsStarred = true;
+            get { return new MvxCommand(ToggleStar, () => IsStarred != null); }
         }
 
-        public async Task Unstar()
+        public bool IsPinned
         {
-            await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Unstar());
-            IsStarred = false;
+            get { return Application.Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
+        }
+
+        private async void ToggleStar()
+        {
+            if (IsStarred == null)
+                return;
+
+            if (IsStarred.Value)
+                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Unstar());
+            else
+                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Star());
+            IsStarred = !IsStarred;
         }
 
         public class NavObject

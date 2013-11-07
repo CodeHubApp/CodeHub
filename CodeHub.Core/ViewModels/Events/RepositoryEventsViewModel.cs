@@ -1,8 +1,8 @@
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using GitHubSharp;
+using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Events
 {
     public class RepositoryEventsViewModel : EventsViewModel
     {
@@ -18,15 +18,21 @@ namespace CodeHub.Core.ViewModels
             private set;
         }
 
-        public RepositoryEventsViewModel(string username, string repository)
+        public void Init(NavObject navObject)
         {
-            Username = username;
-            Repository = repository;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
         }
 
         protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
         {
             return Application.Client.Users[Username].Repositories[Repository].GetEvents(page, perPage);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
         }
     }
 }

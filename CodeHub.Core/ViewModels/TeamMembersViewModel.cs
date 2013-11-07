@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 
@@ -23,7 +24,6 @@ namespace CodeHub.Core.ViewModels
             get;
             private set;
         }
-
 
         public ICommand GoToUserCommand
         {

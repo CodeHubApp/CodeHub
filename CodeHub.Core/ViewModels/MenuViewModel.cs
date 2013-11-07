@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Repositories;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -52,9 +53,25 @@ namespace CodeHub.Core.ViewModels
             get { return new MvxCommand(() => this.ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
         }
 
+        public ICommand GoToNotificationsCommand
+        {
+            get { return new MvxCommand(() => this.ShowMenuViewModel<NotificationsViewModel>(null)); }
+        }
+
+        public ICommand GoToMyIssuesCommand
+        {
+            get { return new MvxCommand(() => this.ShowMenuViewModel<MyIssuesViewModel>(null)); }
+        }
+
+
         public ICommand GoToDefaultTopView
         {
             get { return GoToProfileCommand; }
+        }
+
+        public ICommand GoToStarredRepositoriesCommand
+        {
+            get { return new MvxCommand(() => this.ShowViewModel<RepositoriesStarredViewModel>());}
         }
 
         private bool ShowMenuViewModel<T>(object data) where T : IMvxViewModel

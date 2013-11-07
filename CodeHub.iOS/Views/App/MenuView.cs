@@ -1,4 +1,5 @@
 using CodeFramework.iOS.ViewControllers;
+using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 
@@ -41,12 +42,12 @@ namespace CodeHub.iOS.Views.App
 //                Application.Account.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
 //            root.Add(eventsSection);
 //
-//            var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-//            repoSection.Add(new MenuElement("Owned", () => NavPush(new UserRepositoriesViewController(Application.Account.Username) { Title = "Owned" }), Images.Repo));
-//            //repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
-//            repoSection.Add(new MenuElement("Starred", () => NavPush(new RepositoriesStarredViewController()), Images.Star));
-//            repoSection.Add(new MenuElement("Explore", () => NavPush(new RepositoriesExploreViewController()), Images.Explore));
-//            root.Add(repoSection);
+            var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
+            //repoSection.Add(new MenuElement("Owned", () => NavPush(new UserRepositoriesViewController(Application.Account.Username) { Title = "Owned" }), Images.Repo));
+            //repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
+            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
+            //repoSection.Add(new MenuElement("Explore", () => NavPush(new RepositoriesExploreView()), Images.Explore));
+            root.Add(repoSection);
 //            
 //            var pinnedRepos = Application.Account.GetPinnedRepositories();
 //            if (pinnedRepos.Count > 0)

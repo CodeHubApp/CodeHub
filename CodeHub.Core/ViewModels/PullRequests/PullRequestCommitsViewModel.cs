@@ -1,6 +1,6 @@
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : ChangesetViewModel
     {
@@ -10,15 +10,22 @@ namespace CodeHub.Core.ViewModels
             private set; 
         }
 
-        public PullRequestCommitsViewModel(string username, string repository, ulong pullRequestId)
-            : base(username, repository)
+        public void Init(NavObject navObject)
         {
-            PullRequestId = pullRequestId;
+#warning More work here...
+            PullRequestId = navObject.PullRequestId;
         }
 
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<CommitModel>> GetRequest()
         {
             return Application.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits();
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public ulong PullRequestId { get; set; }
         }
     }
 }

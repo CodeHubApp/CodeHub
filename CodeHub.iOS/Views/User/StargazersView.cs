@@ -1,30 +1,30 @@
 using CodeFramework.iOS.Elements;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.Views.User
 {
-    public class UserFollowersView : BaseFollowersView
+    public class StargazersView : BaseFollowersView
     {
-        public new UserFollowersViewModel ViewModel
+        public new StargazersViewModel ViewModel
         {
-            get { return (UserFollowersViewModel)base.ViewModel; }
+            get { return (StargazersViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
         }
 
         public override void ViewDidLoad()
         {
-            Title = "Followers".t();
-            SearchPlaceholder = "Search Followers".t();
-            NoItemsText = "No Followers".t();
-
+            Title = "Stargazers".t();
+            SearchPlaceholder = "Search Stargazers".t();
+            NoItemsText = "No Stargazers".t();
             base.ViewDidLoad();
 
-            BindCollection(ViewModel.Users, x =>
+            BindCollection(ViewModel.Stargazers, x =>
             {
                 var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
                 e.Tapped += () => ViewModel.GoToUserCommand.Execute(x);
                 return e;
             });
+
         }
     }
 }
