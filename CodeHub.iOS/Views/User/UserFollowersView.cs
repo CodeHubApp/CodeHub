@@ -1,16 +1,7 @@
-using CodeFramework.iOS.Elements;
-using CodeHub.Core.ViewModels.User;
-
 namespace CodeHub.iOS.Views.User
 {
-    public class UserFollowersView : BaseFollowersView
+    public class UserFollowersView : BaseUserCollectionView
     {
-        public new UserFollowersViewModel ViewModel
-        {
-            get { return (UserFollowersViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             Title = "Followers".t();
@@ -18,13 +9,6 @@ namespace CodeHub.iOS.Views.User
             NoItemsText = "No Followers".t();
 
             base.ViewDidLoad();
-
-            BindCollection(ViewModel.Users, x =>
-            {
-                var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-                e.Tapped += () => ViewModel.GoToUserCommand.Execute(x);
-                return e;
-            });
         }
     }
 }

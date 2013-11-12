@@ -1,31 +1,25 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
 using GitHubSharp;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public abstract class GistsViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class GistsViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<GistModel> _gists = new CollectionViewModel<GistModel>();
-        protected new readonly IApplicationService Application;
 
-        protected GistsViewModel(IApplicationService application)
+        public CollectionViewModel<GistModel> Gists { get { return _gists; } }
+
+        public ICommand GoToGistCommand
         {
-            Application = application;
+            get { return new MvxCommand<GistModel>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Id }));}
         }
 
-        public CollectionViewModel<GistModel> Gists
-        {
-            get
-            {
-                return _gists;
-            }
-        }
-        
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             return Gists.SimpleCollectionLoad(CreateRequest(), forceDataRefresh);
         }

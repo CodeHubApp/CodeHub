@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CodeHub.Core.Services;
 using GitHubSharp;
 using GitHubSharp.Models;
 
@@ -13,14 +12,38 @@ namespace CodeHub.Core.ViewModels.Gists
             private set;
         }
 
-        public UserGistsViewModel(IApplicationService application)
-            : base(application)
+        public string Title
         {
+            get;
+            private set;
+        }
+
+        public bool IsMine
+        {
+            get { return Application.Account.Username.Equals(Username); }
         }
 
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
+
+            //Assign some sort of title
+            if (Username != null)
+            {
+                if (IsMine)
+                    Title = "My Gists";
+                else
+                {
+                    if (Username.EndsWith("s"))
+                        Title = Username + "' Gists";
+                    else
+                        Title = Username + "'s Gists";
+                }
+            }
+            else
+            {
+                Title = "Gists";
+            }
         }
 
         protected override GitHubRequest<List<GistModel>> CreateRequest()

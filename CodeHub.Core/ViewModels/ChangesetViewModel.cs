@@ -1,60 +1,91 @@
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
-using GitHubSharp;
-using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class ChangesetViewModel : BaseViewModel, ILoadableViewModel
+    public class ChangesetViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
+        private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
+        private readonly IApplicationService _application;
+        private CommitModel _commitModel;
 
-        public string Username
-        {
-            get;
+        public string Node 
+        { 
+            get; 
             private set;
         }
 
-        public string Repository
-        {
-            get;
-            private set;
+        public string User 
+        { 
+            get; 
+            private set; 
         }
 
-        public string Branch
-        {
-            get;
-            private set;
+        public string Repository 
+        { 
+            get; 
+            private set; 
         }
 
-        public CollectionViewModel<CommitModel> Commits
+        public bool ShowRepository { get; private set; }
+
+        public CommitModel Changeset
         {
-            get { return _commits; }
+            get { return _commitModel; }
+            private set
+            {
+                _commitModel = value;
+                RaisePropertyChanged(() => Changeset);
+            }
         }
-        
+
+        public ICommand GoToRepositoryCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, Repository = Repository })); }
+        }
+
+        public CollectionViewModel<CommentModel> Comments
+        {
+            get { return _comments; }
+        }
+
+        public ChangesetViewModel(IApplicationService application)
+        {
+            _application = application;
+        }
+
         public void Init(NavObject navObject)
         {
-            Username = navObject.Username;
+            User = navObject.Username;
             Repository = navObject.Repository;
-            Branch = navObject.Branch;
+            Node = navObject.Node;
+            ShowRepository = navObject.ShowRepository;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
-            return Commits.SimpleCollectionLoad(GetRequest(), forceDataRefresh);
+            var t1 = Task.Run(() => this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceDataRefresh, response => Changeset = response.Data));
+            FireAndForgetTask.Start(() => Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceDataRefresh));
+            return t1;
         }
 
-        protected virtual GitHubRequest<List<CommitModel>> GetRequest()
+        public async Task AddComment(string text)
         {
-            return Application.Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
+            var c = await _application.Client.ExecuteAsync(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.Create(text));
+            Comments.Items.Add(c.Data);
         }
 
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public string Branch { get; set; }
+            public string Node { get; set; }
+            public bool ShowRepository { get; set; }
         }
     }
 }

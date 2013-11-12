@@ -4,7 +4,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Events
 {
-    public class RepositoryEventsViewModel : EventsViewModel
+    public class RepositoryEventsViewModel : BaseEventsViewModel
     {
         public string Repository 
         { 

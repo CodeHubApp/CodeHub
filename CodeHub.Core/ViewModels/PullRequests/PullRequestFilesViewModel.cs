@@ -1,11 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestFilesViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<CommitModel.CommitFileModel> _files = new CollectionViewModel<CommitModel.CommitFileModel>();
 
@@ -20,6 +22,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; private set; }
 
+//        public ICommand GoToContentCommand
+//        {
+//            get { return new MvxCommand(() => ShowViewModel<ContentViewModel>());}
+//        }
+
         public PullRequestFilesViewModel(string username, string repository, ulong pullRequestId)
         {
             Username = username;
@@ -32,7 +39,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }).OrderBy(y => y.Key);
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             return Files.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
         }

@@ -5,6 +5,7 @@ using CodeFramework.Core;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.App;
 using GitHubSharp;
 
 namespace CodeHub.Core.Services

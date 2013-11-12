@@ -1,16 +1,15 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class TeamsViewModel : BaseViewModel, ILoadableViewModel
+    public class TeamsViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<TeamShortModel> _teams = new CollectionViewModel<TeamShortModel>();
-        private readonly IApplicationService _application;
 
         public CollectionViewModel<TeamShortModel> Teams
         {
@@ -28,19 +27,14 @@ namespace CodeHub.Core.ViewModels
             get { return new MvxCommand<TeamShortModel>(x => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Id = x.Id })); }
         }
 
-        public TeamsViewModel(IApplicationService application)
-        {
-            _application = application;
-        }
-
         public void Init(NavObject navObject)
         {
             OrganizationName = navObject.Name;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
-            return Teams.SimpleCollectionLoad(_application.Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
+            return Teams.SimpleCollectionLoad(Application.Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
         }
 
         public class NavObject

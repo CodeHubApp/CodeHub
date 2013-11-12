@@ -1,10 +1,13 @@
+using System;
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
+using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistViewModel : BaseViewModel, ILoadableViewModel
+    public class GistViewModel : LoadableViewModel
     {
         private GistModel _gist;
         private bool _starred;
@@ -35,19 +38,49 @@ namespace CodeHub.Core.ViewModels.Gists
             }
         }
 
+        public ICommand GoToUserCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Gist.User.Login }), () => Gist != null && Gist.User != null); }
+        }
+
+        public ICommand GoToFileSourceCommand
+        {
+            get { return new MvxCommand(() => { }); }
+        }
+
+        public ICommand GoToViewableFileCommand
+        {
+            get { return new MvxCommand<GistFileModel>(x => ShowViewModel<GistViewableFileViewModel>(new GistViewableFileViewModel.NavObject { GistFile = x }), x => x != null); }
+        }
+
+        public ICommand ToggleStarCommand
+        {
+            get
+            {
+                return new MvxCommand(ToggleStarred, () => Gist != null);
+            }
+        }
+
         public void Init(NavObject navObject)
         {
             Id = navObject.Id;
         }
 
-        public async Task SetStarred(bool value)
+        private async void ToggleStarred()
         {
-            var request = value ? Application.Client.Gists[Id].Star() : Application.Client.Gists[Id].Unstar();
-            await Application.Client.ExecuteAsync(request);
-            IsStarred = value;
+            try
+            {
+                var request = IsStarred ? Application.Client.Gists[Id].Unstar() : Application.Client.Gists[Id].Star();
+                await Application.Client.ExecuteAsync(request);
+                IsStarred = !IsStarred;
+            }
+            catch (Exception)
+            {
+                // Do nothing
+            }
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             var t1 = Task.Run(() => this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => Gist = response.Data));
             FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Gists[Id].IsGistStarred(), forceDataRefresh, response => IsStarred = response.Data));

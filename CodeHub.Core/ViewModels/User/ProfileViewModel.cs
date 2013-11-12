@@ -1,17 +1,16 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
+using CodeHub.Core.ViewModels.Organizations;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.User
 {
-    public class ProfileViewModel : BaseViewModel, ILoadableViewModel
+    public class ProfileViewModel : LoadableViewModel
     {
         private UserModel _userModel;
-        private readonly IApplicationService _application;
 
         public string Username
         {
@@ -37,7 +36,7 @@ namespace CodeHub.Core.ViewModels.User
 
         public ICommand GoToEventsCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Name = Username })); }
+            get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Username })); }
         }
 
         public ICommand GoToOrganizationsCommand
@@ -54,20 +53,15 @@ namespace CodeHub.Core.ViewModels.User
         {
             get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Username })); }
         }
-
-        public ProfileViewModel(IApplicationService application)
-        {
-            _application = application;
-        }
-
+  
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
-            return Task.Run(() => this.RequestModel(_application.Client.Users[Username].Get(), forceDataRefresh, response => User = response.Data));
+            return Task.Run(() => this.RequestModel(Application.Client.Users[Username].Get(), forceDataRefresh, response => User = response.Data));
         }
 
         public class NavObject

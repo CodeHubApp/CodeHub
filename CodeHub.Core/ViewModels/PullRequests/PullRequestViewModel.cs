@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestViewModel : LoadableViewModel
     {
         private PullRequestModel _model;
+        private bool _merged;
         private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
 
         public string User 
@@ -26,6 +29,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
         { 
             get; 
             private set; 
+        }
+
+        public bool Merged
+        {
+            get { return _merged; }
+            set { _merged = value; RaisePropertyChanged(() => Merged); }
         }
 
         public PullRequestModel PullRequest 
@@ -47,10 +56,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             User = navObject.Username;
             Repo = navObject.Repository;
-            PullRequestId = navObject.PullRequestId;
+            PullRequestId = navObject.Id;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             var pullRequest = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
             var commentsRequest = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
@@ -81,11 +90,23 @@ namespace CodeHub.Core.ViewModels.PullRequests
             await Task.Run(() => this.RequestModel(pullRequest, true, r => PullRequest = r.Data));
         }
 
+        public ICommand MergeCommand
+        {
+            get { return new MvxCommand(() => Merge(), CanMerge); }
+        }
+
+        private bool CanMerge()
+        {
+            if (PullRequest == null)
+                return false;
+            return (PullRequest.Merged != null && PullRequest.Merged.Value == false && (PullRequest.Mergable == null || PullRequest.Mergable.Value));
+        }
+
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public ulong PullRequestId { get; set; }
+            public ulong Id { get; set; }
         }
     }
 }

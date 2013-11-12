@@ -1,36 +1,13 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
-using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.User
 {
-    public class UserFollowersViewModel : BaseViewModel, ILoadableViewModel
+    public class UserFollowersViewModel : BaseUserCollectionViewModel
     {
-        private readonly CollectionViewModel<BasicUserModel> _users = new CollectionViewModel<BasicUserModel>();
-        private readonly IApplicationService _application;
-
-        public CollectionViewModel<BasicUserModel> Users
-        {
-            get { return _users; }
-        }
-
         public string Name
         {
             get;
             private set;
-        }
-
-        public ICommand GoToUserCommand
-        {
-            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x.Login })); }
-        }
-
-        public UserFollowersViewModel(IApplicationService application)
-        {
-            _application = application;
         }
 
         public void Init(NavObject navObject)
@@ -38,9 +15,9 @@ namespace CodeHub.Core.ViewModels.User
             Name = navObject.Username;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
-            return Users.SimpleCollectionLoad(_application.Client.Users[Name].GetFollowers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(Application.Client.Users[Name].GetFollowers(), forceDataRefresh);
         }
 
         public class NavObject

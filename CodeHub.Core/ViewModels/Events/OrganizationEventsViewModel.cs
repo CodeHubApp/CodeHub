@@ -4,7 +4,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Events
 {
-    public class OrganizationEventsViewModel : EventsViewModel
+    public class OrganizationEventsViewModel : BaseEventsViewModel
     {
         public string OrganizationName
         {

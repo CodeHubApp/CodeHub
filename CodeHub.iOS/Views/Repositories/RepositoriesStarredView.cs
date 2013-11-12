@@ -4,7 +4,6 @@ namespace CodeHub.iOS.Views.Repositories
     {
 		public RepositoriesStarredView()
         {
-            ShowOwner = true;
             Title = "Following".t();
         }
     }

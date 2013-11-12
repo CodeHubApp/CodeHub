@@ -2,7 +2,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestCommitsViewModel : ChangesetViewModel
+    public class PullRequestCommitsViewModel : ChangesetsViewModel
     {
         public ulong PullRequestId 
         { 

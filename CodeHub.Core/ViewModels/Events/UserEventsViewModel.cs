@@ -4,7 +4,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Events
 {
-    public class UserEventsViewModel : EventsViewModel
+    public class UserEventsViewModel : BaseEventsViewModel
     {
         public string Username
         {

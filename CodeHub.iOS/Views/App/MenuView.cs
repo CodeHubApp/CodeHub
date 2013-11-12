@@ -1,7 +1,9 @@
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
+using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -15,32 +17,25 @@ namespace CodeHub.iOS.Views.App
             set { base.ViewModel = value; }
 	    }
 
-//	    public override void ViewDidAppear(bool animated)
-//	    {
-//	        base.ViewDidAppear(animated);
-//            ViewModel.GoToDefaultTopView.Execute(null);
-//	    }
 
 	    protected override void CreateMenuRoot()
 		{
             var username = ViewModel.Account.Username;
             var root = new RootElement(username);
 
-            root.Add(new Section() {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person)
-                //(_notifications = new MenuElement("Notifications", () => NavPush(new NotificationsViewController()), Images.Notifications)),
-                //new MenuElement("News", () => NavPush(new NewsViewController()), Images.News),
-                //new MenuElement("Issues", () => NavPush(new MyIssuesViewController()), Images.Flag)
+            root.Add(new Section
+            {
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
+                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
+                new MenuElement("News", () => ViewModel.GoToNewsComamnd.Execute(null), Images.News),
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Flag)
             });
-//
-//            if (Application.Account.Notifications != null)
-//                _notifications.NotificationNumber = Application.Account.Notifications.Value;
-//
-//            var eventsSection = new Section() { HeaderView = new MenuSectionView("Events") };
-//            eventsSection.Add(new MenuElement(Application.Account.Username, () => NavPush(new UserEventsViewController(Application.Account.Username)), Images.Event));
-//            if (Application.Account.Organizations != null && Application.Account.ShowOrganizationsInEvents)
-//                Application.Account.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsViewController(username, x.Login)), Images.Event)));
-//            root.Add(eventsSection);
+
+            var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
+//            if (ViewModel.Organizations != null && ViewModel.ShowOrganizationsInEvents)
+//                ViewModel.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationEventsView(username, x.Login)), Images.Event)));
+            root.Add(eventsSection);
 //
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
             //repoSection.Add(new MenuElement("Owned", () => NavPush(new UserRepositoriesViewController(Application.Account.Username) { Title = "Owned" }), Images.Repo));
@@ -59,33 +54,33 @@ namespace CodeHub.iOS.Views.App
 //
 //            var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
 //            if (Application.Accounts.ActiveAccount.Organizations != null && Application.Account.ExpandOrganizations)
-//                Application.Accounts.ActiveAccount.Organizations.ForEach(x => orgSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationViewController(x.Login)), Images.Team)));
+//                Application.Accounts.ActiveAccount.Organizations.ForEach(x => orgSection.Add(new MenuElement(x.Login, () => NavPush(new OrganizationView(x.Login)), Images.Team)));
 //            else
-//                orgSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsViewController(username)), Images.Group));
+//                orgSection.Add(new MenuElement("Organizations", () => NavPush(new OrganizationsView(username)), Images.Group));
 //
 //            //There should be atleast 1 thing...
 //            if (orgSection.Elements.Count > 0)
 //                root.Add(orgSection);
 //
-//            var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
-//            gistsSection.Add(new MenuElement("My Gists", () => NavPush(new AccountGistsViewController(Application.Account.Username)), Images.Script));
-//            gistsSection.Add(new MenuElement("Starred", () => NavPush(new StarredGistsViewController()), Images.Star2));
-//            gistsSection.Add(new MenuElement("Public", () => NavPush(new PublicGistsViewController()), Images.Public));
-//            root.Add(gistsSection);
+            var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
+            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Images.Script));
+            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Images.Star2));
+            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Images.Public));
+            root.Add(gistsSection);
 //
-//            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
-//            root.Add(infoSection);
-//            infoSection.Add(new MenuElement("Settings".t(), () => NavPush(new SettingsViewController()), Images.Cog));
-//            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
-//            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
-//            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
+            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
+            root.Add(infoSection);
+            infoSection.Add(new MenuElement("Settings".t(), () => NavPush(new SettingsView()), Images.Cog));
+            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
+            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
+            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
 		}
 
         private void PresentUserVoice()
         {
-//            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
-//            UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
+            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
+            UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
@@ -96,6 +91,16 @@ namespace CodeHub.iOS.Views.App
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            ViewModel.Bind(x => x.Notifications, x =>
+            {
+                _notifications.NotificationNumber = x;
+                Root.Reload(_notifications, UITableViewRowAnimation.None);
+            });
+
+            ViewModel.LoadCommand.Execute(null);
+
+
 //
 //            ProfileButton.Uri = new System.Uri(Application.Account.AvatarUrl);
 //

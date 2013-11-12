@@ -4,7 +4,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Cirrious.CrossCore.IoC;
 using Cirrious.CrossCore.Platform;
@@ -50,11 +52,11 @@ namespace CodeHub.iOS
             list.Add(typeof(StartupViewModel).Assembly);
             return list.ToArray();
         }
-
-        protected override IMvxTrace CreateDebugTrace()
-        {
-            return new MvxDebugTrace();
-        }
+//
+//        protected override IMvxTrace CreateDebugTrace()
+//        {
+//            return new ;
+//        }
 
         protected override void FillBindingNames(IMvxBindingNameRegistry obj)
         {

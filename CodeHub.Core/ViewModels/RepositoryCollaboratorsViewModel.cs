@@ -7,7 +7,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class RepositoryCollaboratorsViewModel : BaseViewModel, ILoadableViewModel
+    public class RepositoryCollaboratorsViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<BasicUserModel> _collaborators = new CollectionViewModel<BasicUserModel>();
 
@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels
             Repository = navObject.Repository;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             return Collaborators.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
         }

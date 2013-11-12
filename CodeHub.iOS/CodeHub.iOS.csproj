@@ -93,14 +93,60 @@
     <Compile Include="Views\Accounts\WebLoginViewController.cs" />
     <Compile Include="Views\App\AboutViewController.cs" />
     <Compile Include="Views\App\MenuView.cs" />
+    <Compile Include="Views\App\SettingsView.cs" />
+    <Compile Include="Views\Events\BaseEventsViewController.cs" />
+    <Compile Include="Views\Events\NewsView.cs" />
+    <Compile Include="Views\Events\OrganizationEventsView.cs" />
+    <Compile Include="Views\Events\RepoEventsView.cs" />
+    <Compile Include="Views\Events\UserEventsView.cs" />
+    <Compile Include="Views\Gists\GistViewableFileView.cs" />
+    <Compile Include="Views\Gists\PublicGistsView.cs" />
+    <Compile Include="Views\Gists\StarredGistsView.cs" />
+    <Compile Include="Views\Gists\UserGistsView.cs" />
+    <Compile Include="Views\Gists\CreateGistViewController.cs" />
+    <Compile Include="Views\Gists\EditGistController.cs" />
+    <Compile Include="Views\Gists\GistFileViewController.cs" />
+    <Compile Include="Views\Gists\GistsView.cs" />
+    <Compile Include="Views\Gists\GistView.cs" />
+    <Compile Include="Views\Gists\ModifyGistFileController.cs" />
+    <Compile Include="Views\Gists\ModifyGistFileController.designer.cs">
+      <DependentUpon>ModifyGistFileController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Issues\BaseIssuesView.cs" />
+    <Compile Include="Views\Issues\IssueAssigneesView.cs" />
+    <Compile Include="Views\Issues\IssueEditView.cs" />
+    <Compile Include="Views\Issues\IssueLabelsView.cs" />
+    <Compile Include="Views\Issues\IssueMilestonesView.cs" />
+    <Compile Include="Views\Issues\IssuesView.cs" />
+    <Compile Include="Views\Issues\IssueView.cs" />
+    <Compile Include="Views\Issues\MyIssuesView.cs" />
+    <Compile Include="Views\NotificationsView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestFilesViewController.cs" />
+    <Compile Include="Views\PullRequests\PullRequestsView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestView.cs" />
+    <Compile Include="Views\Source\BranchesView.cs" />
+    <Compile Include="Views\Source\ChangesetBranchesView.cs" />
+    <Compile Include="Views\Source\ChangesetDiffViewController.cs" />
+    <Compile Include="Views\Source\ChangesetsViewController.cs" />
+    <Compile Include="Views\Source\ChangesetView.cs" />
+    <Compile Include="Views\Source\FileSourceViewController.cs" />
+    <Compile Include="Views\Source\SourceInfoViewController.cs" />
+    <Compile Include="Views\Source\SourceTreeView.cs" />
+    <Compile Include="Views\Source\TagsView.cs" />
+    <Compile Include="Views\User\OrganizationMembersView.cs" />
+    <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
+    <Compile Include="Views\Organizations\OrganizationsView.cs" />
+    <Compile Include="Views\Organizations\OrganizationView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoriesView.cs" />
-    <Compile Include="Views\Repositories\RepositoryViewController.cs" />
-    <Compile Include="Views\User\StargazersView.cs" />
-    <Compile Include="Views\User\BaseFollowersView.cs" />
+    <Compile Include="Views\Repositories\RepositoryView.cs" />
+    <Compile Include="Views\Repositories\StargazersView.cs" />
+    <Compile Include="Views\User\BaseUserCollectionView.cs" />
     <Compile Include="Views\User\ProfileView.cs" />
+    <Compile Include="Views\User\TeamMembersView.cs" />
+    <Compile Include="Views\User\TeamsView.cs" />
     <Compile Include="Views\User\UserFollowersView.cs" />
     <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="app.config" />
@@ -108,6 +154,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
+    <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -161,6 +208,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="UserVoice">
+      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />

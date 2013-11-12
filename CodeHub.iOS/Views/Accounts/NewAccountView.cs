@@ -1,9 +1,7 @@
-using System;
 using System.Drawing;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using Cirrious.MvvmCross.Touch.Views;
-using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch;
 using MonoTouch.UIKit;
 

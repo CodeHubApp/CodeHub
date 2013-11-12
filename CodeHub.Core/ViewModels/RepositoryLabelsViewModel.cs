@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class RepositoryLabelsViewModel : BaseViewModel, ILoadableViewModel
+    public class RepositoryLabelsViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
 
@@ -25,15 +25,21 @@ namespace CodeHub.Core.ViewModels
             private set;
         }
 
-        public RepositoryLabelsViewModel(string user, string repository)
+        public void Init(NavObject navObject)
         {
-            Username = user;
-            Repository = repository;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
         }
 
-        public Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceDataRefresh)
         {
             return Labels.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].GetLabels(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
         }
     }
 }
