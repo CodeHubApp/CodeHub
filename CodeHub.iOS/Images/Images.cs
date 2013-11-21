@@ -47,20 +47,6 @@ namespace CodeHub.iOS
         public static UIImage Priority { get { return UIImage.FromBundle("/Images/priority"); } }
         public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
-
-        public static UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Controls/backbutton"); } }
-        public static UIImage BackButtonLandscape { get { return UIImageHelper.FromFileAuto("Images/Controls/backbutton-landscape"); } }
-        public static UIImage BarButton { get { return UIImageHelper.FromFileAuto("Images/Controls/barbutton"); } }
-        public static UIImage BarButtonLandscape { get { return UIImageHelper.FromFileAuto("Images/Controls/barbutton-land"); } }
-
-        public static UIImage Titlebar { get { return UIImage.FromBundle("/Images/Controls/titlebar"); } }
-        public static UIImage Bottombar { get { return UIImage.FromFile("Images/Controls/bottombar.png"); } }
-        public static UIImage Searchbar { get { return UIImage.FromBundle("/Images/Controls/searchbar"); } }
-        public static UIImage Divider { get { return UIImage.FromBundle("/Images/Controls/divider"); } }
-
-        public static UIImage TableCell { get { return UIImage.FromBundle("/Images/TableCell"); } }
-        public static UIImage TableCellRed { get { return UIImageHelper.FromFileAuto("Images/tablecell_red"); } }
-
         public static Uri GitHubRepoUrl
         {
             get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }

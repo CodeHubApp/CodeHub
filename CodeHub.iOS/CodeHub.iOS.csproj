@@ -178,6 +178,10 @@
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -203,9 +207,6 @@
     </Reference>
     <Reference Include="Cirrious.MvvmCross.Touch">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -248,27 +249,6 @@
     <Content Include="Images\comments.png" />
     <Content Include="Images\commit%402x.png" />
     <Content Include="Images\commit.png" />
-    <Content Include="Images\Controls\backbutton%402x.png" />
-    <Content Include="Images\Controls\backbutton-landscape%402x.png" />
-    <Content Include="Images\Controls\backbutton-landscape.png" />
-    <Content Include="Images\Controls\backbutton.png" />
-    <Content Include="Images\Controls\barbutton%402x.png" />
-    <Content Include="Images\Controls\barbutton-land%402x.png" />
-    <Content Include="Images\Controls\barbutton-land.png" />
-    <Content Include="Images\Controls\barbutton.png" />
-    <Content Include="Images\Controls\bottombar%402x.png" />
-    <Content Include="Images\Controls\bottombar.png" />
-    <Content Include="Images\Controls\divider%402x.png" />
-    <Content Include="Images\Controls\divider.png" />
-    <Content Include="Images\Controls\dropbar.png" />
-    <Content Include="Images\Controls\menu_navbar%402x.png" />
-    <Content Include="Images\Controls\menu_navbar.png" />
-    <Content Include="Images\Controls\menu_section_bg%402x.png" />
-    <Content Include="Images\Controls\menu_section_bg.png" />
-    <Content Include="Images\Controls\searchbar%402x.png" />
-    <Content Include="Images\Controls\searchbar.png" />
-    <Content Include="Images\Controls\titlebar%402x.png" />
-    <Content Include="Images\Controls\titlebar.png" />
     <Content Include="Images\Controls\warning.png" />
     <Content Include="Images\create%402x.png" />
     <Content Include="Images\create.png" />
@@ -337,8 +317,6 @@
     <Content Include="Images\star.png" />
     <Content Include="Images\star2%402x.png" />
     <Content Include="Images\star2.png" />
-    <Content Include="Images\TableCell.png" />
-    <Content Include="Images\tablecell_red.png" />
     <Content Include="Images\tag%402x.png" />
     <Content Include="Images\tag.png" />
     <Content Include="Images\team%402x.png" />

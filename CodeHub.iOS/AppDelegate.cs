@@ -35,7 +35,13 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            this.window = new UIWindow(UIScreen.MainScreen.Bounds);
+			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+			UINavigationBar.Appearance.TintColor = UIColor.White;
+			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(39, 41, 43);
+			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
+
+			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
+
 
             // Setup theme
             Theme.Setup();

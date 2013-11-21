@@ -51,13 +51,7 @@ namespace CodeHub.iOS
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
-        public UIImage MenuSectionBackground { get { return UIImageHelper.FromFileAuto("Images/Controls/menu_section_bg"); } }
-        public UIImage MenuNavbarBackground { get { return UIImageHelper.FromFileAuto("Images/Controls/menu_navbar"); } }
         public UIImage WarningImage { get { return UIImageHelper.FromFileAuto("Images/Controls/warning"); } }
-
-        public UIImage DropbarBackground { get { return UIImageHelper.FromFileAuto("Images/Controls/dropbar"); } }
-
-        public UIImage TableViewSectionBackground { get { return Images.Searchbar; } }
 
         //Cache these because we make a smaller size of them
         private UIImage _issueCell1, _issueCell2, _issueCell3, _issueCell4;
@@ -110,5 +104,29 @@ namespace CodeHub.iOS
         public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
 
         public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
+
+		public UIColor AccountsNavigationBarTint
+		{
+			get
+			{
+				return UIColor.Red;
+			}
+		}
+
+		public UIColor SlideoutNavigationBarTint
+		{
+			get
+			{
+				return UIColor.Black;
+			}
+		}
+
+		public UIColor ApplicationNavigationBarTint
+		{
+			get
+			{
+				return UIColor.Black;
+			}
+		}
     }
 }
