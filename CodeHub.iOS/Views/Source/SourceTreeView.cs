@@ -19,7 +19,6 @@ namespace CodeHub.iOS.Views.Source
         {
             EnableSearch = true;
             EnableFilter = true;
-            SearchPlaceholder = "Search Files & Folders".t();
 
             base.ViewDidLoad();
 

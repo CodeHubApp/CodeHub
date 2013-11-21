@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             Title = "Stargazers".t();
-            SearchPlaceholder = "Search Stargazers".t();
             NoItemsText = "No Stargazers".t();
 
             base.ViewDidLoad();

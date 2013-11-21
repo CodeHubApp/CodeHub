@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.Source
         public override void ViewDidLoad()
         {
             Title = "Tags".t();
-            SearchPlaceholder = "Search Tags".t();
             NoItemsText = "No Tags".t();
             EnableSearch = true;
 

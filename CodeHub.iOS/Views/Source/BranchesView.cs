@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.Source
         public override void ViewDidLoad()
         {
             Title = "Branches".t();
-            SearchPlaceholder = "Search Branches".t();
             NoItemsText = "No Branches".t();
 
             base.ViewDidLoad();

@@ -19,7 +19,6 @@ namespace CodeHub.iOS.Views.Repositories
         {
             AutoHideSearch = false;
             //EnableFilter = true;
-            SearchPlaceholder = "Search Repositories".t();
             NoItemsText = "No Repositories".t();
             Title = "Explore".t();
         }

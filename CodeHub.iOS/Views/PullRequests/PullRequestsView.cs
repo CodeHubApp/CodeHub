@@ -21,7 +21,6 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             Root.UnevenRows = true;
             Title = "Pull Requests".t();
-            SearchPlaceholder = "Search Pull Requests".t();
             NoItemsText = "No Pull Requests".t();
 
             base.ViewDidLoad();

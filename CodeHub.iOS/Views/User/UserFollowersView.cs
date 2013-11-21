@@ -5,7 +5,6 @@ namespace CodeHub.iOS.Views.User
         public override void ViewDidLoad()
         {
             Title = "Followers".t();
-            SearchPlaceholder = "Search Followers".t();
             NoItemsText = "No Followers".t();
 
             base.ViewDidLoad();

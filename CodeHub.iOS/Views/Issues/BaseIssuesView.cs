@@ -12,7 +12,6 @@ namespace CodeHub.iOS.Views.Issues
         {
             Root.UnevenRows = true;
             Title = "Issues".t();
-            SearchPlaceholder = "Search Issues".t();
         }
 
         protected MonoTouch.Dialog.Element CreateElement(IssueModel x)

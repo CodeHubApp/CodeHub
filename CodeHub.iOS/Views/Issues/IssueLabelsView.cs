@@ -14,7 +14,6 @@ namespace CodeHub.iOS.Views.Issues
         {
             Title = "Labels".t();
             NoItemsText = "No Labels".t();
-            SearchPlaceholder = "Search Labels".t();
             SelectedLabels = new List<LabelModel>();
         }
 

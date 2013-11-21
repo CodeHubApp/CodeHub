@@ -27,7 +27,6 @@ namespace CodeHub.iOS.Views
 
         public override void ViewDidLoad()
         {
-            SearchPlaceholder = "Search Notifications".t();
             NoItemsText = "No Notifications".t();
             Title = "Notifications".t();
 

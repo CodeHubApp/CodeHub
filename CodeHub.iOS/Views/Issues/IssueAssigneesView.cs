@@ -21,7 +21,6 @@ namespace CodeHub.iOS.Views.Issues
         {
             Title = "Assignees".t();
             NoItemsText = "No Assignees".t();
-            SearchPlaceholder = "Search Assignees".t();
 
             base.ViewDidLoad();
 

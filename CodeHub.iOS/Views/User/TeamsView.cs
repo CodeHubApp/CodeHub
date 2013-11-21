@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.User
         public override void ViewDidLoad()
         {
             Title = "Teams".t();
-            SearchPlaceholder = "Search Teams".t();
             NoItemsText = "No Teams".t();
 
             base.ViewDidLoad();

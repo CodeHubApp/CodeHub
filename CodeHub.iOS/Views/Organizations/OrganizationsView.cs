@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.Organizations
         public override void ViewDidLoad()
         {
             Title = "Organizations".t();
-            SearchPlaceholder = "Search Organizations".t();
             NoItemsText = "No Organizations".t();
 
             base.ViewDidLoad();

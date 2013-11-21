@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.Gists
     {
         public override void ViewDidLoad()
         {
-            SearchPlaceholder = "Search Gists".t();
             NoItemsText = "No Gists".t();
 
             base.ViewDidLoad();

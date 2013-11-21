@@ -21,7 +21,6 @@ namespace CodeHub.iOS.Views.Issues
         {
             Title = "Milestones".t();
             NoItemsText = "No Milestones".t();
-            SearchPlaceholder = "Search Milestones".t();
 
             base.ViewDidLoad();
 

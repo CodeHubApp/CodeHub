@@ -11,7 +11,6 @@ namespace CodeHub.iOS.Views.PullRequests
         public override void ViewDidLoad()
         {
             Title = "Files";
-            SearchPlaceholder = "Search Files".t();
             NoItemsText = "No Files".t();
 
             base.ViewDidLoad();
