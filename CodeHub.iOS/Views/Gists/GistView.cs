@@ -142,7 +142,6 @@ namespace CodeHub.iOS.Views.Gists
                 String = str, 
                 Image = Theme.CurrentTheme.AnonymousUserImage,
                 BackgroundColor = UIColor.White,
-                UseBackgroundColor = true,
             };
 
             //Sometimes there's no user!

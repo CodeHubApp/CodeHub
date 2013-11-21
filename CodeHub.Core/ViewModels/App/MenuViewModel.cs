@@ -55,17 +55,17 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToProfileCommand
         {
-            get { return new MvxCommand(() => this.ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
+            get { return new MvxCommand(() => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
         }
 
         public ICommand GoToNotificationsCommand
         {
-            get { return new MvxCommand(() => this.ShowMenuViewModel<NotificationsViewModel>(null)); }
+            get { return new MvxCommand(() => ShowMenuViewModel<NotificationsViewModel>(null)); }
         }
 
         public ICommand GoToMyIssuesCommand
         {
-            get { return new MvxCommand(() => this.ShowMenuViewModel<MyIssuesViewModel>(null)); }
+            get { return new MvxCommand(() => ShowMenuViewModel<MyIssuesViewModel>(null)); }
         }
 
         public ICommand GoToMyEvents
@@ -95,7 +95,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToStarredRepositoriesCommand
         {
-            get { return new MvxCommand(() => this.ShowViewModel<RepositoriesStarredViewModel>());}
+			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
         }
 
         public ICommand GoToNewsComamnd

@@ -48,12 +48,12 @@ namespace CodeHub.iOS.Views.App
                     application.Accounts.Update(currentAccount);
                 })
             });
-
-            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app".t()) {
-                new TrueFalseElement("Send Anonymous Usage".t(), MonoTouch.Utilities.AnalyticsEnabled, e => { 
-                    MonoTouch.Utilities.AnalyticsEnabled = e.Value;
-                })
-            });
+//
+//            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app".t()) {
+//                new TrueFalseElement("Send Anonymous Usage".t(), MonoTouch.Utilities.AnalyticsEnabled, e => { 
+//                    MonoTouch.Utilities.AnalyticsEnabled = e.Value;
+//                })
+//            });
 
 //            if (Application.ClientCache != null)
 //            {

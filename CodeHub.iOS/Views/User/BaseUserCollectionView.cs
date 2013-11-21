@@ -17,6 +17,8 @@ namespace CodeHub.iOS.Views.User
                 e.Tapped += () => vm.GoToUserCommand.Execute(x);
                 return e;
             });
+
+			TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
         }
     }
 }

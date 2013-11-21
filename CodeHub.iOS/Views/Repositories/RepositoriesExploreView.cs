@@ -49,7 +49,6 @@ namespace CodeHub.iOS.Views.Repositories
             public override void OnEditingStarted (UISearchBar searchBar)
             {
                 searchBar.ShowsCancelButton = true;
-                _container.SearchStart ();
                 _container.ShowSearch(true);
                 _container.NavigationController.SetNavigationBarHidden(true, true);
             }
@@ -59,7 +58,6 @@ namespace CodeHub.iOS.Views.Repositories
                 searchBar.ShowsCancelButton = false;
                 _container.FinishSearch ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
-                _container.SearchEnd();
             }
 
             public override void TextChanged (UISearchBar searchBar, string searchText)
@@ -72,7 +70,6 @@ namespace CodeHub.iOS.Views.Repositories
                 _container.FinishSearch ();
                 searchBar.ResignFirstResponder ();
                 _container.NavigationController.SetNavigationBarHidden(false, true);
-                _container.SearchEnd();
             }
 
             public override void SearchButtonClicked (UISearchBar searchBar)
@@ -92,7 +89,7 @@ namespace CodeHub.iOS.Views.Repositories
             {
                 var description = ViewModel.ShouldAlwaysRaiseInpcOnUserInterfaceThread() ? repo.Description : string.Empty;
                 var imageUrl = repo.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;
-                var sse = new RepositoryElement(repo.Name, repo.Watchers, repo.Forks, description, repo.Owner, imageUrl) { ShowOwner = true };
+				var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, imageUrl) { ShowOwner = true };
                 //sse.Tapped += () => NavigationController.PushViewController(new RepositoryViewController(repo.Owner, repo.Name, repo.Name), true);
                 return sse;
             });

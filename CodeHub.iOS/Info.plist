@@ -1,18 +1,39 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict>
-    <key>UIDeviceFamily</key>
-    <array>
-      <integer>1</integer>
-    </array>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-      <string>UIInterfaceOrientationPortrait</string>
-      <string>UIInterfaceOrientationLandscapeLeft</string>
-      <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>MinimumOSVersion</key>
-    <string>3.2</string>
-  </dict>
+<dict>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>MinimumOSVersion</key>
+	<string>7.0</string>
+	<key>CFBundleDisplayName</key>
+	<string>CodeHub</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.dillonbuchanan.codehub</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>2.0.0</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>Icon-Small-50</string>
+		<string>Icon-Small-50@2x</string>
+		<string>Icon-Small</string>
+		<string>Icon-Small@2x</string>
+		<string>Icon</string>
+		<string>Icon@2x</string>
+		<string>Icon-72</string>
+		<string>Icon-72@2x</string>
+	</array>
+</dict>
 </plist>

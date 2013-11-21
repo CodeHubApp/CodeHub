@@ -1,5 +1,6 @@
 ﻿using CodeFramework.iOS;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Cells;
 
 namespace CodeHub.iOS
 {
@@ -12,6 +13,7 @@ namespace CodeHub.iOS
             var theme = new Theme();
             CurrentTheme = theme;
             CodeFramework.iOS.Theme.CurrentTheme = theme;
+			RepositoryCellView.RoundImages = false;
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;

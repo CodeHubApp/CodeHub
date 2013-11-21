@@ -155,23 +155,28 @@
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
+    <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
-      <Project>{b7970173-9022-466b-b57a-7ab1e1f3145f}</Project>
+      <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
       <Name>CodeHub.Core.iOS</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
-      <Project>{c99fe7e3-0985-48f1-9ebb-91680a795f0f}</Project>
+      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
-      <Project>{2698b412-26a3-4269-aa01-ac3bc79a0f14}</Project>
+      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
       <Name>CodeFramework.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89e14828-85bb-4790-9b4e-e44dd4ce000e}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -199,18 +204,12 @@
     <Reference Include="Cirrious.MvvmCross.Touch">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Touch.dll</HintPath>
     </Reference>
-    <Reference Include="MonoTouch.Dialog">
-      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Dialog.dll</HintPath>
-    </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-    <Reference Include="UserVoice">
-      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />
@@ -372,8 +371,9 @@
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Resources\jquery.min.js" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utils\" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork" />
+    <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
 </Project>

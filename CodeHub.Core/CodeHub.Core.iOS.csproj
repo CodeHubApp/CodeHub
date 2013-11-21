@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B7970173-9022-466B-B57A-7AB1E1F3145F}</ProjectGuid>
@@ -108,28 +108,26 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Reference Include="Cirrious.CrossCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e16445fd9b451819, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e16445fd9b451819, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
-      <Project>{c99fe7e3-0985-48f1-9ebb-91680a795f0f}</Project>
-      <Name>CodeFramework.Core.iOS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89e14828-85bb-4790-9b4e-e44dd4ce000e}</Project>
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />

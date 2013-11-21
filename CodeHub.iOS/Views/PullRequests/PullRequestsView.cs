@@ -49,14 +49,6 @@ namespace CodeHub.iOS.Views.PullRequests
             });
         }
 
-        
-        protected override void SearchEnd()
-        {
-            base.SearchEnd();
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, true);
-        }
-
         public override void ViewWillAppear(bool animated)
         {
             if (ToolbarItems != null && !IsSearching)

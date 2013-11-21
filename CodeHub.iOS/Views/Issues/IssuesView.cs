@@ -47,13 +47,6 @@ namespace CodeHub.iOS.Views.Issues
             BindCollection(ViewModel.Issues, CreateElement);
         }
 
-        protected override void SearchEnd()
-        {
-            base.SearchEnd();
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, true);
-        }
-
         public override void ViewWillAppear(bool animated)
         {
             if (ToolbarItems != null && !IsSearching)

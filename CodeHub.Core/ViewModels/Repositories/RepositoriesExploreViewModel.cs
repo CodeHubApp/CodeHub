@@ -34,13 +34,13 @@ namespace CodeHub.Core.ViewModels
 
         private async void Search()
         {
-            await Task.Run(() =>
-            {
-                var request = Application.Client.Repositories.SearchRepositories(SearchText);
-                request.UseCache = false;
-                var response = Application.Client.Execute(request);
-                Repositories.Items.Reset(response.Data.Repositories);
-            });
+//            await Task.Run(() =>
+//            {
+//				var request = Application.Client.Repositories.SearchRepositories(SearchText);
+//                request.UseCache = false;
+//                var response = Application.Client.Execute(request);
+//                Repositories.Items.Reset(response.Data.Repositories);
+//            });
         }
     }
 }
