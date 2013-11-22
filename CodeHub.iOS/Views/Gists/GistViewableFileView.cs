@@ -5,7 +5,7 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistViewableFileView : WebViewController
+    public class GistViewableFileView : WebView
     {
         public new GistViewableFileViewModel ViewModel
         {

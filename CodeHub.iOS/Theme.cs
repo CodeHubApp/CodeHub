@@ -44,8 +44,8 @@ namespace CodeHub.iOS
         public UIImage GearButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/gear"); } }
         public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
         public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
-        public UIImage WebBackButton { get { return UIImage.FromFile("Images/Web/back_button@2x.png"); } }
-        public UIImage WebFowardButton { get { return UIImage.FromFile("Images/Web/forward_button@2x.png"); } }
+		public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
+		public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
 
         public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 

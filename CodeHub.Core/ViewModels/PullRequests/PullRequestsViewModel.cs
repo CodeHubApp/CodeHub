@@ -10,6 +10,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
     public class PullRequestsViewModel : LoadableViewModel
     {
         private readonly FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel> _pullrequests;
+		private bool _isShowingOpened;
 
         public FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel> PullRequests
         {
@@ -20,19 +21,57 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; private set; }
 
+		public bool IsShowingOpened
+		{
+			get { return _isShowingOpened; }
+			set
+			{
+				_isShowingOpened = value;
+				RaisePropertyChanged(() => IsShowingOpened);
+			}
+		}
+
         public ICommand GoToPullRequestCommand
         {
             get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
         }
 
-        public PullRequestsViewModel(string username, string repository) 
-        {
-            Username = username;
-            Repository = repository;
+		public ICommand ShowOpenedCommand
+		{
+			get { return new MvxCommand(ShowOpened, () => !IsShowingOpened); }
+		}
 
-            _pullrequests = new FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel>("PullRequests");
-            _pullrequests.Bind(x => x.Filter, () => LoadCommand.Execute(true));
+		public ICommand ShowClosedCommand
+		{
+			get { return new MvxCommand(ShowClosed, () => IsShowingOpened); }
+		}
+
+		public PullRequestsViewModel()
+		{
+			_pullrequests = new FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel>("PullRequests");
+			_pullrequests.Bind(x => x.Filter, x => 
+				{
+					IsShowingOpened = x.IsOpen;
+					LoadCommand.Execute(true);
+				});
+			IsShowingOpened = _pullrequests.Filter.IsOpen ? true : false;
+		}
+
+		public void Init(NavObject navObject) 
+        {
+			Username = navObject.Username;
+			Repository = navObject.Repository;
         }
+
+		private void ShowOpened()
+		{
+			PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = true }, true);
+		}
+
+		private void ShowClosed()
+		{
+			PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = false }, true);
+		}
 
         protected override Task Load(bool forceDataRefresh)
         {

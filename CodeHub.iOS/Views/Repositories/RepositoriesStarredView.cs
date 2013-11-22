@@ -4,7 +4,7 @@ namespace CodeHub.iOS.Views.Repositories
     {
 		public RepositoriesStarredView()
         {
-            Title = "Following".t();
+			Title = "Starred".t();
         }
     }
 }

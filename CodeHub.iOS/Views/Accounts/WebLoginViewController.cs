@@ -1,10 +1,10 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.Data;
+using CodeFramework.iOS.Views;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public class WebLoginViewController : WebViewController
+    public class WebLoginViewController : WebView
     {
         private const string ClientId = "72f4fb74bdba774b759d";
         private const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";

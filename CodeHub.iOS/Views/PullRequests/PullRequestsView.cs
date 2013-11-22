@@ -8,30 +8,36 @@ namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestsView : ViewModelCollectionDrivenViewController
     {
-        private UISegmentedControl _viewSegment;
-        private UIBarButtonItem _segmentBarButton;
+		private readonly UISegmentedControl _viewSegment;
+		private readonly UIBarButtonItem _segmentBarButton;
+ 
+		public PullRequestsView()
+		{
+			Root.UnevenRows = true;
+			Title = "Pull Requests".t();
+			NoItemsText = "No Pull Requests".t();
 
-        public new PullRequestsViewModel ViewModel
-        {
-            get { return (PullRequestsViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+			_viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
+			_segmentBarButton = new UIBarButtonItem(_viewSegment);
+			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+		}
 
         public override void ViewDidLoad()
         {
-            Root.UnevenRows = true;
-            Title = "Pull Requests".t();
-            NoItemsText = "No Pull Requests".t();
-
             base.ViewDidLoad();
 
-            _viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
+			var vm = (PullRequestsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+			_viewSegment.ValueChanged += (object sender, EventArgs e) => {
+				if (_viewSegment.SelectedSegment == 0)
+					vm.ShowOpenedCommand.Execute(null);
+				else
+					vm.ShowClosedCommand.Execute(null);
+			};
 
+			vm.Bind(x => x.IsShowingOpened, x => _viewSegment.SelectedSegment = x ? 0 : 1, true);
 
-            BindCollection(ViewModel.PullRequests, s =>
+			BindCollection(vm.PullRequests, s =>
             {
                 var sse = new NameTimeStringElement
                 {
@@ -42,37 +48,16 @@ namespace CodeHub.iOS.Views.PullRequests
                     Image = Theme.CurrentTheme.AnonymousUserImage,
                     ImageUri = new Uri(s.User.AvatarUrl)
                 };
-                sse.Tapped += () => ViewModel.GoToPullRequestCommand.Execute(s);
+					sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
                 return sse;
             });
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null && !IsSearching)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
-
-            //Before we select which one, make sure we detach the event handler or silly things will happen
-            _viewSegment.ValueChanged -= SegmentValueChanged;
-
-            //Select which one is currently selected
-            _viewSegment.SelectedSegment = ViewModel.PullRequests.Filter.IsOpen ? 0 : 1;
-
-            _viewSegment.ValueChanged += SegmentValueChanged;
-        }
-
-        void SegmentValueChanged (object sender, EventArgs e)
-        {
-            switch (_viewSegment.SelectedSegment)
-            {
-                case 0:
-                    ViewModel.PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = true }, true);
-                    break;
-                case 1:
-                    ViewModel.PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = false }, true);
-                    break;
-            }
+			if (ToolbarItems != null)
+				NavigationController.SetToolbarHidden(false, animated);
         }
 
         public override void ViewWillDisappear(bool animated)

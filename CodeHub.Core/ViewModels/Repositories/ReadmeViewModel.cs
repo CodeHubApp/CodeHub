@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
+using Cirrious.MvvmCross.ViewModels;
+using System.Windows.Input;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class ReadmeViewModel : BaseViewModel
+	public class ReadmeViewModel : LoadableViewModel
     {
         private string _data;
         private string _path;
+		private GitHubSharp.Models.ContentModel _contentModel;
 
         public string Username { get; private set; }
 
@@ -24,14 +29,25 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { _path = value; RaisePropertyChanged(() => Path); }
         }
 
-        private void Load()
-        {
-            var wiki = Application.Client.Execute(Application.Client.Users[Username].Repositories[Repository].GetReadme()).Data;
-            var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Content));
-            Data = Application.Client.Markdown.GetMarkdown(d);
-            Path = CreateHtmlFile(Data);
-        }
+		public ICommand GoToGitHubCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _contentModel.HtmlUrl }), () => _contentModel != null); }
+		}
 
+		public ICommand GoToLinkCommand
+		{
+			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+		}
+
+		protected override async Task Load(bool forceCacheInvalidation)
+		{
+			var wiki = await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[Repository].GetReadme());
+			_contentModel = wiki.Data;
+			var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Data.Content));
+			Data = await Task.Run<string>(() => Application.Client.Markdown.GetMarkdown(d));
+			Path = CreateHtmlFile(Data);
+		}
+		
         private string CreateHtmlFile(string data)
         {
             //Generate the markup

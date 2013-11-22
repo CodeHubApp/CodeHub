@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
@@ -9,7 +8,7 @@ using FileSourceViewController = CodeHub.iOS.Views.Source.FileSourceViewControll
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : WebViewController
+    public class IssueView : WebView
     {
         private bool _issueRemoved;
 
