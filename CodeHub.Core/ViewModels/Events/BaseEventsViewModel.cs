@@ -127,10 +127,11 @@ namespace CodeHub.Core.ViewModels.Events
 
         private void GoToBranches(RepositoryIdentifier repoId)
         {
-            ShowViewModel<BranchesViewModel>(new BranchesViewModel.NavObject
+			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
                 Username = repoId.Name,
-                Repository = repoId.Owner
+				Repository = repoId.Owner,
+				IsShowingBranches = true
             });
         }
 
@@ -142,10 +143,11 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToTags(EventModel.RepoModel eventModel)
         {
             var repoId = new RepositoryIdentifier(eventModel.Name);
-            ShowViewModel<TagsViewModel>(new TagsViewModel.NavObject
+			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
                 Username = repoId.Name,
-                Repository = repoId.Owner
+				Repository = repoId.Owner,
+				IsShowingBranches = false
             });
         }
 

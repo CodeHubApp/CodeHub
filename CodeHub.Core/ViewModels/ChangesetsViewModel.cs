@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels
 
         public ICommand GoToChangesetCommand
         {
-            get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = Branch })); }
+			get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Sha })); }
         }
 
         public CollectionViewModel<CommitModel> Commits

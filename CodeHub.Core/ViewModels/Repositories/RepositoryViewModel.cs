@@ -5,6 +5,8 @@ using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
+using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Events;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -84,21 +86,57 @@ namespace CodeHub.Core.ViewModels.Repositories
             RepositoryName = navObject.Repository;
         }
 
-        public ICommand ShowCommitsCommand
+		public ICommand GoToOwnerCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Username })); }
+		}
+
+		public ICommand GoToForkParentCommand
+		{
+			get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
+		}
+
+		public ICommand GoToStargazersCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<StargazersViewModel>(new StargazersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
+		}
+
+		public ICommand GoToEventsCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
+
+		public ICommand GoToIssuesCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
+
+		public ICommand GoToReadmeCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<ReadmeViewModel>(new ReadmeViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
+
+        public ICommand GoToCommitsCommand
         {
             get { return new MvxCommand(ShowCommits);}
         }
+
+		public ICommand GoToPullRequestsCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
+
+		public ICommand GoToSourceCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+		}
 
         private void ShowCommits()
         {
             if (Branches != null && Branches.Count == 1)
                 ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositoryName});
             else
-            {
-#warning Need to fix this
-                throw new Exception("Need to fix");
-                ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositoryName});
-            }
+				ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
         }
 
         public ICommand PinCommand

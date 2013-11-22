@@ -94,10 +94,8 @@
     <Compile Include="Views\App\AboutViewController.cs" />
     <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
-    <Compile Include="Views\Events\BaseEventsViewController.cs" />
     <Compile Include="Views\Events\NewsView.cs" />
     <Compile Include="Views\Events\OrganizationEventsView.cs" />
-    <Compile Include="Views\Events\RepoEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
     <Compile Include="Views\Gists\GistViewableFileView.cs" />
     <Compile Include="Views\Gists\PublicGistsView.cs" />
@@ -124,15 +122,12 @@
     <Compile Include="Views\PullRequests\PullRequestFilesViewController.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Source\BranchesView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetDiffViewController.cs" />
-    <Compile Include="Views\Source\ChangesetsViewController.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\FileSourceViewController.cs" />
     <Compile Include="Views\Source\SourceInfoViewController.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
-    <Compile Include="Views\Source\TagsView.cs" />
     <Compile Include="Views\User\OrganizationMembersView.cs" />
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Organizations\OrganizationsView.cs" />
@@ -156,6 +151,10 @@
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
+    <Compile Include="Views\Source\BranchesAndTagsView.cs" />
+    <Compile Include="Views\Source\ChangesetsView.cs" />
+    <Compile Include="Views\Events\RepositoryEventsView.cs" />
+    <Compile Include="Views\Events\BaseEventsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

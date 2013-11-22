@@ -11,9 +11,9 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoryView : ViewModelDrivenViewController, IImageUpdated
+    public class RepositoryView : ViewModelDrivenViewController
     {
-        private HeaderView _header;
+		private readonly HeaderView _header = new HeaderView(0) { ShadowImage = false };
 
         public new RepositoryViewModel ViewModel
         {
@@ -40,15 +40,13 @@ namespace CodeHub.iOS.Views.Repositories
                 if (ViewModel.Repository != null)
                     Render(ViewModel.Repository);
             });
-
-            _header = new HeaderView(View.Bounds.Width) { ShadowImage = false };
-
-            Title = ViewModel.RepositoryName;
-            var set = this.CreateBindingSet<RepositoryView, RepositoryViewModel>();
-            set.Bind(_header.Title).To(x => x.RepositoryName).OneWay();
-            set.Apply();
         }
 
+		public override void ViewWillAppear(bool animated)
+		{
+			base.ViewWillAppear(animated);
+			Title = _header.Title = ViewModel.RepositoryName;
+		}
 
         private void ShowExtraMenu()
         {
@@ -130,8 +128,7 @@ namespace CodeHub.iOS.Views.Repositories
             Title = model.Name;
             var root = new RootElement(Title) { UnevenRows = true };
             _header.Subtitle = "Updated ".t() + (model.UpdatedAt).ToDaysAgo();
-            var imageUrl = model.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;
-            _header.Image = ImageLoader.DefaultRequestImage(imageUrl, this);
+			_header.ImageUri = (model.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl).AbsoluteUri;
 
             root.Add(new Section(_header));
             var sec1 = new Section();
@@ -179,57 +176,47 @@ namespace CodeHub.iOS.Views.Repositories
                 Text2 = size,
                 Image2 = Images.Size
             }));
-//
-//            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-//            owner.Tapped += () => NavigationController.PushViewController(new ProfileViewController(model.Owner.Login), true);
-//            sec1.Add(owner);
-//
-//            if (model.Parent != null)
-//            {
-//                var parent = new StyledStringElement("Forked From".t(), model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-//                parent.Tapped += () => NavigationController.PushViewController(new RepositoryViewController(model.Parent.Owner.Login, model.Parent.Name), true);
-//                sec1.Add(parent);
-//            }
-//
-//            var followers = new StyledStringElement("Stargazers".t(), "" + model.Watchers) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
-//            followers.Tapped += () => NavigationController.PushViewController(new StargazersViewController(model.Owner.Login, model.Name), true);
-//            sec1.Add(followers);
-//
-//
-//            var events = new StyledStringElement("Events".t(), () => NavigationController.PushViewController(new RepoEventsView(model.Owner.Login, model.Name), true), Images.Event);
-//
-//            var sec2 = new Section { events };
-//
-//            if (model.HasIssues)
-//                sec2.Add(new StyledStringElement("Issues".t(), () => NavigationController.PushViewController(new IssuesView(model.Owner.Login, model.Name), true), Images.Flag));
-//
-//            if (ViewModel.Readme != null)
-//                sec2.Add(new StyledStringElement("Readme".t(), () => NavigationController.PushViewController(new ReadmeView(model.Owner.Login, model.Name), true), Images.File));
-//
-//            var sec3 = new Section
-//            {
-//                new StyledStringElement("Changes".t(), () => ViewModel.ShowCommitsCommand.Execute(null), Images.Commit),
-//                new StyledStringElement("Pull Requests".t(), () => NavigationController.PushViewController(new PullRequestsViewController(model.Owner.Login, model.Name), true), Images.Hand),
-//                new StyledStringElement("Branches".t(), () => NavigationController.PushViewController(new BranchesViewController(model.Owner.Login, model.Name), true), Images.Branch),
-//                new StyledStringElement("Tags".t(), () => NavigationController.PushViewController(new TagsView(model.Owner.Login, model.Name), true), Images.Tag)
-//            };
-//
-//            root.Add(new[] { sec1, sec2, sec3 });
-//
-//            if (!string.IsNullOrEmpty(model.Homepage))
-//            {
-//                var web = new StyledStringElement("Website".t(), () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Homepage)), Images.Webpage);
-//                root.Add(new Section { web });
-//            }
-//
-//            Root = root;
-        }
 
-        public void UpdatedImage(Uri uri)
-        {
-            _header.Image = ImageLoader.DefaultRequestImage(uri, this);
-            if (_header.Image != null)
-                _header.SetNeedsDisplay();
+            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
+            sec1.Add(owner);
+
+            if (model.Parent != null)
+            {
+                var parent = new StyledStringElement("Forked From".t(), model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
+                sec1.Add(parent);
+            }
+
+			var followers = new StyledStringElement("Stargazers".t(), "" + model.StargazersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
+            sec1.Add(followers);
+
+			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+            var sec2 = new Section { events };
+
+            if (model.HasIssues)
+				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+
+            if (ViewModel.Readme != null)
+				sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
+
+            var sec3 = new Section
+            {
+                new StyledStringElement("Changes".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
+				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
+				new StyledStringElement("Source".t(), () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
+            };
+
+            root.Add(new[] { sec1, sec2, sec3 });
+
+            if (!string.IsNullOrEmpty(model.Homepage))
+            {
+                var web = new StyledStringElement("Website".t(), () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Homepage)), Images.Webpage);
+                root.Add(new Section { web });
+            }
+
+            Root = root;
         }
     }
 }

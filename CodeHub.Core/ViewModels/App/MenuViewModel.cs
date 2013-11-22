@@ -11,6 +11,7 @@ using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -19,7 +20,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IApplicationService _application;
         private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.SlideoutRootPresentation, string.Empty}};  
         private int _notifications;
-        private List<string> _organizations;
+		private List<string> _organizations;
 
         public int Notifications
         {
@@ -27,7 +28,7 @@ namespace CodeHub.Core.ViewModels.App
             set { _notifications = value; RaisePropertyChanged(() => Notifications); }
         }
 
-        public List<string> Organizations
+		public List<string> Organizations
         {
             get { return _organizations; }
             set { _organizations = value; RaisePropertyChanged(() => Organizations); }
@@ -42,6 +43,11 @@ namespace CodeHub.Core.ViewModels.App
         {
             get { return _application.Account; }
         }
+
+		public IEnumerable<CodeFramework.Core.Data.PinnedRepository> PinnedRepositories
+		{
+			get { return _application.Account.PinnnedRepositories; }
+		}
 
         public MenuViewModel(IApplicationService application)
         {
@@ -98,10 +104,40 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
         }
 
+		public ICommand GoToOwnedRepositoriesCommand
+		{
+			get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
+		}
+
+		public ICommand GoToExploreRepositoriesCommand
+		{
+			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
+		}
+
+		public ICommand GoToOrganizationEventsCommand
+		{
+			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
+		}
+
+		public ICommand GoToOrganizationCommand
+		{
+			get { return new MvxCommand<string>(x => ShowMenuViewModel<Organizations.OrganizationViewModel>(new Organizations.OrganizationViewModel.NavObject { Name = x }));}
+		}
+
+		public ICommand GoToOrganizationsCommand
+		{
+			get { return new MvxCommand(() => ShowMenuViewModel<Organizations.OrganizationsViewModel>(new Organizations.OrganizationsViewModel.NavObject { Username = Account.Username }));}
+		}
+
         public ICommand GoToNewsComamnd
         {
             get { return new MvxCommand(() => ShowMenuViewModel<NewsViewModel>(null));}
         }
+
+		public ICommand GoToRepositoryComamnd
+		{
+			get { return new MvxCommand<Utils.RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
+		}
 
         public ICommand LoadCommand
         {
@@ -115,8 +151,17 @@ namespace CodeHub.Core.ViewModels.App
 
         private async void Load()
         {
-            var notifications = await Application.Client.ExecuteAsync(Application.Client.Notifications.GetAll());
-            Notifications = notifications.Data.Count;
+			var t1 = Application.Client.ExecuteAsync(Application.Client.Notifications.GetAll()).ContinueWith(x =>
+			{
+				Notifications = x.Result.Data.Count;
+			}, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+			var t2 = Application.Client.ExecuteAsync(Application.Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
+			{
+				Organizations = x.Result.Data.Select(y => y.Login).ToList();
+			},TaskContinuationOptions.OnlyOnRanToCompletion);
+
+			await Task.WhenAll(t1, t2);
         }
     }
 }

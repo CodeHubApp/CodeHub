@@ -8,6 +8,10 @@ namespace CodeHub.iOS.Views.User
 {
     public class ProfileView : ViewModelDrivenViewController
     {
+		public ProfileView()
+		{
+			Root.UnevenRows = true;
+		}
         public override void ViewDidLoad()
         {
             Title = "Profile";
@@ -19,7 +23,7 @@ namespace CodeHub.iOS.Views.User
             var set = this.CreateBindingSet<ProfileView, ProfileViewModel>();
             set.Bind(header).For(x => x.Title).To(x => x.Username).OneWay();
             set.Bind(header).For(x => x.Subtitle).To(x => x.User.Name).OneWay();
-			//set.Bind(header).For(x => x.ImageUri).To(x => x.User.AvatarUrl).OneWay();
+			set.Bind(header).For(x => x.ImageUri).To(x => x.User.AvatarUrl).OneWay();
             set.Apply();
 
             var followers = new StyledStringElement("Followers".t(), () => vm.GoToFollowersCommand.Execute(null), Images.Heart);
@@ -29,8 +33,7 @@ namespace CodeHub.iOS.Views.User
             var repos = new StyledStringElement("Repositories".t(), () => vm.GoToRepositoriesCommand.Execute(null), Images.Repo);
             var gists = new StyledStringElement("Gists", () => vm.GoToGistsCommand.Execute(null), Images.Script);
 
-            Root.Add(new Section(header));
-            Root.Add(new [] { new Section { events, organizations, followers, following }, new Section { repos, gists } });
+			Root.Add(new [] { new Section(header), new Section { events, organizations, followers, following }, new Section { repos, gists } });
         }
     }
 }

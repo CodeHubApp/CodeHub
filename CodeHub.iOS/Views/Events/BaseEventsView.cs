@@ -9,9 +9,9 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Events
 {
-    public abstract class BaseEventsViewController : ViewModelCollectionDrivenViewController
+    public abstract class BaseEventsView : ViewModelCollectionDrivenViewController
     {
-        protected BaseEventsViewController()
+        protected BaseEventsView()
         {
             Title = "Events".t();
             Root.UnevenRows = true;

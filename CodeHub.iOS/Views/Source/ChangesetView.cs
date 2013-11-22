@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Source
         {
             Title = "Commit".t();
             Root.UnevenRows = true;
-            _viewSegment = new UISegmentedControl(new object[] { "Changes".t(), "Comments".t() }) {ControlStyle = UISegmentedControlStyle.Bar};
+			_viewSegment = new UISegmentedControl(new object[] { "Changes".t(), "Comments".t() });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
 

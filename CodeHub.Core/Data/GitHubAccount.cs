@@ -54,12 +54,6 @@ namespace CodeHub.Core.Data
         public string FullName { get; set; }
 
         /// <summary>
-        /// A transient record of the user's organizations
-        /// </summary>
-        [Ignore]
-        public List<BasicUserModel> Organizations { get; set; }
-
-        /// <summary>
         /// A list of the current notifications
         /// </summary>
         /// <value>The notifications.</value>

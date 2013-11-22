@@ -1,6 +1,6 @@
 namespace CodeHub.iOS.Views.Events
 {
-    public class NewsView : BaseEventsViewController
+    public class NewsView : BaseEventsView
     {
         public NewsView()
         {

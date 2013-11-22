@@ -18,16 +18,13 @@ namespace CodeHub.iOS.Views.Issues
         public new IssuesViewModel ViewModel
         {
             get { return (IssuesViewModel)base.ViewModel; }
-            protected set { base.ViewModel = value; }
+            set { base.ViewModel = value; }
         }
 
-        public IssuesView(string user, string slug)
+        public IssuesView()
         {
-            ViewModel = new IssuesViewModel(user, slug);
-
-
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => {
-                var b = new IssueEditView(ViewModel.User, ViewModel.Slug) {
+                var b = new IssueEditView(ViewModel.Username, ViewModel.Repository) {
                     Success = (issue) => ViewModel.CreateIssue(issue)
                 };
                 NavigationController.PushViewController(b, true);
@@ -40,7 +37,6 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
             _viewSegment = new UISegmentedControl(new string[] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() });
-            _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };

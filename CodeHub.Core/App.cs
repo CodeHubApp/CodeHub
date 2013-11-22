@@ -14,7 +14,7 @@ namespace CodeHub.Core
         /// </summary>
         public override void Initialize()
         {
-            //// Start the app with the First View Model.
+            // Start the app with the First View Model.
             this.RegisterAppStart<AccountsViewModel>();
         }
     }

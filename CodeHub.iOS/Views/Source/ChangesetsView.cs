@@ -5,13 +5,12 @@ using MonoTouch.Dialog;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetsViewController : ViewModelCollectionDrivenViewController
+    public class ChangesetsView : ViewModelCollectionDrivenViewController
     {
         public override void ViewDidLoad()
         {
             Title = "Changes".t();
             Root.UnevenRows = true;
-            EnableSearch = false;
 
             base.ViewDidLoad();
 

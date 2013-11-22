@@ -1,6 +1,6 @@
 namespace CodeHub.iOS.Views.Events
 {
-    public class UserEventsView : BaseEventsViewController
+    public class UserEventsView : BaseEventsView
     {
     }
 }

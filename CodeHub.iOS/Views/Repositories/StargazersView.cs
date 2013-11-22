@@ -12,14 +12,6 @@ namespace CodeHub.iOS.Views.Repositories
             NoItemsText = "No Stargazers".t();
 
             base.ViewDidLoad();
-
-            var vm = (StargazersViewModel) ViewModel;
-            BindCollection(vm.Stargazers, x =>
-            {
-                var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-                e.Tapped += () => vm.GoToUserCommand.Execute(x);
-                return e;
-            });
         }
     }
 }

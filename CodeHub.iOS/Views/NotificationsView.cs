@@ -21,7 +21,6 @@ namespace CodeHub.iOS.Views
 		public NotificationsView()
         {
             _viewSegment = new UISegmentedControl(new object[] { "Unread".t(), "Participating".t(), "All".t() });
-            _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
 

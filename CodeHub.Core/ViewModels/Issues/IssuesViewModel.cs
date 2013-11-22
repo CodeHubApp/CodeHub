@@ -11,25 +11,25 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssuesViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
+        private FilterableCollectionViewModel<IssueModel, IssuesFilterModel> _issues;
 
         public FilterableCollectionViewModel<IssueModel, IssuesFilterModel> Issues
         {
             get { return _issues; }
         }
 
-        public string User { get; private set; }
-        public string Slug { get; private set; }
+        public string Username { get; private set; }
 
-        public IssuesViewModel(string user, string slug)
-        {
-            User = user;
-            Slug = slug;
+        public string Repository { get; private set; }
 
-            _issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + user + "/" + slug);
-            _issues.GroupingFunction = GroupModel;
-            _issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
-        }
+		public void Init(NavObject nav)
+		{
+			Username = nav.Username;
+			Repository = nav.Repository;
+			_issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
+			_issues.GroupingFunction = GroupModel;
+			_issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
+		}
 
         protected override Task Load(bool forceDataRefresh)
         {
@@ -42,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Issues
             string mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
             string milestone = _issues.Filter.Milestone == null ? null : _issues.Filter.Milestone.Value;
 
-            var request = Application.Client.Users[User].Repositories[Slug].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
+            var request = Application.Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
                                                                                           assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
             return Issues.SimpleCollectionLoad(request, forceDataRefresh);
         }
@@ -87,6 +87,12 @@ namespace CodeHub.Core.ViewModels.Issues
                 return false;
             return true;
         }
+
+		public class NavObject
+		{
+			public string Username { get; set; }
+			public string Repository { get; set; }
+		}
     }
 }
 

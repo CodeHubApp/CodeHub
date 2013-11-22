@@ -26,7 +26,6 @@ namespace CodeHub.iOS.Views.PullRequests
             base.ViewDidLoad();
 
             _viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
-            _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };

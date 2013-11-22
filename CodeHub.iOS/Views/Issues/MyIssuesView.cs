@@ -20,7 +20,6 @@ namespace CodeHub.iOS.Views.Issues
         public MyIssuesView()
         {
             _viewSegment = new UISegmentedControl(new object[] {"Open".t(), "Closed".t(), "Custom".t()});
-            _viewSegment.ControlStyle = UISegmentedControlStyle.Bar;
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
 

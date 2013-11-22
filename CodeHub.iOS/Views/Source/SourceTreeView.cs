@@ -17,14 +17,18 @@ namespace CodeHub.iOS.Views.Source
 
         public override void ViewDidLoad()
         {
-            EnableSearch = true;
             EnableFilter = true;
 
             base.ViewDidLoad();
 
-            Title = string.IsNullOrEmpty(ViewModel.Path) ? "Source".t() : ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
             BindCollection(ViewModel.Content, CreateElement);
         }
+
+		public override void ViewWillAppear(bool animated)
+		{
+			base.ViewWillAppear(animated);
+			Title = string.IsNullOrEmpty(ViewModel.Path) ? "Source".t() : ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
+		}
 
         private Element CreateElement(ContentModel x)
         {
