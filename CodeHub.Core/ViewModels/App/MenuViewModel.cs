@@ -12,6 +12,7 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using System.Linq;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -151,12 +152,12 @@ namespace CodeHub.Core.ViewModels.App
 
         private async void Load()
         {
-			var t1 = Application.Client.ExecuteAsync(Application.Client.Notifications.GetAll()).ContinueWith(x =>
+			var t1 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.GetAll()).ContinueWith(x =>
 			{
 				Notifications = x.Result.Data.Count;
 			}, TaskContinuationOptions.OnlyOnRanToCompletion);
 
-			var t2 = Application.Client.ExecuteAsync(Application.Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
+			var t2 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
 			{
 				Organizations = x.Result.Data.Select(y => y.Login).ToList();
 			},TaskContinuationOptions.OnlyOnRanToCompletion);

@@ -17,7 +17,7 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Users.SimpleCollectionLoad(Application.Client.Users[Name].GetFollowing(), forceDataRefresh);
+			return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Name].GetFollowing(), forceDataRefresh);
         }
 
         public class NavObject

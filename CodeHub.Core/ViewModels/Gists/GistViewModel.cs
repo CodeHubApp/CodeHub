@@ -4,11 +4,13 @@ using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistViewModel : LoadableViewModel
     {
+		private readonly CollectionViewModel<GistCommentModel> _comments = new CollectionViewModel<GistCommentModel>();
         private GistModel _gist;
         private bool _starred;
 
@@ -38,6 +40,11 @@ namespace CodeHub.Core.ViewModels.Gists
             }
         }
 
+		public CollectionViewModel<GistCommentModel> Comments
+		{
+			get { return _comments; }
+		}
+
         public ICommand GoToUserCommand
         {
             get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Gist.User.Login }), () => Gist != null && Gist.User != null); }
@@ -45,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public ICommand GoToFileSourceCommand
         {
-            get { return new MvxCommand(() => { }); }
+			get { return new MvxCommand<GistFileModel>(x => ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistFileModel = x })); }
         }
 
         public ICommand GoToViewableFileCommand
@@ -70,8 +77,8 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             try
             {
-                var request = IsStarred ? Application.Client.Gists[Id].Unstar() : Application.Client.Gists[Id].Star();
-                await Application.Client.ExecuteAsync(request);
+				var request = IsStarred ? this.GetApplication().Client.Gists[Id].Unstar() : this.GetApplication().Client.Gists[Id].Star();
+				await this.GetApplication().Client.ExecuteAsync(request);
                 IsStarred = !IsStarred;
             }
             catch (Exception)
@@ -82,14 +89,15 @@ namespace CodeHub.Core.ViewModels.Gists
 
         protected override Task Load(bool forceDataRefresh)
         {
-            var t1 = Task.Run(() => this.RequestModel(Application.Client.Gists[Id].Get(), forceDataRefresh, response => Gist = response.Data));
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Gists[Id].IsGistStarred(), forceDataRefresh, response => IsStarred = response.Data));
+			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Gists[Id].Get(), forceDataRefresh, response => Gist = response.Data));
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Gists[Id].IsGistStarred(), forceDataRefresh, response => IsStarred = response.Data));
+			FireAndForgetTask.Start(() => Comments.SimpleCollectionLoad(this.GetApplication().Client.Gists[Id].GetComments(), forceDataRefresh));
             return t1;
         }
 
         public async Task Edit(GistEditModel editModel)
         {
-            var response = await Application.Client.ExecuteAsync(Application.Client.Gists[Id].EditGist(editModel));
+			var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[Id].EditGist(editModel));
             Gist = response.Data;
         }
 

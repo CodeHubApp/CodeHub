@@ -42,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Issues
             string mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
             string milestone = _issues.Filter.Milestone == null ? null : _issues.Filter.Milestone.Value;
 
-            var request = Application.Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
+			var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
                                                                                           assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
             return Issues.SimpleCollectionLoad(request, forceDataRefresh);
         }

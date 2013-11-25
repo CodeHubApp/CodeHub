@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Repositories.SimpleCollectionLoad(Application.Client.AuthenticatedUser.Repositories.GetWatching(), forceDataRefresh);
+			return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetWatching(), forceDataRefresh);
         }
     }
 }

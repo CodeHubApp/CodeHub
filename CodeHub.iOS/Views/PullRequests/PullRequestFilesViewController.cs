@@ -22,8 +22,8 @@ namespace CodeHub.iOS.Views.PullRequests
                 var el = new StyledStringElement(name, x.Status, UITableViewCellStyle.Subtitle);
                 el.Image = Images.File;
                 el.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-                el.Tapped += () => NavigationController.PushViewController(
-                    new RawContentViewController(x.RawUrl, null) { Title = name }, true);
+//                el.Tapped += () => NavigationController.PushViewController(
+//                    new RawContentViewController(x.RawUrl, null) { Title = name }, true);
                 return el;
             });
         }

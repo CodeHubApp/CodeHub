@@ -2,7 +2,7 @@ using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-	public class UserRepositoriesView : RepositoriesView
+	public class UserRepositoriesView : BaseRepositoriesView
 	{
 		public override void ViewDidLoad()
 		{

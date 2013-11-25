@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<CommitModel>> GetRequest()
         {
-            return Application.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits();
+			return this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits();
         }
 
         public class NavObject

@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public bool IsMine
         {
-            get { return Application.Account.Username.Equals(Username); }
+			get { return this.GetApplication().Account.Username.Equals(Username); }
         }
 
         public void Init(NavObject navObject)
@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
-            return Application.Client.Users[Username].Gists.GetGists();
+			return this.GetApplication().Client.Users[Username].Gists.GetGists();
         }
 
         public class NavObject

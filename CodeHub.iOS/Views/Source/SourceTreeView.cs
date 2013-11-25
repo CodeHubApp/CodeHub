@@ -41,8 +41,7 @@ namespace CodeHub.iOS.Views.Source
                 //If there's a size, it's a file
                 if (x.Size != null)
                 {
-                    return new StyledStringElement(x.Name, () => NavigationController.PushViewController(
-                                                                                                         new SourceInfoViewController(x.HtmlUrl, x.Path) { Title = x.Name }, true), Images.File);
+					return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
                 }
                         //If there is no size, it's most likey a submodule
                 return new StyledStringElement(x.Name, () => ViewModel.GoToSubmoduleCommand.Execute(x), Images.Repo);

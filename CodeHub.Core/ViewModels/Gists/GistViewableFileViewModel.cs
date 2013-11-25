@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using GitHubSharp.Models;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -40,13 +41,13 @@ namespace CodeHub.Core.ViewModels.Gists
                 string data;
                 using (var ms = new System.IO.MemoryStream())
                 {
-                    Application.Client.DownloadRawResource(GistFile.RawUrl, ms);
+					this.GetApplication().Client.DownloadRawResource(GistFile.RawUrl, ms);
                     ms.Position = 0;
                     var sr = new System.IO.StreamReader(ms);
                     data = sr.ReadToEnd();
                 }
                 if (GistFile.Language.Equals("Markdown"))
-                    data = Application.Client.Markdown.GetMarkdown(data);
+					data = this.GetApplication().Client.Markdown.GetMarkdown(data);
 
                 var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
                 System.IO.File.WriteAllText(path, data, Encoding.UTF8);

@@ -23,10 +23,10 @@ namespace CodeHub.Core.ViewModels.User
         protected override Task Load(bool forceDataRefresh)
         {
             GitHubRequest<List<RepositoryModel>> request;
-            if (string.Equals(Application.Account.Username, Username, StringComparison.OrdinalIgnoreCase))
-                request = Application.Client.AuthenticatedUser.Repositories.GetAll();
+			if (string.Equals(this.GetApplication().Account.Username, Username, StringComparison.OrdinalIgnoreCase))
+				request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll();
             else
-                request = Application.Client.Users[Username].Repositories.GetAll();
+				request = this.GetApplication().Client.Users[Username].Repositories.GetAll();
             return Repositories.SimpleCollectionLoad(request, forceDataRefresh);
         }
 

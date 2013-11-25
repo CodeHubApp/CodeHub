@@ -61,8 +61,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override Task Load(bool forceDataRefresh)
         {
-            var pullRequest = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
-            var commentsRequest = Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
+			var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
+			var commentsRequest = this.GetApplication().Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
 
             var t1 = Task.Run(() => this.RequestModel(pullRequest, forceDataRefresh, response => PullRequest = response.Data));
 
@@ -76,17 +76,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public async Task AddComment(string text)
         {
-            var comment = await Application.Client.ExecuteAsync(Application.Client.Users[User].Repositories[Repo].Issues[PullRequestId].CreateComment(text));
+			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[User].Repositories[Repo].Issues[PullRequestId].CreateComment(text));
             Comments.Items.Add(comment.Data);
         }
 
         public async Task Merge()
         {
-            var response = await Application.Client.ExecuteAsync(Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Merge());
+			var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Merge());
             if (!response.Data.Merged)
                 throw new Exception(response.Data.Message);
 
-            var pullRequest = Application.Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
+			var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
             await Task.Run(() => this.RequestModel(pullRequest, true, r => PullRequest = r.Data));
         }
 

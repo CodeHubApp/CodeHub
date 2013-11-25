@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -66,7 +67,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Task.Run(() => this.RequestModel(Application.Client.Organizations[Name].Get(), forceDataRefresh, response => Organization = response.Data));
+			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceDataRefresh, response => Organization = response.Data));
         }
 
         public class NavObject

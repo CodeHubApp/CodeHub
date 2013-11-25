@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Collaborators.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
+			return Collaborators.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
         }
 
         public class NavObject

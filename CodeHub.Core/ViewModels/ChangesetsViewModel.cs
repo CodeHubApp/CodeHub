@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels
 
         protected virtual GitHubRequest<List<CommitModel>> GetRequest()
         {
-            return Application.Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
+			return this.GetApplication().Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
         }
 
         public class NavObject

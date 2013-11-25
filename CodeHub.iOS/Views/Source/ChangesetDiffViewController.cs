@@ -36,9 +36,9 @@ namespace CodeHub.ViewControllers
             // Must be a binary file
             if (_commit.Patch == null)
             {
-                var result = DownloadFile(_commit.RawUrl);
-                LoadFile(result.File);
-                return;
+//                var result = DownloadFile(_commit.RawUrl);
+//                LoadFile(result.File);
+//                return;
             }
             else
             {

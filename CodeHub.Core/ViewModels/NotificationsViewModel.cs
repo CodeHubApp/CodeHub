@@ -91,7 +91,7 @@ namespace CodeHub.Core.ViewModels
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Task.Run(() => this.RequestModel(Application.Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceDataRefresh, response => {
+			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceDataRefresh, response => {
                 Notifications.Items.Reset(response.Data);
                 UpdateAccountNotificationsCount();
             }));
@@ -123,7 +123,7 @@ namespace CodeHub.Core.ViewModels
         {
             // Only update if we're looking at 
             if (Notifications.Filter.All == false && Notifications.Filter.Participating == false)
-                Application.Account.Notifications = Notifications.Items.Sum(x => x.Unread ? 1 : 0);
+				this.GetApplication().Account.Notifications = Notifications.Items.Sum(x => x.Unread ? 1 : 0);
         }
     }
 }

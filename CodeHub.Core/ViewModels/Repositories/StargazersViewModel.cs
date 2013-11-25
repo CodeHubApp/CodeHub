@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceDataRefresh)
         {
-			return Users.SimpleCollectionLoad(Application.Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
+			return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
         }
 
         public class NavObject

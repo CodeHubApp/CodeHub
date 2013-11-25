@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Organizations
 				return e;
 			});
 
-			TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
+			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 48f, 0, 0);
         }
 	}
 }

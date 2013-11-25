@@ -32,12 +32,29 @@ namespace CodeHub.iOS.Views.Events
                     return null;
 
                 var img = ChooseImage(e.Item1);
-                var username = e.Item1.Actor != null ? e.Item1.Actor.Login : null;
+				var username = e.Item1.Actor != null ? e.Item1.Actor.Login : null;
                 var avatar = e.Item1.Actor != null ? e.Item1.Actor.AvatarUrl : null;
-                var newsEl = new NewsFeedElement(username, avatar, (e.Item1.CreatedAt), e.Item2.Header.Select(x => new NewsFeedElement.TextBlock(x.Text)), img);
-                if (e.Item2.Tapped != null)
-                    newsEl.Tapped += () => e.Item2.Tapped();
-                return newsEl;
+				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
+				foreach (var h in e.Item2.Header)
+				{
+					Action act = null;
+					if (h is BaseEventsViewModel.AnchorBlock)
+						act = (h as BaseEventsViewModel.AnchorBlock).Tapped;
+					headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
+				}
+
+				var bodyBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
+				foreach (var h in e.Item2.Body)
+				{
+					Action act = null;
+					if (h is BaseEventsViewModel.AnchorBlock)
+						act = (h as BaseEventsViewModel.AnchorBlock).Tapped;
+					var block = new NewsFeedElement.TextBlock(h.Text, act);
+					if (act == null) block.Color = UIColor.DarkGray;
+					bodyBlocks.Add(block);
+				}
+
+				return new NewsFeedElement(username, avatar, (e.Item1.CreatedAt), headerBlocks, bodyBlocks, img, e.Item2.Tapped);
             }
             catch (Exception ex)
             {

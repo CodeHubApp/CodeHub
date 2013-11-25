@@ -17,7 +17,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool ShowRepositoryDescription
         {
-            get { return Application.Account.ShowRepositoryDescriptionInList; }
+			get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
         }
 
         public FilterableCollectionViewModel<RepositoryModel, RepositoriesFilterModel> Repositories

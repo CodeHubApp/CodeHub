@@ -103,7 +103,6 @@
     <Compile Include="Views\Gists\UserGistsView.cs" />
     <Compile Include="Views\Gists\CreateGistViewController.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
-    <Compile Include="Views\Gists\GistFileViewController.cs" />
     <Compile Include="Views\Gists\GistsView.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Gists\ModifyGistFileController.cs" />
@@ -135,7 +134,6 @@
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
     <Compile Include="Views\Repositories\StargazersView.cs" />
     <Compile Include="Views\User\BaseUserCollectionView.cs" />
@@ -155,6 +153,9 @@
     <Compile Include="Views\Source\ChangesetsView.cs" />
     <Compile Include="Views\Events\RepositoryEventsView.cs" />
     <Compile Include="Views\Events\BaseEventsView.cs" />
+    <Compile Include="Views\Source\SourceView.cs" />
+    <Compile Include="Views\Gists\GistFileView.cs" />
+    <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

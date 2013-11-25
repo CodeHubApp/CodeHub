@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels
 
         public bool ShowRepositoryDescription
         {
-            get { return Application.Account.ShowRepositoryDescriptionInList; }
+			get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
         }
 
         public CollectionViewModel<RepositorySearchModel.RepositoryModel> Repositories

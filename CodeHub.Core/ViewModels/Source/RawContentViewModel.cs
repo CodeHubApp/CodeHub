@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GitHubSharp;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -61,7 +62,7 @@ namespace CodeHub.Core.ViewModels.Source
             //Find
             using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
             {
-                mime = Application.Client.DownloadRawResource(rawUrl, stream) ?? string.Empty;
+				mime = this.GetApplication().Client.DownloadRawResource(rawUrl, stream) ?? string.Empty;
             }
 
             return new DownloadResult { IsBinary = IsBinary(mime), File = filepath };

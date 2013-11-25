@@ -76,7 +76,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         protected override Task Load(bool forceDataRefresh)
         {
             var state = PullRequests.Filter.IsOpen ? "open" : "closed";
-            var request = Application.Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
+			var request = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
             return PullRequests.SimpleCollectionLoad(request, forceDataRefresh);
         }
 

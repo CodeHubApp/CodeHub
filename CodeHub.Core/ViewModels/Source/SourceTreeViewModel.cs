@@ -67,7 +67,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceCommand
         {
-            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>());}
+			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl }));}
         }
 
         private void GoToSubmodule(ContentModel x)
@@ -105,7 +105,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Content.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceDataRefresh);
+			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceDataRefresh);
         }
 
         public class NavObject

@@ -8,7 +8,7 @@ namespace CodeHub.Core.ViewModels.Gists
     {
         protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
-            return Application.Client.Gists.GetPublicGists();
+			return this.GetApplication().Client.Gists.GetPublicGists();
         }
     }
 }

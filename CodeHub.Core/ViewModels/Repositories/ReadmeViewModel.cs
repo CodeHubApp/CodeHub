@@ -41,10 +41,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
-			var wiki = await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[Repository].GetReadme());
+			var wiki = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme());
 			_contentModel = wiki.Data;
 			var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Data.Content));
-			Data = await Task.Run<string>(() => Application.Client.Markdown.GetMarkdown(d));
+			Data = await Task.Run<string>(() => this.GetApplication().Client.Markdown.GetMarkdown(d));
 			Path = CreateHtmlFile(Data);
 		}
 		

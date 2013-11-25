@@ -150,31 +150,31 @@ namespace CodeHub.Core.ViewModels.Repositories
             var repoName = Repository.Name;
 
             //Is it pinned already or not?
-            var pinnedRepo = Application.Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
+			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
             if (pinnedRepo == null)
             {
                 //var imageUrl = Repository.Fork ? Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
                 //Application.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, imageUrl.AbsolutePath);
             }
             else
-                Application.Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
+				this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }
 
 
         protected override Task Load(bool forceDataRefresh)
         {
-            var t1 = Task.Run(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].Get(), forceDataRefresh, response => Repository = response.Data));
+			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceDataRefresh, response => Repository = response.Data));
 
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
                     forceDataRefresh, response => Readme = response.Data));
 
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
                     forceDataRefresh, response => Branches = response.Data));
 
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
                     forceDataRefresh, response => IsWatched = response.Data));
          
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
                     forceDataRefresh, response => IsStarred = response.Data));
 
             return t1;
@@ -191,9 +191,9 @@ namespace CodeHub.Core.ViewModels.Repositories
                 return;
 
             if (IsWatched.Value)
-                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].StopWatching());
+				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].StopWatching());
             else
-                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Watch());
+				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
 
             IsWatched = !IsWatched;
         }
@@ -205,7 +205,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool IsPinned
         {
-            get { return Application.Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
+			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
         }
 
         private async void ToggleStar()
@@ -214,9 +214,9 @@ namespace CodeHub.Core.ViewModels.Repositories
                 return;
 
             if (IsStarred.Value)
-                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Unstar());
+				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Unstar());
             else
-                await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepositoryName].Star());
+				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
             IsStarred = !IsStarred;
         }
 

@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {

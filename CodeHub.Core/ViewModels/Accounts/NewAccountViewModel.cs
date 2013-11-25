@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {

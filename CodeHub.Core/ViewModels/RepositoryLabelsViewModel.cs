@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Labels.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].GetLabels(), forceDataRefresh);
+			return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetLabels(), forceDataRefresh);
         }
 
         public class NavObject

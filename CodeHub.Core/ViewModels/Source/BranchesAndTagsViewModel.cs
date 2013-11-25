@@ -85,7 +85,7 @@ namespace CodeHub.Core.ViewModels.Source
 		{
 			if (IsBranchesShowing)
 			{
-				var request = Application.Client.Users[Username].Repositories[Repository].GetBranches();
+				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches();
 				return Task.Run(() => this.RequestModel(request, forceDataRefresh, response =>
 				{
 					Items.Items.Reset(response.Data.Select(x => new ViewObject { Name = x.Name, Object = x }));
@@ -94,7 +94,7 @@ namespace CodeHub.Core.ViewModels.Source
 			}
 			else
 			{
-				var request = Application.Client.Users[Username].Repositories[Repository].GetTags();
+				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags();
 				return Task.Run(() => this.RequestModel(request, forceDataRefresh, response => {
 					Items.Items.Reset(response.Data.Select(x => new ViewObject { Name = x.Name, Object = x }));
 					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Select(x => new ViewObject { Name = x.Name, Object = x })));

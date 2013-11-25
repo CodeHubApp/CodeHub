@@ -47,9 +47,9 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected override Task Load(bool forceDataRefresh)
         {
-            var t1 = Task.Run(() => this.RequestModel(Application.Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceDataRefresh, response => Issue = response.Data));
+			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceDataRefresh, response => Issue = response.Data));
 
-            FireAndForgetTask.Start(() => this.RequestModel(Application.Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceDataRefresh, response => {
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceDataRefresh, response => {
                 Comments.Items.Reset(response.Data);
                 this.CreateMore(response, m => Comments.MoreItems = m, d => Comments.Items.AddRange(d));
             }));
@@ -74,7 +74,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public async Task AddComment(string text)
         {
-            var comment = await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
+			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
             Comments.Items.Add(comment.Data);
         }
 

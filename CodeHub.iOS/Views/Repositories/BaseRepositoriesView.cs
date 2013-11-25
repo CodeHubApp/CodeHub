@@ -7,7 +7,7 @@ using MonoTouch.Dialog;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public abstract class RepositoriesView : ViewModelCollectionDrivenViewController
+    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenViewController
     {
         public new RepositoriesViewModel ViewModel
         {  
@@ -15,7 +15,7 @@ namespace CodeHub.iOS.Views.Repositories
             set { base.ViewModel = value; }
         }
 
-        protected RepositoriesView()
+        protected BaseRepositoriesView()
         {
             EnableFilter = true;
             Title = "Repositories".t();
@@ -26,6 +26,7 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             BindCollection(ViewModel.Repositories, CreateElement);
+			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 56f, 0, 0);
         }
 
         protected Element CreateElement(RepositoryModel repo)

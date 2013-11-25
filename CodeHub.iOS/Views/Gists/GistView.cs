@@ -47,11 +47,17 @@ namespace CodeHub.iOS.Views.Gists
             _shareButton.Enabled = false;
             _header.Title = "Gist: " + ViewModel.Id;
 
+			TableView.ContentInset = new UIEdgeInsets(-36f, 0, 0, 0);
+			TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
+
             ViewModel.Bind(x => x.Gist, gist =>
             {
                 UpdateOwned();
-                RenderGist(gist);
+                RenderGist();
             });
+
+			ViewModel.BindCollection(x => x.Comments, x => RenderGist());
+
             ViewModel.Bind(x => x.IsStarred, isStarred =>
             {
                 _starButton.SetImage(isStarred ? Images.Gist.StarHighlighted : Images.Gist.Star, UIControlState.Normal);
@@ -128,11 +134,17 @@ namespace CodeHub.iOS.Views.Gists
             sheet.ShowFrom(_shareButton, true);
         }
 
-        public void RenderGist(GistModel model)
+        public void RenderGist()
         {
+			if (ViewModel.Gist == null)
+				return;
+
+			var model = ViewModel.Gist;
+
             _shareButton.Enabled = _userButton.Enabled = model != null;
             var root = new RootElement(Title) { UnevenRows = true };
             var sec = new Section();
+			root.Add(sec);
             _header.Subtitle = "Updated " + model.UpdatedAt.ToDaysAgo();
 
 
@@ -140,8 +152,7 @@ namespace CodeHub.iOS.Views.Gists
             var d = new NameTimeStringElement() { 
                 Time = model.UpdatedAt.ToDaysAgo(), 
                 String = str, 
-                Image = Theme.CurrentTheme.AnonymousUserImage,
-                BackgroundColor = UIColor.White,
+                Image = Theme.CurrentTheme.AnonymousUserImage
             };
 
             //Sometimes there's no user!
@@ -150,7 +161,8 @@ namespace CodeHub.iOS.Views.Gists
 
             sec.Add(d);
 
-            var sec2 = new Section();
+			var sec2 = new Section("Files");
+			root.Add(sec2);
 
             foreach (var file in model.Files.Keys)
             {
@@ -162,18 +174,40 @@ namespace CodeHub.iOS.Views.Gists
 
                 var fileSaved = file;
                 var gistFileModel = model.Files[fileSaved];
-
                 
-                if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-                    sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-                else
-                    sse.Tapped += () => NavigationController.PushViewController(new GistFileViewController(gistFileModel, ViewModel.Gist.HtmlUrl), true);
+				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
+					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
+				else
+					sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
                 
 
                 sec2.Add(sse);
             }
 
-            root.Add(new [] { sec, sec2 });
+			if (ViewModel.Comments.Items.Count > 0)
+			{
+				var sec3 = new Section("Comments");
+				foreach (var comment in ViewModel.Comments)
+				{
+					var el = new NameTimeStringElement 
+					{ 
+						Name = "Anonymous",
+						Image = Theme.CurrentTheme.AnonymousUserImage,
+						String = comment.Body,
+			         	Time = comment.CreatedAt.ToDaysAgo(),
+					};
+
+					if (comment.User != null)
+					{
+						el.Name = comment.User.Login;
+						el.ImageUri = new Uri(comment.User.AvatarUrl);
+					}
+
+					sec3.Add(el);
+				}
+				root.Add(sec3);
+			}
+
             Root = root;
         }
 

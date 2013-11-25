@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-            return Milestones.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].Milestones.GetAll(), forceCacheInvalidation);
+			return Milestones.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Milestones.GetAll(), forceCacheInvalidation);
         }
 
         public class NavObject

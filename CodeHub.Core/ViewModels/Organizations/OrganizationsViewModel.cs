@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Organizations.SimpleCollectionLoad(Application.Client.Users[Username].GetOrganizations(), forceDataRefresh);
+			return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
         }
 
         public class NavObject

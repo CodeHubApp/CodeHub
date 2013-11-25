@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Files.SimpleCollectionLoad(Application.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
+			return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
         }
 
         public class NavObject

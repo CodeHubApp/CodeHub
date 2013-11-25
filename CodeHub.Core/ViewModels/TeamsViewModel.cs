@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels
 
         protected override Task Load(bool forceDataRefresh)
         {
-            return Teams.SimpleCollectionLoad(Application.Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
+			return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
         }
 
         public class NavObject
