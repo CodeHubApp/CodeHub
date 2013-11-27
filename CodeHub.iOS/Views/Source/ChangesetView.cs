@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : ViewModelDrivenViewController
     {
-        private readonly HeaderView _header = new HeaderView(0);
+        private readonly HeaderView _header = new HeaderView();
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
 

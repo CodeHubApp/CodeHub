@@ -14,6 +14,7 @@ namespace CodeHub.iOS
             CurrentTheme = theme;
             CodeFramework.iOS.Theme.CurrentTheme = theme;
 			RepositoryCellView.RoundImages = false;
+			MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;

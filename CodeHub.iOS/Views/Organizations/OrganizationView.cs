@@ -15,7 +15,7 @@ namespace CodeHub.iOS.Views.Organizations
             base.ViewDidLoad();
 
             var vm = (OrganizationViewModel) ViewModel;
-            _header = new HeaderView(View.Bounds.Width) { Title = vm.Name };
+            _header = new HeaderView() { Title = vm.Name };
 
             vm.Bind(x => x.Organization, model =>
             {

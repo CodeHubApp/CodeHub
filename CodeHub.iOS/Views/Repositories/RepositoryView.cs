@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryView : ViewModelDrivenViewController
     {
-		private readonly HeaderView _header = new HeaderView(0) { ShadowImage = false };
+		private readonly HeaderView _header = new HeaderView();
 
         public new RepositoryViewModel ViewModel
         {

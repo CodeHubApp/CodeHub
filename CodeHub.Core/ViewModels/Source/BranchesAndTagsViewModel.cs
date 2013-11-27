@@ -11,6 +11,7 @@ namespace CodeHub.Core.ViewModels.Source
 	public class BranchesAndTagsViewModel : LoadableViewModel
 	{
 		private readonly CollectionViewModel<ViewObject> _items = new CollectionViewModel<ViewObject>();
+		private bool _isBranchesShowing = true;
 
 		public string Username
 		{
@@ -24,7 +25,15 @@ namespace CodeHub.Core.ViewModels.Source
 			private set;
 		}
 
-		public bool IsBranchesShowing { get; private set; }
+		public bool IsBranchesShowing
+		{
+			get { return _isBranchesShowing; }
+			private set
+			{
+				_isBranchesShowing = value;
+				RaisePropertyChanged(() => IsBranchesShowing);
+			}
+		}
 
 		public CollectionViewModel<ViewObject> Items
 		{

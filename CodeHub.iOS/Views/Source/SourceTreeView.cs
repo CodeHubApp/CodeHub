@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Source
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-			Title = string.IsNullOrEmpty(ViewModel.Path) ? "Source".t() : ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
+			Title = string.IsNullOrEmpty(ViewModel.Path) ? ViewModel.Repository : ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
 		}
 
         private Element CreateElement(ContentModel x)
@@ -43,7 +43,8 @@ namespace CodeHub.iOS.Views.Source
                 {
 					return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
                 }
-                        //If there is no size, it's most likey a submodule
+
+                //If there is no size, it's most likey a submodule
                 return new StyledStringElement(x.Name, () => ViewModel.GoToSubmoduleCommand.Execute(x), Images.Repo);
             }
             

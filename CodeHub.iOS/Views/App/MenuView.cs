@@ -98,7 +98,7 @@ namespace CodeHub.iOS.Views.App
             base.ViewDidLoad();
 
 			TableView.SeparatorInset = UIEdgeInsets.Zero;
-			TableView.SeparatorColor = UIColor.FromRGB(41, 41, 41);
+			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
 
 			ProfileButton.Uri = new System.Uri(ViewModel.Account.AvatarUrl);
 

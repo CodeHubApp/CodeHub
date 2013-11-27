@@ -35,7 +35,7 @@ namespace CodeHub.iOS.Views.Issues
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null && !IsSearching)
+            if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
 

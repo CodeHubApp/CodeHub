@@ -3,6 +3,7 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -27,20 +28,25 @@ namespace CodeHub.Core.ViewModels
             set { _searchText = value; RaisePropertyChanged(() => SearchText); }
         }
 
+		public ICommand GoToRepositoryCommand
+		{
+			get { return new MvxCommand<RepositorySearchModel.RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
+		}
+
         public ICommand SearchCommand
         {
-            get { return new MvxCommand(Search, () => SearchText.Length > 0);}
+			get { return new MvxCommand(Search, () => !string.IsNullOrEmpty(SearchText)); }
         }
 
         private async void Search()
         {
-//            await Task.Run(() =>
-//            {
-//				var request = Application.Client.Repositories.SearchRepositories(SearchText);
-//                request.UseCache = false;
-//                var response = Application.Client.Execute(request);
-//                Repositories.Items.Reset(response.Data.Repositories);
-//            });
+            await Task.Run(() =>
+            {
+				var request = this.GetApplication().Client.Repositories.SearchRepositories(new string[] { SearchText }, new string[] { });
+                request.UseCache = false;
+				var response = this.GetApplication().Client.Execute(request);
+				Repositories.Items.Reset(response.Data.Items);
+            });
         }
     }
 }

@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.PullRequests
         public PullRequestView()
         {
             Root.UnevenRows = true;
-            _header = new HeaderView(0) { ShadowImage = false };
+            _header = new HeaderView() { ShadowImage = false };
             _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge }) { BackgroundColor = UIColor.White };
         }
 

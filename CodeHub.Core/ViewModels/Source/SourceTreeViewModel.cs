@@ -20,29 +20,13 @@ namespace CodeHub.Core.ViewModels.Source
             get { return _content; }
         }
 
-        public string Username
-        {
-            get;
-            private set;
-        }
+		public string Username { get; private set; }
 
-        public string Path
-        {
-            get;
-            private set;
-        }
+		public string Path { get; private set; }
 
-        public string Branch
-        {
-            get;
-            private set;
-        }
+		public string Branch { get; private set; }
 
-        public string Repository
-        {
-            get;
-            private set;
-        }
+		public string Repository { get; private set; }
 
         public SourceFilterModel Filter
         {

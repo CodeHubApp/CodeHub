@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class GistView : ViewModelDrivenViewController
     {
-        private readonly HeaderView _header = new HeaderView(0);
+        private readonly HeaderView _header = new HeaderView();
         private readonly UIBarButtonItem _shareButton, _userButton;
         private readonly UIButton _starButton;
 
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.Gists
             _header.Title = "Gist: " + ViewModel.Id;
 
 			TableView.ContentInset = new UIEdgeInsets(-36f, 0, 0, 0);
-			TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
+			//TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
 
             ViewModel.Bind(x => x.Gist, gist =>
             {

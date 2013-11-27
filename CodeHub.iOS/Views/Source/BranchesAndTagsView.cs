@@ -8,20 +8,8 @@ namespace CodeHub.iOS.Views.Source
 {
 	public class BranchesAndTagsView : ViewModelCollectionDrivenViewController
 	{
-		private readonly UISegmentedControl _viewSegment;
-		private readonly UIBarButtonItem _segmentBarButton;
-
-		public new BranchesAndTagsViewModel ViewModel
-		{
-			get { return (BranchesAndTagsViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
-
-		public BranchesAndTagsView()
-		{
-			_viewSegment = new UISegmentedControl(new object[] {"Branches".t(), "Tags".t()});
-			_segmentBarButton = new UIBarButtonItem(_viewSegment);
-		}
+		private UISegmentedControl _viewSegment;
+		private UIBarButtonItem _segmentBarButton;
 
 		public override void ViewDidLoad()
 		{
@@ -30,9 +18,20 @@ namespace CodeHub.iOS.Views.Source
 
 			base.ViewDidLoad();
 
-			_segmentBarButton.Width = View.Frame.Width - 10f;
+			var vm = (BranchesAndTagsViewModel)ViewModel;
+
+			_viewSegment = new UISegmentedControl(new object[] {"Branches".t(), "Tags".t()});
+			_segmentBarButton = new UIBarButtonItem(_viewSegment) { Width = View.Frame.Width - 10f };
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-			this.BindCollection(ViewModel.Items, x => new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x)));
+			this.BindCollection(vm.Items, x => new StyledStringElement(x.Name, () => vm.GoToSourceCommand.Execute(x)));
+			vm.Bind(x => x.IsBranchesShowing, x => _viewSegment.SelectedSegment = x ? 0 : 1, true);
+
+			_viewSegment.ValueChanged += (sender, e) => {
+				if (_viewSegment.SelectedSegment == 0)
+					vm.ShowBranchesCommand.Execute(null);
+				else if (_viewSegment.SelectedSegment == 1)
+					vm.ShowTagsCommand.Execute(null);
+			};
 		}
 
 		public override void ViewWillAppear(bool animated)
@@ -40,29 +39,6 @@ namespace CodeHub.iOS.Views.Source
 			base.ViewWillAppear(animated);
 			if (ToolbarItems != null)
 				NavigationController.SetToolbarHidden(false, animated);
-
-			//Before we select which one, make sure we detach the event handler or silly things will happen
-			_viewSegment.ValueChanged -= SegmentValueChanged;
-
-			//Select which one is currently selected
-			if (ViewModel.IsBranchesShowing)
-				_viewSegment.SelectedSegment = 0;
-			else
-				_viewSegment.SelectedSegment = 2;
-
-			_viewSegment.ValueChanged += SegmentValueChanged;
-		}
-
-		void SegmentValueChanged (object sender, EventArgs e)
-		{
-			if (_viewSegment.SelectedSegment == 0)
-			{
-				ViewModel.ShowBranchesCommand.Execute(null);
-			}
-			else if (_viewSegment.SelectedSegment == 1)
-			{
-				ViewModel.ShowTagsCommand.Execute(null);
-			}
 		}
 
 		public override void ViewWillDisappear(bool animated)

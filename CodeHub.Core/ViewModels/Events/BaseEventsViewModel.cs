@@ -513,7 +513,7 @@ namespace CodeHub.Core.ViewModels.Events
             var watchEvent = eventModel.PayloadObject as EventModel.WatchEvent;
             if (watchEvent != null)
             {
-                eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel);
+				eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
                 eventBlock.Header.Add(watchEvent.Action.Equals("started") ? 
                     new TextBlock(" started watching ") : new TextBlock(" stopped watching "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
@@ -535,11 +535,9 @@ namespace CodeHub.Core.ViewModels.Events
             if (repoSplit.Length < 2)
                 return new TextBlock(repoModel.Name);
 
-            var repoOwner = repoSplit[0];
-            var repoName = repoSplit[1];
-			return !repoOwner.ToLower().Equals(this.GetApplication().Account.Username.ToLower()) ? 
-                new AnchorBlock(repoModel.Name, () => GoToRepositoryCommand.Execute(repoModel)) : 
-                new AnchorBlock(repoName, () => GoToRepositoryCommand.Execute(repoModel));
+//            var repoOwner = repoSplit[0];
+//            var repoName = repoSplit[1];
+			return new AnchorBlock(repoModel.Name, () => GoToRepositoryCommand.Execute(repoModel));
         }
 
 

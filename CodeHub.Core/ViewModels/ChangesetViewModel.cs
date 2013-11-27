@@ -13,26 +13,25 @@ namespace CodeHub.Core.ViewModels
         private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
         private readonly IApplicationService _application;
         private CommitModel _commitModel;
+		private bool _isChangesetsShowing;
 
-        public string Node 
-        { 
-            get; 
-            private set;
-        }
+		public string Node { get; private set; }
 
-        public string User 
-        { 
-            get; 
-            private set; 
-        }
+		public string User { get; private set; }
 
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
+		public string Repository { get; private set; }
 
         public bool ShowRepository { get; private set; }
+
+		public bool IsCommentsShowing
+		{
+			get { return _isChangesetsShowing; }
+			private set
+			{
+				_isChangesetsShowing = value;
+				RaisePropertyChanged(() => IsCommentsShowing);
+			}
+		}
 
         public CommitModel Changeset
         {
