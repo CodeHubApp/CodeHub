@@ -12,6 +12,7 @@ namespace CodeHub.iOS.Views.User
 		{
 			Root.UnevenRows = true;
 		}
+
         public override void ViewDidLoad()
         {
             Title = "Profile";
@@ -26,7 +27,7 @@ namespace CodeHub.iOS.Views.User
 			set.Bind(header).For(x => x.ImageUri).To(x => x.User.AvatarUrl).OneWay();
             set.Apply();
 
-			var followers = new StyledStringElement("Followers".t(), () => vm.LoadCommand.Execute(null), Images.Heart);
+			var followers = new StyledStringElement("Followers".t(), () => vm.GoToFollowersCommand.Execute(null), Images.Heart);
             var following = new StyledStringElement("Following".t(), () => vm.GoToFollowingCommand.Execute(null), Images.Following);
             var events = new StyledStringElement("Events".t(), () => vm.GoToEventsCommand.Execute(null), Images.Event);
             var organizations = new StyledStringElement("Organizations".t(), () => vm.GoToOrganizationsCommand.Execute(null), Images.Group);

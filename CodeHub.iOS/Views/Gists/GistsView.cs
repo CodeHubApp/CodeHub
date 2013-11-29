@@ -30,8 +30,6 @@ namespace CodeHub.iOS.Views.Gists
                 sse.Tapped += () => vm.GoToGistCommand.Execute(x);
                 return sse;
             });
-
-			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 47f, 0, 0);
         }
     }
 }

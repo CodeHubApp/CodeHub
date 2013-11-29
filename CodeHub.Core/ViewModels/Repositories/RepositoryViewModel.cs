@@ -30,6 +30,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set; 
         }
 
+		public string ImageUrl
+		{
+			get;
+			set;
+		}
+
         public bool? IsStarred
         {
             get { return _starred; }
@@ -152,10 +158,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             //Is it pinned already or not?
 			var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
             if (pinnedRepo == null)
-            {
-                //var imageUrl = Repository.Fork ? Images.GitHubRepoForkUrl : CodeHub.Images.GitHubRepoUrl;
-                //Application.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, imageUrl.AbsolutePath);
-            }
+				this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, ImageUrl);
             else
 				this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }

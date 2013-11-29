@@ -8,6 +8,9 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using CodeFramework.ViewControllers;
 using CodeFramework.Views;
+using CodeFramework.iOS.ViewControllers;
+using CodeFramework.iOS.Utils;
+using Cirrious.CrossCore;
 
 namespace CodeHub.ViewControllers
 {
@@ -37,30 +40,31 @@ namespace CodeHub.ViewControllers
 
         protected async virtual void Save()
         {
-//            if (_model.Files.Count == 0)
-//            {
-//                MonoTouch.Utilities.ShowAlert("No Files", "You cannot create a Gist without atleast one file");
-//                return;
-//            }
-//
-//            try
-//            {
-//                GistModel newGist = null;
-//                _model.Public = _public.Value;
-//                await this.DoWorkAsync("Saving...", async () => {
-//                    newGist = (await Application.Client.ExecuteAsync(Application.Client.AuthenticatedUser.Gists.CreateGist(_model))).Data;
-//                });
-//
-//                if (Created != null && newGist != null)
-//                    Created(newGist);
-//
-//                //Dismiss me!
-//                NavigationController.PopViewControllerAnimated(true);
-//            }
-//            catch (Exception e)
-//            {
-//                MonoTouch.Utilities.ShowAlert("Unable to Save!", e.Message);
-//            }
+            if (_model.Files.Count == 0)
+            {
+                MonoTouch.Utilities.ShowAlert("No Files", "You cannot create a Gist without atleast one file");
+                return;
+            }
+
+            try
+            {
+                GistModel newGist = null;
+                _model.Public = _public.Value;
+                await this.DoWorkAsync("Saving...", async () => {
+					var app = Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+					newGist = (await app.Client.ExecuteAsync(app.Client.AuthenticatedUser.Gists.CreateGist(_model))).Data;
+                });
+
+                if (Created != null && newGist != null)
+                    Created(newGist);
+
+                //Dismiss me!
+                NavigationController.PopViewControllerAnimated(true);
+            }
+            catch (Exception e)
+            {
+                MonoTouch.Utilities.ShowAlert("Unable to Save!", e.Message);
+            }
         }
 
         int _gistFileCounter = 0;
@@ -152,11 +156,11 @@ namespace CodeHub.ViewControllers
 
         private void ChangeDescription()
         {
-//            var composer = new Composer { Title = "Description", Text = _model.Description };
-//            composer.NewComment(this, (text) => {
-//                _model.Description = text;
-//                composer.CloseComposer();
-//            });
+            var composer = new Composer { Title = "Description", Text = _model.Description };
+            composer.NewComment(this, (text) => {
+                _model.Description = text;
+                composer.CloseComposer();
+            });
         }
 
         public override Source CreateSizingSource(bool unevenRows)

@@ -9,27 +9,10 @@ namespace CodeHub.Core.ViewModels.Source
 {
 	public class SourceViewModel : FileSourceViewModel
     {
-		private string _title;
 		private string _path;
 		private string _name;
 		private string _gitUrl;
-
-		public string HtmlUrl { get; private set; }
-
-		public string Title
-		{
-			get { return _title; }
-			private set 
-			{
-				_title = value;
-				RaisePropertyChanged(() => Title);
-			}
-		}
-
-		public ICommand GoToGitHubCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = HtmlUrl })); }
-		}
+		private bool _forceBinary;
 
 		protected override async Task Load(bool forceCacheInvalidation)
         {
@@ -45,6 +28,10 @@ namespace CodeHub.Core.ViewModels.Source
 
 			FilePath = filepath;
 
+			// We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
+			if (_forceBinary)
+				return;
+
 			var isText = mime.Contains("charset");
 			if (isText)
 			{
@@ -58,6 +45,7 @@ namespace CodeHub.Core.ViewModels.Source
 			HtmlUrl = navObject.HtmlUrl;
 			_name = navObject.Name;
 			_gitUrl = navObject.GitUrl;
+			_forceBinary = navObject.ForceBinary;
 
 			//Create the filename
 			var fileName = System.IO.Path.GetFileName(_path);
@@ -74,6 +62,7 @@ namespace CodeHub.Core.ViewModels.Source
 			public string HtmlUrl { get; set; }
 			public string Name { get; set; }
 			public string GitUrl { get; set; }
+			public bool ForceBinary { get; set; }
 		}
     }
 }

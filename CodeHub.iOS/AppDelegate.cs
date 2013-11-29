@@ -39,8 +39,10 @@ namespace CodeHub.iOS
 			UINavigationBar.Appearance.TintColor = UIColor.White;
 			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(39, 41, 43);
 			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
-			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(120, 120, 127);
-			//UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TintColor = UIColor.FromRGB(120, 120, 127);
+			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
+			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(196, 196, 202);
+			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(81, 81, 81);
+			UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
 			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
 

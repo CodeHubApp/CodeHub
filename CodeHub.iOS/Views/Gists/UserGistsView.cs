@@ -32,7 +32,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             var ctrl = new CreateGistViewController();
             ctrl.Created = newGist =>ViewModel.Gists.Items.Insert(0, newGist);
-            NavigationController.PushViewController(ctrl, true);
+			NavigationController.PushViewController(ctrl, true);
         }
     }
 }

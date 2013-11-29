@@ -64,7 +64,6 @@
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
-    <Compile Include="ViewModels\Source\RawContentViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\User\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
@@ -105,6 +104,8 @@
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
+    <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
+    <Compile Include="Services\JsonSerializationService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -118,6 +119,9 @@
     </Reference>
     <Reference Include="Cirrious.MvvmCross">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp.MonoTouch">
+      <HintPath>..\lib\GitHubSharp\lib\RestSharp\RestSharp.MonoTouch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

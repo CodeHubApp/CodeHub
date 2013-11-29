@@ -57,6 +57,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public class NavObject
         {
+			public string Filename { get; set; }
+			public string RawUrl { get; set; }
             public GistFileModel GistFile { get; set; }
         }
     }

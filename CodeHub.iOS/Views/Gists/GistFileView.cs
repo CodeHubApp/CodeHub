@@ -3,23 +3,21 @@ using CodeFramework.Views;
 using CodeFramework.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core;
+using MonoTouch.Foundation;
 
 namespace CodeHub.ViewControllers
 {
-	public class GistFileView : WebView
+	public class GistFileView : CodeHub.iOS.Views.Source.FileSourceView
     {
-		public new GistFileViewModel ViewModel
-		{
-			get { return (GistFileViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
-
 		public override void ViewDidLoad()
 		{
-			Title = "Gist";
-
 			base.ViewDidLoad();
-			ViewModel.Bind(x => x.ContentPath, x => LoadFile(x));
+
+			ViewModel.Bind(x => x.ContentPath, x =>
+			{
+				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
+				LoadContent(data, System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
+			});
 		}
     }
 }

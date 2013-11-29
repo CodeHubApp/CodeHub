@@ -11,12 +11,6 @@ namespace CodeHub.iOS.Views.Issues
     {
         public Action<MilestoneModel> MilestoneSelected;
 
-        public new IssueMilestonesViewModel ViewModel
-        {
-            get { return (IssueMilestonesViewModel)base.ViewModel; }
-            protected set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             Title = "Milestones".t();
@@ -24,10 +18,12 @@ namespace CodeHub.iOS.Views.Issues
 
             base.ViewDidLoad();
 
+			var vm = (IssueMilestonesViewModel)ViewModel;
+
             //Add a fake 'Unassigned' guy so we can always unassigned what we've done
-            ViewModel.BindCollection(x => x.Milestones, (ev) =>
+			vm.BindCollection(x => x.Milestones, (ev) =>
             {
-                var items = ViewModel.Milestones.ToList();
+				var items = vm.Milestones.ToList();
                 var noMilestone = new MilestoneModel { Title = "No Milestone".t() };
                 items.Insert(0, noMilestone);
 
@@ -38,7 +34,7 @@ namespace CodeHub.iOS.Views.Issues
                         if (MilestoneSelected != null)
                             MilestoneSelected(x == noMilestone ? null : x);
                     });
-                }, ViewModel.Milestones.MoreItems);
+				}, vm.Milestones.MoreItems);
             });
         }
     }

@@ -5,6 +5,7 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -47,6 +48,26 @@ namespace CodeHub.Core.ViewModels
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, Repository = Repository })); }
         }
+
+		public ICommand GoToFileCommand
+		{
+			get
+			{ 
+				return new MvxCommand<CommitModel.CommitFileModel>(x =>
+				{
+						if (x.Patch == null)
+						{
+							ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { GitUrl = x.ContentsUrl, HtmlUrl = x.BlobUrl, Name = x.Filename, Path = x.Filename, ForceBinary = true });
+						}
+						else
+						{
+							Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IViewModelTxService>().Add(x);
+							ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
+						}
+
+				});
+			}
+		}
 
         public CollectionViewModel<CommentModel> Comments
         {

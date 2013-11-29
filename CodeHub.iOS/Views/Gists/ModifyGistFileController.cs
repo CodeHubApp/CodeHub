@@ -90,7 +90,6 @@ namespace CodeHub.ViewControllers
             if (newHeight < (Scroll.Frame.Height - offsetSize))
                 newHeight = Scroll.Frame.Height - offsetSize;
             Text.Frame = new RectangleF(f.X, f.Y, f.Width, newHeight);
-            Console.WriteLine("Frame Height: " + Text.Frame.Height);
         }
 
         void KeyboardWillShow (NSNotification notification)

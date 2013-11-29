@@ -52,13 +52,31 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public ICommand GoToFileSourceCommand
         {
-			get { return new MvxCommand<GistFileModel>(x => ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistFileModel = x })); }
+			get { 
+				return new MvxCommand<GistFileModel>(x => {
+					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(x);
+					ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistId = Id, Filename = x.Filename });
+				});
+			}
         }
 
         public ICommand GoToViewableFileCommand
         {
             get { return new MvxCommand<GistFileModel>(x => ShowViewModel<GistViewableFileViewModel>(new GistViewableFileViewModel.NavObject { GistFile = x }), x => x != null); }
         }
+
+		public ICommand GoToHtmlUrlCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _gist.HtmlUrl }), () => _gist != null); }
+		}
+
+		public ICommand ForkCommand
+		{
+			get
+			{
+				return new MvxCommand(() => ForkGist());
+			}
+		}
 
         public ICommand ToggleStarCommand
         {
@@ -86,6 +104,13 @@ namespace CodeHub.Core.ViewModels.Gists
                 // Do nothing
             }
         }
+
+		public async Task ForkGist()
+		{
+			var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[Id].ForkGist());
+			var forkedGist = data.Data;
+			ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = forkedGist.Id });
+		}
 
         protected override Task Load(bool forceDataRefresh)
         {

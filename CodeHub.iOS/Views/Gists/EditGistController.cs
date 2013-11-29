@@ -9,6 +9,8 @@ using System.Drawing;
 using System.Linq;
 using CodeFramework.ViewControllers;
 using CodeFramework.Views;
+using CodeFramework.iOS.Utils;
+using CodeFramework.iOS.ViewControllers;
 
 namespace CodeHub.ViewControllers
 {
@@ -44,20 +46,21 @@ namespace CodeHub.ViewControllers
 
         protected virtual void Save()
         {
-//            if (_model.Files.Where(x => x.Value != null).Count() == 0)
-//            {
-//                MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
-//                return;
-//            }
-//
-//            this.DoWork(() => {
-//                var newGist = Application.Client.Execute(Application.Client.Gists[_originalGist.Id].EditGist(_model));
-//                InvokeOnMainThread(() => {
-//                    if (Created != null)
-//                        Created(newGist.Data);
-//                    DismissViewController(true, null);
-//                });
-//            });
+            if (_model.Files.Where(x => x.Value != null).Count() == 0)
+            {
+                MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
+                return;
+            }
+
+            this.DoWork(() => {
+				var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+				var newGist = app.Client.Execute(app.Client.Gists[_originalGist.Id].EditGist(_model));
+                InvokeOnMainThread(() => {
+                    if (Created != null)
+                        Created(newGist.Data);
+                    DismissViewController(true, null);
+                });
+            });
         }
 
         private bool IsDuplicateName(string name)
@@ -165,11 +168,11 @@ namespace CodeHub.ViewControllers
 
         private void ChangeDescription()
         {
-//            var composer = new Composer { Title = "Description", Text = _model.Description };
-//            composer.NewComment(this, (text) => {
-//                _model.Description = text;
-//                composer.CloseComposer();
-//            });
+            var composer = new Composer { Title = "Description", Text = _model.Description };
+            composer.NewComment(this, (text) => {
+                _model.Description = text;
+                composer.CloseComposer();
+            });
         }
 
         public override Source CreateSizingSource(bool unevenRows)

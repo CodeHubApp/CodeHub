@@ -99,6 +99,8 @@ namespace CodeHub.iOS.Views.Source
                         if (commitModel.Parents != null && commitModel.Parents.Count > 0)
                             parent = commitModel.Parents[0].Sha;
 
+						ViewModel.GoToFileCommand.Execute(x);
+
                         // This could mean it's a binary or it's just been moved with no changes...
 //                        if (x.Patch == null)
 //                            NavigationController.PushViewController(new RawContentViewController(x.RawUrl, x.BlobUrl), true);

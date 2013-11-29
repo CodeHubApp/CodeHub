@@ -122,7 +122,6 @@
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
-    <Compile Include="Views\Source\ChangesetDiffViewController.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\FileSourceViewController.cs" />
     <Compile Include="Views\Source\SourceInfoViewController.cs" />
@@ -156,6 +155,8 @@
     <Compile Include="Views\Source\SourceView.cs" />
     <Compile Include="Views\Gists\GistFileView.cs" />
     <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
+    <Compile Include="Views\Source\FileSourceView.cs" />
+    <Compile Include="Views\Source\ChangesetDiffView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

@@ -30,6 +30,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             ViewModel.Bind(x => x.Repository, x =>
             {
+				ViewModel.ImageUrl = (x.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl).AbsoluteUri;
                 NavigationItem.RightBarButtonItem.Enabled = true;
                 Render(x);
             });
@@ -55,7 +56,7 @@ namespace CodeHub.iOS.Views.Repositories
                 return;
 
             var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
-            var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Pin to Slideout Menu".t() : "Unpin from Slideout Menu".t());
+			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu".t() : "Pin to Slideout Menu".t());
             var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo".t() : "Star This Repo".t());
             var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo".t() : "Watch This Repo".t());
             //var forkButton = sheet.AddButton("Fork Repository".t());

@@ -7,12 +7,12 @@ using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Gists
 {
     public class GistView : ViewModelDrivenViewController
     {
-        private readonly HeaderView _header = new HeaderView();
         private readonly UIBarButtonItem _shareButton, _userButton;
         private readonly UIButton _starButton;
 
@@ -45,10 +45,6 @@ namespace CodeHub.iOS.Views.Gists
             //Disable these buttons until the gist object becomes valid
             _userButton.Enabled = false;
             _shareButton.Enabled = false;
-            _header.Title = "Gist: " + ViewModel.Id;
-
-			TableView.ContentInset = new UIEdgeInsets(-36f, 0, 0, 0);
-			//TableView.SeparatorInset = MonoTouch.UIKit.UIEdgeInsets.Zero;
 
             ViewModel.Bind(x => x.Gist, gist =>
             {
@@ -68,13 +64,13 @@ namespace CodeHub.iOS.Views.Gists
         private void UpdateOwned()
         {
             //Is it owned?
-            /*
-            if (string.Equals(Application.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
+			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+			if (string.Equals(app.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
             {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Theme.CurrentTheme.EditButton, () => {
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => {
                     //We need to make sure we have the FULL gist
                     this.DoWork(() => {
-                        var gist = Application.Client.Execute(Application.Client.Gists[ViewModel.Id].Get()).Data;
+						var gist = app.Client.Execute(app.Client.Gists[ViewModel.Id].Get()).Data;
                         InvokeOnMainThread(() => {
                             var gistController = new EditGistController(gist);
                             gistController.Created = (editedGist) => {
@@ -88,20 +84,22 @@ namespace CodeHub.iOS.Views.Gists
             }
             else
             {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(CodeFramework.Theme.CurrentTheme.ForkButton, () => {
-                    NavigationItem.RightBarButtonItem.Enabled = false;
-
-                    this.DoWork(() => {
-                        var forkedGist = Application.Client.Execute(Application.Client.Gists[ViewModel.Id].ForkGist()).Data;
-                        InvokeOnMainThread(delegate {
-                            NavigationController.PushViewController(new GistView(forkedGist), true);
-                        });
-                    }, null, () => {
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.ForkButton, async () => {
+					try
+					{
+						NavigationItem.RightBarButtonItem.Enabled = false;
+						await this.DoWorkAsync("Forking...", () => ViewModel.ForkGist());
+					}
+					catch (Exception e)
+					{
+						MonoTouch.Utilities.ShowAlert("Error", e.Message);
+					}
+					finally
+					{
                         NavigationItem.RightBarButtonItem.Enabled = true;
-                    });
+					}
                 }));
             }
-             */
         }
         
         private void ShareButtonPress()
@@ -126,8 +124,8 @@ namespace CodeHub.iOS.Views.Gists
                     PresentViewController (activityController, true, null);
                 }
                 else if (e.ButtonIndex == showButton)
-                {
-                    try { UIApplication.SharedApplication.OpenUrl(new NSUrl(ViewModel.Gist.HtmlUrl)); } catch { }
+				{
+					ViewModel.GoToHtmlUrlCommand.Execute(null);
                 }
             };
 
@@ -143,9 +141,8 @@ namespace CodeHub.iOS.Views.Gists
 
             _shareButton.Enabled = _userButton.Enabled = model != null;
             var root = new RootElement(Title) { UnevenRows = true };
-            var sec = new Section();
+			var sec = new Section();
 			root.Add(sec);
-            _header.Subtitle = "Updated " + model.UpdatedAt.ToDaysAgo();
 
 
             var str = string.IsNullOrEmpty(model.Description) ? "Gist " + model.Id : model.Description;
@@ -175,9 +172,9 @@ namespace CodeHub.iOS.Views.Gists
                 var fileSaved = file;
                 var gistFileModel = model.Files[fileSaved];
                 
-				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-				else
+//				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
+//					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
+//				else
 					sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
                 
 
