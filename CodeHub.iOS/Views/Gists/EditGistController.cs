@@ -175,7 +175,7 @@ namespace CodeHub.ViewControllers
             });
         }
 
-        public override Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
         {
             return new EditSource(this);
         }

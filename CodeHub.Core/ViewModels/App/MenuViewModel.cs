@@ -55,6 +55,17 @@ namespace CodeHub.Core.ViewModels.App
             _application = application;
         }
 
+		public ICommand DeletePinnedRepositoryCommand
+		{
+			get 
+			{
+				return new MvxCommand<CodeFramework.Core.Data.PinnedRepository>(x =>
+				{
+					_application.Account.PinnnedRepositories.RemovePinnedRepository(x.Id);
+				}, x => x != null);
+			}
+		}
+
         public ICommand GoToAccountsCommand
         {
             get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>()); }

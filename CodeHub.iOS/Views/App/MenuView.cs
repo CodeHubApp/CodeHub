@@ -11,6 +11,7 @@ namespace CodeHub.iOS.Views.App
 	public class MenuView : MenuBaseViewController
     {
         private MenuElement _notifications;
+		private Section _favoriteRepoSection;
 
 	    public new MenuViewModel ViewModel
 	    {
@@ -21,6 +22,7 @@ namespace CodeHub.iOS.Views.App
 	    protected override void CreateMenuRoot()
 		{
             var username = ViewModel.Account.Username;
+			Title = username;
             var root = new RootElement(username);
 
             root.Add(new Section
@@ -45,17 +47,16 @@ namespace CodeHub.iOS.Views.App
             root.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Count() > 0)
-            {
-                var pinnedRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
+			{
+				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-				{
-					var x = pinnedRepository;
-					pinnedRepoSection.Add(new MenuElement(x.Name, () => ViewModel.GoToRepositoryComamnd.Execute(new CodeHub.Core.Utils.RepositoryIdentifier { Owner = x.Owner, Name = x.Name }), Images.Repo) 
-						{ ImageUri = new System.Uri(x.ImageUri) });
-				}
-
-                root.Add(pinnedRepoSection);
-            }
+					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryComamnd));
+				root.Add(_favoriteRepoSection);
+			}
+			else
+			{
+				_favoriteRepoSection = null;
+			}
 
             var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
 			if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
@@ -116,6 +117,79 @@ namespace CodeHub.iOS.Views.App
             ViewModel.LoadCommand.Execute(null);
         }
 
+		private class PinnedRepoElement : MenuElement
+		{
+			public CodeFramework.Core.Data.PinnedRepository PinnedRepo
+			{
+				get;
+				private set; 
+			}
+
+			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
+				: base(pinnedRepo.Name, () => command.Execute(new CodeHub.Core.Utils.RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
+			{
+				PinnedRepo = pinnedRepo;
+				ImageUri = new System.Uri(PinnedRepo.ImageUri);
+			}
+		}
+
+		private void DeletePinnedRepo(PinnedRepoElement el)
+		{
+			ViewModel.DeletePinnedRepositoryCommand.Execute(el.PinnedRepo);
+
+			if (_favoriteRepoSection.Elements.Count == 1)
+			{
+				Root.Remove(_favoriteRepoSection);
+				_favoriteRepoSection = null;
+			}
+			else
+			{
+				_favoriteRepoSection.Remove(el);
+			}
+		}
+
+		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		{
+			return new EditSource(this);
+		}
+
+		private class EditSource : SizingSource
+		{
+			private readonly MenuView _parent;
+			public EditSource(MenuView dvc) 
+				: base (dvc)
+			{
+				_parent = dvc;
+			}
+
+			public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				if (_parent._favoriteRepoSection == null)
+					return false;
+				if (_parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+					return true;
+				return false;
+			}
+
+			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				if (_parent._favoriteRepoSection != null && _parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+					return UITableViewCellEditingStyle.Delete;
+				return UITableViewCellEditingStyle.None;
+			}
+
+			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				switch (editingStyle)
+				{
+					case UITableViewCellEditingStyle.Delete:
+						var section = _parent.Root[indexPath.Section];
+						var element = section[indexPath.Row];
+						_parent.DeletePinnedRepo(element as PinnedRepoElement);
+						break;
+				}
+			}
+		}
     }
 }
 
