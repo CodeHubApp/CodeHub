@@ -137,6 +137,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
 		}
 
+		public ICommand GoToHtmlUrlCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = Repository.HtmlUrl }), () => Repository != null); }
+		}
+
         private void ShowCommits()
         {
             if (Branches != null && Branches.Count == 1)

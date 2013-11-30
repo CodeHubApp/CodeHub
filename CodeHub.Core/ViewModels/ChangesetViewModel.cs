@@ -14,7 +14,6 @@ namespace CodeHub.Core.ViewModels
         private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
         private readonly IApplicationService _application;
         private CommitModel _commitModel;
-		private bool _isChangesetsShowing;
 
 		public string Node { get; private set; }
 
@@ -23,16 +22,6 @@ namespace CodeHub.Core.ViewModels
 		public string Repository { get; private set; }
 
         public bool ShowRepository { get; private set; }
-
-		public bool IsCommentsShowing
-		{
-			get { return _isChangesetsShowing; }
-			private set
-			{
-				_isChangesetsShowing = value;
-				RaisePropertyChanged(() => IsCommentsShowing);
-			}
-		}
 
         public CommitModel Changeset
         {
@@ -67,6 +56,11 @@ namespace CodeHub.Core.ViewModels
 
 				});
 			}
+		}
+
+		public ICommand GoToHtmlUrlCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _commitModel.Url }), () => _commitModel != null); }
 		}
 
         public CollectionViewModel<CommentModel> Comments

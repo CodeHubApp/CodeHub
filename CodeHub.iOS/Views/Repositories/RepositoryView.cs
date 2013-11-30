@@ -25,7 +25,7 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.GearButton, ShowExtraMenu));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.Enabled = false;
 
             ViewModel.Bind(x => x.Repository, x =>
@@ -86,7 +86,7 @@ namespace CodeHub.iOS.Views.Repositories
                 // Show in Bitbucket
                 else if (e.ButtonIndex == showButton)
                 {
-                    try { UIApplication.SharedApplication.OpenUrl(new NSUrl(repoModel.HtmlUrl)); } catch { }
+					ViewModel.GoToHtmlUrlCommand.Execute(null);
                 }
             };
 

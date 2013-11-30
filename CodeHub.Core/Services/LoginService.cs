@@ -43,6 +43,7 @@ namespace CodeHub.Core.Services
             var userInfo = (client.Execute(client.AuthenticatedUser.GetInfo())).Data;
             account.Username = userInfo.Login;
             account.AvatarUrl = userInfo.AvatarUrl;
+			client.Username = userInfo.Login;
 
             _accounts.Update(account);
             return client;

@@ -17,11 +17,22 @@ namespace CodeHub.Core.ViewModels
         private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
         private ICommand _readAllCommand;
         private ICommand _readCommand;
+		private int _shownIndex;
 
         public FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> Notifications
         {
             get { return _notifications; }
         }
+
+		public int ShownIndex
+		{
+			get { return _shownIndex; }
+			private set
+			{
+				_shownIndex = value;
+				RaisePropertyChanged(() => ShownIndex);
+			}
+		}
 
         public ICommand ReadCommand
         {
@@ -34,7 +45,6 @@ namespace CodeHub.Core.ViewModels
             {
                 return _readAllCommand ?? (_readAllCommand = new MvxCommand(MarkAllAsRead, () =>
                 {
-
                     return true;
                 }));
             }
@@ -44,6 +54,42 @@ namespace CodeHub.Core.ViewModels
         {
             get { return new MvxCommand<NotificationModel>(GoToNotification); }
         }
+
+		public ICommand ShowUnreadCommand
+		{
+			get 
+			{
+				return new MvxCommand(() =>
+				{
+					ShownIndex = 0;
+					Notifications.ApplyFilter(NotificationsFilterModel.CreateUnreadFilter(), true);
+				});
+			}
+		}
+
+		public ICommand ShowParticipatingCommand
+		{
+			get 
+			{
+				return new MvxCommand(() =>
+				{
+					ShownIndex = 1;
+					Notifications.ApplyFilter(NotificationsFilterModel.CreateParticipatingFilter(), true);
+				});
+			}
+		}
+
+		public ICommand ShowAllCommand
+		{
+			get 
+			{
+				return new MvxCommand(() =>
+				{
+					ShownIndex = 2;
+					Notifications.ApplyFilter(NotificationsFilterModel.CreateAllFilter(), true);
+				});
+			}
+		}
 
         private void GoToNotification(NotificationModel x)
         {
@@ -72,21 +118,14 @@ namespace CodeHub.Core.ViewModels
         {
             _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
-            _notifications.Bind(x => x.Filter, async () =>
-            {
-                IsLoading = true;
-                try
-                {
-                    await Load(false);
-                }
-                catch (Exception e)
-                {
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
-            });
+			_notifications.Bind(x => x.Filter, () => LoadCommand.Execute(false));
+
+			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
+				ShownIndex = 0;
+			else if (_notifications.Filter.Equals(NotificationsFilterModel.CreateParticipatingFilter()))
+				ShownIndex = 1;
+			else
+				ShownIndex = 2;
         }
 
         protected override Task Load(bool forceDataRefresh)

@@ -5,44 +5,32 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : ViewModelDrivenViewController
     {
         private readonly HeaderView _header = new HeaderView();
-        private readonly UISegmentedControl _viewSegment;
-        private readonly UIBarButtonItem _segmentBarButton;
 
         public new ChangesetViewModel ViewModel 
         {
             get { return (ChangesetViewModel)base.ViewModel; }
-            protected set { base.ViewModel = value; }
+			set { base.ViewModel = value; }
         }
         
         public ChangesetView()
         {
             Title = "Commit".t();
             Root.UnevenRows = true;
-			_viewSegment = new UISegmentedControl(new object[] { "Changes".t(), "Comments".t() });
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            //Fucking bug in the divider
-            BeginInvokeOnMainThread(delegate {
-                _viewSegment.SelectedSegment = 1;
-                _viewSegment.SelectedSegment = 0;
-                _viewSegment.ValueChanged += (sender, e) => Render();
-            });
-
-            _segmentBarButton.Width = View.Frame.Width - 10f;
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             _header.Title = "Commit: ".t() + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
-
             ViewModel.Bind(x => x.Changeset, Render);
             ViewModel.BindCollection(x => x.Comments, a => Render());
         }
@@ -88,96 +76,104 @@ namespace CodeHub.iOS.Views.Source
                 detailSection.Add(repo);
             }
 
-            if (_viewSegment.SelectedSegment == 0)
+			var fileSection = new Section();
+            commitModel.Files.ForEach(x => {
+                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
+                fileSection.Add(sse);
+            });
+
+            if (fileSection.Elements.Count > 0)
+                root.Add(fileSection);
+
+
+			var commentSection = new Section();
+            foreach (var comment in ViewModel.Comments)
             {
-                var fileSection = new Section();
-                commitModel.Files.ForEach(x => {
-                    var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-                    var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-                    sse.Tapped += () => {
-                        string parent = null;
-                        if (commitModel.Parents != null && commitModel.Parents.Count > 0)
-                            parent = commitModel.Parents[0].Sha;
+                //The path should be empty to indicate it's a comment on the entire commit, not a specific file
+                if (!string.IsNullOrEmpty(comment.Path))
+                    continue;
 
-						ViewModel.GoToFileCommand.Execute(x);
-
-                        // This could mean it's a binary or it's just been moved with no changes...
-//                        if (x.Patch == null)
-//                            NavigationController.PushViewController(new RawContentViewController(x.RawUrl, x.BlobUrl), true);
-//                        else
-//                            NavigationController.PushViewController(new ChangesetDiffViewController(ViewModel.User, ViewModel.Repository, commitModel.Sha, x) { Comments = ViewModel.Comments.Items.ToList() }, true);
-                    };
-                    fileSection.Add(sse);
+                commentSection.Add(new CommentElement {
+                    Name = comment.User.Login,
+                    Time = comment.CreatedAt.ToDaysAgo(),
+                    String = comment.Body,
+                    Image = Images.Anonymous,
+                    ImageUri = new Uri(comment.User.AvatarUrl),
+                    BackgroundColor = UIColor.White,
                 });
-
-                if (fileSection.Elements.Count > 0)
-                    root.Add(fileSection);
-            }
-            else if (_viewSegment.SelectedSegment == 1)
-            {
-                var commentSection = new Section();
-                foreach (var comment in ViewModel.Comments)
-                {
-                    //The path should be empty to indicate it's a comment on the entire commit, not a specific file
-                    if (!string.IsNullOrEmpty(comment.Path))
-                        continue;
-
-                    commentSection.Add(new CommentElement {
-                        Name = comment.User.Login,
-                        Time = comment.CreatedAt.ToDaysAgo(),
-                        String = comment.Body,
-                        Image = Images.Anonymous,
-                        ImageUri = new Uri(comment.User.AvatarUrl),
-                        BackgroundColor = UIColor.White,
-                    });
-                }
-
-                if (commentSection.Elements.Count > 0)
-                    root.Add(commentSection);
-
-                var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
-                addComment.Tapped += AddCommentTapped;
-                root.Add(new Section { addComment });
             }
 
+			if (commentSection.Elements.Count > 0)
+				root.Add(commentSection);
+
+            var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
+            addComment.Tapped += AddCommentTapped;
+			root.Add(new Section { addComment });
             Root = root; 
         }
 
         void AddCommentTapped()
         {
-//            var composer = new Composer();
-//            composer.NewComment(this, (text) => {
-//                try
-//                {
-//                    composer.DoWorkTest("Commenting...".t(), async () => {
-//                        await ViewModel.AddComment(text);
-//                        composer.CloseComposer();
-//                    });
-//                }
-//                catch (Exception e)
-//                {
-//                    Utilities.ShowAlert("Unable to post comment!", e.Message);
-//                }
-//                finally
-//                {
-//                    composer.EnableSendButton = true;
-//                }
-//            });
+            var composer = new Composer();
+			composer.NewComment(this, async (text) => {
+                try
+                {
+					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+					composer.CloseComposer();
+                }
+                catch (Exception e)
+                {
+					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+                }
+                finally
+                {
+                    composer.EnableSendButton = true;
+                }
+            });
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
-            base.ViewWillAppear(animated);
-        }
+		private void ShowExtraMenu()
+		{
+			var changeset = ViewModel.Changeset;
+			if (changeset == null)
+				return;
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
-        }
+			var sheet = MonoTouch.Utilities.GetSheet(Title);
+			var addComment = sheet.AddButton("Add Comment".t());
+			var copySha = sheet.AddButton("Copy Sha".t());
+			var shareButton = sheet.AddButton("Share".t());
+			//var showButton = sheet.AddButton("Show in GitHub".t());
+			var cancelButton = sheet.AddButton("Cancel".t());
+			sheet.CancelButtonIndex = cancelButton;
+			sheet.DismissWithClickedButtonIndex(cancelButton, true);
+			sheet.Clicked += (s, e) => {
+				// Pin to menu
+				if (e.ButtonIndex == addComment)
+				{
+					AddCommentTapped();
+				}
+				else if (e.ButtonIndex == copySha)
+				{
+					UIPasteboard.General.String = ViewModel.Changeset.Sha;
+				}
+				else if (e.ButtonIndex == shareButton)
+				{
+					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
+					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
+					UIActivity[] applicationActivities = null;
+					var activityController = new UIActivityViewController (activityItems, applicationActivities);
+					PresentViewController (activityController, true, null);
+				}
+//				else if (e.ButtonIndex == showButton)
+//				{
+//					ViewModel.GoToHtmlUrlCommand.Execute(null);
+//				}
+			};
+
+			sheet.ShowInView(this.View);
+		}
     }
 }
 

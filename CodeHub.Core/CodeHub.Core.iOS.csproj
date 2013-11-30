@@ -39,7 +39,6 @@
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\NotificationsFilterModel.cs" />
-    <Compile Include="Filters\PullRequestsFilterModel.cs" />
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Markdown\MarkdownParser.cs" />

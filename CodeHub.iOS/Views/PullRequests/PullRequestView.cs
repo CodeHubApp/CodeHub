@@ -6,6 +6,7 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -72,23 +73,23 @@ namespace CodeHub.iOS.Views.PullRequests
             secDetails.Add(_split1);
             root.Add(secDetails);
 
-//            root.Add(new Section {
-//                new StyledStringElement("Commits", () => NavigationController.PushViewController(new ChangesetsViewController(ViewModel.User, ViewModel.Repo, ViewModel.PullRequestId), true), Images.Commit),
-//                new StyledStringElement("Files", () => NavigationController.PushViewController(new PullRequestFilesViewController(ViewModel.User, ViewModel.Repo, ViewModel.PullRequestId), true), Images.File),
-//            });
+            root.Add(new Section {
+				//new StyledStringElement("Commits", () => NavigationController.PushViewController(new ChangesetsViewController(ViewModel.User, ViewModel.Repo, ViewModel.PullRequestId), true), Images.Commit),
+				new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
+            });
 
             if (!merged)
             {
                 MonoTouch.Foundation.NSAction mergeAction = async () =>
                 {
-//                    try
-//                    {
-//                        await this.DoWorkTest("Merging...", () => ViewModel.Merge());
-//                    }
-//                    catch (Exception e)
-//                    {
-//                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
-//                    }
+                    try
+                    {
+						await this.DoWorkAsync("Merging...", () => ViewModel.Merge());
+                    }
+                    catch (Exception e)
+                    {
+                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
+                    }
                 };
 
                 if (ViewModel.PullRequest.Mergable == null)
@@ -151,22 +152,20 @@ namespace CodeHub.iOS.Views.PullRequests
         void AddCommentTapped()
         {
             var composer = new Composer();
-            composer.NewComment(this, (text) => {
-//                try
-//                {
-//                    composer.DoWorkTest("Commenting...".t(), async () => {
-//                        await ViewModel.AddComment(text);
-//                        composer.CloseComposer();
-//                    });
-//                }
-//                catch (Exception ex)
-//                {
-//                    Utilities.ShowAlert("Unable to post comment!", ex.Message);
-//                }
-//                finally
-//                {
-//                    composer.EnableSendButton = true;
-//                }
+			composer.NewComment(this, async (text) => {
+                try
+                {
+					await composer.DoWorkAsync("Commenting...".t(), () =>  ViewModel.AddComment(text));
+					composer.CloseComposer();
+                }
+                catch (Exception ex)
+                {
+					MonoTouch.Utilities.ShowAlert("Unable to post comment!", ex.Message);
+                }
+                finally
+                {
+                    composer.EnableSendButton = true;
+                }
             });
         }
 

@@ -9,10 +9,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel> _pullrequests;
+		private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
 		private bool _isShowingOpened;
 
-        public FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel> PullRequests
+		public CollectionViewModel<PullRequestModel> PullRequests
         {
             get { return _pullrequests; }
         }
@@ -48,13 +48,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		public PullRequestsViewModel()
 		{
-			_pullrequests = new FilterableCollectionViewModel<PullRequestModel, PullRequestsFilterModel>("PullRequests");
-			_pullrequests.Bind(x => x.Filter, x => 
-				{
-					IsShowingOpened = x.IsOpen;
-					LoadCommand.Execute(true);
-				});
-			IsShowingOpened = _pullrequests.Filter.IsOpen ? true : false;
+			IsShowingOpened = true;
 		}
 
 		public void Init(NavObject navObject) 
@@ -65,17 +59,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		private void ShowOpened()
 		{
-			PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = true }, true);
+			IsShowingOpened = true;
+			LoadCommand.Execute(null);
 		}
 
 		private void ShowClosed()
 		{
-			PullRequests.ApplyFilter(new Core.Filters.PullRequestsFilterModel { IsOpen = false }, true);
+			IsShowingOpened = false;
+			LoadCommand.Execute(null);
 		}
 
         protected override Task Load(bool forceDataRefresh)
         {
-            var state = PullRequests.Filter.IsOpen ? "open" : "closed";
+			var state = IsShowingOpened ? "open" : "closed";
 			var request = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
             return PullRequests.SimpleCollectionLoad(request, forceDataRefresh);
         }

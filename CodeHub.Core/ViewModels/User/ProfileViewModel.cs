@@ -12,6 +12,7 @@ namespace CodeHub.Core.ViewModels.User
     public class ProfileViewModel : LoadableViewModel
     {
         private UserModel _userModel;
+		private bool _isFollowing;
 
         public string Username
         {
@@ -24,6 +25,24 @@ namespace CodeHub.Core.ViewModels.User
             get { return _userModel; }
             private set { _userModel = value; RaisePropertyChanged(() => User); }
         }
+
+		public bool IsFollowing
+		{
+			get { return _isFollowing; }
+			private set
+			{
+				_isFollowing = value;
+				RaisePropertyChanged(() => IsFollowing);
+			}
+		}
+
+		public bool IsLoggedInUser
+		{
+			get
+			{
+				return string.Equals(Username, this.GetApplication().Account.Username);
+			}
+		}
 
         public ICommand GoToFollowersCommand
         {
@@ -54,6 +73,27 @@ namespace CodeHub.Core.ViewModels.User
         {
             get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Username })); }
         }
+
+		public ICommand ToggleFollowingCommand
+		{
+			get { return new MvxCommand(() => ToggleFollowing()); }
+		}
+
+		private async void ToggleFollowing()
+		{
+			try
+			{
+				if (IsFollowing)
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Unfollow(Username));
+				else
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
+				IsFollowing = !IsFollowing;
+			}
+			catch (System.Exception e)
+			{
+				ReportError("Unable to toggle following", e);
+			}
+		}
   
         public void Init(NavObject navObject)
         {
@@ -62,6 +102,9 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load(bool forceDataRefresh)
         {
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceDataRefresh, x => {
+				IsFollowing = x.Data;
+			}));
 			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceDataRefresh, response => User = response.Data));
         }
 

@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -22,16 +23,23 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; private set; }
 
-//        public ICommand GoToContentCommand
-//        {
-//            get { return new MvxCommand(() => ShowViewModel<ContentViewModel>());}
-//        }
+		public ICommand GoToSourceCommand
+		{
+			get 
+			{ 
+				return new MvxCommand<CommitModel.CommitFileModel>(x => 
+				{
+					var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+					ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
+				});
+			}
+		}
 
-        public PullRequestFilesViewModel(string username, string repository, ulong pullRequestId)
+		public void Init(NavObject navObject)
         {
-            Username = username;
-            Repository = repository;
-            PullRequestId = pullRequestId;
+			Username = navObject.Username;
+			Repository = navObject.Repository;
+			PullRequestId = navObject.PullRequestId;
 
             _files.GroupingFunction = (x) => x.GroupBy(y => {
                 var filename = "/" + y.Filename;

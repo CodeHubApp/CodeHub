@@ -52,6 +52,16 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _comments; }
         }
 
+		public ICommand GoToCommitsCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<ChangesetsViewModel>()); }
+		}
+
+		public ICommand GoToFilesCommand
+		{
+			get { return new MvxCommand(() => ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
+		}
+
         public void Init(NavObject navObject)
         {
             User = navObject.Username;
