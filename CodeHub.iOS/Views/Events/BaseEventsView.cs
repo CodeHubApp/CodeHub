@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Events
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
-        private MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
+        private static MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
         {
             try
             {
@@ -38,8 +38,9 @@ namespace CodeHub.iOS.Views.Events
 				foreach (var h in e.Item2.Header)
 				{
 					Action act = null;
-					if (h is BaseEventsViewModel.AnchorBlock)
-						act = (h as BaseEventsViewModel.AnchorBlock).Tapped;
+					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+					if (anchorBlock != null)
+						act = anchorBlock.Tapped;
 					headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
 				}
 
@@ -47,8 +48,9 @@ namespace CodeHub.iOS.Views.Events
 				foreach (var h in e.Item2.Body)
 				{
 					Action act = null;
-					if (h is BaseEventsViewModel.AnchorBlock)
-						act = (h as BaseEventsViewModel.AnchorBlock).Tapped;
+					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+					if (anchorBlock != null)
+						act = anchorBlock.Tapped;
 					var block = new NewsFeedElement.TextBlock(h.Text, act);
 					if (act == null) block.Color = UIColor.DarkGray;
 					bodyBlocks.Add(block);

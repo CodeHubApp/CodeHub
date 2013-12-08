@@ -46,32 +46,27 @@ namespace CodeHub.ViewControllers
 
         protected virtual void Save()
         {
-            if (_model.Files.Where(x => x.Value != null).Count() == 0)
+            if (_model.Files.Count(x => x.Value != null) == 0)
             {
                 MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
                 return;
             }
 
-            this.DoWork(() => {
+			this.DoWorkAsync("Saving...", async () =>
+			{
 				var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-				var newGist = app.Client.Execute(app.Client.Gists[_originalGist.Id].EditGist(_model));
-                InvokeOnMainThread(() => {
-                    if (Created != null)
-                        Created(newGist.Data);
-                    DismissViewController(true, null);
-                });
-            });
+				var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
+				if (Created != null)
+					Created(newGist.Data);
+				DismissViewController(true, null);
+			});
         }
 
         private bool IsDuplicateName(string name)
         {
-            if (_model.Files.Where(x => x.Key.Equals(name) && x.Value != null).Count() > 0)
+            if (_model.Files.Count(x => x.Key.Equals(name) && x.Value != null) > 0)
                 return true;
-            return _model.Files.Where(x => {
-                if (x.Value != null)
-                    return name.Equals(x.Value.Filename);
-                return false;
-            }).Count() > 0;
+            return _model.Files.Count(x => x.Value != null && name.Equals(x.Value.Filename)) > 0;
         }
 
         int _gistFileCounter = 0;

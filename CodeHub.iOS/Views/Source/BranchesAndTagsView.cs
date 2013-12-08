@@ -3,6 +3,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -18,20 +19,15 @@ namespace CodeHub.iOS.Views.Source
 
 			base.ViewDidLoad();
 
-			var vm = (BranchesAndTagsViewModel)ViewModel;
-
 			_viewSegment = new UISegmentedControl(new object[] {"Branches".t(), "Tags".t()});
 			_segmentBarButton = new UIBarButtonItem(_viewSegment) { Width = View.Frame.Width - 10f };
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-			this.BindCollection(vm.Items, x => new StyledStringElement(x.Name, () => vm.GoToSourceCommand.Execute(x)));
-			vm.Bind(x => x.IsBranchesShowing, x => _viewSegment.SelectedSegment = x ? 0 : 1, true);
 
-			_viewSegment.ValueChanged += (sender, e) => {
-				if (_viewSegment.SelectedSegment == 0)
-					vm.ShowBranchesCommand.Execute(null);
-				else if (_viewSegment.SelectedSegment == 1)
-					vm.ShowTagsCommand.Execute(null);
-			};
+			var vm = (BranchesAndTagsViewModel)ViewModel;
+			this.BindCollection(vm.Items, x => new StyledStringElement(x.Name, () => vm.GoToSourceCommand.Execute(x)));
+			var set = this.CreateBindingSet<BranchesAndTagsView, BranchesAndTagsViewModel>();
+			set.Bind(_viewSegment).To(x => x.SelectedFilter);
+			set.Apply();
 		}
 
 		public override void ViewWillAppear(bool animated)

@@ -2,14 +2,17 @@ using System;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using FileSourceViewController = CodeHub.iOS.Views.Source.FileSourceViewController;
+using CodeFramework.iOS.ViewControllers;
+using MonoTouch.Dialog;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : WebView
+	public class IssueView : ViewModelDrivenViewController
     {
+		private readonly HeaderView _header;
+		private readonly SplitElement _split1;
         private bool _issueRemoved;
 
         public new IssueViewModel ViewModel
@@ -19,31 +22,20 @@ namespace CodeHub.iOS.Views.Issues
         }
 
         public IssueView()
-            : base(false)
         {
+			Root.UnevenRows = true;
+			_header = new HeaderView() { ShadowImage = false };
+			_split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () =>
-            {
-                var editController = new IssueEditView(ViewModel.Username, ViewModel.Repository)
-                {
-                    ExistingIssue = ViewModel.Issue,
-                    Title = "Edit Issue",
-                    Success = EditingComplete,
-                };
-                NavigationController.PushViewController(editController, true);
-            }));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => ViewModel.GoToEditCommand.Execute(null)));
             NavigationItem.RightBarButtonItem.Enabled = false;
-
             ViewModel.Bind(x => x.Issue, RenderIssue);
             ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
-
-            var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Issue.html");
-            LoadFile(path);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -51,45 +43,45 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewWillAppear(animated);
             Title = "Issue #" + ViewModel.Id;
         }
-
-        protected override void OnLoadError(object sender, UIWebErrorArgs e)
-        {
-            MonoTouch.Utilities.LogException(new Exception(e.Error.Description));
-            MonoTouch.Utilities.ShowAlert("Error", e.Error.Description);
-            base.OnLoadError(sender, e);
-        }
-
-        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
-        {
-            if (request.Url.AbsoluteString.StartsWith("codehub://ready"))
-            {
-                if (ViewModel.Issue != null)
-                    RenderIssue();
-                if (ViewModel.Comments.Items.Count > 0)
-                    RenderComments();
-            }
-            else if (request.Url.AbsoluteString.StartsWith("codehub://add_comment"))
-            {
-                AddCommentTapped();
-            }
-            else if (request.Url.AbsoluteString.StartsWith("codehub://assignee/"))
-            {
-                var name = request.Url.AbsoluteString.Substring("codehub://assignee/".Length);
-//                if (!string.IsNullOrEmpty(name))
-//                    NavigationController.PushViewController(new ProfileViewController(name), true);
-            }
-            else if (request.Url.AbsoluteString.StartsWith("file"))
-            {
-                return true;
-            }
-            else if (request.Url.AbsoluteString.StartsWith("http"))
-            {
-                try { UIApplication.SharedApplication.OpenUrl(request.Url); } catch { }
-            }
-
-            return false;
-        }
-
+//
+//        protected override void OnLoadError(object sender, UIWebErrorArgs e)
+//        {
+//            MonoTouch.Utilities.LogException(new Exception(e.Error.Description));
+//            MonoTouch.Utilities.ShowAlert("Error", e.Error.Description);
+//            base.OnLoadError(sender, e);
+//        }
+//
+//        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+//        {
+//            if (request.Url.AbsoluteString.StartsWith("codehub://ready"))
+//            {
+//                if (ViewModel.Issue != null)
+//                    RenderIssue();
+//                if (ViewModel.Comments.Items.Count > 0)
+//                    RenderComments();
+//            }
+//            else if (request.Url.AbsoluteString.StartsWith("codehub://add_comment"))
+//            {
+//                AddCommentTapped();
+//            }
+//            else if (request.Url.AbsoluteString.StartsWith("codehub://assignee/"))
+//            {
+//                var name = request.Url.AbsoluteString.Substring("codehub://assignee/".Length);
+////                if (!string.IsNullOrEmpty(name))
+////                    NavigationController.PushViewController(new ProfileViewController(name), true);
+//            }
+//            else if (request.Url.AbsoluteString.StartsWith("file"))
+//            {
+//                return true;
+//            }
+//            else if (request.Url.AbsoluteString.StartsWith("http"))
+//            {
+//                try { UIApplication.SharedApplication.OpenUrl(request.Url); } catch { }
+//            }
+//
+//            return false;
+//        }
+//
         public void RenderComments()
         {
 //            var comments = ViewModel.Comments.Select(x => new { 
@@ -106,30 +98,54 @@ namespace CodeHub.iOS.Views.Issues
         {
             NavigationItem.RightBarButtonItem.Enabled = true;
 
-            var state = ViewModel.Issue.State;
-            if (state == null)
-                state = "No State";
+			var root = new RootElement(Title);
+			_header.Title = ViewModel.Issue.Title;
+			_header.Subtitle = "Updated " + ViewModel.Issue.UpdatedAt.ToDaysAgo();
+			root.Add(new Section(_header));
 
-            var milestone = ViewModel.Issue.Milestone;
-            var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
-            var assignedTo = ViewModel.Issue.Assignee;
-            var assignedToStr = ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : null;
+			var milestone = ViewModel.Issue.Milestone;
+			var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
+			var secDetails = new Section();
 
-            var issue = new { state = state, 
-                milestone = milestoneStr, 
-                assigned_to = assignedToStr ?? "Unassigned", 
-                updated_at = "Updated " + ViewModel.Issue.UpdatedAt.ToDaysAgo(),
-                title = ViewModel.Issue.Title,
-                assigned_to_login = assignedToStr ?? ""
-            };
+			_split1.Value.Text1 = ViewModel.Issue.State ?? "No State";
+			_split1.Value.Text2 = milestoneStr;
+			secDetails.Add(_split1);
 
+			var responsible = new StyledStringElement(ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t()) {
+				Font = StyledStringElement.DefaultDetailFont,
+				TextColor = StyledStringElement.DefaultDetailColor,
+				Image = Images.Person
+			};
+
+			if (ViewModel.Issue.Assignee != null)
+			{
+				responsible.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
+				responsible.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+			}
+
+			secDetails.Add(responsible);
+			root.Add(secDetails);
+
+			var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+			addComment.Tapped += AddCommentTapped;
+			root.Add(new Section { addComment });
+			Root = root;
+//
+//            var issue = new { state = state, 
+//                milestone = milestoneStr, 
+//                assigned_to = assignedToStr ?? "Unassigned", 
+//                updated_at = "Updated " + ViewModel.Issue.UpdatedAt.ToDaysAgo(),
+//                title = ViewModel.Issue.Title,
+//                assigned_to_login = assignedToStr ?? ""
+//            };
+//
 //            var data = new RestSharp.Serializers.JsonSerializer().Serialize(issue);
 //            Web.EvaluateJavascript("var a = " + data + "; setData(a);");
 
             var md = new MarkdownSharp.Markdown();
 
-            var desc = FileSourceViewController.JavaScriptStringEncode(md.Transform(ViewModel.Issue.Body));
-            Web.EvaluateJavascript("var a = \"" + desc + "\"; setDescription(a);");
+			//var desc = FileSourceViewController.JavaScriptStringEncode(md.Transform(ViewModel.Issue.Body));
+			//Web.EvaluateJavascript("var a = \"" + desc + "\"; setDescription(a);");
         }
 
         void EditingComplete(IssueModel model)
@@ -150,24 +166,22 @@ namespace CodeHub.iOS.Views.Issues
 
         void AddCommentTapped()
         {
-//            var composer = new Composer();
-//            composer.NewComment(this, (text) => {
-//                try
-//                {
-//                    composer.DoWorkTest("Loading...".t(), async () => {
-//                        await ViewModel.AddComment(text);
-//                        composer.CloseComposer();
-//                    });
-//                }
-//                catch (Exception ex)
-//                {
-//                    Utilities.ShowAlert("Unable to post comment!", ex.Message);
-//                }
-//                finally
-//                {
-//                    composer.EnableSendButton = true;
-//                }
-//            });
+			var composer = new Composer();
+			composer.NewComment(this, async (text) => {
+				try
+				{
+					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+					composer.CloseComposer();
+				}
+				catch (Exception e)
+				{
+					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+				}
+				finally
+				{
+					composer.EnableSendButton = true;
+				}
+			});
         }
 
         public override UIView InputAccessoryView

@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.User
 			var header = new HeaderView();
             var set = this.CreateBindingSet<ProfileView, ProfileViewModel>();
             set.Bind(header).For(x => x.Title).To(x => x.Username).OneWay();
-            set.Bind(header).For(x => x.Subtitle).To(x => x.User.Name).OneWay();
+			set.Bind(header).For(x => x.Subtitle).To(x => x.User.Name).OneWay();
 			set.Bind(header).For(x => x.ImageUri).To(x => x.User.AvatarUrl).OneWay();
             set.Apply();
 

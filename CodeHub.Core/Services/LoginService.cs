@@ -2,6 +2,7 @@
 using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using GitHubSharp;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
@@ -36,15 +37,15 @@ namespace CodeHub.Core.Services
             return client;
         }
 
-        public Client LoginAccount(GitHubAccount account)
+		public async Task<Client> LoginAccount(GitHubAccount account)
         {
             //Create the client
             var client = Client.BasicOAuth(account.OAuth, account.Domain ?? Client.DefaultApi);
-            var userInfo = (client.Execute(client.AuthenticatedUser.GetInfo())).Data;
+			var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
+			var userInfo = data.Data;
             account.Username = userInfo.Login;
             account.AvatarUrl = userInfo.AvatarUrl;
 			client.Username = userInfo.Login;
-
             _accounts.Update(account);
             return client;
         }

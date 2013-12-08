@@ -100,12 +100,10 @@ namespace CodeHub.Core.ViewModels.User
             Username = navObject.Username;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceDataRefresh, x => {
-				IsFollowing = x.Data;
-			}));
-			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceDataRefresh, response => User = response.Data));
+			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data));
+			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data));
         }
 
         public class NavObject

@@ -3,6 +3,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -28,14 +29,9 @@ namespace CodeHub.iOS.Views.PullRequests
 
 			var vm = (PullRequestsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
-			_viewSegment.ValueChanged += (object sender, EventArgs e) => {
-				if (_viewSegment.SelectedSegment == 0)
-					vm.ShowOpenedCommand.Execute(null);
-				else
-					vm.ShowClosedCommand.Execute(null);
-			};
-
-			vm.Bind(x => x.IsShowingOpened, x => _viewSegment.SelectedSegment = x ? 0 : 1, true);
+			var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
+			set.Bind(_viewSegment).To(x => x.SelectedFilter);
+			set.Apply();
 
 			BindCollection(vm.PullRequests, s =>
             {

@@ -54,43 +54,7 @@ namespace CodeHub.Core.ViewModels
         {
             get { return new MvxCommand<NotificationModel>(GoToNotification); }
         }
-
-		public ICommand ShowUnreadCommand
-		{
-			get 
-			{
-				return new MvxCommand(() =>
-				{
-					ShownIndex = 0;
-					Notifications.ApplyFilter(NotificationsFilterModel.CreateUnreadFilter(), true);
-				});
-			}
-		}
-
-		public ICommand ShowParticipatingCommand
-		{
-			get 
-			{
-				return new MvxCommand(() =>
-				{
-					ShownIndex = 1;
-					Notifications.ApplyFilter(NotificationsFilterModel.CreateParticipatingFilter(), true);
-				});
-			}
-		}
-
-		public ICommand ShowAllCommand
-		{
-			get 
-			{
-				return new MvxCommand(() =>
-				{
-					ShownIndex = 2;
-					Notifications.ApplyFilter(NotificationsFilterModel.CreateAllFilter(), true);
-				});
-			}
-		}
-
+		
         private void GoToNotification(NotificationModel x)
         {
             var subject = x.Subject.Type.ToLower();
@@ -119,13 +83,19 @@ namespace CodeHub.Core.ViewModels
             _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
 			_notifications.Bind(x => x.Filter, () => LoadCommand.Execute(false));
+			this.Bind(x => x.ShownIndex, x => {
+				if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
+				else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
+				else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
+			});
 
 			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
-				ShownIndex = 0;
+				_shownIndex = 0;
 			else if (_notifications.Filter.Equals(NotificationsFilterModel.CreateParticipatingFilter()))
-				ShownIndex = 1;
+				_shownIndex = 1;
 			else
-				ShownIndex = 2;
+				_shownIndex = 2;
+
         }
 
         protected override Task Load(bool forceDataRefresh)

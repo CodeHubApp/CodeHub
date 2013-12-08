@@ -1,9 +1,9 @@
 using System;
 using CodeFramework.ViewControllers;
-using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views
 {
@@ -25,21 +25,10 @@ namespace CodeHub.iOS.Views
 
             base.ViewDidLoad();
 
-			var vm = (NotificationsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
-			_viewSegment.ValueChanged += (object sender, EventArgs e) => {
-				if (_viewSegment.SelectedSegment == 0)
-					vm.ShowUnreadCommand.Execute(null);
-				else if (_viewSegment.SelectedSegment == 1)
-					vm.ShowParticipatingCommand.Execute(null);
-				else
-					vm.ShowAllCommand.Execute(null);
-			};
-
-			vm.Bind(x => x.ShownIndex, x => _viewSegment.SelectedSegment = x, true);
-
+			var vm = (NotificationsViewModel)ViewModel;
 			BindCollection(vm.Notifications, x =>
             {
                 var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.ToDaysAgo(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
@@ -55,6 +44,10 @@ namespace CodeHub.iOS.Views
 				el.Tapped += () => vm.GoToNotificationCommand.Execute(x);
                 return el;
             });
+
+			var set = this.CreateBindingSet<NotificationsView, NotificationsViewModel>();
+			set.Bind(_viewSegment).To(x => x.ShownIndex);
+			set.Apply();
         }
 
         public override void ViewWillAppear(bool animated)
@@ -70,7 +63,6 @@ namespace CodeHub.iOS.Views
                 NavigationController.SetToolbarHidden(true, animated);
             base.ViewWillDisappear(animated);
         }
-
     }
 }
 

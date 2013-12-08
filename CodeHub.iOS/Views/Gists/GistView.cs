@@ -67,19 +67,22 @@ namespace CodeHub.iOS.Views.Gists
 			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
 			if (string.Equals(app.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
             {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => {
-                    //We need to make sure we have the FULL gist
-                    this.DoWork(() => {
-						var gist = app.Client.Execute(app.Client.Gists[ViewModel.Id].Get()).Data;
-                        InvokeOnMainThread(() => {
-                            var gistController = new EditGistController(gist);
-                            gistController.Created = (editedGist) => {
-                                ViewModel.Gist = editedGist;
-                            };
-                            var navController = new UINavigationController(gistController);
-                            PresentViewController(navController, true, null);
-                        });
-                    });
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, async () => {
+					try
+					{
+						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
+						var gistController = new EditGistController(data.Data);
+						gistController.Created = (editedGist) => {
+							ViewModel.Gist = editedGist;
+						};
+						var navController = new UINavigationController(gistController);
+						PresentViewController(navController, true, null);
+
+					}
+					catch (Exception e)
+					{
+						MonoTouch.Utilities.ShowAlert("Error", e.Message);
+					}
                 }));
             }
             else
@@ -88,7 +91,7 @@ namespace CodeHub.iOS.Views.Gists
 					try
 					{
 						NavigationItem.RightBarButtonItem.Enabled = false;
-						await this.DoWorkAsync("Forking...", () => ViewModel.ForkGist());
+						await this.DoWorkAsync("Forking...", ViewModel.ForkGist);
 					}
 					catch (Exception e)
 					{

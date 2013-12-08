@@ -29,6 +29,9 @@ namespace CodeHub.Core.Services
             Account = account;
             Client = client;
 
+			//Set the default account
+			Accounts.SetDefault(account);
+
             // Show the menu & show a page on the slideout
             _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
         }

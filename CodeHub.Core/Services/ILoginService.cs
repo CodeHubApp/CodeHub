@@ -1,4 +1,5 @@
 ﻿using CodeHub.Core.Data;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
@@ -6,7 +7,7 @@ namespace CodeHub.Core.Services
     {
         GitHubSharp.Client LoginWithToken(string accessToken);
 
-        GitHubSharp.Client LoginAccount(GitHubAccount account);
+		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
 
         GitHubAccount Authenticate(string domain, string user, string pass, string twoFactor);
 

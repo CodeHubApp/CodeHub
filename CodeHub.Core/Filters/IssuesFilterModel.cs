@@ -1,19 +1,14 @@
 using System;
-using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {
-    public class IssuesFilterModel : FilterModel<IssuesFilterModel>
+	public class IssuesFilterModel : BaseIssuesFilterModel<IssuesFilterModel>
     {
-        public bool Ascending { get; set; }
-
         public string Labels { get; set; }
 
         public bool Open { get; set; }
 
         public DateTime? Since { get; set; }
-
-        public Sort SortType { get; set; }
 
         public string Mentioned { get; set; }
 
@@ -34,7 +29,6 @@ namespace CodeHub.Core.Filters
         {
             Ascending = false;
             Open = true;
-            SortType = Sort.None;
         }
 
         /// <summary>
@@ -86,14 +80,6 @@ namespace CodeHub.Core.Filters
             {
                 return Ascending.GetHashCode() ^ (Labels != null ? Labels.GetHashCode() : 0) ^ Open.GetHashCode() ^ Since.GetHashCode() ^ SortType.GetHashCode() ^ (Mentioned != null ? Mentioned.GetHashCode() : 0) ^ (Creator != null ? Creator.GetHashCode() : 0) ^ (Assignee != null ? Assignee.GetHashCode() : 0) ^ (Milestone != null ? Milestone.GetHashCode() : 0);
             }
-        }
-
-        public enum Sort
-        {
-            None,
-            Created,
-            Updated,
-            Comments
         }
     }
 }

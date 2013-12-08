@@ -1,12 +1,9 @@
 using System;
-using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {
-	public class MyIssuesFilterModel : FilterModel<MyIssuesFilterModel>
+	public class MyIssuesFilterModel : BaseIssuesFilterModel<MyIssuesFilterModel>
     {
-		public bool Ascending { get; set; }
-
 		public string Labels { get; set; }
 
 		public Filter FilterType { get; set; }
@@ -15,14 +12,10 @@ namespace CodeHub.Core.Filters
 
 		public DateTime? Since { get; set; }
 
-        public Sort SortType { get; set; }
-
 		public MyIssuesFilterModel()
         {
-            Ascending = false;
             Open = true;
             FilterType = Filter.All;
-            SortType = Sort.None;
         }
 
         /// <summary>
@@ -66,14 +59,6 @@ namespace CodeHub.Core.Filters
             }
         }
         
-        public enum Sort : int
-        {
-            None,
-            Created,
-            Updated,
-            Comments
-        }
-
 		public enum Filter : int
 		{
             [EnumDescription("Assigned To You")]

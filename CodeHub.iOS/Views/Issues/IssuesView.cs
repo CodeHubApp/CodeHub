@@ -1,11 +1,9 @@
 using System;
-using System.Threading.Tasks;
 using Cirrious.CrossCore;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
-using CodeHub.ViewControllers;
 using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Issues
@@ -21,19 +19,10 @@ namespace CodeHub.iOS.Views.Issues
             set { base.ViewModel = value; }
         }
 
-        public IssuesView()
-        {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => {
-                var b = new IssueEditView(ViewModel.Username, ViewModel.Repository) {
-                    Success = (issue) => ViewModel.CreateIssue(issue)
-                };
-                NavigationController.PushViewController(b, true);
-            }));
-
-        }
-
         public override void ViewDidLoad()
         {
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => ViewModel.GoToNewIssueCommand.Execute(null)));
+
             base.ViewDidLoad();
 
             _viewSegment = new UISegmentedControl(new string[] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() });

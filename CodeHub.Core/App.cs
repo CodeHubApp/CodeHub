@@ -1,6 +1,6 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels;
-using CodeHub.Core.ViewModels.Accounts;
+using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.Core
 {
@@ -14,8 +14,11 @@ namespace CodeHub.Core
         /// </summary>
         public override void Initialize()
         {
+			//Ensure this is loaded
+			Cirrious.MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
+
             // Start the app with the First View Model.
-            this.RegisterAppStart<AccountsViewModel>();
+			this.RegisterAppStart<StartupViewModel>();
         }
     }
 }

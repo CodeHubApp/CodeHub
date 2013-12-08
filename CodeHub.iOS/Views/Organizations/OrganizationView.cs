@@ -2,7 +2,6 @@ using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Organizations;
 using MonoTouch.Dialog;
-using MonoTouch.Dialog.Utilities;
 
 namespace CodeHub.iOS.Views.Organizations
 {

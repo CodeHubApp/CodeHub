@@ -17,7 +17,10 @@ namespace CodeHub.iOS.Views.Source
             var vm = (ChangesetsViewModel) ViewModel;
             BindCollection(vm.Commits, x =>
             {
-                var desc = (x.Commit.Message ?? "").Replace("\n", " ").Trim();
+				var msg = x.Commit.Message ?? string.Empty;
+				var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
+				var desc = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
+
                 string login;
                 var date = DateTime.MinValue;
 

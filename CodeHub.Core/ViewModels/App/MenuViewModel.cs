@@ -108,7 +108,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToDefaultTopView
         {
-            get { return GoToProfileCommand; }
+			get { return GoToProfileCommand; }
         }
 
         public ICommand GoToStarredRepositoriesCommand

@@ -169,21 +169,21 @@ namespace CodeHub.Core.ViewModels.Repositories
         }
 
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceDataRefresh, response => Repository = response.Data));
+			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceCacheInvalidation, response => Repository = response.Data));
 
 			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
-                    forceDataRefresh, response => Readme = response.Data));
+                    forceCacheInvalidation, response => Readme = response.Data));
 
 			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
-                    forceDataRefresh, response => Branches = response.Data));
+                    forceCacheInvalidation, response => Branches = response.Data));
 
 			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-                    forceDataRefresh, response => IsWatched = response.Data));
+                    forceCacheInvalidation, response => IsWatched = response.Data));
          
 			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-                    forceDataRefresh, response => IsStarred = response.Data));
+                    forceCacheInvalidation, response => IsStarred = response.Data));
 
             return t1;
         }

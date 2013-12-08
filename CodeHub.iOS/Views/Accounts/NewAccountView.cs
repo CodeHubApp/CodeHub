@@ -13,28 +13,14 @@ namespace CodeHub.iOS.Views.Accounts
 			: base ("NewAccountView", null)
         {
             Title = "Account";
-            //NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
-        }
-
-        public override void ViewWillLayoutSubviews()
-        {
-            base.ViewWillLayoutSubviews();
-
-            try
-            {
-                var color = Utilities.CreateRepeatingBackground();
-                if (color != null)
-                    View.BackgroundColor = color;
-            }
-            catch
-            {
-                // Don't care
-            }
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(CodeFramework.iOS.Views.NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);;
 			
             InternetButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             EnterpriseButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);

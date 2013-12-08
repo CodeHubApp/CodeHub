@@ -1,32 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CodeFramework.Core.Utils;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class MyIssuesViewModel : LoadableViewModel
+	public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
-        private readonly FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel> _issues;
+		private int _selectedFilter;
 
-        public FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel> Issues
-        {
-            get { return _issues; }
-        }
+		public int SelectedFilter
+		{
+			get { return _selectedFilter; }
+			set 
+			{
+				_selectedFilter = value;
+				RaisePropertyChanged(() => SelectedFilter);
+			}
+		}
 
         public MyIssuesViewModel()
         {
             _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
             _issues.Bind(x => x.Filter, () => LoadCommand.Execute(true));
-           
+
+			this.Bind(x => x.SelectedFilter, x =>
+			{
+				if (x == 0)
+					_issues.Filter = MyIssuesFilterModel.CreateOpenFilter();
+				else if (x == 1)
+					_issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
+			});
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
             string filter = Issues.Filter.FilterType.ToString().ToLower();
             string direction = Issues.Filter.Ascending ? "asc" : "desc";
@@ -35,32 +43,7 @@ namespace CodeHub.Core.ViewModels.Issues
             string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
 
 			var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
-            return Issues.SimpleCollectionLoad(request, forceDataRefresh);
-        }
-        
-        private List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
-        {
-            var order = Issues.Filter.SortType;
-            if (order == MyIssuesFilterModel.Sort.Comments)
-            {
-                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
-                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Comments)).ToList();
-                return FilterGroup.CreateNumberedGroup(g, "Comments");
-            }
-            if (order == MyIssuesFilterModel.Sort.Updated)
-            {
-                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
-                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
-                return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
-            }
-            if (order == MyIssuesFilterModel.Sort.Created)
-            {
-                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
-                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
-                return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
-            }
-
-            return null;
+            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
         }
     }
 }

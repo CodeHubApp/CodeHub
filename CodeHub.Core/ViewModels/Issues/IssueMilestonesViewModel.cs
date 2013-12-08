@@ -1,12 +1,27 @@
 using System.Threading.Tasks;
 using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueMilestonesViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
+		private MilestoneModel _selectedMilestone;
+
+		public MilestoneModel SelectedMilestone
+		{
+			get
+			{
+				return _selectedMilestone;
+			}
+			set
+			{
+				_selectedMilestone = value;
+				RaisePropertyChanged(() => SelectedMilestone);
+			}
+		}
 
         public CollectionViewModel<MilestoneModel> Milestones
         {
@@ -29,6 +44,11 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             Username = navObject.Username;
             Repository = navObject.Repository;
+			SelectedMilestone = TxSevice.Get() as MilestoneModel;
+			this.Bind(x => x.SelectedMilestone, x => {
+				Messenger.Publish(new SelectedMilestoneMessage(this) { Milestone = x });
+				ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+			});
         }
 
         protected override Task Load(bool forceCacheInvalidation)

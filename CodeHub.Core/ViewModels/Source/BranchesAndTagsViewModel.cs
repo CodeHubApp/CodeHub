@@ -10,8 +10,16 @@ namespace CodeHub.Core.ViewModels.Source
 {
 	public class BranchesAndTagsViewModel : LoadableViewModel
 	{
-		private readonly CollectionViewModel<ViewObject> _items = new CollectionViewModel<ViewObject>();
-		private bool _isBranchesShowing = true;
+		private int _selectedFilter;
+		public int SelectedFilter
+		{
+			get { return _selectedFilter; }
+			set 
+			{
+				_selectedFilter = value;
+				RaisePropertyChanged(() => SelectedFilter);
+			}
+		}
 
 		public string Username
 		{
@@ -25,16 +33,7 @@ namespace CodeHub.Core.ViewModels.Source
 			private set;
 		}
 
-		public bool IsBranchesShowing
-		{
-			get { return _isBranchesShowing; }
-			private set
-			{
-				_isBranchesShowing = value;
-				RaisePropertyChanged(() => IsBranchesShowing);
-			}
-		}
-
+		private readonly CollectionViewModel<ViewObject> _items = new CollectionViewModel<ViewObject>();
 		public CollectionViewModel<ViewObject> Items
 		{
 			get { return _items; }
@@ -43,30 +42,6 @@ namespace CodeHub.Core.ViewModels.Source
 		public ICommand GoToSourceCommand
 		{
 			get { return new MvxCommand<ViewObject>(GoToSource); }
-		}
-
-		public ICommand ShowBranchesCommand
-		{
-			get
-			{
-				return new MvxCommand(() =>
-				{
-					IsBranchesShowing = true;
-					LoadCommand.Execute(false);
-				}, () => !IsBranchesShowing);
-			}
-		}
-
-		public ICommand ShowTagsCommand
-		{
-			get
-			{
-				return new MvxCommand(() =>
-				{
-					IsBranchesShowing = false;
-					LoadCommand.Execute(false);
-				}, () => IsBranchesShowing);
-			}
 		}
 
 		private void GoToSource(ViewObject obj)
@@ -83,19 +58,24 @@ namespace CodeHub.Core.ViewModels.Source
 			}
 		}
 
+		public BranchesAndTagsViewModel()
+		{
+			this.Bind(x => x.SelectedFilter, x => LoadCommand.Execute(false));
+		}
+
 		public void Init(NavObject navObject)
 		{
 			Username = navObject.Username;
 			Repository = navObject.Repository;
-			IsBranchesShowing = navObject.IsShowingBranches;
+			_selectedFilter = navObject.IsShowingBranches ? 0 : 1;
 		}
 
-		protected override Task Load(bool forceDataRefresh)
+		protected override Task Load(bool forceCacheInvalidation)
 		{
-			if (IsBranchesShowing)
+			if (SelectedFilter == 0)
 			{
 				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches();
-				return Task.Run(() => this.RequestModel(request, forceDataRefresh, response =>
+				return Task.Run(() => this.RequestModel(request, forceCacheInvalidation, response =>
 				{
 					Items.Items.Reset(response.Data.Select(x => new ViewObject { Name = x.Name, Object = x }));
 					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Select(x => new ViewObject { Name = x.Name, Object = x })));
@@ -104,7 +84,7 @@ namespace CodeHub.Core.ViewModels.Source
 			else
 			{
 				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags();
-				return Task.Run(() => this.RequestModel(request, forceDataRefresh, response => {
+				return Task.Run(() => this.RequestModel(request, forceCacheInvalidation, response => {
 					Items.Items.Reset(response.Data.Select(x => new ViewObject { Name = x.Name, Object = x }));
 					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Select(x => new ViewObject { Name = x.Name, Object = x })));
 				}));

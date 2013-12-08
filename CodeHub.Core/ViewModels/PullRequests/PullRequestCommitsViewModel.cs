@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 			return this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits();
         }
 
-        public class NavObject
+		public new class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }

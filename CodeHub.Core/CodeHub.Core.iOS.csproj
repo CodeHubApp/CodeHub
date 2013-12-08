@@ -92,7 +92,6 @@
     <Compile Include="ViewModels\Repositories\RepositoriesWatchedViewModel.cs" />
     <Compile Include="ViewModels\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
-    <Compile Include="ViewModels\RepositoryLabelsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Repositories\StargazersViewModel.cs" />
@@ -105,6 +104,20 @@
     <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="Services\JsonSerializationService.cs" />
+    <Compile Include="ViewModels\App\StartupViewModel.cs" />
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
+    <Compile Include="Filters\BaseIssuesFilterModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
+    <Compile Include="Messages\SelectIssueLabelsMessage.cs" />
+    <Compile Include="Messages\SelectedMilestoneMessage.cs" />
+    <Compile Include="Messages\SelectedAssignedToMessage.cs" />
+    <Compile Include="ViewModels\Issues\IssueAssignedToViewModel.cs" />
+    <Compile Include="Messages\IssueAddMessage.cs" />
+    <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
+    <Compile Include="Messages\IssueEditMessage.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -122,6 +135,9 @@
     <Reference Include="RestSharp.MonoTouch">
       <HintPath>..\lib\GitHubSharp\lib\RestSharp\RestSharp.MonoTouch.dll</HintPath>
     </Reference>
+    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
+      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
@@ -134,4 +150,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Messages\" />
+  </ItemGroup>
 </Project>

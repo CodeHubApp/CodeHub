@@ -312,6 +312,8 @@ namespace CodeHub.Core.ViewModels.Events
 					eventBlock.Header.Add(new TextBlock(" created Gist #"));
                 else if (string.Equals(gistEvent.Action, "update", StringComparison.OrdinalIgnoreCase))
 					eventBlock.Header.Add(new TextBlock(" updated Gist #"));
+				else if (string.Equals(gistEvent.Action, "fork", StringComparison.OrdinalIgnoreCase))
+					eventBlock.Header.Add(new TextBlock(" forked Gist #"));
 
                 eventBlock.Header.Add(new AnchorBlock(gistEvent.Gist.Id, eventBlock.Tapped));
                 eventBlock.Body.Add(new TextBlock(gistEvent.Gist.Description.Replace('\n', ' ').Replace("\r", "").Trim()));
@@ -475,6 +477,7 @@ namespace CodeHub.Core.ViewModels.Events
 					foreach (var commit in pushEvent.Commits)
 					{
 						var desc = (commit.Message ?? "");
+						var sha = commit.Sha;
 						var firstNewLine = desc.IndexOf("\n");
 						if (firstNewLine <= 0)
 							firstNewLine = desc.Length;
@@ -484,7 +487,7 @@ namespace CodeHub.Core.ViewModels.Events
 						if (shortSha.Length > 6)
 							shortSha = shortSha.Substring(0, 6);
 
-						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, commit.Sha)));
+						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, sha)));
 						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
 					}
 				}

@@ -287,7 +287,7 @@ Global
 		StartupItem = CodeHub.iOS.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
-		$1.DirectoryNamespaceAssociation = None
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
 		$1.ResourceNamePolicy = FileFormatDefault
 		$0.TextStylePolicy = $2
 		$2.EolMarker = Windows
