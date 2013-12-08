@@ -118,6 +118,8 @@
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
+    <Compile Include="Services\IMarkdownService.cs" />
+    <Compile Include="Services\MarkdownService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -152,5 +154,8 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Messages\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Markdown\marked.js" />
   </ItemGroup>
 </Project>

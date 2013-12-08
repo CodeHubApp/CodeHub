@@ -7,6 +7,7 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -31,6 +32,16 @@ namespace CodeHub.Core.ViewModels.Issues
             get; 
             private set; 
         }
+
+		public string MarkdownDescription
+		{
+			get
+			{
+				if (Issue == null)
+					return string.Empty;
+				return (GetService<IMarkdownService>().Convert(Issue.Body));
+			}
+		}
 
 		private IssueModel _issueModel;
         public IssueModel Issue
@@ -65,7 +76,10 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _comments; }
         }
 
-        public Action<IssueModel> ModelChanged;
+		public ICommand GoToWeb
+		{
+			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+		}
 
         protected override Task Load(bool forceCacheInvalidation)
         {
@@ -81,10 +95,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string ConvertToMarkdown(string str)
         {
-            var options = new MarkdownSharp.MarkdownOptions();
-            options.AutoHyperlink = true;
-            var md = new MarkdownSharp.Markdown(options);
-            return md.Transform(str);
+			return (GetService<IMarkdownService>().Convert(str));
         }
 
         public void Init(NavObject navObject)

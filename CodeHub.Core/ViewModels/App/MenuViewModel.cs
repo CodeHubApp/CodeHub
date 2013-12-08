@@ -37,7 +37,9 @@ namespace CodeHub.Core.ViewModels.App
 
         public void Init()
         {
-            GoToDefaultTopView.Execute(null);
+			//GoToDefaultTopView.Execute(null);
+
+			ShowMenuViewModel<IssuesViewModel>(new IssuesViewModel.NavObject { Username = "thedillonb", Repository = "CodeHub" });
         }
 
         public GitHubAccount Account
