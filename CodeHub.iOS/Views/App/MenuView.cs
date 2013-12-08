@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.App
             {
                 new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
                 (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsComamnd.Execute(null), Images.News),
+                new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Images.News),
                 new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Flag)
             });
 
@@ -50,7 +50,7 @@ namespace CodeHub.iOS.Views.App
 			{
 				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryComamnd));
+					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
 				root.Add(_favoriteRepoSection);
 			}
 			else
@@ -76,7 +76,7 @@ namespace CodeHub.iOS.Views.App
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings".t(), () => NavPush(new SettingsView()), Images.Cog));
+			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
             infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));

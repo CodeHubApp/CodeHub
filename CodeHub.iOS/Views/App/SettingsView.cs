@@ -1,18 +1,16 @@
 using Cirrious.CrossCore;
-using CodeFramework.ViewControllers;
 using CodeHub.Core.Services;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using CodeFramework.iOS.ViewControllers;
+using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class SettingsView : BaseDialogViewController
+	public class SettingsView : ViewModelDrivenViewController
     {
         public SettingsView()
-            : base(false)
         {
             Title = "Settings";
-            Style = UITableViewStyle.Grouped;
         }
 
         public override void ViewWillAppear(bool animated)
@@ -20,6 +18,7 @@ namespace CodeHub.iOS.Views.App
             var application = Mvx.Resolve<IApplicationService>();
             var root = new RootElement(Title);
             var currentAccount = application.Account;
+			var vm = (SettingsViewModel)ViewModel;
 
             root.Add(new Section(string.Empty, "If disabled, CodeHub will prompt you for your password when you switch to this account".t()) {
                     new TrueFalseElement("Remember Credentials".t(), !currentAccount.DontRemember, e => { 
@@ -48,6 +47,13 @@ namespace CodeHub.iOS.Views.App
                     application.Accounts.Update(currentAccount);
                 })
             });
+
+			var el = new StyledStringElement("Startup View", vm.DefaultStartupViewName, MonoTouch.UIKit.UITableViewCellStyle.Value1)
+			{ 
+				Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,
+			};
+			el.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
+            root.Add(new Section(string.Empty, "Select the default startup view after login".t()) { el });
 //
 //            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app".t()) {
 //                new TrueFalseElement("Send Anonymous Usage".t(), MonoTouch.Utilities.AnalyticsEnabled, e => { 

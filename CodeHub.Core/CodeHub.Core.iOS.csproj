@@ -120,6 +120,7 @@
     <Compile Include="Messages\IssueEditMessage.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\MarkdownService.cs" />
+    <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

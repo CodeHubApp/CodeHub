@@ -1,18 +1,10 @@
-using System.Collections.Generic;
 using CodeFramework.Core.Data;
-using GitHubSharp.Models;
 using SQLite;
 
 namespace CodeHub.Core.Data
 {
     public class GitHubAccount : Account
     {
-		/// <summary>
-		/// Gets or sets the password.
-		/// </summary>
-		/// <value>The password.</value>
-        public string Password { get; set; }
-
         /// <summary>
         /// Gets or sets the OAuth string
         /// </summary>
@@ -23,12 +15,6 @@ namespace CodeHub.Core.Data
         /// </summary>
         /// <value>The domain.</value>
         public string Domain { get; set; }
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="Account"/> dont remember.
-		/// THIS HAS TO BE A NEGATIVE STATEMENT SINCE IT DEFAULTS TO 'FALSE' WHEN RETRIEVING A NULL VIA SQLITE
-		/// </summary>
-		public bool DontRemember { get; set; }
 
         /// <summary>
         /// Gets or sets whether orgs should be listed in the menu controller under 'events'
