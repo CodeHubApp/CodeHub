@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using CodeFramework.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Events;
@@ -21,6 +20,7 @@ namespace CodeHub.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 

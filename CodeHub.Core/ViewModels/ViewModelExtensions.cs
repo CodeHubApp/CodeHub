@@ -77,8 +77,8 @@ namespace CodeHub.Core.ViewModels
         public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
         {
             return Task.Run(() => viewModel.RequestModel(request, forceDataRefresh, response => {
+				viewModel.CreateMore(response, m => viewModel.MoreItems = m, d => viewModel.Items.AddRange(d));
                 viewModel.Items.Reset(response.Data);
-                viewModel.CreateMore(response, m => viewModel.MoreItems = m, d => viewModel.Items.AddRange(d));
             }));
         }
     }

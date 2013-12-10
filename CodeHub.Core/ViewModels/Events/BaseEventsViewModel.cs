@@ -40,8 +40,8 @@ namespace CodeHub.Core.ViewModels.Events
         protected override Task Load(bool forceDataRefresh)
         {
             return Task.Run(() => this.RequestModel(CreateRequest(0, 100), forceDataRefresh, response => {
+				this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
                 Events.Items.Reset(CreateDataFromLoad(response.Data));
-                this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
             }));
         }
 
