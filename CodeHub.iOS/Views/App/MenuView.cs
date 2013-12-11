@@ -85,8 +85,8 @@ namespace CodeHub.iOS.Views.App
 
         private void PresentUserVoice()
         {
-//            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
-//            UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
+            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
+			UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)

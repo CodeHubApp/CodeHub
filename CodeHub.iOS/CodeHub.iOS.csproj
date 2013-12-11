@@ -207,6 +207,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
+    <Reference Include="UserVoice">
+      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />
