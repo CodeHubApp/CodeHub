@@ -57,7 +57,7 @@ namespace CodeHub.iOS
 			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 			UINavigationBar.Appearance.TintColor = UIColor.White;
 			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
-			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White });
+			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
 
 			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
 

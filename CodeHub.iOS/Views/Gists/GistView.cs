@@ -67,7 +67,7 @@ namespace CodeHub.iOS.Views.Gists
 			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
 			if (string.Equals(app.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
             {
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, async () => {
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.EditButton, UIBarButtonItemStyle.Plain, async (s, e) => {
 					try
 					{
 						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
@@ -79,29 +79,29 @@ namespace CodeHub.iOS.Views.Gists
 						PresentViewController(navController, true, null);
 
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						MonoTouch.Utilities.ShowAlert("Error", e.Message);
+						MonoTouch.Utilities.ShowAlert("Error", ex.Message);
 					}
-                }));
+                });
             }
             else
             {
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.ForkButton, async () => {
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ForkButton, UIBarButtonItemStyle.Plain, async (s, e) => {
 					try
 					{
 						NavigationItem.RightBarButtonItem.Enabled = false;
 						await this.DoWorkAsync("Forking...", ViewModel.ForkGist);
 					}
-					catch (Exception e)
+					catch (Exception ex)
 					{
-						MonoTouch.Utilities.ShowAlert("Error", e.Message);
+						MonoTouch.Utilities.ShowAlert("Error", ex.Message);
 					}
 					finally
 					{
                         NavigationItem.RightBarButtonItem.Enabled = true;
 					}
-                }));
+                });
             }
         }
         

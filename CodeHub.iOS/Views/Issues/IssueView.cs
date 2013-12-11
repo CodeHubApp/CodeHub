@@ -44,7 +44,7 @@ namespace CodeHub.iOS.Views.Issues
 			_commentsElement = new WebElement2(content2);
 			_commentsElement.UrlRequested = ViewModel.GoToWeb.Execute;
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.EditButton, () => ViewModel.GoToEditCommand.Execute(null)));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.EditButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.GoToEditCommand.Execute(null));
             NavigationItem.RightBarButtonItem.Enabled = false;
             ViewModel.Bind(x => x.Issue, RenderIssue);
             ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());

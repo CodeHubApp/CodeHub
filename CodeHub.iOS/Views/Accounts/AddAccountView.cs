@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Accounts
             : base("AddAccountView", null)
         {
             Title = "Login".t();
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
         }
 
         public override void ViewDidLoad()

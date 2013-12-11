@@ -22,10 +22,10 @@ namespace CodeHub.iOS.Views.Issues
 			_hud = this.CreateHud();
 			var vm = (IssueEditViewModel)ViewModel;
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.SaveButton, () => {
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 				View.EndEditing(true);
 				vm.SaveCommand.Execute(null);
-			}));
+			});
 
 			var title = new InputElement("Title", string.Empty, string.Empty);
 			title.Changed += (object sender, EventArgs e) => vm.Title = title.Value;

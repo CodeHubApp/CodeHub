@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.Gists
         public GistViewableFileView()
                 : base(true)
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.ViewButton, () => ViewModel.GoToFileSourceCommand.Execute(null)));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ViewButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.GoToFileSourceCommand.Execute(null));
         }
 
         public override void ViewDidLoad()

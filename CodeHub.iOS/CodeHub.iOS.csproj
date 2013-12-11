@@ -218,28 +218,16 @@
     <Content Include="Images\bin_closed.png" />
     <Content Include="Images\branch%402x.png" />
     <Content Include="Images\branch.png" />
-    <Content Include="Images\Buttons\add%402x.png" />
-    <Content Include="Images\Buttons\add.png" />
-    <Content Include="Images\Buttons\back%402x.png" />
-    <Content Include="Images\Buttons\back.png" />
     <Content Include="Images\Buttons\black_button%402x.png" />
     <Content Include="Images\Buttons\black_button.png" />
-    <Content Include="Images\Buttons\cancel%402x.png" />
-    <Content Include="Images\Buttons\cancel.png" />
-    <Content Include="Images\Buttons\edit%402x.png" />
-    <Content Include="Images\Buttons\edit.png" />
     <Content Include="Images\Buttons\filter%402x.png" />
     <Content Include="Images\Buttons\filter.png" />
     <Content Include="Images\Buttons\fork%402x.png" />
     <Content Include="Images\Buttons\fork.png" />
-    <Content Include="Images\Buttons\gear%402x.png" />
-    <Content Include="Images\Buttons\gear.png" />
     <Content Include="Images\Buttons\grey_button%402x.png" />
     <Content Include="Images\Buttons\grey_button.png" />
     <Content Include="Images\Buttons\save%402x.png" />
     <Content Include="Images\Buttons\save.png" />
-    <Content Include="Images\Buttons\three_lines%402x.png" />
-    <Content Include="Images\Buttons\three_lines.png" />
     <Content Include="Images\Buttons\view%402x.png" />
     <Content Include="Images\Buttons\view.png" />
     <Content Include="Images\cog%402x.png" />
@@ -351,6 +339,14 @@
     <BundleResource Include="Images\Web\forward%402x.png" />
     <Content Include="WebCell\body.html" />
     <Content Include="WebCell\comments.html" />
+    <BundleResource Include="Images\Buttons\back%402x.png" />
+    <BundleResource Include="Images\Buttons\back.png" />
+    <BundleResource Include="Images\Buttons\edit.png" />
+    <BundleResource Include="Images\Buttons\edit%402x.png" />
+    <BundleResource Include="Images\Buttons\cancel.png" />
+    <BundleResource Include="Images\Buttons\cancel%402x.png" />
+    <BundleResource Include="Images\Buttons\three_lines.png" />
+    <BundleResource Include="Images\Buttons\three_lines%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

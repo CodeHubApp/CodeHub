@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Accounts
 			: base ("NewAccountView", null)
         {
             Title = "Account";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(CodeFramework.iOS.Views.NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,(s, e) => NavigationController.PopViewControllerAnimated(true));
         }
 
         public override void ViewDidLoad()

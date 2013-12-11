@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Gists
             base.ViewDidLoad();
 
             if (ViewModel.IsMine)
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, NewGist));
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => NewGist());
         }
 
         public override void ViewWillAppear(bool animated)

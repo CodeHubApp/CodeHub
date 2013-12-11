@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Issues
 
         public override void ViewDidLoad()
         {
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.AddButton, () => ViewModel.GoToNewIssueCommand.Execute(null)));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.GoToNewIssueCommand.Execute(null));
 
             base.ViewDidLoad();
 

@@ -27,8 +27,8 @@ namespace CodeHub.ViewControllers
             Style = UITableViewStyle.Grouped;
             _originalGist = gist;
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem (NavigationButton.Create(Theme.CurrentTheme.CancelButton, Discard));
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.SaveButton, Save));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => Discard());
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Save());
 
             _model = new GistEditModel();
             _model.Description = gist.Description;

@@ -27,7 +27,7 @@ namespace CodeHub.ViewControllers
             Title = "Create Gist";
             Style = UITableViewStyle.Grouped;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.SaveButton, Save));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Save());
 
             _model = new GistCreateModel() { Public = true };
             _model.Files = new Dictionary<string, GistCreateModel.File>();

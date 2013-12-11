@@ -22,8 +22,8 @@ namespace CodeHub.ViewControllers
             _content = content;
 
             Title = "New File";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.SaveButton, () => {
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 
                 var newName = Name.Text;
                 var newContent = Text.Text;
@@ -40,12 +40,12 @@ namespace CodeHub.ViewControllers
                         Save(newName, newContent);
                     NavigationController.PopViewControllerAnimated(true);
                 }
-                catch (Exception e)
+				catch (Exception ex)
                 {
-                    MonoTouch.Utilities.ShowAlert("Error", e.Message);
+					MonoTouch.Utilities.ShowAlert("Error", ex.Message);
                     return;
                 }
-            }));
+            });
         }
 
         public override void DidReceiveMemoryWarning()
