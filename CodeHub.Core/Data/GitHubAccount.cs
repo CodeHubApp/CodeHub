@@ -11,10 +11,16 @@ namespace CodeHub.Core.Data
         public string OAuth { get; set; }
 
         /// <summary>
-        /// Gets or sets the domain
+		/// Gets or sets the domain (API)
         /// </summary>
         /// <value>The domain.</value>
         public string Domain { get; set; }
+
+		/// <summary>
+		/// Gets or sets the web domain. Sort of like the API domain with the API paths
+		/// </summary>
+		/// <value>The web domain.</value>
+		public string WebDomain { get; set; }
 
         /// <summary>
         /// Gets or sets whether orgs should be listed in the menu controller under 'events'

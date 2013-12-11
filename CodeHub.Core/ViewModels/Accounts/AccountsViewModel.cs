@@ -28,6 +28,12 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             var githubAccount = (GitHubAccount) account;
 
+			if (githubAccount.DontRemember)
+			{
+				ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+				return;
+			}
+
 			try
 			{
 				IsLoggingIn = true;

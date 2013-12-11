@@ -16,10 +16,11 @@ namespace CodeHub.Core.Services
             _accounts = accounts;
         }
 
-        public Client LoginWithToken(string accessToken)
+		public async Task<Client> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain)
         {
-            var client = Client.BasicOAuth(accessToken);
-            var info = client.Execute(client.AuthenticatedUser.GetInfo());
+			var token = await Task.Run(() => Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain));
+			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
+			var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
             var username = info.Data.Login;
 
             //Does this user exist?
@@ -27,8 +28,11 @@ namespace CodeHub.Core.Services
             var exists = account != null;
             if (!exists)
                 account = new GitHubAccount { Username = username };
-            account.OAuth = accessToken;
+			account.OAuth = token.AccessToken;
             account.AvatarUrl = info.Data.AvatarUrl;
+			account.Domain = apiDomain;
+			account.WebDomain = requestDomain;
+			client.Username = username;
 
             if (exists)
                 _accounts.Update(account);

@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Accounts
         {
             base.ViewDidLoad();
 
-			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);;
+			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
 			
             InternetButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             EnterpriseButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);

@@ -1,8 +1,8 @@
 using System;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Data;
-using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.App
 		private readonly ILoginService _loginService;
 		private readonly IApplicationService _applicationService;
 
-		public StartupViewModel(IAccountsService accountsService, ILoginService loginService, IApplicationService applicationService)
+		public StartupViewModel(ILoginService loginService, IApplicationService applicationService)
 		{
 			_loginService = loginService;
 			_applicationService = applicationService;
@@ -19,20 +19,33 @@ namespace CodeHub.Core.ViewModels.App
 
 		protected async override void Startup()
 		{
-			var account = GetDefaultAccount();
+			if (!_applicationService.Accounts.Any())
+			{
+				ShowViewModel<Accounts.AccountsViewModel>();
+				ShowViewModel<Accounts.NewAccountViewModel>();
+				return;
+			}
+
+			var account = GetDefaultAccount() as GitHubAccount;
 			if (account == null)
 			{
-				this.ShowViewModel<Accounts.AccountsViewModel>();
+				ShowViewModel<Accounts.AccountsViewModel>();
+				return;
+			}
+
+			if (account.DontRemember)
+			{
+				ShowViewModel<Accounts.AccountsViewModel>();
+				ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
 				return;
 			}
 
 			//Lets login!
-			var githubAccount = (GitHubAccount) account;
 			try
 			{
 				IsLoggingIn = true;
-				var client = await _loginService.LoginAccount(githubAccount);
-				_applicationService.ActivateUser(githubAccount, client);
+				var client = await _loginService.LoginAccount(account);
+				_applicationService.ActivateUser(account, client);
 			}
 			catch (Exception e)
 			{

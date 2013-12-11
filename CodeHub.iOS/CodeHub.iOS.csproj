@@ -89,7 +89,6 @@
     <Compile Include="Views\Accounts\AddAccountView.designer.cs">
       <DependentUpon>AddAccountView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Accounts\WebLoginViewController.cs" />
     <Compile Include="Views\App\AboutViewController.cs" />
     <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
@@ -155,6 +154,7 @@
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
+    <Compile Include="Views\Accounts\LoginView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

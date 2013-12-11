@@ -67,7 +67,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public void Init(NavObject navObject)
         {
-            _attemptedAccount = navObject.AttemptedAccount;
+			if (!string.IsNullOrEmpty(navObject.AttemptedAccountName))
+				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountName) as GitHubAccount;
 
             if (_attemptedAccount != null)
             {
@@ -137,7 +138,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public class NavObject
         {
             public bool IsEnterprise { get; set; }
-            public GitHubAccount AttemptedAccount { get; set; }
+			public string AttemptedAccountName { get; set; }
         }
     }
 }

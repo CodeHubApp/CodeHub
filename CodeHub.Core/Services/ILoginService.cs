@@ -5,7 +5,7 @@ namespace CodeHub.Core.Services
 {
     public interface ILoginService
     {
-        GitHubSharp.Client LoginWithToken(string accessToken);
+		Task<GitHubSharp.Client> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain);
 
 		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
 

@@ -25,23 +25,6 @@ namespace CodeHub.iOS.Views.Accounts
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(NavigationButton.Create(Theme.CurrentTheme.BackButton, () => NavigationController.PopViewControllerAnimated(true)));
         }
 
-
-        public override void ViewWillLayoutSubviews()
-        {
-            base.ViewWillLayoutSubviews();
-
-            try
-            {
-                var color = Utilities.CreateRepeatingBackground();
-                if (color != null)
-                    View.BackgroundColor = color;
-            }
-            catch
-            {
-
-            }
-        }
-
         public override void ViewDidLoad()
         {
             var set = this.CreateBindingSet<AddAccountView, AddAccountViewModel>();
@@ -53,6 +36,7 @@ namespace CodeHub.iOS.Views.Accounts
 
             base.ViewDidLoad();
 
+			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
             Logo.Image = Images.Logos.GitHub;
 
             if (ViewModel.IsEnterprise)

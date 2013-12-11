@@ -8,12 +8,12 @@ namespace CodeHub.Core.ViewModels.Accounts
     {
         public ICommand GoToDotComLoginCommand
         {
-            get { return new MvxCommand(() => this.ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = false })); }
+			get { return new MvxCommand(() => this.ShowViewModel<LoginViewModel>(new LoginViewModel.NavObject())); }
         }
 
         public ICommand GoToEnterpriseLoginCommand
         {
-            get { return new MvxCommand(() => this.ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true })); }
+			get { return new MvxCommand(() => this.ShowViewModel<LoginViewModel>(new LoginViewModel.NavObject { IsEnterprise = true })); }
         }
     }
 }
