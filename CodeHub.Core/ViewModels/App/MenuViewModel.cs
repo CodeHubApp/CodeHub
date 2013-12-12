@@ -13,16 +13,19 @@ using CodeHub.Core.ViewModels.User;
 using System.Linq;
 using CodeFramework.Core.Utils;
 using CodeFramework.Core.ViewModels.App;
+using CodeHub.Core.Messages;
+using Cirrious.MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.App
 {
 	public class MenuViewModel : BaseMenuViewModel
     {
         private readonly IApplicationService _application;
-        private int _notifications;
+		private int _notifications;
 		private List<string> _organizations;
+		private readonly MvxSubscriptionToken _notificationCountToken;
 
-        public int Notifications
+		public int Notifications
         {
             get { return _notifications; }
             set { _notifications = value; RaisePropertyChanged(() => Notifications); }
@@ -42,7 +45,13 @@ namespace CodeHub.Core.ViewModels.App
         public MenuViewModel(IApplicationService application)
         {
             _application = application;
+			_notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
         }
+
+		private void OnNotificationCountMessage(NotificationCountMessage msg)
+		{
+			Notifications = msg.Count;
+		}
 
         public ICommand GoToAccountsCommand
         {

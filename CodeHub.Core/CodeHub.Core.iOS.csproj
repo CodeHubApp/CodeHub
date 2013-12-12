@@ -123,6 +123,7 @@
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\CommitsViewModel.cs" />
+    <Compile Include="Messages\NotificationCountMessage.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

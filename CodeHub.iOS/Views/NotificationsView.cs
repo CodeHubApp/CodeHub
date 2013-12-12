@@ -4,6 +4,7 @@ using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views
 {
@@ -11,6 +12,7 @@ namespace CodeHub.iOS.Views
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
+		private IHud _markHud;
 
 		public NotificationsView()
         {
@@ -25,10 +27,22 @@ namespace CodeHub.iOS.Views
 
             base.ViewDidLoad();
 
+			_markHud = new Hud(View);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
 			var vm = (NotificationsViewModel)ViewModel;
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CheckButton, UIBarButtonItemStyle.Plain, (s, e) => vm.ReadAllCommand.Execute(null));
+			vm.ReadAllCommand.CanExecuteChanged += (sender, e) => NavigationItem.RightBarButtonItem.Enabled = vm.ReadAllCommand.CanExecute(null);
+
+			vm.Bind(x => x.IsMarking, x =>
+			{
+				if (x)
+					_markHud.Show("Marking...");
+				else
+					_markHud.Hide();
+			});
+
 			BindCollection(vm.Notifications, x =>
             {
                 var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.ToDaysAgo(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };

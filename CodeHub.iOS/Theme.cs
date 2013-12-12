@@ -35,7 +35,7 @@ namespace CodeHub.iOS
                 };
             }
         }
-
+		public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
         public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
         public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
         public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }

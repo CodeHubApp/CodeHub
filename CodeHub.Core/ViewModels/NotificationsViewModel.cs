@@ -9,15 +9,17 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using GitHubSharp.Models;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels
 {
     public class NotificationsViewModel : LoadableViewModel
     {
         private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
-        private ICommand _readAllCommand;
-        private ICommand _readCommand;
+		private ICommand _readAllCommand;
+		private ICommand _readCommand;
 		private int _shownIndex;
+		private bool _isMarking;
 
         public FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> Notifications
         {
@@ -34,6 +36,16 @@ namespace CodeHub.Core.ViewModels
 			}
 		}
 
+		public bool IsMarking
+		{
+			get { return _isMarking; }
+			set
+			{
+				_isMarking = value;
+				RaisePropertyChanged(() => IsMarking);
+			}
+		}
+
         public ICommand ReadCommand
         {
             get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
@@ -41,13 +53,7 @@ namespace CodeHub.Core.ViewModels
 
         public ICommand ReadAllCommand
         {
-            get
-            {
-                return _readAllCommand ?? (_readAllCommand = new MvxCommand(MarkAllAsRead, () =>
-                {
-                    return true;
-                }));
-            }
+			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking)); }
         }
 
         public ICommand GoToNotificationCommand
@@ -87,7 +93,9 @@ namespace CodeHub.Core.ViewModels
 				if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
 				else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
 				else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
+				((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged();
 			});
+			this.Bind(x => x.IsLoading, ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged);
 
 			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
 				_shownIndex = 0;
@@ -98,41 +106,69 @@ namespace CodeHub.Core.ViewModels
 
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceDataRefresh, response => {
+			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
                 Notifications.Items.Reset(response.Data);
                 UpdateAccountNotificationsCount();
             }));
         }
 
-        public async Task Read(NotificationModel model)
+		private async void Read(NotificationModel model)
         {
-//            var response = await Application.Client.ExecuteAsync(Application.Client.Notifications[model.Id].MarkAsRead());
-//            if (response.Data) 
-//            {
-//                //We just read it
-//                model.Unread = false;
-//
-//                // Only remove if we're not looking at all
-//                if (Notifications.Filter.All == false)
-//                    Notifications.Items.Remove(model);
-//
-//                //Update the notifications count on the account
-//                UpdateAccountNotificationsCount();
-//            }
+			// If its already read, ignore it
+			if (!model.Unread)
+				return;
+
+			var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
+            if (response.Data) 
+            {
+                //We just read it
+                model.Unread = false;
+ 
+                //Update the notifications count on the account
+				Notifications.Items.Remove(model);
+                UpdateAccountNotificationsCount();
+            }
         }
 
-        private void MarkAllAsRead()
-        {
-            
+		private async void MarkAllAsRead()
+		{
+			// Make sure theres some sort of notification
+			if (!Notifications.Any())
+				return;
+
+			try
+			{
+				IsMarking = true;
+
+				foreach (var notification in Notifications)
+				{
+					try
+					{
+						await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[notification.Id].MarkAsRead());
+						notification.Unread = false;
+					}
+					catch
+					{
+						//Ignore?
+					}
+				}
+
+				Notifications.Items.Clear();
+				UpdateAccountNotificationsCount();
+			}
+			finally
+			{
+				IsMarking = false;
+			}
         }
 
         private void UpdateAccountNotificationsCount()
         {
             // Only update if we're looking at 
-            if (Notifications.Filter.All == false && Notifications.Filter.Participating == false)
-				this.GetApplication().Account.Notifications = Notifications.Items.Sum(x => x.Unread ? 1 : 0);
+			if (!Notifications.Filter.All && !Notifications.Filter.Participating)
+				Messenger.Publish<NotificationCountMessage>(new NotificationCountMessage(this) { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
         }
     }
 }

@@ -349,6 +349,8 @@
     <BundleResource Include="Images\Buttons\cancel%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
+    <BundleResource Include="Images\Buttons\check.png" />
+    <BundleResource Include="Images\Buttons\check%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

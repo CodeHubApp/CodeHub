@@ -62,8 +62,10 @@ namespace CodeHub.iOS
 			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
 
 			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
-			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(196, 196, 202);
-			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(81, 81, 81);
+			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
+			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
+			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
+
 			UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
 			UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes()
