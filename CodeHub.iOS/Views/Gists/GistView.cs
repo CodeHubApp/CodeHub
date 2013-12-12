@@ -67,7 +67,7 @@ namespace CodeHub.iOS.Views.Gists
 			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
 			if (string.Equals(app.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
             {
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.EditButton, UIBarButtonItemStyle.Plain, async (s, e) => {
+				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, async (s, e) => {
 					try
 					{
 						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));

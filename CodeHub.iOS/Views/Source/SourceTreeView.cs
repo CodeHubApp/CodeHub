@@ -3,6 +3,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
+using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -16,10 +17,10 @@ namespace CodeHub.iOS.Views.Source
 
         public override void ViewDidLoad()
         {
-            EnableFilter = true;
-
             base.ViewDidLoad();
 
+			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+				(s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
             BindCollection(ViewModel.Content, CreateElement);
         }
 
@@ -49,12 +50,6 @@ namespace CodeHub.iOS.Views.Source
             
             return new StyledStringElement(x.Name) { Image = Images.File };
         }
-
-//
-//        protected override CodeFramework.Filters.ViewControllers.FilterViewController CreateFilterController()
-//        {
-//            return new CodeHub.Filters.ViewControllers.SourceFilterViewController(ViewModel.Content);
-//        }
     }
 }
 

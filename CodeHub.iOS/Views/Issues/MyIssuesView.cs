@@ -1,7 +1,4 @@
-using System;
-using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels.Issues;
-using CodeHub.ViewControllers;
 using MonoTouch.UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 
@@ -19,8 +16,15 @@ namespace CodeHub.iOS.Views.Issues
 			_viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t(), "Custom".t() });
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 			var vm = (MyIssuesViewModel)ViewModel;
+			vm.Bind(x => x.SelectedFilter, x =>
+			{
+				if (x == 2)
+				{
+					ShowFilterController(new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(vm.Issues));
+				}
+			});
 
 			BindCollection(vm.Issues, CreateElement);
 			var set = this.CreateBindingSet<MyIssuesView, MyIssuesViewModel>();

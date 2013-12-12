@@ -39,9 +39,8 @@ namespace CodeHub.iOS
         public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
         public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
         public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
-        public UIImage EditButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/edit"); } }
+		public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
         public UIImage SaveButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
-        public UIImage FilterButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/filter"); } }
         public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
         public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
 		public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
@@ -51,7 +50,6 @@ namespace CodeHub.iOS
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
-        public UIImage WarningImage { get { return UIImageHelper.FromFileAuto("Images/Controls/warning"); } }
 
         //Cache these because we make a smaller size of them
         private UIImage _issueCell1, _issueCell2, _issueCell3, _issueCell4;

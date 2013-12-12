@@ -5,6 +5,7 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
+using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -74,9 +75,7 @@ namespace CodeHub.iOS.Views.Issues
             }
             else if (_viewSegment.SelectedSegment == 3)
             {
-//                var filter = new IssuesFilterViewController(ViewModel.User, ViewModel.Slug, ViewModel.Issues);
-//                var nav = new UINavigationController(filter);
-//                PresentViewController(nav, true, null);
+				ShowFilterController(new IssuesFilterViewController(ViewModel.Username, ViewModel.Repository, ViewModel.Issues));
             }
         }
 

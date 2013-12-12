@@ -1,9 +1,9 @@
 using CodeFramework.iOS.Elements;
 using CodeFramework.ViewControllers;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
+using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -17,9 +17,10 @@ namespace CodeHub.iOS.Views.Repositories
 
         protected BaseRepositoriesView()
         {
-            EnableFilter = true;
             Title = "Repositories".t();
-            NoItemsText = "No Repositories".t();   
+            NoItemsText = "No Repositories".t(); 
+			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
         }
 
         public override void ViewDidLoad()
@@ -37,10 +38,5 @@ namespace CodeHub.iOS.Views.Repositories
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;
         }
-
-//        protected override FilterViewController CreateFilterController()
-//        {
-//            return new RepositoriesFilterViewController(ViewModel.Repositories);
-//        }
     }
 }

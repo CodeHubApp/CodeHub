@@ -66,6 +66,7 @@ namespace CodeHub.Core.ViewModels.Source
         {
             _content = new FilterableCollectionViewModel<ContentModel, SourceFilterModel>("SourceViewModel");
             _content.FilteringFunction = FilterModel;
+			_content.Bind(x => x.Filter, _content.Refresh);
         }
 
         public void Init(NavObject navObject)
@@ -87,9 +88,9 @@ namespace CodeHub.Core.ViewModels.Source
             return _content.Filter.Ascending ? ret : ret.Reverse();
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceDataRefresh);
+			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
         }
 
         public class NavObject

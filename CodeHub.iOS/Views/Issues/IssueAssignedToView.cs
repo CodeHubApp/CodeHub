@@ -20,7 +20,12 @@ namespace CodeHub.iOS.Views.Issues
 			BindCollection(vm.Users, x =>
 			{
 				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-				el.Tapped += () => vm.SelectedUser = x;
+					el.Tapped += () => {
+						if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
+							vm.SelectedUser = null;
+						else
+							vm.SelectedUser = x;
+					};
 				if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UITableViewCellAccessory.Checkmark;
 				else

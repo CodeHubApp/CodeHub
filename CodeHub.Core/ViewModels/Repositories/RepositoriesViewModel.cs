@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.Utils;
@@ -35,9 +34,9 @@ namespace CodeHub.Core.ViewModels.Repositories
         protected RepositoriesViewModel(string filterKey = "RepositoryController")
         {
             _repositories = new FilterableCollectionViewModel<RepositoryModel, RepositoriesFilterModel>(filterKey);
-            //_repositories.FilteringFunction = x => _repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
-            //_repositories.GroupingFunction = CreateGroupedItems;
-            _repositories.Bind(x => x.Filter, () => Repositories.Refresh());
+			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
+            _repositories.GroupingFunction = CreateGroupedItems;
+			_repositories.Bind(x => x.Filter, Repositories.Refresh);
         }
 
         private IEnumerable<IGrouping<string, RepositoryModel>> CreateGroupedItems(IEnumerable<RepositoryModel> model)

@@ -157,6 +157,11 @@
     <Compile Include="Views\Accounts\LoginView.cs" />
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
+    <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
+    <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
+    <Compile Include="Views\Filters\MyIssuesFilterViewController.cs" />
+    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
+    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -222,8 +227,6 @@
     <Content Include="Images\branch.png" />
     <Content Include="Images\Buttons\black_button%402x.png" />
     <Content Include="Images\Buttons\black_button.png" />
-    <Content Include="Images\Buttons\filter%402x.png" />
-    <Content Include="Images\Buttons\filter.png" />
     <Content Include="Images\Buttons\fork%402x.png" />
     <Content Include="Images\Buttons\fork.png" />
     <Content Include="Images\Buttons\grey_button%402x.png" />
@@ -238,7 +241,6 @@
     <Content Include="Images\comments.png" />
     <Content Include="Images\commit%402x.png" />
     <Content Include="Images\commit.png" />
-    <Content Include="Images\Controls\warning.png" />
     <Content Include="Images\create%402x.png" />
     <Content Include="Images\create.png" />
     <Content Include="Images\events%402x.png" />
@@ -343,14 +345,14 @@
     <Content Include="WebCell\comments.html" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
     <BundleResource Include="Images\Buttons\back.png" />
-    <BundleResource Include="Images\Buttons\edit.png" />
-    <BundleResource Include="Images\Buttons\edit%402x.png" />
     <BundleResource Include="Images\Buttons\cancel.png" />
     <BundleResource Include="Images\Buttons\cancel%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
     <BundleResource Include="Images\Buttons\check%402x.png" />
+    <BundleResource Include="Images\Buttons\sort.png" />
+    <BundleResource Include="Images\Buttons\sort%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -359,5 +361,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebCell\" />
+    <Folder Include="Views\Filters\" />
   </ItemGroup>
 </Project>
