@@ -329,8 +329,8 @@ namespace CodeHub.Core.ViewModels.Events
 				{
 					foreach (var page in gollumEvent.Pages)
 					{
-
-						eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToWebPage(page.HtmlUrl)));
+						var p = page;
+						eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToWebPage(p.HtmlUrl)));
 						eventBlock.Body.Add(new TextBlock(" - " + page.Action + "\n"));
 					}
 				}
