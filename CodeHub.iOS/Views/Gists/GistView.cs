@@ -72,9 +72,7 @@ namespace CodeHub.iOS.Views.Gists
 					{
 						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
 						var gistController = new EditGistController(data.Data);
-						gistController.Created = (editedGist) => {
-							ViewModel.Gist = editedGist;
-						};
+						gistController.Created = editedGist => ViewModel.Gist = editedGist;
 						var navController = new UINavigationController(gistController);
 						PresentViewController(navController, true, null);
 
