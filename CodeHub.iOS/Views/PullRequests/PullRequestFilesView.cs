@@ -26,33 +26,28 @@ namespace CodeHub.iOS.Views.PullRequests
                 return el;
             });
         }
-//
-//        public override Source CreateSizingSource(bool unevenRows)
-//        {
-//            return new CustomSource(this);
-//        }
-//    
-//        private class CustomSource : Source
-//        {
-//            public CustomSource(PullRequestFilesView parent)
-//                : base(parent)
-//            {
-//            }
-//
-//            public override MonoTouch.UIKit.UIView GetViewForHeader(MonoTouch.UIKit.UITableView tableView, int sectionIdx)
-//            {
-//                var view = base.GetViewForHeader(tableView, sectionIdx);
-//                foreach (var v in view.Subviews)
-//                {
-//                    var label = v as UILabel;
-//                    if (label != null)
-//                    {
-//                        label.LineBreakMode = UILineBreakMode.HeadTruncation;
-//                    }
-//                }
-//                return view;
-//            }
-//        }
+
+		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+        {
+            return new CustomSource(this);
+        }
+    
+		private class CustomSource : BaseDialogViewController.Source
+        {
+            public CustomSource(PullRequestFilesView parent)
+                : base(parent)
+            {
+            }
+
+			public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, int section)
+			{
+				var x = headerView as UITableViewHeaderFooterView;
+				if (x != null)
+				{
+					x.TextLabel.LineBreakMode = UILineBreakMode.HeadTruncation;
+				}
+			}
+        }
     }
 }
 

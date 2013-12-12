@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
+using System.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -76,17 +77,36 @@ namespace CodeHub.iOS.Views.Source
                 detailSection.Add(repo);
             }
 
-			var fileSection = new Section();
-            commitModel.Files.ForEach(x => {
-                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
-                fileSection.Add(sse);
-            });
+			var paths = commitModel.Files.GroupBy(y => {
+				var filename = "/" + y.Filename;
+				return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+			}).OrderBy(y => y.Key);
 
-            if (fileSection.Elements.Count > 0)
-                root.Add(fileSection);
+			foreach (var p in paths)
+			{
+				var fileSection = new Section(p.Key);
+				foreach (var x in p)
+				{
+					var y = x;
+					var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+					var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+					sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
+					fileSection.Add(sse);
+				}
+				root.Add(fileSection);
+			}
+//
+//			var fileSection = new Section();
+//            commitModel.Files.ForEach(x => {
+//                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+//                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+//                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
+//                fileSection.Add(sse);
+//            });
 
+//            if (fileSection.Elements.Count > 0)
+//                root.Add(fileSection);
+//
 
 			var commentSection = new Section();
             foreach (var comment in ViewModel.Comments)
