@@ -122,6 +122,7 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
+    <Compile Include="ViewModels\CommitsViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

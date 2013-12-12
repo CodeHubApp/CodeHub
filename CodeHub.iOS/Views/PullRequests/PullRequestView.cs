@@ -74,7 +74,7 @@ namespace CodeHub.iOS.Views.PullRequests
             root.Add(secDetails);
 
             root.Add(new Section {
-				//new StyledStringElement("Commits", () => NavigationController.PushViewController(new ChangesetsViewController(ViewModel.User, ViewModel.Repo, ViewModel.PullRequestId), true), Images.Commit),
+				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
 				new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
             });
 
@@ -84,7 +84,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 {
                     try
                     {
-						await this.DoWorkAsync("Merging...", () => ViewModel.Merge());
+						await this.DoWorkAsync("Merging...", ViewModel.Merge);
                     }
                     catch (Exception e)
                     {

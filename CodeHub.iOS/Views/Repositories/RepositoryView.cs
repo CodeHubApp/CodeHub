@@ -204,7 +204,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             var sec3 = new Section
             {
-                new StyledStringElement("Changes".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
+				new StyledStringElement("Commits".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
 				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
 				new StyledStringElement("Source".t(), () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
             };

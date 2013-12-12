@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		public ICommand GoToCommitsCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<ChangesetsViewModel>()); }
+			get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repo, PullRequestId = PullRequestId })); }
 		}
 
 		public ICommand GoToFilesCommand
