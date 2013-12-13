@@ -18,6 +18,7 @@ namespace CodeHub.Core.ViewModels
         private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
 		private ICommand _readAllCommand;
 		private ICommand _readCommand;
+		private ICommand _readReposCommand;
 		private int _shownIndex;
 		private bool _isMarking;
 
@@ -48,12 +49,17 @@ namespace CodeHub.Core.ViewModels
 
         public ICommand ReadCommand
         {
-            get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
+            get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(Read));}
         }
+
+		public ICommand ReadRepositoriesCommand
+		{
+			get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(MarkRepoAsRead)); }
+		}
 
         public ICommand ReadAllCommand
         {
-			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking)); }
+			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(MarkAllAsRead, () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
         }
 
         public ICommand GoToNotificationCommand
@@ -131,6 +137,36 @@ namespace CodeHub.Core.ViewModels
                 UpdateAccountNotificationsCount();
             }
         }
+
+		private async void MarkRepoAsRead(string repo)
+		{
+			var items = Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			try
+			{
+				IsMarking = true;
+
+				foreach (var notification in items)
+				{
+					try
+					{
+						await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[notification.Id].MarkAsRead());
+						notification.Unread = false;
+					}
+					catch
+					{
+						//Ignore?
+					}
+				}
+
+				Notifications.Items.RemoveRange(items);
+				UpdateAccountNotificationsCount();
+			}
+			finally
+			{
+				IsMarking = false;
+			}
+		}
 
 		private async void MarkAllAsRead()
 		{

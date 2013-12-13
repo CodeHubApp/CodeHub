@@ -64,6 +64,41 @@ namespace CodeHub.iOS.Views
 			set.Apply();
         }
 
+		protected override Section CreateSection(string text)
+		{
+			return new Section(new MarkReadSection(text, this, _viewSegment.SelectedSegment != 2));
+		}
+
+		private class MarkReadSection : UITableViewHeaderFooterView
+		{
+			readonly UIButton _button;
+			readonly NotificationsView _parent;
+			public MarkReadSection(string text, NotificationsView parent, bool button)
+				: base(new System.Drawing.RectangleF(0, 0, 320, 28f))
+			{
+				_parent = parent;
+				TextLabel.Text = text;
+
+				if (button)
+				{
+					_button = new UIButton(UIButtonType.RoundedRect);
+					_button.SetImage(Theme.CurrentTheme.CheckButton, UIControlState.Normal);
+					//_button.Frame = new System.Drawing.RectangleF(320f - 42f, 1f, 26f, 26f);
+					_button.TintColor = UIColor.FromRGB(50, 50, 50);
+					_button.TouchUpInside += (sender, e) => ((NotificationsViewModel)_parent.ViewModel).ReadRepositoriesCommand.Execute(text);
+					Add(_button);
+				}
+			}
+
+			public override void LayoutSubviews()
+			{
+				base.LayoutSubviews();
+
+				if (_button != null)
+					_button.Frame = new System.Drawing.RectangleF(Frame.Width - 42f, 1, 26, 26);
+			}
+		}
+
         public override void ViewWillAppear(bool animated)
         {
             if (ToolbarItems != null)
