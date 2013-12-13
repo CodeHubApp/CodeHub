@@ -68,14 +68,17 @@ namespace CodeHub.iOS.Views.Issues
 			var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
 			var data = s.Serialize(comments);
 			InvokeOnMainThread(() => {
-				if (_commentsElement.GetImmediateRootElement() == null)
-					Root.Insert(Root.Count - 1, new Section() { _commentsElement });
 				_commentsElement.Value = data;
+				if (_commentsElement.GetImmediateRootElement() == null)
+					RenderIssue();
 			});
         }
 
         public void RenderIssue()
         {
+			if (ViewModel.Issue == null)
+				return;
+
             NavigationItem.RightBarButtonItem.Enabled = true;
 
 			var root = new RootElement(Title);
@@ -112,7 +115,7 @@ namespace CodeHub.iOS.Views.Issues
 			secDetails.Add(responsible);
 			root.Add(secDetails);
 
-			if (ViewModel.Issue.Comments > 0)
+			if (ViewModel.Comments.Any())
 			{
 				root.Add(new Section { _commentsElement });
 			}
