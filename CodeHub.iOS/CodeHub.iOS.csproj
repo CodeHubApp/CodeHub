@@ -333,10 +333,8 @@
     <BundleResource Include="Resources\Icon-Small%402x.png" />
     <BundleResource Include="Resources\Icon.png" />
     <BundleResource Include="Resources\Icon%402x.png" />
-    <BundleResource Include="Resources\Issue.html" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
-    <BundleResource Include="Resources\jquery.min.js" />
     <BundleResource Include="Images\Web\back.png" />
     <BundleResource Include="Images\Web\back%402x.png" />
     <BundleResource Include="Images\Web\forward.png" />
@@ -351,8 +349,8 @@
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
     <BundleResource Include="Images\Buttons\check%402x.png" />
-    <BundleResource Include="Images\Buttons\sort.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
+    <BundleResource Include="Images\Buttons\sort.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
