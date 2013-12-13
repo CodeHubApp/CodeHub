@@ -77,7 +77,6 @@
   <ItemGroup>
     <Compile Include="Images\Images.cs" />
     <Compile Include="LinkerPleaseInclude.cs" />
-    <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
@@ -351,6 +350,11 @@
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
+    <BundleResource Include="Resources\Icon-60%402x.png" />
+    <BundleResource Include="Resources\Icon-76.png" />
+    <BundleResource Include="Resources\Icon-76%402x.png" />
+    <BundleResource Include="Resources\Icon-Small-40.png" />
+    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

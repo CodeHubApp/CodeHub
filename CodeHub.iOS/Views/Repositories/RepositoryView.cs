@@ -213,7 +213,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {
-                var web = new StyledStringElement("Website".t(), () => UIApplication.SharedApplication.OpenUrl(NSUrl.FromString(model.Homepage)), Images.Webpage);
+				var web = new StyledStringElement("Website".t(), () => ViewModel.GoToUrlCommand.Execute(model.Homepage));
                 root.Add(new Section { web });
             }
 

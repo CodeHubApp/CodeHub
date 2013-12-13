@@ -34,6 +34,11 @@
 		<string>Icon@2x</string>
 		<string>Icon-72</string>
 		<string>Icon-72@2x</string>
+		<string>Icon-60@2x</string>
+		<string>Icon-76</string>
+		<string>Icon-76@2x</string>
+		<string>Icon-Small-40</string>
+		<string>Icon-Small-40@2x</string>
 	</array>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
@@ -47,5 +52,7 @@
 	</dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 </dict>
 </plist>

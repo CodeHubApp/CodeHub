@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Linq;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -20,6 +21,18 @@ namespace CodeHub.Core.ViewModels.App
 		public ICommand DeleteAllCacheCommand
 		{
 			get { return new MvxCommand(DeleteCache); }
+		}
+
+		public bool AnalyticsEnabled
+		{
+			get
+			{
+				return GetService<IAnalyticsService>().Enabled;
+			}
+			set
+			{
+				GetService<IAnalyticsService>().Enabled = value;
+			}
 		}
 
 		private void DeleteCache()

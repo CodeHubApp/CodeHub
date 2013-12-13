@@ -27,6 +27,17 @@ namespace CodeHub.iOS
         /// </summary>
         private UIWindow window;
 
+		/// <summary>
+		/// This is the main entry point of the application.
+		/// </summary>
+		/// <param name="args">The args.</param>
+		public static void Main(string[] args)
+		{
+			// if you want to use a different Application Delegate class from "AppDelegate"
+			// you can specify it here.
+			UIApplication.Main(args, null, "AppDelegate");
+		}
+
 		private class UserVoiceStyleSheet : UserVoice.UVStyleSheet
 		{
 			public override UIColor NavigationBarTextColor
@@ -85,6 +96,8 @@ namespace CodeHub.iOS
 
             var setup = new Setup(this, presenter);
             setup.Initialize();
+
+			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-44040302-1", "CodeHub");
 
             var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();

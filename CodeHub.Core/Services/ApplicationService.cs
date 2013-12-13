@@ -47,7 +47,7 @@ namespace CodeHub.Core.Services
 			var totalCacheSize = cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
 			var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
 
-			if (totalCacheSizeMB > 1)
+			if (totalCacheSizeMB > 64)
 			{
 				System.Console.WriteLine("Flushing cache due to size...");
 				cache.DeleteAll();

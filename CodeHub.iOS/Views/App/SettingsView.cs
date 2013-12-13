@@ -54,12 +54,10 @@ namespace CodeHub.iOS.Views.App
 			};
 			el.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
             root.Add(new Section(string.Empty, "Select the default startup view after login".t()) { el });
-//
-//            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app".t()) {
-//                new TrueFalseElement("Send Anonymous Usage".t(), MonoTouch.Utilities.AnalyticsEnabled, e => { 
-//                    MonoTouch.Utilities.AnalyticsEnabled = e.Value;
-//                })
-//            });
+
+            root.Add(new Section(string.Empty, "If enabled, send anonymous usage statistics to build a better app".t()) {
+				new TrueFalseElement("Send Anonymous Usage".t(), vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value)
+            });
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
 			var cacheSection = new Section(string.Empty, string.Format("{0} MB of cache used".t(), totalCacheSizeMB)); 
