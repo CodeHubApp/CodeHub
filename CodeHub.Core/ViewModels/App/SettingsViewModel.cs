@@ -1,7 +1,7 @@
 ﻿using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
-using CodeFramework.Core.ViewModels.App;
 using Cirrious.MvvmCross.ViewModels;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -15,6 +15,30 @@ namespace CodeHub.Core.ViewModels.App
 		public ICommand GoToDefaultStartupViewCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
+		}
+
+		public ICommand DeleteAllCacheCommand
+		{
+			get { return new MvxCommand(DeleteCache); }
+		}
+
+		private void DeleteCache()
+		{
+			if (this.GetApplication().Account.Cache != null)
+				this.GetApplication().Account.Cache.DeleteAll();
+		}
+
+		public float CacheSize
+		{
+			get
+			{
+				if (this.GetApplication().Account.Cache == null)
+					return 0f;
+
+				var totalCacheSize = this.GetApplication().Account.Cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
+				var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
+				return totalCacheSizeMB;
+			}
 		}
     }
 }

@@ -61,19 +61,15 @@ namespace CodeHub.iOS.Views.App
 //                })
 //            });
 
-//            if (Application.ClientCache != null)
-//            {
-//                var totalCacheSize = Application.ClientCache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-//                var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f).ToString("0.##");
-//                var cacheSection = new Section(string.Empty, string.Format("{0} MB of cache".t(), totalCacheSizeMB)); 
-//                cacheSection.Add(new StyledStringElement("Delete Cache".t(), () =>
-//                { 
-//                    Application.ClientCache.DeleteAll();
-//                    cacheSection.Footer = string.Format("{0} MB of cache".t(), 0);
-//                    ReloadData();
-//                }));
-//                root.Add(cacheSection);
-//            }
+			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
+			var cacheSection = new Section(string.Empty, string.Format("{0} MB of cache used".t(), totalCacheSizeMB)); 
+            cacheSection.Add(new StyledStringElement("Delete Cache".t(), () =>
+            { 
+				vm.DeleteAllCacheCommand.Execute(null);
+				cacheSection.Footer = string.Format("{0} MB of cache used".t(), 0);
+                ReloadData();
+            }));
+            root.Add(cacheSection);
 
 			//Assign the root
 			Root = root;
