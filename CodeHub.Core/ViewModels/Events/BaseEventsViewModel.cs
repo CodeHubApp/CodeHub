@@ -158,14 +158,6 @@ namespace CodeHub.Core.ViewModels.Events
             });
         }
 
-		private void GoToWebPage(string url)
-		{
-			ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject
-			{
-				Url = url
-			});
-		}
-
         private EventBlock CreateEventTextBlocks(EventModel eventModel)
         {
             var eventBlock = new EventBlock();
@@ -330,7 +322,7 @@ namespace CodeHub.Core.ViewModels.Events
 					foreach (var page in gollumEvent.Pages)
 					{
 						var p = page;
-						eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToWebPage(p.HtmlUrl)));
+						eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToUrlCommand.Execute(p.HtmlUrl)));
 						eventBlock.Body.Add(new TextBlock(" - " + page.Action + "\n"));
 					}
 				}
