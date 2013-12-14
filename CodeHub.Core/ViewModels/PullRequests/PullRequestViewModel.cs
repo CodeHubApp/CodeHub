@@ -74,12 +74,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
 			var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
 			var commentsRequest = this.GetApplication().Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
 
-            var t1 = Task.Run(() => this.RequestModel(pullRequest, forceDataRefresh, response => PullRequest = response.Data));
+			var t1 = this.RequestModel(pullRequest, forceDataRefresh, response => PullRequest = response.Data);
 
-            FireAndForgetTask.Start(() => this.RequestModel(commentsRequest, forceDataRefresh, response => {
+            this.RequestModel(commentsRequest, forceDataRefresh, response => {
+				this.CreateMore(response, m => Comments.MoreItems = m, Comments.Items.AddRange);
                 Comments.Items.Reset(response.Data);
-                this.CreateMore(response, m => Comments.MoreItems = m, d => Comments.Items.AddRange(d));
-            }));
+			}).FireAndForget();
 
             return t1;
         }
@@ -97,7 +97,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 throw new Exception(response.Data.Message);
 
 			var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repo].PullRequests[PullRequestId].Get();
-            await Task.Run(() => this.RequestModel(pullRequest, true, r => PullRequest = r.Data));
+            await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
         }
 
         public ICommand MergeCommand

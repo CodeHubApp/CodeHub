@@ -102,8 +102,8 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data));
-			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data));
+			this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data).FireAndForget();
+			return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data);
         }
 
         public class NavObject

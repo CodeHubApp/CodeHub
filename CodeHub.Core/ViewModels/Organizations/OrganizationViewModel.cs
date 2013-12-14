@@ -65,9 +65,9 @@ namespace CodeHub.Core.ViewModels.Organizations
             get { return new MvxCommand(() => ShowViewModel<OrganizationRepositoriesViewModel>(new OrganizationRepositoriesViewModel.NavObject { Name = Name })); }
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceDataRefresh, response => Organization = response.Data));
+			return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceCacheInvalidation, response => Organization = response.Data);
         }
 
         public class NavObject

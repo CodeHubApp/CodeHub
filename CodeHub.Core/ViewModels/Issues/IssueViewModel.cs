@@ -83,12 +83,12 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data));
+			var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data);
 
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation, response => {
+			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation, response => {
                 Comments.Items.Reset(response.Data);
 				this.CreateMore(response, m => Comments.MoreItems = m, Comments.Items.AddRange);
-            }));
+			}).FireAndForget();
 
             return t1;
         }

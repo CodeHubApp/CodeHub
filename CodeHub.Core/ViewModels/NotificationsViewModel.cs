@@ -114,10 +114,10 @@ namespace CodeHub.Core.ViewModels
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return Task.Run(() => this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
+			return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
                 Notifications.Items.Reset(response.Data);
                 UpdateAccountNotificationsCount();
-            }));
+            });
         }
 
 		private async void Read(NotificationModel model)

@@ -81,10 +81,10 @@ namespace CodeHub.Core.ViewModels
             ShowRepository = navObject.ShowRepository;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-            var t1 = Task.Run(() => this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceDataRefresh, response => Changeset = response.Data));
-            FireAndForgetTask.Start(() => Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceDataRefresh));
+            var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceCacheInvalidation, response => Changeset = response.Data);
+			Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
             return t1;
         }
 

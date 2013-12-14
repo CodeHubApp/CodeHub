@@ -75,19 +75,20 @@ namespace CodeHub.Core.ViewModels.Source
 			if (SelectedFilter == 0)
 			{
 				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches();
-				return Task.Run(() => this.RequestModel(request, forceCacheInvalidation, response =>
+				return this.RequestModel(request, forceCacheInvalidation, response =>
 				{
-					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
 					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-				}));
+					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
+				});
 			}
 			else
 			{
 				var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags();
-				return Task.Run(() => this.RequestModel(request, forceCacheInvalidation, response => {
-					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
+				return this.RequestModel(request, forceCacheInvalidation, response => 
+				{
 					this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-				}));
+					Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
+				});
 			}
 		}
 

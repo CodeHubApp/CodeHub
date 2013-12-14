@@ -171,19 +171,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			var t1 = Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceCacheInvalidation, response => Repository = response.Data));
+			var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceCacheInvalidation, response => Repository = response.Data);
 
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
-                    forceCacheInvalidation, response => Readme = response.Data));
+			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
+				forceCacheInvalidation, response => Readme = response.Data).FireAndForget();
 
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
-                    forceCacheInvalidation, response => Branches = response.Data));
+			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
+				forceCacheInvalidation, response => Branches = response.Data).FireAndForget();
 
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-                    forceCacheInvalidation, response => IsWatched = response.Data));
+			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
+				forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
          
-			FireAndForgetTask.Start(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-                    forceCacheInvalidation, response => IsStarred = response.Data));
+			this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
+				forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
 
             return t1;
         }
