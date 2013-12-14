@@ -91,7 +91,7 @@ namespace CodeHub.Core.ViewModels.User
 			}
 			catch (System.Exception e)
 			{
-				ReportError("Unable to toggle following", e);
+				ReportError(e);
 			}
 		}
   

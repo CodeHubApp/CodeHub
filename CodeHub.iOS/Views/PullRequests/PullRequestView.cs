@@ -35,9 +35,9 @@ namespace CodeHub.iOS.Views.PullRequests
             ViewModel.BindCollection(x => x.Comments, e => Render());
         }
 
-        public override void ViewDidAppear(bool animated)
+		public override void ViewWillAppear(bool animated)
         {
-            base.ViewDidAppear(animated);
+			base.ViewWillAppear(animated);
             Title = "Pull Request #".t() + ViewModel.PullRequestId;
         }
 
