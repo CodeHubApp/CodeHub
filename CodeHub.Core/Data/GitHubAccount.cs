@@ -10,6 +10,12 @@ namespace CodeHub.Core.Data
         /// </summary>
         public string OAuth { get; set; }
 
+		/// <summary>
+		/// The password which is only used on Enterprise accounts since oAuth does not work.
+		/// </summary>
+		/// <value>The password.</value>
+		public string Password { get; set; }
+
         /// <summary>
 		/// Gets or sets the domain (API)
         /// </summary>
@@ -21,6 +27,12 @@ namespace CodeHub.Core.Data
 		/// </summary>
 		/// <value>The web domain.</value>
 		public string WebDomain { get; set; }
+
+		/// <summary>
+		/// Gets whether this account is enterprise or not
+		/// </summary>
+		/// <value><c>true</c> if enterprise; otherwise, <c>false</c>.</value>
+		public bool IsEnterprise { get; set; }
 
         /// <summary>
         /// Gets or sets whether orgs should be listed in the menu controller under 'events'

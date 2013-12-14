@@ -30,7 +30,16 @@ namespace CodeHub.Core.ViewModels.Accounts
 
 			if (githubAccount.DontRemember)
 			{
-				ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+				//Hack for now
+				if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
+				{
+					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
+				}
+				else
+				{
+					ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+				}
+
 				return;
 			}
 

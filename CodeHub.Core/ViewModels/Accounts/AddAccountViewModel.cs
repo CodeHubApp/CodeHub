@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
@@ -67,8 +67,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public void Init(NavObject navObject)
         {
-			if (!string.IsNullOrEmpty(navObject.AttemptedAccountName))
-				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountName) as GitHubAccount;
+			if (navObject.AttemptedAccountId >= 0)
+				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
 
             if (_attemptedAccount != null)
             {
@@ -109,9 +109,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             try
             {
                 IsLoggingIn = true;
-                var account = await Task.Run(() => _loginService.Authenticate(apiUrl, Username, Password, TwoFactor));
-                var client = await Task.Run(() => _loginService.LoginAccount(account));
-                _application.ActivateUser(account, client);
+				Console.WriteLine(apiUrl);
+				var loginData = await Task.Run(() => _loginService.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount));
+				var client = await Task.Run(() => _loginService.LoginAccount(loginData.Account));
+				_application.ActivateUser(loginData.Account, client);
             }
             catch (Exception e)
             {
@@ -121,7 +122,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 if (!(e is LoginService.TwoFactorRequiredException))
                 {
                     Password = null;
-                    ReportError("Error attempting to login via new User", e);
+					ReportError(e);
                 }
 
                 exception = e;
@@ -138,7 +139,12 @@ namespace CodeHub.Core.ViewModels.Accounts
         public class NavObject
         {
             public bool IsEnterprise { get; set; }
-			public string AttemptedAccountName { get; set; }
+			public int AttemptedAccountId { get; set; }
+
+			public NavObject()
+			{
+				AttemptedAccountId = int.MinValue;
+			}
         }
     }
 }

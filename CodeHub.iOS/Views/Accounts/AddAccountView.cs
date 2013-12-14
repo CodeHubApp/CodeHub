@@ -1,17 +1,21 @@
 using System.Drawing;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using Cirrious.MvvmCross.Touch.Views;
-using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
+using CodeFramework.Core.Messages;
+using Cirrious.CrossCore;
+using Cirrious.MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public partial class AddAccountView : MvxViewController
     {
+		private readonly IHud _hud;
+		private MvxSubscriptionToken _errorToken;
+
         public new AddAccountViewModel ViewModel
         {
             get { return (AddAccountViewModel) base.ViewModel; }
@@ -23,6 +27,7 @@ namespace CodeHub.iOS.Views.Accounts
         {
             Title = "Login".t();
 			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+			_hud = this.CreateHud();
         }
 
         public override void ViewDidLoad()
@@ -35,6 +40,14 @@ namespace CodeHub.iOS.Views.Accounts
             set.Apply();
 
             base.ViewDidLoad();
+
+			ViewModel.Bind(x => x.IsLoggingIn, x =>
+			{
+				if (x)
+					_hud.Show("Logging in...");
+				else
+					_hud.Hide();
+			});
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
             Logo.Image = Images.Logos.GitHub;
@@ -93,13 +106,23 @@ namespace CodeHub.iOS.Views.Accounts
             base.ViewWillAppear(animated);
             _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
             _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
+			_errorToken = Mvx.Resolve<IMvxMessenger>().SubscribeOnMainThread<ErrorMessage>(OnErrorMessage);
         }
+
+		private void OnErrorMessage(ErrorMessage msg)
+		{
+			if (msg.Sender != ViewModel)
+				return;
+			MonoTouch.Utilities.ShowAlert("Error", msg.Error.Message);
+		}
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
             NSNotificationCenter.DefaultCenter.RemoveObserver(_hideNotification);
             NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
+			_errorToken.Dispose();
+			_errorToken = null;
         }
 
         private void OnKeyboardNotification (NSNotification notification)

@@ -36,7 +36,17 @@ namespace CodeHub.Core.ViewModels.App
 			if (account.DontRemember)
 			{
 				ShowViewModel<Accounts.AccountsViewModel>();
-				ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
+
+				//Hack for now
+				if (account.IsEnterprise || !string.IsNullOrEmpty(account.Password))
+				{
+					ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
+				}
+				else
+				{
+					ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
+				}
+
 				return;
 			}
 

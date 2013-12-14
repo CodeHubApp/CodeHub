@@ -14,17 +14,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 		public static readonly string RedirectUri = "http://dillonbuchanan.com/";
 		private readonly ILoginService _loginService;
 
-		private string _username;
-		public string Username
-		{
-			get { return _username; }
-			set
-			{
-				_username = value;
-				RaisePropertyChanged(() => Username);
-			}
-		}
-
 		private bool _isLoggingIn;
 		public bool IsLoggingIn
 		{
@@ -54,14 +43,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 
 		public ICommand GoToOldLoginWaysCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = IsEnterprise, AttemptedAccountName = Username })); }
+			get { return new MvxCommand(() => ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = IsEnterprise })); }
 		}
 
 		public ICommand GoBackCommand
 		{
 			get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
 		}
-
 
 		public LoginViewModel(ILoginService loginService)
 		{
@@ -70,7 +58,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 
 		public void Init(NavObject navObject)
 		{
-			Username = navObject.Username;
 			IsEnterprise = navObject.IsEnterprise;
 			WebDomain = navObject.WebDomain;
 
@@ -79,9 +66,9 @@ namespace CodeHub.Core.ViewModels.Accounts
 				WebDomain = GitHubSharp.Client.AccessTokenUri;
 			}
 
-			if (navObject.Revalidation)
+			if (navObject.AttemptedAccountId >= 0)
 			{
-				AttemptedAccount = this.GetApplication().Accounts.Find(navObject.Username) as GitHubAccount;
+				AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
 
 				//This is a hack to get around the fact that WebDomain will be null for Enterprise users since the last version did not contain the variable
 				if (WebDomain == null && IsEnterprise)
@@ -121,9 +108,9 @@ namespace CodeHub.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-				var client = await _loginService.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl);
-				var account = this.GetApplication().Accounts.Find(client.Username) as GitHubAccount;
-				this.GetApplication().ActivateUser(account, client);
+				var account = AttemptedAccount;
+				var data = await _loginService.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+				this.GetApplication().ActivateUser(data.Account, data.Client);
 			}
 			catch (Exception e)
 			{
@@ -139,8 +126,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 		{
 			public string Username { get; set; }
 			public bool IsEnterprise { get; set; }
-			public bool Revalidation { get; set; }
 			public string WebDomain { get; set; }
+			public int AttemptedAccountId { get; set; }
+
+			public NavObject()
+			{
+				AttemptedAccountId = int.MinValue;
+			}
 
 			public static NavObject CreateDontRemember(GitHubAccount account)
 			{
@@ -148,8 +140,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 				{ 
 					WebDomain = account.WebDomain, 
 					IsEnterprise = !string.Equals(account.Domain, GitHubSharp.Client.DefaultApi), 
-					Revalidation = true, 
-					Username = account.Username 
+					Username = account.Username,
+					AttemptedAccountId = account.Id
 				};
 			}
 		}
