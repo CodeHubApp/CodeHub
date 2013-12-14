@@ -231,6 +231,9 @@
     <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
+    <Reference Include="MTiRate">
+      <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />

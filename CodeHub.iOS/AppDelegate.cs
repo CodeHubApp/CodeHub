@@ -65,12 +65,14 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+			var iRate = MTiRate.iRate.SharedInstance;
+			iRate.AppStoreID = 707173885;
+
 			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 			UINavigationBar.Appearance.TintColor = UIColor.White;
 			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
 			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
 			CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-			
 
 			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
 
@@ -87,7 +89,6 @@ namespace CodeHub.iOS
 			}, UIControlState.Normal);
 
 			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
-
 
             // Setup theme
             Theme.Setup();
