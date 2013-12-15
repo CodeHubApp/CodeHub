@@ -27,11 +27,12 @@ namespace CodeHub.Core.ViewModels.Accounts
 		protected async override void SelectAccount(IAccount account)
         {
             var githubAccount = (GitHubAccount) account;
+			var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
 
 			if (githubAccount.DontRemember)
 			{
 				//Hack for now
-				if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
+				if (isEnterprise)
 				{
 					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
 				}
@@ -49,9 +50,17 @@ namespace CodeHub.Core.ViewModels.Accounts
 				var client = await _loginService.LoginAccount(githubAccount);
 				_applicationService.ActivateUser(githubAccount, client);
 			}
+			catch (GitHubSharp.UnauthorizedException e)
+			{
+				ReportError(e);
+				if (isEnterprise)
+					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = githubAccount.Id });
+				else
+					ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+			}
 			catch (Exception e)
 			{
-				Error = e;
+				ReportError(e);
 			}
 			finally
 			{

@@ -33,12 +33,13 @@ namespace CodeHub.Core.ViewModels.App
 				return;
 			}
 
+			var isEnterprise = account.IsEnterprise || !string.IsNullOrEmpty(account.Password);
 			if (account.DontRemember)
 			{
 				ShowViewModel<Accounts.AccountsViewModel>();
 
 				//Hack for now
-				if (account.IsEnterprise || !string.IsNullOrEmpty(account.Password))
+				if (isEnterprise)
 				{
 					ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
 				}
@@ -57,9 +58,19 @@ namespace CodeHub.Core.ViewModels.App
 				var client = await _loginService.LoginAccount(account);
 				_applicationService.ActivateUser(account, client);
 			}
+			catch (GitHubSharp.UnauthorizedException e)
+			{
+				ReportError(e);
+				ShowViewModel<Accounts.AccountsViewModel>();
+				if (isEnterprise)
+					ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
+				else
+					ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
+			}
 			catch (Exception e)
 			{
-				Error = e;
+				ReportError(e);
+				ShowViewModel<Accounts.AccountsViewModel>();
 			}
 			finally
 			{
