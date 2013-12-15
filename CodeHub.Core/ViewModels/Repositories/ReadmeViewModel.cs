@@ -51,16 +51,18 @@ namespace CodeHub.Core.ViewModels.Repositories
         private string CreateHtmlFile(string data)
         {
             //Generate the markup
-            var markup = new StringBuilder();
-            markup.Append("<html><head>");
-            markup.Append("<meta name=\"viewport\" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0\"/>");
-            markup.Append("<title>Readme");
-            markup.Append("</title></head><body>");
-            markup.Append(data);
-            markup.Append("</body></html>");
+			var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
 
             var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-            System.IO.File.WriteAllText(tmp, markup.ToString(), System.Text.Encoding.UTF8);
+			using (var fs = new System.IO.StreamWriter(new System.IO.FileStream(tmp, System.IO.FileMode.Create)))
+			{
+				var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
+				fs.Write(markup.Substring(0, dataIndex));
+				fs.Write(data);
+				fs.Write(markup.Substring(dataIndex + 8));
+				fs.Flush();
+				fs.Close();
+			}
             return tmp;
         }
 

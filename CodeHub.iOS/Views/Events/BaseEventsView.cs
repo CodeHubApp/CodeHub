@@ -111,6 +111,8 @@ namespace CodeHub.iOS.Views.Events
                 return Images.Team;
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
                 return Images.Eye;
+			else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
+				return Images.Public;
             return Images.Priority;
         }
     }

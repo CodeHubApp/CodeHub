@@ -521,6 +521,14 @@ namespace CodeHub.Core.ViewModels.Events
                 return eventBlock;
             }
 
+			var releaseEvent = eventModel.PayloadObject as EventModel.ReleaseEvent;
+			if (releaseEvent != null)
+			{
+				eventBlock.Tapped = () => GoToUrlCommand.Execute(releaseEvent.Release.HtmlUrl);
+				eventBlock.Header.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
+				return eventBlock;
+			}
+
             return eventBlock;
         }
 

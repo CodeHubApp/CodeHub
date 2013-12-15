@@ -175,10 +175,6 @@
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core.iOS</Name>
@@ -198,6 +194,10 @@
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
       <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
       <Name>CodeHub.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

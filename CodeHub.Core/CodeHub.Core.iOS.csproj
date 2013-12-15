@@ -41,7 +41,6 @@
     <Compile Include="Filters\NotificationsFilterModel.cs" />
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Filters\SourceFilterModel.cs" />
-    <Compile Include="Markdown\MarkdownParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\GitHubAccountsService.cs" />
@@ -146,13 +145,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
@@ -161,5 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Markdown\marked.js" />
+    <Content Include="Markdown\markdown.html" />
   </ItemGroup>
 </Project>
