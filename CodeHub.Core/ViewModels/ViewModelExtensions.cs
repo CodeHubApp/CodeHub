@@ -6,12 +6,13 @@ using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-		public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
+        public static Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
             if (forceDataRefresh)
             {
@@ -19,32 +20,36 @@ namespace CodeHub.Core.ViewModels
                 request.RequestFromCache = false;
             }
 
-			var response = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(request);
-            update(response);
+            var application = Mvx.Resolve<IApplicationService>();
+            var uiThrad = Mvx.Resolve<IUIThreadService>();
 
-            if (response.WasCached)
+            return Task.Run(() =>
             {
-				Task.Run(async () => {
+                var result = application.Client.Execute(request);
+                uiThrad.MarshalOnUIThread(() => update(result));
+
+                if (result.WasCached)
+                {
                     try
                     {
                         request.RequestFromCache = false;
-						var r = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(request);
-						update(r);
+                        var r = application.Client.Execute(request);
+                        uiThrad.MarshalOnUIThread(() => update(r));
                     }
                     catch (NotModifiedException)
                     {
                         Console.WriteLine("Not modified: " + request.Url);
                     }
-					catch (Exception)
+                    catch (Exception)
                     {
                         Console.WriteLine("SHIT! " + request.Url);
                     }
-                });
-            }
+                }
+            });
         }
 
         public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
-										 Action<Task> assignMore, Action<T> newDataAction) where T : new()
+                                               Action<Task> assignMore, Action<T> newDataAction) where T : new()
         {
             if (response.More == null)
             {
@@ -52,21 +57,22 @@ namespace CodeHub.Core.ViewModels
                 return;
             }
 
-			var task = new Task(async () => 
-				{
-                     response.More.UseCache = false;
-					 var moreResponse = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
-                     viewModel.CreateMore(moreResponse, assignMore, newDataAction);
-                     newDataAction(moreResponse.Data);
-            	});
+            var task = new Task(async () =>
+            {
+                response.More.UseCache = false;
+                var moreResponse = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
+                viewModel.CreateMore(moreResponse, assignMore, newDataAction);
+                newDataAction(moreResponse.Data);
+            });
 
-			assignMore(task);
+            assignMore(task);
         }
 
         public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
         {
-			return viewModel.RequestModel(request, forceDataRefresh, response => {
-				viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
+            return viewModel.RequestModel(request, forceDataRefresh, response =>
+            {
+                viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
                 viewModel.Items.Reset(response.Data);
             });
         }
