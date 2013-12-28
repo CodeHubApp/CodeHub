@@ -4,6 +4,7 @@ using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Repositories;
+using System;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -40,13 +41,20 @@ namespace CodeHub.Core.ViewModels
 
         private async void Search()
         {
-            await Task.Run(() =>
-            {
-				var request = this.GetApplication().Client.Repositories.SearchRepositories(new string[] { SearchText }, new string[] { });
-                request.UseCache = false;
-				var response = this.GetApplication().Client.Execute(request);
-				Repositories.Items.Reset(response.Data.Items);
-            });
+			try
+			{
+	            await Task.Run(() =>
+	            {
+					var request = this.GetApplication().Client.Repositories.SearchRepositories(new [] { SearchText }, new string[] { });
+	                request.UseCache = false;
+					var response = this.GetApplication().Client.Execute(request);
+					Repositories.Items.Reset(response.Data.Items);
+				});
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
         }
     }
 }
