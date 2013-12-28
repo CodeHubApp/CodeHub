@@ -19,7 +19,7 @@ namespace CodeHub.Core.Filters
 			return (SourceFilterModel)this.MemberwiseClone();
         }
 
-        public enum Order : int
+        public enum Order
         { 
             Alphabetical, 
             [EnumDescription("Folders Then Files")]

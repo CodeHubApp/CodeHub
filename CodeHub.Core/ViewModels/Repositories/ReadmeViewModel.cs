@@ -44,7 +44,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 			var wiki = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme());
 			_contentModel = wiki.Data;
 			var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Data.Content));
-			Data = await Task.Run<string>(() => this.GetApplication().Client.Markdown.GetMarkdown(d));
+			Data = await Task.Run(() => this.GetApplication().Client.Markdown.GetMarkdown(d));
 			Path = CreateHtmlFile(Data);
 		}
 		
@@ -54,15 +54,15 @@ namespace CodeHub.Core.ViewModels.Repositories
 			var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
 
             var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-			using (var fs = new System.IO.StreamWriter(new System.IO.FileStream(tmp, System.IO.FileMode.Create)))
-			{
-				var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
-				fs.Write(markup.Substring(0, dataIndex));
-				fs.Write(data);
-				fs.Write(markup.Substring(dataIndex + 8));
-				fs.Flush();
-				fs.Close();
-			}
+            using (var tmpStream = new System.IO.FileStream(tmp, System.IO.FileMode.Create))
+            {
+                var fs = new System.IO.StreamWriter(tmpStream);
+                var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
+                fs.Write(markup.Substring(0, dataIndex));
+                fs.Write(data);
+                fs.Write(markup.Substring(dataIndex + 8));
+                fs.Flush();
+            }
             return tmp;
         }
 

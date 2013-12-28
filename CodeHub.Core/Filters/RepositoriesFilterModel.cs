@@ -19,7 +19,7 @@ namespace CodeHub.Core.Filters
             return (RepositoriesFilterModel)this.MemberwiseClone();
         }
 
-        public enum Order : int
+        public enum Order
         { 
             Name, 
             Owner,

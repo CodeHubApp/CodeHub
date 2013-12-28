@@ -47,7 +47,7 @@ namespace CodeHub.Core.Filters
                 return true;
             if (obj.GetType() != typeof(MyIssuesFilterModel))
                 return false;
-            MyIssuesFilterModel other = (MyIssuesFilterModel)obj;
+            var other = (MyIssuesFilterModel)obj;
             return Ascending == other.Ascending && Labels == other.Labels && FilterType == other.FilterType && Open == other.Open && Since == other.Since && SortType == other.SortType;
         }
 
@@ -59,7 +59,7 @@ namespace CodeHub.Core.Filters
             }
         }
         
-		public enum Filter : int
+		public enum Filter
 		{
             [EnumDescription("Assigned To You")]
 			Assigned,

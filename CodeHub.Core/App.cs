@@ -1,5 +1,4 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.Core

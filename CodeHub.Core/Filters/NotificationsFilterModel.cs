@@ -22,7 +22,7 @@ namespace CodeHub.Core.Filters
                 return true;
             if (obj.GetType() != typeof(NotificationsFilterModel))
                 return false;
-            NotificationsFilterModel other = (NotificationsFilterModel)obj;
+            var other = (NotificationsFilterModel)obj;
             return All == other.All && Participating == other.Participating;
         }
         

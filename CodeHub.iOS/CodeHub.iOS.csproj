@@ -95,6 +95,7 @@
     <Compile Include="Images\Images.cs" />
     <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="Views\Accounts\NewAccountView.cs" />
@@ -382,8 +383,5 @@
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="WebCell\" />
-    <Folder Include="Views\Filters\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

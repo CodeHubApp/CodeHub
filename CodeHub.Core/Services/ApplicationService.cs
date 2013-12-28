@@ -1,10 +1,8 @@
-﻿using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
+﻿using Cirrious.MvvmCross.ViewModels;
 using Cirrious.MvvmCross.Views;
-using CodeFramework.Core;
+using CodeFramework.Core.Data;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp;
 using System.Linq;
@@ -42,10 +40,10 @@ namespace CodeHub.Core.Services
             _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
         }
 
-		private static void CheckCacheSize(CodeFramework.Core.Data.AccountCache cache)
+		private static void CheckCacheSize(AccountCache cache)
 		{
 			var totalCacheSize = cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-			var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
+			var totalCacheSizeMB = (totalCacheSize / 1024f / 1024f);
 
 			if (totalCacheSizeMB > 64)
 			{
@@ -56,8 +54,8 @@ namespace CodeHub.Core.Services
 
 		private class GitHubCache : ICache
 		{
-			private readonly CodeFramework.Core.Data.AccountCache _account;
-			public GitHubCache(GitHubAccount account)
+			private readonly AccountCache _account;
+			public GitHubCache(Account account)
 			{
 				_account = account.Cache;
 			}

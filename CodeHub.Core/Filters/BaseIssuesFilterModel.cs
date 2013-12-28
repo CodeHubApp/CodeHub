@@ -8,13 +8,13 @@ namespace CodeHub.Core.Filters
 
 		public Sort SortType { get; set; }
 
-        public BaseIssuesFilterModel()
+	    protected BaseIssuesFilterModel()
         {
 			SortType = Sort.None;
 			Ascending = false;
         }
 
-		public enum Sort : int
+		public enum Sort
 		{
 			None,
 			Created,
