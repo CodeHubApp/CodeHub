@@ -158,17 +158,15 @@ namespace CodeHub.Core.ViewModels.App
 
         private async void Load()
         {
-			var t1 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.GetAll()).ContinueWith(x =>
+			this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.GetAll()).ContinueWith(x =>
 			{
 				Notifications = x.Result.Data.Count;
-			}, TaskContinuationOptions.OnlyOnRanToCompletion);
+			}, TaskContinuationOptions.OnlyOnRanToCompletion).FireAndForget();
 
-			var t2 = this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
+			this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
 			{
 				Organizations = x.Result.Data.Select(y => y.Login).ToList();
-			},TaskContinuationOptions.OnlyOnRanToCompletion);
-
-			await Task.WhenAll(t1, t2);
+			}, TaskContinuationOptions.OnlyOnRanToCompletion).FireAndForget();
         }
     }
 }

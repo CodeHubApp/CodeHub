@@ -30,23 +30,23 @@ namespace CodeHub.Core.ViewModels
 
                 if (result.WasCached)
                 {
-                    try
+                    request.RequestFromCache = false;
+
+                    Task.Run(() =>
                     {
-                        request.RequestFromCache = false;
-                        var r = application.Client.Execute(request);
-                        uiThrad.MarshalOnUIThread(() => update(r));
-                    }
-                    catch (NotModifiedException)
-                    {
-                        Console.WriteLine("Not modified: " + request.Url);
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("SHIT! " + request.Url);
-                    }
+                        try
+                        {
+                            var r = application.Client.Execute(request);
+                            uiThrad.MarshalOnUIThread(() => update(r));
+                        }
+                        catch (NotModifiedException)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Not modified: " + request.Url);
+                        }
+                    }).FireAndForget();
                 }
             });
-        }
+		}
 
         public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
                                                Action<Task> assignMore, Action<T> newDataAction) where T : new()

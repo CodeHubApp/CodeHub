@@ -31,12 +31,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
 		public ICommand GoToGitHubCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _contentModel.HtmlUrl }), () => _contentModel != null); }
+			get { return new MvxCommand(() => GoToUrlCommand.Execute(_contentModel.HtmlUrl), () => _contentModel != null); }
 		}
 
 		public ICommand GoToLinkCommand
 		{
-			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+			get { return GoToUrlCommand; }
 		}
 
 		protected override async Task Load(bool forceCacheInvalidation)

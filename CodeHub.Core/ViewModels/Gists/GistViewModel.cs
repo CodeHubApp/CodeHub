@@ -67,7 +67,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
 		public ICommand GoToHtmlUrlCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _gist.HtmlUrl }), () => _gist != null); }
+			get { return new MvxCommand(() => GoToUrlCommand.Execute(_gist.HtmlUrl), () => _gist != null); }
 		}
 
 		public ICommand ForkCommand

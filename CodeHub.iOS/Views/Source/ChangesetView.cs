@@ -7,6 +7,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
 using System.Linq;
+using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -168,28 +169,35 @@ namespace CodeHub.iOS.Views.Source
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
-				// Pin to menu
-				if (e.ButtonIndex == addComment)
+			sheet.Clicked += (s, e) => 
+			{
+				try
 				{
-					AddCommentTapped();
+					// Pin to menu
+					if (e.ButtonIndex == addComment)
+					{
+						AddCommentTapped();
+					}
+					else if (e.ButtonIndex == copySha)
+					{
+						UIPasteboard.General.String = ViewModel.Changeset.Sha;
+					}
+					else if (e.ButtonIndex == shareButton)
+					{
+						var item = new NSUrl(ViewModel.Changeset.Url);
+						var activityItems = new MonoTouch.Foundation.NSObject[] { item };
+						UIActivity[] applicationActivities = null;
+						var activityController = new UIActivityViewController (activityItems, applicationActivities);
+						PresentViewController (activityController, true, null);
+					}
+	//				else if (e.ButtonIndex == showButton)
+	//				{
+	//					ViewModel.GoToHtmlUrlCommand.Execute(null);
+	//				}
 				}
-				else if (e.ButtonIndex == copySha)
+				catch (Exception ex)
 				{
-					UIPasteboard.General.String = ViewModel.Changeset.Sha;
 				}
-				else if (e.ButtonIndex == shareButton)
-				{
-					var item = UIActivity.FromObject (ViewModel.Changeset.Url);
-					var activityItems = new MonoTouch.Foundation.NSObject[] { item };
-					UIActivity[] applicationActivities = null;
-					var activityController = new UIActivityViewController (activityItems, applicationActivities);
-					PresentViewController (activityController, true, null);
-				}
-//				else if (e.ButtonIndex == showButton)
-//				{
-//					ViewModel.GoToHtmlUrlCommand.Execute(null);
-//				}
 			};
 
 			sheet.ShowInView(this.View);

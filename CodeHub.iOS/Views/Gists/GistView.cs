@@ -115,19 +115,26 @@ namespace CodeHub.iOS.Views.Gists
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
-                if (e.ButtonIndex == shareButton)
-                {
-                    var item = UIActivity.FromObject (ViewModel.Gist.HtmlUrl);
-                    var activityItems = new NSObject[] { item };
-                    UIActivity[] applicationActivities = null;
-                    var activityController = new UIActivityViewController (activityItems, applicationActivities);
-                    PresentViewController (activityController, true, null);
-                }
-                else if (e.ButtonIndex == showButton)
+            sheet.Clicked += (s, e) => 
+			{
+				try
 				{
-					ViewModel.GoToHtmlUrlCommand.Execute(null);
-                }
+	                if (e.ButtonIndex == shareButton)
+	                {
+						var item = new NSUrl(ViewModel.Gist.HtmlUrl);
+	                    var activityItems = new NSObject[] { item };
+	                    UIActivity[] applicationActivities = null;
+	                    var activityController = new UIActivityViewController (activityItems, applicationActivities);
+	                    PresentViewController (activityController, true, null);
+	                }
+	                else if (e.ButtonIndex == showButton)
+					{
+						ViewModel.GoToHtmlUrlCommand.Execute(null);
+	                }
+				}
+				catch (Exception ex)
+				{
+				}
             };
 
             sheet.ShowFrom(_shareButton, true);

@@ -16,10 +16,17 @@ namespace CodeHub.iOS.Views.Source
 			set { base.ViewModel = value; }
 		}
 
-		public FileSourceView()
+		protected FileSourceView()
 			: base(false)
 		{
+		}
+
+		public override void ViewDidLoad()
+		{
+			base.ViewDidLoad();
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+			NavigationItem.RightBarButtonItem.Enabled = false;
+			ViewModel.Bind(x => x.IsLoading, x => NavigationItem.RightBarButtonItem.Enabled = !x);
 		}
 
 		public override void ViewWillAppear(bool animated)
@@ -39,31 +46,37 @@ namespace CodeHub.iOS.Views.Source
 		private void ShowExtraMenu()
 		{
 			var sheet = MonoTouch.Utilities.GetSheet(Title);
-
-			var openButton = sheet.AddButton("Open In".t());
-			var shareButton = sheet.AddButton("Share".t());
-			var showButton = ViewModel.HtmlUrl != null ? sheet.AddButton("Show in GitHub".t()) : -1;
+			var openButton = !string.IsNullOrEmpty(ViewModel.FilePath) ? sheet.AddButton("Open In".t()) : -1;
+			var shareButton = !string.IsNullOrEmpty(ViewModel.HtmlUrl) ? sheet.AddButton("Share".t()) : -1;
+			var showButton = ViewModel.GoToHtmlUrlCommand.CanExecute(null) ? sheet.AddButton("Show in GitHub".t()) : -1;
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
-				if (e.ButtonIndex == openButton)
+			sheet.Clicked += (s, e) => 
+			{
+				try
 				{
-					var ctrl = new UIDocumentInteractionController();
-					ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
-					ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+					if (e.ButtonIndex == openButton)
+					{
+						var ctrl = new UIDocumentInteractionController();
+						ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
+						ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+					}
+					else if (e.ButtonIndex == shareButton)
+					{
+						var item = new NSUrl(ViewModel.HtmlUrl);
+						var activityItems = new NSObject[] { item };
+						UIActivity[] applicationActivities = null;
+						var activityController = new UIActivityViewController (activityItems, applicationActivities);
+						PresentViewController (activityController, true, null);
+					}
+					else if (e.ButtonIndex == showButton)
+					{
+						ViewModel.GoToHtmlUrlCommand.Execute(null);
+					}
 				}
-				else if (e.ButtonIndex == shareButton)
+				catch (Exception ex)
 				{
-					var item = UIActivity.FromObject (ViewModel.HtmlUrl);
-					var activityItems = new NSObject[] { item };
-					UIActivity[] applicationActivities = null;
-					var activityController = new UIActivityViewController (activityItems, applicationActivities);
-					PresentViewController (activityController, true, null);
-				}
-				else if (e.ButtonIndex == showButton)
-				{
-					ViewModel.GoToHtmlUrlCommand.Execute(null);
 				}
 			};
 
