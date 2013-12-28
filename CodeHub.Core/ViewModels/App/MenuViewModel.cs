@@ -156,9 +156,11 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand(Load);}    
         }
 
-        private async void Load()
+        private void Load()
         {
-			this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.GetAll()).ContinueWith(x =>
+			var notificationRequest = this.GetApplication().Client.Notifications.GetAll();
+			notificationRequest.RequestFromCache = false;
+			this.GetApplication().Client.ExecuteAsync(notificationRequest).ContinueWith(x =>
 			{
 				Notifications = x.Result.Data.Count;
 			}, TaskContinuationOptions.OnlyOnRanToCompletion).FireAndForget();

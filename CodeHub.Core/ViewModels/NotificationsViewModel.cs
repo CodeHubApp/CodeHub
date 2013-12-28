@@ -10,6 +10,7 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -54,12 +55,12 @@ namespace CodeHub.Core.ViewModels
 
 		public ICommand ReadRepositoriesCommand
 		{
-			get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(MarkRepoAsRead)); }
+			get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(x => MarkRepoAsRead(x))); }
 		}
 
         public ICommand ReadAllCommand
         {
-			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(MarkAllAsRead, () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
+			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
         }
 
         public ICommand GoToNotificationCommand
@@ -125,60 +126,45 @@ namespace CodeHub.Core.ViewModels
 			// If its already read, ignore it
 			if (!model.Unread)
 				return;
-
-			var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
-            if (response.Data) 
-            {
-                //We just read it
-                model.Unread = false;
- 
-                //Update the notifications count on the account
-				Notifications.Items.Remove(model);
-                UpdateAccountNotificationsCount();
-            }
+			try
+			{
+				var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
+	            if (response.Data) 
+	            {
+	                //We just read it
+	                model.Unread = false;
+	 
+	                //Update the notifications count on the account
+					Notifications.Items.Remove(model);
+	                UpdateAccountNotificationsCount();
+	            }
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
         }
 
-		private async void MarkRepoAsRead(string repo)
+		private async Task MarkRepoAsRead(string repo)
 		{
 			var items = Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList();
-
-			try
-			{
-				IsMarking = true;
-
-				foreach (var notification in items)
-				{
-					try
-					{
-						await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[notification.Id].MarkAsRead());
-						notification.Unread = false;
-					}
-					catch
-					{
-						//Ignore?
-					}
-				}
-
-				Notifications.Items.RemoveRange(items);
-				UpdateAccountNotificationsCount();
-			}
-			finally
-			{
-				IsMarking = false;
-			}
+			await MarkNotificationsAsRead(items);
 		}
 
-		private async void MarkAllAsRead()
+		private async Task MarkAllAsRead()
 		{
 			// Make sure theres some sort of notification
-			if (!Notifications.Any())
-				return;
+			if (Notifications.Any())
+				await MarkNotificationsAsRead(Notifications);
+        }
 
+		private async Task MarkNotificationsAsRead(IEnumerable<NotificationModel> notifications)
+		{
 			try
 			{
 				IsMarking = true;
 
-				foreach (var notification in Notifications)
+				foreach (var notification in notifications)
 				{
 					try
 					{
@@ -194,11 +180,15 @@ namespace CodeHub.Core.ViewModels
 				Notifications.Items.Clear();
 				UpdateAccountNotificationsCount();
 			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
 			finally
 			{
 				IsMarking = false;
 			}
-        }
+		}
 
         private void UpdateAccountNotificationsCount()
         {

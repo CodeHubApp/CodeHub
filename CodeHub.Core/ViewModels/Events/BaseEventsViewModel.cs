@@ -37,17 +37,29 @@ namespace CodeHub.Core.ViewModels.Events
             ReportRepository = true;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load(bool forceCacheInvalidation)
         {
-            return Task.Run(() => this.RequestModel(CreateRequest(0, 100), forceDataRefresh, response => {
+			return this.RequestModel(CreateRequest(0, 100), forceCacheInvalidation, response => {
 				this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
                 Events.Items.Reset(CreateDataFromLoad(response.Data));
-            }));
+            });
         }
 
-        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(IEnumerable<EventModel> events)
+		private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(List<EventModel> events)
         {
-			return events.Select(x => new Tuple<EventModel, EventBlock>(x, CreateEventTextBlocks(x)));
+			var transformedEvents = new List<Tuple<EventModel, EventBlock>>(events.Count);
+			foreach (var e in events)
+			{
+				try
+				{
+					transformedEvents.Add(new Tuple<EventModel, EventBlock>(e, CreateEventTextBlocks(e)));
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine(ex.ToString());
+				}
+			}
+			return transformedEvents;
         }
         
         protected abstract GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage);
