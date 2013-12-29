@@ -61,6 +61,7 @@ namespace CodeHub.Core.ViewModels.App
 				else
 					await Task.Run(() => notificationService.Deregister());
 				this.GetApplication().Account.PushNotificationsEnabled = enabled;
+				this.GetApplication().Accounts.Update(this.GetApplication().Account);
 				RaisePropertyChanged(() => PushNotificationsEnabled);
 			}
 			catch (Exception e)
