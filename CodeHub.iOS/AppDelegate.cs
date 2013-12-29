@@ -6,7 +6,8 @@
 
 using CodeFramework.iOS;
 using System.Collections.Generic;
-using System;    using Cirrious.CrossCore;
+using System;    
+using Cirrious.CrossCore;
 using Cirrious.MvvmCross.Touch.Platform;
 using Cirrious.MvvmCross.ViewModels;
 using MonoTouch.Foundation;
@@ -118,9 +119,12 @@ namespace CodeHub.iOS
 				}
 			}
 
-
-			const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-			UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+			// Notifications don't work on teh simulator so don't bother
+			if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+			{
+				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+			}
 
             return true;
         }
@@ -144,7 +148,7 @@ namespace CodeHub.iOS
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Handle Notifications issue: " + e.ToString());
+				Console.WriteLine("Handle Notifications issue: " + e);
 			}
 		}
 

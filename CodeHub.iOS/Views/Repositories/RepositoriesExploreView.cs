@@ -1,15 +1,17 @@
 using System;
-using System.Drawing;
 using CodeFramework.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
 using MonoTouch.UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public sealed class RepositoriesExploreView : ViewModelCollectionDrivenViewController
+    public class RepositoriesExploreView : ViewModelCollectionDrivenViewController
     {
+		private Hud _hud;
+
 		public RepositoriesExploreView()
         {
             AutoHideSearch = false;
@@ -21,6 +23,7 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+			_hud = new Hud(View);
 			var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
 
@@ -33,6 +36,14 @@ namespace CodeHub.iOS.Views.Repositories
 				search.ResignFirstResponder();
 				vm.SearchCommand.Execute(null);
 			};
+
+			vm.Bind(x => x.IsSearching, x =>
+			{
+				if (x)
+					_hud.Show("Searching...");
+				else
+					_hud.Hide();
+			});
 
 			BindCollection(vm.Repositories, repo =>
             {

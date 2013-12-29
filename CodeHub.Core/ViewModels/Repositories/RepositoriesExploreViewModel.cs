@@ -29,6 +29,17 @@ namespace CodeHub.Core.ViewModels
             set { _searchText = value; RaisePropertyChanged(() => SearchText); }
         }
 
+		private bool _isSearching;
+		public bool IsSearching
+		{
+			get { return _isSearching; }
+			private set
+			{
+				_isSearching = value;
+				RaisePropertyChanged(() => IsSearching);
+			}
+		}
+
 		public ICommand GoToRepositoryCommand
 		{
 			get { return new MvxCommand<RepositorySearchModel.RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
@@ -36,24 +47,27 @@ namespace CodeHub.Core.ViewModels
 
         public ICommand SearchCommand
         {
-			get { return new MvxCommand(Search, () => !string.IsNullOrEmpty(SearchText)); }
+			get { return new MvxCommand(() => Search(), () => !string.IsNullOrEmpty(SearchText)); }
         }
 
-        private async void Search()
+		private async Task Search()
         {
 			try
 			{
-	            await Task.Run(() =>
-	            {
-					var request = this.GetApplication().Client.Repositories.SearchRepositories(new [] { SearchText }, new string[] { });
-	                request.UseCache = false;
-					var response = this.GetApplication().Client.Execute(request);
-					Repositories.Items.Reset(response.Data.Items);
-				});
+				IsSearching = true;
+
+				var request = this.GetApplication().Client.Repositories.SearchRepositories(new [] { SearchText }, new string[] { });
+                request.UseCache = false;
+				var response = await this.GetApplication().Client.ExecuteAsync(request);
+				Repositories.Items.Reset(response.Data.Items);
 			}
 			catch (Exception e)
 			{
 				ReportError(e);
+			}
+			finally
+			{
+				IsSearching = false;
 			}
         }
     }
