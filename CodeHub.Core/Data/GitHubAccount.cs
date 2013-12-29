@@ -51,6 +51,12 @@ namespace CodeHub.Core.Data
         /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
         public bool ShowRepositoryDescriptionInList { get; set; }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="CodeHub.Core.Data.GitHubAccount"/> push notifications enabled.
+		/// </summary>
+		/// <value><c>true</c> if push notifications enabled; otherwise, <c>false</c>.</value>
+		public bool PushNotificationsEnabled { get; set; }
+
         /// <summary>
         /// A transient record of the user's name
         /// </summary>

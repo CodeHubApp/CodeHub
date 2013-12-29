@@ -5,15 +5,15 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using CodeFramework.iOS;
+using System.Collections.Generic;
+using System;    using Cirrious.CrossCore;
+using Cirrious.MvvmCross.Touch.Platform;
+using Cirrious.MvvmCross.ViewModels;
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
 
 namespace CodeHub.iOS
 {
-    using Cirrious.CrossCore;
-    using Cirrious.MvvmCross.Touch.Platform;
-    using Cirrious.MvvmCross.ViewModels;
-    using MonoTouch.Foundation;
-    using MonoTouch.UIKit;
-
     /// <summary>
     /// The UIApplicationDelegate for the application. This class is responsible for launching the 
     /// User Interface of the application, as well as listening (and optionally responding) to 
@@ -26,6 +26,8 @@ namespace CodeHub.iOS
         /// The window.
         /// </summary>
         private UIWindow window;
+
+		public string DeviceToken;
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -105,7 +107,55 @@ namespace CodeHub.iOS
 
             this.window.MakeKeyAndVisible();
 
+			if (options != null)
+			{
+				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
+				{
+					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
+					if(remoteNotification != null) {
+						HandleNotification(remoteNotification);
+					}
+				}
+			}
+
+
+			const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+			UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+
             return true;
         }
+
+		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
+		{
+			if (application.ApplicationState == UIApplicationState.Active)
+				return;
+			HandleNotification(userInfo);
+		}
+
+		private void HandleNotification(NSDictionary data)
+		{
+			try
+			{
+				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
+				var request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
+				var repoId = new CodeHub.Core.Utils.RepositoryIdentifier(data["r"].ToString());
+				request.ParameterValues = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
+				viewDispatcher.ShowViewModel(request);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Handle Notifications issue: " + e.ToString());
+			}
+		}
+
+		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+		{
+			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
+		}
+
+		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+		{
+			MonoTouch.Utilities.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
+		}
     }
 }

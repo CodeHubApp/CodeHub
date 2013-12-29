@@ -3,6 +3,9 @@ using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Linq;
 using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -32,6 +35,38 @@ namespace CodeHub.Core.ViewModels.App
 			set
 			{
 				GetService<IAnalyticsService>().Enabled = value;
+			}
+		}
+
+		public bool PushNotificationsEnabled
+		{
+			get
+			{
+				return this.GetApplication().Account.PushNotificationsEnabled;
+			}
+			set
+			{
+				RegisterPushNotifications(value);
+			}
+		}
+
+		private async Task RegisterPushNotifications(bool enabled)
+		{
+			var notificationService = GetService<IPushNotificationsService>();
+
+			try
+			{
+				if (enabled)
+					await Task.Run(() => notificationService.Register());
+				else
+					await Task.Run(() => notificationService.Deregister());
+				this.GetApplication().Account.PushNotificationsEnabled = enabled;
+				RaisePropertyChanged(() => PushNotificationsEnabled);
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+				RaisePropertyChanged(() => PushNotificationsEnabled);
 			}
 		}
 

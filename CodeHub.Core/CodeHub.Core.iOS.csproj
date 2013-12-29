@@ -122,6 +122,7 @@
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\CommitsViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
+    <Compile Include="Services\IPushNotificationsService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
