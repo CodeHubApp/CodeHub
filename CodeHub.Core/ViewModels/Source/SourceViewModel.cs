@@ -17,14 +17,12 @@ namespace CodeHub.Core.ViewModels.Source
 		protected override async Task Load(bool forceCacheInvalidation)
         {
 			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_name));
+			string mime = string.Empty;
 
-			var mime = await Task.Run<string>(() =>
+			using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
 			{
-				using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-				{
-					return this.GetApplication().Client.DownloadRawResource2(_gitUrl, stream) ?? string.Empty;
-				}
-			});
+				mime = await this.GetApplication().Client.DownloadRawResource2(_gitUrl, stream) ?? string.Empty;
+			}
 
 			FilePath = filepath;
 

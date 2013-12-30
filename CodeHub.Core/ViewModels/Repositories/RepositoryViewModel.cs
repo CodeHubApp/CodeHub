@@ -190,25 +190,31 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ICommand ToggleWatchCommand
         {
-            get { return new MvxCommand(ToggleWatch, () => IsWatched != null); }
+			get { return new MvxCommand(() => ToggleWatch(), () => IsWatched != null); }
         }
 
-        private async void ToggleWatch()
+		private async Task ToggleWatch()
         {
             if (IsWatched == null)
                 return;
 
-            if (IsWatched.Value)
-				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].StopWatching());
-            else
-				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
-
-            IsWatched = !IsWatched;
+			try
+			{
+	            if (IsWatched.Value)
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].StopWatching());
+	            else
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
+				IsWatched = !IsWatched;
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
         }
 
         public ICommand ToggleStarCommand
         {
-            get { return new MvxCommand(ToggleStar, () => IsStarred != null); }
+			get { return new MvxCommand(() => ToggleStar(), () => IsStarred != null); }
         }
 
         public bool IsPinned
@@ -216,16 +222,23 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
         }
 
-        private async void ToggleStar()
+		private async Task ToggleStar()
         {
             if (IsStarred == null)
                 return;
 
-            if (IsStarred.Value)
-				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Unstar());
-            else
-				await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
-            IsStarred = !IsStarred;
+			try
+			{
+	            if (IsStarred.Value)
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Unstar());
+	            else
+					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
+	            IsStarred = !IsStarred;
+			}
+			catch (Exception e)
+			{
+				ReportError(e);
+			}
         }
 
         public class NavObject

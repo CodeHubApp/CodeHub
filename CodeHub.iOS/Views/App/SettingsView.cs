@@ -60,11 +60,11 @@ namespace CodeHub.iOS.Views.App
 			var pushNotifications = new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value);
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB of cache used".t(), totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Subtitle);
+			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
 			deleteCache.Tapped += () =>
 			{ 
 				vm.DeleteAllCacheCommand.Execute(null);
-				deleteCache.Value = string.Format("{0} MB of cache used".t(), 0);
+				deleteCache.Value = string.Format("{0} MB", 0);
 				ReloadData();
 			};
 

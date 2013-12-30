@@ -136,11 +136,12 @@
     <Reference Include="Cirrious.MvvmCross">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp.MonoTouch">
-      <HintPath>..\lib\GitHubSharp\lib\RestSharp\RestSharp.MonoTouch.dll</HintPath>
-    </Reference>
     <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\GitHubSharp\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

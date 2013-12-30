@@ -82,7 +82,7 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             get
             {
-                return new MvxCommand(ToggleStarred, () => Gist != null);
+				return new MvxCommand(() => ToggleStarred(), () => Gist != null);
             }
         }
 
@@ -91,7 +91,7 @@ namespace CodeHub.Core.ViewModels.Gists
             Id = navObject.Id;
         }
 
-        private async void ToggleStarred()
+		private async Task ToggleStarred()
         {
             try
             {
@@ -99,9 +99,9 @@ namespace CodeHub.Core.ViewModels.Gists
 				await this.GetApplication().Client.ExecuteAsync(request);
                 IsStarred = !IsStarred;
             }
-            catch (Exception)
+			catch (Exception e)
             {
-                // Do nothing
+				ReportError(e);
             }
         }
 

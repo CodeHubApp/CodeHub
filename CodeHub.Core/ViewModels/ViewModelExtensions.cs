@@ -23,26 +23,26 @@ namespace CodeHub.Core.ViewModels
             var application = Mvx.Resolve<IApplicationService>();
             var uiThrad = Mvx.Resolve<IUIThreadService>();
 
-            return Task.Run(() =>
+			return Task.Run(async () =>
             {
-                var result = application.Client.Execute(request);
+				var result = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
                 uiThrad.MarshalOnUIThread(() => update(result));
 
                 if (result.WasCached)
                 {
                     request.RequestFromCache = false;
 
-                    Task.Run(() =>
+					Task.Run(async () =>
                     {
                         try
                         {
-                            var r = application.Client.Execute(request);
+							var r = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
                             uiThrad.MarshalOnUIThread(() => update(r));
                         }
-                        catch (NotModifiedException)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Not modified: " + request.Url);
-                        }
+						catch (NotModifiedException)
+						{
+							System.Diagnostics.Debug.WriteLine("Not modified: " + request.Url);
+						}
                     }).FireAndForget();
                 }
             });

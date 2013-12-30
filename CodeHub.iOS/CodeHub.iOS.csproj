@@ -152,7 +152,6 @@
     <Compile Include="Views\User\TeamsView.cs" />
     <Compile Include="Views\User\UserFollowersView.cs" />
     <Compile Include="Views\User\UserFollowingsView.cs" />
-    <None Include="app.config" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
@@ -238,9 +237,6 @@
     </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp.MonoTouch">
-      <HintPath>..\lib\GitHubSharp\lib\RestSharp\RestSharp.MonoTouch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

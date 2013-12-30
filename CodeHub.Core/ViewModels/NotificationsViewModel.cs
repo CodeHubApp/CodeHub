@@ -50,7 +50,7 @@ namespace CodeHub.Core.ViewModels
 
         public ICommand ReadCommand
         {
-            get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(Read));}
+			get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
         }
 
 		public ICommand ReadRepositoriesCommand
@@ -121,11 +121,12 @@ namespace CodeHub.Core.ViewModels
             });
         }
 
-		private async void Read(NotificationModel model)
+		private async Task Read(NotificationModel model)
         {
 			// If its already read, ignore it
 			if (!model.Unread)
 				return;
+
 			try
 			{
 				var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());

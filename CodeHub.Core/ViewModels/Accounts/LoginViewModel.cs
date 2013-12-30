@@ -4,6 +4,7 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -85,7 +86,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 			}
 		}
 
-		public async void Login(string code)
+		public async Task Login(string code)
 		{
 			string apiUrl;
 			if (IsEnterprise)

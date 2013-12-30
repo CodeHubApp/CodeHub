@@ -1,5 +1,7 @@
 ﻿using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.App;
+using CodeFramework.Core.Services;
+using Cirrious.CrossCore;
 
 namespace CodeHub.Core
 {
@@ -15,6 +17,9 @@ namespace CodeHub.Core
         {
 			//Ensure this is loaded
 			Cirrious.MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
+
+			var httpService = Mvx.Resolve<IHttpClientService>();
+			GitHubSharp.Client.ClientConstructor = httpService.Create;
 
             // Start the app with the First View Model.
 			this.RegisterAppStart<StartupViewModel>();

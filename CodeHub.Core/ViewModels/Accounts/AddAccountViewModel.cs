@@ -18,14 +18,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         private string _domain;
         private bool _isLoggingIn;
 
-        public event EventHandler<Exception> LoginException;
-
-        protected virtual void OnLoginException(Exception e)
-        {
-            var handler = LoginException;
-            if (handler != null) handler(this, e);
-        }
-
         public bool IsEnterprise { get; private set; }
 
         public bool IsLoggingIn
@@ -56,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public ICommand LoginCommand
         {
-            get { return new MvxCommand(Login, CanLogin);}
+			get { return new MvxCommand(() => Login(), CanLogin);}
         }
 
         public AddAccountViewModel(IApplicationService application, ILoginService loginService)
@@ -90,7 +82,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             return true;
         }
 
-        private async void Login()
+		private async Task Login()
         {
             var apiUrl = IsEnterprise ? Domain : null;
             if (apiUrl != null)
@@ -102,9 +94,6 @@ namespace CodeHub.Core.ViewModels.Accounts
                 if (!apiUrl.Contains("/api/"))
                     apiUrl += "api/v3/";
             }
-
-            // Get the accounts service so we can do some special things
-            Exception exception = null;
 
             try
             {
@@ -122,18 +111,13 @@ namespace CodeHub.Core.ViewModels.Accounts
                 if (!(e is LoginService.TwoFactorRequiredException))
                 {
                     Password = null;
-					ReportError(e);
+					DisplayException(e);
                 }
-
-                exception = e;
             }
             finally
             {
                 IsLoggingIn = false;
             }
-
-            if (exception != null)
-                OnLoginException(exception);
         }
 
         public class NavObject
