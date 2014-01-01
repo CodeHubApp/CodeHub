@@ -14,7 +14,6 @@ namespace CodeHub.iOS.Views.Issues
 	public class IssueView : ViewModelDrivenViewController
     {
 		private readonly HeaderView _header;
-		private readonly SplitElement _split1;
 		private WebElement _descriptionElement;
 		private WebElement2 _commentsElement;
 
@@ -29,7 +28,6 @@ namespace CodeHub.iOS.Views.Issues
         {
 			Root.UnevenRows = true;
 			_header = new HeaderView() { ShadowImage = false };
-			_split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Milestone }) { BackgroundColor = UIColor.White };
         }
 
         public override void ViewDidLoad()
@@ -38,11 +36,11 @@ namespace CodeHub.iOS.Views.Issues
 
 			var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
 			_descriptionElement = new WebElement(content);
-			_descriptionElement.UrlRequested = ViewModel.GoToWeb.Execute;
+			_descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
 			var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
 			_commentsElement = new WebElement2(content2);
-			_commentsElement.UrlRequested = ViewModel.GoToWeb.Execute;
+			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
             NavigationItem.RightBarButtonItem.Enabled = false;
@@ -86,8 +84,7 @@ namespace CodeHub.iOS.Views.Issues
 			_header.Subtitle = "Updated " + ViewModel.Issue.UpdatedAt.ToDaysAgo();
 			root.Add(new Section(_header));
 
-			var milestone = ViewModel.Issue.Milestone;
-			var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
+
 			var secDetails = new Section();
 
 			if (!string.IsNullOrEmpty(ViewModel.Issue.Body))
@@ -96,23 +93,29 @@ namespace CodeHub.iOS.Views.Issues
 				secDetails.Add(_descriptionElement);
 			}
 
-			_split1.Value.Text1 = ViewModel.Issue.State ?? "No State";
-			_split1.Value.Text2 = milestoneStr;
-			secDetails.Add(_split1);
+			var milestone = ViewModel.Issue.Milestone;
+			var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
+			var milestoneElement = new StyledStringElement("Milestone", milestoneStr, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
 
-			var responsible = new StyledStringElement(ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t()) {
-				Font = StyledStringElement.DefaultDetailFont,
-				TextColor = StyledStringElement.DefaultDetailColor,
-				Image = Images.Person
+			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t(), UITableViewCellStyle.Value1) {
+				Image = Images.Person,
+				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
+			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
 
-			if (ViewModel.Issue.Assignee != null)
-			{
-				responsible.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
-				responsible.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-			}
 
-			secDetails.Add(responsible);
+			var labels = ViewModel.Issue.Labels.Count == 0 ? "None" : string.Join(", ", ViewModel.Issue.Labels.Select(i => i.Name));
+			var labelsElement = new StyledStringElement("Lables", labels, UITableViewCellStyle.Value1) {
+				Image = Images.Explore,
+				Accessory = UITableViewCellAccessory.DisclosureIndicator
+			};
+			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
+
+
+			secDetails.Add(milestoneElement);
+			secDetails.Add(assigneeElement);
+			secDetails.Add(labelsElement);
 			root.Add(secDetails);
 
 			if (ViewModel.Comments.Any())

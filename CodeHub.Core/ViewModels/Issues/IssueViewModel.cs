@@ -56,7 +56,35 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public ICommand GoToAssigneeCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue.Assignee.Login }), () => Issue != null && Issue.Assignee != null); }
+			get 
+			{ 
+				return new MvxCommand(() => {
+					GetService<IViewModelTxService>().Add(Issue.Assignee);
+					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+				}); 
+			}
+		}
+
+		public ICommand GoToMilestoneCommand
+		{
+			get 
+			{ 
+				return new MvxCommand(() => {
+					GetService<IViewModelTxService>().Add(Issue.Milestone);
+					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+				}); 
+			}
+		}
+
+		public ICommand GoToLabelsCommand
+		{
+			get 
+			{ 
+				return new MvxCommand(() => {
+					GetService<IViewModelTxService>().Add(Issue.Labels);
+					ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+				}); 
+			}
 		}
 
 		public ICommand GoToEditCommand
@@ -75,11 +103,6 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             get { return _comments; }
         }
-
-		public ICommand GoToWeb
-		{
-			get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
-		}
 
         protected override Task Load(bool forceCacheInvalidation)
         {

@@ -4,6 +4,7 @@ using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
 using System.Linq;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -21,6 +22,8 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
 			var vm = (IssueLabelsViewModel)ViewModel;
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SaveLabelChoices.Execute(null));
+
 			BindCollection(vm.Labels, x => 
             {
 				var e = new LabelElement(x);
@@ -53,6 +56,13 @@ namespace CodeHub.iOS.Views.Issues
 
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			}, true);
+
+			var _hud = new Hud(View);
+			vm.Bind(x => x.IsSaving, x =>
+			{
+				if (x) _hud.Show("Saving...");
+				else _hud.Hide();
+			});
         }
 
 		private class LabelElement : StyledStringElement

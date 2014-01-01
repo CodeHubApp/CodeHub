@@ -4,6 +4,7 @@ using MonoTouch.Dialog;
 using GitHubSharp.Models;
 using System.Linq;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -41,6 +42,13 @@ namespace CodeHub.iOS.Views.Issues
 				foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
 					m.Accessory = (x != null && m.Milestone.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
+			});
+
+			var _hud = new Hud(View);
+			vm.Bind(x => x.IsSaving, x =>
+			{
+				if (x) _hud.Show("Saving...");
+				else _hud.Hide();
 			});
         }
 
