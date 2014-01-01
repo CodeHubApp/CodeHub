@@ -60,7 +60,15 @@ namespace CodeHub.Core.ViewModels.Issues
 				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
 			}
 
-			return null;
+			try
+			{
+				var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
+				return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
+			}
+			catch (Exception e)
+			{
+				return null;
+			}
 		}
     }
 

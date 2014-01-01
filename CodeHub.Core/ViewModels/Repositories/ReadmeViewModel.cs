@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeFramework.Core.ViewModels;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -39,12 +40,20 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return GoToUrlCommand; }
 		}
 
+		public ICommand ShareCommand
+		{
+			get
+			{
+				return new MvxCommand(() => GetService<IShareService>().ShareUrl(_contentModel.HtmlUrl), () => _contentModel != null);
+			}
+		}
+
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
 			var wiki = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme());
 			_contentModel = wiki.Data;
 			var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Data.Content));
-			Data = await Task.Run(() => this.GetApplication().Client.Markdown.GetMarkdown(d));
+			Data = await this.GetApplication().Client.Markdown.GetMarkdown(d);
 			Path = CreateHtmlFile(Data);
 		}
 		

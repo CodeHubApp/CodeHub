@@ -34,25 +34,22 @@ namespace CodeHub.Core.ViewModels.Gists
             GistFile = navObject.GistFile;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+		protected override async Task Load(bool forceCacheInvalidation)
         {
-            return Task.Run(() =>
+            string data;
+            using (var ms = new System.IO.MemoryStream())
             {
-                string data;
-                using (var ms = new System.IO.MemoryStream())
-                {
-					this.GetApplication().Client.DownloadRawResource(GistFile.RawUrl, ms);
-                    ms.Position = 0;
-                    var sr = new System.IO.StreamReader(ms);
-                    data = sr.ReadToEnd();
-                }
-                if (GistFile.Language.Equals("Markdown"))
-					data = this.GetApplication().Client.Markdown.GetMarkdown(data);
+				await this.GetApplication().Client.DownloadRawResource(GistFile.RawUrl, ms);
+                ms.Position = 0;
+                var sr = new System.IO.StreamReader(ms);
+                data = sr.ReadToEnd();
+            }
+            if (GistFile.Language.Equals("Markdown"))
+				data = await this.GetApplication().Client.Markdown.GetMarkdown(data);
 
-                var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-                System.IO.File.WriteAllText(path, data, Encoding.UTF8);
-                FilePath = path;
-            });
+            var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
+            System.IO.File.WriteAllText(path, data, Encoding.UTF8);
+            FilePath = path;
         }
 
         public class NavObject

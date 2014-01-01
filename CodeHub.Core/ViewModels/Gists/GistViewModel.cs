@@ -5,6 +5,7 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using CodeFramework.Core.ViewModels;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -85,6 +86,14 @@ namespace CodeHub.Core.ViewModels.Gists
 				return new MvxCommand(() => ToggleStarred(), () => Gist != null);
             }
         }
+
+		public ICommand ShareCommand
+		{
+			get
+			{
+				return new MvxCommand(() => GetService<IShareService>().ShareUrl(Gist.HtmlUrl), () => Gist != null);
+			}
+		}
 
         public void Init(NavObject navObject)
         {

@@ -121,11 +121,7 @@ namespace CodeHub.iOS.Views.Gists
 				{
 	                if (e.ButtonIndex == shareButton)
 	                {
-						var item = new NSUrl(ViewModel.Gist.HtmlUrl);
-	                    var activityItems = new NSObject[] { item };
-	                    UIActivity[] applicationActivities = null;
-	                    var activityController = new UIActivityViewController (activityItems, applicationActivities);
-	                    PresentViewController (activityController, true, null);
+						ViewModel.ShareCommand.Execute(null);
 	                }
 	                else if (e.ButtonIndex == showButton)
 					{

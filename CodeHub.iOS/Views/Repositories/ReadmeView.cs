@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Repositories
 
 		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, MonoTouch.UIKit.UIWebViewNavigationType navigationType)
 		{
-			if (!request.Url.AbsoluteString.StartsWith("file://"))
+			if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
 			{
 				ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
 				return false;
@@ -39,6 +39,7 @@ namespace CodeHub.iOS.Views.Repositories
 		private void ShareButtonPress()
 		{
 			var sheet = MonoTouch.Utilities.GetSheet("Readme");
+			var shareButton = sheet.AddButton("Share".t());
 			var showButton = sheet.AddButton("Show in GitHub".t());
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
@@ -46,6 +47,8 @@ namespace CodeHub.iOS.Views.Repositories
 			sheet.Clicked += (s, e) => {
 				if (e.ButtonIndex == showButton)
 					ViewModel.GoToGitHubCommand.Execute(null);
+				else if (e.ButtonIndex == shareButton)
+					ViewModel.ShareCommand.Execute(null);
 			};
 
 			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
