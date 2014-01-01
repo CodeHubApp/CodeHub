@@ -5,6 +5,7 @@ using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Linq;
+using CodeFramework.Core.Utils;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -126,7 +127,7 @@ namespace CodeHub.iOS.Views.App
 			}
 
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new CodeHub.Core.Utils.RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
+				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
 			{
 				PinnedRepo = pinnedRepo;
 				ImageUri = new System.Uri(PinnedRepo.ImageUri);

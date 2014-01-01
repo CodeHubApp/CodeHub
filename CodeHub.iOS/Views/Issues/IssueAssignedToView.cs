@@ -20,12 +20,12 @@ namespace CodeHub.iOS.Views.Issues
 			BindCollection(vm.Users, x =>
 			{
 				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-					el.Tapped += () => {
-						if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
-							vm.SelectedUser = null;
-						else
-							vm.SelectedUser = x;
-					};
+				el.Tapped += () => {
+					if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
+						vm.SelectedUser = null;
+					else
+						vm.SelectedUser = x;
+				};
 				if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UITableViewCellAccessory.Checkmark;
 				else
@@ -38,8 +38,8 @@ namespace CodeHub.iOS.Views.Issues
 				if (Root.Count == 0)
 					return;
 				foreach (var m in Root[0].Elements.Cast<UserElement>())
-				m.Accessory = (x != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase)) ? 
-					          UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+					m.Accessory = (x != null && string.Equals(vm.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
+					          	   UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});
         }

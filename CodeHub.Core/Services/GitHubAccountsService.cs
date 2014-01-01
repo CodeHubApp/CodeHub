@@ -9,7 +9,6 @@ namespace CodeHub.Core.Services
         public GitHubAccountsService(IDefaultValueService defaults, IAccountPreferencesService accountPreferences) 
             : base(defaults, accountPreferences)
         {
-            Console.WriteLine("Accounts created!");
         }
     }
 }

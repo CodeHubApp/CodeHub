@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Utils;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -14,6 +13,7 @@ using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp;
 using GitHubSharp.Models;
+using CodeFramework.Core.Utils;
 
 namespace CodeHub.Core.ViewModels.Events
 {

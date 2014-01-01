@@ -12,6 +12,7 @@ using Cirrious.MvvmCross.Touch.Platform;
 using Cirrious.MvvmCross.ViewModels;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using CodeFramework.Core.Utils;
 
 namespace CodeHub.iOS
 {
@@ -142,7 +143,7 @@ namespace CodeHub.iOS
 			{
 				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
 				var request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
-				var repoId = new CodeHub.Core.Utils.RepositoryIdentifier(data["r"].ToString());
+				var repoId = new RepositoryIdentifier(data["r"].ToString());
 				request.ParameterValues = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
 				viewDispatcher.ShowViewModel(request);
 			}

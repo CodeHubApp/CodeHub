@@ -4,7 +4,6 @@ using GitHubSharp.Models;
 using CodeHub.Core.Filters;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.Utils;
 using CodeHub.Core.ViewModels.PullRequests;
 using System.Collections.Generic;
 using System.Linq;

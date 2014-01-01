@@ -7,7 +7,7 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
-using CodeHub.Core.Services;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

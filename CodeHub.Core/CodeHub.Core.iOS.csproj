@@ -47,7 +47,6 @@
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\LoginService.cs" />
-    <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
@@ -102,7 +101,6 @@
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
-    <Compile Include="Services\JsonSerializationService.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
@@ -117,7 +115,6 @@
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
-    <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\CommitsViewModel.cs" />
@@ -140,8 +137,8 @@
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\lib\GitHubSharp\lib\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="ServiceStack.Text.MonoTouch">
+      <HintPath>..\lib\CodeFramework\lib\iOS\ServiceStack.Text.MonoTouch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

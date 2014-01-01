@@ -47,10 +47,28 @@ namespace CodeHub.Core.ViewModels.Issues
 				string[] labels = Labels.Items.Select(x => x.Name).ToArray();
 				var content = Content ?? string.Empty;
 				var state = IsOpen ? "open" : "closed";
+				var retried = false;
 
 				IsSaving = true;
-				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels)); 
-				Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+
+				// For some reason github needs to try again during an internal server error
+				tryagain:
+
+				try
+				{
+					var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels)); 
+					Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+				}
+				catch (GitHubSharp.InternalServerException)
+				{
+					if (retried)
+						throw;
+
+					//Do nothing. Something is wrong with github's service
+					retried = true;
+					goto tryagain;
+				}
+
 				ChangePresentation(new MvxClosePresentationHint(this));
 			}
 			catch (Exception e)
