@@ -75,12 +75,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 			var commentsRequest = this.GetApplication().Client.Users[User].Repositories[Repo].Issues[PullRequestId].GetComments();
 
 			var t1 = this.RequestModel(pullRequest, forceDataRefresh, response => PullRequest = response.Data);
-
-            this.RequestModel(commentsRequest, forceDataRefresh, response => {
-				this.CreateMore(response, m => Comments.MoreItems = m, Comments.Items.AddRange);
-                Comments.Items.Reset(response.Data);
-			}).FireAndForget();
-
+			Comments.SimpleCollectionLoad(commentsRequest, forceDataRefresh).FireAndForget();
             return t1;
         }
 

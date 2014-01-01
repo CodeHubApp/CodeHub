@@ -197,6 +197,14 @@
       <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
+      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
+      <Name>MonoTouch.SlideoutNavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
+      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
+      <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cirrious.CrossCore">
@@ -231,12 +239,6 @@
     </Reference>
     <Reference Include="MTiRate">
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Dialog">
-      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Dialog.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\lib\CodeFramework\lib\iOS\MonoTouch.Slideout.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
