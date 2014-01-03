@@ -52,11 +52,11 @@ namespace CodeHub.iOS
 			list.Add(typeof(BaseStartupViewModel).Assembly);
             return list.ToArray();
         }
-//
-//        protected override IMvxTrace CreateDebugTrace()
-//        {
-//            return new ;
-//        }
+
+        protected override Cirrious.CrossCore.Platform.IMvxTrace CreateDebugTrace()
+        {
+			return new Cirrious.CrossCore.Platform.MvxDebugOnlyTrace();
+        }
 
         protected override void FillBindingNames(IMvxBindingNameRegistry obj)
         {

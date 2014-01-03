@@ -12,6 +12,8 @@ namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueLabelsViewModel : LoadableViewModel
     {
+		private IEnumerable<LabelModel> _originalLables;
+
 		private bool _isSaving;
 		public bool IsSaving
 		{
@@ -48,7 +50,9 @@ namespace CodeHub.Core.ViewModels.Issues
 			Repository = navObject.Repository;
 			Id = navObject.Id;
 			SaveOnSelect = navObject.SaveOnSelect;
-			SelectedLabels.Items.Reset(GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>);
+
+			_originalLables = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
+			SelectedLabels.Items.Reset(_originalLables);
 		}
 
 		public ICommand SaveLabelChoices
@@ -58,6 +62,13 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		private async Task SelectLabels(IEnumerable<LabelModel> x)
 		{
+			//If nothing has changed, dont do anything...
+			if (_originalLables != null && _originalLables.Intersect(x).Count() == _originalLables.Count())
+			{
+				ChangePresentation(new MvxClosePresentationHint(this));
+				return;
+			}
+				
 			if (SaveOnSelect)
 			{
 				try

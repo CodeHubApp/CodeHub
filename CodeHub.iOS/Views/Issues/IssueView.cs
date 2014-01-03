@@ -112,9 +112,8 @@ namespace CodeHub.iOS.Views.Issues
 			};
 			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
 
-
-			secDetails.Add(milestoneElement);
 			secDetails.Add(assigneeElement);
+			secDetails.Add(milestoneElement);
 			secDetails.Add(labelsElement);
 			root.Add(secDetails);
 
