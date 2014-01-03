@@ -151,6 +151,11 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
 		}
 
+		public ICommand GoToAboutCommand
+		{
+			get { return new MvxCommand(() => ShowMenuViewModel<AboutViewModel>(null)); }
+		}
+
         public ICommand LoadCommand
         {
             get { return new MvxCommand(Load);}    

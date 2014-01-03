@@ -528,7 +528,7 @@ namespace CodeHub.Core.ViewModels.Events
             {
 				eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
                 eventBlock.Header.Add(watchEvent.Action.Equals("started") ? 
-                    new TextBlock(" started watching ") : new TextBlock(" stopped watching "));
+					new TextBlock(" starred ") : new TextBlock(" unstarred "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 return eventBlock;
             }

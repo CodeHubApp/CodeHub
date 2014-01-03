@@ -120,6 +120,7 @@
     <Compile Include="ViewModels\CommitsViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
+    <Compile Include="ViewModels\App\AboutViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

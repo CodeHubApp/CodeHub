@@ -1,13 +1,12 @@
 using System;
-using CodeFramework.iOS;
-using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using CodeFramework.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class AboutViewController : BaseDialogViewController
+	public class AboutViewController : ViewModelDrivenViewController
     {
         private const string About = @"CodeHub is the best way to browse and maintain your GitHub repositories on any iPhone, iPod Touch, and iPad device! " +
             "Keep an eye on your projects with the ability to view everything from pull requests to commenting on individual file diffs in the latest change set. " + 
@@ -16,7 +15,7 @@ namespace CodeHub.iOS.Views.App
         public AboutViewController()
             : base (true)
         {
-            Title = "About".t();
+			Title = "About".t();
         }
 
         public override void ViewDidLoad()

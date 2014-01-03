@@ -78,7 +78,7 @@ namespace CodeHub.iOS.Views.App
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
 			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("About".t(), () => NavPush(new AboutViewController()), Images.Info));
+			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
