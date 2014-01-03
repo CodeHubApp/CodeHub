@@ -102,7 +102,8 @@ namespace CodeHub.iOS.Views.App
 			TableView.SeparatorInset = UIEdgeInsets.Zero;
 			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
 
-			ProfileButton.Uri = new System.Uri(ViewModel.Account.AvatarUrl);
+			if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
+				ProfileButton.Uri = new System.Uri(ViewModel.Account.AvatarUrl);
 
             ViewModel.Bind(x => x.Notifications, x =>
             {

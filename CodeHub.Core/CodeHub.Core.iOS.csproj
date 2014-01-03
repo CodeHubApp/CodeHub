@@ -126,7 +126,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Cirrious.CrossCore">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>

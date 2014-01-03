@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		private async Task SelectLabels(IEnumerable<LabelModel> x)
 		{
 			//If nothing has changed, dont do anything...
-			if (_originalLables != null && _originalLables.Intersect(x).Count() == _originalLables.Count())
+			if (_originalLables != null && _originalLables.Count() == x.Count() && _originalLables.Intersect(x).Count() == x.Count())
 			{
 				ChangePresentation(new MvxClosePresentationHint(this));
 				return;
