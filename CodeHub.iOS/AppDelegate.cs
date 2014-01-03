@@ -109,23 +109,23 @@ namespace CodeHub.iOS
 
             this.window.MakeKeyAndVisible();
 
-			if (options != null)
-			{
-				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
-				{
-					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-					if(remoteNotification != null) {
-						HandleNotification(remoteNotification);
-					}
-				}
-			}
+//			if (options != null)
+//			{
+//				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
+//				{
+//					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
+//					if(remoteNotification != null) {
+//						HandleNotification(remoteNotification);
+//					}
+//				}
+//			}
 
 			// Notifications don't work on teh simulator so don't bother
-			if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR)
-			{
-				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-			}
+//			if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+//			{
+//				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+//				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+//			}
 
             return true;
         }

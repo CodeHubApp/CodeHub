@@ -72,7 +72,7 @@ namespace CodeHub.iOS.Views.App
 
 			//Assign the root
 			var root = new RootElement(Title);
-			root.Add(new Section("Account") { saveCredentials, pushNotifications });
+			root.Add(new Section("Account") { saveCredentials /*, pushNotifications */ });
 			root.Add(new Section("Apperance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
 			root.Add(new Section ("Internal") { deleteCache, usage });
 			Root = root;

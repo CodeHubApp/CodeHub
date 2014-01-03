@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels
 		}
 
         public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
-                                               Action<Task> assignMore, Action<T> newDataAction) where T : new()
+										 Action<Action> assignMore, Action<T> newDataAction) where T : new()
         {
             if (response.More == null)
             {
@@ -57,13 +57,13 @@ namespace CodeHub.Core.ViewModels
                 return;
             }
 
-            var task = new Task(async () =>
+			Action task = () =>
             {
                 response.More.UseCache = false;
-                var moreResponse = await Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
+				var moreResponse = Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
-            });
+            };
 
             assignMore(task);
         }
