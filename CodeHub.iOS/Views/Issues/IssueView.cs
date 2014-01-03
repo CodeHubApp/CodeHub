@@ -107,7 +107,7 @@ namespace CodeHub.iOS.Views.Issues
 
 			var labels = ViewModel.Issue.Labels.Count == 0 ? "None" : string.Join(", ", ViewModel.Issue.Labels.Select(i => i.Name));
 			var labelsElement = new StyledStringElement("Lables", labels, UITableViewCellStyle.Value1) {
-				Image = Images.Explore,
+				Image = Images.Tag,
 				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
 			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);

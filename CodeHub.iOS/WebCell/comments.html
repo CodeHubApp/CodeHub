@@ -9,7 +9,7 @@ function addComment(data) {
 	var html = "<div class='comment'><img src='" + data.avatar_url + "'><div><h1>" + data.login + "</h1><span>" + data.updated_at + "</span><div class='mark'>" + data.body + "</div></div></div>";
 	document.getElementById('main').appendChild(create(html));
 }
-function size() { return document.getElementById('main').scrollHeight + 20; }
+function size() { return document.getElementById('main').scrollHeight + 0; }
 function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
 var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100);
 </script>

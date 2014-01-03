@@ -7,7 +7,7 @@ font-size: 12px;
 -webkit-touch-callout: none;
 -webkit-user-select: none;
 } 
-body { margin: 10px; } 
+body { margin: 14px 12px; } 
 #main { width: 100%; }
 img { max-width: 100%; } 
 p { margin: 10px 0; white-space: pre-wrap; } 
@@ -84,7 +84,7 @@ border-bottom: 1px solid #ddd;
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <script>
 function ins(c) { document.getElementById('main').innerHTML = c; }
-function size() { return document.getElementById('main').scrollHeight + 20; }
+function size() { return document.getElementById('main').scrollHeight + 28; }
 function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
 var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100);
 </script>
