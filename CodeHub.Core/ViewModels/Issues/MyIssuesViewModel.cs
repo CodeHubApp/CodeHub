@@ -2,6 +2,9 @@ using System.Threading.Tasks;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -32,6 +35,25 @@ namespace CodeHub.Core.ViewModels.Issues
 				else if (x == 1)
 					_issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
 			});
+        }
+
+        protected override List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
+        {
+            var group = base.Group(model);
+            if (group == null)
+            {
+                try
+                {
+                    var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
+                    return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+
+            return group;
         }
 
         protected override Task Load(bool forceCacheInvalidation)

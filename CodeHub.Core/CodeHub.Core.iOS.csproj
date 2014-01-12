@@ -123,6 +123,7 @@
     <Compile Include="ViewModels\App\AboutViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="Messages\SourceEditMessage.cs" />
+    <Compile Include="Services\JsonSerializationService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

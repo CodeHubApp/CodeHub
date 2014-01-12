@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 		}
 
-		protected List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
+        protected virtual List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
 		{
 			var order = Issues.Filter.SortType;
 			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Comments)
@@ -60,15 +60,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
 			}
 
-			try
-			{
-				var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
-				return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
+            return null;
 		}
     }
 
