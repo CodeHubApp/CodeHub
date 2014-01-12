@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public ICommand GoToEditCommand
 		{
-			get { return new MvxCommand(() => ShowViewModel<EditSourceViewModel>(new EditSourceViewModel.NavObject { Path = _path, Branch = Branch, Username = Username, Repository = Repository }), () => TrueBranch); }
+            get { return new MvxCommand(() => ShowViewModel<EditSourceViewModel>(new EditSourceViewModel.NavObject { Path = _path, Branch = Branch, Username = Username, Repository = Repository }), () => ContentPath != null && TrueBranch); }
 		}
 
 		public void Init(NavObject navObject)
