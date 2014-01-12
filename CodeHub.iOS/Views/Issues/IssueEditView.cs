@@ -9,7 +9,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueEditView : ViewModelDrivenViewController
+	public class IssueEditView : ViewModelDrivenDialogViewController
     {
 		private IHud _hud;
 

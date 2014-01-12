@@ -7,7 +7,7 @@ using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class SourceTreeView : ViewModelCollectionDrivenViewController
+    public class SourceTreeView : ViewModelCollectionDrivenDialogViewController
     {
         public new SourceTreeViewModel ViewModel
         {

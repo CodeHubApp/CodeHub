@@ -8,7 +8,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAssignedToView : ViewModelCollectionDrivenViewController
+    public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
     {
 
         public override void ViewDidLoad()

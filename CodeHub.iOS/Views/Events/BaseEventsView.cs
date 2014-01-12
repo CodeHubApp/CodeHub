@@ -8,7 +8,7 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Events
 {
-    public abstract class BaseEventsView : ViewModelCollectionDrivenViewController
+    public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
     {
         protected BaseEventsView()
         {
@@ -56,7 +56,7 @@ namespace CodeHub.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
-				return new NewsFeedElement(username, avatar, (e.Item1.CreatedAt), headerBlocks, bodyBlocks, img, e.Item2.Tapped);
+				return new NewsFeedElement(username, avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img, e.Item2.Tapped);
             }
             catch (Exception ex)
             {

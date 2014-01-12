@@ -108,7 +108,7 @@ namespace CodeHub.ViewControllers
             section.Add(desc);
 
             if (_public == null)
-                _public = new TrueFalseElement("Public", _model.Public, (e) => { }); 
+				_public = new TrueFalseElement("Public", _model.Public ?? false, (e) => { }); 
 
             if (_publicEditable)
                 section.Add(_public);

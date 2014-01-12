@@ -5,7 +5,7 @@ using MonoTouch.Dialog;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public abstract class GistsView : ViewModelCollectionDrivenViewController
+    public abstract class GistsView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {

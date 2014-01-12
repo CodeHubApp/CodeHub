@@ -68,17 +68,17 @@ namespace CodeHub.Core.Services
 				return data.CacheTag;
 			}
 
-			public T Get<T>(string url) where T : new()
+            public byte[] Get(string url)
 			{
-				var data = _account.Get<T>(url);
+                var data = _account.Get(url);
 				if (data == null)
-					return default(T);
+                    return null;
 
 				System.Console.WriteLine("[GET] cache: {0}", url);
 				return data;
 			}
 
-			public void Set(string url, object data, string etag)
+            public void Set(string url, byte[] data, string etag)
 			{
 				System.Console.WriteLine("[SET] cache: {0}", url);
 				_account.Set(url, data, etag);

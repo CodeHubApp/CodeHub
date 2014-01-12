@@ -4,7 +4,7 @@ namespace CodeHub.Core.ViewModels.User
 {
     public class TeamMembersViewModel : BaseUserCollectionViewModel
     {
-        public ulong Id
+        public long Id
         {
             get;
             private set;
@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.User
 
         public class NavObject
         {
-            public ulong Id { get; set; }
+            public long Id { get; set; }
         }
     }
 }

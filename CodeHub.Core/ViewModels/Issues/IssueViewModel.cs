@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Issues
     {
 		private MvxSubscriptionToken _editToken;
 
-        public ulong Id 
+        public long Id 
         { 
             get; 
             private set; 
@@ -140,7 +140,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public ulong Id { get; set; }
+            public long Id { get; set; }
         }
     }
 }

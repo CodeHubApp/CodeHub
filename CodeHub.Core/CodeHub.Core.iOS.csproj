@@ -121,6 +121,8 @@
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
     <Compile Include="ViewModels\App\AboutViewModel.cs" />
+    <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
+    <Compile Include="Messages\SourceEditMessage.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

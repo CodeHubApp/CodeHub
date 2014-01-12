@@ -192,6 +192,7 @@
     <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
+    <Compile Include="Views\Source\EditSourceView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">

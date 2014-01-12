@@ -7,7 +7,7 @@ using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestsView : ViewModelCollectionDrivenViewController
+    public class PullRequestsView : ViewModelCollectionDrivenDialogViewController
     {
 		private readonly UISegmentedControl _viewSegment;
 		private readonly UIBarButtonItem _segmentBarButton;

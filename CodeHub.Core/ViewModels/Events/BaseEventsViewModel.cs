@@ -123,7 +123,7 @@ namespace CodeHub.Core.ViewModels.Events
             get { return new MvxCommand<EventModel.GistEvent>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Gist.Id }), x => x != null && x.Gist != null); }
         }
 
-        private void GoToIssue(RepositoryIdentifier repo, ulong id)
+        private void GoToIssue(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
@@ -135,7 +135,7 @@ namespace CodeHub.Core.ViewModels.Events
             });
         }
 
-        private void GoToPullRequest(RepositoryIdentifier repo, ulong id)
+        private void GoToPullRequest(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;

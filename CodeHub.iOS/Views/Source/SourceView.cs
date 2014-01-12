@@ -1,5 +1,7 @@
 using System;
 using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -22,6 +24,21 @@ namespace CodeHub.iOS.Views.Source
 					LoadFile(ViewModel.FilePath);
 				}
 			});
+		}
+
+		protected override UIActionSheet CreateActionSheet(string title)
+		{
+			var vm = (SourceViewModel)ViewModel;
+			var sheet = base.CreateActionSheet(title);
+			var editButton = vm.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
+			sheet.Clicked += (sender, e) =>
+			{
+				if (e.ButtonIndex == editButton)
+				{
+					vm.GoToEditCommand.Execute(null);
+				}
+			};
+			return sheet;
 		}
     }
 }

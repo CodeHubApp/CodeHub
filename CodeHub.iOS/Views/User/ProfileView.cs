@@ -7,7 +7,7 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.User
 {
-    public class ProfileView : ViewModelDrivenViewController
+    public class ProfileView : ViewModelDrivenDialogViewController
     {
 		public new ProfileViewModel ViewModel
 		{

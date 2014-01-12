@@ -8,7 +8,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueLabelsView : ViewModelCollectionDrivenViewController
+    public class IssueLabelsView : ViewModelCollectionDrivenDialogViewController
     {
 		public IssueLabelsView()
 		{

@@ -8,7 +8,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views
 {
-	public class NotificationsView : ViewModelCollectionDrivenViewController
+	public class NotificationsView : ViewModelCollectionDrivenDialogViewController
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;

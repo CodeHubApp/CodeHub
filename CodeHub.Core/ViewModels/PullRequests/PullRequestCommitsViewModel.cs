@@ -6,7 +6,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : ChangesetsViewModel
     {
-		public ulong PullRequestId 
+		public long PullRequestId 
 		{ 
 			get; 
 			private set; 
@@ -25,7 +25,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		public new class NavObject : CommitsViewModel.NavObject
 		{
-			public ulong PullRequestId { get; set; }
+			public long PullRequestId { get; set; }
 		}
     }
 }

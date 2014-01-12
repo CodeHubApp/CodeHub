@@ -7,7 +7,7 @@ using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenViewController
+    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
     {
         public new RepositoriesViewModel ViewModel
         {  

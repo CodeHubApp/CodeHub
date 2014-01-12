@@ -8,7 +8,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesExploreView : ViewModelCollectionDrivenViewController
+    public class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
 		private Hud _hud;
 

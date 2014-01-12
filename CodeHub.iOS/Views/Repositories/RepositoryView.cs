@@ -11,7 +11,7 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoryView : ViewModelDrivenViewController
+    public class RepositoryView : ViewModelDrivenDialogViewController
     {
 		private readonly HeaderView _header = new HeaderView();
 
@@ -150,7 +150,7 @@ namespace CodeHub.iOS.Views.Repositories
             sec1.Add(new SplitElement(new SplitElement.Row {
                 Text1 = model.Private ? "Private".t() : "Public".t(),
                 Image1 = model.Private ? Images.Locked : Images.Unlocked,
-                Text2 = model.Language,
+				Text2 = model.Language ?? "N/A",
                 Image2 = Images.Language
             }));
 

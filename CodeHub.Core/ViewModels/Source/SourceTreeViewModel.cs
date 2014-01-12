@@ -26,6 +26,8 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string Branch { get; private set; }
 
+		public bool TrueBranch { get; private set; }
+
 		public string Repository { get; private set; }
 
         public SourceFilterModel Filter
@@ -41,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceTreeCommand
         {
-            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path })); }
+			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
         }
 
         public ICommand GoToSubmoduleCommand
@@ -51,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceCommand
         {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl }));}
+			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
         }
 
         private void GoToSubmodule(ContentModel x)
@@ -75,6 +77,7 @@ namespace CodeHub.Core.ViewModels.Source
             Repository = navObject.Repository;
             Branch = navObject.Branch ?? "master";
             Path = navObject.Path ?? "";
+			TrueBranch = navObject.TrueBranch;
         }
 
         private IEnumerable<ContentModel> FilterModel(IEnumerable<ContentModel> model)
@@ -99,6 +102,9 @@ namespace CodeHub.Core.ViewModels.Source
             public string Repository { get; set; }
             public string Branch { get; set; }
             public string Path { get; set; }
+
+			// Whether the branch is a real branch and not a node
+			public bool TrueBranch { get; set; }
         }
     }
 }

@@ -5,7 +5,7 @@ using CodeFramework.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationsView : ViewModelCollectionDrivenViewController
+    public class OrganizationsView : ViewModelCollectionDrivenDialogViewController
 	{
         public override void ViewDidLoad()
         {

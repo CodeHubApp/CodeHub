@@ -7,7 +7,7 @@ using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class BranchesAndTagsView : ViewModelCollectionDrivenViewController
+	public class BranchesAndTagsView : ViewModelCollectionDrivenDialogViewController
 	{
 		private UISegmentedControl _viewSegment;
 		private UIBarButtonItem _segmentBarButton;

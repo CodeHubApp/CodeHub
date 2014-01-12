@@ -43,9 +43,14 @@ namespace CodeHub.iOS.Views.Source
 			Title = ViewModel.Title;
 		}
 
+		protected virtual UIActionSheet CreateActionSheet(string title)
+		{
+			return MonoTouch.Utilities.GetSheet(title);
+		}
+
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet(Title);
+			var sheet = CreateActionSheet(Title);
 			var openButton = !string.IsNullOrEmpty(ViewModel.FilePath) ? sheet.AddButton("Open In".t()) : -1;
 			var shareButton = !string.IsNullOrEmpty(ViewModel.HtmlUrl) ? sheet.AddButton("Share".t()) : -1;
 			var showButton = ViewModel.GoToHtmlUrlCommand.CanExecute(null) ? sheet.AddButton("Show in GitHub".t()) : -1;

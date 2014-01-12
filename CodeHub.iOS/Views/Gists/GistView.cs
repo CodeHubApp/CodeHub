@@ -11,7 +11,7 @@ using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ViewModelDrivenViewController
+    public class GistView : ViewModelDrivenDialogViewController
     {
         private readonly UIBarButtonItem _shareButton, _userButton;
         private readonly UIButton _starButton;

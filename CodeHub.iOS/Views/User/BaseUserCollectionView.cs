@@ -4,7 +4,7 @@ using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.iOS.Views.User
 {
-    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenViewController
+    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenDialogViewController
     {
         public override void ViewDidLoad()
         {

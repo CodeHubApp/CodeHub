@@ -25,7 +25,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             private set; 
         }
 
-        public ulong PullRequestId 
+        public long PullRequestId 
         { 
             get; 
             private set; 
@@ -111,7 +111,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public ulong Id { get; set; }
+            public long Id { get; set; }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 		}
 
-		public ulong Id { get; private set; }
+		public long Id { get; private set; }
 
 		protected override async Task Save()
 		{
@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Issues
 					throw new Exception("Issue must have a title!");
 
 				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-				uint? milestone = null;
+				int? milestone = null;
 				if (Milestone != null) 
 					milestone = Milestone.Number;
 				string[] labels = Labels.Items.Select(x => x.Name).ToArray();
@@ -123,7 +123,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
-			public ulong Id { get; set; }
+			public long Id { get; set; }
 		}
     }
 }

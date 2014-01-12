@@ -5,7 +5,7 @@ using CodeHub.Core.ViewModels.Issues;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class BaseIssuesView : ViewModelCollectionDrivenViewController
+    public abstract class BaseIssuesView : ViewModelCollectionDrivenDialogViewController
     {
 		public new IBaseIssuesViewModel ViewModel
 		{

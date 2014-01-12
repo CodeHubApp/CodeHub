@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Source
 			if (obj.Object is BranchModel)
 			{
 				var x = obj.Object as BranchModel;
-				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Name });
+				ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject { Username = Username, Repository = Repository, Branch = x.Name, TrueBranch = true });
 			}
 			else if (obj.Object is TagModel)
 			{

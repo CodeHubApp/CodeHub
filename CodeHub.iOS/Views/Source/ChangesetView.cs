@@ -11,7 +11,7 @@ using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetView : ViewModelDrivenViewController
+    public class ChangesetView : ViewModelDrivenDialogViewController
     {
         private readonly HeaderView _header = new HeaderView();
 

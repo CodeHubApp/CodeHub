@@ -1,8 +1,3 @@
-using GitHubSharp.Models;
-using CodeFramework.Views;
-using CodeFramework.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeHub.Core;
 using MonoTouch.Foundation;
 
 namespace CodeHub.ViewControllers

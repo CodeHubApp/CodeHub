@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueView : ViewModelDrivenViewController
+	public class IssueView : ViewModelDrivenDialogViewController
     {
 		private readonly HeaderView _header;
 		private WebElement _descriptionElement;

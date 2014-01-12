@@ -5,7 +5,7 @@ using MonoTouch.Dialog;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public abstract class CommitsView : ViewModelCollectionDrivenViewController
+	public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
 	{
 		public override void ViewDidLoad()
 		{
@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Source
 					var desc = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 
 					string login;
-					var date = DateTime.MinValue;
+					var date = DateTimeOffset.MinValue;
 
 					if (x.Committer != null)
 						login = x.Committer.Login;

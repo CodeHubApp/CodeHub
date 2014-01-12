@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Issues
 					throw new Exception("Issue must have a title!");
 
 				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-				uint? milestone = null;
+				int? milestone = null;
 				if (Milestone != null) 
 					milestone = Milestone.Number;
 				string[] labels = Labels.Items.Select(x => x.Name).ToArray();

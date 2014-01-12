@@ -6,7 +6,7 @@ using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class SettingsView : ViewModelDrivenViewController
+	public class SettingsView : ViewModelDrivenDialogViewController
     {
         public SettingsView()
         {

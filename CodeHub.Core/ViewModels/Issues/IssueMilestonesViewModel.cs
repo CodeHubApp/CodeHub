@@ -43,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public string Repository { get; private set; }
 
-		public ulong Id { get; private set; }
+		public long Id { get; private set; }
 
 		public bool SaveOnSelect { get; private set; }
 
@@ -65,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				try
 				{
 					IsSaving = true;
-					uint? milestone = null;
+					int? milestone = null;
 					if (x != null) milestone = x.Number;
 					var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(milestone);
 					var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
@@ -97,7 +97,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-			public ulong Id { get; set; }
+			public long Id { get; set; }
 			public bool SaveOnSelect { get; set; }
         }
     }

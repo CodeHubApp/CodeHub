@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Filters
 		private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
 		private string _username, _repository;
 
-        public Action<string, uint?, string> MilestoneSelected;
+        public Action<string, int?, string> MilestoneSelected;
 
 		public async override void ViewDidLoad()
 		{

@@ -5,7 +5,7 @@ using MonoTouch.Dialog;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationView : ViewModelDrivenViewController
+    public class OrganizationView : ViewModelDrivenDialogViewController
     {
         private HeaderView _header;
 

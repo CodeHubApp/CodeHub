@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public string Repository { get; private set; }
 
-		public ulong Id { get; private set; }
+		public long Id { get; private set; }
 
 		public bool SaveOnSelect { get; private set; }
 
@@ -105,7 +105,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			public string Username { get; set; }
 			public string Repository { get; set; }
-			public ulong Id { get; set; }
+			public long Id { get; set; }
 			public bool SaveOnSelect { get; set; }
 		}
     }
