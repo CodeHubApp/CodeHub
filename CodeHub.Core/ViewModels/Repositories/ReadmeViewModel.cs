@@ -48,13 +48,14 @@ namespace CodeHub.Core.ViewModels.Repositories
 			}
 		}
 
-		protected override async Task Load(bool forceCacheInvalidation)
+		protected override Task Load(bool forceCacheInvalidation)
 		{
-			var wiki = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme());
-			_contentModel = wiki.Data;
-			var d = Encoding.UTF8.GetString(Convert.FromBase64String(wiki.Data.Content));
-			Data = await this.GetApplication().Client.Markdown.GetMarkdown(d);
-			Path = CreateHtmlFile(Data);
+            return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme(), forceCacheInvalidation, x =>
+            {
+                var markdownService = GetService<IMarkdownService>();
+                var data = markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
+                Path = CreateHtmlFile(data);
+            });
 		}
 		
         private string CreateHtmlFile(string data)
