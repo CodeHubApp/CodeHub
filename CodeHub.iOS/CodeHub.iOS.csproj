@@ -193,6 +193,9 @@
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
+    <Compile Include="InAppPurchases.cs" />
+    <Compile Include="Services\FeaturesService.cs" />
+    <Compile Include="Views\App\UpgradesView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
@@ -218,6 +221,10 @@
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
       <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
       <Name>MonoTouch.Dialog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\monotouch-uservoice\UserVoice\UserVoice.csproj">
+      <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
+      <Name>UserVoice</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +252,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
-    <Reference Include="UserVoice">
-      <HintPath>..\lib\CodeFramework\lib\iOS\UserVoice.dll</HintPath>
-    </Reference>
     <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>

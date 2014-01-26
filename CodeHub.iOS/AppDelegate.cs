@@ -13,6 +13,7 @@ using Cirrious.MvvmCross.ViewModels;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeFramework.Core.Utils;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS
 {
@@ -42,25 +43,6 @@ namespace CodeHub.iOS
 			UIApplication.Main(args, null, "AppDelegate");
 		}
 
-		private class UserVoiceStyleSheet : UserVoice.UVStyleSheet
-		{
-			public override UIColor NavigationBarTextColor
-			{
-				get
-				{
-					return UIColor.White;
-				}
-			}
-
-			public override UIColor NavigationBarTintColor
-			{
-				get
-				{
-					return UIColor.White;
-				}
-			}
-		}
-
         /// <summary>
         /// Finished the launching.
         /// </summary>
@@ -77,8 +59,6 @@ namespace CodeHub.iOS
 			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
 			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
 			CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-
-			UserVoice.UVStyleSheet.StyleSheet = new UserVoiceStyleSheet();
 
 			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
 			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
@@ -109,6 +89,9 @@ namespace CodeHub.iOS
 
             this.window.MakeKeyAndVisible();
 
+            InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
+            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
+
 //			if (options != null)
 //			{
 //				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
@@ -120,14 +103,32 @@ namespace CodeHub.iOS
 //				}
 //			}
 
+            var features = Mvx.Resolve<IFeaturesService>();
+
 			// Notifications don't work on teh simulator so don't bother
-//			if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR)
-//			{
-//				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-//				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-//			}
+            if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
+			{
+				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+			}
 
             return true;
+        }
+
+        void HandlePurchaseSuccess (object sender, string e)
+        {
+            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(e, true);
+
+            if (string.Equals(e, InAppPurchases.PushNotificationsId))
+            {
+                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+            }
+        }
+
+        void HandlePurchaseError (object sender, Exception e)
+        {
+            MonoTouch.Utilities.ShowAlert("Unable to make purchase", e.Message);
         }
 
 		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)

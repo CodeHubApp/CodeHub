@@ -124,6 +124,9 @@
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="Messages\SourceEditMessage.cs" />
     <Compile Include="Services\JsonSerializationService.cs" />
+    <Compile Include="Services\IMarkdownService.cs" />
+    <Compile Include="Services\IFeaturesService.cs" />
+    <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

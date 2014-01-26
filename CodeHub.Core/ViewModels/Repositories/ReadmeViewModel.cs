@@ -5,6 +5,7 @@ using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

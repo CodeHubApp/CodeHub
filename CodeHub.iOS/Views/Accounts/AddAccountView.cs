@@ -5,7 +5,6 @@ using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
-using CodeFramework.Core.Messages;
 using Cirrious.CrossCore;
 using Cirrious.MvvmCross.Plugins.Messenger;
 
@@ -14,7 +13,6 @@ namespace CodeHub.iOS.Views.Accounts
     public partial class AddAccountView : MvxViewController
     {
 		private readonly IHud _hud;
-		private MvxSubscriptionToken _errorToken;
 
         public new AddAccountViewModel ViewModel
         {
@@ -106,23 +104,13 @@ namespace CodeHub.iOS.Views.Accounts
             base.ViewWillAppear(animated);
             _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
             _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
-			_errorToken = Mvx.Resolve<IMvxMessenger>().SubscribeOnMainThread<ErrorMessage>(OnErrorMessage);
         }
-
-		private void OnErrorMessage(ErrorMessage msg)
-		{
-			if (msg.Sender != ViewModel)
-				return;
-			MonoTouch.Utilities.ShowAlert("Error", msg.Error.Message);
-		}
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
             NSNotificationCenter.DefaultCenter.RemoveObserver(_hideNotification);
             NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
-			_errorToken.Dispose();
-			_errorToken = null;
         }
 
         private void OnKeyboardNotification (NSNotification notification)

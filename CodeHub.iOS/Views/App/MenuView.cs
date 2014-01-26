@@ -77,7 +77,8 @@ namespace CodeHub.iOS.Views.App
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
-			infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
+            infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
+            infoSection.Add(new MenuElement("Upgrades".t(), () => ViewModel.GoToUpgradesCommand.Execute(null), Images.Unlocked));
 			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
@@ -86,8 +87,8 @@ namespace CodeHub.iOS.Views.App
 
         private void PresentUserVoice()
         {
-            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
-			UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
+//            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
+//			UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)

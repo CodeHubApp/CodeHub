@@ -11,6 +11,13 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class SettingsViewModel : BaseViewModel
     {
+        private readonly IFeaturesService _featuresService;
+
+        public SettingsViewModel(IFeaturesService featuresService)
+        {
+            _featuresService = featuresService;
+        }
+
 		public string DefaultStartupViewName
 		{
 			get { return this.GetApplication().Account.DefaultStartupView; }
@@ -38,16 +45,19 @@ namespace CodeHub.Core.ViewModels.App
 			}
 		}
 
-		public bool PushNotificationsEnabled
+        public bool PushNotificationsActivated
+        {
+            get { return _featuresService.IsPushNotificationsActivated; }
+        }
+
+        public bool PushNotificationsEnabled
 		{
-			get
-			{
-				return this.GetApplication().Account.PushNotificationsEnabled;
-			}
-			set
-			{
-				RegisterPushNotifications(value);
-			}
+            get { return this.GetApplication().Account.PushNotificationsEnabled; }
+            set 
+            { 
+                if (PushNotificationsActivated)
+                    RegisterPushNotifications(value); 
+            }
 		}
 
 		private async Task RegisterPushNotifications(bool enabled)

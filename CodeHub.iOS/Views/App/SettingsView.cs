@@ -26,12 +26,13 @@ namespace CodeHub.iOS.Views.App
 			var application = Mvx.Resolve<IApplicationService>();
 			var vm = (SettingsViewModel)ViewModel;
 			var currentAccount = application.Account;
+            var accountSection = new Section("Account");
 
-			var saveCredentials = new TrueFalseElement("Save Credentials".t(), !currentAccount.DontRemember, e =>
-			{ 
-				currentAccount.DontRemember = !e.Value;
-				application.Accounts.Update(currentAccount);
-			});
+            accountSection.Add(new TrueFalseElement("Save Credentials".t(), !currentAccount.DontRemember, e =>
+            { 
+                currentAccount.DontRemember = !e.Value;
+                application.Accounts.Update(currentAccount);
+            }));
 
 			var showOrganizationsInEvents = new TrueFalseElement("Show Organizations in Events".t(), currentAccount.ShowOrganizationsInEvents, e =>
 			{ 
@@ -57,7 +58,8 @@ namespace CodeHub.iOS.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
-			var pushNotifications = new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value);
+            if (vm.PushNotificationsActivated)
+                accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
 			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
@@ -72,7 +74,7 @@ namespace CodeHub.iOS.Views.App
 
 			//Assign the root
 			var root = new RootElement(Title);
-			root.Add(new Section("Account") { saveCredentials /*, pushNotifications */ });
+            root.Add(accountSection);
 			root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
 			root.Add(new Section ("Internal") { deleteCache, usage });
 			Root = root;

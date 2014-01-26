@@ -156,6 +156,11 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<AboutViewModel>(null)); }
 		}
 
+        public ICommand GoToUpgradesCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<UpgradesViewModel>(null)); }
+        }
+
         public ICommand LoadCommand
         {
             get { return new MvxCommand(Load);}    
