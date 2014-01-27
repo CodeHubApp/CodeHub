@@ -17,6 +17,24 @@ namespace CodeHub.iOS
 			MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
 			MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
 
+            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+            UINavigationBar.Appearance.TintColor = UIColor.White;
+            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+            CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+
+            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
+            UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
+
+            UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
+            UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
+
+            UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
+
+            UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor = UIColor.White}, UIControlState.Normal);
+
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
 //            CodeFramework.Elements.NewsFeedElement.NameColor = theme.MainTitleColor;

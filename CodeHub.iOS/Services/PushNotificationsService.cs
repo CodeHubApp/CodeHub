@@ -1,59 +1,75 @@
 using System;
 using CodeHub.Core.Services;
 using MonoTouch.UIKit;
+using Cirrious.CrossCore;
+using CodeFramework.Core.Services;
+using System.Net.Http;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Services
 {
 	public class PushNotificationsService : IPushNotificationsService
     {
+        private const string RegisterUri = "http://codehub-push.herokuapp.com/register";
+        private const string DeregisterUri = "http://codehub-push.herokuapp.com/unregister";
+
 		private readonly object _lock = new object();
 
 		public void Register()
 		{
-//			lock (_lock)
-//			{
-//				var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
-//
-//				if (string.IsNullOrEmpty(del.DeviceToken))
-//					throw new InvalidOperationException("Push notifications has not been enabled for this app!");
-//
-//				var user = Cirrious.CrossCore.Mvx.Resolve<IApplicationService>().Account;
-//
-//				var client = new RestSharp.RestClient();
-//				var request = new RestSharp.RestRequest("http://codehub-push.herokuapp.com/register", RestSharp.Method.POST);
-//				request.AddParameter("token", del.DeviceToken);
-//				request.AddParameter("user", user.Username);
-//				request.AddParameter("oauth", user.OAuth);
-//				request.Timeout = 1000 * 30;
-//				var response = client.Execute(request);
-//				if (response.ErrorException != null)
-//					throw response.ErrorException;
-//
-//				if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
-//					return;
-//				throw new InvalidOperationException("Unable to register! Server returned a " + response.StatusCode + " status code");
-//			}
+			lock (_lock)
+			{
+				var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
+
+				if (string.IsNullOrEmpty(del.DeviceToken))
+					throw new InvalidOperationException("Push notifications has not been enabled for this app!");
+
+				var user = Mvx.Resolve<IApplicationService>().Account;
+                if (user.IsEnterprise)
+                    throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
+
+                var client = Mvx.Resolve<IHttpClientService>().Create();
+                var content = new FormUrlEncodedContent(new[] 
+                {
+                    new KeyValuePair<string, string>("token", del.DeviceToken),
+                    new KeyValuePair<string, string>("user", user.Username),
+                    new KeyValuePair<string, string>("oauth", user.OAuth)
+                });
+
+                client.Timeout = new TimeSpan(0, 0, 30);
+                var response = client.PostAsync(RegisterUri, content).Result;
+                if (!response.IsSuccessStatusCode)
+                    throw new InvalidOperationException("Unable to register! Server returned a " + response.StatusCode + " status code");
+                System.Diagnostics.Debug.WriteLine("Push notifications registered for: " + user.Username + " (" + user.OAuth + ") on device <" + del.DeviceToken + ">");
+			}
 		}
 
 		public void Deregister()
 		{
-//			lock (_lock)
-//			{
-//				var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
-//				var user = Cirrious.CrossCore.Mvx.Resolve<IApplicationService>().Account;
-//				var client = new RestSharp.RestClient();
-//				var request = new RestSharp.RestRequest("http://codehub-push.herokuapp.com/unregister", RestSharp.Method.POST);
-//				request.AddParameter("token", del.DeviceToken);
-//				request.AddParameter("oauth", user.OAuth);
-//				request.Timeout = 1000 * 30;
-//				var response = client.Execute(request);
-//				if (response.ErrorException != null)
-//					throw response.ErrorException;
-//
-//				if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.NotFound)
-//					return;
-//				throw new InvalidOperationException("Unable to deregister! Server returned a " + response.StatusCode + " status code");
-//			}
+			lock (_lock)
+			{
+				var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
+
+                if (string.IsNullOrEmpty(del.DeviceToken))
+                    throw new InvalidOperationException("Push notifications has not been enabled for this app!");
+
+                var user = Mvx.Resolve<IApplicationService>().Account;
+                if (user.IsEnterprise)
+                    throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
+
+                var client = Mvx.Resolve<IHttpClientService>().Create();
+                var content = new FormUrlEncodedContent(new[] 
+                    {
+                        new KeyValuePair<string, string>("token", del.DeviceToken),
+                        new KeyValuePair<string, string>("oauth", user.OAuth)
+                    });
+
+                client.Timeout = new TimeSpan(0, 0, 30);
+                var response = client.PostAsync(DeregisterUri, content).Result;
+                if (!response.IsSuccessStatusCode)
+                    throw new InvalidOperationException("Unable to deregister! Server returned a " + response.StatusCode + " status code");
+                System.Diagnostics.Debug.WriteLine("Push notifications deregistered for: " + user.Username + " (" + user.OAuth + ") on device <" + del.DeviceToken + ">");
+			}
 		}
     }
 }

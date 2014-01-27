@@ -3,20 +3,34 @@ using CodeHub.Core.Services;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.App
 {
 	public class SettingsView : ViewModelDrivenDialogViewController
     {
+        private IHud _hud;
+
         public SettingsView()
         {
             Title = "Settings";
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            _hud = new Hud(View);
         }
 
         public override void ViewWillAppear(bool animated)
         {
 			var vm = (SettingsViewModel)ViewModel;
 			vm.Bind(x => x.PushNotificationsEnabled, CreateTable);
+            vm.Bind(x => x.IsSaving, x =>
+            {
+                    if (x) _hud.Show("Saving...");
+                    else _hud.Hide();
+            });
 			CreateTable();
             base.ViewWillAppear(animated);
         }

@@ -14,6 +14,8 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.Services;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS
 {
@@ -29,7 +31,6 @@ namespace CodeHub.iOS
         /// The window.
         /// </summary>
         private UIWindow window;
-
 		public string DeviceToken;
 
 		/// <summary>
@@ -54,24 +55,6 @@ namespace CodeHub.iOS
 			var iRate = MTiRate.iRate.SharedInstance;
 			iRate.AppStoreID = 707173885;
 
-			UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
-			UINavigationBar.Appearance.TintColor = UIColor.White;
-			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
-			UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-			CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-
-			UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
-			UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
-			UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
-
-			UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
-
-			UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes()
-			{
-				TextColor = UIColor.White,
-			}, UIControlState.Normal);
-
 			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
 
             // Setup theme
@@ -92,16 +75,16 @@ namespace CodeHub.iOS
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
 
-//			if (options != null)
-//			{
-//				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
-//				{
-//					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-//					if(remoteNotification != null) {
-//						HandleNotification(remoteNotification);
-//					}
-//				}
-//			}
+			if (options != null)
+			{
+				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
+				{
+					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
+					if(remoteNotification != null) {
+						HandleNotification(remoteNotification);
+					}
+				}
+			}
 
             var features = Mvx.Resolve<IFeaturesService>();
 
@@ -157,6 +140,14 @@ namespace CodeHub.iOS
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
 			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
+
+            var app = Mvx.Resolve<IApplicationService>();
+            if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
+            {
+                Task.Run(() => Mvx.Resolve<IPushNotificationsService>().Register());
+                app.Account.IsPushNotificationsEnabled = true;
+                app.Accounts.Update(app.Account);
+            }
 		}
 
 		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)

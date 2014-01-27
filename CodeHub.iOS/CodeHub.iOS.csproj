@@ -258,6 +258,7 @@
     <Reference Include="MTiRate">
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />

@@ -33,6 +33,17 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(DeleteCache); }
 		}
 
+        private bool _isSaving;
+        public bool IsSaving
+        {
+            get { return _isSaving; }
+            private set
+            {
+                _isSaving = value;
+                RaisePropertyChanged(() => IsSaving);
+            }
+        }
+
 		public bool AnalyticsEnabled
 		{
 			get
@@ -52,7 +63,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public bool PushNotificationsEnabled
 		{
-            get { return this.GetApplication().Account.PushNotificationsEnabled; }
+            get { return this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; }
             set 
             { 
                 if (PushNotificationsActivated)
@@ -66,19 +77,23 @@ namespace CodeHub.Core.ViewModels.App
 
 			try
 			{
+                IsSaving = true;
 				if (enabled)
 					await Task.Run(() => notificationService.Register());
 				else
 					await Task.Run(() => notificationService.Deregister());
-				this.GetApplication().Account.PushNotificationsEnabled = enabled;
+				this.GetApplication().Account.IsPushNotificationsEnabled = enabled;
 				this.GetApplication().Accounts.Update(this.GetApplication().Account);
-				RaisePropertyChanged(() => PushNotificationsEnabled);
 			}
 			catch (Exception e)
 			{
 				ReportError(e);
-				RaisePropertyChanged(() => PushNotificationsEnabled);
 			}
+            finally
+            {
+                RaisePropertyChanged(() => PushNotificationsEnabled);
+                IsSaving = false;
+            }
 		}
 
 		private void DeleteCache()

@@ -87,8 +87,17 @@ namespace CodeHub.iOS.Views.App
 
         private void PresentUserVoice()
         {
-//            var config = UserVoice.UVConfig.Create("http://codehub.uservoice.com", "95D8N9Q3UT1Asn89F7d3lA", "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4");
-//			UserVoice.UserVoice.PresentUserVoiceInterface(this, config);
+            var config = new UserVoice.UVConfig() {
+                Key = "95D8N9Q3UT1Asn89F7d3lA",
+                Secret = "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4",
+                Site = "codehub.uservoice.com",
+                ShowContactUs = true,
+                ShowForum = true,
+                ShowPostIdea = true,
+                ShowKnowledgeBase = true,
+            };
+            UserVoice.UserVoice.Initialize(config);
+            UserVoice.UserVoice.PresentUserVoiceInterfaceForParentViewController(this);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
@@ -108,14 +117,14 @@ namespace CodeHub.iOS.Views.App
 
             ViewModel.Bind(x => x.Notifications, x =>
             {
-                _notifications.NotificationNumber = x;
-                Root.Reload(_notifications, UITableViewRowAnimation.None);
+                if (_notifications != null)
+                {
+                    _notifications.NotificationNumber = x;
+                    Root.Reload(_notifications, UITableViewRowAnimation.None);
+                }
             });
 
-			ViewModel.Bind(x => x.Organizations, x =>
-			{
-				CreateMenuRoot();
-			});
+            ViewModel.Bind(x => x.Organizations, x => CreateMenuRoot());
 
             ViewModel.LoadCommand.Execute(null);
         }
