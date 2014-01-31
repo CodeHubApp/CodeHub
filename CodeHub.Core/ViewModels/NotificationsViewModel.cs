@@ -11,6 +11,7 @@ using CodeHub.Core.ViewModels.PullRequests;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
 using System.Collections.Generic;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -88,6 +89,11 @@ namespace CodeHub.Core.ViewModels
                 ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
                 ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, Node = node });
+            }
+            else if (subject.Equals("release"))
+            {
+                ReadCommand.Execute(x);
+                ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, IsShowingBranches = false });
             }
         }
 
@@ -172,13 +178,13 @@ namespace CodeHub.Core.ViewModels
 						await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[notification.Id].MarkAsRead());
 						notification.Unread = false;
 					}
-					catch
+                    catch (Exception e)
 					{
-						//Ignore?
+                        System.Diagnostics.Debug.WriteLine("Unable to mark notification as read: " + e.Message);
 					}
 				}
 
-				Notifications.Items.Clear();
+                Notifications.Items.RemoveRange(notifications);
 				UpdateAccountNotificationsCount();
 			}
 			catch (Exception e)

@@ -16,6 +16,9 @@ using CodeFramework.Core.Utils;
 using CodeHub.Core.Services;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Text;
 
 namespace CodeHub.iOS
 {
@@ -67,6 +70,17 @@ namespace CodeHub.iOS
 
 			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-44040302-1", "CodeHub");
 
+            if (options != null)
+            {
+                if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
+                {
+                    var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
+                    if(remoteNotification != null) {
+                        HandleNotification(remoteNotification, true);
+                    }
+                }
+            }
+
             var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();
 
@@ -74,17 +88,6 @@ namespace CodeHub.iOS
 
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
-
-			if (options != null)
-			{
-				if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
-				{
-					var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-					if(remoteNotification != null) {
-						HandleNotification(remoteNotification);
-					}
-				}
-			}
 
             var features = Mvx.Resolve<IFeaturesService>();
 
@@ -118,18 +121,61 @@ namespace CodeHub.iOS
 		{
 			if (application.ApplicationState == UIApplicationState.Active)
 				return;
-			HandleNotification(userInfo);
+            HandleNotification(userInfo, false);
 		}
 
-		private void HandleNotification(NSDictionary data)
+        private void HandleNotification(NSDictionary data, bool fromBootup)
 		{
 			try
 			{
 				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
-				var request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
-				var repoId = new RepositoryIdentifier(data["r"].ToString());
-				request.ParameterValues = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
-				viewDispatcher.ShowViewModel(request);
+                var appService = Mvx.Resolve<IApplicationService>();
+                var repoId = new RepositoryIdentifier(data["r"].ToString());
+                var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
+
+                MvxViewModelRequest request;
+                if (data.ContainsKey(new NSString("c")))
+                {
+                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.ChangesetViewModel>.GetDefaultRequest();
+                    parameters.Add("Node", data["c"].ToString());
+                    parameters.Add("ShowRepository", "True");
+                }
+                else if (data.ContainsKey(new NSString("i")))
+                {
+                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Issues.IssueViewModel>.GetDefaultRequest();
+                    parameters.Add("Id", data["i"].ToString());
+                }
+                else if (data.ContainsKey(new NSString("p")))
+                {
+                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>.GetDefaultRequest();
+                    parameters.Add("Id", data["p"].ToString());
+                }
+                else
+                {
+                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
+                }
+
+                request.ParameterValues = parameters;
+
+                var username = data["u"].ToString();
+
+                if (appService.Account == null || !appService.Account.Username.Equals(username))
+                {
+                    var user = appService.Accounts.FirstOrDefault(x => x.Username.Equals(username));
+                    if (user != null)
+                    {
+                        appService.DeactivateUser();
+                        appService.Accounts.SetDefault(user);
+                    }
+                }
+
+                appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(request));
+
+                if (appService.Account == null && !fromBootup)
+                {
+                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
+                    viewDispatcher.ShowViewModel(startupViewModelRequest);
+                }
 			}
 			catch (Exception e)
 			{
@@ -154,5 +200,87 @@ namespace CodeHub.iOS
 		{
 			MonoTouch.Utilities.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
 		}
+
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            try
+            {
+                var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
+                var appService = Mvx.Resolve<IApplicationService>();
+
+                var path = url.AbsoluteString.Replace("codehub://", "");
+                var queryMarker = path.IndexOf("?", StringComparison.Ordinal);
+                if (queryMarker > 0)
+                    path = path.Substring(0, queryMarker);
+
+                if (!path.EndsWith("/", StringComparison.Ordinal))
+                    path += "/";
+                var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
+                var firstIsDomain = first.Contains(".");
+
+                var req = RouteProvider.ProcessRoute(path);
+                if (req != null)
+                    appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(req));
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to open URL \"" + url.AbsoluteString + "\": " + e.Message);
+            }
+
+            return false;
+        }
+    }
+
+    public static class RouteProvider
+    {
+        public static Route[] Routes = {
+            new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.User.ProfileViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoryViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/$", typeof(CodeHub.Core.ViewModels.Issues.IssuesViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Issues.IssueViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(CodeHub.Core.ViewModels.Source.SourceTreeViewModel)),
+        };
+
+        public static MvxViewModelRequest ProcessRoute(string path)
+        {
+            if (!path.EndsWith("/", StringComparison.Ordinal))
+                path += "/";
+
+            foreach (var route in Routes)
+            {
+                var regex = new Regex(route.Path, RegexOptions.ExplicitCapture);
+                var match = regex.Match(path);
+                var groups = regex.GetGroupNames().Skip(1);
+
+                if (match.Success)
+                {
+                    var rec = new MvxViewModelRequest();
+                    rec.ViewModelType = route.ViewModelType;
+                    rec.ParameterValues = new Dictionary<string, string>();
+                    foreach (var group in groups)
+                        rec.ParameterValues.Add(group, match.Groups[group].Value);
+                    return rec;
+                }
+            }
+
+            return null;
+        }
+
+    }
+
+    public class Route
+    {
+        public string Path { get; set; }
+        public Type ViewModelType { get; set; }
+
+        public Route(string path, Type viewModelType) 
+        {
+            Path = path;
+            ViewModelType = viewModelType;
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿using CodeFramework.Core.Services;
+﻿using System;
+using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
-using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
@@ -12,6 +12,10 @@ namespace CodeHub.Core.Services
 
         IAccountsService Accounts { get; }
 
+        void DeactivateUser();
+
         void ActivateUser(GitHubAccount account, GitHubSharp.Client client);
+
+        void SetUserActivationAction(Action action);
     }
 }

@@ -17,10 +17,12 @@ namespace CodeHub.Core.Services
         private readonly IPushNotificationsService _pushNotifications;
         private readonly IFeaturesService _features;
         private readonly IAlertDialogService _alertDialogService;
+        private Action _activationAction;
 
         public Client Client { get; private set; }
         public GitHubAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
+
 
         public ApplicationService(IAccountsService accounts, IMvxViewDispatcher viewDispatcher, 
             IFeaturesService features, IPushNotificationsService pushNotifications,
@@ -31,6 +33,14 @@ namespace CodeHub.Core.Services
             Accounts = accounts;
             _features = features;
             _alertDialogService = alertDialogService;
+        }
+
+        public void DeactivateUser()
+        {
+            Accounts.SetActiveAccount(null);
+            Accounts.SetDefault(null);
+            Account = null;
+            Client = null;
         }
 
         public void ActivateUser(GitHubAccount account, Client client)
@@ -51,8 +61,23 @@ namespace CodeHub.Core.Services
             // Show the menu & show a page on the slideout
             _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
 
+            // A user has been activated!
+            if (_activationAction != null)
+            {
+                _activationAction();
+                _activationAction = null;
+            }
+
             //Activate push notifications
             PromptForPushNotifications();
+        }
+
+        public void SetUserActivationAction(Action action)
+        {
+            if (Account != null)
+                action();
+            else
+                _activationAction = action;
         }
 
         private async Task PromptForPushNotifications()
