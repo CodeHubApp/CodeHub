@@ -49,7 +49,7 @@ namespace CodeHub.iOS.Views
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
-                    el.Image = Images.Flag;
+                    el.Image = Images.Issue;
                 else if (subject.Equals("pullrequest"))
                     el.Image = Images.Hand;
                 else if (subject.Equals("commit"))

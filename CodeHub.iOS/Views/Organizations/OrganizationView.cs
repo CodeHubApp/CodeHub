@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Organizations
 				_header.ImageUri = model.AvatarUrl;
             });
 
-            var members = new StyledStringElement("Members".t(), () => vm.GoToMembersCommand.Execute(null), Images.Following);
+            var members = new StyledStringElement("Members".t(), () => vm.GoToMembersCommand.Execute(null), Images.Group);
             var teams = new StyledStringElement("Teams".t(), () => vm.GoToTeamsCommand.Execute(null), Images.Team);
             var followers = new StyledStringElement("Followers".t(), () => vm.GoToFollowersCommand.Execute(null), Images.Heart);
             var events = new StyledStringElement("Events".t(), () => vm.GoToEventsCommand.Execute(null), Images.Event);

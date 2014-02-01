@@ -332,12 +332,8 @@
     <Content Include="Images\notifications.png" />
     <Content Include="Images\pencil%402x.png" />
     <Content Include="Images\pencil.png" />
-    <Content Include="Images\person%402x.png" />
-    <Content Include="Images\person.png" />
     <Content Include="Images\priority%402x.png" />
     <Content Include="Images\priority.png" />
-    <Content Include="Images\public%402x.png" />
-    <Content Include="Images\public.png" />
     <Content Include="Images\repo%402x.png" />
     <Content Include="Images\repo.png" />
     <Content Include="Images\repository.png" />
@@ -348,8 +344,6 @@
     <Content Include="Images\size.png" />
     <Content Include="Images\star%402x.png" />
     <Content Include="Images\star.png" />
-    <Content Include="Images\star2%402x.png" />
-    <Content Include="Images\star2.png" />
     <Content Include="Images\tag%402x.png" />
     <Content Include="Images\tag.png" />
     <Content Include="Images\team%402x.png" />
@@ -398,6 +392,10 @@
     <BundleResource Include="Resources\Icon-76%402x.png" />
     <BundleResource Include="Resources\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
+    <BundleResource Include="Images\codehub-blur.png" />
+    <BundleResource Include="Images\codehub-blur%402x.png" />
+    <BundleResource Include="Images\bug.png" />
+    <BundleResource Include="Images\bug%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
