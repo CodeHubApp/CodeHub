@@ -25,7 +25,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public void Init(NavObject navObject)
         {
-            Username = navObject.Username;
+            Username = navObject.Username ?? this.GetApplication().Account.Username;
 
             //Assign some sort of title
             if (Username != null)

@@ -82,6 +82,10 @@ namespace CodeHub.Core.Services
 
         private async Task PromptForPushNotifications()
         {
+            // Push notifications are not enabled for enterprise
+            if (Account.IsEnterprise)
+                return;
+
             try
             {
                 // Check for push notifications

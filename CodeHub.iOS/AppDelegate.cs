@@ -235,6 +235,9 @@ namespace CodeHub.iOS
     public static class RouteProvider
     {
         public static Route[] Routes = {
+            new Route("^gist.github.com/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
+            new Route("^gist.github.com/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
+            new Route("^gist.github.com/(?<Username>[^/]*)/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.GistViewModel)),
             new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.User.ProfileViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoryViewModel)),
@@ -252,7 +255,7 @@ namespace CodeHub.iOS
 
             foreach (var route in Routes)
             {
-                var regex = new Regex(route.Path, RegexOptions.ExplicitCapture);
+                var regex = new Regex(route.Path, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
                 var match = regex.Match(path);
                 var groups = regex.GetGroupNames().Skip(1);
 
