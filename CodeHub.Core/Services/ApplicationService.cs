@@ -49,14 +49,14 @@ namespace CodeHub.Core.Services
             Account = account;
             Client = client;
 
-			//Set the default account
-			Accounts.SetDefault(account);
+            //Set the default account
+            Accounts.SetDefault(account);
 
-			//Check the cache size
-			CheckCacheSize(account.Cache);
+            //Check the cache size
+            CheckCacheSize(account.Cache);
 
             //Assign the cache
-			Client.Cache = new GitHubCache(account);
+            Client.Cache = new GitHubCache(account);
 
             // Show the menu & show a page on the slideout
             _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
@@ -108,54 +108,52 @@ namespace CodeHub.Core.Services
             }
         }
 
-		private static void CheckCacheSize(AccountCache cache)
-		{
-			var totalCacheSize = cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-			var totalCacheSizeMB = (totalCacheSize / 1024f / 1024f);
+        private static void CheckCacheSize(AccountCache cache)
+        {
+            var totalCacheSize = cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
+            var totalCacheSizeMB = (totalCacheSize / 1024f / 1024f);
 
-			if (totalCacheSizeMB > 64)
-			{
-				System.Console.WriteLine("Flushing cache due to size...");
-				cache.DeleteAll();
-			}
-		}
+            if (totalCacheSizeMB > 64)
+            {
+                System.Console.WriteLine("Flushing cache due to size...");
+                cache.DeleteAll();
+            }
+        }
 
-		private class GitHubCache : ICache
-		{
-			private readonly AccountCache _account;
-			public GitHubCache(Account account)
-			{
-				_account = account.Cache;
-			}
+        private class GitHubCache : ICache
+        {
+            private readonly AccountCache _account;
+            public GitHubCache(Account account)
+            {
+                _account = account.Cache;
+            }
 
-			public string GetETag(string url)
-			{
-				var data = _account.GetEntry(url);
-				if (data == null)
-					return null;
-				return data.CacheTag;
-			}
+            public string GetETag(string url)
+            {
+                var data = _account.GetEntry(url);
+                if (data == null)
+                    return null;
+                return data.CacheTag;
+            }
 
             public byte[] Get(string url)
-			{
+            {
                 var data = _account.Get(url);
-				if (data == null)
+                if (data == null)
                     return null;
 
-				System.Console.WriteLine("[GET] cache: {0}", url);
-				return data;
-			}
+                return data;
+            }
 
             public void Set(string url, byte[] data, string etag)
-			{
-				System.Console.WriteLine("[SET] cache: {0}", url);
-				_account.Set(url, data, etag);
-			}
+            {
+                _account.Set(url, data, etag);
+            }
 
-			public bool Exists(string url)
-			{
-				return _account.GetEntry(url) != null;
-			}
-		}
+            public bool Exists(string url)
+            {
+                return _account.GetEntry(url) != null;
+            }
+        }
     }
 }

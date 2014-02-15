@@ -4,6 +4,8 @@ using System.Linq;
 using CodeHub.Core.Services;
 using CodeFramework.iOS.ViewControllers;
 using System;
+using CodeHub.Core.ViewModels.App;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -21,14 +23,20 @@ namespace CodeHub.iOS.Views.App
             NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
         }
 
-        public override async void ViewDidLoad()
+        public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+            var vm = (UpgradesViewModel)this.ViewModel;
+            vm.Bind(x => x.Keys, x => LoadProducts(x));
+        }
 
+        private async Task LoadProducts(string[] keys)
+        {
             try
             {
                 MonoTouch.Utilities.PushNetworkActive();
-                var data = await InAppPurchases.RequestProductData(InAppPurchases.PushNotificationsId);
+                var data = await InAppPurchases.RequestProductData(keys);
+                _items.Clear();
                 _items.AddRange(data.Products.Select(x => new Item { Id = x.ProductIdentifier, Name = x.LocalizedTitle, Description = x.LocalizedDescription, Price = x.LocalizedPrice() }));
                 Render();
             }

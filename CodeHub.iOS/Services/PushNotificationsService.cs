@@ -10,8 +10,8 @@ namespace CodeHub.iOS.Services
 {
 	public class PushNotificationsService : IPushNotificationsService
     {
-        private const string RegisterUri = "http://codehub-push.dillonbuchanan.com/register";
-        private const string DeregisterUri = "http://codehub-push.dillonbuchanan.com/unregister";
+        private const string RegisterUri = "http://162.243.15.10/register";
+        private const string DeregisterUri = "http://162.243.15.10/unregister";
 
 		private readonly object _lock = new object();
 

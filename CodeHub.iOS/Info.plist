@@ -21,9 +21,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.1.1</string>
-	<key>CFBundleVersion</key>
-	<string>2.1.1</string>
+	<string>2.2.0</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-Small-50</string>
@@ -69,5 +67,7 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>2.2.0</string>
 </dict>
 </plist>
