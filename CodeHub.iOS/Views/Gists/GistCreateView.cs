@@ -1,70 +1,41 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.iOS;
-using GitHubSharp.Models;
-using System.Collections.Generic;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using System.Drawing;
-using CodeFramework.ViewControllers;
-using CodeFramework.Views;
 using CodeFramework.iOS.ViewControllers;
+using Cirrious.MvvmCross.Touch.Views;
+using CodeHub.Core.ViewModels.Gists;
+using CodeHub.ViewControllers;
 using CodeFramework.iOS.Utils;
-using Cirrious.CrossCore;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Gists
 {
-    public class CreateGistViewController : BaseDialogViewController
+    public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalTouchView
     {
-        protected GistCreateModel _model;
-        protected TrueFalseElement _public;
-        public Action<GistModel> Created;
-        protected bool _publicEditable = true;
+        private IHud _hud;
 
-        public CreateGistViewController()
-            : base(true)
+        public new GistCreateViewModel ViewModel
+        {
+            get { return (GistCreateViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
+
+        public override void ViewDidLoad()
         {
             Title = "Create Gist";
-            Style = UITableViewStyle.Grouped;
-
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Save());
-
-            _model = new GistCreateModel() { Public = true };
-            _model.Files = new Dictionary<string, GistCreateModel.File>();
-        }
-
-        private void Discard()
-        {
-            DismissViewController(true, null);
-        }
-
-        protected async virtual void Save()
-        {
-            if (_model.Files.Count == 0)
+            _hud = this.CreateHud();
+            base.ViewDidLoad();
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
+            ViewModel.Bind(x => x.Description, UpdateView);
+            ViewModel.Bind(x => x.Files, UpdateView);
+            ViewModel.Bind(x => x.Public, UpdateView);
+            ViewModel.Bind(x => x.IsSaving, x =>
             {
-                MonoTouch.Utilities.ShowAlert("No Files", "You cannot create a Gist without atleast one file");
-                return;
-            }
-
-            try
-            {
-                GistModel newGist = null;
-                _model.Public = _public.Value;
-                await this.DoWorkAsync("Saving...", async () => {
-					var app = Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-					newGist = (await app.Client.ExecuteAsync(app.Client.AuthenticatedUser.Gists.CreateGist(_model))).Data;
-                });
-
-                if (Created != null && newGist != null)
-                    Created(newGist);
-
-                //Dismiss me!
-                NavigationController.PopViewControllerAnimated(true);
-            }
-            catch (Exception e)
-            {
-                MonoTouch.Utilities.ShowAlert("Unable to Save!", e.Message);
-            }
+                if (x)
+                    _hud.Show("Saving...");
+                else
+                    _hud.Hide();
+            });
         }
 
         int _gistFileCounter = 0;
@@ -78,16 +49,18 @@ namespace CodeHub.ViewControllers
                     while (true)
                     {
                         name = "gistfile" + (++_gistFileCounter) + ".txt";
-                        if (_model.Files.ContainsKey(name))
+                        if (ViewModel.Files.ContainsKey(name))
                             continue;
                         break;
                     }
                 }
 
-                if (_model.Files.ContainsKey(name))
+                if (ViewModel.Files.ContainsKey(name))
                     throw new InvalidOperationException("A filename by that type already exists");
-                _model.Files.Add(name, new GistCreateModel.File { Content = content });
+                ViewModel.Files.Add(name, content);
+                ViewModel.Files = ViewModel.Files;
             };
+
             NavigationController.PushViewController(createController, true);
         }
 
@@ -103,45 +76,40 @@ namespace CodeHub.ViewControllers
             var section = new Section();
             root.Add(section);
 
-            var desc = new MultilinedElement("Description") { Value = _model.Description };
+            var desc = new MultilinedElement("Description") { Value = ViewModel.Description };
             desc.Tapped += ChangeDescription;
             section.Add(desc);
 
-            if (_public == null)
-				_public = new TrueFalseElement("Public", _model.Public ?? false, (e) => { }); 
-
-            if (_publicEditable)
-                section.Add(_public);
+            var pub = new TrueFalseElement("Public", ViewModel.Public, (e) => ViewModel.Public = e.Value); 
+            section.Add(pub);
 
             var fileSection = new Section();
             root.Add(fileSection);
 
-            foreach (var file in _model.Files.Keys)
+            foreach (var file in ViewModel.Files.Keys)
             {
                 var key = file;
-                if (!_model.Files.ContainsKey(key) || _model.Files[file].Content == null)
+                if (string.IsNullOrEmpty(ViewModel.Files[file]))
                     continue;
 
-                var size = System.Text.ASCIIEncoding.UTF8.GetByteCount(_model.Files[file].Content);
+                var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
                 var el = new StyledStringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
                 el.Tapped += () => {
-                    if (!_model.Files.ContainsKey(key))
+                    if (!ViewModel.Files.ContainsKey(key))
                         return;
-                    var createController = new ModifyGistFileController(key, _model.Files[key].Content);
+                    var createController = new ModifyGistFileController(key, ViewModel.Files[key]);
                     createController.Save = (name, content) => {
 
                         if (string.IsNullOrEmpty(name))
                             throw new InvalidOperationException("Please enter a name for the file");
 
                         //If different name & exists somewhere else
-                        if (!name.Equals(key) && _model.Files.ContainsKey(name))
+                        if (!name.Equals(key) && ViewModel.Files.ContainsKey(name))
                             throw new InvalidOperationException("A filename by that type already exists");
 
-                        //Remove old
-                        _model.Files.Remove(key);
-
-                        //Put new
-                        _model.Files[name] = new GistCreateModel.File { Content = content };
+                        ViewModel.Files.Remove(key);
+                        ViewModel.Files[name] = content;
+                        ViewModel.Files = ViewModel.Files; // Trigger refresh
                     };
 
                     NavigationController.PushViewController(createController, true);
@@ -156,9 +124,9 @@ namespace CodeHub.ViewControllers
 
         private void ChangeDescription()
         {
-            var composer = new Composer { Title = "Description", Text = _model.Description };
+            var composer = new Composer { Title = "Description", Text = ViewModel.Description };
             composer.NewComment(this, (text) => {
-                _model.Description = text;
+                ViewModel.Description = text;
                 composer.CloseComposer();
             });
         }
@@ -170,13 +138,13 @@ namespace CodeHub.ViewControllers
 
         private void Delete(Element element)
         {
-            _model.Files.Remove(element.Caption);
+            ViewModel.Files.Remove(element.Caption);
         }
 
-        private class EditSource : SizingSource
+        private class EditSource : DialogViewController.SizingSource
         {
-            private readonly CreateGistViewController _parent;
-            public EditSource(CreateGistViewController dvc) 
+            private readonly GistCreateView _parent;
+            public EditSource(GistCreateView dvc) 
                 : base (dvc)
             {
                 _parent = dvc;

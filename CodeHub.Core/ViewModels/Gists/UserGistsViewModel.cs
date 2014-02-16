@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
 using GitHubSharp;
 using GitHubSharp.Models;
+using Cirrious.MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Messages;
+using Cirrious.MvvmCross.ViewModels;
+using System.Windows.Input;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class UserGistsViewModel : GistsViewModel
     {
+        private readonly MvxSubscriptionToken _addToken;
+
         public string Username
         {
             get;
@@ -23,6 +29,16 @@ namespace CodeHub.Core.ViewModels.Gists
 			get { return this.GetApplication().Account.Username.Equals(Username); }
         }
 
+        public UserGistsViewModel()
+        {
+            _addToken = Messenger.SubscribeOnMainThread<GistAddMessage>(x => Gists.Items.Insert(0, x.Gist));
+        }
+
+        public ICommand GoToCreateGistCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<GistCreateViewModel>()); }
+        }
+
         public void Init(NavObject navObject)
         {
             Username = navObject.Username ?? this.GetApplication().Account.Username;
@@ -34,7 +50,7 @@ namespace CodeHub.Core.ViewModels.Gists
                     Title = "My Gists";
                 else
                 {
-                    if (Username.EndsWith("s"))
+                    if (Username.EndsWith("s", System.StringComparison.Ordinal))
                         Title = Username + "' Gists";
                     else
                         Title = Username + "'s Gists";

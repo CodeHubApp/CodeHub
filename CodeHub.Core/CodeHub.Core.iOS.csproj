@@ -127,6 +127,8 @@
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
+    <Compile Include="Messages\GistAddMessage.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -85,6 +85,12 @@
     <BuildIpa>True</BuildIpa>
     <IpaPackageName>
     </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseThumb>true</MtouchUseThumb>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -129,7 +135,6 @@
     <Compile Include="Views\Gists\PublicGistsView.cs" />
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
-    <Compile Include="Views\Gists\CreateGistViewController.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
     <Compile Include="Views\Gists\GistsView.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
@@ -196,6 +201,9 @@
     <Compile Include="InAppPurchases.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="Views\App\UpgradesView.cs" />
+    <Compile Include="UrlRouterProvider.cs" />
+    <Compile Include="XCallbackProvider.cs" />
+    <Compile Include="Views\Gists\GistCreateView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">

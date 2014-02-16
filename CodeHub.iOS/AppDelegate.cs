@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
+using CodeFramework.iOS.XCallback;
 
 namespace CodeHub.iOS
 {
@@ -99,6 +100,12 @@ namespace CodeHub.iOS
 			}
 
             return true;
+        }
+
+        public override void WillEnterForeground(UIApplication application)
+        {
+            XCallbackProvider.DestoryTokens();
+            base.WillEnterForeground(application);
         }
 
         void HandlePurchaseSuccess (object sender, string e)
@@ -203,11 +210,15 @@ namespace CodeHub.iOS
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            try
-            {
-                var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
-                var appService = Mvx.Resolve<IApplicationService>();
+            var uri = new Uri(url.AbsoluteString);
 
+            if (uri.Host == "x-callback-url")
+            {
+                XCallbackProvider.Handle(new XCallbackQuery(url.AbsoluteString));
+                return true;
+            }
+            else
+            {
                 var path = url.AbsoluteString.Replace("codehub://", "");
                 var queryMarker = path.IndexOf("?", StringComparison.Ordinal);
                 if (queryMarker > 0)
@@ -218,72 +229,8 @@ namespace CodeHub.iOS
                 var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
                 var firstIsDomain = first.Contains(".");
 
-                var req = RouteProvider.ProcessRoute(path);
-                if (req != null)
-                    appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(req));
-                return true;
+                return UrlRouteProvider.Handle(path);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to open URL \"" + url.AbsoluteString + "\": " + e.Message);
-            }
-
-            return false;
-        }
-    }
-
-    public static class RouteProvider
-    {
-        public static Route[] Routes = {
-            new Route("^gist.github.com/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
-            new Route("^gist.github.com/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
-            new Route("^gist.github.com/(?<Username>[^/]*)/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.GistViewModel)),
-            new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.User.ProfileViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoryViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/$", typeof(CodeHub.Core.ViewModels.Issues.IssuesViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Issues.IssueViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(CodeHub.Core.ViewModels.Source.SourceTreeViewModel)),
-        };
-
-        public static MvxViewModelRequest ProcessRoute(string path)
-        {
-            if (!path.EndsWith("/", StringComparison.Ordinal))
-                path += "/";
-
-            foreach (var route in Routes)
-            {
-                var regex = new Regex(route.Path, RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase);
-                var match = regex.Match(path);
-                var groups = regex.GetGroupNames().Skip(1);
-
-                if (match.Success)
-                {
-                    var rec = new MvxViewModelRequest();
-                    rec.ViewModelType = route.ViewModelType;
-                    rec.ParameterValues = new Dictionary<string, string>();
-                    foreach (var group in groups)
-                        rec.ParameterValues.Add(group, match.Groups[group].Value);
-                    return rec;
-                }
-            }
-
-            return null;
-        }
-
-    }
-
-    public class Route
-    {
-        public string Path { get; set; }
-        public Type ViewModelType { get; set; }
-
-        public Route(string path, Type viewModelType) 
-        {
-            Path = path;
-            ViewModelType = viewModelType;
         }
     }
 }
