@@ -110,7 +110,7 @@ namespace CodeHub.iOS.Views.Events
             else if (eventModel.PayloadObject is EventModel.TeamAddEvent)
                 return Images.Team;
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
-                return Images.Eye;
+                return Images.Star;
 			else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
                 return Images.Webpage;
             return Images.Priority;
