@@ -1,12 +1,13 @@
 using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
     public interface IPushNotificationsService
     {
-		void Register();
+        Task Register();
 
-		void Deregister();
+        Task Deregister();
     }
 }
 

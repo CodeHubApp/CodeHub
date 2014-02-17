@@ -79,9 +79,14 @@ namespace CodeHub.Core.ViewModels.App
 			{
                 IsSaving = true;
 				if (enabled)
-					await Task.Run(() => notificationService.Register());
+                {
+					await notificationService.Register();
+                }
 				else
-					await Task.Run(() => notificationService.Deregister());
+                {
+                    await notificationService.Deregister();
+                }
+
 				this.GetApplication().Account.IsPushNotificationsEnabled = enabled;
 				this.GetApplication().Accounts.Update(this.GetApplication().Account);
 			}
