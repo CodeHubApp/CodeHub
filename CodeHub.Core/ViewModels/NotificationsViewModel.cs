@@ -152,50 +152,48 @@ namespace CodeHub.Core.ViewModels
 			}
         }
 
-		private async Task MarkRepoAsRead(string repo)
+        private async Task MarkRepoAsRead(string repo)
 		{
-			var items = Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList();
-			await MarkNotificationsAsRead(items);
+            try
+            {
+                IsMarking = true;
+                var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
+                await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
+                Notifications.Items.RemoveRange(Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
+                UpdateAccountNotificationsCount();
+            }
+            catch (Exception e)
+            {
+                ReportError(e);
+            }
+            finally
+            {
+                IsMarking = false;
+            }
 		}
 
 		private async Task MarkAllAsRead()
 		{
 			// Make sure theres some sort of notification
-			if (Notifications.Any())
-				await MarkNotificationsAsRead(Notifications);
+            if (!Notifications.Any())
+                return;
+
+            try
+            {
+                IsMarking = true;
+                await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkAsRead());
+                Notifications.Items.Clear();
+                UpdateAccountNotificationsCount();
+            }
+            catch (Exception e)
+            {
+                ReportError(e);
+            }
+            finally
+            {
+                IsMarking = false;
+            }
         }
-
-		private async Task MarkNotificationsAsRead(IEnumerable<NotificationModel> notifications)
-		{
-			try
-			{
-				IsMarking = true;
-
-				foreach (var notification in notifications)
-				{
-					try
-					{
-						await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[notification.Id].MarkAsRead());
-						notification.Unread = false;
-					}
-                    catch (Exception e)
-					{
-                        System.Diagnostics.Debug.WriteLine("Unable to mark notification as read: " + e.Message);
-					}
-				}
-
-                Notifications.Items.RemoveRange(notifications);
-				UpdateAccountNotificationsCount();
-			}
-			catch (Exception e)
-			{
-				ReportError(e);
-			}
-			finally
-			{
-				IsMarking = false;
-			}
-		}
 
         private void UpdateAccountNotificationsCount()
         {

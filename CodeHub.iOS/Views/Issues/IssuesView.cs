@@ -25,7 +25,7 @@ namespace CodeHub.iOS.Views.Issues
 
             base.ViewDidLoad();
 
-            _viewSegment = new UISegmentedControl(new string[] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() });
+            _viewSegment = new CustomUISegmentedControl(new [] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() }, 3);
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
@@ -83,6 +83,24 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewWillDisappear(animated);
             if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(true, animated);
+        }
+
+        private class CustomUISegmentedControl : UISegmentedControl
+        {
+            readonly int _multipleTouchIndex;
+            public CustomUISegmentedControl(object[] args, int multipleTouchIndex)
+                : base(args)
+            {
+                this._multipleTouchIndex = multipleTouchIndex;
+            }
+
+            public override void TouchesEnded(MonoTouch.Foundation.NSSet touches, UIEvent evt)
+            {
+                var previousSelected = SelectedSegment;
+                base.TouchesEnded(touches, evt);
+                if (previousSelected == SelectedSegment && SelectedSegment == _multipleTouchIndex)
+                    SendActionForControlEvents(UIControlEvent.ValueChanged);
+            }
         }
     }
 }

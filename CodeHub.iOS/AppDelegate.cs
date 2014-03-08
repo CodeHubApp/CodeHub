@@ -69,7 +69,7 @@ namespace CodeHub.iOS
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
-			Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("UA-44040302-1", "CodeHub");
+            Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("YDPn28UeAWRt5dTlrd2IhIc3zW4atsiSPScqWmGI", "eDfhufHi88Az1IQkMsIR2o8j5Jmqjmc7FhyQradc");
 
             if (options != null)
             {

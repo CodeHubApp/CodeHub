@@ -15,6 +15,7 @@ using CodeFramework.Core.Utils;
 using CodeFramework.Core.ViewModels.App;
 using CodeHub.Core.Messages;
 using Cirrious.MvvmCross.Plugins.Messenger;
+using System;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -168,17 +169,19 @@ namespace CodeHub.Core.ViewModels.App
 
         private void Load()
         {
-			var notificationRequest = this.GetApplication().Client.Notifications.GetAll();
-			notificationRequest.RequestFromCache = false;
-			this.GetApplication().Client.ExecuteAsync(notificationRequest).ContinueWith(x =>
-			{
-				Notifications = x.Result.Data.Count;
-			}, TaskContinuationOptions.OnlyOnRanToCompletion).FireAndForget();
+            var notificationRequest = this.GetApplication().Client.Notifications.GetAll();
+            notificationRequest.RequestFromCache = false;
+            notificationRequest.CheckIfModified = false;
+            this.GetApplication().Client.ExecuteAsync(notificationRequest).ContinueWith(t =>
+            {
+                Notifications = t.Result.Data.Count;
+            });
 
-			this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(x =>
-			{
-				Organizations = x.Result.Data.Select(y => y.Login).ToList();
-			}, TaskContinuationOptions.OnlyOnRanToCompletion).FireAndForget();
+            this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(t =>
+            {
+                Organizations = t.Result.Data.Select(y => y.Login).ToList();
+
+            });
         }
     }
 }

@@ -22,6 +22,11 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+            UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
+            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
+
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
 
             UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
             UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;

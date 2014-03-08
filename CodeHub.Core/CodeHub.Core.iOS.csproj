@@ -145,9 +145,6 @@
       <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="ServiceStack.Text.MonoTouch">
-      <HintPath>..\lib\CodeFramework\lib\iOS\ServiceStack.Text.MonoTouch.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">

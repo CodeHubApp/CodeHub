@@ -2,6 +2,7 @@ using System;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
+using System.Text;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -89,6 +90,11 @@ namespace CodeHub.iOS.Views.Accounts
 				ViewModel.Login(code);
                 return false;
             }
+            if (request.Url.AbsoluteString == "https://github.com/" || request.Url.AbsoluteString.StartsWith("https://github.com/join"))
+            {
+                return false;
+            }
+
             return base.ShouldStartLoad(request, navigationType);
         }
 
@@ -110,12 +116,23 @@ namespace CodeHub.iOS.Views.Accounts
         {
             base.OnLoadFinished(sender, e);
 
+            var script = new StringBuilder();
+
+            //Apple is full of clowns. The GitHub login page has links that can ultimiately end you at a place where you can purchase something
+            //so we need to inject javascript that will remove these links. What a bunch of idiots...
+            script.Append("$('.switch-to-desktop').hide();");
+            script.Append("$('.header-button').hide();");
+            script.Append("$('.header').hide();");
+            script.Append("$('.site-footer').hide();");
+            script.Append("$('.brand-logo-wordmark').click(function(e) { e.preventDefault(); });");
+
             //Inject some Javascript so we can set the username if there is an attempted account
 			if (ViewModel.AttemptedAccount != null)
             {
-				var script = "(function() { setTimeout(function() { $('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly'); }, 100); })();";
-                Web.EvaluateJavascript(script);
+                script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
             }
+
+            Web.EvaluateJavascript("(function(){setTimeout(function(){" + script.ToString() +"}, 100); })();");
         }
 
         private void LoadRequest()
