@@ -166,7 +166,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             sec1.Add(new SplitElement(new SplitElement.Row {
                 Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue".t() : " Issues".t()),
-                Image1 = Images.Issue,
+                Image1 = Images.Flag,
                 Text2 = model.Forks.ToString() + (model.Forks == 1 ? " Fork".t() : " Forks".t()),
                 Image2 = Images.Fork
             }));
@@ -178,7 +178,7 @@ namespace CodeHub.iOS.Views.Repositories
                 Image2 = Images.Size
             }));
 
-            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.User,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
             sec1.Add(owner);
 
@@ -197,7 +197,7 @@ namespace CodeHub.iOS.Views.Repositories
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Issue));
+				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
 
             if (ViewModel.Readme != null)
 				sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));

@@ -73,13 +73,6 @@ namespace CodeHub.iOS
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
-        public UIImage MenuBackground
-        {
-            get
-            {
-                return Images.MenuBackground; 
-            }
-        }
 
         //Cache these because we make a smaller size of them
         private UIImage _issueCell1, _issueCell2, _issueCell3, _issueCell4;
@@ -97,7 +90,7 @@ namespace CodeHub.iOS
 
         public UIImage IssueCellImage3
         {
-            get { return _issueCell3 ?? (_issueCell3 = new UIImage(Images.User.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return _issueCell3 ?? (_issueCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
         }
 
         public UIImage IssueCellImage4
@@ -117,7 +110,7 @@ namespace CodeHub.iOS
 
         public UIImage RepositoryCellUser
         {
-            get { return _repoCell3 ?? (_repoCell3 = new UIImage(Images.User.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return _repoCell3 ?? (_repoCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
         }
 
         public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }

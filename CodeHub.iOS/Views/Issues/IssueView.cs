@@ -99,7 +99,7 @@ namespace CodeHub.iOS.Views.Issues
 			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
 
 			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t(), UITableViewCellStyle.Value1) {
-                Image = Images.User,
+				Image = Images.Person,
 				Accessory = UITableViewCellAccessory.DisclosureIndicator
 			};
 			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);

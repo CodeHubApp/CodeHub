@@ -96,7 +96,7 @@ namespace CodeHub.iOS.Views.Events
             else if (eventModel.PayloadObject is EventModel.IssueCommentEvent)
                 return Images.Comments;
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
-                return Images.Issue;
+                return Images.Flag;
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
                 return Images.Group;
             else if (eventModel.PayloadObject is EventModel.PublicEvent)
@@ -112,7 +112,7 @@ namespace CodeHub.iOS.Views.Events
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
                 return Images.Star;
 			else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
-                return Images.Webpage;
+				return Images.Public;
             return Images.Priority;
         }
     }

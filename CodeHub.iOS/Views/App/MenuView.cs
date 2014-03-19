@@ -28,10 +28,10 @@ namespace CodeHub.iOS.Views.App
 
             root.Add(new Section
             {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.User ),
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
                 (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
                 new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Images.News),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Issue)
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Flag)
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
@@ -47,21 +47,21 @@ namespace CodeHub.iOS.Views.App
 			repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
             root.Add(repoSection);
             
-            if (ViewModel.PinnedRepositories.Any())
-            {
-                _favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
-                foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-                    _favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
-                root.Add(_favoriteRepoSection);
-            }
-            else
-            {
-                _favoriteRepoSection = null;
-            }
+			if (ViewModel.PinnedRepositories.Count() > 0)
+			{
+				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
+				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
+					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
+				root.Add(_favoriteRepoSection);
+			}
+			else
+			{
+				_favoriteRepoSection = null;
+			}
 
             var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
 			if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
-                ViewModel.Organizations.ForEach(x => orgSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationCommand.Execute(x), Images.Team)));
+				ViewModel.Organizations.ForEach(x => orgSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationCommand.Execute(x), Images.Team)));
             else
 				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group));
 
@@ -71,8 +71,8 @@ namespace CodeHub.iOS.Views.App
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
             gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Images.Script));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Images.Star));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Images.Webpage));
+            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Images.Star2));
+            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Images.Public));
             root.Add(gistsSection);
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
@@ -80,7 +80,7 @@ namespace CodeHub.iOS.Views.App
             infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
             infoSection.Add(new MenuElement("Upgrades".t(), () => ViewModel.GoToUpgradesCommand.Execute(null), Images.Unlocked));
 			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
-            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Bug));
+            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
             Root = root;
 		}
