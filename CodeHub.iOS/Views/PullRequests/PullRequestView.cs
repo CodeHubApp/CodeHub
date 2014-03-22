@@ -101,7 +101,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 if (ViewModel.PullRequest.Mergable == null)
                 {
                     var el = new StyledStringElement("Merge".t(), mergeAction, Images.Fork);
-                    root.Add(new Section(null, "The mergable state is unknown and merging may not be successful.") { el });
+                    root.Add(new Section { el });
                 }
                 else if (ViewModel.PullRequest.Mergable.Value)
                 {

@@ -156,6 +156,10 @@
       <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp.MonoTouch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
+      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
+      <Name>CodeFramework.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup />

@@ -53,10 +53,10 @@ namespace CodeHub.iOS.Views.Source
             root.Add(detailSection);
 
             var user = "Unknown";
-            if (commitModel.Author != null)
-                user = commitModel.Author.Login;
             if (commitModel.Commit.Author != null)
                 user = commitModel.Commit.Author.Name;
+            if (commitModel.Commit.Committer != null)
+                user = commitModel.Commit.Committer.Name;
 
             detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)
             {

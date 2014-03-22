@@ -72,6 +72,13 @@ namespace CodeHub.iOS.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
+            var largeFonts = new TrueFalseElement("Large Fonts", vm.LargeFonts, x =>
+            {
+                vm.LargeFonts = x.Value;
+                Theme.Setup();
+                CreateTable();
+            });
+
             if (vm.PushNotificationsActivated)
                 accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
 
@@ -89,7 +96,7 @@ namespace CodeHub.iOS.Views.App
 			//Assign the root
 			var root = new RootElement(Title);
             root.Add(accountSection);
-			root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
+            root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView, largeFonts });
 			root.Add(new Section ("Internal") { deleteCache, usage });
 			Root = root;
 

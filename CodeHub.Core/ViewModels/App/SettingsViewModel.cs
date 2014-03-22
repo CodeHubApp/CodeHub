@@ -12,10 +12,12 @@ namespace CodeHub.Core.ViewModels.App
     public class SettingsViewModel : BaseViewModel
     {
         private readonly IFeaturesService _featuresService;
+        private readonly IDefaultValueService _defaultValueService;
 
-        public SettingsViewModel(IFeaturesService featuresService)
+        public SettingsViewModel(IFeaturesService featuresService, IDefaultValueService defaultValueService)
         {
             _featuresService = featuresService;
+            _defaultValueService = defaultValueService;
         }
 
 		public string DefaultStartupViewName
@@ -55,6 +57,12 @@ namespace CodeHub.Core.ViewModels.App
 				GetService<IAnalyticsService>().Enabled = value;
 			}
 		}
+
+        public bool LargeFonts
+        {
+            get { return _defaultValueService.Get<bool>("large_fonts"); }
+            set { _defaultValueService.Set("large_fonts", value); }
+        }
 
         public bool PushNotificationsActivated
         {

@@ -13,9 +13,13 @@ namespace CodeHub.iOS
             var theme = new Theme();
             CurrentTheme = theme;
             CodeFramework.iOS.Theme.CurrentTheme = theme;
+
+            var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
+            Theme.CurrentTheme.FontSizeRatio = defaultValues.Get<bool>("large_fonts") ? 1.3f : 1.0f;
+
 			RepositoryCellView.RoundImages = false;
-			MonoTouch.Dialog.StyledStringElement.DefaultTitleFont = UIFont.SystemFontOfSize(15f);
 			MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
+            MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
@@ -34,7 +38,7 @@ namespace CodeHub.iOS
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
-            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio);
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
@@ -51,7 +55,7 @@ namespace CodeHub.iOS
             {
                 return new UITextAttributes
                 { 
-                    Font = UIFont.SystemFontOfSize(14f), 
+                    Font = UIFont.SystemFontOfSize(14f * Theme.CurrentTheme.FontSizeRatio), 
                     TextColor = UIColor.FromRGB(87, 85, 85), 
                     TextShadowColor = UIColor.FromRGBA(255, 255, 255, 125), 
                     TextShadowOffset = new UIOffset(0, 1) 
@@ -149,5 +153,7 @@ namespace CodeHub.iOS
 				return UIColor.Black;
 			}
 		}
+
+        public float FontSizeRatio { get; set; }
     }
 }

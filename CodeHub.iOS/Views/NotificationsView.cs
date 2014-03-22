@@ -82,6 +82,7 @@ namespace CodeHub.iOS.Views
             {
                 _parent = parent;
                 TextLabel.Text = text;
+                TextLabel.Font = TextLabel.Font.WithSize(TextLabel.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
 
                 if (button)
                 {

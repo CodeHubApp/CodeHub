@@ -1,12 +1,9 @@
 using System;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using MonoTouch.Dialog.Utilities;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Repositories

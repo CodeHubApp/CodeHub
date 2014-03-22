@@ -60,14 +60,12 @@ namespace CodeHub.iOS
 			iRate.AppStoreID = 707173885;
 
 			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
+            var presenter = new TouchViewPresenter(this.window);
+            var setup = new Setup(this, presenter);
+            setup.Initialize();
 
             // Setup theme
             Theme.Setup();
-
-            var presenter = new TouchViewPresenter(this.window);
-
-            var setup = new Setup(this, presenter);
-            setup.Initialize();
 
             Mvx.Resolve<CodeFramework.Core.Services.IAnalyticsService>().Init("YDPn28UeAWRt5dTlrd2IhIc3zW4atsiSPScqWmGI", "eDfhufHi88Az1IQkMsIR2o8j5Jmqjmc7FhyQradc");
 
