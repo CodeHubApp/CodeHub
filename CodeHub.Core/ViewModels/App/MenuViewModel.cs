@@ -119,6 +119,12 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
 		}
 
+        [PotentialStartupViewAttribute("Trending Repositories")]
+        public ICommand GoToTrendingRepositoriesCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesTrendingViewModel>(null));}
+        }
+
 		public ICommand GoToOrganizationEventsCommand
 		{
 			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}

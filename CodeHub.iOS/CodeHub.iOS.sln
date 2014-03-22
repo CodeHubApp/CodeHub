@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.iOS", "CodeHub.iOS.csproj", "{B061316A-F386-4FE2-93B7-555584234FF8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F112095C-7262-445E-91C4-D35C1E986E69}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeFramework", "CodeFramework", "{F112095C-7262-445E-91C4-D35C1E986E69}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Core.iOS", "..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj", "{C99FE7E3-0985-48F1-9EBB-91680A795F0F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core.iOS", "..\CodeHub.Core\CodeHub.Core.iOS.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.iOS", "..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj", "{2698B412-26A3-4269-AA01-AC3BC79A0F14}"
 EndProject
@@ -20,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTouch.Dialog", "..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj", "{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserVoice", "..\lib\CodeFramework\CodeFramework.iOS\lib\monotouch-uservoice\UserVoice\UserVoice.csproj", "{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core.iOS", "..\CodeHub.Core\CodeHub.Core.iOS.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -367,7 +367,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C99FE7E3-0985-48F1-9EBB-91680A795F0F} = {F112095C-7262-445E-91C4-D35C1E986E69}
-		{B7970173-9022-466B-B57A-7AB1E1F3145F} = {F112095C-7262-445E-91C4-D35C1E986E69}
 		{2698B412-26A3-4269-AA01-AC3BC79A0F14} = {F112095C-7262-445E-91C4-D35C1E986E69}
 		{89E14828-85BB-4790-9B4E-E44DD4CE000E} = {F7C14107-24A4-404A-AD12-A12EC9F28490}
 		{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6} = {F7C14107-24A4-404A-AD12-A12EC9F28490}

@@ -129,6 +129,7 @@
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

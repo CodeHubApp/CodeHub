@@ -211,6 +211,7 @@
     <Compile Include="XCallbackProvider.cs" />
     <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
+    <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
@@ -413,6 +414,8 @@
     <BundleResource Include="Resources\Icon-76%402x.png" />
     <BundleResource Include="Resources\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
+    <BundleResource Include="Images\chart%402x.png" />
+    <BundleResource Include="Images\chart.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
