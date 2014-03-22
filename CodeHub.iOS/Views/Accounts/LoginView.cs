@@ -3,6 +3,8 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using System.Text;
+using Cirrious.CrossCore;
+using CodeFramework.Core.Services;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -137,11 +139,18 @@ namespace CodeHub.iOS.Views.Accounts
 
         private void LoadRequest()
         {
-            //Remove all cookies & cache
-            foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-            MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(ViewModel.LoginUrl)));
+            try
+            {
+                //Remove all cookies & cache
+                foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
+                    MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
+                MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
+    			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(ViewModel.LoginUrl)));
+            }
+            catch (Exception e)
+            {
+                Mvx.Resolve<IAlertDialogService>().Alert("Unable to process request!", e.Message);
+            }
         }
     }
 }
