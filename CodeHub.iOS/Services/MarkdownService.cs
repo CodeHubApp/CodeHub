@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Services
 
 		public string Convert(string c)
 		{
-			if (string.IsNullOrEmpty(c))
+			if (c.Length == 0)
 				return string.Empty;
 			return _val.Call(JSValue.From(c, _ctx)).ToString();
 		}
