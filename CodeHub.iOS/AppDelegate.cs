@@ -90,6 +90,13 @@ namespace CodeHub.iOS
 
             var features = Mvx.Resolve<IFeaturesService>();
 
+
+            // Automatic activations in debug mode!
+            #if DEBUG
+            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(InAppPurchases.PushNotificationsId, true);
+            #endif
+
+
 			// Notifications don't work on teh simulator so don't bother
             if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
 			{

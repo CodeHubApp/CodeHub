@@ -96,6 +96,7 @@
     <MtouchUseThumb>true</MtouchUseThumb>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
