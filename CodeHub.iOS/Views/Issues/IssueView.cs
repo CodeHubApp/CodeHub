@@ -1,7 +1,6 @@
 using System;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
-using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.ViewControllers;
 using MonoTouch.Dialog;
@@ -14,10 +13,13 @@ namespace CodeHub.iOS.Views.Issues
 {
 	public class IssueView : ViewModelDrivenDialogViewController
     {
-		private readonly HeaderView _header;
-		private WebElement _descriptionElement;
-		private WebElement2 _commentsElement;
-
+        protected readonly HeaderView _header;
+        protected WebElement _descriptionElement;
+        protected WebElement2 _commentsElement;
+        protected StyledStringElement _milestoneElement;
+        protected StyledStringElement _assigneeElement;
+        protected StyledStringElement _labelsElement;
+        protected StyledStringElement _addCommentElement;
 
         public new IssueViewModel ViewModel
         {
@@ -43,9 +45,39 @@ namespace CodeHub.iOS.Views.Issues
 			_commentsElement = new WebElement2(content2);
 			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
+            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
+
+            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) {Image = Images.Person, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
+
+            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Images.Tag, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
+
+            _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+            _addCommentElement.Tapped += AddCommentTapped;
+
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
             NavigationItem.RightBarButtonItem.Enabled = false;
-            ViewModel.Bind(x => x.Issue, RenderIssue);
+            ViewModel.Bind(x => x.IsLoading, x => 
+            {
+                if (!x)
+                {
+                    NavigationItem.RightBarButtonItem.Enabled = ViewModel.Issue != null;
+                }
+            });
+
+            ViewModel.Bind(x => x.Issue, x =>
+            {
+                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned".t();
+                _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
+                _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
+                _descriptionElement.Value = ViewModel.MarkdownDescription;
+                _header.Title = x.Title;
+                _header.Subtitle = "Updated " + x.UpdatedAt.ToDaysAgo();
+                Render();
+            });
+
             ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
             ViewModel.BindCollection(x => x.Events, (e) => RenderComments());
         }
@@ -70,16 +102,18 @@ namespace CodeHub.iOS.Views.Issues
                 AvatarUrl = x.Actor.AvatarUrl, 
                 Login = x.Actor.Login, 
                 CreatedAt = x.CreatedAt,
-                Body = CreateEventBody(x.Event, x.Actor, x.CommitId)
-            }));
+                Body = CreateEventBody(x.Event, x.CommitId)
+            })
+                .Where(x => !string.IsNullOrEmpty(x.Body)));
 
             return items.OrderBy(x => x.CreatedAt);
         }
 
-        private string CreateEventBody(string eventType, BasicUserModel actor, string commitId)
+        private static string CreateEventBody(string eventType, string commitId)
         {
+            commitId = commitId ?? string.Empty;
             var smallCommit = commitId;
-            if (smallCommit == null)
+            if (string.IsNullOrEmpty(smallCommit))
                 smallCommit = "Unknown";
             else if (smallCommit.Length > 7)
                 smallCommit = commitId.Substring(0, 7);
@@ -89,9 +123,9 @@ namespace CodeHub.iOS.Views.Issues
             if (eventType == "reopened")
                 return "<p><span class=\"label label-success\">Reopened</span> this issue.</p>";
             if (eventType == "merged")
-                return "<p><span class=\"label label-info\">Merged</span> commit <a>" + commitId + "</a></p>";
+                return "<p><span class=\"label label-info\">Merged</span> commit " + smallCommit + "</p>";
             if (eventType == "referenced")
-                return "<p><span class=\"label label-default\">Referenced</span> commit <a>" + smallCommit + "</a></p>";
+                return "<p><span class=\"label label-default\">Referenced</span> commit " + smallCommit + "</p>";
             return string.Empty;
         }
 
@@ -109,64 +143,33 @@ namespace CodeHub.iOS.Views.Issues
 			InvokeOnMainThread(() => {
 				_commentsElement.Value = data;
 				if (_commentsElement.GetImmediateRootElement() == null)
-					RenderIssue();
+                    Render();
 			});
         }
 
-        public void RenderIssue()
+        protected virtual void Render()
         {
-			if (ViewModel.Issue == null)
-				return;
+            //Wait for the issue to load
+            if (ViewModel.Issue == null)
+                return;
 
-            NavigationItem.RightBarButtonItem.Enabled = true;
-
-			var root = new RootElement(Title);
-			_header.Title = ViewModel.Issue.Title;
-			_header.Subtitle = "Updated " + ViewModel.Issue.UpdatedAt.ToDaysAgo();
+            var root = new RootElement(Title);
 			root.Add(new Section(_header));
 
-
 			var secDetails = new Section();
+            if (!string.IsNullOrEmpty(_descriptionElement.Value))
+                secDetails.Add(_descriptionElement);
 
-			if (!string.IsNullOrEmpty(ViewModel.Issue.Body))
-			{
-				_descriptionElement.Value = ViewModel.MarkdownDescription;
-				secDetails.Add(_descriptionElement);
-			}
-
-			var milestone = ViewModel.Issue.Milestone;
-			var milestoneStr = milestone != null ? milestone.Title : "No Milestone";
-			var milestoneElement = new StyledStringElement("Milestone", milestoneStr, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-			milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
-
-			var assigneeElement = new StyledStringElement("Assigned", ViewModel.Issue.Assignee != null ? ViewModel.Issue.Assignee.Login : "Unassigned".t(), UITableViewCellStyle.Value1) {
-				Image = Images.Person,
-				Accessory = UITableViewCellAccessory.DisclosureIndicator
-			};
-			assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
-
-
-			var labels = ViewModel.Issue.Labels.Count == 0 ? "None" : string.Join(", ", ViewModel.Issue.Labels.Select(i => i.Name));
-			var labelsElement = new StyledStringElement("Labels", labels, UITableViewCellStyle.Value1) {
-				Image = Images.Tag,
-				Accessory = UITableViewCellAccessory.DisclosureIndicator
-			};
-			labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
-
-			secDetails.Add(assigneeElement);
-			secDetails.Add(milestoneElement);
-			secDetails.Add(labelsElement);
+            secDetails.Add(_assigneeElement);
+            secDetails.Add(_milestoneElement);
+            secDetails.Add(_labelsElement);
 			root.Add(secDetails);
 
-			if (ViewModel.Comments.Any())
-			{
+            if (!string.IsNullOrEmpty(_commentsElement.Value))
 				root.Add(new Section { _commentsElement });
-			}
 
-			var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-			addComment.Tapped += AddCommentTapped;
-			root.Add(new Section { addComment });
-			Root = root;
+            root.Add(new Section { _addCommentElement });
+            Root = root;
         }
 
         void AddCommentTapped()

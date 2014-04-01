@@ -29,29 +29,29 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		public ICommand GoToCommitsCommand
 		{
-            get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = User, Repository = Repository, PullRequestId = Id })); }
+            get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
 		}
 
 		public ICommand GoToFilesCommand
 		{
-            get { return new MvxCommand(() => ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject { Username = User, Repository = Repository, PullRequestId = Id })); }
+            get { return new MvxCommand(() => ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
 		}
 
         protected override Task Load(bool forceDataRefresh)
         {
             var subTask = base.Load(forceDataRefresh);
-            var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repository].PullRequests[Id].Get();
+            var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
 			var t1 = this.RequestModel(pullRequest, forceDataRefresh, response => PullRequest = response.Data);
             return Task.WhenAll(subTask, t1);
         }
 
         public async Task Merge()
         {
-            var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[User].Repositories[Repository].PullRequests[Id].Merge());
+            var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge());
             if (!response.Data.Merged)
                 throw new Exception(response.Data.Message);
 
-            var pullRequest = this.GetApplication().Client.Users[User].Repositories[Repository].PullRequests[Id].Get();
+            var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
             await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
         }
 
