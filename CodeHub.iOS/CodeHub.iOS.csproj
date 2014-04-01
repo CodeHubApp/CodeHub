@@ -105,7 +105,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <CodesignProvision>F7DD164D-5C4E-4322-AF9C-CF33ACD388D4</CodesignProvision>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseThumb>true</MtouchUseThumb>
     <IpaPackageName>

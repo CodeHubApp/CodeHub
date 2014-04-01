@@ -8,6 +8,7 @@ using MonoTouch.Dialog;
 using CodeFramework.iOS.Utils;
 using CodeFramework.iOS.Elements;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -27,7 +28,7 @@ namespace CodeHub.iOS.Views.Issues
         public IssueView()
         {
 			Root.UnevenRows = true;
-			_header = new HeaderView() { ShadowImage = false };
+			_header = new HeaderView();
         }
 
         public override void ViewDidLoad()
@@ -46,6 +47,7 @@ namespace CodeHub.iOS.Views.Issues
             NavigationItem.RightBarButtonItem.Enabled = false;
             ViewModel.Bind(x => x.Issue, RenderIssue);
             ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
+            ViewModel.BindCollection(x => x.Events, (e) => RenderComments());
         }
 
         public override void ViewWillAppear(bool animated)
@@ -54,17 +56,56 @@ namespace CodeHub.iOS.Views.Issues
             Title = "Issue #" + ViewModel.Id;
         }
 
+        private IEnumerable<CommentModel> CreateCommentList()
+        {
+            var items = ViewModel.Comments.Select(x => new CommentModel 
+            { 
+                AvatarUrl = x.User.AvatarUrl, 
+                Login = x.User.Login, 
+                CreatedAt = x.CreatedAt,
+                Body = ViewModel.ConvertToMarkdown(x.Body)
+            })
+                .Concat(ViewModel.Events.Select(x => new CommentModel
+            {
+                AvatarUrl = x.Actor.AvatarUrl, 
+                Login = x.Actor.Login, 
+                CreatedAt = x.CreatedAt,
+                Body = CreateEventBody(x.Event, x.Actor, x.CommitId)
+            }));
+
+            return items.OrderBy(x => x.CreatedAt);
+        }
+
+        private string CreateEventBody(string eventType, BasicUserModel actor, string commitId)
+        {
+            var smallCommit = commitId;
+            if (smallCommit == null)
+                smallCommit = "Unknown";
+            else if (smallCommit.Length > 7)
+                smallCommit = commitId.Substring(0, 7);
+
+            if (eventType == "closed")
+                return "<p><span class=\"label label-danger\">Closed</span> this issue.</p>";
+            if (eventType == "reopened")
+                return "<p><span class=\"label label-success\">Reopened</span> this issue.</p>";
+            if (eventType == "merged")
+                return "<p><span class=\"label label-info\">Merged</span> commit <a>" + commitId + "</a></p>";
+            if (eventType == "referenced")
+                return "<p><span class=\"label label-default\">Referenced</span> commit <a>" + smallCommit + "</a></p>";
+            return string.Empty;
+        }
+
         public void RenderComments()
         {
-            var comments = ViewModel.Comments.Select(x => new { 
-                avatarUrl = x.User.AvatarUrl, 
-                login = x.User.Login, 
-                updated_at = x.CreatedAt.ToDaysAgo(), 
-                body = ViewModel.ConvertToMarkdown(x.Body)
-            });
+            var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
 
-			var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
-			var data = s.Serialize(comments);
+            var data = s.Serialize(CreateCommentList().Select(x => new {
+                avatarUrl = x.AvatarUrl,
+                login = x.Login,
+                created_at = x.CreatedAt.ToDaysAgo(),
+                body = x.Body
+            }));
+
 			InvokeOnMainThread(() => {
 				_commentsElement.Value = data;
 				if (_commentsElement.GetImmediateRootElement() == null)
@@ -155,6 +196,14 @@ namespace CodeHub.iOS.Views.Issues
                 var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
+        }
+
+        private class CommentModel
+        {
+            public string AvatarUrl { get; set; }
+            public string Login { get; set; }
+            public DateTimeOffset CreatedAt { get; set; }
+            public string Body { get; set; }
         }
     }
 }

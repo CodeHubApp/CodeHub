@@ -6,7 +6,7 @@ function create(htmlStr) { var frag = document.createDocumentFragment(), temp = 
     while (temp.firstChild) { frag.appendChild(temp.firstChild); } return frag;
 }
 function addComment(data) {
-	var html = "<div class='comment'><img src='" + data.avatar_url + "'><div><h1>" + data.login + "</h1><span>" + data.updated_at + "</span><div class='mark'>" + data.body + "</div></div></div>";
+	var html = "<div class='comment'><img src='" + data.avatar_url + "'><div><h1>" + data.login + "</h1><span>" + data.created_at + "</span><div class='mark'>" + data.body + "</div></div></div>";
 	document.getElementById('main').appendChild(create(html));
 }
 function size() { return document.getElementById('main').scrollHeight + 0; }
@@ -33,8 +33,7 @@ border-top: none;
 
 .comment {
 border-top: 1px solid #c8c8c8;
-box-sizing: border-box; 
-padding: 8px 6px;
+padding: 8px 6px 2px;
 }
 
 .comment > img{
@@ -48,7 +47,6 @@ display: inline-block;
 padding-left: 40px;
 box-sizing: border-box;
 width: 100%;
-overflow-x:hidden;
 }
 
 .comment > div > h1 {
@@ -61,14 +59,14 @@ overflow: hidden;
 
 .comment > div > span {
 font-size: 10px;
-margin: 0px 0 0px 0;
+margin: 0;
 color: #404040;
 white-space: nowrap;
 overflow: hidden;
 }
 
 .comment > div > div {
-margin: 10px 0 0px 0;
+margin: 0;
 word-wrap: break-word;
 }
 
@@ -146,5 +144,30 @@ border-bottom: 1px solid #eee;
 .mark h1 {
 font-size: 1.6em;
 border-bottom: 1px solid #ddd;
+}
+
+.mark .label {
+display: inline;
+padding: .2em .6em .2em;
+font-size: 85%;
+font-weight: 700;
+line-height: 1;
+color: #fff;
+text-align: center;
+white-space: nowrap;
+vertical-align: baseline;
+border-radius: .25em;
+}
+.label-danger {
+background-color: #d9534f;
+}
+.label-success {
+background-color: #5cb85c;
+}
+.label-info {
+background-color: #6e5494;
+}
+.label-default {
+background-color: #999;
 }
 </style></head><body><div id="main"></div></body></html>

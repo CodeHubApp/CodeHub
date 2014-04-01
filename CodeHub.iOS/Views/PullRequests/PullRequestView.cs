@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.PullRequests
         public PullRequestView()
         {
             Root.UnevenRows = true;
-            _header = new HeaderView() { ShadowImage = false };
+            _header = new HeaderView();
 			_split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge });
 			_split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Person, Image2 = Images.Create });
         }
