@@ -111,7 +111,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 if (!(e is LoginService.TwoFactorRequiredException))
                 {
                     Password = null;
-					DisplayException(e);
+                    DisplayAlert(e.Message);
                 }
             }
             finally

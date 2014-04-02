@@ -91,7 +91,7 @@ namespace CodeHub.Core.ViewModels.User
 			}
 			catch (System.Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to follow user! Please try again.");
 			}
 		}
   

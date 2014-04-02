@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to search for repositories. Please try again.");
 			}
 			finally
 			{

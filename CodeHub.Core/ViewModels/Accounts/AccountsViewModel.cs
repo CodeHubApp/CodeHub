@@ -52,7 +52,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 			}
 			catch (GitHubSharp.UnauthorizedException e)
 			{
-				ReportError(e);
+                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
+
 				if (isEnterprise)
 					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = githubAccount.Id });
 				else
@@ -60,7 +61,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                ReportException(e);
 			}
 			finally
 			{

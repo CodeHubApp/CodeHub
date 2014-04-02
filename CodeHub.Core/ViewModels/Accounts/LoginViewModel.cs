@@ -118,7 +118,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
             catch (Exception e)
             {
-                ReportError(e);
+                DisplayAlert(e.Message);
             }
             finally
             {

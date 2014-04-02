@@ -10,11 +10,14 @@ namespace CodeHub.Core.ViewModels.Issues
     {
 		protected override async Task Save()
 		{
+            if (string.IsNullOrEmpty(Title))
+            {
+                DisplayAlert("Unable to save the issue: you must provide a title!");
+                return;
+            }
+
 			try
 			{
-				if (string.IsNullOrEmpty(Title))
-					throw new Exception("Issue must have a title!");
-
 				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
 				int? milestone = null;
 				if (Milestone != null) 
@@ -29,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to save new issue! Please try again.");
 			}
 			finally
 			{

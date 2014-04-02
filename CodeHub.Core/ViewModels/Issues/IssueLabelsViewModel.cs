@@ -81,7 +81,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				}
 				catch (Exception e)
 				{
-					DisplayException(e);
+                    DisplayAlert("Unable to save labels! Please try again.");
 				}
 				finally
 				{

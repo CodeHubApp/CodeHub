@@ -83,7 +83,7 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             if (_files.Count == 0)
             {
-                DisplayException(new Exception("You cannot create a Gist without atleast one file"));
+                DisplayAlert("You cannot create a Gist without atleast one file! Please correct and try again.");
                 return;
             }
 
@@ -103,7 +103,7 @@ namespace CodeHub.Core.ViewModels.Gists
             }
             catch (Exception e)
             {
-                ReportError(e);
+                DisplayAlert("Unable to create new gist! Please try again.");
             }
             finally
             {

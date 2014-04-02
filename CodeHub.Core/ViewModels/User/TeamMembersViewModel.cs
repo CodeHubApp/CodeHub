@@ -4,11 +4,7 @@ namespace CodeHub.Core.ViewModels.User
 {
     public class TeamMembersViewModel : BaseUserCollectionViewModel
     {
-        public long Id
-        {
-            get;
-            private set;
-        }
+        public long Id { get; private set; }
 
         public void Init(NavObject navObject)
         {

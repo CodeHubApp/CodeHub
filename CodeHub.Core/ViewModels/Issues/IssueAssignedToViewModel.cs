@@ -73,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				}
 				catch (Exception e)
 				{
-					DisplayException(e);
+                    DisplayAlert("Unable to assign issue to selected user! Please try again.");
 				}
 				finally
 				{

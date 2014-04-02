@@ -148,7 +148,7 @@ namespace CodeHub.Core.ViewModels
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to mark notification as read. Please try again.");
 			}
         }
 
@@ -164,7 +164,7 @@ namespace CodeHub.Core.ViewModels
             }
             catch (Exception e)
             {
-                ReportError(e);
+                DisplayAlert("Unable to mark repositories' notifications as read. Please try again.");
             }
             finally
             {
@@ -187,7 +187,7 @@ namespace CodeHub.Core.ViewModels
             }
             catch (Exception e)
             {
-                ReportError(e);
+                DisplayAlert("Unable to mark all notifications as read. Please try again.");
             }
             finally
             {

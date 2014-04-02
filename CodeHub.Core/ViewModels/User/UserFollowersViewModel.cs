@@ -4,11 +4,7 @@ namespace CodeHub.Core.ViewModels.User
 {
     public class UserFollowersViewModel : BaseUserCollectionViewModel
     {
-        public string Name
-        {
-            get;
-            private set;
-        }
+        public string Name { get; private set; }
 
         public void Init(NavObject navObject)
         {

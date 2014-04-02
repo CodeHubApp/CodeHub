@@ -11,13 +11,22 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
 	public class ReadmeViewModel : LoadableViewModel
     {
+        private readonly IMarkdownService _markdownService;
         private string _data;
         private string _path;
 		private GitHubSharp.Models.ContentModel _contentModel;
 
-        public string Username { get; private set; }
+        public string Username 
+        {
+            get;
+            private set; 
+        }
 
-        public string Repository { get; private set; }
+        public string Repository 
+        {
+            get;
+            private set; 
+        }
 
         public string Data
         {
@@ -43,18 +52,20 @@ namespace CodeHub.Core.ViewModels.Repositories
 
 		public ICommand ShareCommand
 		{
-			get
-			{
-				return new MvxCommand(() => GetService<IShareService>().ShareUrl(_contentModel.HtmlUrl), () => _contentModel != null);
-			}
+            get { return new MvxCommand(() => GetService<IShareService>().ShareUrl(_contentModel.HtmlUrl), () => _contentModel != null); }
 		}
+
+        public ReadmeViewModel(IMarkdownService markdownService)
+        {
+            _markdownService = markdownService;
+        }
 
 		protected override Task Load(bool forceCacheInvalidation)
 		{
             return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme(), forceCacheInvalidation, x =>
             {
-                var markdownService = GetService<IMarkdownService>();
-                var data = markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
+                _contentModel = x.Data;
+                var data = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
                 Path = CreateHtmlFile(data);
             });
 		}

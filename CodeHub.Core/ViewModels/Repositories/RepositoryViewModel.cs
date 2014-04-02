@@ -208,7 +208,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to toggle repository as " + (IsWatched.Value ? "unwatched" : "watched") + "! Please try again.");
 			}
         }
 
@@ -237,7 +237,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to " + (IsStarred.Value ? "unstar" : "star") + " this repository! Please try again.");
 			}
         }
 

@@ -100,7 +100,7 @@ namespace CodeHub.Core.ViewModels.App
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                ReportException(e);
 			}
             finally
             {

@@ -110,7 +110,7 @@ namespace CodeHub.Core.ViewModels.Gists
             }
 			catch (Exception e)
             {
-				ReportError(e);
+                DisplayAlert("Unable to start gist. Please try again.");
             }
         }
 

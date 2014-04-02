@@ -73,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 			catch (Exception e)
 			{
-				ReportError(e);
+                DisplayAlert("Unable to save the issue! Please try again");
 			}
 			finally
 			{
