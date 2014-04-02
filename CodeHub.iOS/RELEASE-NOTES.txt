@@ -1,0 +1,3 @@
+- Fixed crash issue
+- Improved issue comments & pull request comments (now will event statues)
+- Enabled Push Notifications for all Beta users (Enable it in the settings)
