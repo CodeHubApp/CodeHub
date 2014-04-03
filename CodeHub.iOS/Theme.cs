@@ -36,7 +36,7 @@ namespace CodeHub.iOS
             UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
-            UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationController)).TintColor = UIColor.White;
+            UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;
 
             // Composer Input Accessory Buttons
             UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = UIColor.FromRGB(50, 50, 50);

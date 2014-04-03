@@ -1,3 +1,4 @@
-- Fixed crash issue
-- Improved issue comments & pull request comments (now will event statues)
-- Enabled Push Notifications for all Beta users (Enable it in the settings)
+- Better error messages
+- Comments can now be viewed in markdown before posting
+- You can now upload images!!!
+- Input accessory view for quick access to markdown characters when commenting.

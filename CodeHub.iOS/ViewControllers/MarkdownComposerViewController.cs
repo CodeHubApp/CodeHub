@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
+using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -116,27 +117,21 @@ namespace CodeHub.iOS.ViewControllers
             imagePicker.NavigationControllerDelegate = new ImagePickerDelegate();
             imagePicker.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
             imagePicker.MediaTypes = UIImagePickerController.AvailableMediaTypes(UIImagePickerControllerSourceType.PhotoLibrary);
-            imagePicker.FinishedPickingMedia += (object sender, UIImagePickerMediaPickedEventArgs e) =>
+            imagePicker.MediaTypes = imagePicker.MediaTypes.Where(x => !(x.Contains("movie") || x.Contains("video"))).ToArray();
+
+            imagePicker.FinishedPickingMedia += (sender, e) =>
             {
                 // determine what was selected, video or image
                 bool isImage = false;
                 switch(e.Info[UIImagePickerController.MediaType].ToString()) {
                     case "public.image":
-                        Console.WriteLine("Image selected");
                         isImage = true;
-                        break;
-                    case "public.video":
-                        Console.WriteLine("Video selected");
                         break;
                 }
 
-                // get common info (shared between images and video)
-                NSUrl referenceURL = e.Info[new NSString("UIImagePickerControllerReferenceUrl")] as NSUrl;
-                if (referenceURL != null)
-                    Console.WriteLine("Url:"+referenceURL.ToString ());
-
                 // if it was an image, get the other image info
-                if(isImage) {
+                if(isImage) 
+                {
                     // get the original image
                     UIImage originalImage = e.Info[UIImagePickerController.OriginalImage] as UIImage;
                     if(originalImage != null) {
@@ -145,15 +140,14 @@ namespace CodeHub.iOS.ViewControllers
                         {
                             UploadImage(originalImage);
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            Console.WriteLine("Fudge...");
                         }
-                        Console.WriteLine ("got the original image");
-                        //imageView.Image = originalImage; // display
                     }
-                } else { // if it's a video
-                    //TODO: Don't support video...
+                } 
+                else 
+                { // if it's a video
+                    MonoTouch.Utilities.ShowAlert("Not supported!", "Video upload is currently not supported.");
                 }          
 
                 // dismiss the picker
@@ -162,7 +156,7 @@ namespace CodeHub.iOS.ViewControllers
             };
 
 
-            imagePicker.Canceled += (object sender, EventArgs e) =>
+            imagePicker.Canceled += (sender, e) =>
             {
                 imagePicker.DismissViewController(true, null);
                 UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
