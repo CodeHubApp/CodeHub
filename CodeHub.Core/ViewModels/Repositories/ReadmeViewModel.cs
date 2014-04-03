@@ -6,6 +6,7 @@ using System.Windows.Input;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
+using CodeHub.Core.Utils;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -66,27 +67,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             {
                 _contentModel = x.Data;
                 var data = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
-                Path = CreateHtmlFile(data);
+                Path = MarkdownHtmlGenerator.CreateFile(data);
             });
 		}
-		
-        private string CreateHtmlFile(string data)
-        {
-            //Generate the markup
-			var markup = System.IO.File.ReadAllText("Markdown/markdown.html", Encoding.UTF8);
-
-            var tmp = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
-            using (var tmpStream = new System.IO.FileStream(tmp, System.IO.FileMode.Create))
-            {
-				var fs = new System.IO.StreamWriter(tmpStream, Encoding.UTF8);
-                var dataIndex = markup.IndexOf("{{DATA}}", StringComparison.Ordinal);
-                fs.Write(markup.Substring(0, dataIndex));
-                fs.Write(data);
-                fs.Write(markup.Substring(dataIndex + 8));
-                fs.Flush();
-            }
-            return tmp;
-        }
 
         public void Init(NavObject navObject)
         {

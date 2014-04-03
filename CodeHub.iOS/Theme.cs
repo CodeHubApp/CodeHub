@@ -36,6 +36,11 @@ namespace CodeHub.iOS
             UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
+            UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationController)).TintColor = UIColor.White;
+
+            // Composer Input Accessory Buttons
+            UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = UIColor.FromRGB(50, 50, 50);
+
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio);

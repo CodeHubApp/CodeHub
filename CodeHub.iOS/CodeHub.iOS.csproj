@@ -214,6 +214,7 @@
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <None Include="RELEASE-NOTES.txt" />
+    <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
@@ -425,4 +426,7 @@
     <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewControllers\" />
+  </ItemGroup>
 </Project>

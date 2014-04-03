@@ -8,6 +8,7 @@ using CodeFramework.iOS.Utils;
 using CodeFramework.iOS.Elements;
 using System.Linq;
 using System.Collections.Generic;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -132,16 +133,16 @@ namespace CodeHub.iOS.Views.Issues
         public void RenderComments()
         {
             var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
-
-            var data = s.Serialize(CreateCommentList().Select(x => new {
+            var comments = CreateCommentList().Select(x => new {
                 avatarUrl = x.AvatarUrl,
                 login = x.Login,
                 created_at = x.CreatedAt.ToDaysAgo(),
                 body = x.Body
-            }));
+            });
+            var data = s.Serialize(comments);
 
 			InvokeOnMainThread(() => {
-				_commentsElement.Value = data;
+                _commentsElement.Value = !comments.Any() ? string.Empty : data;
 				if (_commentsElement.GetImmediateRootElement() == null)
                     Render();
 			});
@@ -174,7 +175,7 @@ namespace CodeHub.iOS.Views.Issues
 
         void AddCommentTapped()
         {
-			var composer = new Composer();
+            var composer = new MarkdownComposerViewController();
 			composer.NewComment(this, async (text) => {
 				try
 				{
