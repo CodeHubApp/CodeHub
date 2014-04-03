@@ -8,6 +8,7 @@ using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
 using System.Linq;
 using MonoTouch.Foundation;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -137,7 +138,7 @@ namespace CodeHub.iOS.Views.Source
 
         void AddCommentTapped()
         {
-            var composer = new Composer();
+            var composer = new MarkdownComposerViewController();
 			composer.NewComment(this, async (text) => {
                 try
                 {

@@ -6,6 +6,7 @@ using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using System.Linq;
 using CodeFramework.iOS.Utils;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -45,7 +46,7 @@ namespace CodeHub.iOS.Views.Issues
 			var content = new MultilinedElement("Description");
 			content.Tapped += () =>
 			{
-				var composer = new Composer { Title = "Issue Description", Text = content.Value };
+                var composer = new MarkdownComposerViewController { Title = "Issue Description", Text = content.Value };
 				composer.NewComment(this, (text) => {
 					vm.Content = text;
 					composer.CloseComposer();

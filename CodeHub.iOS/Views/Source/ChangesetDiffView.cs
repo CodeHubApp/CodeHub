@@ -10,6 +10,7 @@ using CodeHub.Core.ViewModels.Source;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Utils;
 using CodeFramework.Core.Services;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.ViewControllers
 {
@@ -122,7 +123,7 @@ namespace CodeHub.ViewControllers
 
         private void ShowCommentComposer(int line)
         {
-            var composer = new Composer();
+            var composer = new MarkdownComposerViewController();
 			composer.NewComment(this, async (text) => {
 				try
 				{
