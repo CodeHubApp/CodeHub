@@ -111,9 +111,27 @@ namespace CodeHub.iOS.ViewControllers
             }
         }
 
+        private class RotatableUIImagePickerController : UIImagePickerController
+        {
+            public override bool ShouldAutorotate()
+            {
+                return true;
+            }
+
+            public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+            {
+                return UIInterfaceOrientationMask.All;
+            }
+
+            public override UIInterfaceOrientation PreferredInterfaceOrientationForPresentation()
+            {
+                return UIApplication.SharedApplication.StatusBarOrientation;
+            }
+        }
+
         private void SelectImage()
         {
-            var imagePicker = new UIImagePickerController();
+            var imagePicker = new RotatableUIImagePickerController();
             imagePicker.NavigationControllerDelegate = new ImagePickerDelegate();
             imagePicker.SourceType = UIImagePickerControllerSourceType.PhotoLibrary;
             imagePicker.MediaTypes = UIImagePickerController.AvailableMediaTypes(UIImagePickerControllerSourceType.PhotoLibrary);
