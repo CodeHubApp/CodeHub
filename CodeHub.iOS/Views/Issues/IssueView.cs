@@ -12,11 +12,11 @@ using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueView : ViewModelDrivenDialogViewController
+    public class IssueView : ViewModelDrivenDialogViewController
     {
-        protected readonly HeaderView _header;
+        protected HeaderView _header;
         protected WebElement _descriptionElement;
-        protected WebElement2 _commentsElement;
+        protected WebElement _commentsElement;
         protected StyledStringElement _milestoneElement;
         protected StyledStringElement _assigneeElement;
         protected StyledStringElement _labelsElement;
@@ -30,21 +30,24 @@ namespace CodeHub.iOS.Views.Issues
 
         public IssueView()
         {
-			Root.UnevenRows = true;
-			_header = new HeaderView();
+            Root.UnevenRows = true;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-			_descriptionElement = new WebElement(content);
-			_descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            _header = new HeaderView();
 
-			var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-			_commentsElement = new WebElement2(content2);
-			_commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
+            _descriptionElement = new WebElement(content, "body", false);
+            _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            //_descriptionElement.HeightChanged = x => Render();
+
+            var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
+            _commentsElement = new WebElement(content2, "comments", true);
+            _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            //_commentsElement.HeightChanged = x => Render();
 
             _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
             _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
@@ -58,7 +61,7 @@ namespace CodeHub.iOS.Views.Issues
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             _addCommentElement.Tapped += AddCommentTapped;
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
             NavigationItem.RightBarButtonItem.Enabled = false;
             ViewModel.Bind(x => x.IsLoading, x => 
             {
@@ -141,11 +144,11 @@ namespace CodeHub.iOS.Views.Issues
             });
             var data = s.Serialize(comments);
 
-			InvokeOnMainThread(() => {
+            InvokeOnMainThread(() => {
                 _commentsElement.Value = !comments.Any() ? string.Empty : data;
-				if (_commentsElement.GetImmediateRootElement() == null)
+                if (_commentsElement.GetImmediateRootElement() == null)
                     Render();
-			});
+            });
         }
 
         protected virtual void Render()
@@ -155,19 +158,19 @@ namespace CodeHub.iOS.Views.Issues
                 return;
 
             var root = new RootElement(Title);
-			root.Add(new Section(_header));
+            root.Add(new Section(_header));
 
-			var secDetails = new Section();
+            var secDetails = new Section();
             if (!string.IsNullOrEmpty(_descriptionElement.Value))
                 secDetails.Add(_descriptionElement);
 
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
             secDetails.Add(_labelsElement);
-			root.Add(secDetails);
+            root.Add(secDetails);
 
             if (!string.IsNullOrEmpty(_commentsElement.Value))
-				root.Add(new Section { _commentsElement });
+                root.Add(new Section { _commentsElement });
 
             root.Add(new Section { _addCommentElement });
             Root = root;
@@ -176,21 +179,21 @@ namespace CodeHub.iOS.Views.Issues
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-			composer.NewComment(this, async (text) => {
-				try
-				{
-					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
-					composer.CloseComposer();
-				}
-				catch (Exception e)
-				{
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
-				}
-				finally
-				{
-					composer.EnableSendButton = true;
-				}
-			});
+            composer.NewComment(this, async (text) => {
+                try
+                {
+                    await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+                    composer.CloseComposer();
+                }
+                catch (Exception e)
+                {
+                    MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+                }
+                finally
+                {
+                    composer.EnableSendButton = true;
+                }
+            });
         }
 
         public override UIView InputAccessoryView
