@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
 using System.Linq;
+using System.Drawing;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -26,26 +27,36 @@ namespace CodeHub.iOS.ViewControllers
             NavigationItem.TitleView = _viewSegment;
             _viewSegment.ValueChanged += SegmentValueChanged;
 
+            var pictureImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/picture");
+            var linkImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/link");
+            var photoImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/photo");
+
             var buttons = new []
             {
                 CreateAccessoryButton("@", () => TextView.InsertText("@")),
                 CreateAccessoryButton("#", () => TextView.InsertText("#")),
                 CreateAccessoryButton("*", () => TextView.InsertText("*")),
                 CreateAccessoryButton("`", () => TextView.InsertText("`")),
-                CreateAccessoryButton("Image", () => {
+                CreateAccessoryButton(pictureImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("![]()");
                     TextView.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 4, 0);
                 }),
-                CreateAccessoryButton("Upload", () => SelectImage()),
-                CreateAccessoryButton("Link", () => {
+                CreateAccessoryButton(photoImage, () => SelectImage()),
+                CreateAccessoryButton(linkImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("[]()");
                     TextView.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 1, 0);
                 }),
                 CreateAccessoryButton("~", () => TextView.InsertText("~")),
                 CreateAccessoryButton("=", () => TextView.InsertText("=")),
+                CreateAccessoryButton("-", () => TextView.InsertText("-")),
+                CreateAccessoryButton("+", () => TextView.InsertText("+")),
                 CreateAccessoryButton("_", () => TextView.InsertText("_")),
+                CreateAccessoryButton("[", () => TextView.InsertText("[")),
+                CreateAccessoryButton("]", () => TextView.InsertText("]")),
+                CreateAccessoryButton("<", () => TextView.InsertText("<")),
+                CreateAccessoryButton(">", () => TextView.InsertText(">")),
             };
 
             SetAccesoryButtons(buttons);

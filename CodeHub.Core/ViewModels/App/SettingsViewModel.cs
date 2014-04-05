@@ -71,11 +71,25 @@ namespace CodeHub.Core.ViewModels.App
 
         public bool PushNotificationsEnabled
 		{
-            get { return this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; }
+            get 
+            { 
+                return PushNotificationsActivated && this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; 
+            }
             set 
             { 
                 if (PushNotificationsActivated)
-                    RegisterPushNotifications(value); 
+                    RegisterPushNotifications(value);
+                else
+                {
+                    GetService<IAlertDialogService>()
+                        .PromptYesNo("Requires Activation", "Push notifications require activation. Would you like to go there now to activate push notifications?")
+                        .ContinueWith(t =>
+                        {
+                            if (t.Status == TaskStatus.RanToCompletion && t.Result)
+                                ShowViewModel<UpgradesViewModel>();
+                        });
+                    RaisePropertyChanged(() => PushNotificationsEnabled);
+                }
             }
 		}
 

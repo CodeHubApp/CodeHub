@@ -79,8 +79,7 @@ namespace CodeHub.iOS.Views.App
                 CreateTable();
             });
 
-            if (vm.PushNotificationsActivated)
-                accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
+            accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
 			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);

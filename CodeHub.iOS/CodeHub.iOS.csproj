@@ -419,6 +419,12 @@
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
     <BundleResource Include="Images\chart%402x.png" />
     <BundleResource Include="Images\chart.png" />
+    <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
+    <BundleResource Include="Images\MarkdownComposer\link.png" />
+    <BundleResource Include="Images\MarkdownComposer\photo%402x.png" />
+    <BundleResource Include="Images\MarkdownComposer\photo.png" />
+    <BundleResource Include="Images\MarkdownComposer\picture%402x.png" />
+    <BundleResource Include="Images\MarkdownComposer\picture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -428,5 +434,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="ViewControllers\" />
+    <Folder Include="Images\MarkdownComposer\" />
   </ItemGroup>
 </Project>
