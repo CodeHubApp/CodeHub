@@ -3,16 +3,17 @@ using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.ViewControllers;
+using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class AboutViewController : ViewModelDrivenDialogViewController
+	public class AboutView : ViewModelDrivenDialogViewController
     {
         private const string About = @"CodeHub is the best way to browse and maintain your GitHub repositories on any iPhone, iPod Touch, and iPad device! " +
             "Keep an eye on your projects with the ability to view everything from pull requests to commenting on individual file diffs in the latest change set. " + 
             "CodeHub brings GitHub to your finger tips in a sleek and efficient design." + "\n\nCreated By Dillon Buchanan";
 
-        public AboutViewController()
+        public AboutView()
             : base (true)
         {
 			Title = "About".t();
@@ -22,6 +23,8 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
+            var vm = (AboutViewModel)ViewModel;
+
             var root = new RootElement(Title)
             {
                 new Section
@@ -30,7 +33,7 @@ namespace CodeHub.iOS.Views.App
                 },
                 new Section
                 {
-                    new StyledStringElement("Source Code".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://github.com/thedillonb/CodeHub")))
+                    new StyledStringElement("Source Code".t(), () => vm.GoToSourceCodeCommand.Execute(null))
                 },
                 new Section(String.Empty, "Thank you for downloading. Enjoy!")
                 {

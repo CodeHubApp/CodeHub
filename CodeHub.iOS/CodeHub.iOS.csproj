@@ -132,7 +132,6 @@
     <Compile Include="Views\Accounts\AddAccountView.designer.cs">
       <DependentUpon>AddAccountView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\App\AboutViewController.cs" />
     <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\NewsView.cs" />
@@ -222,6 +221,7 @@
     </Compile>
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="Factories\FeatureFactory.cs" />
+    <Compile Include="Views\App\AboutView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
