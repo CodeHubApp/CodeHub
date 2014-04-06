@@ -1,9 +1,9 @@
 ﻿using CodeHub.Core.Data;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.Services
+namespace CodeHub.Core.Factories
 {
-    public interface ILoginService
+    public interface ILoginFactory
     {
 		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount existingAccount);
 

@@ -5,6 +5,7 @@ using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -12,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Accounts
     {
         private GitHubAccount _attemptedAccount;
         private readonly IApplicationService _application;
-        private readonly ILoginService _loginService;
+        private readonly ILoginFactory _loginFactory;
         private string _username;
         private string _password;
         private string _domain;
@@ -51,10 +52,10 @@ namespace CodeHub.Core.ViewModels.Accounts
 			get { return new MvxCommand(() => Login(), CanLogin);}
         }
 
-        public AddAccountViewModel(IApplicationService application, ILoginService loginService)
+        public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
         {
             _application = application;
-            _loginService = loginService;
+            _loginFactory = loginFactory;
         }
 
         public void Init(NavObject navObject)
@@ -99,8 +100,8 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 IsLoggingIn = true;
 				Console.WriteLine(apiUrl);
-				var loginData = await Task.Run(() => _loginService.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount));
-				var client = await Task.Run(() => _loginService.LoginAccount(loginData.Account));
+				var loginData = await Task.Run(() => _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount));
+				var client = await Task.Run(() => _loginFactory.LoginAccount(loginData.Account));
 				_application.ActivateUser(loginData.Account, client);
             }
             catch (Exception e)
@@ -108,7 +109,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 TwoFactor = null;
 
                 // Don't log an error for a two factor warning
-                if (!(e is LoginService.TwoFactorRequiredException))
+                if (!(e is LoginFactory.TwoFactorRequiredException))
                 {
                     Password = null;
                     DisplayAlert(e.Message);

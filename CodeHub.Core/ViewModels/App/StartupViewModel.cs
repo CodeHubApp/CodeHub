@@ -3,17 +3,18 @@ using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Linq;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.App
 {
 	public class StartupViewModel : BaseStartupViewModel
     {
-		private readonly ILoginService _loginService;
+        private readonly ILoginFactory _loginFactory;
 		private readonly IApplicationService _applicationService;
 
-		public StartupViewModel(ILoginService loginService, IApplicationService applicationService)
+        public StartupViewModel(ILoginFactory loginFactory, IApplicationService applicationService)
 		{
-			_loginService = loginService;
+			_loginFactory = loginFactory;
 			_applicationService = applicationService;
 		}
 
@@ -55,7 +56,7 @@ namespace CodeHub.Core.ViewModels.App
 			try
 			{
 				IsLoggingIn = true;
-				var client = await _loginService.LoginAccount(account);
+				var client = await _loginFactory.LoginAccount(account);
 				_applicationService.ActivateUser(account, client);
 			}
 			catch (GitHubSharp.UnauthorizedException e)

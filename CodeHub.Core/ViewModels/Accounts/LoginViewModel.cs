@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public const string ClientId = "72f4fb74bdba774b759d";
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
-        private readonly ILoginService _loginService;
+        private readonly ILoginFactory _loginFactory;
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
@@ -57,9 +57,9 @@ namespace CodeHub.Core.ViewModels.Accounts
             get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
         }
 
-        public LoginViewModel(ILoginService loginService)
+        public LoginViewModel(ILoginFactory loginFactory)
         {
-            _loginService = loginService;
+            _loginFactory = loginFactory;
         }
 
         public void Init(NavObject navObject)
@@ -115,7 +115,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 IsLoggingIn = true;
                 var account = AttemptedAccount;
-                var data = await _loginService.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+                var data = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
 
                 try
                 {

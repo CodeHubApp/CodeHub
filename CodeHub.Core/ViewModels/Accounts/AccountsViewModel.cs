@@ -4,18 +4,19 @@ using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AccountsViewModel : BaseAccountsViewModel
     {
-        private readonly ILoginService _loginService;
+        private readonly ILoginFactory _loginFactory;
         private readonly IApplicationService _applicationService;
 		
-        public AccountsViewModel(IAccountsService accountsService, ILoginService loginService, IApplicationService applicationService) 
+        public AccountsViewModel(IAccountsService accountsService, ILoginFactory loginFactory, IApplicationService applicationService) 
             : base(accountsService)
         {
-            _loginService = loginService;
+            _loginFactory = loginFactory;
             _applicationService = applicationService;
         }
 
@@ -47,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 			try
 			{
 				IsLoggingIn = true;
-				var client = await _loginService.LoginAccount(githubAccount);
+				var client = await _loginFactory.LoginAccount(githubAccount);
 				_applicationService.ActivateUser(githubAccount, client);
 			}
 			catch (GitHubSharp.UnauthorizedException e)
