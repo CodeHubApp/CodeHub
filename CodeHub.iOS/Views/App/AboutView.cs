@@ -39,7 +39,7 @@ namespace CodeHub.iOS.Views.App
                 {
                     new StyledStringElement("Follow On Twitter".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
                     new StyledStringElement("Rate This App".t(), () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
-                    new StyledStringElement("App Version".t(), NSBundle.MainBundle.InfoDictionary.ValueForKey(new NSString("CFBundleVersion")).ToString())
+                    new StyledStringElement("App Version".t(), vm.Version)
                 }
             };
 
