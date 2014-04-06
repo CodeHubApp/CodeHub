@@ -37,6 +37,11 @@ namespace CodeHub.iOS
         private UIWindow window;
 		public string DeviceToken;
 
+        public new UIWindow Window
+        {
+            get { return this.window; }
+        }
+
 		/// <summary>
 		/// This is the main entry point of the application.
 		/// </summary>

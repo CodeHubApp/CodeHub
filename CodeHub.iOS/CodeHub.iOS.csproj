@@ -215,6 +215,13 @@
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <None Include="RELEASE-NOTES.txt" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
+    <Compile Include="Views\App\SidebarOrderView.cs" />
+    <Compile Include="Views\App\EnablePushNotificationsViewController.cs" />
+    <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
+      <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
+    <Compile Include="Factory\FeatureFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
@@ -278,6 +285,9 @@
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="OHAttributedLabel">
+      <HintPath>..\lib\CodeFramework\lib\iOS\OHAttributedLabel.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />
@@ -435,5 +445,6 @@
   <ItemGroup>
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\MarkdownComposer\" />
+    <Folder Include="Factory\" />
   </ItemGroup>
 </Project>

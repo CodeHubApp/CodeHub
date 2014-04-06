@@ -30,6 +30,11 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
 		}
 
+        public ICommand GoToSidebarOrderCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<SidebarOrderViewModel>()); }
+        }
+
 		public ICommand DeleteAllCacheCommand
 		{
 			get { return new MvxCommand(DeleteCache); }

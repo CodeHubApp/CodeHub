@@ -131,6 +131,8 @@
     <Compile Include="Messages\GistAddMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="Utils\MarkdownHtmlGenerator.cs" />
+    <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
+    <Compile Include="Factories\IFeatureFactory.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -167,5 +169,8 @@
   <ItemGroup>
     <Content Include="Markdown\marked.js" />
     <Content Include="Markdown\markdown.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Factories\" />
   </ItemGroup>
 </Project>

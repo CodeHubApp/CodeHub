@@ -5,11 +5,14 @@ using MonoTouch.UIKit;
 using System.Text;
 using Cirrious.CrossCore;
 using CodeFramework.Core.Services;
+using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public class LoginView : WebView
     {
+        private readonly IHud _hud;
+
 		public new LoginViewModel ViewModel
 		{
 			get { return (LoginViewModel)base.ViewModel; }
@@ -21,6 +24,7 @@ namespace CodeHub.iOS.Views.Accounts
         {
             Title = "Login";
 			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+            _hud = this.CreateHud();
         }
 
 		private void ShowExtraMenu()
@@ -47,6 +51,14 @@ namespace CodeHub.iOS.Views.Accounts
 
 			if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
 				LoadRequest();
+
+            ViewModel.Bind(x => x.IsLoggingIn, x =>
+            {
+                if (x)
+                    _hud.Show("Logging in...");
+                else
+                    _hud.Hide();
+            });
 		}
 
 		public override void ViewDidAppear(bool animated)

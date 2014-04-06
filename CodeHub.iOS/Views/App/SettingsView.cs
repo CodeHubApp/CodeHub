@@ -72,6 +72,8 @@ namespace CodeHub.iOS.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
+            var sidebarOrder = new StyledStringElement("Sidebar Order", () => vm.GoToSidebarOrderCommand.Execute(null));
+
             var largeFonts = new TrueFalseElement("Large Fonts", vm.LargeFonts, x =>
             {
                 vm.LargeFonts = x.Value;

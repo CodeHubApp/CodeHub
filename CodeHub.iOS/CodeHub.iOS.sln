@@ -21,6 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserVoice", "..\lib\CodeFra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core.iOS", "..\CodeHub.Core\CodeHub.Core.iOS.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{796438D1-990E-430C-9FF0-494285D4411E}"
+	ProjectSection(SolutionItems) = preProject
+		CodeHub.iOS.sln = CodeHub.iOS.sln
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AdHoc|Any CPU = AdHoc|Any CPU

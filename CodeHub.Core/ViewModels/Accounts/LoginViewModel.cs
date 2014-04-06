@@ -5,6 +5,8 @@ using CodeHub.Core.Services;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
+using CodeHub.Core.Factories;
+using Cirrious.CrossCore;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -114,6 +116,23 @@ namespace CodeHub.Core.ViewModels.Accounts
                 IsLoggingIn = true;
                 var account = AttemptedAccount;
                 var data = await _loginService.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+
+                try
+                {
+                    if (!IsEnterprise)
+                    {
+                        var features = Mvx.Resolve<IFeaturesService>();
+                        if (!features.IsPushNotificationsActivated)
+                        {
+                            await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
+                        }
+                    }
+                }
+                catch 
+                {
+                    // Don't do anything...
+                }
+
                 this.GetApplication().ActivateUser(data.Account, data.Client);
             }
             catch (Exception e)

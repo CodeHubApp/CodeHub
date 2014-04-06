@@ -97,6 +97,16 @@ namespace CodeHub.iOS
                 .AsInterfaces()
                 .RegisterAsLazySingleton();
 
+            this.CreatableTypes()
+                .EndingWith("Factory")
+                .AsInterfaces()
+                .RegisterAsDynamic();
+
+            this.CreatableTypes(typeof(Core.App).Assembly)
+                .EndingWith("Factory")
+                .AsInterfaces()
+                .RegisterAsDynamic();
+
             return new Core.App();
         }
     }
