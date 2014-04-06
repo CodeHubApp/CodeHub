@@ -221,7 +221,7 @@
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
-    <Compile Include="Factory\FeatureFactory.cs" />
+    <Compile Include="Factories\FeatureFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
@@ -445,6 +445,6 @@
   <ItemGroup>
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\MarkdownComposer\" />
-    <Folder Include="Factory\" />
+    <Folder Include="Factories\" />
   </ItemGroup>
 </Project>
