@@ -72,7 +72,7 @@ namespace CodeHub.iOS
             // Setup theme
             Theme.Setup();
 
-            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("https://app.getsentry.com/api/21627/store/", "a1cf5eda5acf480a87bbd3c4826767e4", "840cba62d6f84573ab9fdb5f216b87a2");
+            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             if (options != null)
             {
