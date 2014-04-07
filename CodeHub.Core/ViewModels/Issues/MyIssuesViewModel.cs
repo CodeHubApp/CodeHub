@@ -5,13 +5,16 @@ using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Cirrious.MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
-		private int _selectedFilter;
+        private MvxSubscriptionToken _editToken;
 
+		private int _selectedFilter;
 		public int SelectedFilter
 		{
 			get { return _selectedFilter; }
@@ -35,6 +38,24 @@ namespace CodeHub.Core.ViewModels.Issues
 				else if (x == 1)
 					_issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
 			});
+
+            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            {
+                if (x.Issue == null)
+                    return;
+
+                var item = Issues.Items.FirstOrDefault(y => y.Number == x.Issue.Number);
+                if (item == null)
+                    return;
+
+                var index = Issues.Items.IndexOf(item);
+
+                using (Issues.DeferRefresh())
+                {
+                    Issues.Items.RemoveAt(index);
+                    Issues.Items.Insert(index, x.Issue);
+                }
+            });
         }
 
         protected override List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)

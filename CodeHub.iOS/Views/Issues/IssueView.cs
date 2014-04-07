@@ -21,6 +21,7 @@ namespace CodeHub.iOS.Views.Issues
         protected StyledStringElement _assigneeElement;
         protected StyledStringElement _labelsElement;
         protected StyledStringElement _addCommentElement;
+        private IHud _hud;
 
         public new IssueViewModel ViewModel
         {
@@ -38,6 +39,7 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
             _header = new HeaderView();
+            _hud = this.CreateHud();
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "body", false);
@@ -61,7 +63,7 @@ namespace CodeHub.iOS.Views.Issues
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             _addCommentElement.Tapped += AddCommentTapped;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => ViewModel.GoToEditCommand.Execute(null));
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.Enabled = false;
             ViewModel.Bind(x => x.IsLoading, x => 
             {
@@ -69,6 +71,14 @@ namespace CodeHub.iOS.Views.Issues
                 {
                     NavigationItem.RightBarButtonItem.Enabled = ViewModel.Issue != null;
                 }
+            });
+
+            ViewModel.Bind(x => x.IsModifying, x =>
+            {
+                if (x)
+                    _hud.Show("Loading...");
+                else
+                    _hud.Hide();
             });
 
             ViewModel.Bind(x => x.Issue, x =>
@@ -203,6 +213,37 @@ namespace CodeHub.iOS.Views.Issues
                 var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
+        }
+
+
+        private void ShowExtraMenu()
+        {
+            if (ViewModel.Issue == null)
+                return;
+
+            var sheet = MonoTouch.Utilities.GetSheet(Title);
+            var editButton = sheet.AddButton("Edit".t());
+            var openButton = sheet.AddButton(ViewModel.Issue.State == "open" ? "Close".t() : "Open".t());
+            var commentButton = sheet.AddButton("Comment".t());
+            var shareButton = sheet.AddButton("Share".t());
+            var showButton = sheet.AddButton("Show in GitHub".t());
+            var cancelButton = sheet.AddButton("Cancel".t());
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+            sheet.Clicked += (s, e) => {
+                if (e.ButtonIndex == editButton)
+                    ViewModel.GoToEditCommand.Execute(null);
+                else if (e.ButtonIndex == openButton)
+                    ViewModel.ToggleStateCommand.Execute(null);
+                else if (e.ButtonIndex == shareButton)
+                    ViewModel.ShareCommand.Execute(null);
+                else if (e.ButtonIndex == showButton)
+                    ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
+                else if (e.ButtonIndex == commentButton)
+                    AddCommentTapped();
+            };
+
+            sheet.ShowInView(this.View);
         }
 
         private class CommentModel

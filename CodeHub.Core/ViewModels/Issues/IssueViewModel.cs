@@ -7,6 +7,7 @@ using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
+using System;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -53,6 +54,17 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
+        private bool _isModifying;
+        public bool IsModifying
+        {
+            get { return _isModifying; }
+            set
+            {
+                _isModifying = value;
+                RaisePropertyChanged(() => IsModifying);
+            }
+        }
+
 		public ICommand GoToAssigneeCommand
 		{
 			get 
@@ -91,11 +103,27 @@ namespace CodeHub.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Issue);
+					GetService<IViewModelTxService>().Add(Issue);
 					ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
 				}, () => Issue != null); 
 			}
 		}
+
+        public ICommand ToggleStateCommand
+        {
+            get 
+            {
+                return new MvxCommand(() => ToggleState(Issue.State == "open"), () => Issue != null);
+            }
+        }
+
+        public ICommand ShareCommand
+        {
+            get
+            {
+                return new MvxCommand(() => GetService<IShareService>().ShareUrl(Issue.HtmlUrl), () => Issue != null & !string.IsNullOrEmpty(Issue.HtmlUrl));
+            }
+        }
 
 		private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
         public CollectionViewModel<IssueCommentModel> Comments
@@ -140,6 +168,24 @@ namespace CodeHub.Core.ViewModels.Issues
         {
 			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
             Comments.Items.Add(comment.Data);
+        }
+
+        private async Task ToggleState(bool closed)
+        {
+            try
+            {
+                IsModifying = true;
+                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].UpdateState(closed ? "closed" : "open")); 
+                Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+            }
+            catch (Exception e)
+            {
+                DisplayAlert("Unable to " + (closed ? "close" : "open") + " the item. " + e.Message);
+            }
+            finally
+            {
+                IsModifying = false;
+            }
         }
 
         public class NavObject
