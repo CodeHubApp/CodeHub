@@ -1,4 +1,3 @@
-- Better error messages
-- Comments can now be viewed in markdown before posting
-- You can now upload images!!!
-- Input accessory view for quick access to markdown characters when commenting.
+- Bug fixes
+- Tweeks to performance and error reporting
+- Issue action button (top right) now allows for share, close/open, comment, edit, show in github within the menu.
