@@ -69,10 +69,10 @@ namespace CodeHub.iOS
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
+            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+
             // Setup theme
             Theme.Setup();
-
-            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             if (options != null)
             {
@@ -94,7 +94,6 @@ namespace CodeHub.iOS
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
 
             var features = Mvx.Resolve<IFeaturesService>();
-
 
             // Automatic activations in debug mode!
             #if DEBUG

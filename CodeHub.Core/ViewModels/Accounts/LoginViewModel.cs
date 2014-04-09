@@ -111,38 +111,41 @@ namespace CodeHub.Core.ViewModels.Accounts
                 apiUrl = GitHubSharp.Client.DefaultApi;
             }
     
+            LoginData loginData = null;
+
             try
             {
                 IsLoggingIn = true;
                 var account = AttemptedAccount;
-                var data = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
-
-                try
-                {
-                    if (!IsEnterprise)
-                    {
-                        var features = Mvx.Resolve<IFeaturesService>();
-                        if (!features.IsPushNotificationsActivated)
-                        {
-                            await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
-                        }
-                    }
-                }
-                catch 
-                {
-                    // Don't do anything...
-                }
-
-                this.GetApplication().ActivateUser(data.Account, data.Client);
+                loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
             }
             catch (Exception e)
             {
                 DisplayAlert(e.Message);
+                return;
             }
             finally
             {
                 IsLoggingIn = false;
             }
+
+            try
+            {
+                if (!IsEnterprise)
+                {
+                    var features = Mvx.Resolve<IFeaturesService>();
+                    if (!features.IsPushNotificationsActivated)
+                    {
+                        await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
+                    }
+                }
+            }
+            catch 
+            {
+                // Don't do anything...
+            }
+
+            this.GetApplication().ActivateUser(loginData.Account, loginData.Client);
         }
 
         public class NavObject

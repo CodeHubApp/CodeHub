@@ -15,10 +15,14 @@ namespace CodeHub.iOS
             CodeFramework.iOS.Theme.CurrentTheme = theme;
 
             var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
-            Theme.CurrentTheme.FontSizeRatio = defaultValues.Get<bool>("large_fonts") ? 1.3f : 1.0f;
 
-			RepositoryCellView.RoundImages = false;
-			MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
+            bool largeFonts;
+            if (!defaultValues.TryGet<bool>("large_fonts", out largeFonts))
+                largeFonts = false;
+            Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
+
+            RepositoryCellView.RoundImages = false;
+            MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
             MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
@@ -67,16 +71,16 @@ namespace CodeHub.iOS
                 };
             }
         }
-		public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
+        public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
         public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
         public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
         public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
-		public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
+        public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
         public UIImage SaveButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
         public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
         public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
-		public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
-		public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
+        public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
+        public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
 
         public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 
@@ -135,29 +139,29 @@ namespace CodeHub.iOS
 
         public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
 
-		public UIColor AccountsNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Red;
-			}
-		}
+        public UIColor AccountsNavigationBarTint
+        {
+            get
+            {
+                return UIColor.Red;
+            }
+        }
 
-		public UIColor SlideoutNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Black;
-			}
-		}
+        public UIColor SlideoutNavigationBarTint
+        {
+            get
+            {
+                return UIColor.Black;
+            }
+        }
 
-		public UIColor ApplicationNavigationBarTint
-		{
-			get
-			{
-				return UIColor.Black;
-			}
-		}
+        public UIColor ApplicationNavigationBarTint
+        {
+            get
+            {
+                return UIColor.Black;
+            }
+        }
 
         public float FontSizeRatio { get; set; }
     }
