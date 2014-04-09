@@ -128,7 +128,7 @@ namespace CodeHub.iOS.Views.Gists
 						ViewModel.GoToHtmlUrlCommand.Execute(null);
 	                }
 				}
-				catch (Exception ex)
+				catch
 				{
 				}
             };

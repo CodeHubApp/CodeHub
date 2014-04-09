@@ -1,15 +1,13 @@
-using System;
 using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeFramework.Core.Services;
-using System.Collections.Generic;
+using CodeHub.Core.Services;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class UpgradesViewModel : LoadableViewModel
     {
-        private readonly IHttpClientService _httpClientService;
-        private readonly IJsonSerializationService _jsonSerializationService;
+        private readonly IFeaturesService _featuresService;
         private string[] _keys;
 
         public string[] Keys
@@ -22,19 +20,14 @@ namespace CodeHub.Core.ViewModels.App
             }
         }
 
-        public UpgradesViewModel(IHttpClientService httpClientService, IJsonSerializationService jsonSerializationService)
+        public UpgradesViewModel(IFeaturesService featuresService)
         {
-            _httpClientService = httpClientService;
-            _jsonSerializationService = jsonSerializationService;
+            _featuresService = featuresService;
         }
 
         protected override async Task Load(bool forceCacheInvalidation)
         {
-            var client = _httpClientService.Create();
-            client.Timeout = new TimeSpan(0, 0, 30);
-            var response = await client.GetAsync("http://162.243.15.10/in-app");
-            var data = await response.Content.ReadAsStringAsync();
-            Keys = _jsonSerializationService.Deserialize<List<string>>(data).ToArray();
+            Keys = (await _featuresService.GetAvailableFeatureIds()).ToArray();
         }
     }
 }

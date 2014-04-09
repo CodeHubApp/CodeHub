@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeFramework.iOS.Utils;
-using CodeFramework.Core.Services;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -90,7 +88,7 @@ namespace CodeHub.iOS.Views.App
         {
             _hud.Show("Enabling...");
             var featureService = Mvx.Resolve<IFeaturesService>();
-            featureService.Activate(InAppPurchases.PushNotificationsId);
+            featureService.Activate(FeatureIds.PushNotifications);
         }
     }
 }

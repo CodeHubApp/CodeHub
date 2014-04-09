@@ -7,6 +7,8 @@ using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
 using Cirrious.CrossCore;
+using CodeFramework.Core.Services;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -16,6 +18,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private readonly ILoginFactory _loginFactory;
+        private readonly IFeaturesService _featuresService;
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
@@ -57,9 +60,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
         }
 
-        public LoginViewModel(ILoginFactory loginFactory)
+        public LoginViewModel(ILoginFactory loginFactory, IFeaturesService featuresService)
         {
             _loginFactory = loginFactory;
+            _featuresService = featuresService;
         }
 
         public void Init(NavObject navObject)
@@ -112,12 +116,25 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
     
             LoginData loginData = null;
+            bool shouldPromptPush = false;
 
             try
             {
                 IsLoggingIn = true;
                 var account = AttemptedAccount;
                 loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+
+                if (!_featuresService.IsPushNotificationsActivated && !IsEnterprise)
+                {
+                    try
+                    {
+                        var ids = await _featuresService.GetAvailableFeatureIds();
+                        shouldPromptPush = ids.Contains(FeatureIds.PushNotifications);
+                    }
+                    catch
+                    {
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -131,16 +148,11 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             try
             {
-                if (!IsEnterprise)
-                {
-                    var features = Mvx.Resolve<IFeaturesService>();
-                    if (!features.IsPushNotificationsActivated)
-                    {
-                        await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
-                    }
-                }
+                // Only prompt if we're allowing that to be enabled.
+                if (shouldPromptPush)
+                    await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
             }
-            catch 
+            catch
             {
                 // Don't do anything...
             }

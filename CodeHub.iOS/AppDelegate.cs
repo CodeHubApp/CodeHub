@@ -97,7 +97,7 @@ namespace CodeHub.iOS
 
             // Automatic activations in debug mode!
             #if DEBUG
-            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(InAppPurchases.PushNotificationsId, true);
+            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
             #endif
 
 
@@ -121,7 +121,7 @@ namespace CodeHub.iOS
         {
             Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(e, true);
 
-            if (string.Equals(e, InAppPurchases.PushNotificationsId))
+            if (string.Equals(e, FeatureIds.PushNotifications))
             {
                 const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
                 UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);

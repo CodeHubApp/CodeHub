@@ -76,7 +76,7 @@ namespace CodeHub.iOS.Views.Source
 						ViewModel.GoToHtmlUrlCommand.Execute(null);
 					}
 				}
-				catch (Exception ex)
+				catch
 				{
 				}
 			};

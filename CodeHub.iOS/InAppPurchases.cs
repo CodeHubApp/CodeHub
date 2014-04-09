@@ -8,7 +8,6 @@ namespace CodeHub.iOS
     public class InAppPurchases 
     {
         private static InAppPurchases _instance;
-        public const string PushNotificationsId = "com.dillonbuchanan.codehub.push";
         private readonly TransactionObserver _observer;
 
         public event EventHandler<string> PurchaseSuccess;
