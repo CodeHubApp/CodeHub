@@ -24,6 +24,9 @@ namespace CodeHub.iOS.Views.Issues
 				{
 					ShowFilterController(new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(vm.Issues));
 				}
+
+                // If there is searching going on. Finish it.
+                FinishSearch();
 			});
 
 			BindCollection(vm.Issues, CreateElement);

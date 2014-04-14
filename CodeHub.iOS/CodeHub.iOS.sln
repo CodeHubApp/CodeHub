@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.iOS", "CodeHub.iOS.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeFramework", "CodeFramework", "{F112095C-7262-445E-91C4-D35C1E986E69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Core.iOS", "..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj", "{C99FE7E3-0985-48F1-9EBB-91680A795F0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Core", "..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj", "{C99FE7E3-0985-48F1-9EBB-91680A795F0F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.iOS", "..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj", "{2698B412-26A3-4269-AA01-AC3BC79A0F14}"
 EndProject

@@ -9,42 +9,42 @@ namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestsView : ViewModelCollectionDrivenDialogViewController
     {
-		private readonly UISegmentedControl _viewSegment;
-		private readonly UIBarButtonItem _segmentBarButton;
+        private readonly UISegmentedControl _viewSegment;
+        private readonly UIBarButtonItem _segmentBarButton;
  
-		public PullRequestsView()
-		{
-			Root.UnevenRows = true;
-			Title = "Pull Requests".t();
-			NoItemsText = "No Pull Requests".t();
+        public PullRequestsView()
+        {
+            Root.UnevenRows = true;
+            Title = "Pull Requests".t();
+            NoItemsText = "No Pull Requests".t();
 
-			_viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
-			_segmentBarButton = new UIBarButtonItem(_viewSegment);
-			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-		}
+            _viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
+            _segmentBarButton = new UIBarButtonItem(_viewSegment);
+            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			var vm = (PullRequestsViewModel)ViewModel;
+            var vm = (PullRequestsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
-			var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
-			set.Bind(_viewSegment).To(x => x.SelectedFilter);
-			set.Apply();
+            var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
+            set.Bind(_viewSegment).To(x => x.SelectedFilter);
+            set.Apply();
 
-			BindCollection(vm.PullRequests, s =>
+            BindCollection(vm.PullRequests, s =>
             {
                 var sse = new NameTimeStringElement
                 {
-                    Name = s.Title,
-                    String = s.Body.Replace('\n', ' ').Replace("\r", ""),
+                    Name = s.Title ?? "No Title",
+                    String = (s.Body ?? string.Empty).Replace('\n', ' ').Replace("\r", ""),
                     Lines = 3,
                     Time = s.CreatedAt.ToDaysAgo(),
                     Image = Theme.CurrentTheme.AnonymousUserImage,
                     ImageUri = new Uri(s.User.AvatarUrl)
                 };
-					sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
+                sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
                 return sse;
             });
         }
@@ -52,8 +52,8 @@ namespace CodeHub.iOS.Views.PullRequests
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-			if (ToolbarItems != null)
-				NavigationController.SetToolbarHidden(false, animated);
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(false, animated);
         }
 
         public override void ViewWillDisappear(bool animated)

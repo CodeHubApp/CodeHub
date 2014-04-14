@@ -151,10 +151,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
-      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core.iOS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
       <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
       <Name>GitHubSharp.MonoTouch</Name>
@@ -162,6 +158,10 @@
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
       <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
       <Name>CodeFramework.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
+      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
+      <Name>CodeFramework.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />

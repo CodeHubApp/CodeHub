@@ -35,15 +35,23 @@ namespace CodeHub.iOS.Views.Repositories
             {
                 var index = vm.SelectedTime == null ? 0 : vm.Times.ToList().IndexOf(vm.SelectedTime);
                 if (index < 0) index = 0;
-                new PickerAlert(vm.Times.Select(x => x.Name).ToArray(), index, x => vm.SelectedTime = vm.Times[x]).Show();
+                new PickerAlert(vm.Times.Select(x => x.Name).ToArray(), index, x => 
+                {
+                    if (x < vm.Times.Length)
+                        vm.SelectedTime = vm.Times[x];
+                }).Show();
             });
 
             var button2 = new UIBarButtonItem("Language", UIBarButtonItemStyle.Plain, (s, e) =>
             {
                 var index = vm.SelectedLanguage == null ? 0 : vm.Languages.ToList().IndexOf(vm.SelectedLanguage);
                 if (index < 0) index = 0;
-                new PickerAlert(vm.Languages.Select(x => x.Name).ToArray(), index, x => vm.SelectedLanguage = vm.Languages.ElementAt(x)).Show();
-
+                new PickerAlert(vm.Languages.Select(x => x.Name).ToArray(), index, x =>
+                {
+                    var selectedlanguage = vm.Languages.ElementAtOrDefault(x);
+                    if (selectedlanguage != null)
+                        vm.SelectedLanguage = selectedlanguage;
+                }).Show();
             });
 
             vm.Bind(x => x.SelectedTime, x => button.Title = x.Name, true);

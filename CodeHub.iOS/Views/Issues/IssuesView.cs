@@ -60,6 +60,9 @@ namespace CodeHub.iOS.Views.Issues
         {
             var application = Mvx.Resolve<IApplicationService>();
 
+            // If there is searching going on. Finish it.
+            FinishSearch();
+
             if (_viewSegment.SelectedSegment == 0)
             {
                 ViewModel.Issues.ApplyFilter(IssuesFilterModel.CreateOpenFilter(), true);

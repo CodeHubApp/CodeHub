@@ -1,3 +1,1 @@
 - Bug fixes
-- Tweeks to performance and error reporting
-- Issue action button (top right) now allows for share, close/open, comment, edit, show in github within the menu.
