@@ -37,8 +37,9 @@ namespace CodeHub.iOS.Views.Repositories
                 if (index < 0) index = 0;
                 new PickerAlert(vm.Times.Select(x => x.Name).ToArray(), index, x => 
                 {
-                    if (x < vm.Times.Length)
-                        vm.SelectedTime = vm.Times[x];
+                    var selectedTime = vm.Times.ElementAtOrDefault(x);
+                    if (selectedTime != null)
+                        vm.SelectedTime = selectedTime;
                 }).Show();
             });
 
