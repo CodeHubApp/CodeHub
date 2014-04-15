@@ -164,10 +164,19 @@ namespace CodeHub.Core.ViewModels.Issues
 			});
         }
 
-        public async Task AddComment(string text)
+        public async Task<bool> AddComment(string text)
         {
-			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
-            Comments.Items.Add(comment.Data);
+            try
+            {
+    			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
+                Comments.Items.Add(comment.Data);
+                return true;
+            }
+            catch (Exception e)
+            {
+                DisplayAlert(e.Message);
+                return false;
+            }
         }
 
         private async Task ToggleState(bool closed)

@@ -91,7 +91,8 @@ namespace CodeHub.iOS
         private void FailedTransaction (SKPaymentTransaction transaction)
         {
             SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
-            OnPurchaseError(new Exception(transaction.Error.LocalizedDescription));
+            var errorString = transaction.Error != null ? transaction.Error.LocalizedDescription : "Unable to process transaction!";
+            OnPurchaseError(new Exception(errorString));
         }
 
         private class TransactionObserver : SKPaymentTransactionObserver
@@ -105,22 +106,29 @@ namespace CodeHub.iOS
 
             public override void UpdatedTransactions(SKPaymentQueue queue, SKPaymentTransaction[] transactions)
             {
-                Console.WriteLine ("UpdatedTransactions");
                 foreach (SKPaymentTransaction transaction in transactions)
                 {
-                    switch (transaction.TransactionState)
+                    try
                     {
-                        case SKPaymentTransactionState.Purchased:
-                            _inAppPurchases.CompleteTransaction(transaction);
-                            break;
-                        case SKPaymentTransactionState.Failed:
-                            _inAppPurchases.FailedTransaction(transaction);
-                            break;
-                        case SKPaymentTransactionState.Restored:
-                            _inAppPurchases.RestoreTransaction(transaction);
-                            break;
-                        default:
-                            break;
+                        switch (transaction.TransactionState)
+                        {
+                            case SKPaymentTransactionState.Purchased:
+                                _inAppPurchases.CompleteTransaction(transaction);
+                                break;
+                            case SKPaymentTransactionState.Failed:
+                                _inAppPurchases.FailedTransaction(transaction);
+                                break;
+                            case SKPaymentTransactionState.Restored:
+                                _inAppPurchases.RestoreTransaction(transaction);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MonoTouch.Utilities.ShowAlert("Error", "Unable to process transaction: " + e.Message);
+                        e.Report();
                     }
                 }
             }

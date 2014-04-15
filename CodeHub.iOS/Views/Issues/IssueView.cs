@@ -190,19 +190,13 @@ namespace CodeHub.iOS.Views.Issues
         {
             var composer = new MarkdownComposerViewController();
             composer.NewComment(this, async (text) => {
-                try
-                {
-                    await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+
+                var hud = this.CreateHud();
+                hud.Show("Posting Comment...");
+                if (await ViewModel.AddComment(text))
                     composer.CloseComposer();
-                }
-                catch (Exception e)
-                {
-                    MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
-                }
-                finally
-                {
-                    composer.EnableSendButton = true;
-                }
+                hud.Hide();
+                composer.EnableSendButton = true;
             });
         }
 

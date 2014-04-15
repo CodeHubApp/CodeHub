@@ -4,6 +4,7 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Linq;
 using CodeHub.Core.Factories;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -71,7 +72,8 @@ namespace CodeHub.Core.ViewModels.App
 			}
 			catch (Exception e)
 			{
-                ReportException(e);
+                if (!(e is TaskCanceledException))
+                    ReportException(e);
 				ShowViewModel<Accounts.AccountsViewModel>();
 			}
 			finally

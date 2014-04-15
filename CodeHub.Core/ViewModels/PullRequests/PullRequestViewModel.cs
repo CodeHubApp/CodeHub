@@ -17,19 +17,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
         private MvxSubscriptionToken _issueEditSubscription;
         private MvxSubscriptionToken _pullRequestEditSubscription;
 
-        public long Id 
+        public long Id
         { 
             get; 
             private set; 
         }
 
-        public string Username 
+        public string Username
         { 
             get; 
             private set; 
         }
 
-        public string Repository 
+        public string Repository
         { 
             get; 
             private set; 
@@ -41,37 +41,58 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         private bool _merged;
+
         public bool Merged
         {
             get { return _merged; }
-            set { _merged = value; RaisePropertyChanged(() => Merged); }
+            set
+            {
+                _merged = value;
+                RaisePropertyChanged(() => Merged);
+            }
         }
 
         private IssueModel _issueModel;
+
         public IssueModel Issue
         {
             get { return _issueModel; }
-            set { _issueModel = value; RaisePropertyChanged(() => Issue); }
+            set
+            {
+                _issueModel = value;
+                RaisePropertyChanged(() => Issue);
+            }
         }
 
         private PullRequestModel _model;
-        public PullRequestModel PullRequest 
+
+        public PullRequestModel PullRequest
         { 
             get { return _model; }
-            set { _model = value; RaisePropertyChanged(() => PullRequest); }
+            set
+            {
+                _model = value;
+                RaisePropertyChanged(() => PullRequest);
+            }
         }
 
         private bool _isModifying;
+
         public bool IsModifying
         {
             get { return _isModifying; }
-            set { _isModifying = value; RaisePropertyChanged(() => IsModifying); }
+            set
+            {
+                _isModifying = value;
+                RaisePropertyChanged(() => IsModifying);
+            }
         }
 
         private ICommand _goToAssigneeCommand;
+
         public ICommand GoToAssigneeCommand
         {
-            get 
+            get
             {
                 if (_goToAssigneeCommand == null)
                 {
@@ -90,9 +111,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         private ICommand _goToMilestoneCommand;
+
         public ICommand GoToMilestoneCommand
         {
-            get 
+            get
             { 
                 if (_goToMilestoneCommand == null)
                 {
@@ -111,9 +133,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         private ICommand _goToLabelsCommand;
+
         public ICommand GoToLabelsCommand
         {
-            get 
+            get
             { 
                 if (_goToLabelsCommand == null)
                 {
@@ -133,9 +156,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public ICommand GoToEditCommand
         {
-            get 
+            get
             { 
-                return new MvxCommand(() => {
+                return new MvxCommand(() =>
+                {
                     GetService<IViewModelTxService>().Add(Issue);
                     ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
                 }, () => Issue != null); 
@@ -143,6 +167,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         private ICommand _shareCommmand;
+
         public new ICommand ShareCommand
         {
             get
@@ -162,7 +187,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             get { return new MvxCommand(() => ToggleState(PullRequest.State == "open")); }
         }
-            
+
         public ICommand GoToCommitsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
@@ -174,17 +199,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
+
         public CollectionViewModel<IssueCommentModel> Comments
         {
             get { return _comments; }
         }
 
         private readonly CollectionViewModel<IssueEventModel> _events = new CollectionViewModel<IssueEventModel>();
+
         public CollectionViewModel<IssueEventModel> Events
         {
             get { return _events; }
         }
-            
+
         public string ConvertToMarkdown(string str)
         {
             return (GetService<IMarkdownService>().Convert(str));
@@ -211,10 +238,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
         }
 
-        public async Task AddComment(string text)
+        public async Task<bool> AddComment(string text)
         {
-            var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
-            Comments.Items.Add(comment.Data);
+            try
+            {
+                var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
+                Comments.Items.Add(comment.Data);
+                return true;
+            }
+            catch (Exception e)
+            {
+                DisplayAlert(e.Message);
+                return false;
+            }
         }
 
         private async Task ToggleState(bool closed)
@@ -238,7 +274,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         protected override Task Load(bool forceCacheInvalidation)
         {
             var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
-			var t1 = this.RequestModel(pullRequest, forceCacheInvalidation, response => PullRequest = response.Data);
+            var t1 = this.RequestModel(pullRequest, forceCacheInvalidation, response => PullRequest = response.Data);
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
@@ -270,7 +306,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public class NavObject
         {
             public string Username { get; set; }
+
             public string Repository { get; set; }
+
             public long Id { get; set; }
         }
     }
