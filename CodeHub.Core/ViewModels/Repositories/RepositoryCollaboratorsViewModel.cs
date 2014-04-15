@@ -5,7 +5,7 @@ using CodeFramework.Core.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryCollaboratorsViewModel : LoadableViewModel
     {

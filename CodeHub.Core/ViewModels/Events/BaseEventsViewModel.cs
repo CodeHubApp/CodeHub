@@ -14,6 +14,7 @@ using CodeHub.Core.ViewModels.User;
 using GitHubSharp;
 using GitHubSharp.Models;
 using CodeFramework.Core.Utils;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.Core.ViewModels.Events
 {

@@ -9,6 +9,7 @@ using CodeFramework.iOS.Utils;
 using System.Linq;
 using MonoTouch.Foundation;
 using CodeHub.iOS.ViewControllers;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.iOS.Views.Source
 {

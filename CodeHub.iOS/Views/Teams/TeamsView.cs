@@ -1,8 +1,8 @@
 using CodeFramework.ViewControllers;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
+using CodeHub.Core.ViewModels.Teams;
 
-namespace CodeHub.iOS.Views.User
+namespace CodeHub.iOS.Views.Teams
 {
     public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {

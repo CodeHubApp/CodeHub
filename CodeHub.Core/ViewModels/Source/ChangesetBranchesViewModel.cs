@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Services;
 using GitHubSharp.Models;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.Core.ViewModels.Source
 {

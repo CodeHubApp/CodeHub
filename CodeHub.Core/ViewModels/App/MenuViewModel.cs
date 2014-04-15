@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.Data;
@@ -15,7 +14,7 @@ using CodeFramework.Core.Utils;
 using CodeFramework.Core.ViewModels.App;
 using CodeHub.Core.Messages;
 using Cirrious.MvvmCross.Plugins.Messenger;
-using System;
+using CodeHub.Core.ViewModels.Notifications;
 
 namespace CodeHub.Core.ViewModels.App
 {

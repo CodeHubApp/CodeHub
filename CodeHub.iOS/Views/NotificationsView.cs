@@ -5,6 +5,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
+using CodeHub.Core.ViewModels.Notifications;
 
 namespace CodeHub.iOS.Views
 {

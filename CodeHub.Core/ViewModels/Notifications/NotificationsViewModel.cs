@@ -12,8 +12,9 @@ using GitHubSharp.Models;
 using CodeHub.Core.Messages;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
+using CodeHub.Core.ViewModels.Changesets;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Notifications
 {
     public class NotificationsViewModel : LoadableViewModel
     {

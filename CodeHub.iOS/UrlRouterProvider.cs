@@ -20,8 +20,8 @@ namespace CodeHub.iOS
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/$", typeof(CodeHub.Core.ViewModels.Issues.IssuesViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/$", typeof(CodeHub.Core.ViewModels.CommitsViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/(?<Node>[^/]*)/$", typeof(CodeHub.Core.ViewModels.ChangesetViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/$", typeof(CodeHub.Core.ViewModels.Changesets.CommitsViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/(?<Node>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Changesets.ChangesetViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Issues.IssueViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(CodeHub.Core.ViewModels.Source.SourceTreeViewModel)),
         };

@@ -236,7 +236,7 @@ namespace CodeHub.iOS.Views.Issues
                 else if (e.ButtonIndex == openButton)
                     ViewModel.ToggleStateCommand.Execute(null);
                 else if (e.ButtonIndex == shareButton)
-                    ViewModel.ShareCommand.Execute(null);
+                    ViewModel.ShareCommand.Execute(ViewModel.Issue.HtmlUrl);
                 else if (e.ButtonIndex == showButton)
                     ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
                 else if (e.ButtonIndex == commentButton)

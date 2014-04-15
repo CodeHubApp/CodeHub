@@ -7,6 +7,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels.Teams;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {

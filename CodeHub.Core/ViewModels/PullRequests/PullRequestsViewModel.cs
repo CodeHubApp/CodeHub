@@ -2,13 +2,17 @@
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
-using CodeHub.Core.Filters;
 using GitHubSharp.Models;
+using Cirrious.MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Messages;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : LoadableViewModel
     {
+        private MvxSubscriptionToken _pullRequestEditSubscription;
+
 		private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
 		public CollectionViewModel<PullRequestModel> PullRequests
         {
@@ -44,6 +48,23 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
 			Username = navObject.Username;
 			Repository = navObject.Repository;
+
+            PullRequests.FilteringFunction = x => {
+                var state = SelectedFilter == 0 ? "open" : "closed";
+                return x.Where(y => y.State == state);
+            };
+
+            _pullRequestEditSubscription = Messenger.SubscribeOnMainThread<PullRequestEditMessage>(x =>
+            {
+                if (x.PullRequest == null)
+                    return;
+          
+                var index = PullRequests.Items.IndexOf(x.PullRequest);
+                if (index < 0)
+                    return;
+                PullRequests.Items[index] = x.PullRequest;
+                PullRequests.Refresh();
+            });
         }
 
         protected override Task Load(bool forceCacheInvalidation)

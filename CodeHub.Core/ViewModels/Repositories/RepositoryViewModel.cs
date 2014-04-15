@@ -7,6 +7,7 @@ using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.User;
 using CodeHub.Core.ViewModels.Events;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

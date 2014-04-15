@@ -7,7 +7,7 @@ using GitHubSharp;
 using System.Collections.Generic;
 using Cirrious.MvvmCross.ViewModels;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Changesets
 {
 	public abstract class CommitsViewModel : LoadableViewModel
 	{

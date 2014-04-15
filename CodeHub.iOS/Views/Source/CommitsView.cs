@@ -2,6 +2,7 @@ using System;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.iOS.Views.Source
 {

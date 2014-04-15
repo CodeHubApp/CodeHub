@@ -1,4 +1,6 @@
-namespace CodeHub.iOS.Views.User
+using CodeHub.iOS.Views.User;
+
+namespace CodeHub.iOS.Views.Teams
 {
     public class TeamMembersView : BaseUserCollectionView
     {

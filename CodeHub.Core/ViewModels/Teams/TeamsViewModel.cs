@@ -5,7 +5,7 @@ using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Teams
 {
     public class TeamsViewModel : LoadableViewModel
     {

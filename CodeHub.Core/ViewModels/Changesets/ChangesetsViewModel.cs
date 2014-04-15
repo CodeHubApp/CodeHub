@@ -2,7 +2,7 @@ using GitHubSharp;
 using System.Collections.Generic;
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Changesets
 {
 	public class ChangesetsViewModel : CommitsViewModel
     {

@@ -173,8 +173,6 @@
     <Compile Include="Views\Repositories\StargazersView.cs" />
     <Compile Include="Views\User\BaseUserCollectionView.cs" />
     <Compile Include="Views\User\ProfileView.cs" />
-    <Compile Include="Views\User\TeamMembersView.cs" />
-    <Compile Include="Views\User\TeamsView.cs" />
     <Compile Include="Views\User\UserFollowersView.cs" />
     <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="Info.plist" />
@@ -223,6 +221,8 @@
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="Factories\FeatureFactory.cs" />
     <Compile Include="Views\App\AboutView.cs" />
+    <Compile Include="Views\Teams\TeamsView.cs" />
+    <Compile Include="Views\Teams\TeamMembersView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
@@ -447,5 +447,6 @@
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\MarkdownComposer\" />
     <Folder Include="Factories\" />
+    <Folder Include="Views\Teams\" />
   </ItemGroup>
 </Project>

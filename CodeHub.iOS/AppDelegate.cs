@@ -152,7 +152,7 @@ namespace CodeHub.iOS
                 MvxViewModelRequest request;
                 if (data.ContainsKey(new NSString("c")))
                 {
-                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.ChangesetViewModel>.GetDefaultRequest();
+                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Changesets.ChangesetViewModel>.GetDefaultRequest();
                     parameters.Add("Node", data["c"].ToString());
                     parameters.Add("ShowRepository", "True");
                 }

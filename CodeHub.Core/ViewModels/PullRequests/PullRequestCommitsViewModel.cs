@@ -1,6 +1,7 @@
 using GitHubSharp.Models;
 using GitHubSharp;
 using System.Collections.Generic;
+using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {

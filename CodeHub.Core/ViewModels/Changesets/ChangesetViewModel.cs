@@ -7,7 +7,7 @@ using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Source;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Changesets
 {
     public class ChangesetViewModel : LoadableViewModel
     {
