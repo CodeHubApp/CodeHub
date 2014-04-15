@@ -16,16 +16,22 @@ namespace CodeHub.iOS.Views.App
 		MonoTouch.UIKit.UIButton CancelButton { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.UIView ContainerView { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UIButton EnableButton { get; set; }
 
 		[Outlet]
 		MonoTouch.UIKit.UIImageView ImageView { get; set; }
+
+		[Outlet]
+		MonoTouch.UIKit.UILabel PushLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (ImageView != null) {
-				ImageView.Dispose ();
-				ImageView = null;
+			if (CancelButton != null) {
+				CancelButton.Dispose ();
+				CancelButton = null;
 			}
 
 			if (EnableButton != null) {
@@ -33,9 +39,19 @@ namespace CodeHub.iOS.Views.App
 				EnableButton = null;
 			}
 
-			if (CancelButton != null) {
-				CancelButton.Dispose ();
-				CancelButton = null;
+			if (ImageView != null) {
+				ImageView.Dispose ();
+				ImageView = null;
+			}
+
+			if (PushLabel != null) {
+				PushLabel.Dispose ();
+				PushLabel = null;
+			}
+
+			if (ContainerView != null) {
+				ContainerView.Dispose ();
+				ContainerView = null;
 			}
 		}
 	}

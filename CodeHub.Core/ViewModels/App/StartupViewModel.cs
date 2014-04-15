@@ -72,8 +72,7 @@ namespace CodeHub.Core.ViewModels.App
 			}
 			catch (Exception e)
 			{
-                if (!(e is TaskCanceledException))
-                    ReportException(e);
+                DisplayAlert(e.Message);
 				ShowViewModel<Accounts.AccountsViewModel>();
 			}
 			finally

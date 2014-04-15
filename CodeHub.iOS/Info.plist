@@ -21,22 +21,22 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.0</string>
+	<string>2.3.1</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>Icon-Small-50</string>
-		<string>Icon-Small-50@2x</string>
-		<string>Icon-Small</string>
-		<string>Icon-Small@2x</string>
+		<string>Icon-60@2x</string>
+		<string>Icon-72</string>
 		<string>Icon</string>
 		<string>Icon@2x</string>
-		<string>Icon-72</string>
-		<string>Icon-72@2x</string>
-		<string>Icon-60@2x</string>
-		<string>Icon-76</string>
-		<string>Icon-76@2x</string>
-		<string>Icon-Small-40</string>
 		<string>Icon-Small-40@2x</string>
+		<string>Icon-Small-40</string>
+		<string>Icon-Small-50</string>
+		<string>Icon-Small@2x</string>
+		<string>Icon-Small-50@2x</string>
+		<string>Icon-Small</string>
+		<string>Icon-76@2x</string>
+		<string>Icon-72@2x</string>
+		<string>Icon-76</string>
 	</array>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
@@ -68,6 +68,6 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>4</string>
+	<string>2.3.1</string>
 </dict>
 </plist>

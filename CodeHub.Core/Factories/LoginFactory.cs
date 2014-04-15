@@ -18,7 +18,7 @@ namespace CodeHub.Core.Factories
 
 		public async Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount account)
         {
-			var token = await Task.Run(() => Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain));
+			var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
 			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
 			var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
             var username = info.Data.Login;

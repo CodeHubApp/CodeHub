@@ -62,17 +62,9 @@ namespace CodeHub.Core.ViewModels.Accounts
 				else
 					ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
 			}
-            catch (TaskCanceledException)
-            {
-                DisplayAlert("Timeout waiting for a response from GitHub! Please try again.");
-            }
-            catch (WebException)
-            {
-                DisplayAlert("Unable to communicate with GitHub. Please check your connection and try again.");
-            }
 			catch (Exception e)
 			{
-                ReportException(e);
+                DisplayAlert(e.Message);
 			}
 			finally
 			{

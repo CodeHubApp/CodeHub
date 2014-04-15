@@ -12,6 +12,10 @@ namespace CodeHub.Core.ViewModels
             {
                 await base.ExecuteLoadResource(forceCacheInvalidation);
             }
+            catch (System.IO.IOException)
+            {
+                DisplayAlert("Unable to communicate with GitHub as the transmission was interrupted! Please try again.");
+            }
             catch (StatusCodeException e)
             {
                 DisplayAlert(e.Message);

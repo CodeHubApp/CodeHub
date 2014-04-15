@@ -194,7 +194,9 @@ namespace CodeHub.iOS.Views.Repositories
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-				sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+            {
+                sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+            }
 
             if (ViewModel.Readme != null)
 				sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));

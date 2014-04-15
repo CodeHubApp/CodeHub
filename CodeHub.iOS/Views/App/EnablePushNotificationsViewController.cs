@@ -29,7 +29,12 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
+            this.View.AutosizesSubviews = true;
+
             ImageView.Image = UIImageHelper.FromFileAuto("iTunesArtwork");
+            ImageView.Layer.CornerRadius = 24f;
+            ImageView.Layer.MasksToBounds = true;
+
             CancelButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             CancelButton.TintColor = UIColor.Black;
             CancelButton.Layer.ShadowColor = UIColor.Black.CGColor;
@@ -44,19 +49,19 @@ namespace CodeHub.iOS.Views.App
             EnableButton.Layer.ShadowOpacity = 0.3f;
             EnableButton.TouchUpInside += EnablePushNotifications;
 
-            var lbl = new UILabel();
-            lbl.Frame = new RectangleF(ImageView.Frame.Width - 25, -15, 40, 40);
-            lbl.TextAlignment = UITextAlignment.Center;
-            lbl.Layer.CornerRadius = lbl.Frame.Width / 2;
-            lbl.Layer.MasksToBounds = true;
-            lbl.BackgroundColor = UIColor.Red;
-            lbl.Text = "12";
-            lbl.Font = UIFont.SystemFontOfSize(18f);
-            lbl.TextColor = UIColor.White;
-
-            ImageView.AddSubview(lbl);
+            PushLabel.Layer.CornerRadius = PushLabel.Frame.Width / 2;
+            PushLabel.Layer.MasksToBounds = true;
 
             _hud = new Hud(View);
+        }
+
+        public override void ViewWillLayoutSubviews()
+        {
+            base.ViewWillLayoutSubviews();
+
+            ContainerView.Frame = new RectangleF(View.Bounds.Width / 2 - ContainerView.Frame.Width / 2, 
+                                                 View.Bounds.Height / 2 - ContainerView.Frame.Height / 2, 
+                                                 ContainerView.Frame.Width, ContainerView.Frame.Height);
         }
 
         public override void ViewDidAppear(bool animated)
@@ -82,6 +87,20 @@ namespace CodeHub.iOS.Views.App
         {
             _hud.Hide();
             DismissViewController(true, OnDismissed);
+        }
+
+        public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                return UIInterfaceOrientationMask.Portrait;
+            return base.GetSupportedInterfaceOrientations();
+        }
+
+        public override UIInterfaceOrientation PreferredInterfaceOrientationForPresentation()
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                return UIInterfaceOrientation.Portrait;
+            return base.PreferredInterfaceOrientationForPresentation();
         }
 
         private void EnablePushNotifications(object sender, EventArgs e)
