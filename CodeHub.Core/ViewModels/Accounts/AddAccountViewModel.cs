@@ -100,8 +100,8 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 IsLoggingIn = true;
 				Console.WriteLine(apiUrl);
-				var loginData = await Task.Run(() => _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount));
-				var client = await Task.Run(() => _loginFactory.LoginAccount(loginData.Account));
+                var loginData = await _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
+				var client = await _loginFactory.LoginAccount(loginData.Account);
 				_application.ActivateUser(loginData.Account, client);
             }
             catch (Exception e)
