@@ -49,6 +49,9 @@ namespace CodeHub.iOS
         public static UIImage Unlocked { get { return UIImageHelper.FromFileAuto("Images/unlocked"); } }
         public static UIImage Locked { get { return UIImageHelper.FromFileAuto("Images/locked"); } }
 
+        public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown"); } }
+
+
         public static Uri GitHubRepoUrl
         {
             get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }

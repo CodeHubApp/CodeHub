@@ -164,5 +164,7 @@ namespace CodeHub.iOS
         }
 
         public float FontSizeRatio { get; set; }
+
+        public UIImage LoginUserUnknown { get { return Images.LoginUserUnknown; } }
     }
 }
