@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
+        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
             if (forceDataRefresh)
             {
@@ -23,29 +23,16 @@ namespace CodeHub.Core.ViewModels
             var application = Mvx.Resolve<IApplicationService>();
             var uiThrad = Mvx.Resolve<IUIThreadService>();
 
-			return Task.Run(async () =>
+			var result = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
+            uiThrad.MarshalOnUIThread(() => update(result));
+
+            if (result.WasCached)
             {
-				var result = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
-                uiThrad.MarshalOnUIThread(() => update(result));
-
-                if (result.WasCached)
-                {
-                    request.RequestFromCache = false;
-
-					Task.Run(async () =>
-                    {
-                        try
-                        {
-							var r = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
-                            uiThrad.MarshalOnUIThread(() => update(r));
-                        }
-						catch (NotModifiedException)
-						{
-							System.Diagnostics.Debug.WriteLine("Not modified: " + request.Url);
-						}
-                    }).FireAndForget();
-                }
-            });
+                request.RequestFromCache = false;
+                var uncachedTask = application.Client.ExecuteAsync(request);
+                uncachedTask.FireAndForget();
+                uncachedTask.ContinueWith(t => uiThrad.MarshalOnUIThread(() => update(t.Result)), TaskContinuationOptions.OnlyOnRanToCompletion);
+            }
 		}
 
         public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
