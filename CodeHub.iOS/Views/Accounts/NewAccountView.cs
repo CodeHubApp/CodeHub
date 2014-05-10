@@ -4,6 +4,9 @@ using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch;
 using MonoTouch.UIKit;
+using Cirrious.CrossCore;
+using CodeHub.Core.Services;
+using CodeHub.iOS.Views.App;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -34,11 +37,28 @@ namespace CodeHub.iOS.Views.Accounts
             EnterpriseButton.Layer.ShadowOpacity = 0.3f;
 
             var set = this.CreateBindingSet<NewAccountView, NewAccountViewModel>();
-            set.Bind(EnterpriseButton).To(x => x.GoToEnterpriseLoginCommand);
             set.Bind(InternetButton).To(x => x.GoToDotComLoginCommand);
             set.Apply();
 
+            EnterpriseButton.TouchUpInside += (object sender, System.EventArgs e) => GoToEnterprise();
+
             ScrollView.ContentSize = new SizeF(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
+        }
+
+        private void GoToEnterprise()
+        {
+            var features = Mvx.Resolve<IFeaturesService>();
+            if (features.IsEnterpriseSupportActivated)
+                ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
+            else
+            {
+                var ctrl = new EnableEnterpriseViewController();
+                ctrl.Dismissed += (sender, e) => {
+                    if (features.IsEnterpriseSupportActivated)
+                        ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
+                };
+                PresentViewController(ctrl, true, null);
+            }
         }
     }
 }

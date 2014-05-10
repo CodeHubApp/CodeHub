@@ -32,6 +32,18 @@ namespace CodeHub.iOS.Services
             }
         }
 
+        public bool IsEnterpriseSupportActivated
+        {
+            get
+            {
+                return IsActivated(FeatureIds.EnterpriseSupport);
+            }
+            set
+            {
+                _defaultValueService.Set(FeatureIds.EnterpriseSupport, value);
+            }
+        }
+
         public void Activate(string id)
         {
             InAppPurchases.Instance.PurchaseProduct(id);
@@ -45,11 +57,14 @@ namespace CodeHub.iOS.Services
 
         public async Task<IEnumerable<string>> GetAvailableFeatureIds()
         {
+            var ids = new List<string>();
+            ids.Add(FeatureIds.EnterpriseSupport);
             var client = _httpClientService.Create();
             client.Timeout = new TimeSpan(0, 0, 15);
             var response = await client.GetAsync("http://push.codehub-app.com/in-app");
             var data = await response.Content.ReadAsStringAsync();
-            return _jsonSerializationService.Deserialize<List<string>>(data).ToArray();
+            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
+            return ids;
         }
     }
 }

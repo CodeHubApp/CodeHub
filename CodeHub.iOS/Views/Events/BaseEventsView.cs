@@ -32,7 +32,6 @@ namespace CodeHub.iOS.Views.Events
                     return null;
 
                 var img = ChooseImage(e.Item1);
-				var username = e.Item1.Actor != null ? e.Item1.Actor.Login : null;
                 var avatar = e.Item1.Actor != null ? e.Item1.Actor.AvatarUrl : null;
 				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
 				foreach (var h in e.Item2.Header)
@@ -56,7 +55,7 @@ namespace CodeHub.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
-				return new NewsFeedElement(username, avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img, e.Item2.Tapped);
+				return new NewsFeedElement(avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img, e.Item2.Tapped);
             }
             catch (Exception ex)
             {

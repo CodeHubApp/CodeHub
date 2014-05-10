@@ -142,7 +142,20 @@ namespace CodeHub.iOS.Views.App
 				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
 			{
 				PinnedRepo = pinnedRepo;
-				ImageUri = new System.Uri(PinnedRepo.ImageUri);
+
+                // BUG FIX: App keeps getting relocated so the URLs become off
+                if (PinnedRepo.ImageUri.EndsWith("repository.png", System.StringComparison.Ordinal))
+                {
+                    Image = UIImage.FromFile("Images/repository.png");
+                }
+                else if (PinnedRepo.ImageUri.EndsWith("repository_fork.png", System.StringComparison.Ordinal))
+                {
+                    Image = UIImage.FromFile("Images/repository_fork.png");
+                }
+                else
+                {
+                    ImageUri = new System.Uri(PinnedRepo.ImageUri);
+                }
 			}
 		}
 

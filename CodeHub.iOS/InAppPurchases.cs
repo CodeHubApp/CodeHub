@@ -55,7 +55,9 @@ namespace CodeHub.iOS
             productsRequest.ReceivedResponse += (sender, e) => tcs.SetResult(e.Response);
             productsRequest.RequestFailed += (sender, e) => tcs.SetException(new Exception(e.Error.LocalizedDescription));
             productsRequest.Start();
-            return await tcs.Task;
+            var ret = await tcs.Task;
+            productsRequest.Dispose();
+            return ret;
         }
 
         public static bool CanMakePayments()

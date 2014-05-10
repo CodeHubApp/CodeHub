@@ -7,6 +7,8 @@ namespace CodeHub.Core.Services
     {
         bool IsPushNotificationsActivated { get; set; }
 
+        bool IsEnterpriseSupportActivated { get; set; }
+
         void Activate(string id);
 
         bool IsActivated(string id);
@@ -17,6 +19,7 @@ namespace CodeHub.Core.Services
     public static class FeatureIds
     {
         public const string PushNotifications = "com.dillonbuchanan.codehub.push";
+        public const string EnterpriseSupport = "com.dillonbuchanan.codehub.enterprise_support";
     }
 }
 

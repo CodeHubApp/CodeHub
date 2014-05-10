@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B061316A-F386-4FE2-93B7-555584234FF8}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
@@ -221,6 +219,11 @@
     <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamMembersView.cs" />
+    <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
+    <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
+      <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
@@ -284,9 +287,6 @@
       <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="OHAttributedLabel">
-      <HintPath>..\lib\CodeFramework\lib\iOS\OHAttributedLabel.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />
@@ -436,6 +436,7 @@
     <BundleResource Include="Images\MarkdownComposer\picture.png" />
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\login_user_unknown.png" />
+    <BundleResource Include="Images\enterprise.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
