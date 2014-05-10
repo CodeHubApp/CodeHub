@@ -98,7 +98,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		protected override Task Load(bool forceCacheInvalidation)
 		{
-			return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetLabels(), forceCacheInvalidation);
+            return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Labels.GetAll(), forceCacheInvalidation);
 		}
 
 		public class NavObject

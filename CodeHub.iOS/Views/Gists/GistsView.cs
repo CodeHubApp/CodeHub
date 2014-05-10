@@ -25,8 +25,8 @@ namespace CodeHub.iOS.Views.Gists
                     Image = Theme.CurrentTheme.AnonymousUserImage
                 };
 
-                sse.Name = (x.User == null) ? "Anonymous" : x.User.Login;
-                sse.ImageUri = (x.User == null) ? null : new Uri(x.User.AvatarUrl);
+                sse.Name = (x.Owner == null) ? "Anonymous" : x.Owner.Login;
+                sse.ImageUri = (x.Owner == null) ? null : new Uri(x.Owner.AvatarUrl);
                 sse.Tapped += () => vm.GoToGistCommand.Execute(x);
                 return sse;
             });

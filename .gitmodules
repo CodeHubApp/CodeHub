@@ -1,6 +1,6 @@
 [submodule "lib/CodeFramework"]
 	path = lib/CodeFramework
-	url = https://thedillonb@github.com/thedillonb/CodeFramework.git
+	url = git@github.com:thedillonb/CodeFramework.git
 [submodule "lib/GitHubSharp"]
 	path = lib/GitHubSharp
-	url = https://thedillonb@github.com/thedillonb/GitHubSharp.git
+	url = git@github.com:thedillonb/GitHubSharp.git

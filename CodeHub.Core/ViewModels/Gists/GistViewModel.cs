@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public ICommand GoToUserCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Gist.User.Login }), () => Gist != null && Gist.User != null); }
+            get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Gist.Owner.Login }), () => Gist != null && Gist.Owner != null); }
         }
 
         public ICommand GoToFileSourceCommand

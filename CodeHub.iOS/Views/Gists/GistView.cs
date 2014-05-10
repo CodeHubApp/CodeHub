@@ -65,7 +65,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             //Is it owned?
 			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-			if (string.Equals(app.Account.Username, ViewModel.Gist.User.Login, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
             {
 				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, async (s, e) => {
 					try
@@ -157,8 +157,8 @@ namespace CodeHub.iOS.Views.Gists
             };
 
             //Sometimes there's no user!
-            d.Name = (model.User == null) ? "Anonymous" : model.User.Login;
-            d.ImageUri = (model.User == null) ? null : new Uri(model.User.AvatarUrl);
+            d.Name = (model.Owner == null) ? "Anonymous" : model.Owner.Login;
+            d.ImageUri = (model.Owner == null) ? null : new Uri(model.Owner.AvatarUrl);
 
             sec.Add(d);
 

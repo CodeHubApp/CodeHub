@@ -5,6 +5,7 @@ using GitHubSharp.Models;
 using System.Linq;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
+using CodeFramework.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -26,7 +27,7 @@ namespace CodeHub.iOS.Views.Issues
 
 			BindCollection(vm.Labels, x => 
             {
-				var e = new LabelElement(x);
+                var e = new LabelElement(x.Name, x.Color);
                 e.Tapped += () =>
                 {
                     if (e.Accessory == UITableViewCellAccessory.Checkmark)
@@ -49,7 +50,8 @@ namespace CodeHub.iOS.Views.Issues
 				var elements = Root[0].Elements;
 				foreach (var el in elements.Cast<LabelElement>())
 				{
-					el.Accessory = vm.SelectedLabels.Contains(el.Label) ? 
+                    var element = el;
+                    el.Accessory = vm.SelectedLabels.Any(y => string.Equals(y.Name, element.Name, System.StringComparison.OrdinalIgnoreCase)) ? 
 					               UITableViewCellAccessory.Checkmark : 
 					               UITableViewCellAccessory.None;
 				}
@@ -64,44 +66,6 @@ namespace CodeHub.iOS.Views.Issues
 				else _hud.Hide();
 			});
         }
-
-		private class LabelElement : StyledStringElement
-		{
-			public LabelModel Label { get; private set; }
-			public LabelElement(LabelModel m)
-				: base(m.Name)
-			{
-				Label = m;
-				Image = CreateImage(m.Color);
-			}
-
-			private static UIImage CreateImage(string color)
-			{
-				try
-				{
-					var red = color.Substring(0, 2);
-					var green = color.Substring(2, 2);
-					var blue = color.Substring(4, 2);
-
-					var redB = System.Convert.ToByte(red, 16);
-					var greenB = System.Convert.ToByte(green, 16);
-					var BlueB = System.Convert.ToByte(blue, 16);
-
-					var size = new System.Drawing.SizeF(24f, 24f);
-
-					UIGraphics.BeginImageContext(size);
-					UIColor.FromRGB(redB, greenB, BlueB).SetFill();
-					GraphicsUtil.FillRoundedRect(UIGraphics.GetCurrentContext(), new System.Drawing.RectangleF(0, 0, size.Width, size.Height), 6f);
-					var image = UIGraphics.GetImageFromCurrentImageContext();
-					UIGraphics.EndImageContext();
-					return image;
-				}
-				catch
-				{
-					return null;
-				}
-			}
-		}
     }
 }
 

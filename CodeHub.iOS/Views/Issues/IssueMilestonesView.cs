@@ -1,10 +1,9 @@
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.Dialog;
-using GitHubSharp.Models;
 using System.Linq;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Utils;
+using CodeFramework.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -21,9 +20,12 @@ namespace CodeHub.iOS.Views.Issues
         {
             base.ViewDidLoad();
 
+            TableView.RowHeight = 80f;
+            TableView.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
+
 			var vm = (IssueMilestonesViewModel)ViewModel;
 			BindCollection(vm.Milestones, x => {
-				var e = new MilestoneElement(x);
+                var e = new MilestoneElement(x.Number, x.Title, x.OpenIssues, x.ClosedIssues, x.DueOn);
 				e.Tapped += () => {
 					if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
 						vm.SelectedMilestone = null;
@@ -40,7 +42,7 @@ namespace CodeHub.iOS.Views.Issues
 				if (Root.Count == 0)
 					return;
 				foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
-					m.Accessory = (x != null && m.Milestone.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+					m.Accessory = (x != null && m.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});
 
@@ -51,16 +53,6 @@ namespace CodeHub.iOS.Views.Issues
 				else _hud.Hide();
 			});
         }
-
-		private class MilestoneElement : StyledStringElement
-		{
-			public MilestoneModel Milestone { get; private set; }
-			public MilestoneElement(MilestoneModel m) 
-				: base(m.Title)
-			{
-				Milestone = m;
-			}
-		}
     }
 }
 
