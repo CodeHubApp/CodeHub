@@ -283,12 +283,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public async Task Merge()
         {
-            var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge());
-            if (!response.Data.Merged)
-                throw new Exception(response.Data.Message);
+            try
+            {
+                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge());
+                if (!response.Data.Merged)
+                    throw new Exception(response.Data.Message);
 
-            var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
-            await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
+                var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
+                await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
+            }
+            catch (Exception e)
+            {
+                this.AlertService.Alert("Unable to Merge!", e.Message);
+            }
         }
 
         public ICommand MergeCommand

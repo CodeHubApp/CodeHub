@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
 using CodeFramework.iOS.XCallback;
+using MonoTouch.Security;
 
 namespace CodeHub.iOS
 {
@@ -89,6 +90,30 @@ namespace CodeHub.iOS
 			startup.Start();
 
             this.window.MakeKeyAndVisible();
+
+            // Record the date this application was installed (or the date that we started recording installation date).
+            try
+            {
+                var query = new SecRecord(SecKind.GenericPassword) { Generic = NSData.FromString("codehub_install_date") };
+                SecStatusCode secStatusCode;
+                var rec = SecKeyChain.QueryAsRecord(query, out secStatusCode);
+                if (secStatusCode != SecStatusCode.Success)
+                {
+                    var newRec = new SecRecord(SecKind.GenericPassword)
+                    {
+                        Label = "CodeHub Install Date",
+                        Description = "The first date CodeHub was installed",
+                        ValueData = NSData.FromString(DateTime.UtcNow.ToString()),
+                        Generic = NSData.FromString("codehub_install_date")
+                    };
+
+                    SecKeyChain.Add(newRec);
+                }
+            }
+            catch
+            {
+                // Do nothing...
+            }
 
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
