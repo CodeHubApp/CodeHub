@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B7970173-9022-466B-B57A-7AB1E1F3145F}</ProjectGuid>
+    <ProjectGuid>{9668F603-4C35-40FF-8703-8F8184CC9FC9}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>CodeHub.Core</RootNamespace>
@@ -124,7 +124,6 @@
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
-    <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="Messages\PullRequestEditMessage.cs" />
     <Compile Include="Bootstrap.cs" />
   </ItemGroup>
@@ -136,10 +135,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
       <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
       <Name>CodeFramework.iOS</Name>
@@ -152,13 +147,12 @@
       <Project>{EBBA1BD0-8430-4CC1-B636-B89C505C7D1C}</Project>
       <Name>Xamarin.Utilities.Core.iOS</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
+      <Project>{89e14828-85bb-4790-9b4e-e44dd4ce000e}</Project>
+      <Name>GitHubSharp.MonoTouch</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
-    <Folder Include="Factories\" />
-    <Folder Include="ViewModels\Teams\" />
-    <Folder Include="ViewModels\Changesets\" />
-    <Folder Include="ViewModels\Notifications\" />
-  </ItemGroup>
 </Project>

@@ -5,7 +5,6 @@ using MonoTouch.Foundation;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Utils;

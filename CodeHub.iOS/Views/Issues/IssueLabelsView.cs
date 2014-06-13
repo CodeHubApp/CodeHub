@@ -1,4 +1,4 @@
-using CodeFramework.ViewControllers;
+using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;

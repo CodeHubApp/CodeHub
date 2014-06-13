@@ -1,11 +1,13 @@
-using Cirrious.MvvmCross.Plugins.Messenger;
-
 namespace CodeHub.Core.Messages
 {
-	public class NotificationCountMessage : MvxMessage
+	public class NotificationCountMessage 
 	{
-		public NotificationCountMessage(object sender) : base(sender) {}
-		public int Count;
+	    public NotificationCountMessage(int count)
+	    {
+	        Count = count;
+	    }
+
+	    public int Count { get; private set; }
 	}
 }
 

@@ -1,7 +1,6 @@
 using System;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using CodeFramework.ViewControllers;
 using System.Linq;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.ViewModels;

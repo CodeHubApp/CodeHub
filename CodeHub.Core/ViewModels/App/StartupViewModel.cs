@@ -1,5 +1,6 @@
 using System;
 using CodeFramework.Core.ViewModels;
+using CodeFramework.Core.ViewModels.Application;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Linq;
@@ -7,7 +8,7 @@ using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class StartupViewModel : BaseStartupViewModel
+    public class StartupViewModel : CodeFramework.Core.ViewModels.Application.StartupViewModel
     {
         private readonly ILoginFactory _loginFactory;
         private readonly IApplicationService _applicationService;

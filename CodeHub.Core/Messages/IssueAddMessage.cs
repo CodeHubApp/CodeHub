@@ -1,12 +1,15 @@
-using Cirrious.MvvmCross.Plugins.Messenger;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages
 {
-	public class IssueAddMessage : MvxMessage
+	public class IssueAddMessage
 	{
-		public IssueAddMessage(object sender) : base(sender) {}
-		public IssueModel Issue;
+        public IssueModel Issue { get; private set; }
+
+	    public IssueAddMessage(IssueModel issue)
+	    {
+	        Issue = issue;
+	    }
 	}
 }
 

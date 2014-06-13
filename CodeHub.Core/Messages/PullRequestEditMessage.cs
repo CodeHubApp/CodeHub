@@ -1,12 +1,15 @@
-﻿using Cirrious.MvvmCross.Plugins.Messenger;
-using GitHubSharp.Models;
+﻿using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages
 {
-    public class PullRequestEditMessage : MvxMessage
+    public class PullRequestEditMessage
     {
-        public PullRequestEditMessage(object sender) : base(sender) {}
-        public PullRequestModel PullRequest;
+        public PullRequestEditMessage(PullRequestModel pullRequest)
+        {
+            PullRequest = pullRequest;
+        }
+
+        public PullRequestModel PullRequest { get; private set; }
     }
 }
 

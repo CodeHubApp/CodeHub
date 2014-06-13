@@ -7,8 +7,6 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Drawing;
 using System.Linq;
-using CodeFramework.ViewControllers;
-using CodeFramework.Views;
 using CodeFramework.iOS.Utils;
 using CodeFramework.iOS.ViewControllers;
 

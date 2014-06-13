@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
+using CodeFramework.Core.ViewModels.Application;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
@@ -15,6 +15,7 @@ using CodeFramework.Core.ViewModels.App;
 using CodeHub.Core.Messages;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.ViewModels.Notifications;
+using AccountsViewModel = CodeHub.Core.ViewModels.Accounts.AccountsViewModel;
 
 namespace CodeHub.Core.ViewModels.App
 {

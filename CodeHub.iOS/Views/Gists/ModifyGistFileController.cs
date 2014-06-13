@@ -4,7 +4,6 @@ using CodeFramework.iOS.Views;
 using CodeHub.iOS;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeFramework.Views;
 
 namespace CodeHub.ViewControllers
 {

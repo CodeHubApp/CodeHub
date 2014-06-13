@@ -1,6 +1,6 @@
 using System;
 using CodeFramework.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
 using MonoTouch;

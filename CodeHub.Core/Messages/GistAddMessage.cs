@@ -1,15 +1,12 @@
-﻿using System;
-using GitHubSharp.Models;
-using Cirrious.MvvmCross.Plugins.Messenger;
+﻿using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages
 {
-    public class GistAddMessage : MvxMessage
+    public class GistAddMessage
     {
         public GistModel Gist { get; private set; }
 
-        public GistAddMessage(object sender, GistModel gist) 
-            : base(sender)
+        public GistAddMessage(GistModel gist) 
         {
             Gist = gist;
         }

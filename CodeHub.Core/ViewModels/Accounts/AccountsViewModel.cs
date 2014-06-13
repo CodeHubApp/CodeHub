@@ -10,7 +10,7 @@ using System.Net;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AccountsViewModel : BaseAccountsViewModel
+    public class AccountsViewModel : CodeFramework.Core.ViewModels.Application.AccountsViewModel
     {
         private readonly ILoginFactory _loginFactory;
         private readonly IApplicationService _applicationService;

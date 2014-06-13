@@ -1,16 +1,19 @@
-using System;
-using Cirrious.MvvmCross.Plugins.Messenger;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages
 {
-	public class SourceEditMessage : MvxMessage
+	public class SourceEditMessage
     {
-		public SourceEditMessage(object sender) : base(sender) {}
+	    public SourceEditMessage(string oldSha, string data, ContentUpdateModel update)
+	    {
+	        Update = update;
+	        Data = data;
+	        OldSha = oldSha;
+	    }
 
-		public string OldSha;
-		public string Data;
-		public ContentUpdateModel Update;
+	    public string OldSha { get; private set; }
+        public string Data { get; private set; }
+        public ContentUpdateModel Update { get; private set; }
     }
 }
 

@@ -1,4 +1,5 @@
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeFramework.iOS.ViewComponents;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.User;

@@ -11,6 +11,7 @@ using Cirrious.CrossCore.IoC;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS;
+using CodeFramework.iOS.Views.Application;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Views;
 using MonoTouch.UIKit;

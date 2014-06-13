@@ -1,12 +1,15 @@
-using Cirrious.MvvmCross.Plugins.Messenger;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages
 {
-	public class SelectedMilestoneMessage : MvxMessage
+	public class SelectedMilestoneMessage
 	{
-		public SelectedMilestoneMessage(object sender) : base(sender) {}
-		public MilestoneModel Milestone;
+	    public SelectedMilestoneMessage(MilestoneModel milestone)
+	    {
+	        Milestone = milestone;
+	    }
+
+	    public MilestoneModel Milestone { get; private set; }
 	}
 }
 
