@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B7970173-9022-466B-B57A-7AB1E1F3145F}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -34,7 +32,6 @@
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="App.cs" />
     <Compile Include="Data\GitHubAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
@@ -43,7 +40,6 @@
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApplicationService.cs" />
-    <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
@@ -92,10 +88,8 @@
     <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
-    <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
@@ -115,14 +109,11 @@
     <Compile Include="ViewModels\App\AboutViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="Messages\SourceEditMessage.cs" />
-    <Compile Include="Services\JsonSerializationService.cs" />
-    <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
-    <Compile Include="Utils\MarkdownHtmlGenerator.cs" />
     <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
     <Compile Include="Factories\IFeatureFactory.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
@@ -135,21 +126,13 @@
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="Messages\PullRequestEditMessage.cs" />
+    <Compile Include="Bootstrap.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Core" />
-    <Reference Include="Cirrious.CrossCore">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
@@ -165,13 +148,13 @@
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.iOS.csproj">
+      <Project>{EBBA1BD0-8430-4CC1-B636-B89C505C7D1C}</Project>
+      <Name>Xamarin.Utilities.Core.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Markdown\marked.js" />
-    <Content Include="Markdown\markdown.html" />
-  </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />
     <Folder Include="ViewModels\Teams\" />

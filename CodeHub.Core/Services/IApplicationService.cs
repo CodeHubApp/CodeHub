@@ -10,8 +10,6 @@ namespace CodeHub.Core.Services
  
         GitHubAccount Account { get; }
 
-        IAccountsService Accounts { get; }
-
         void DeactivateUser();
 
         void ActivateUser(GitHubAccount account, GitHubSharp.Client client);
