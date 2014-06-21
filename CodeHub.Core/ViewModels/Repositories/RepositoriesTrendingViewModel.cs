@@ -1,10 +1,13 @@
 ﻿using System;
-using CodeFramework.Core.ViewModels;
-using System.Windows.Input;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Services;
 using System.Collections.Generic;
+using CodeHub.Core.Services;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -12,6 +15,7 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         private const string LanguagesUrl = "http://codehub-trending.herokuapp.com/languages";
         private const string TrendingUrl = "http://codehub-trending.herokuapp.com/trending";
+        private readonly IApplicationService _applicationService;
         private readonly IJsonHttpClientService _jsonHttpClient;
         private readonly TimeModel[] _times = 
         {
@@ -26,88 +30,73 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _times; }
         }
 
-        private readonly CollectionViewModel<RepositoryModel> _repositories = new CollectionViewModel<RepositoryModel>();
-        public CollectionViewModel<RepositoryModel> Repositories
-        {
-            get { return _repositories; }
-        }
+        public ReactiveCollection<RepositoryModel> Repositories { get; private set; }
 
-        private readonly CollectionViewModel<LanguageModel> _languages = new CollectionViewModel<LanguageModel>();
-        public CollectionViewModel<LanguageModel> Languages
-        {
-            get { return _languages; }
-        }
+        public ReactiveList<LanguageModel> Languages { get; private set; }
 
         private LanguageModel _selectedLanguage;
         public LanguageModel SelectedLanguage
         {
             get { return _selectedLanguage; }
-            set
-            {
-                if (object.Equals(_selectedLanguage, value))
-                    return;
-                _selectedLanguage = value;
-                RaisePropertyChanged(() => SelectedLanguage);
-            }
+            set { this.RaiseAndSetIfChanged(ref _selectedLanguage, value); }
         }
 
         private TimeModel _selectedTime;
         public TimeModel SelectedTime
         {
             get { return _selectedTime; }
-            set
-            {
-                if (object.Equals(_selectedTime, value))
-                    return;
-                _selectedTime = value;
-                RaisePropertyChanged(() => SelectedTime);
-            }
+            set { this.RaiseAndSetIfChanged(ref _selectedTime, value); }
         }
-
 
         public bool ShowRepositoryDescription
         {
-            get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
+            get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public RepositoriesTrendingViewModel(IJsonHttpClientService jsonHttpClient)
+        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+
+        public RepositoriesTrendingViewModel(IApplicationService applicationService, IJsonHttpClientService jsonHttpClient)
         {
+            _applicationService = applicationService;
             _jsonHttpClient = jsonHttpClient;
-        }
 
-        public void Init()
-        {
+            Languages = new ReactiveList<LanguageModel>();
+            Repositories = new ReactiveCollection<RepositoryModel>();
+
+            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = x.Owner;
+                vm.RepositoryName = x.Name;
+                ShowViewModel(vm);
+            });
+
             SelectedTime = Times[0];
             SelectedLanguage = _defaultLanguage;
             GetLanguages().FireAndForget();
-            this.Bind(x => x.SelectedTime, () => LoadCommand.Execute(null));
-            this.Bind(x => x.SelectedLanguage, () => LoadCommand.Execute(null));
-        }
 
-        public ICommand GoToRepositoryCommand
-        {
-            get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name })); }
-        }
- 
-        protected override async Task Load(bool forceCacheInvalidation)
-        {
-            var query = "?";
-            if (SelectedLanguage != null && SelectedLanguage.Slug != null)
-                query += string.Format("language={0}&", SelectedLanguage.Slug);
-            if (SelectedTime != null && SelectedTime.Slug != null)
-                query += string.Format("since={0}", SelectedTime.Slug);
+            this.WhenAnyValue(x => x.SelectedTime, x => x.SelectedLanguage, (x, y) => Unit.Default)
+                .Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-            var repos = await _jsonHttpClient.Get<List<RepositoryModel>>(TrendingUrl + query);
-            Repositories.Items.Clear();
-            Repositories.Items.Reset(repos);
-        }
+            LoadCommand.RegisterAsyncTask(async t =>
+            {
+                var query = "?";
+                if (SelectedLanguage != null && SelectedLanguage.Slug != null)
+                    query += string.Format("language={0}&", SelectedLanguage.Slug);
+                if (SelectedTime != null && SelectedTime.Slug != null)
+                    query += string.Format("since={0}", SelectedTime.Slug);
 
+                var repos = await _jsonHttpClient.Get<List<RepositoryModel>>(TrendingUrl + query);
+                Repositories.Reset(repos);
+            });
+        }
 
         private async Task GetLanguages()
         {
             var languages = await _jsonHttpClient.Get<List<LanguageModel>>(LanguagesUrl);
             languages.Insert(0, _defaultLanguage);
-            Languages.Items.Reset(languages);
+            Languages.Reset(languages);
         }
 
         public class LanguageModel
@@ -123,7 +112,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                     return true;
                 if (obj.GetType() != typeof(LanguageModel))
                     return false;
-                LanguageModel other = (LanguageModel)obj;
+                var other = (LanguageModel)obj;
                 return Name == other.Name && Slug == other.Slug;
             }
             
@@ -151,7 +140,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                     return true;
                 if (obj.GetType() != typeof(TimeModel))
                     return false;
-                TimeModel other = (TimeModel)obj;
+                var other = (TimeModel)obj;
                 return Name == other.Name && Slug == other.Slug;
             }
 

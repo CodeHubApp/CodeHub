@@ -2,19 +2,18 @@ using System;
 using CodeFramework.iOS.ViewComponents;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeFramework.iOS.Elements;
 using MonoTouch.UIKit;
 using System.Linq;
 using System.Collections.Generic;
-using CodeHub.iOS.ViewControllers;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestView : ViewModelDrivenDialogViewController
+    public class PullRequestView : ViewModelDialogView<PullRequestViewModel>
     {
+        private UIActionSheet _actionSheet;
         private SplitElement _split1, _split2;
         private HeaderView _header;
         private WebElement _descriptionElement;
@@ -23,41 +22,29 @@ namespace CodeHub.iOS.Views.PullRequests
         private StyledStringElement _assigneeElement;
         private StyledStringElement _labelsElement;
         private StyledStringElement _addCommentElement;
-        private IHud _hud;
-
-        public new PullRequestViewModel ViewModel
-        {
-            get { return (PullRequestViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            Title = "Pull Request #".t() + ViewModel.Id;
-        }
 
         public override void ViewDidLoad()
         {
+            Title = "Pull Request #" + ViewModel.PullRequestId;
+
             Root.UnevenRows = true;
 
             base.ViewDidLoad();
 
             _header = new HeaderView();
-            _hud = this.CreateHud();
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-            _descriptionElement = new WebElement(content, "body", false);
+            _descriptionElement = new WebElement("body");
             _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
             var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-            _commentsElement = new WebElement(content2, "comments", true);
+            _commentsElement = new WebElement("comments");
             _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
             _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Images.Milestone };
             _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
 
-            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) { Image = Images.Person };
+            _assigneeElement = new StyledStringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) { Image = Images.Person };
             _assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
 
             _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Images.Tag };
@@ -65,19 +52,19 @@ namespace CodeHub.iOS.Views.PullRequests
 
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             _addCommentElement.Tapped += AddCommentTapped;
+//
+//            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge });
+//            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Person, Image2 = Images.Create });
 
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge });
-            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Person, Image2 = Images.Create });
-
-            ViewModel.Bind(x => x.PullRequest, x =>
+            ViewModel.WhenAnyValue(x => x.PullRequest).Subscribe(x =>
             {
                 var merged = (x.Merged != null && x.Merged.Value);
 
-                _split1.Value.Text1 = x.State;
-                _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
-
-                _split2.Value.Text1 = x.User.Login;
-                _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
+//                _split1.Value.Text1 = x.State;
+//                _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
+//
+//                _split2.Value.Text1 = x.User.Login;
+//                _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
 
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
                 _header.Title = x.Title;
@@ -87,26 +74,11 @@ namespace CodeHub.iOS.Views.PullRequests
             });
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.Enabled = false;
-            ViewModel.Bind(x => x.IsLoading, x =>
-            {
-                if (!x)
-                {
-                    NavigationItem.RightBarButtonItem.Enabled = ViewModel.PullRequest != null;
-                }
-            });
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.PullRequest, x => x != null));
 
-            ViewModel.Bind(x => x.IsModifying, x =>
+            ViewModel.WhenAnyValue(x => x.Issue).Subscribe(x =>
             {
-                if (x)
-                    _hud.Show("Loading...");
-                else
-                    _hud.Hide();
-            });
-
-            ViewModel.Bind(x => x.Issue, x =>
-            {
-                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned".t();
+                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 Render();
@@ -133,9 +105,9 @@ namespace CodeHub.iOS.Views.PullRequests
                 if (_milestoneElement.Accessory != before && _milestoneElement.GetImmediateRootElement() != null)
                     Root.Reload(_milestoneElement, UITableViewRowAnimation.Fade);
             };
-
-            ViewModel.BindCollection(x => x.Comments, e => RenderComments());
-            ViewModel.BindCollection(x => x.Events, e => RenderComments());
+//
+//            ViewModel.BindCollection(x => x.Comments, e => RenderComments());
+//            ViewModel.BindCollection(x => x.Events, e => RenderComments());
         }
 
         private IEnumerable<CommentModel> CreateCommentList()
@@ -181,36 +153,36 @@ namespace CodeHub.iOS.Views.PullRequests
 
         public void RenderComments()
         {
-            var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
-            var comments = CreateCommentList().Select(x => new {
-                avatarUrl = x.AvatarUrl,
-                login = x.Login,
-                created_at = x.CreatedAt.ToDaysAgo(),
-                body = x.Body
-            });
-            var data = s.Serialize(comments);
-
-            InvokeOnMainThread(() =>
-            {
-                _commentsElement.Value = !comments.Any() ? string.Empty : data;
-                if (_commentsElement.GetImmediateRootElement() == null)
-                    Render();
-            });
+//            var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
+//            var comments = CreateCommentList().Select(x => new {
+//                avatarUrl = x.AvatarUrl,
+//                login = x.Login,
+//                created_at = x.CreatedAt.ToDaysAgo(),
+//                body = x.Body
+//            });
+//            var data = s.Serialize(comments);
+//
+//            InvokeOnMainThread(() =>
+//            {
+//                _commentsElement.Value = !comments.Any() ? string.Empty : data;
+//                if (_commentsElement.GetImmediateRootElement() == null)
+//                    Render();
+//            });
         }
 
         void AddCommentTapped()
         {
-            var composer = new MarkdownComposerViewController();
-            composer.NewComment(this, async text =>
-            {
-                var hud = this.CreateHud();
-                hud.Show("Posting Comment...");
-                if (await ViewModel.AddComment(text))
-                    composer.CloseComposer();
-
-                hud.Hide();
-                composer.EnableSendButton = true;
-            });
+//            var composer = new MarkdownComposerViewController();
+//            composer.NewComment(this, async text =>
+//            {
+//                var hud = this.CreateHud();
+//                hud.Show("Posting Comment...");
+//                if (await ViewModel.AddComment(text))
+//                    composer.CloseComposer();
+//
+//                hud.Hide();
+//                composer.EnableSendButton = true;
+//            });
         }
 
         public override UIView InputAccessoryView
@@ -227,13 +199,13 @@ namespace CodeHub.iOS.Views.PullRequests
             if (ViewModel.PullRequest == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet(Title);
-            var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit".t()) : -1;
-            var openButton = sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close".t() : "Open".t());
-            var commentButton = sheet.AddButton("Comment".t());
-            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share".t()) : -1;
-            var showButton = sheet.AddButton("Show in GitHub".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var sheet = _actionSheet = new UIActionSheet(Title);
+            var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
+            var openButton = sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close" : "Open");
+            var commentButton = sheet.AddButton("Comment");
+            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share") : -1;
+            var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += (s, e) =>
@@ -248,6 +220,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     ViewModel.GoToUrlCommand.Execute(ViewModel.PullRequest.HtmlUrl);
                 else if (e.ButtonIndex == commentButton)
                     AddCommentTapped();
+                _actionSheet = null;
             };
 
             sheet.ShowInView(View);
@@ -274,8 +247,8 @@ namespace CodeHub.iOS.Views.PullRequests
             root.Add(new Section(_header));
 
             var secDetails = new Section();
-            if (!string.IsNullOrEmpty(_descriptionElement.Value))
-                secDetails.Add(_descriptionElement);
+//            if (!string.IsNullOrEmpty(_descriptionElement.Value))
+//                secDetails.Add(_descriptionElement);
 
             secDetails.Add(_split1);
             secDetails.Add(_split2);
@@ -295,29 +268,29 @@ namespace CodeHub.iOS.Views.PullRequests
             {
                 MonoTouch.Foundation.NSAction mergeAction = async () =>
                 {
-                    try
-                    {
-                        await this.DoWorkAsync("Merging...", ViewModel.Merge);
-                    }
-                    catch (Exception e)
-                    {
-                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
-                    }
+//                    try
+//                    {
+//                        await this.DoWorkAsync("Merging...", ViewModel.Merge);
+//                    }
+//                    catch (Exception e)
+//                    {
+//                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
+//                    }
                 };
 
                 StyledStringElement el;
                 if (ViewModel.PullRequest.Mergable == null)
-                    el = new StyledStringElement("Merge".t(), mergeAction, Images.Fork);
+                    el = new StyledStringElement("Merge", mergeAction, Images.Fork);
                 else if (ViewModel.PullRequest.Mergable.Value)
-                    el = new StyledStringElement("Merge".t(), mergeAction, Images.Fork);
+                    el = new StyledStringElement("Merge", mergeAction, Images.Fork);
                 else
-                    el = new StyledStringElement("Unable to merge!".t()) { Image = Images.Fork };
+                    el = new StyledStringElement("Unable to merge!") { Image = Images.Fork };
 
                 root.Add(new Section { el });
             }
-
-            if (!string.IsNullOrEmpty(_commentsElement.Value))
-                root.Add(new Section { _commentsElement });
+//
+//            if (!string.IsNullOrEmpty(_commentsElement.Value))
+//                root.Add(new Section { _commentsElement });
 
             root.Add(new Section { _addCommentElement });
 

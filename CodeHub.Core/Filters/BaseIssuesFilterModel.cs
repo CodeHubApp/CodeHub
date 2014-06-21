@@ -1,8 +1,6 @@
-using CodeFramework.Core.ViewModels;
-
 namespace CodeHub.Core.Filters
 {
-	public abstract class BaseIssuesFilterModel<T> : FilterModel<T>
+	public abstract class BaseIssuesFilterModel
     {
 		public bool Ascending { get; set; }
 

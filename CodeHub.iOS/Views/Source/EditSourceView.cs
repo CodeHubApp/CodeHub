@@ -1,16 +1,16 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
+using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Foundation;
-using CodeFramework.iOS.Utils;
-using Cirrious.MvvmCross.Touch.Views;
 using System.Threading.Tasks;
+using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class EditSourceView : ViewModelDrivenViewController, IMvxModalTouchView
+	public class EditSourceView : ViewModelDialogView<EditSourceViewModel>
     {
 		readonly ComposerView _composerView;
 	
@@ -28,9 +28,7 @@ namespace CodeHub.iOS.Views.Source
 			base.ViewDidLoad();
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Commit());
-
-			var vm = (EditSourceViewModel)this.ViewModel;
-			vm.Bind(x => x.Text, x => _composerView.Text = x);
+            ViewModel.WhenAnyValue(x => x.Text).Subscribe(x => _composerView.Text = x);
 		}
 
 		private void Commit()
@@ -49,16 +47,16 @@ namespace CodeHub.iOS.Views.Source
         /// </summary>
         private async Task CommitThis(EditSourceViewModel viewModel, LiteComposer composer, string content, string message)
         {
-            try
-            {
-                await this.DoWorkAsync("Commiting...", () => viewModel.Commit(content, message));
-                NavigationController.DismissViewController(true, null);
-            }
-            catch (Exception ex)
-            {
-                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
-                composer.EnableSendButton = true;
-            }
+//            try
+//            {
+//                await this.DoWorkAsync("Commiting...", () => viewModel.Commit(content, message));
+//                NavigationController.DismissViewController(true, null);
+//            }
+//            catch (Exception ex)
+//            {
+//                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+//                composer.EnableSendButton = true;
+//            }
         }
 
 		void KeyboardWillShow (NSNotification notification)

@@ -1,44 +1,34 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : LoadableViewModel
 	{
-        private readonly CollectionViewModel<BasicUserModel> _orgs = new CollectionViewModel<BasicUserModel>();
+        public ReactiveCollection<BasicUserModel> Organizations { get; private set; }
 
-        public CollectionViewModel<BasicUserModel> Organizations
+        public string Username { get; set; }
+
+        public IReactiveCommand GoToOrganizationCommand { get; private set; }
+
+        public OrganizationsViewModel(IApplicationService applicationService)
         {
-            get { return _orgs; }
-        }
+            GoToOrganizationCommand = new ReactiveCommand();
+            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<OrganizationViewModel>();
+                vm.Name = x.Login;
+                ShowViewModel(vm);
+            });
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-        }
-
-        public ICommand GoToOrganizationCommand
-        {
-            get { return new MvxCommand<BasicUserModel>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                Organizations.SimpleCollectionLoad(applicationService.Client.Users[Username].GetOrganizations(),
+                    t as bool?));
         }
 	}
 }

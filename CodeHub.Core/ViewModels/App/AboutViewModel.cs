@@ -1,28 +1,34 @@
-using CodeFramework.Core.ViewModels;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using System;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeFramework.Core.Services;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
 	public class AboutViewModel : BaseViewModel
     {
-        private readonly IEnvironmentService _environmentService;
-
-        public AboutViewModel(IEnvironmentService environmentService)
-        {
-            _environmentService = environmentService;
-        }
+        private readonly IEnvironmentalService _environmentService;
 
         public string Version
         {
             get { return _environmentService.ApplicationVersion; }
         }
 
-        public ICommand GoToSourceCodeCommand
+        public IReactiveCommand GoToSourceCodeCommand { get; private set; }
+
+        public AboutViewModel(IEnvironmentalService environmentService)
         {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }
+            _environmentService = environmentService;
+
+            GoToSourceCodeCommand = new ReactiveCommand();
+            GoToSourceCodeCommand.Subscribe(x =>
+            {
+                var vm = CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = "thedillonb";
+                vm.RepositoryName = "codehub";
+                ShowViewModel(vm);
+            });
         }
     }
 }

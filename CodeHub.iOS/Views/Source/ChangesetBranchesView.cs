@@ -1,20 +1,20 @@
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.Dialog;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetBranchesView : ViewModelCollectionDrivenDialogViewController
+    public class ChangesetBranchesView : ViewModelCollectionView<ChangesetBranchesViewModel>
     {
         public override void ViewDidLoad()
         {
-            Title = "Changeset Branch".t();
-            NoItemsText = "No Branches".t();
+            Title = "Changeset Branch";
+            NoItemsText = "No Branches";
 
             base.ViewDidLoad();
 
-            var vm = (ChangesetBranchesViewModel) ViewModel;
-            BindCollection(vm.Branches, x => new StyledStringElement(x.Name, () => vm.GoToBranchCommand.Execute(x)));
+            Bind(ViewModel.WhenAnyValue(x => x.Branches), x => new StyledStringElement(x.Name, () => ViewModel.GoToBranchCommand.Execute(x)));
         }
     }
 }

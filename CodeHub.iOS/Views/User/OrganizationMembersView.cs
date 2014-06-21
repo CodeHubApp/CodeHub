@@ -4,8 +4,8 @@ namespace CodeHub.iOS.Views.User
     {
         public override void ViewDidLoad()
         {
-            Title = "Members".t();
-            NoItemsText = "No Members".t();
+            Title = "Members";
+            NoItemsText = "No Members";
 
             base.ViewDidLoad();
         }

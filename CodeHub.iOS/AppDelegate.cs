@@ -1,26 +1,15 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <summary>
-//    Defines the AppDelegate type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-using CodeFramework.iOS;
-using System.Collections.Generic;
-using System;    
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.Touch.Platform;
-using Cirrious.MvvmCross.ViewModels;
+﻿using System;
+using CodeFramework.Core.Messages;
+using CodeFramework.Core.Services;
+using CodeFramework.Core.ViewModels.Application;
+using CodeFramework.iOS.Views.Application;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeFramework.Core.Utils;
 using CodeHub.Core.Services;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System.Text;
-using CodeFramework.iOS.XCallback;
 using MonoTouch.Security;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS
 {
@@ -30,18 +19,14 @@ namespace CodeHub.iOS
     /// application events from iOS.
     /// </summary>
     [Register("AppDelegate")]
-    public class AppDelegate : MvxApplicationDelegate
+    public class AppDelegate : UIApplicationDelegate
     {
         /// <summary>
         /// The window.
         /// </summary>
-        private UIWindow window;
 		public string DeviceToken;
 
-        public new UIWindow Window
-        {
-            get { return this.window; }
-        }
+        public new UIWindow Window { get; set; }
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -62,89 +47,113 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-			var iRate = MTiRate.iRate.SharedInstance;
-			iRate.AppStoreID = 707173885;
+            CodeHub.Core.Bootstrap.Init();
 
-			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
-            var presenter = new TouchViewPresenter(this.window);
-            var setup = new Setup(this, presenter);
-            setup.Initialize();
 
-            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+//			var iRate = MTiRate.iRate.SharedInstance;
+//			iRate.AppStoreID = 707173885;
 
-            // Setup theme
+            IoC.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+
+            // Stamp the date this was installed (first run)
+            StampInstallDate();
+
+            // Load the IoC
+            IoC.RegisterAssemblyServicesAsSingletons(typeof(Xamarin.Utilities.Core.Services.IDefaultValueService).Assembly);
+            IoC.RegisterAssemblyServicesAsSingletons(typeof(Xamarin.Utilities.Services.DefaultValueService).Assembly);
+            IoC.RegisterAssemblyServicesAsSingletons(typeof(CodeFramework.Core.Services.IAccountsService).Assembly);
+            IoC.RegisterAssemblyServicesAsSingletons(typeof(CodeFramework.iOS.Theme).Assembly);
+            IoC.RegisterAssemblyServicesAsSingletons(typeof(Core.Services.IApplicationService).Assembly);
+            IoC.RegisterAssemblyServicesAsSingletons(GetType().Assembly);
+
+            var viewModelViewService = IoC.Resolve<IViewModelViewService>();
+            viewModelViewService.RegisterViewModels(typeof(Xamarin.Utilities.Services.DefaultValueService).Assembly);
+            viewModelViewService.RegisterViewModels(typeof(CodeFramework.iOS.Theme).Assembly);
+            viewModelViewService.RegisterViewModels(GetType().Assembly);
+
             Theme.Setup();
+            SetupPushNotifications();
+            HandleNotificationOptions(options);
 
-            if (options != null)
+            var startupViewController = new StartupView { ViewModel = IoC.Resolve<StartupViewModel>() };
+            startupViewController.ViewModel.View = startupViewController;
+
+            var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
+            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ =>
             {
-                if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
-                {
-                    var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-                    if(remoteNotification != null) {
-                        HandleNotification(remoteNotification, true);
-                    }
-                }
+                mainNavigationController.PopToRootViewController(false);
+                mainNavigationController.DismissViewController(true, null);
+            });
+
+            Window = new UIWindow(UIScreen.MainScreen.Bounds) {RootViewController = mainNavigationController};
+            Window.MakeKeyAndVisible();
+            return true;
+        }
+
+        private void HandleNotificationOptions(NSDictionary options)
+        {
+            if (options == null) return;
+            if (!options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) return;
+
+            var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
+            if (remoteNotification != null)
+            {
+                HandleNotification(remoteNotification, true);
             }
+        }
 
-            var startup = Mvx.Resolve<IMvxAppStart>();
-			startup.Start();
+        private void SetupPushNotifications()
+        {
+            InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
+            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
 
-            this.window.MakeKeyAndVisible();
+            var features = IoC.Resolve<IFeaturesService>();
 
-            // Record the date this application was installed (or the date that we started recording installation date).
+            // Automatic activations in debug mode!
+#if DEBUG
+            IoC.Resolve<IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
+#endif
+
+            // Notifications don't work on teh simulator so don't bother
+            if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
+            {
+                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+            }
+        }
+
+        /// <summary>
+        /// Record the date this application was installed (or the date that we started recording installation date).
+        /// </summary>
+        private static void StampInstallDate()
+        {
             try
             {
                 var query = new SecRecord(SecKind.GenericPassword) { Generic = NSData.FromString("codehub_install_date") };
                 SecStatusCode secStatusCode;
-                var rec = SecKeyChain.QueryAsRecord(query, out secStatusCode);
-                if (secStatusCode != SecStatusCode.Success)
+                SecKeyChain.QueryAsRecord(query, out secStatusCode);
+                if (secStatusCode == SecStatusCode.Success) 
+                    return;
+
+                var newRec = new SecRecord(SecKind.GenericPassword)
                 {
-                    var newRec = new SecRecord(SecKind.GenericPassword)
-                    {
-                        Label = "CodeHub Install Date",
-                        Description = "The first date CodeHub was installed",
-                        ValueData = NSData.FromString(DateTime.UtcNow.ToString()),
-                        Generic = NSData.FromString("codehub_install_date")
-                    };
+                    Label = "CodeHub Install Date",
+                    Description = "The first date CodeHub was installed",
+                    ValueData = NSData.FromString(DateTime.UtcNow.ToString()),
+                    Generic = NSData.FromString("codehub_install_date")
+                };
 
-                    SecKeyChain.Add(newRec);
-                }
+                SecKeyChain.Add(newRec);
             }
-            catch
+            catch (Exception e)
             {
-                // Do nothing...
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
-
-            InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
-            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
-
-            var features = Mvx.Resolve<IFeaturesService>();
-
-            // Automatic activations in debug mode!
-            #if DEBUG
-            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
-            #endif
-
-
-			// Notifications don't work on teh simulator so don't bother
-            if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
-			{
-				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-			}
-
-            return true;
-        }
-
-        public override void WillEnterForeground(UIApplication application)
-        {
-            XCallbackProvider.DestoryTokens();
-            base.WillEnterForeground(application);
         }
 
         void HandlePurchaseSuccess (object sender, string e)
         {
-            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(e, true);
+            IoC.Resolve<IDefaultValueService>().Set(e, true);
 
             if (string.Equals(e, FeatureIds.PushNotifications))
             {
@@ -155,7 +164,7 @@ namespace CodeHub.iOS
 
         void HandlePurchaseError (object sender, Exception e)
         {
-            MonoTouch.Utilities.ShowAlert("Unable to make purchase", e.Message);
+            IoC.Resolve<IAlertDialogService>().Alert("Unable to make purchase", e.Message);
         }
 
 		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
@@ -169,54 +178,54 @@ namespace CodeHub.iOS
 		{
 			try
 			{
-				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
-                var appService = Mvx.Resolve<IApplicationService>();
-                var repoId = new RepositoryIdentifier(data["r"].ToString());
-                var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
-
-                MvxViewModelRequest request;
-                if (data.ContainsKey(new NSString("c")))
-                {
-                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Changesets.ChangesetViewModel>.GetDefaultRequest();
-                    parameters.Add("Node", data["c"].ToString());
-                    parameters.Add("ShowRepository", "True");
-                }
-                else if (data.ContainsKey(new NSString("i")))
-                {
-                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Issues.IssueViewModel>.GetDefaultRequest();
-                    parameters.Add("Id", data["i"].ToString());
-                }
-                else if (data.ContainsKey(new NSString("p")))
-                {
-                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>.GetDefaultRequest();
-                    parameters.Add("Id", data["p"].ToString());
-                }
-                else
-                {
-                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
-                }
-
-                request.ParameterValues = parameters;
-
-                var username = data["u"].ToString();
-
-                if (appService.Account == null || !appService.Account.Username.Equals(username))
-                {
-                    var user = appService.Accounts.FirstOrDefault(x => x.Username.Equals(username));
-                    if (user != null)
-                    {
-                        appService.DeactivateUser();
-                        appService.Accounts.SetDefault(user);
-                    }
-                }
-
-                appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(request));
-
-                if (appService.Account == null && !fromBootup)
-                {
-                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
-                    viewDispatcher.ShowViewModel(startupViewModelRequest);
-                }
+//				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
+//                var appService = Mvx.Resolve<IApplicationService>();
+//                var repoId = new RepositoryIdentifier(data["r"].ToString());
+//                var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
+//
+//                MvxViewModelRequest request;
+//                if (data.ContainsKey(new NSString("c")))
+//                {
+//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Changesets.ChangesetViewModel>.GetDefaultRequest();
+//                    parameters.Add("Node", data["c"].ToString());
+//                    parameters.Add("ShowRepository", "True");
+//                }
+//                else if (data.ContainsKey(new NSString("i")))
+//                {
+//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Issues.IssueViewModel>.GetDefaultRequest();
+//                    parameters.Add("Id", data["i"].ToString());
+//                }
+//                else if (data.ContainsKey(new NSString("p")))
+//                {
+//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>.GetDefaultRequest();
+//                    parameters.Add("Id", data["p"].ToString());
+//                }
+//                else
+//                {
+//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
+//                }
+//
+//                request.ParameterValues = parameters;
+//
+//                var username = data["u"].ToString();
+//
+//                if (appService.Account == null || !appService.Account.Username.Equals(username))
+//                {
+//                    var user = appService.Accounts.FirstOrDefault(x => x.Username.Equals(username));
+//                    if (user != null)
+//                    {
+//                        appService.DeactivateUser();
+//                        appService.Accounts.SetDefault(user);
+//                    }
+//                }
+//
+//                appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(request));
+//
+//                if (appService.Account == null && !fromBootup)
+//                {
+//                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
+//                    viewDispatcher.ShowViewModel(startupViewModelRequest);
+//                }
 			}
 			catch (Exception e)
 			{
@@ -228,18 +237,19 @@ namespace CodeHub.iOS
 		{
 			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
 
-            var app = Mvx.Resolve<IApplicationService>();
+            var app = IoC.Resolve<IApplicationService>();
+            var accounts = IoC.Resolve<IAccountsService>();
             if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
             {
-                Task.Run(() => Mvx.Resolve<IPushNotificationsService>().Register());
+                Task.Run(() => IoC.Resolve<IPushNotificationsService>().Register());
                 app.Account.IsPushNotificationsEnabled = true;
-                app.Accounts.Update(app.Account);
+                accounts.Update(app.Account);
             }
 		}
 
 		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
 		{
-			MonoTouch.Utilities.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
+            IoC.Resolve<IAlertDialogService>().Alert("Error Registering for Notifications", error.LocalizedDescription);
 		}
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
@@ -248,7 +258,7 @@ namespace CodeHub.iOS
 
             if (uri.Host == "x-callback-url")
             {
-                XCallbackProvider.Handle(new XCallbackQuery(url.AbsoluteString));
+                //XCallbackProvider.Handle(new XCallbackQuery(url.AbsoluteString));
                 return true;
             }
             else

@@ -1,61 +1,69 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Filters;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.ViewModels.PullRequests;
 using System.Collections.Generic;
 using System.Linq;
 using CodeFramework.Core.Utils;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public abstract class BaseIssuesViewModel<TFilterModel> : LoadableViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel<TFilterModel>, new()
+    public abstract class BaseIssuesViewModel<TFilterModel> : LoadableViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel
     {
-		protected FilterableCollectionViewModel<IssueModel, TFilterModel> _issues;
+        private TFilterModel _filter;
 
-		public FilterableCollectionViewModel<IssueModel, TFilterModel> Issues
-		{
-			get { return _issues; }
-		}
+		public ReactiveCollection<IssueModel> Issues { get; private set; }
 
-		public ICommand GoToIssueCommand
-		{
-			get 
-			{ 
-				return new MvxCommand<IssueModel>(x =>
-				{
-					var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
-					var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-					var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
+        public IReactiveCommand GoToIssueCommand { get; private set; }
 
-					if (isPullRequest)
-						ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-					else
-						ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-				});
-			}
-		}
+        public TFilterModel Filter
+	    {
+	        get { return _filter; }
+	        set { this.RaiseAndSetIfChanged(ref _filter, value); }
+	    }
+
+	    protected BaseIssuesViewModel()
+	    {
+	        Issues = new ReactiveCollection<IssueModel>();
+	    }
+
+//		{
+//			get 
+//			{ 
+//				return new MvxCommand<IssueModel>(x =>
+//				{
+//					var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
+//					var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
+//					var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
+//
+//					if (isPullRequest)
+//						ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
+//					else
+//						ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
+//				});
+//			}
+//		}
 
         protected virtual List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
 		{
-			var order = Issues.Filter.SortType;
-			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Comments)
+			var order = Filter.SortType;
+			if (order == BaseIssuesFilterModel.Sort.Comments)
 			{
-				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
+				var a = Filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
 				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Comments)).ToList();
 				return FilterGroup.CreateNumberedGroup(g, "Comments");
 			}
-			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Updated)
+			if (order == BaseIssuesFilterModel.Sort.Updated)
 			{
-				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
+				var a = Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
 				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
 				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
 			}
-			if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Created)
+			if (order == BaseIssuesFilterModel.Sort.Created)
 			{
-				var a = Issues.Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
+				var a = Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
 				var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
 				return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
 			}
@@ -64,9 +72,11 @@ namespace CodeHub.Core.ViewModels.Issues
 		}
     }
 
-	public interface IBaseIssuesViewModel : IMvxViewModel
-	{
-		ICommand GoToIssueCommand { get; }
-	}
+    public interface IBaseIssuesViewModel
+    {
+        ReactiveCollection<IssueModel> Issues { get; }
+
+        IReactiveCommand GoToIssueCommand { get; }
+    }
 }
 

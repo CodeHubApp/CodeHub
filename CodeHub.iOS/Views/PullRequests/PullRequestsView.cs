@@ -3,37 +3,36 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestsView : ViewModelCollectionDrivenDialogViewController
+    public class PullRequestsView : ViewModelCollectionView<PullRequestsViewModel>
     {
-        private readonly UISegmentedControl _viewSegment;
-        private readonly UIBarButtonItem _segmentBarButton;
- 
+        private UISegmentedControl _viewSegment;
+        private UIBarButtonItem _segmentBarButtonItem;
+
         public PullRequestsView()
         {
             Root.UnevenRows = true;
-            Title = "Pull Requests".t();
-            NoItemsText = "No Pull Requests".t();
-
-            _viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
 
         public override void ViewDidLoad()
         {
+            Title = "Pull Requests";
+            NoItemsText = "No Pull Requests";
+
             base.ViewDidLoad();
 
-            var vm = (PullRequestsViewModel)ViewModel;
-            _segmentBarButton.Width = View.Frame.Width - 10f;
-            var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
-            set.Bind(_viewSegment).To(x => x.SelectedFilter);
-            set.Apply();
+            _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
+            _segmentBarButtonItem = new UIBarButtonItem(_viewSegment) {Width = View.Frame.Width - 10f};
+            ToolbarItems = new[] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButtonItem, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
-            BindCollection(vm.PullRequests, s =>
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = _viewSegment.SelectedSegment;
+            ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
+
+
+            Bind(ViewModel.WhenAnyValue(x => x.PullRequests), s =>
             {
                 var sse = new NameTimeStringElement
                 {
@@ -44,7 +43,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     Image = Theme.CurrentTheme.AnonymousUserImage,
                     ImageUri = new Uri(s.User.AvatarUrl)
                 };
-                sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
+                sse.Tapped += () => ViewModel.GoToPullRequestCommand.Execute(s);
                 return sse;
             });
         }

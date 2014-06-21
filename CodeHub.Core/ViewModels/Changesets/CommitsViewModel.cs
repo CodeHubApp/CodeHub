@@ -1,58 +1,42 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using System.Reactive.Linq;
 using GitHubSharp.Models;
-using System.Windows.Input;
-using System.Threading.Tasks;
 using GitHubSharp;
 using System.Collections.Generic;
-using Cirrious.MvvmCross.ViewModels;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
 	public abstract class CommitsViewModel : LoadableViewModel
 	{
-		private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
+		public string RepositoryOwner { get; set; }
 
-		public string Username
-		{
-			get;
-			private set;
-		}
+		public string RepositoryName { get; set; }
 
-		public string Repository
-		{
-			get;
-			private set;
-		}
+		public IReactiveCommand GoToChangesetCommand { get; private set; }
 
-		public ICommand GoToChangesetCommand
-		{
-			get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Sha })); }
-		}
+		public ReactiveCollection<CommitModel> Commits { get; private set; }
 
-		public CollectionViewModel<CommitModel> Commits
-		{
-			get { return _commits; }
-		}
+	    protected CommitsViewModel()
+	    {
+	        Commits = new ReactiveCollection<CommitModel>();
 
-		public void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-		}
+            GoToChangesetCommand = new ReactiveCommand();
+	        GoToChangesetCommand.OfType<CommitModel>().Subscribe(x =>
+	        {
+	            var vm = CreateViewModel<ChangesetViewModel>();
+	            vm.RepositoryOwner = RepositoryOwner;
+	            vm.RepositoryName = RepositoryName;
+	            vm.Node = x.Sha;
+                ShowViewModel(vm);
+	        });
 
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-			return Commits.SimpleCollectionLoad(GetRequest(), forceCacheInvalidation);
-		}
+	        LoadCommand.RegisterAsyncTask(x => Commits.SimpleCollectionLoad(GetRequest(), x as bool?));
+	    }
 
 		protected abstract GitHubRequest<List<CommitModel>> GetRequest();
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-		}
 	}
 }
 

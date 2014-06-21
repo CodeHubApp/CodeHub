@@ -7,7 +7,7 @@ namespace CodeHub.iOS.Views.Teams
         public override void ViewDidLoad()
         {
             Title = "Members";
-            NoItemsText = "No Members".t();
+            NoItemsText = "No Members";
 
             base.ViewDidLoad();
         }

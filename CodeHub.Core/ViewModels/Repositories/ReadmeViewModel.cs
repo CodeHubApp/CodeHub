@@ -1,86 +1,58 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Cirrious.MvvmCross.ViewModels;
-using System.Windows.Input;
-using CodeFramework.Core.ViewModels;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
-using CodeHub.Core.Utils;
+using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
 	public class ReadmeViewModel : LoadableViewModel
     {
-        private readonly IMarkdownService _markdownService;
-        private string _data;
-        private string _path;
-		private GitHubSharp.Models.ContentModel _contentModel;
+        public string RepositoryOwner { get; set; }
 
-        public string Username 
+        public string RepositoryName { get; set; }
+
+        private string _contentText;
+        public string ContentText
         {
-            get;
-            private set; 
+            get { return _contentText; }
+            set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public string Repository 
+	    private ContentModel _contentModel;
+	    public ContentModel ContentModel
+	    {
+	        get { return _contentModel; }
+	        private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
+	    }
+
+		public IReactiveCommand GoToGitHubCommand { get; private set; }
+
+		public IReactiveCommand GoToLinkCommand { get; private set; }
+
+		public IReactiveCommand ShareCommand { get; private set; }
+
+        public ReadmeViewModel(IApplicationService applicationService, IMarkdownService markdownService, IShareService shareService)
         {
-            get;
-            private set; 
-        }
+            ShareCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentModel, x => x != null));
+            ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
 
-        public string Data
-        {
-            get { return _data; }
-            set { _data = value; RaisePropertyChanged(() => Data); }
-        }
+            GoToGitHubCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentModel, x => x != null));
+            GoToGitHubCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(ContentModel.HtmlUrl));
 
-        public string Path
-        {
-            get { return _path; }
-            set { _path = value; RaisePropertyChanged(() => Path); }
-        }
+            GoToLinkCommand = new ReactiveCommand();
+            GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
 
-		public ICommand GoToGitHubCommand
-		{
-			get { return new MvxCommand(() => GoToUrlCommand.Execute(_contentModel.HtmlUrl), () => _contentModel != null); }
-		}
-
-		public ICommand GoToLinkCommand
-		{
-			get { return GoToUrlCommand; }
-		}
-
-		public ICommand ShareCommand
-		{
-            get { return new MvxCommand(() => GetService<IShareService>().ShareUrl(_contentModel.HtmlUrl), () => _contentModel != null); }
-		}
-
-        public ReadmeViewModel(IMarkdownService markdownService)
-        {
-            _markdownService = markdownService;
-        }
-
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-            return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme(), forceCacheInvalidation, x =>
-            {
-                _contentModel = x.Data;
-                var data = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
-                Path = MarkdownHtmlGenerator.CreateFile(data);
-            });
-		}
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            LoadCommand.RegisterAsyncTask(x => 
+                this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme(), x as bool?, r =>
+                {
+                    ContentModel = r.Data;
+                    ContentText = markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(ContentModel.Content)));
+                }));
         }
     }
 }

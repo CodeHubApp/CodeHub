@@ -1,63 +1,87 @@
-using Cirrious.MvvmCross.ViewModels;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System;
-using CodeHub.Core.Messages;
-using System.Linq;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueEditViewModel : IssueModifyViewModel
     {
-		private IssueModel _issue;
+	    private readonly IApplicationService _applicationService;
+	    private IssueModel _issue;
 		private bool _open;
 
 		public bool IsOpen
 		{
 			get { return _open; }
-			set
-			{
-				_open = value;
-				RaisePropertyChanged(() => IsOpen);
-			}
+			set { this.RaiseAndSetIfChanged(ref _open, value); }
 		}
 
 		public IssueModel Issue
 		{
 			get { return _issue; }
-			set {
-				_issue = value;
-				RaisePropertyChanged(() => Issue);
-			}
+			set { this.RaiseAndSetIfChanged(ref _issue, value); }
 		}
 
-		public long Id { get; private set; }
+		public long Id { get; set; }
 
-		protected override async Task Save()
+	    public IReactiveCommand GoToDescriptionCommand { get; private set; }
+
+	    public IssueEditViewModel(IApplicationService applicationService)
+	    {
+	        _applicationService = applicationService;
+
+            GoToDescriptionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null));
+	        GoToDescriptionCommand.Subscribe(_ =>
+	        {
+	            var vm = CreateViewModel<ComposerViewModel>();
+	            vm.Text = Issue.Body;
+	            vm.SaveCommand.Subscribe(__ =>
+	            {
+	                Issue.Body = vm.Text;
+                    vm.DismissCommand.ExecuteIfCan();
+	            });
+	            ShowViewModel(vm);
+	        });
+
+	        this.WhenAnyValue(x => x.Issue).Where(x => x != null).Subscribe(x =>
+	        {
+                Title = x.Title;
+                AssignedTo = x.Assignee;
+                Milestone = x.Milestone;
+                Labels = x.Labels.ToArray();
+                Content = x.Body;
+                IsOpen = string.Equals(x.State, "open");
+	        });
+	    }
+
+	    protected override async Task Save()
 		{
+            if (string.IsNullOrEmpty(Title))
+                throw new Exception("Issue must have a title!");
+
 			try
 			{
-				if (string.IsNullOrEmpty(Title))
-					throw new Exception("Issue must have a title!");
-
-				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+				var assignedTo = AssignedTo == null ? null : AssignedTo.Login;
 				int? milestone = null;
 				if (Milestone != null) 
 					milestone = Milestone.Number;
-				string[] labels = Labels.Items.Select(x => x.Name).ToArray();
+				var labels = Labels.Select(x => x.Name).ToArray();
 				var content = Content ?? string.Empty;
 				var state = IsOpen ? "open" : "closed";
 				var retried = false;
-
-				IsSaving = true;
 
 				// For some reason github needs to try again during an internal server error
 				tryagain:
 
 				try
 				{
-					var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels)); 
-					Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+                    var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels));
+				    Issue = data.Data;
 				}
 				catch (GitHubSharp.InternalServerException)
 				{
@@ -69,15 +93,11 @@ namespace CodeHub.Core.ViewModels.Issues
 					goto tryagain;
 				}
 
-				ChangePresentation(new MvxClosePresentationHint(this));
+				DismissCommand.ExecuteIfCan();
 			}
 			catch (Exception e)
 			{
-                DisplayAlert("Unable to save the issue! Please try again");
-			}
-			finally
-			{
-				IsSaving = false;
+                throw new Exception("Unable to save the issue! Please try again", e);
 			}
 
 //			//There is a wierd bug in GitHub when editing an existing issue and the assignedTo is null
@@ -102,29 +122,6 @@ namespace CodeHub.Core.ViewModels.Issues
 //				return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data));
 //			return Task.Delay(0);
 //		}
-
-		public void Init(NavObject navObject)
-		{
-			base.Init(navObject.Username, navObject.Repository);
-			Id = navObject.Id;
-			Issue = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IssueModel;
-			if (Issue != null)
-			{
-				Title = Issue.Title;
-				AssignedTo = Issue.Assignee;
-				Milestone = Issue.Milestone;
-				Labels.Items.Reset(Issue.Labels);
-				Content = Issue.Body;
-				IsOpen = string.Equals(Issue.State, "open");
-			}
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public long Id { get; set; }
-		}
     }
 }
 

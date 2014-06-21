@@ -1,172 +1,101 @@
 using System;
-using CodeFramework.iOS.Views;
-using CodeHub.iOS;
-using GitHubSharp.Models;
 using System.Collections.Generic;
+using System.Linq;
+using CodeFramework.iOS.Views;
+using CodeHub.Core.ViewModels.Gists;
+using CodeHub.ViewControllers;
+using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using System.Drawing;
-using System.Linq;
-using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.ViewControllers;
+using ReactiveUI;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Gists
 {
-    public class EditGistController : BaseDialogViewController
+    public class EditGistController : ViewModelDialogView<GistEditViewModel>
     {
-        private GistEditModel _model;
-        public Action<GistModel> Created;
-        private GistModel _originalGist;
-
-        public EditGistController(GistModel gist)
-            : base(true)
+        public EditGistController()
         {
             Title = "Edit Gist";
-            Style = UITableViewStyle.Grouped;
-            _originalGist = gist;
-
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => Discard());
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Save());
-
-            _model = new GistEditModel();
-            _model.Description = gist.Description;
-            _model.Files = new Dictionary<string, GistEditModel.File>();
-
-            if (gist.Files != null)
-                foreach (var f in gist.Files)
-                    _model.Files.Add(f.Key, new GistEditModel.File() { Content = f.Value.Content });
         }
 
-        private void Discard()
+        public override void ViewDidLoad()
         {
-            DismissViewController(true, null);
+            base.ViewDidLoad();
+
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton,
+                UIBarButtonItemStyle.Plain, (s, e) =>
+                    ViewModel.DismissCommand.ExecuteIfCan());
+            NavigationItem.LeftBarButtonItem.EnableIfExecutable(ViewModel.DismissCommand.CanExecuteObservable);
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton,
+                UIBarButtonItemStyle.Plain, (s, e) =>
+                    ViewModel.SaveCommand.ExecuteIfCan());
+            NavigationItem.LeftBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);
         }
 
-        protected virtual void Save()
-        {
-            if (_model.Files.Count(x => x.Value != null) == 0)
-            {
-                MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
-                return;
-            }
-
-			this.DoWorkAsync("Saving...", async () =>
-			{
-				var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-				var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
-				if (Created != null)
-					Created(newGist.Data);
-				DismissViewController(true, null);
-			});
-        }
-
-        private bool IsDuplicateName(string name)
-        {
-            if (_model.Files.Count(x => x.Key.Equals(name) && x.Value != null) > 0)
-                return true;
-            return _model.Files.Count(x => x.Value != null && name.Equals(x.Value.Filename)) > 0;
-        }
-
-        int _gistFileCounter = 0;
-        private string GenerateName()
-        {
-            var name = string.Empty;
-            //Keep trying until we get a valid filename
-            while (true)
-            {
-                name = "gistfile" + (++_gistFileCounter) + ".txt";
-                if (IsDuplicateName(name))
-                    continue;
-                break;
-            }
-            return name;
-        }
-
-        private void AddFile()
-        {
-            var createController = new ModifyGistFileController();
-            createController.Save = (name, content) => {
-                if (string.IsNullOrEmpty(name))
-                    name = GenerateName();
-
-                if (IsDuplicateName(name))
-                    throw new InvalidOperationException("A filename by that type already exists");
-                _model.Files[name] = new GistEditModel.File { Content = content };
-            };
-            NavigationController.PushViewController(createController, true);
-        }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            UpdateView();
+            //UpdateView();
         }
 
-        protected void UpdateView()
-        {
-            var root = new RootElement(Title) { UnevenRows = true };
-            var section = new Section();
-            root.Add(section);
-
-            var desc = new MultilinedElement("Description") { Value = _model.Description };
-            desc.Tapped += ChangeDescription;
-            section.Add(desc);
-
-            var fileSection = new Section();
-            root.Add(fileSection);
-
-            foreach (var file in _model.Files.Keys)
-            {
-                var key = file;
-                if (!_model.Files.ContainsKey(key) || _model.Files[file] == null || _model.Files[file].Content == null)
-                    continue;
-
-                var elName = key;
-                if (_model.Files[key].Filename != null)
-                    elName = _model.Files[key].Filename;
-
-                var el = new FileElement(elName, key, _model.Files[key]);
-                el.Tapped += () => {
-                    if (!_model.Files.ContainsKey(key))
-                        return;
-                    var createController = new ModifyGistFileController(key, _model.Files[key].Content);
-                    createController.Save = (name, content) => {
-
-                        if (string.IsNullOrEmpty(name))
-                            throw new InvalidOperationException("Please enter a name for the file");
-
-                        //If different name & exists somewhere else
-                        if (!name.Equals(key))
-                            if (IsDuplicateName(name))
-                                throw new InvalidOperationException("A filename by that type already exists");
-
-                        if (_originalGist.Files.ContainsKey(key))
-                            _model.Files[key] = new GistEditModel.File { Content = content, Filename = name };
-                        else
-                        {
-                            _model.Files.Remove(key);
-                            _model.Files[name] = new GistEditModel.File { Content = content };
-                        }
-                    };
-
-                    NavigationController.PushViewController(createController, true);
-                };
-                fileSection.Add(el);
-            }
-
-            fileSection.Add(new StyledStringElement("Add New File", AddFile));
-
-            Root = root;
-        }
-
-        private void ChangeDescription()
-        {
-            var composer = new Composer { Title = "Description", Text = _model.Description };
-            composer.NewComment(this, (text) => {
-                _model.Description = text;
-                composer.CloseComposer();
-            });
-        }
+//        protected void UpdateView()
+//        {
+//            var root = new RootElement(Title) { UnevenRows = true };
+//            var section = new Section();
+//            root.Add(section);
+//
+//            var desc = new MultilinedElement("Description") { Value = _model.Description };
+//            desc.Tapped += () => ViewModel.GoToDescriptionCommand.ExecuteIfCan();
+//            section.Add(desc);
+//
+//            var fileSection = new Section();
+//            root.Add(fileSection);
+//
+//            foreach (var file in _model.Files.Keys)
+//            {
+//                var key = file;
+//                if (!_model.Files.ContainsKey(key) || _model.Files[file] == null || _model.Files[file].Content == null)
+//                    continue;
+//
+//                var elName = key;
+//                if (_model.Files[key].Filename != null)
+//                    elName = _model.Files[key].Filename;
+//
+//                var el = new FileElement(elName, key, _model.Files[key]);
+//                el.Tapped += () => {
+//                    if (!_model.Files.ContainsKey(key))
+//                        return;
+//                    var createController = new ModifyGistFileController(key, _model.Files[key].Content);
+//                    createController.Save = (name, content) => {
+//
+//                        if (string.IsNullOrEmpty(name))
+//                            throw new InvalidOperationException("Please enter a name for the file");
+//
+//                        //If different name & exists somewhere else
+//                        if (!name.Equals(key))
+//                            if (IsDuplicateName(name))
+//                                throw new InvalidOperationException("A filename by that type already exists");
+//
+//                        if (_originalGist.Files.ContainsKey(key))
+//                            _model.Files[key] = new GistEditModel.File { Content = content, Filename = name };
+//                        else
+//                        {
+//                            _model.Files.Remove(key);
+//                            _model.Files[name] = new GistEditModel.File { Content = content };
+//                        }
+//                    };
+//
+//                    NavigationController.PushViewController(createController, true);
+//                };
+//                fileSection.Add(el);
+//            }
+//
+//            fileSection.Add(new StyledStringElement("Add New File", AddFile));
+//
+//            Root = root;
+//        }
 
 		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
         {
@@ -179,11 +108,11 @@ namespace CodeHub.ViewControllers
             if (fileEl == null)
                 return;
 
-            var key = fileEl.Key;
-            if (_originalGist.Files.ContainsKey(key))
-                _model.Files[key] = null;
-            else
-                _model.Files.Remove(key);
+//            var key = fileEl.Key;
+//            if (_originalGist.Files.ContainsKey(key))
+//                _model.Files[key] = null;
+//            else
+//                _model.Files.Remove(key);
 
             section.Remove(element);
         }
@@ -204,7 +133,7 @@ namespace CodeHub.ViewControllers
             }
         }
 
-        private class EditSource : SizingSource
+        private class EditSource : DialogViewController.SizingSource
         {
             private readonly EditGistController _parent;
             public EditSource(EditGistController dvc) 

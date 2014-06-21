@@ -1,27 +1,27 @@
 ﻿using System;
-using CodeFramework.iOS.ViewControllers;
-using MonoTouch.UIKit;
-using Cirrious.CrossCore;
-using CodeHub.Core.Services;
-using CodeHub.Core.Utils;
-using MonoTouch.Foundation;
-using System.Net;
 using System.Collections.Specialized;
-using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
-using System.Linq;
-using System.Drawing;
+using CodeHub.Core.ViewModels.App;
+using MonoTouch.UIKit;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
 
-namespace CodeHub.iOS.ViewControllers
+namespace CodeHub.iOS.Views.App
 {
-    public class MarkdownComposerViewController : Composer
+    public class MarkdownComposerView : ComposerViewController<MarkdownComposerViewModel>
     {
+        private readonly IAlertDialogService _alertDialogService;
+        private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly UISegmentedControl _viewSegment;
         private UIWebView _previewView;
 
-        public MarkdownComposerViewController()
+        public MarkdownComposerView(IAlertDialogService alertDialogService, IStatusIndicatorService statusIndicatorService)
         {
+            _alertDialogService = alertDialogService;
+            _statusIndicatorService = statusIndicatorService;
             _viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
             _viewSegment.SelectedSegment = 0;
             NavigationItem.TitleView = _viewSegment;
@@ -83,8 +83,7 @@ namespace CodeHub.iOS.ViewControllers
 
         private async void UploadImage(UIImage img)
         {
-            var hud = new CodeFramework.iOS.Utils.Hud(null);
-            hud.Show("Uploading...");
+            _statusIndicatorService.Show("Uploading...");
 
             try
             {
@@ -108,17 +107,17 @@ namespace CodeHub.iOS.ViewControllers
                 });
 
 
-                var json = Mvx.Resolve<IJsonSerializationService>();
+                var json = IoC.Resolve<IJsonSerializationService>();
                 var imgurModel = json.Deserialize<ImgurModel>(System.Text.Encoding.UTF8.GetString(returnData));
                 TextView.InsertText("![](" + imgurModel.Data.Link + ")");
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", "Unable to upload image: " + e.Message);
+                _alertDialogService.Alert("Error", "Unable to upload image: " + e.Message);
             }
             finally
             {
-                hud.Hide();
+                _statusIndicatorService.Hide();
             }
         }
 
@@ -176,7 +175,7 @@ namespace CodeHub.iOS.ViewControllers
                 } 
                 else 
                 { // if it's a video
-                    MonoTouch.Utilities.ShowAlert("Not supported!", "Video upload is currently not supported.");
+                    _alertDialogService.Alert("Not supported!", "Video upload is currently not supported.");
                 }          
 
                 // dismiss the picker
@@ -210,16 +209,16 @@ namespace CodeHub.iOS.ViewControllers
             }
             else
             {
-                if (_previewView == null)
-                    _previewView = new UIWebView(this.View.Bounds);
-
-                TextView.RemoveFromSuperview();
-                Add(_previewView);
-
-                var markdownService = Mvx.Resolve<IMarkdownService>();
-                var path = MarkdownHtmlGenerator.CreateFile(markdownService.Convert(Text));
-                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-                _previewView.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
+//                if (_previewView == null)
+//                    _previewView = new UIWebView(this.View.Bounds);
+//
+//                TextView.RemoveFromSuperview();
+//                Add(_previewView);
+//
+//                var markdownService = IoC.Resolve<IMarkdownService>();
+//                var path = MarkdownHtmlGenerator.CreateFile(markdownService.Convert(Text));
+//                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
+//                _previewView.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
             }
         }
     }

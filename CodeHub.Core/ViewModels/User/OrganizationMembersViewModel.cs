@@ -1,28 +1,16 @@
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.User
 {
     public class OrganizationMembersViewModel : BaseUserCollectionViewModel
     {
-        public string OrganizationName 
-        { 
-            get; 
-            private set; 
-        }
+        public string OrganizationName { get; set; }
 
-        public void Init(NavObject navObject)
+        public OrganizationMembersViewModel(IApplicationService applicationService)
         {
-            OrganizationName = navObject.Name;
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Users.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetMembers(), forceDataRefresh);
+            LoadCommand.RegisterAsyncTask(
+                t => Users.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetMembers(), t as bool?));
         }
     }
 }

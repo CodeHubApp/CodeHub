@@ -1,27 +1,34 @@
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System.Reactive.Linq;
 using GitHubSharp;
 using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public abstract class GistsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<GistModel> _gists = new CollectionViewModel<GistModel>();
+        public ReactiveCollection<GistModel> Gists { get; private set; }
 
-        public CollectionViewModel<GistModel> Gists { get { return _gists; } }
+        public IReactiveCommand GoToGistCommand { get; private set; }
 
-        public ICommand GoToGistCommand
+        protected GistsViewModel()
         {
-            get { return new MvxCommand<GistModel>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Id }));}
-        }
+            Gists = new ReactiveCollection<GistModel>();
 
-        protected override Task Load(bool forceDataRefresh)
-        {
-            return Gists.SimpleCollectionLoad(CreateRequest(), forceDataRefresh);
+            GoToGistCommand = new ReactiveCommand();
+            GoToGistCommand.OfType<GistModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<GistViewModel>();
+                vm.Id = x.Id;
+                vm.Gist = x;
+                ShowViewModel(vm);
+            });
+
+            LoadCommand.RegisterAsyncTask(t => Gists.SimpleCollectionLoad(CreateRequest(), t as bool?));
         }
 
         protected abstract GitHubRequest<List<GistModel>> CreateRequest();

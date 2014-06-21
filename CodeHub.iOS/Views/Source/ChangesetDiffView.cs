@@ -1,53 +1,41 @@
 using System;
-using CodeHub.iOS.Views.Source;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using GitHubSharp.Models;
 using System.Collections.Generic;
-using System.Linq;
 using CodeHub.Core.ViewModels.Source;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Utils;
-using CodeFramework.Core.Services;
-using CodeHub.iOS.ViewControllers;
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
+using Xamarin.Utilities.Core.Services;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Source
 {
-	public class ChangesetDiffView : FileSourceView
+	public class ChangesetDiffView : FileSourceView<ChangesetDiffViewModel>
     {
-		private readonly IJsonSerializationService _serializationService = Cirrious.CrossCore.Mvx.Resolve<IJsonSerializationService>();
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
-
-		public new ChangesetDiffViewModel ViewModel
-		{
-			get { return (ChangesetDiffViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+	    private UIActionSheet _actionSheet;
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-
-
-			ViewModel.Bind(x => x.FilePath, x =>
-			{
-				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-				var patch = JavaScriptStringEncode(data);
-				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
-			});
-
-			ViewModel.BindCollection(x => x.Comments, e =>
-			{
-				//Convert it to something light weight
-				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
-					Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
-					Content = x.Body, Date = x.UpdatedAt
-				}).ToList();
-
-				var c = _serializationService.Serialize(slimComments);
-				ExecuteJavascript("var a = " + c + "; setComments(a);");
-			});
+//
+//
+//			ViewModel.Bind(x => x.FilePath, x =>
+//			{
+//				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
+//				var patch = JavaScriptStringEncode(data);
+//				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
+//			});
+//
+//			ViewModel.BindCollection(x => x.Comments, e =>
+//			{
+//				//Convert it to something light weight
+//				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
+//					Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
+//					Content = x.Body, Date = x.UpdatedAt
+//				}).ToList();
+//
+//				var c = _serializationService.Serialize(slimComments);
+//				ExecuteJavascript("var a = " + c + "; setComments(a);");
+//			});
 		}
 
 		private bool _isLoaded;
@@ -84,8 +72,8 @@ namespace CodeHub.ViewControllers
 				}
 				else if(func.Equals("comment")) 
 				{
-					var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
-					PromptForComment(commentModel);
+					//var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
+					//PromptForComment(commentModel);
                 }
 
 				return false;
@@ -105,16 +93,17 @@ namespace CodeHub.ViewControllers
         private void PromptForComment(JavascriptCommentModel model)
         {
             string title = string.Empty;
-            title = "Line ".t() + model.FileLine;
+            title = "Line " + model.FileLine;
 
-            var sheet = MonoTouch.Utilities.GetSheet(title);
-            var addButton = sheet.AddButton("Add Comment".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var sheet = _actionSheet = new UIActionSheet(title);
+            var addButton = sheet.AddButton("Add Comment");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Clicked += (sender, e) => {
                 if (e.ButtonIndex == addButton)
                     ShowCommentComposer(model.PatchLine);
+                _actionSheet = null;
             };
 
             sheet.ShowInView(this.View);
@@ -122,19 +111,19 @@ namespace CodeHub.ViewControllers
 
         private void ShowCommentComposer(int line)
         {
-            var composer = new MarkdownComposerViewController();
-			composer.NewComment(this, async (text) => {
-				try
-				{
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, line));
-					composer.CloseComposer();
-				}
-				catch (Exception e)
-				{
-					MonoTouch.Utilities.ShowAlert("Unable to Comment".t(), e.Message);
-					composer.EnableSendButton = true;
-				}
-            });
+//            var composer = new MarkdownComposerViewController();
+//			composer.NewComment(this, async (text) => {
+//				try
+//				{
+//					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, line));
+//					composer.CloseComposer();
+//				}
+//				catch (Exception e)
+//				{
+//					MonoTouch.Utilities.ShowAlert("Unable to Comment", e.Message);
+//					composer.EnableSendButton = true;
+//				}
+//            });
         }
     }
 }

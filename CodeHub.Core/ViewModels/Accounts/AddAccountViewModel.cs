@@ -1,86 +1,67 @@
 using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
-using CodeHub.Core.Services;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Factories;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AddAccountViewModel : BaseViewModel 
     {
-        private GitHubAccount _attemptedAccount;
-        private readonly IApplicationService _application;
         private readonly ILoginFactory _loginFactory;
+        private readonly IAccountsService _accountsService;
         private string _username;
         private string _password;
         private string _domain;
-        private bool _isLoggingIn;
 
-        public bool IsEnterprise { get; private set; }
+        public bool IsEnterprise { get; set; }
 
-        public bool IsLoggingIn
-        {
-            get { return _isLoggingIn; }
-            set { _isLoggingIn = value; RaisePropertyChanged(() => IsLoggingIn); }
-        }
+        public string TwoFactor { get; set; }
+
+        public IReactiveCommand LoginCommand { get; private set; }
 
         public string Username
         {
             get { return _username; }
-            set { _username = value; RaisePropertyChanged(() => Username); }
+            set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
         public string Password
         {
             get { return _password; }
-            set { _password = value; RaisePropertyChanged(() => Password); }
+            set { this.RaiseAndSetIfChanged(ref _password, value); }
         }
 
         public string Domain
         {
             get { return _domain; }
-            set { _domain = value; RaisePropertyChanged(() => Domain); }
+            set { this.RaiseAndSetIfChanged(ref _domain, value); }
         }
 
-        public string TwoFactor { get; set; }
-
-        public ICommand LoginCommand
+        private GitHubAccount _attemptedAccount;
+        public GitHubAccount AttemptedAccount
         {
-			get { return new MvxCommand(() => Login(), CanLogin);}
+            get { return _attemptedAccount; }
+            set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
         }
 
-        public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
+        public AddAccountViewModel(ILoginFactory loginFactory, IAccountsService accountsService)
         {
-            _application = application;
             _loginFactory = loginFactory;
-        }
+            _accountsService = accountsService;
 
-        public void Init(NavObject navObject)
-        {
-			if (navObject.AttemptedAccountId >= 0)
-				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
-
-            if (_attemptedAccount != null)
+            this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
             {
-                Username = _attemptedAccount.Username;
-                IsEnterprise = _attemptedAccount.Domain != null;
-                if (IsEnterprise)
-                    Domain = _attemptedAccount.Domain;
-            }
-            else
-            {
-                IsEnterprise = navObject.IsEnterprise;
-            }
-        }
+                Username = x.Username;
+                Password = x.Password;
+                Domain = x.Domain;
+            });
 
-        private bool CanLogin()
-        {
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
-                return false;
-            return true;
+            LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)));
+            LoginCommand.RegisterAsyncTask(_ => Login());
         }
 
 		private async Task Login()
@@ -98,11 +79,10 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             try
             {
-                IsLoggingIn = true;
 				Console.WriteLine(apiUrl);
                 var loginData = await _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
-				var client = await _loginFactory.LoginAccount(loginData.Account);
-				_application.ActivateUser(loginData.Account, client);
+				await _loginFactory.LoginAccount(loginData.Account);
+                _accountsService.ActiveAccount = loginData.Account;
             }
             catch (Exception e)
             {
@@ -112,24 +92,9 @@ namespace CodeHub.Core.ViewModels.Accounts
                 if (!(e is LoginFactory.TwoFactorRequiredException))
                 {
                     Password = null;
-                    DisplayAlert(e.Message);
+                    throw;
                 }
             }
-            finally
-            {
-                IsLoggingIn = false;
-            }
-        }
-
-        public class NavObject
-        {
-            public bool IsEnterprise { get; set; }
-			public int AttemptedAccountId { get; set; }
-
-			public NavObject()
-			{
-				AttemptedAccountId = int.MinValue;
-			}
         }
     }
 }

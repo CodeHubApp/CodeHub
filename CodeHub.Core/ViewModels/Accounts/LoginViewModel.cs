@@ -1,14 +1,12 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
 using System.Linq;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -19,17 +17,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private readonly ILoginFactory _loginFactory;
         private readonly IFeaturesService _featuresService;
-
-        private bool _isLoggingIn;
-        public bool IsLoggingIn
-        {
-            get { return _isLoggingIn; }
-            set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(() => IsLoggingIn);
-            }
-        }
+        private readonly IAccountsService _accountsService;
 
         public string LoginUrl
         {
@@ -38,64 +26,55 @@ namespace CodeHub.Core.ViewModels.Accounts
                 var web = WebDomain.TrimEnd('/');
                 return string.Format(
                     web + "/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}", 
-                    LoginViewModel.ClientId, 
-                    Uri.EscapeDataString(LoginViewModel.RedirectUri),
+                    ClientId, 
+                    Uri.EscapeDataString(RedirectUri),
                     Uri.EscapeDataString("user,repo,notifications,gist"));
             }
         }
 
-        public bool IsEnterprise { get; private set; }
+        public bool IsEnterprise { get; set; }
 
-        public GitHubAccount AttemptedAccount { get; private set; }
+        private GitHubAccount _attemptedAccount;
+        public GitHubAccount AttemptedAccount
+        {
+            get { return _attemptedAccount; }
+            set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
+        }
 
         public string WebDomain { get; set; }
 
-        public ICommand GoToOldLoginWaysCommand
+        public IReactiveCommand GoToOldLoginWaysCommand { get; private set; }
+
+        public IReactiveCommand LoginCommand { get; private set; }
+
+        private string _code;
+        public string Code
         {
-            get { return new MvxCommand(() => ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = IsEnterprise })); }
+            get { return _code; }
+            set { this.RaiseAndSetIfChanged(ref _code, value); }
         }
 
-        public ICommand GoBackCommand
-        {
-            get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
-        }
-
-        public LoginViewModel(ILoginFactory loginFactory, IFeaturesService featuresService)
+        public LoginViewModel(ILoginFactory loginFactory, 
+                              IFeaturesService featuresService, 
+                              IAccountsService accountsService)
         {
             _loginFactory = loginFactory;
             _featuresService = featuresService;
+            _accountsService = accountsService;
+
+            GoToOldLoginWaysCommand = new ReactiveCommand();
+            GoToOldLoginWaysCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<AddAccountViewModel>();
+                vm.IsEnterprise = true;
+                ShowViewModel(vm);
+            });
+
+            LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Code, x => !string.IsNullOrEmpty(x)));
+            LoginCommand.RegisterAsyncTask(_ => Login(Code));
         }
 
-        public void Init(NavObject navObject)
-        {
-            IsEnterprise = navObject.IsEnterprise;
-            WebDomain = navObject.WebDomain;
-
-            if (WebDomain == null && !IsEnterprise)
-            {
-                WebDomain = GitHubSharp.Client.AccessTokenUri;
-            }
-
-            if (navObject.AttemptedAccountId >= 0)
-            {
-                AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
-
-                //This is a hack to get around the fact that WebDomain will be null for Enterprise users since the last version did not contain the variable
-                if (WebDomain == null && IsEnterprise)
-                {
-                    try
-                    {
-                        WebDomain = AttemptedAccount.Domain.Substring(0, AttemptedAccount.Domain.IndexOf("/api"));
-                    }
-                    catch 
-                    {
-                        //Doh!
-                    }
-                }
-            }
-        }
-
-        public async Task Login(string code)
+        private async Task Login(string code)
         {
             string apiUrl;
             if (IsEnterprise)
@@ -114,74 +93,36 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 apiUrl = GitHubSharp.Client.DefaultApi;
             }
-    
-            LoginData loginData = null;
-            bool shouldPromptPush = false;
 
-            try
+            var shouldPromptPush = false;
+            var account = AttemptedAccount;
+            var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+
+            if (!_featuresService.IsPushNotificationsActivated && !IsEnterprise)
             {
-                IsLoggingIn = true;
-                var account = AttemptedAccount;
-                loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
-
-                if (!_featuresService.IsPushNotificationsActivated && !IsEnterprise)
+                try
                 {
-                    try
-                    {
-                        var ids = await _featuresService.GetAvailableFeatureIds();
-                        shouldPromptPush = ids.Contains(FeatureIds.PushNotifications);
-                    }
-                    catch
-                    {
-                    }
+                    var ids = await _featuresService.GetAvailableFeatureIds();
+                    shouldPromptPush = ids.Contains(FeatureIds.PushNotifications);
                 }
-            }
-            catch (Exception e)
-            {
-                DisplayAlert(e.Message);
-                return;
-            }
-            finally
-            {
-                IsLoggingIn = false;
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("Unable to get available feature ids: {0}", e.Message);
+                }
             }
 
             try
             {
                 // Only prompt if we're allowing that to be enabled.
                 if (shouldPromptPush)
-                    await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
+                    await _featuresService.PromptPushNotificationFeature();
             }
-            catch
+            catch (Exception e)
             {
-                // Don't do anything...
+                System.Diagnostics.Debug.WriteLine("Unable to get prompt for push notificatoins: {0}", e.Message);
             }
 
-            this.GetApplication().ActivateUser(loginData.Account, loginData.Client);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public bool IsEnterprise { get; set; }
-            public string WebDomain { get; set; }
-            public int AttemptedAccountId { get; set; }
-
-            public NavObject()
-            {
-                AttemptedAccountId = int.MinValue;
-            }
-
-            public static NavObject CreateDontRemember(GitHubAccount account)
-            {
-                return new NavObject
-                { 
-                    WebDomain = account.WebDomain, 
-                    IsEnterprise = !string.Equals(account.Domain, GitHubSharp.Client.DefaultApi), 
-                    Username = account.Username,
-                    AttemptedAccountId = account.Id
-                };
-            }
+            _accountsService.ActiveAccount = loginData.Account;
         }
     }
 }

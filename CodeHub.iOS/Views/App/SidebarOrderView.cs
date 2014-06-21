@@ -1,12 +1,13 @@
 ﻿using System;
 using CodeFramework.iOS.ViewControllers;
+using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using System.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class SidebarOrderView : ViewModelDrivenDialogViewController
+    public class SidebarOrderView : ViewModelDialogView<SidebarOrderViewModel>
     {
         public SidebarOrderView()
         {

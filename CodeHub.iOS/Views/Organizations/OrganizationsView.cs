@@ -1,24 +1,23 @@
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Organizations;
-using MonoTouch.Dialog;
 using CodeFramework.iOS.Elements;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationsView : ViewModelCollectionDrivenDialogViewController
-	{
+    public class OrganizationsView : ViewModelCollectionView<OrganizationsViewModel>
+    {
         public override void ViewDidLoad()
         {
-            Title = "Organizations".t();
-            NoItemsText = "No Organizations".t();
+            Title = "Organizations";
+            NoItemsText = "No Organizations";
 
             base.ViewDidLoad();
 
-            var vm = (OrganizationsViewModel) ViewModel;
-			BindCollection(vm.Organizations, x =>
+			Bind(ViewModel.WhenAnyValue(x => x.Organizations), x =>
 			{
 				var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-				e.Tapped += () => vm.GoToOrganizationCommand.Execute(x);
+				e.Tapped += () => ViewModel.GoToOrganizationCommand.Execute(x);
 				return e;
 			});
         }

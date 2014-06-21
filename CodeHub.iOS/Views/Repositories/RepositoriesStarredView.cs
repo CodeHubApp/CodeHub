@@ -1,11 +1,14 @@
+using CodeHub.Core.ViewModels.Repositories;
+
 namespace CodeHub.iOS.Views.Repositories
 {
-	public class RepositoriesStarredView : BaseRepositoriesView
+	public class RepositoriesStarredView : BaseRepositoriesView<RepositoriesStarredViewModel>
     {
-		public RepositoriesStarredView()
-        {
-			Title = "Starred".t();
-        }
+	    public override void LoadView()
+	    {
+	        Title = "Starred";
+	        base.LoadView();
+	    }
     }
 }
 

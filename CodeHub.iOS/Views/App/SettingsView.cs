@@ -1,69 +1,54 @@
-using Cirrious.CrossCore;
+using CodeFramework.iOS.Views;
 using CodeHub.Core.Services;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
-using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class SettingsView : ViewModelDrivenDialogViewController
-    {
-        private IHud _hud;
-
-        public SettingsView()
-        {
-            Title = "Settings";
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            _hud = new Hud(View);
-        }
-
+	public class SettingsView : ViewModelDialogView<SettingsViewModel>
+	{
         public override void ViewWillAppear(bool animated)
         {
 			var vm = (SettingsViewModel)ViewModel;
-			vm.Bind(x => x.PushNotificationsEnabled, CreateTable);
-            vm.Bind(x => x.IsSaving, x =>
-            {
-                    if (x) _hud.Show("Saving...");
-                    else _hud.Hide();
-            });
+//			vm.Bind(x => x.PushNotificationsEnabled, CreateTable);
+//            vm.Bind(x => x.IsSaving, x =>
+//            {
+//                    if (x) _hud.Show("Saving...");
+//                    else _hud.Hide();
+//            });
 			CreateTable();
             base.ViewWillAppear(animated);
         }
 
 		private void CreateTable()
 		{
-			var application = Mvx.Resolve<IApplicationService>();
+			var application = IoC.Resolve<IApplicationService>();
 			var vm = (SettingsViewModel)ViewModel;
 			var currentAccount = application.Account;
             var accountSection = new Section("Account");
 
-            accountSection.Add(new TrueFalseElement("Save Credentials".t(), !currentAccount.DontRemember, e =>
+            accountSection.Add(new TrueFalseElement("Save Credentials", !currentAccount.DontRemember, e =>
             { 
-                currentAccount.DontRemember = !e.Value;
-                application.Accounts.Update(currentAccount);
+//                currentAccount.DontRemember = !e.Value;
+//                application.Accounts.Update(currentAccount);
             }));
 
-			var showOrganizationsInEvents = new TrueFalseElement("Show Organizations in Events".t(), currentAccount.ShowOrganizationsInEvents, e =>
+			var showOrganizationsInEvents = new TrueFalseElement("Show Organizations in Events", currentAccount.ShowOrganizationsInEvents, e =>
 			{ 
-				currentAccount.ShowOrganizationsInEvents = e.Value;
-				application.Accounts.Update(currentAccount);
+//				currentAccount.ShowOrganizationsInEvents = e.Value;
+//				application.Accounts.Update(currentAccount);
 			});
 
-			var showOrganizations = new TrueFalseElement("List Organizations in Menu".t(), currentAccount.ExpandOrganizations, e =>
+			var showOrganizations = new TrueFalseElement("List Organizations in Menu", currentAccount.ExpandOrganizations, e =>
 			{ 
-				currentAccount.ExpandOrganizations = e.Value;
-				application.Accounts.Update(currentAccount);
+//				currentAccount.ExpandOrganizations = e.Value;
+//				application.Accounts.Update(currentAccount);
 			});
 
-			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions".t(), currentAccount.ShowRepositoryDescriptionInList, e =>
+			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions", currentAccount.ShowRepositoryDescriptionInList, e =>
 			{ 
-				currentAccount.ShowRepositoryDescriptionInList = e.Value;
-				application.Accounts.Update(currentAccount);
+//				currentAccount.ShowRepositoryDescriptionInList = e.Value;
+//				application.Accounts.Update(currentAccount);
 			});
 
 			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, MonoTouch.UIKit.UITableViewCellStyle.Value1)
@@ -72,7 +57,7 @@ namespace CodeHub.iOS.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
-            var sidebarOrder = new StyledStringElement("Sidebar Order", () => vm.GoToSidebarOrderCommand.Execute(null));
+            //var sidebarOrder = new StyledStringElement("Sidebar Order", () => vm.GoToSidebarOrderCommand.Execute(null));
 
             var largeFonts = new TrueFalseElement("Large Fonts", vm.LargeFonts, x =>
             {
@@ -81,10 +66,10 @@ namespace CodeHub.iOS.Views.App
                 CreateTable();
             });
 
-            accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
+            accountSection.Add(new TrueFalseElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
+			var deleteCache = new StyledStringElement("Delete Cache", string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
 			deleteCache.Tapped += () =>
 			{ 
 				vm.DeleteAllCacheCommand.Execute(null);
@@ -92,10 +77,10 @@ namespace CodeHub.iOS.Views.App
 				ReloadData();
 			};
 
-			var usage = new TrueFalseElement("Send Anonymous Usage".t(), vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value);
+			var usage = new TrueFalseElement("Send Anonymous Usage", vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value);
 
 			//Assign the root
-			var root = new RootElement(Title);
+			var root = new RootElement("Settings");
             root.Add(accountSection);
             root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView, largeFonts });
 			root.Add(new Section ("Internal") { deleteCache, usage });

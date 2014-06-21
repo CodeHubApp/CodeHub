@@ -1,113 +1,77 @@
 using System;
-using CodeFramework.Core.ViewModels;
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using CodeHub.Core.Messages;
 using System.Linq;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueLabelsViewModel : LoadableViewModel
     {
-		private IEnumerable<LabelModel> _originalLables;
+		public ReactiveCollection<LabelModel> Labels { get; private set; }
 
-		private bool _isSaving;
-		public bool IsSaving
-		{
-			get { return _isSaving; }
-			private set {
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
+	    public ReactiveList<LabelModel> SelectedLabels { get; private set; }
 
-		private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
-		public CollectionViewModel<LabelModel> Labels
-		{
-			get { return _labels; }
-		}
+        public string RepositoryOwner { get; set; }
 
-		private readonly CollectionViewModel<LabelModel> _selectedLabels = new CollectionViewModel<LabelModel>();
-		public CollectionViewModel<LabelModel> SelectedLabels
-		{
-			get { return _selectedLabels; }
-		}
+		public string RepositoryName { get; set; }
 
-		public string Username  { get; private set; }
+		public long IssueId { get; set; }
 
-		public string Repository { get; private set; }
+		public bool SaveOnSelect { get; set; }
 
-		public long Id { get; private set; }
+        public ICollection<LabelModel> OriginalLabels { get; set; } 
 
-		public bool SaveOnSelect { get; private set; }
+        public IReactiveCommand SelectLabelsCommand { get; private set; }
 
-		public void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Id = navObject.Id;
-			SaveOnSelect = navObject.SaveOnSelect;
+	    public IssueLabelsViewModel(IApplicationService applicationService)
+	    {
+	        Labels = new ReactiveCollection<LabelModel>();
+            SelectedLabels = new ReactiveList<LabelModel>();
 
-			_originalLables = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
-			SelectedLabels.Items.Reset(_originalLables);
-		}
+            SelectLabelsCommand = new ReactiveCommand();
+	        SelectLabelsCommand.RegisterAsyncTask(async t =>
+	        {
+	            var selectedLabels = t as IEnumerable<LabelModel>;
+                if (selectedLabels != null)
+	                SelectedLabels.Reset(selectedLabels);
 
-		public ICommand SaveLabelChoices
-		{
-			get { return new MvxCommand(() => SelectLabels(SelectedLabels)); }
-		}
+	            //If nothing has changed, dont do anything...
+                if (OriginalLabels != null && OriginalLabels.Count() == SelectedLabels.Count() &&
+                    OriginalLabels.Intersect(SelectedLabels).Count() == SelectedLabels.Count())
+	            {
+	                DismissCommand.ExecuteIfCan();
+	                return;
+	            }
 
-		private async Task SelectLabels(IEnumerable<LabelModel> x)
-		{
-			//If nothing has changed, dont do anything...
-			if (_originalLables != null && _originalLables.Count() == x.Count() && _originalLables.Intersect(x).Count() == x.Count())
-			{
-				ChangePresentation(new MvxClosePresentationHint(this));
-				return;
-			}
-				
-			if (SaveOnSelect)
-			{
-				try
-				{
-					IsSaving = true;
-					var labels = x != null ? x.Select(y => y.Name).ToArray() : null;
-					var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateLabels(labels);
-					var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
-				}
-				catch (Exception e)
-				{
-                    DisplayAlert("Unable to save labels! Please try again.");
-				}
-				finally
-				{
-					IsSaving = false;
-				}
-			}
-			else
-			{
-				Messenger.Publish(new SelectIssueLabelsMessage(this) { Labels = SelectedLabels.Items.ToArray() });
-			}
+	            if (SaveOnSelect)
+	            {
+	                try
+	                {
+                        var labels = (SelectedLabels != null && SelectedLabels.Count > 0) 
+                                    ? SelectedLabels.Select(y => y.Name).ToArray() : null;
+	                    var updateReq =
+	                        applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId]
+	                            .UpdateLabels(labels);
+                        await applicationService.Client.ExecuteAsync(updateReq);
+	                }
+	                catch (Exception e)
+	                {
+	                    throw new Exception("Unable to save labels! Please try again.", e);
+	                }
+	            }
 
-			ChangePresentation(new MvxClosePresentationHint(this));
-		}
+                DismissCommand.ExecuteIfCan();
+	        });
 
-		protected override Task Load(bool forceCacheInvalidation)
-		{
-            return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Labels.GetAll(), forceCacheInvalidation);
-		}
-
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public long Id { get; set; }
-			public bool SaveOnSelect { get; set; }
-		}
+	        LoadCommand.RegisterAsyncTask(t =>
+	            Labels.SimpleCollectionLoad(
+	                applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Labels.GetAll(),
+	                t as bool?));
+	    }
     }
 }
 

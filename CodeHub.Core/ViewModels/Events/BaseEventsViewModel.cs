@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -15,17 +14,21 @@ using GitHubSharp;
 using GitHubSharp.Models;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Changesets;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Events
 {
     public abstract class BaseEventsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<Tuple<EventModel, EventBlock>> _events = new CollectionViewModel<Tuple<EventModel, EventBlock>>();
+        protected readonly IApplicationService ApplicationService;
 
-        public CollectionViewModel<Tuple<EventModel, EventBlock>> Events
-        {
-            get { return _events; }
-        }
+        public ReactiveCollection<Tuple<EventModel, EventBlock>> Events { get; private set; }
+
+        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+
+        public IReactiveCommand GoToGistCommand { get; private set; }
 
         public bool ReportRepository
         {
@@ -33,17 +36,37 @@ namespace CodeHub.Core.ViewModels.Events
             private set;
         }
 
-        protected BaseEventsViewModel()
+        protected BaseEventsViewModel(IApplicationService applicationService)
         {
+            ApplicationService = applicationService;
+            Events = new ReactiveCollection<Tuple<EventModel, EventBlock>>();
             ReportRepository = true;
-        }
 
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return this.RequestModel(CreateRequest(0, 100), forceCacheInvalidation, response => {
-				this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
-                Events.Items.Reset(CreateDataFromLoad(response.Data));
+            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand.OfType<EventModel.RepoModel>().Subscribe(x =>
+            {
+                var repoId = new RepositoryIdentifier(x.Name);
+                var vm = CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = repoId.Owner;
+                vm.RepositoryName = repoId.Name;
+                ShowViewModel(vm);
             });
+
+            GoToGistCommand = new ReactiveCommand();
+            GoToGistCommand.OfType<EventModel.GistEvent>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<GistViewModel>();
+                vm.Id = x.Gist.Id;
+                vm.Gist = x.Gist;
+                ShowViewModel(vm);
+            });
+
+            LoadCommand.RegisterAsyncTask(t => 
+                this.RequestModel(CreateRequest(0, 100), t as bool?, response =>
+                {
+                    this.CreateMore(response, m => Events.MoreTask = m, d => Events.AddRange(CreateDataFromLoad(d)));
+                    Events.Reset(CreateDataFromLoad(response.Data));
+                }));
         }
 
 		private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(List<EventModel> events)
@@ -65,110 +88,83 @@ namespace CodeHub.Core.ViewModels.Events
         
         protected abstract GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage);
 
-		private void GoToCommits(EventModel.RepoModel repoModel, string branch)
+        private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {
-			var repoId = new RepositoryIdentifier(repoModel.Name);
-            ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
-            {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				Branch = branch
-            });
-        }
-
-        public ICommand GoToRepositoryCommand
-        {
-            get { return new MvxCommand<EventModel.RepoModel>(GoToRepository, x => x != null); }
-        }
-
-        private void GoToRepository(EventModel.RepoModel eventModel)
-        {
-            var repoId = new RepositoryIdentifier(eventModel.Name);
-            ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
-            {
-				Username = repoId.Owner,
-				Repository = repoId.Name
-            });
+            var repoId = new RepositoryIdentifier(repoModel.Name);
+            var vm = CreateViewModel<ChangesetsViewModel>();
+            vm.RepositoryOwner = repoId.Owner;
+            vm.RepositoryName = repoId.Name;
+            vm.Branch = branch;
+            ShowViewModel(vm);
         }
 
         private void GoToUser(string username)
         {
-            if (string.IsNullOrEmpty(username))
-                return;
-            ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject {Username = username});
+            if (string.IsNullOrEmpty(username)) return;
+            var vm = CreateViewModel<ProfileViewModel>();
+            vm.Username = username;
+            ShowViewModel(vm);
         }
 
         private void GoToBranches(RepositoryIdentifier repoId)
         {
-			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
-            {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				IsShowingBranches = true
-            });
+            var vm = CreateViewModel<BranchesAndTagsViewModel>();
+            vm.RepositoryOwner = repoId.Owner;
+            vm.RepositoryName = repoId.Name;
+            vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Branches;
+            ShowViewModel(vm);
         }
 
         private void GoToTags(EventModel.RepoModel eventModel)
         {
             var repoId = new RepositoryIdentifier(eventModel.Name);
-			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
-            {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				IsShowingBranches = false
-            });
-        }
-
-        public ICommand GoToGistCommand
-        {
-            get { return new MvxCommand<EventModel.GistEvent>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Gist.Id }), x => x != null && x.Gist != null); }
+            var vm = CreateViewModel<BranchesAndTagsViewModel>();
+            vm.RepositoryOwner = repoId.Owner;
+            vm.RepositoryName = repoId.Name;
+            vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Tags;
+            ShowViewModel(vm);
         }
 
         private void GoToIssue(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name,
-                Id = id
-            });
+            var vm = CreateViewModel<IssueViewModel>();
+            vm.RepositoryOwner = repo.Owner;
+            vm.RepositoryName = repo.Name;
+            vm.IssueId = id;
         }
 
         private void GoToPullRequest(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name,
-                Id = id
-            });
+            var vm = CreateViewModel<PullRequestViewModel>();
+            vm.RepositoryOwner = repo.Owner;
+            vm.RepositoryName = repo.Name;
+            vm.PullRequestId = id;
+            ShowViewModel(vm);
         }
 
         private void GoToPullRequests(RepositoryIdentifier repo)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            ShowViewModel<PullRequestsViewModel>(new PullRequestsViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name
-            });
+            var vm = CreateViewModel<PullRequestsViewModel>();
+            vm.RepositoryOwner = repo.Owner;
+            vm.RepositoryName = repo.Name;
+            ShowViewModel(vm);
         }
 
         private void GoToChangeset(RepositoryIdentifier repo, string sha)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-			ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
-            {
-                Username = repo.Owner,
-                Repository = repo.Name,
-				Node = sha
-            });
+            var vm = CreateViewModel<ChangesetViewModel>();
+            vm.RepositoryOwner = repo.Owner;
+            vm.RepositoryName = repo.Name;
+            vm.Node = sha;
+            ShowViewModel(vm);
         }
 
         private EventBlock CreateEventTextBlocks(EventModel eventModel)
@@ -309,7 +305,7 @@ namespace CodeHub.Core.ViewModels.Events
             else if (eventModel.PayloadObject is EventModel.GistEvent)
             {
                 var gistEvent = (EventModel.GistEvent)eventModel.PayloadObject;
-                eventBlock.Tapped = () => GoToGistCommand.Execute(gistEvent);
+                eventBlock.Tapped = () => GoToGistCommand.ExecuteIfCan(gistEvent);
 
                 if (string.Equals(gistEvent.Action, "create", StringComparison.OrdinalIgnoreCase))
 					eventBlock.Header.Add(new TextBlock(" created Gist #"));

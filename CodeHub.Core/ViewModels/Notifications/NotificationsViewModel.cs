@@ -1,206 +1,170 @@
 using System;
 using System.Linq;
-using System.Threading;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using GitHubSharp.Models;
-using CodeHub.Core.Messages;
-using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
     public class NotificationsViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
-		private ICommand _readAllCommand;
-		private ICommand _readCommand;
-		private ICommand _readReposCommand;
-		private int _shownIndex;
-		private bool _isMarking;
+        private readonly IApplicationService _applicationService;
+        private int _shownIndex;
+        private NotificationsFilterModel _filter;
 
-        public FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> Notifications
-        {
-            get { return _notifications; }
-        }
+        public ReactiveCollection<NotificationModel> Notifications { get; private set; }
 
 		public int ShownIndex
 		{
 			get { return _shownIndex; }
-			private set
-			{
-				_shownIndex = value;
-				RaisePropertyChanged(() => ShownIndex);
-			}
+			set { this.RaiseAndSetIfChanged(ref _shownIndex, value); }
 		}
 
-		public bool IsMarking
-		{
-			get { return _isMarking; }
-			set
-			{
-				_isMarking = value;
-				RaisePropertyChanged(() => IsMarking);
-			}
-		}
-
-        public ICommand ReadCommand
+        public NotificationsFilterModel Filter
         {
-			get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
+            get { return _filter; }
+            private set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
-		public ICommand ReadRepositoriesCommand
-		{
-			get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(x => MarkRepoAsRead(x))); }
-		}
+        public IReactiveCommand ReadRepositoriesCommand { get; private set; }
 
-        public ICommand ReadAllCommand
-        {
-			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
-        }
+        public IReactiveCommand ReadAllCommand { get; private set; }
 
-        public ICommand GoToNotificationCommand
-        {
-            get { return new MvxCommand<NotificationModel>(GoToNotification); }
-        }
+        public IReactiveCommand GoToNotificationCommand { get; private set; }
 		
         private void GoToNotification(NotificationModel x)
         {
             var subject = x.Subject.Type.ToLower();
             if (subject.Equals("issue"))
             {
-                ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = x.Repository.Owner.Login,Repository = x.Repository.Name, Id = long.Parse(node) });
+                var vm = CreateViewModel<IssueViewModel>();
+                vm.RepositoryOwner = x.Repository.Owner.Login;
+                vm.RepositoryName = x.Repository.Name;
+                vm.IssueId = long.Parse(node);
+                ShowViewModel(vm);
             }
             else if (subject.Equals("pullrequest"))
             {
-                ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, Id = long.Parse(node) });
+                var vm = CreateViewModel<PullRequestViewModel>();
+                vm.RepositoryOwner = x.Repository.Owner.Login;
+                vm.RepositoryName = x.Repository.Name;
+                vm.PullRequestId = long.Parse(node);
+                ShowViewModel(vm);
             }
             else if (subject.Equals("commit"))
             {
-                ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, Node = node });
+                var vm = CreateViewModel<ChangesetViewModel>();
+                vm.RepositoryOwner = x.Repository.Owner.Login;
+                vm.RepositoryName = x.Repository.Name;
+                vm.Node = node;
+                ShowViewModel(vm);
             }
             else if (subject.Equals("release"))
             {
-                ReadCommand.Execute(x);
-                ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, IsShowingBranches = false });
+                var vm = CreateViewModel<BranchesAndTagsViewModel>();
+                vm.RepositoryOwner = x.Repository.Owner.Login;
+                vm.RepositoryName = x.Repository.Name;
+                vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Tags;
+                ShowViewModel(vm);
             }
+
+            ReadNotification(x);
         }
 
-        public NotificationsViewModel()
+        public NotificationsViewModel(IApplicationService applicationService)
         {
-            _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
-            _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
-			_notifications.Bind(x => x.Filter, () => LoadCommand.Execute(false));
-			this.Bind(x => x.ShownIndex, x => {
-				if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
-				else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
-				else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
-				((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged();
-			});
-			this.Bind(x => x.IsLoading, ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged);
+            _applicationService = applicationService;
+            Notifications = new ReactiveCollection<NotificationModel> {GroupFunc = x => x.Repository.FullName};
 
-			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
-				_shownIndex = 0;
-			else if (_notifications.Filter.Equals(NotificationsFilterModel.CreateParticipatingFilter()))
-				_shownIndex = 1;
-			else
-				_shownIndex = 2;
-
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
-                Notifications.Items.Reset(response.Data);
-                UpdateAccountNotificationsCount();
+            LoadCommand.RegisterAsyncTask(t =>
+            {
+                var req = applicationService.Client.Notifications.GetAll(all: Filter.All, participating: Filter.Participating);
+                return this.RequestModel(req, t as bool?, response => Notifications.Reset(response.Data));
             });
+
+            GoToNotificationCommand = new ReactiveCommand();
+            GoToNotificationCommand.OfType<NotificationModel>().Subscribe(GoToNotification);
+
+            ReadAllCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ShownIndex, x => x != 2));
+            ReadAllCommand.RegisterAsyncTask(async t =>
+            {
+                try
+                {
+                    if (!Notifications.Any()) return;
+                    await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
+                    Notifications.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Unable to mark all notifications as read. Please try again.", e);
+                }
+            });
+
+            ReadRepositoriesCommand = new ReactiveCommand();
+            ReadRepositoriesCommand.RegisterAsyncTask(async t =>
+            {
+                try
+                {
+                    var repo = t as string;
+                    if (repo == null) return;
+                    var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
+                    await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
+                    Notifications.RemoveAll(Notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Unable to mark repositories' notifications as read. Please try again.", e);
+                }
+            });
+
+            this.WhenAnyValue(x => x.ShownIndex).Subscribe(x =>
+            {
+                switch (x)
+                {
+                    case 0:
+                        Filter = NotificationsFilterModel.CreateUnreadFilter();
+                        break;
+                    case 1:
+                        Filter = NotificationsFilterModel.CreateParticipatingFilter();
+                        break;
+                    default:
+                        Filter = NotificationsFilterModel.CreateAllFilter();
+                        break;
+                }
+            });
+
+            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(x => LoadCommand.ExecuteIfCan());
         }
 
-		private async Task Read(NotificationModel model)
+        private async Task ReadNotification(NotificationModel notification)
         {
-			// If its already read, ignore it
-			if (!model.Unread)
-				return;
-
-			try
-			{
-				var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
-	            if (response.Data) 
-	            {
-	                //We just read it
-	                model.Unread = false;
-	 
-	                //Update the notifications count on the account
-					Notifications.Items.Remove(model);
-	                UpdateAccountNotificationsCount();
-	            }
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to mark notification as read. Please try again.");
-			}
-        }
-
-        private async Task MarkRepoAsRead(string repo)
-		{
             try
             {
-                IsMarking = true;
-                var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
-                await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
-                Notifications.Items.RemoveRange(Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
-                UpdateAccountNotificationsCount();
+                if (notification == null) return;
+                if (!notification.Unread) return;
+                var response = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Notifications[notification.Id].MarkAsRead());
+                if (response.Data)
+                {
+                    notification.Unread = false;
+                    Notifications.Remove(notification);
+                }
             }
             catch (Exception e)
             {
-                DisplayAlert("Unable to mark repositories' notifications as read. Please try again.");
+                System.Diagnostics.Debug.WriteLine("Unable to mark notification as read: " + e.Message);
             }
-            finally
-            {
-                IsMarking = false;
-            }
-		}
-
-		private async Task MarkAllAsRead()
-		{
-			// Make sure theres some sort of notification
-            if (!Notifications.Any())
-                return;
-
-            try
-            {
-                IsMarking = true;
-                await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkAsRead());
-                Notifications.Items.Clear();
-                UpdateAccountNotificationsCount();
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to mark all notifications as read. Please try again.");
-            }
-            finally
-            {
-                IsMarking = false;
-            }
-        }
-
-        private void UpdateAccountNotificationsCount()
-        {
-            // Only update if we're looking at 
-			if (!Notifications.Filter.All && !Notifications.Filter.Participating)
-				Messenger.Publish<NotificationCountMessage>(new NotificationCountMessage(this) { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
         }
     }
 }

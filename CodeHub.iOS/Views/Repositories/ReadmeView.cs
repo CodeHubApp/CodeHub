@@ -1,57 +1,52 @@
+using System;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeFramework.iOS.Views;
+using MonoTouch.UIKit;
+using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class ReadmeView : WebView
+    public class ReadmeView : WebView<ReadmeViewModel>
     {
-        public new ReadmeViewModel ViewModel
-        {
-            get { return (ReadmeViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
-		public ReadmeView() : base(false)
-        {
-            Title = "Readme";
-            Web.ScalesPageToFit = true;
-        }
+        private UIActionSheet _actionSheet;
 
         public override void ViewDidLoad()
         {
+            Web.ScalesPageToFit = true;
+            Title = "Readme";
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.Path, x => LoadFile(x));
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
-			ViewModel.LoadCommand.Execute(false);
+            ViewModel.WhenAnyValue(x => x.ContentText).Subscribe(LoadContent);
+
+			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel, x => x != null));
         }
 
-		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, MonoTouch.UIKit.UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
 		{
-			if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
-			{
-				ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
-				return false;
-			}
-
-			return base.ShouldStartLoad(request, navigationType);
+		    if (request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
+		        return base.ShouldStartLoad(request, navigationType);
+		    ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
+		    return false;
 		}
 
 		private void ShareButtonPress()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet("Readme");
-			var shareButton = sheet.AddButton("Share".t());
-			var showButton = sheet.AddButton("Show in GitHub".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+            _actionSheet = new UIActionSheet("Readme");
+            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? _actionSheet.AddButton("Share") : -1;
+		    var showButton = ViewModel.GoToGitHubCommand.CanExecute(null) ? _actionSheet.AddButton("Show in GitHub") : -1;
+            var cancelButton = _actionSheet.AddButton("Cancel");
+            _actionSheet.CancelButtonIndex = cancelButton;
+            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
+            _actionSheet.Clicked += (s, e) =>
+            {
 				if (e.ButtonIndex == showButton)
-					ViewModel.GoToGitHubCommand.Execute(null);
+                    ViewModel.GoToGitHubCommand.ExecuteIfCan();
 				else if (e.ButtonIndex == shareButton)
-					ViewModel.ShareCommand.Execute(null);
-			};
+					ViewModel.ShareCommand.ExecuteIfCan();
+                _actionSheet = null;
+            };
 
-			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            _actionSheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
 		}
     }
 }

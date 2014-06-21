@@ -1,40 +1,48 @@
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using System.Linq;
 using CodeHub.Core.Services;
-using CodeFramework.iOS.ViewControllers;
 using System;
 using CodeHub.Core.ViewModels.App;
 using System.Threading.Tasks;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class UpgradesView : ViewModelDrivenDialogViewController
+    public class UpgradesView : ViewModelDialogView<UpgradesViewModel>
     {
+        private readonly IFeaturesService _featuresService;
+        private readonly INetworkActivityService _networkActivityService;
+        private readonly IAlertDialogService _alertDialogService;
         private readonly List<Item> _items = new List<Item>();
-        private readonly IFeaturesService _features;
 
-        public UpgradesView()
+        public UpgradesView(IFeaturesService featuresService, INetworkActivityService networkActivityService, IAlertDialogService alertDialogService)
         {
-            Title = "Upgrades";
+            _featuresService = featuresService;
+            _networkActivityService = networkActivityService;
+            _alertDialogService = alertDialogService;
             EnableSearch = false;
             Style = MonoTouch.UIKit.UITableViewStyle.Plain;
-            _features = Cirrious.CrossCore.Mvx.Resolve<IFeaturesService>();
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
         }
 
         public override void ViewDidLoad()
         {
+            Title = "Upgrades";
+            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
+
             base.ViewDidLoad();
-            var vm = (UpgradesViewModel)this.ViewModel;
-            vm.Bind(x => x.Keys, x => LoadProducts(x));
+
+            ViewModel.WhenAnyValue(x => x.Keys).Where(x => x != null && x.Length > 0).Subscribe(x => LoadProducts(x));
         }
 
         private async Task LoadProducts(string[] keys)
         {
             try
             {
-                MonoTouch.Utilities.PushNetworkActive();
+                _networkActivityService.PushNetworkActive();
                 var data = await InAppPurchases.RequestProductData(keys);
                 _items.Clear();
                 _items.AddRange(data.Products.Select(x => new Item { Id = x.ProductIdentifier, Name = x.LocalizedTitle, Description = x.LocalizedDescription, Price = x.LocalizedPrice() }));
@@ -42,11 +50,11 @@ namespace CodeHub.iOS.Views.App
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                _alertDialogService.Alert("Error", e.Message);
             }
             finally
             {
-                MonoTouch.Utilities.PopNetworkActive();
+                _networkActivityService.PopNetworkActive();
             }
         }
 
@@ -73,7 +81,7 @@ namespace CodeHub.iOS.Views.App
             section.AddAll(_items.Select(item =>
             {
                 var el = new MultilinedElement(item.Name + " (" + item.Price + ")", item.Description);
-                if (_features.IsActivated(item.Id))
+                if (_featuresService.IsActivated(item.Id))
                 {
                     el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.Checkmark;
                 }
@@ -98,7 +106,7 @@ namespace CodeHub.iOS.Views.App
 
         private void Tapped(Item item)
         {
-            _features.Activate(item.Id);
+            _featuresService.Activate(item.Id);
         }
 
         private class Item

@@ -3,24 +3,12 @@ using SQLite;
 
 namespace CodeHub.Core.Data
 {
-    public class GitHubAccount : Account
+    public class GitHubAccount : BaseAccount
     {
         /// <summary>
         /// Gets or sets the OAuth string
         /// </summary>
         public string OAuth { get; set; }
-
-		/// <summary>
-		/// The password which is only used on Enterprise accounts since oAuth does not work.
-		/// </summary>
-		/// <value>The password.</value>
-		public string Password { get; set; }
-
-        /// <summary>
-		/// Gets or sets the domain (API)
-        /// </summary>
-        /// <value>The domain.</value>
-        public string Domain { get; set; }
 
 		/// <summary>
 		/// Gets or sets the web domain. Sort of like the API domain with the API paths
@@ -45,7 +33,7 @@ namespace CodeHub.Core.Data
         public bool ExpandOrganizations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Account"/> hides the repository
+        /// Gets or sets a value indicating whether this <see cref="BaseAccount"/> hides the repository
         /// description in list.
         /// </summary>
         /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
@@ -71,7 +59,7 @@ namespace CodeHub.Core.Data
         public int? Notifications { get; set; }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Account"/> class.
+		/// Initializes a new instance of the <see cref="BaseAccount"/> class.
 		/// </summary>
 		public GitHubAccount()
 		{

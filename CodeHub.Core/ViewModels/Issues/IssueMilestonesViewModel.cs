@@ -1,105 +1,66 @@
-using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
-using CodeHub.Core.Messages;
-using System.Linq;
 using System;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueMilestonesViewModel : LoadableViewModel
     {
-		private MilestoneModel _selectedMilestone;
-		public MilestoneModel SelectedMilestone
-		{
-			get
-			{
-				return _selectedMilestone;
-			}
-			set
-			{
-				_selectedMilestone = value;
-				RaisePropertyChanged(() => SelectedMilestone);
-			}
-		}
-
-		private bool _isSaving;
-		public bool IsSaving
-		{
-			get { return _isSaving; }
-			private set {
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
-
-		private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
-        public CollectionViewModel<MilestoneModel> Milestones
+        private MilestoneModel _selectedMilestone;
+        public MilestoneModel SelectedMilestone
         {
-            get { return _milestones; }
+            get { return _selectedMilestone; }
+            set { this.RaiseAndSetIfChanged(ref _selectedMilestone, value); }
         }
 
-		public string Username  { get; private set; }
+        public ReactiveCollection<MilestoneModel> Milestones { get; private set; }
 
-		public string Repository { get; private set; }
+        public string RepositoryOwner { get; set; }
 
-		public long Id { get; private set; }
+        public string RepositoryName { get; set; }
 
-		public bool SaveOnSelect { get; private set; }
+        public long IssueId { get; set; }
 
-        public void Init(NavObject navObject)
+        public bool SaveOnSelect { get; set; }
+
+        public IReactiveCommand SelectMilestoneCommand { get; private set; }
+
+        public IssueMilestonesViewModel(IApplicationService applicationService)
         {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Id = navObject.Id;
-			SaveOnSelect = navObject.SaveOnSelect;
-			SelectedMilestone = TxSevice.Get() as MilestoneModel;
+            Milestones = new ReactiveCollection<MilestoneModel>();
 
-			this.Bind(x => x.SelectedMilestone, x => SelectMilestone(x));
-        }
+            SelectMilestoneCommand = new ReactiveCommand();
+            SelectMilestoneCommand.RegisterAsyncTask(async t =>
+            {
+                var milestone = t as MilestoneModel;
+                if (milestone != null)
+                    SelectedMilestone = milestone;
 
-		private async Task SelectMilestone(MilestoneModel x)
-		{
-			if (SaveOnSelect)
-			{
-				try
-				{
-					IsSaving = true;
-					int? milestone = null;
-					if (x != null) milestone = x.Number;
-					var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(milestone);
-					var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-					Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
-				}
-				catch (Exception e)
-				{
-                    DisplayAlert("Unable to to save milestone! Please try again.");
-                    ReportException(e);
-				}
-				finally
-				{
-					IsSaving = false;
-				}
-			}
-			else
-			{
-				Messenger.Publish(new SelectedMilestoneMessage(this) { Milestone = x });
-			}
+                if (SaveOnSelect)
+                {
+                    try
+                    {
+                        int? milestoneNumber = null;
+                        if (SelectedMilestone != null) milestoneNumber = SelectedMilestone.Number;
+                        var updateReq = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId].UpdateMilestone(milestoneNumber);
+                        await applicationService.Client.ExecuteAsync(updateReq);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Unable to to save milestone! Please try again.", e);
+                    }
+                }
 
-			ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
-		}
+                DismissCommand.ExecuteIfCan();
+            });
 
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return Milestones.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Milestones.GetAll(), forceCacheInvalidation);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-			public long Id { get; set; }
-			public bool SaveOnSelect { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                Milestones.SimpleCollectionLoad(
+                    applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Milestones.GetAll(),
+                    t as bool?));
         }
     }
 }

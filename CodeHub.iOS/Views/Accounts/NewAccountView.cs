@@ -1,26 +1,28 @@
 using System.Drawing;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch;
 using MonoTouch.UIKit;
-using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
+using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class NewAccountView : MvxViewController
+    public partial class NewAccountView : ViewModelViewController<NewAccountViewModel>
     {
-        public NewAccountView()
+        private readonly IFeaturesService _featuresService;
+
+        public NewAccountView(IFeaturesService featuresService)
 			: base ("NewAccountView", null)
         {
-            Title = "Account";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,(s, e) => NavigationController.PopViewControllerAnimated(true));
+            _featuresService = featuresService;
         }
 
         public override void ViewDidLoad()
         {
+            Title = "Account";
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+
             base.ViewDidLoad();
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
@@ -36,26 +38,22 @@ namespace CodeHub.iOS.Views.Accounts
             EnterpriseButton.Layer.ShadowOffset = new SizeF(0, 1);
             EnterpriseButton.Layer.ShadowOpacity = 0.3f;
 
-            var set = this.CreateBindingSet<NewAccountView, NewAccountViewModel>();
-            set.Bind(InternetButton).To(x => x.GoToDotComLoginCommand);
-            set.Apply();
-
-            EnterpriseButton.TouchUpInside += (object sender, System.EventArgs e) => GoToEnterprise();
+            EnterpriseButton.TouchUpInside += (sender, e) => ViewModel.GoToDotComLoginCommand.ExecuteIfCan();
+            EnterpriseButton.TouchUpInside += (sender, e) => GoToEnterprise();
 
             ScrollView.ContentSize = new SizeF(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
         }
 
         private void GoToEnterprise()
         {
-            var features = Mvx.Resolve<IFeaturesService>();
-            if (features.IsEnterpriseSupportActivated)
-                ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
+            if (_featuresService.IsEnterpriseSupportActivated)
+                ViewModel.GoToEnterpriseLoginCommand.Execute(null);
             else
             {
-                var ctrl = new EnableEnterpriseViewController();
+                var ctrl = IoC.Resolve<EnableEnterpriseViewController>();
                 ctrl.Dismissed += (sender, e) => {
-                    if (features.IsEnterpriseSupportActivated)
-                        ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
+                    if (_featuresService.IsEnterpriseSupportActivated)
+                        ViewModel.GoToEnterpriseLoginCommand.Execute(null);
                 };
                 PresentViewController(ctrl, true, null);
             }

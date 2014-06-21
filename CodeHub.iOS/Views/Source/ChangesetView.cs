@@ -1,54 +1,42 @@
 using System;
 using CodeFramework.Elements;
 using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
 using System.Linq;
 using MonoTouch.Foundation;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetView : ViewModelDrivenDialogViewController
+    public class ChangesetView : ViewModelDialogView<ChangesetViewModel>
     {
         private readonly HeaderView _header = new HeaderView();
-
-        public new ChangesetViewModel ViewModel 
-        {
-            get { return (ChangesetViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-        }
-        
-        public ChangesetView()
-        {
-            Title = "Commit".t();
-            Root.UnevenRows = true;
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-        }
+        private UIActionSheet _actionSheet;
 
         public override void ViewDidLoad()
         {
+            Title = "Commit";
+            Root.UnevenRows = true;
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+
             base.ViewDidLoad();
 
-            _header.Title = "Commit: ".t() + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
-            ViewModel.Bind(x => x.Changeset, Render);
-            ViewModel.BindCollection(x => x.Comments, a => Render());
+            _header.Title = "Commit: " + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
+//            ViewModel.Bind(x => x.Changeset, Render);
+//            ViewModel.BindCollection(x => x.Comments, a => Render());
         }
 
         public void Render()
         {
-            var commitModel = ViewModel.Changeset;
+            var commitModel = ViewModel.Commit;
             if (commitModel == null)
                 return;
 
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-            _header.Subtitle = "Commited ".t() + (commitModel.Commit.Committer.Date).ToDaysAgo();
+            _header.Subtitle = "Commited " + (commitModel.Commit.Committer.Date).ToDaysAgo();
             var headerSection = new Section(_header);
             root.Add(headerSection);
 
@@ -70,7 +58,7 @@ namespace CodeHub.iOS.Views.Source
 
             if (ViewModel.ShowRepository)
             {
-                var repo = new StyledStringElement(ViewModel.Repository) { 
+                var repo = new StyledStringElement(ViewModel.RepositoryName) { 
                     Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
                     Font = StyledStringElement.DefaultDetailFont, 
@@ -132,7 +120,7 @@ namespace CodeHub.iOS.Views.Source
 			if (commentSection.Elements.Count > 0)
 				root.Add(commentSection);
 
-            var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
+            var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             addComment.Tapped += AddCommentTapped;
 			root.Add(new Section { addComment });
             Root = root; 
@@ -140,36 +128,36 @@ namespace CodeHub.iOS.Views.Source
 
         void AddCommentTapped()
         {
-            var composer = new MarkdownComposerViewController();
-			composer.NewComment(this, async (text) => {
-                try
-                {
-					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
-					composer.CloseComposer();
-                }
-                catch (Exception e)
-                {
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
-                }
-                finally
-                {
-                    composer.EnableSendButton = true;
-                }
-            });
+//            var composer = new MarkdownComposerViewController();
+//			composer.NewComment(this, async (text) => {
+//                try
+//                {
+//					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
+//					composer.CloseComposer();
+//                }
+//                catch (Exception e)
+//                {
+//					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+//                }
+//                finally
+//                {
+//                    composer.EnableSendButton = true;
+//                }
+//            });
         }
 
 		private void ShowExtraMenu()
 		{
-			var changeset = ViewModel.Changeset;
+			var changeset = ViewModel.Commit;
 			if (changeset == null)
 				return;
 
-			var sheet = MonoTouch.Utilities.GetSheet(Title);
-			var addComment = sheet.AddButton("Add Comment".t());
-			var copySha = sheet.AddButton("Copy Sha".t());
-			var shareButton = sheet.AddButton("Share".t());
-			//var showButton = sheet.AddButton("Show in GitHub".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
+            var sheet = _actionSheet = new UIActionSheet(Title);
+			var addComment = sheet.AddButton("Add Comment");
+			var copySha = sheet.AddButton("Copy Sha");
+			var shareButton = sheet.AddButton("Share");
+			//var showButton = sheet.AddButton("Show in GitHub");
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 			sheet.Clicked += (s, e) => 
@@ -183,11 +171,11 @@ namespace CodeHub.iOS.Views.Source
 					}
 					else if (e.ButtonIndex == copySha)
 					{
-						UIPasteboard.General.String = ViewModel.Changeset.Sha;
+						UIPasteboard.General.String = ViewModel.Commit.Sha;
 					}
 					else if (e.ButtonIndex == shareButton)
 					{
-						var item = new NSUrl(ViewModel.Changeset.Url);
+						var item = new NSUrl(ViewModel.Commit.Url);
 						var activityItems = new MonoTouch.Foundation.NSObject[] { item };
 						UIActivity[] applicationActivities = null;
 						var activityController = new UIActivityViewController (activityItems, applicationActivities);
@@ -201,6 +189,8 @@ namespace CodeHub.iOS.Views.Source
 				catch
 				{
 				}
+
+			    _actionSheet = null;
 			};
 
 			sheet.ShowInView(this.View);

@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {
-	public class SourceFilterModel : FilterModel<SourceFilterModel>
+	public class SourceFilterModel
     {
         public Order OrderBy { get; set; }
+
         public bool Ascending { get; set; }
 
 		public SourceFilterModel()
@@ -14,9 +14,9 @@ namespace CodeHub.Core.Filters
             Ascending = true;
         }
 
-		public override SourceFilterModel Clone()
+		public SourceFilterModel Clone()
         {
-			return (SourceFilterModel)this.MemberwiseClone();
+			return (SourceFilterModel)MemberwiseClone();
         }
 
         public enum Order

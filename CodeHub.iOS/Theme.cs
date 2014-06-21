@@ -1,6 +1,7 @@
 ﻿using CodeFramework.iOS;
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Cells;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS
 {
@@ -14,10 +15,10 @@ namespace CodeHub.iOS
             CurrentTheme = theme;
             CodeFramework.iOS.Theme.CurrentTheme = theme;
 
-            var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
+            var defaultValues = IoC.Resolve<IDefaultValueService>();
 
             bool largeFonts;
-            if (!defaultValues.TryGet<bool>("large_fonts", out largeFonts))
+            if (!defaultValues.TryGet("large_fonts", out largeFonts))
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
@@ -29,15 +30,15 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-            CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+            //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
 
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
-
-            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
-            UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
+//
+//            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
+//            UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;

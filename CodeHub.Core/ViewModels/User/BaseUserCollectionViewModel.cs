@@ -1,22 +1,28 @@
-﻿using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+﻿using System;
+using System.Reactive.Linq;
 using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.User
 {
     public abstract class BaseUserCollectionViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<BasicUserModel> _users = new CollectionViewModel<BasicUserModel>();
+        public ReactiveCollection<BasicUserModel> Users { get; private set; }
 
-        public CollectionViewModel<BasicUserModel> Users
-        {
-            get { return _users; }
-        }
+        public IReactiveCommand GoToUserCommand { get; private set; }
 
-        public ICommand GoToUserCommand
+        protected BaseUserCollectionViewModel()
         {
-            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x.Login })); }
+            Users = new ReactiveCollection<BasicUserModel>();
+            GoToUserCommand = new ReactiveCommand();
+            GoToUserCommand.OfType<BasicUserModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<ProfileViewModel>();
+                vm.Username = x.Login;
+                ShowViewModel(vm);
+            });
         }
     }
 }

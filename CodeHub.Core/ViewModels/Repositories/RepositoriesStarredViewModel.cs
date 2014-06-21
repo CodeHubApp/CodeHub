@@ -1,17 +1,17 @@
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesStarredViewModel : RepositoriesViewModel
     {
-        public RepositoriesStarredViewModel()
+        public RepositoriesStarredViewModel(IApplicationService applicationService) : base(applicationService)
         {
             ShowRepositoryOwner = true;
-        }
 
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetStarred(), forceDataRefresh);
+            LoadCommand.RegisterAsyncTask(t =>
+                Repositories.SimpleCollectionLoad(
+                    applicationService.Client.AuthenticatedUser.Repositories.GetStarred(), t as bool?));
         }
     }
 }

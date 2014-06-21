@@ -3,30 +3,24 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using CodeHub.iOS.Views.Filters;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseRepositoriesView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : RepositoriesViewModel
     {
-        public new RepositoriesViewModel ViewModel
-        {  
-            get { return (RepositoriesViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         protected BaseRepositoriesView()
         {
-            Title = "Repositories".t();
-            NoItemsText = "No Repositories".t(); 
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
-				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
+            Title = "Repositories";
+            NoItemsText = "No Repositories"; 
+//			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+//				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            BindCollection(ViewModel.Repositories, CreateElement);
+            Bind(ViewModel.WhenAnyValue(x => x.Repositories), CreateElement);
 			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 56f, 0, 0);
         }
 

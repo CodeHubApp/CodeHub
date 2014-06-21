@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Drawing;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
-using Cirrious.CrossCore;
 using CodeHub.Core.Services;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.App
 {
     public partial class EnableEnterpriseViewController : UIViewController
     {
-        private IHud _hud;
+        private readonly IStatusIndicatorService _statusIndicatorService;
+        private readonly IFeaturesService _featuresService;
 
-        public EnableEnterpriseViewController() : base("EnableEnterpriseViewController", null)
+        public EnableEnterpriseViewController(IStatusIndicatorService statusIndicatorService, IFeaturesService featuresService) 
+            : base("EnableEnterpriseViewController", null)
         {
+            _statusIndicatorService = statusIndicatorService;
+            _featuresService = featuresService;
         }
 
         public event EventHandler Dismissed;
@@ -29,7 +31,7 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
-            this.View.AutosizesSubviews = true;
+            View.AutosizesSubviews = true;
 
             ImageView.Image = Images.Logos.Enterprise;
             ImageView.Layer.CornerRadius = 24f;
@@ -48,8 +50,6 @@ namespace CodeHub.iOS.Views.App
             EnableButton.Layer.ShadowOffset = new SizeF(0, 1);
             EnableButton.Layer.ShadowOpacity = 0.3f;
             EnableButton.TouchUpInside += EnablePushNotifications;
-
-            _hud = new Hud(View);
         }
 
         public override void ViewWillLayoutSubviews()
@@ -77,12 +77,12 @@ namespace CodeHub.iOS.Views.App
 
         void HandlePurchaseError (object sender, Exception e)
         {
-            _hud.Hide();
+            _statusIndicatorService.Hide();
         }
 
         void HandlePurchaseSuccess (object sender, string e)
         {
-            _hud.Hide();
+            _statusIndicatorService.Hide();
             DismissViewController(true, OnDismissed);
         }
 
@@ -102,9 +102,8 @@ namespace CodeHub.iOS.Views.App
 
         private void EnablePushNotifications(object sender, EventArgs e)
         {
-            _hud.Show("Enabling...");
-            var featureService = Mvx.Resolve<IFeaturesService>();
-            featureService.Activate(FeatureIds.EnterpriseSupport);
+            _statusIndicatorService.Show("Enabling...");
+            _featuresService.Activate(FeatureIds.EnterpriseSupport);
         }
     }
 }

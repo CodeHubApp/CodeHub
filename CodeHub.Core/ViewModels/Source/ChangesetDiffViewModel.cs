@@ -1,75 +1,89 @@
 using System;
-using CodeFramework.Core.ViewModels;
-using System.Threading.Tasks;
-using GitHubSharp.Models;
-using CodeFramework.Core.Services;
-using Cirrious.CrossCore;
-using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.App;
+using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
 
 namespace CodeHub.Core.ViewModels.Source
 {
 	public class ChangesetDiffViewModel : FileSourceViewModel
     {
-		private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
-		private CommitModel.CommitFileModel _commitFileModel;
+        private CommitModel.CommitFileModel _commitFile;
+        private string _filename;
 		private string _actualFilename;
 
-		public string Username { get; private set; }
+		public string Username { get; set; }
 
-		public string Repository { get; private set; }
+		public string Repository { get; set; }
 
-		public string Branch { get; private set; }
+		public string Branch { get; set; }
 
-		public string Filename { get; private set; }
+	    public string Filename
+	    {
+	        get { return _filename; }
+	        set { this.RaiseAndSetIfChanged(ref _filename, value); }
+	    }
 
-		public CollectionViewModel<CommentModel> Comments
-		{
-			get { return _comments; }
-		}
+	    public CommitModel.CommitFileModel CommitFile
+	    {
+	        get { return _commitFile; }
+	        set { this.RaiseAndSetIfChanged(ref _commitFile, value); }
+	    }
 
-		public void Init(NavObject navObject)
-        {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Branch = navObject.Branch;
-			Filename = navObject.Filename;
+		public ReactiveCollection<CommentModel> Comments { get; private set; }
 
-			_actualFilename = System.IO.Path.GetFileName(Filename);
-			if (_actualFilename == null)
-				_actualFilename = Filename.Substring(Filename.LastIndexOf('/') + 1);
+        public IReactiveCommand GoToCommentCommand { get; private set; }
 
-			Title = _actualFilename;
+	    public ChangesetDiffViewModel(IApplicationService applicationService)
+	    {
+            Comments = new ReactiveCollection<CommentModel>();
 
-			_commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as CommitModel.CommitFileModel;
-        }
+            GoToCommentCommand = new ReactiveCommand();
+            GoToCommentCommand.OfType<int?>().Subscribe(line =>
+            {
+                var vm = CreateViewModel<CommentViewModel>();
+                vm.SaveCommand.RegisterAsyncTask(async t =>
+                {
+                    var req = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(vm.Comment, Filename, line);
+                    var response = await applicationService.Client.ExecuteAsync(req);
+			        Comments.Add(response.Data);
+                    vm.DismissCommand.ExecuteIfCan();
+                });
+                ShowViewModel(vm);
+            });
 
-		protected override async Task Load(bool forceCacheInvalidation)
-		{
-			//Make sure we have this information. If not, go get it
-			if (_commitFileModel == null)
-			{
-				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Get());
-				_commitFileModel = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
-			}
+	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
+	        {
+	            if (string.IsNullOrEmpty(x))
+	                Title = "Diff";
+	            else
+	            {
+	                _actualFilename = System.IO.Path.GetFileName(Filename) ??
+	                                  Filename.Substring(Filename.LastIndexOf('/') + 1);
+	                Title = _actualFilename;
+	            }
+	        });
 
-			FilePath = CreatePlainContentFile(_commitFileModel.Patch, _actualFilename);
-			await Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.GetAll(), forceCacheInvalidation);
-		}
+	        LoadCommand.RegisterAsyncTask(async t =>
+	        {
+	            var branch = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch];
 
-		public async Task PostComment(string comment, int line)
-		{
-			var c = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(comment, Filename, line));
-			Comments.Items.Add(c.Data);
-		}
+	            //Make sure we have this information. If not, go get it
+			    if (CommitFile == null)
+			    {
+				    var data = await applicationService.Client.ExecuteAsync(branch.Get());
+                    CommitFile = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
+			    }
 
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public string Branch { get; set; }
-			public string Filename { get; set; }
-		}
+                FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename);
+			    await Comments.SimpleCollectionLoad(branch.Comments.GetAll(), t as bool?);
+
+	        });
+	    }
     }
 }
 

@@ -1,64 +1,71 @@
 using System;
+using System.Linq;
+using System.Reactive.Linq;
 using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.Utils;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
-using System.Linq;
+using ReactiveUI;
+using Xamarin.Utilities.Views;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesTrendingView : ViewModelCollectionDrivenDialogViewController
+    public class RepositoriesTrendingView : ViewModelCollectionView<RepositoriesTrendingViewModel>
     {
         public RepositoriesTrendingView()
         {
             EnableSearch = false;
-            NoItemsText = "No Repositories".t();
-            Title = "Trending".t();
         }
 
         public override void ViewDidLoad()
         {
-            base.ViewDidLoad();
-            var vm = (RepositoriesTrendingViewModel)ViewModel;
+            NoItemsText = "No Repositories";
+            Title = "Trending";
 
-			BindCollection(vm.Repositories, repo =>
+            base.ViewDidLoad();
+
+			Bind(ViewModel.WhenAnyValue(x => x.Repositories), repo =>
             {
-				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
+				var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
                 var imageUrl = Images.GitHubRepoUrl;
                 var sse = new RepositoryElement(repo.Name, repo.Stars, repo.Forks, description, repo.Owner, imageUrl) { ShowOwner = true };
-				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
+                sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });
 
             var button = new UIBarButtonItem("Time", UIBarButtonItemStyle.Plain, (s, e) =>
             {
-                var index = vm.SelectedTime == null ? 0 : vm.Times.ToList().IndexOf(vm.SelectedTime);
+                var index = ViewModel.SelectedTime == null ? 0 : ViewModel.Times.ToList().IndexOf(ViewModel.SelectedTime);
                 if (index < 0) index = 0;
-                new PickerAlert(vm.Times.Select(x => x.Name).ToArray(), index, x => 
+                new PickerAlertView(ViewModel.Times.Select(x => x.Name).ToArray(), index, x => 
                 {
-                    var selectedTime = vm.Times.ElementAtOrDefault(x);
+                    var selectedTime = ViewModel.Times.ElementAtOrDefault(x);
                     if (selectedTime != null)
-                        vm.SelectedTime = selectedTime;
+                        ViewModel.SelectedTime = selectedTime;
                 }).Show();
             });
 
             var button2 = new UIBarButtonItem("Language", UIBarButtonItemStyle.Plain, (s, e) =>
             {
-                var index = vm.SelectedLanguage == null ? 0 : vm.Languages.ToList().IndexOf(vm.SelectedLanguage);
+                var index = ViewModel.SelectedLanguage == null ? 0 : ViewModel.Languages.ToList().IndexOf(ViewModel.SelectedLanguage);
                 if (index < 0) index = 0;
-                new PickerAlert(vm.Languages.Select(x => x.Name).ToArray(), index, x =>
+                new PickerAlertView(ViewModel.Languages.Select(x => x.Name).ToArray(), index, x =>
                 {
-                    var selectedlanguage = vm.Languages.ElementAtOrDefault(x);
+                    var selectedlanguage = ViewModel.Languages.ElementAtOrDefault(x);
                     if (selectedlanguage != null)
-                        vm.SelectedLanguage = selectedlanguage;
+                        ViewModel.SelectedLanguage = selectedlanguage;
                 }).Show();
             });
 
-            vm.Bind(x => x.SelectedTime, x => button.Title = x.Name, true);
-            vm.Bind(x => x.SelectedLanguage, x => button2.Title = x.Name, true);
+            ViewModel.WhenAnyValue(x => x.SelectedTime)
+                .Where(x => x != null)
+                .Subscribe(x => button.Title = x.Name);
 
-            ToolbarItems = new UIBarButtonItem[]
+            ViewModel.WhenAnyValue(x => x.SelectedLanguage)
+                .Where(x => x != null)
+                .Subscribe(x => button2.Title = x.Name);
+
+            ToolbarItems = new[]
             {
                 new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
                 button2,

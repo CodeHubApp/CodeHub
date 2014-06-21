@@ -1,40 +1,31 @@
 using System;
-using CodeHub.iOS;
+using System.Reactive;
+using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using CodeFramework.iOS.ViewControllers;
-using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;
-using CodeFramework.iOS.Utils;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalTouchView
+    public class GistCreateView : ViewModelDialogView<GistCreateViewModel>
     {
-        private IHud _hud;
-
-        public new GistCreateViewModel ViewModel
-        {
-            get { return (GistCreateViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             Title = "Create Gist";
-            _hud = this.CreateHud();
             base.ViewDidLoad();
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
-            ViewModel.Bind(x => x.Description, UpdateView);
-            ViewModel.Bind(x => x.Files, UpdateView);
-            ViewModel.Bind(x => x.Public, UpdateView);
-            ViewModel.Bind(x => x.IsSaving, x =>
+
+            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, x => x.Public, (x, x1, x2) => Unit.Default)
+                .Subscribe(x => UpdateView());
+
+            ViewModel.SaveCommand.IsExecuting.Subscribe( x =>
             {
-                if (x)
-                    _hud.Show("Saving...");
-                else
-                    _hud.Hide();
+//                if (x)
+//                    _hud.Show("Saving...");
+//                else
+//                    _hud.Hide();
             });
         }
 
@@ -124,11 +115,11 @@ namespace CodeHub.iOS.Views.Gists
 
         private void ChangeDescription()
         {
-            var composer = new Composer { Title = "Description", Text = ViewModel.Description };
-            composer.NewComment(this, (text) => {
-                ViewModel.Description = text;
-                composer.CloseComposer();
-            });
+//            var composer = new Composer { Title = "Description", Text = ViewModel.Description };
+//            composer.NewComment(this, (text) => {
+//                ViewModel.Description = text;
+//                composer.CloseComposer();
+//            });
         }
 
 		public override DialogViewController.Source CreateSizingSource(bool unevenRows)

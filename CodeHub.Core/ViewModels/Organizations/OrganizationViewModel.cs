@@ -1,13 +1,13 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using System;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.ViewModels.Teams;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -15,65 +15,79 @@ namespace CodeHub.Core.ViewModels.Organizations
 	{
         private UserModel _userModel;
 
-        public string Name 
-        { 
-            get; 
-            private set; 
-        }
-
-		public void Init(NavObject navObject) 
-		{
-			Name = navObject.Name;
-		}
+        public string Name { get; set; }
 
         public UserModel Organization
         {
             get { return _userModel; }
-            private set
+            private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
+        }
+
+        public IReactiveCommand GoToMembersCommand { get; private set; }
+
+        public IReactiveCommand GoToTeamsCommand { get; private set; }
+
+        public IReactiveCommand GoToFollowersCommand { get; private set; }
+
+        public IReactiveCommand GoToEventsCommand { get; private set; }
+
+        public IReactiveCommand GoToGistsCommand { get; private set; }
+
+        public IReactiveCommand GoToRepositoriesCommand { get; private set; }
+
+        public OrganizationViewModel(IApplicationService applicationService)
+        {
+            GoToMembersCommand = new ReactiveCommand();
+            GoToMembersCommand.Subscribe(_ =>
             {
-                _userModel = value;
-                RaisePropertyChanged(() => Organization);
-            }
-        }
+                var vm = CreateViewModel<OrganizationMembersViewModel>();
+                vm.OrganizationName = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToMembersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<OrganizationMembersViewModel>(new OrganizationMembersViewModel.NavObject { Name = Name }));}
-        }
+            GoToTeamsCommand = new ReactiveCommand();
+            GoToTeamsCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<TeamsViewModel>();
+                vm.OrganizationName = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToTeamsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<TeamsViewModel>(new TeamsViewModel.NavObject { Name = Name })); }
-        }
+            GoToFollowersCommand = new ReactiveCommand();
+            GoToFollowersCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<UserFollowersViewModel>();
+                vm.Username = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToFollowersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowersViewModel>(new UserFollowersViewModel.NavObject { Username = Name })); }
-        }
+            GoToEventsCommand = new ReactiveCommand();
+            GoToEventsCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<UserEventsViewModel>();
+                vm.Username = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToEventsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Name })); }
-        }
+            GoToGistsCommand = new ReactiveCommand();
+            GoToGistsCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<UserGistsViewModel>();
+                vm.Username = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToGistsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Name })); }
-        }
+            GoToRepositoriesCommand = new ReactiveCommand();
+            GoToRepositoriesCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<OrganizationRepositoriesViewModel>();
+                vm.Name = Name;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<OrganizationRepositoriesViewModel>(new OrganizationRepositoriesViewModel.NavObject { Name = Name })); }
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceCacheInvalidation, response => Organization = response.Data);
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                this.RequestModel(applicationService.Client.Organizations[Name].Get(), t as bool?,
+                    response => Organization = response.Data));
         }
 	}
 }

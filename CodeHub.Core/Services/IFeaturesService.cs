@@ -14,6 +14,8 @@ namespace CodeHub.Core.Services
         bool IsActivated(string id);
 
         Task<IEnumerable<string>> GetAvailableFeatureIds();
+
+        Task PromptPushNotificationFeature();
     }
 
     public static class FeatureIds

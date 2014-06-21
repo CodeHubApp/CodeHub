@@ -1,22 +1,21 @@
 using System;
-using Cirrious.CrossCore;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
-using CodeHub.iOS.Views.Filters;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssuesView : BaseIssuesView
+    public class IssuesView : BaseIssuesView<IssuesViewModel>
     {
+        private readonly IApplicationService _applicationService;
         private UISegmentedControl _viewSegment;
         private UIBarButtonItem _segmentBarButton;
 
-        public new IssuesViewModel ViewModel
+        public IssuesView(IApplicationService applicationService)
         {
-            get { return (IssuesViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
+            _applicationService = applicationService;
         }
 
         public override void ViewDidLoad()
@@ -25,11 +24,11 @@ namespace CodeHub.iOS.Views.Issues
 
             base.ViewDidLoad();
 
-            _viewSegment = new CustomUISegmentedControl(new [] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() }, 3);
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
-            _segmentBarButton.Width = View.Frame.Width - 10f;
+            _viewSegment = new CustomUISegmentedControl(new [] { "Open", "Closed", "Mine", "Custom" }, 3);
+            _segmentBarButton = new UIBarButtonItem(_viewSegment) {Width = View.Frame.Width - 10f};
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-            BindCollection(ViewModel.Issues, CreateElement);
+            
+            Bind(ViewModel.WhenAnyValue(x => x.Issues), CreateElement);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -41,14 +40,12 @@ namespace CodeHub.iOS.Views.Issues
             //Before we select which one, make sure we detach the event handler or silly things will happen
             _viewSegment.ValueChanged -= SegmentValueChanged;
 
-            var application = Mvx.Resolve<IApplicationService>();
-
             //Select which one is currently selected
-            if (ViewModel.Issues.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
+            if (ViewModel.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
                 _viewSegment.SelectedSegment = 0;
-            else if (ViewModel.Issues.Filter.Equals(IssuesFilterModel.CreateClosedFilter()))
+            else if (ViewModel.Filter.Equals(IssuesFilterModel.CreateClosedFilter()))
                 _viewSegment.SelectedSegment = 1;
-            else if (ViewModel.Issues.Filter.Equals(IssuesFilterModel.CreateMineFilter(application.Account.Username)))
+            else if (ViewModel.Filter.Equals(IssuesFilterModel.CreateMineFilter(_applicationService.Account.Username)))
                 _viewSegment.SelectedSegment = 2;
             else
                 _viewSegment.SelectedSegment = 3;
@@ -58,26 +55,24 @@ namespace CodeHub.iOS.Views.Issues
 
         void SegmentValueChanged (object sender, EventArgs e)
         {
-            var application = Mvx.Resolve<IApplicationService>();
-
             // If there is searching going on. Finish it.
             FinishSearch();
 
             if (_viewSegment.SelectedSegment == 0)
             {
-                ViewModel.Issues.ApplyFilter(IssuesFilterModel.CreateOpenFilter(), true);
+                ViewModel.Filter = IssuesFilterModel.CreateOpenFilter();
             }
             else if (_viewSegment.SelectedSegment == 1)
             {
-                ViewModel.Issues.ApplyFilter(IssuesFilterModel.CreateClosedFilter(), true);
+                ViewModel.Filter = IssuesFilterModel.CreateClosedFilter();
             }
             else if (_viewSegment.SelectedSegment == 2)
             {
-                ViewModel.Issues.ApplyFilter(IssuesFilterModel.CreateMineFilter(application.Account.Username), true);
+                ViewModel.Filter = IssuesFilterModel.CreateMineFilter(_applicationService.Account.Username);
             }
             else if (_viewSegment.SelectedSegment == 3)
             {
-				ShowFilterController(new IssuesFilterViewController(ViewModel.Username, ViewModel.Repository, ViewModel.Issues));
+				//ShowFilterController(new IssuesFilterViewController(ViewModel.RepositoryOwner, ViewModel.RepositoryName, ViewModel.Issues));
             }
         }
 
@@ -91,7 +86,7 @@ namespace CodeHub.iOS.Views.Issues
         private class CustomUISegmentedControl : UISegmentedControl
         {
             readonly int _multipleTouchIndex;
-            public CustomUISegmentedControl(object[] args, int multipleTouchIndex)
+            public CustomUISegmentedControl(string[] args, int multipleTouchIndex)
                 : base(args)
             {
                 this._multipleTouchIndex = multipleTouchIndex;

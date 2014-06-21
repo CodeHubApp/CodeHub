@@ -1,56 +1,52 @@
 using System;
 using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.iOS.Utils;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
+    public class RepositoriesExploreView : ViewModelCollectionView<RepositoriesExploreViewModel>
     {
-		private Hud _hud;
+        private readonly IStatusIndicatorService _statusIndicatorService;
 
-		public RepositoriesExploreView()
-        {
-            AutoHideSearch = false;
-            //EnableFilter = true;
-            NoItemsText = "No Repositories".t();
-            Title = "Explore".t();
-        }
+        public RepositoriesExploreView(IStatusIndicatorService statusIndicatorService)
+		{
+		    _statusIndicatorService = statusIndicatorService;
+		    AutoHideSearch = false;
+		}
 
         public override void ViewDidLoad()
         {
+            NoItemsText = "No Repositories";
+            Title = "Explore";
+
             base.ViewDidLoad();
-			_hud = new Hud(View);
-			var vm = (RepositoriesExploreViewModel)ViewModel;
+
             var search = (UISearchBar)TableView.TableHeaderView;
-
-			var set = this.CreateBindingSet<RepositoriesExploreView, RepositoriesExploreViewModel>();
-			set.Bind(search).For(x => x.Text).To(x => x.SearchText);
-			set.Apply();
-
+            search.TextChanged += (sender, args) => ViewModel.SearchText = search.Text;
 			search.SearchButtonClicked += (sender, e) =>
 			{
 				search.ResignFirstResponder();
-				vm.SearchCommand.Execute(null);
+				ViewModel.SearchCommand.ExecuteIfCan();
 			};
 
-			vm.Bind(x => x.IsSearching, x =>
+			ViewModel.SearchCommand.IsExecuting.Subscribe(x =>
 			{
 				if (x)
-					_hud.Show("Searching...");
+                    _statusIndicatorService.Show("Searching...");
 				else
-					_hud.Hide();
+                    _statusIndicatorService.Hide();
 			});
 
-			BindCollection(vm.Repositories, repo =>
+			Bind(ViewModel.WhenAnyValue(x => x.Repositories), repo =>
             {
-				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
+				var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
                 var imageUrl = repo.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;
 				var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, imageUrl) { ShowOwner = true };
-				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
+				sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });
         }

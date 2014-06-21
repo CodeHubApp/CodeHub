@@ -1,61 +1,63 @@
 using System;
-using CodeHub.Core.ViewModels;
-using System.Threading.Tasks;
-using GitHubSharp.Models;
 using CodeFramework.Core.ViewModels;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
+using GitHubSharp.Models;
+using ReactiveUI;
 
-namespace CodeHub.Core
+namespace CodeHub.Core.ViewModels.Gists
 {
 	public class GistFileViewModel : FileSourceViewModel
     {
-		private string _id;
-		private string _filename;
-		private GistFileModel _fileModel;
+        private string _filename;
+        private string _id;
+        private GistFileModel _gistFile;
 
-		public void Init(NavObject navObject)
-        {
-			//Create the filename
-			var fileName = System.IO.Path.GetFileName(navObject.Filename);
-			if (fileName == null)
-				fileName = navObject.Filename.Substring(navObject.Filename.LastIndexOf('/') + 1);
+	    public string Id
+	    {
+	        get { return _id; }
+	        set { this.RaiseAndSetIfChanged(ref _id, value); }
+	    }
 
-			//Create the temp file path
-			Title = fileName;
+	    public string Filename
+	    {
+	        get { return _filename; }
+	        set { this.RaiseAndSetIfChanged(ref _filename, value); }
+	    }
 
-			_id = navObject.GistId;
-			_filename = navObject.Filename;
+	    public GistFileModel GistFile
+	    {
+	        get { return _gistFile; }
+	        set { this.RaiseAndSetIfChanged(ref _gistFile, value); }
+	    }
 
-			//Grab the data
-			_fileModel = GetService<IViewModelTxService>().Get() as GistFileModel;
-        }
+	    public GistFileViewModel(IApplicationService applicationService)
+	    {
+	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
+	        {
+	            Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
+	        });
 
-		protected override async Task Load(bool forceCacheInvalidation)
-		{
-			if (_fileModel == null)
-			{
-				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[_id].Get());
-				_fileModel = data.Data.Files[_filename];
-			}
+            LoadCommand.RegisterAsyncTask(async t =>
+            {
+                if (GistFile == null)
+			    {
+                    var data = await applicationService.Client.ExecuteAsync(applicationService.Client.Gists[_id].Get());
+                    GistFile = data.Data.Files[_filename];
+			    }
 
-			//Check to make sure...
-			if (_fileModel == null || _fileModel.Content == null)
-			{
-				throw new Exception("Unable to retreive gist!");
-			}
+			    //Check to make sure...
+                if (GistFile == null || GistFile.Content == null)
+			    {
+				    throw new Exception("Unable to retreive gist!");
+			    }
 
-			var content = _fileModel.Content;
-			var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_fileModel.Filename));
-			System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
-			FilePath = filePath;
-			ContentPath = CreateContentFile();
-		}
-
-		public class NavObject
-		{
-			public string GistId { get; set; }
-			public string Filename { get; set; }
-		}
+                var content = GistFile.Content;
+                var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(GistFile.Filename));
+			    System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
+			    FilePath = filePath;
+			    ContentPath = CreateContentFile();
+            });
+	    }
     }
 }
 

@@ -1,22 +1,21 @@
 using System;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Changesets;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
+	public abstract class CommitsView : ViewModelCollectionView<CommitsViewModel>
 	{
 		public override void ViewDidLoad()
 		{
-			Title = "Commits".t();
+			Title = "Commits";
 			Root.UnevenRows = true;
 
 			base.ViewDidLoad();
 
-			var vm = (CommitsViewModel) ViewModel;
-			BindCollection(vm.Commits, x =>
+			Bind(ViewModel.WhenAnyValue(x => x.Commits), x =>
 			{
 				var msg = x.Commit.Message ?? string.Empty;
 				var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
@@ -40,7 +39,7 @@ namespace CodeHub.iOS.Views.Source
 					date = x.Commit.Committer.Date;
 
 				var el = new NameTimeStringElement { Name = login, Time = date.ToDaysAgo(), String = desc, Lines = 4 };
-				el.Tapped += () => vm.GoToChangesetCommand.Execute(x);
+				el.Tapped += () => ViewModel.GoToChangesetCommand.Execute(x);
 				return el;
 			});
 		}

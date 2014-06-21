@@ -1,45 +1,36 @@
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
-using System.Threading.Tasks;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Teams
 {
     public class TeamsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<TeamShortModel> _teams = new CollectionViewModel<TeamShortModel>();
+        public ReactiveCollection<TeamShortModel> Teams { get; private set; }
 
-        public CollectionViewModel<TeamShortModel> Teams
-        {
-            get { return _teams; }
-        }
+        public string OrganizationName { get; set; }
 
-        public string OrganizationName
-        {
-            get;
-            private set;
-        }
+        public IReactiveCommand GoToTeamCommand { get; private set; }
 
-        public ICommand GoToTeamCommand
+        public TeamsViewModel(IApplicationService applicationService)
         {
-            get { return new MvxCommand<TeamShortModel>(x => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Id = x.Id })); }
-        }
+            Teams = new ReactiveCollection<TeamShortModel>();
 
-        public void Init(NavObject navObject)
-        {
-            OrganizationName = navObject.Name;
-        }
+            GoToTeamCommand =  new ReactiveCommand();
+            GoToTeamCommand.OfType<TeamShortModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<TeamMembersViewModel>();
+                vm.Id = x.Id;
+                ShowViewModel(vm);
+            });
 
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            LoadCommand.RegisterAsyncTask(x => 
+                			Teams.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetTeams(), x as bool?));
         }
     }
 }

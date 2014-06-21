@@ -29,7 +29,7 @@ namespace CodeHub.ViewControllers
 
                 if (String.IsNullOrEmpty(newContent))
                 {
-                    MonoTouch.Utilities.ShowAlert("No Content", "You cannot save a file without content!");
+                    //MonoTouch.Utilities.ShowAlert("No Content", "You cannot save a file without content!");
                     return;
                 }
 
@@ -41,18 +41,10 @@ namespace CodeHub.ViewControllers
                 }
 				catch (Exception ex)
                 {
-					MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+					//MonoTouch.Utilities.ShowAlert("Error", ex.Message);
                     return;
                 }
             });
-        }
-
-        public override void DidReceiveMemoryWarning()
-        {
-            // Releases the view if it doesn't have a superview.
-            base.DidReceiveMemoryWarning();
-			
-            // Release any cached data, images, etc that aren't in use.
         }
 
         public override void ViewDidLoad()

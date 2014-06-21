@@ -1,20 +1,17 @@
-using Cirrious.MvvmCross.Binding.BindingContext;
+using System;
+using System.Reactive.Linq;
 using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.User;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.User
 {
-    public class ProfileView : ViewModelDrivenDialogViewController
+    public class ProfileView : ViewModelDialogView<ProfileViewModel>
     {
-		public new ProfileViewModel ViewModel
-		{
-			get { return (ProfileViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+        private UIActionSheet _actionSheet;
 
 		public ProfileView()
 		{
@@ -27,41 +24,45 @@ namespace CodeHub.iOS.Views.User
 
             base.ViewDidLoad();
 
-			var header = new HeaderView();
-            var set = this.CreateBindingSet<ProfileView, ProfileViewModel>();
-            set.Bind(header).For(x => x.Title).To(x => x.Username).OneWay();
-			set.Bind(header).For(x => x.Subtitle).To(x => x.User.Name).OneWay();
-			set.Bind(header).For(x => x.ImageUri).To(x => x.User.AvatarUrl).OneWay();
-            set.Apply();
+            var header = new HeaderView {Title = ViewModel.Username};
+            ViewModel.WhenAnyValue(x => x.User).Where(x => x != null).Subscribe(x =>
+            {
+                header.Subtitle = x.Name;
+                header.ImageUri = x.AvatarUrl;
+            });
 
-			var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-			var following = new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
-			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-			var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group);
-			var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
+			var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
+			var following = new StyledStringElement("Following", () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
+			var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+			var organizations = new StyledStringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group);
+			var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
 			var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Images.Script);
 
 			Root.Add(new [] { new Section(header), new Section { events, organizations, followers, following }, new Section { repos, gists } });
 
 			if (!ViewModel.IsLoggedInUser)
+            {
 				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+                NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.IsFollowing, x => x != null));
+            }
         }
 
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet(ViewModel.Username);
-			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+		    _actionSheet = new UIActionSheet(ViewModel.Username);
+		    var followButton = ViewModel.IsFollowing.HasValue
+                ? _actionSheet.AddButton(ViewModel.IsFollowing.Value ? "Unfollow" : "Follow")
+		        : -1;
+            var cancelButton = _actionSheet.AddButton("Cancel");
+            _actionSheet.CancelButtonIndex = cancelButton;
+            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
+            _actionSheet.Clicked += (s, e) => 
+            {
 				if (e.ButtonIndex == followButton)
-				{
 					ViewModel.ToggleFollowingCommand.Execute(null);
-				}
 			};
 
-			sheet.ShowInView(this.View);
+            _actionSheet.ShowInView(View);
 		}
     }
 }

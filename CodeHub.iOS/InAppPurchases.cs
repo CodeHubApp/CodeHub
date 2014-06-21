@@ -2,12 +2,13 @@ using System;
 using MonoTouch.StoreKit;
 using MonoTouch.Foundation;
 using System.Threading.Tasks;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS
 {
-    public class InAppPurchases 
+    public class InAppPurchases
     {
-        private static InAppPurchases _instance;
+        private static readonly Lazy<InAppPurchases> _instance = new Lazy<InAppPurchases>(() => new InAppPurchases());
         private readonly TransactionObserver _observer;
 
         public event EventHandler<string> PurchaseSuccess;
@@ -15,12 +16,7 @@ namespace CodeHub.iOS
 
         public static InAppPurchases Instance
         {
-            get
-            {
-                if (_instance == null)
-                    _instance = new InAppPurchases();
-                return _instance;
-            }
+            get { return _instance.Value; }
         }
 
         private void OnPurchaseError(Exception e)
@@ -129,7 +125,7 @@ namespace CodeHub.iOS
                     }
                     catch (Exception e)
                     {
-                        MonoTouch.Utilities.ShowAlert("Error", "Unable to process transaction: " + e.Message);
+                        IoC.Resolve<IAlertDialogService>().Alert("Error", "Unable to process transaction: " + e.Message);
                         e.Report();
                     }
                 }

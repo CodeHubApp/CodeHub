@@ -1,110 +1,116 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System.Reactive.Linq;
 using CodeHub.Core.Filters;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeFramework.Core.Utils;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<ContentModel, SourceFilterModel> _content;
+        public ReactiveCollection<ContentModel> Content { get; private set; }
+
+		public string Username { get; set; }
+
+		public string Path { get; set; }
+
+		public string Branch { get; set; }
+
+		public bool TrueBranch { get; set; }
+
+		public string Repository { get; set; }
+
         private SourceFilterModel _filter;
-
-        public FilterableCollectionViewModel<ContentModel, SourceFilterModel> Content
-        {
-            get { return _content; }
-        }
-
-		public string Username { get; private set; }
-
-		public string Path { get; private set; }
-
-		public string Branch { get; private set; }
-
-		public bool TrueBranch { get; private set; }
-
-		public string Repository { get; private set; }
-
         public SourceFilterModel Filter
         {
             get { return _filter; }
-            set
+            set { this.RaiseAndSetIfChanged(ref _filter, value); }
+        }
+
+        public IReactiveCommand GoToSourceTreeCommand { get; private set; }
+
+        public IReactiveCommand GoToSubmoduleCommand { get; private set; }
+
+        public IReactiveCommand GoToSourceCommand { get; private set; }
+
+        public SourceTreeViewModel(IApplicationService applicationService)
+        {
+            Filter = applicationService.Account.Filters.GetFilter<SourceFilterModel>("SourceViewModel");
+            Content = new ReactiveCollection<ContentModel>();
+
+            GoToSubmoduleCommand = new ReactiveCommand();
+            GoToSubmoduleCommand.OfType<ContentModel>().Subscribe(x =>
             {
-                _filter = value;
-                RaisePropertyChanged(() => Filter);
-                _content.Refresh();
-            }
-        }
+                var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", StringComparison.OrdinalIgnoreCase) + 7);
+                var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.OrdinalIgnoreCase)));
+                var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", StringComparison.OrdinalIgnoreCase) + 1);
+                var vm = CreateViewModel<SourceTreeViewModel>();
+                vm.Username = repoId.Owner;
+                vm.Repository = repoId.Name;
+                vm.Branch = sha;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToSourceTreeCommand
-        {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
-        }
+            GoToSourceCommand = new ReactiveCommand();
+            GoToSourceCommand.OfType<ContentModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<SourceViewModel>();
+                vm.Name = x.Name;
+                vm.Username = Username;
+                vm.Repository = Repository;
+                vm.Branch = Branch;
+                vm.Path = x.Path;
+                vm.HtmlUrl = x.HtmlUrl;
+                vm.GitUrl = x.GitUrl;
+                vm.TrueBranch = TrueBranch;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToSubmoduleCommand
-        {
-            get { return new MvxCommand<ContentModel>(GoToSubmodule);}
-        }
+            GoToSourceTreeCommand = new ReactiveCommand();
+            GoToSourceTreeCommand.OfType<ContentModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<SourceTreeViewModel>();
+                vm.Username = Username;
+                vm.Branch = Branch;
+                vm.Repository = Repository;
+                vm.TrueBranch = TrueBranch;
+                ShowViewModel(vm);
+            });
 
-        public ICommand GoToSourceCommand
-        {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
-        }
+            this.WhenAnyValue(x => x.Filter).Subscribe(filter =>
+            {
+                if (filter == null)
+                {
+                    Content.OrderFunc = null;
+                }
+                else
+                {
+                    Content.OrderFunc = x =>
+                    {
+                        switch (filter.OrderBy)
+                        {
+                            case SourceFilterModel.Order.FoldersThenFiles:
+                                x = x.OrderBy(y => y.Type).ThenBy(y => y.Name);
+                                break;
+                            default:
+                                x = x.OrderBy(y => y.Name);
+                                break;
+                        }
 
-        private void GoToSubmodule(ContentModel x)
-        {
-            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
-            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
-            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
-        }
+                        return filter.Ascending ? x : x.Reverse();
+                    };
+                }
+            });
 
-        public SourceTreeViewModel()
-        {
-            _content = new FilterableCollectionViewModel<ContentModel, SourceFilterModel>("SourceViewModel");
-            _content.FilteringFunction = FilterModel;
-			_content.Bind(x => x.Filter, _content.Refresh);
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Branch = navObject.Branch ?? "master";
-            Path = navObject.Path ?? "";
-			TrueBranch = navObject.TrueBranch;
-        }
-
-        private IEnumerable<ContentModel> FilterModel(IEnumerable<ContentModel> model)
-        {
-            var ret = model;
-            var order = _content.Filter.OrderBy;
-            if (order == SourceFilterModel.Order.Alphabetical)
-                ret = model.OrderBy(x => x.Name);
-            else if (order == SourceFilterModel.Order.FoldersThenFiles)
-                ret = model.OrderBy(x => x.Type).ThenBy(x => x.Name);
-            return _content.Filter.Ascending ? ret : ret.Reverse();
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public string Branch { get; set; }
-            public string Path { get; set; }
-
-			// Whether the branch is a real branch and not a node
-			public bool TrueBranch { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                Content.SimpleCollectionLoad(
+                    applicationService.Client.Users[Username].Repositories[Repository].GetContent(
+                        Path ?? string.Empty, Branch ?? "master"), t as bool?));
         }
     }
 }

@@ -3,16 +3,16 @@ using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
-using MonoTouch;
 using MonoTouch.UIKit;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Events
 {
-    public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseEventsView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : BaseEventsViewModel
     {
         protected BaseEventsView()
         {
-            Title = "Events".t();
+            Title = "Events";
             Root.UnevenRows = true;
             EnableSearch = false;
         }
@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Events
         {
             base.ViewDidLoad();
 			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
-            BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
+            Bind(ViewModel.WhenAnyValue(x => x.Events), CreateElement);
         }
 
         private static MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
@@ -59,8 +59,7 @@ namespace CodeHub.iOS.Views.Events
             }
             catch (Exception ex)
             {
-                Utilities.LogException("Unable to add event", ex);
-                return null;
+                throw new Exception("Unable to add event", ex);
             }
         }
 

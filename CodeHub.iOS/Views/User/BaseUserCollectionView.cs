@@ -1,20 +1,20 @@
 using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.User;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.User
 {
-    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseUserCollectionView : ViewModelCollectionView<BaseUserCollectionViewModel>
     {
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var vm = (BaseUserCollectionViewModel)ViewModel;
-            BindCollection(vm.Users, x =>
+            Bind(ViewModel.WhenAnyValue(x => x.Users), x =>
             {
                 var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-                e.Tapped += () => vm.GoToUserCommand.Execute(x);
+                e.Tapped += () => ViewModel.GoToUserCommand.Execute(x);
                 return e;
             });
         }

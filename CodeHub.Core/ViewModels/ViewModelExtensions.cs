@@ -1,42 +1,40 @@
 using System;
 using System.Threading.Tasks;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
-using CodeFramework.Core.Services;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
+        public static async Task RequestModel<TRequest>(this object viewModel, GitHubRequest<TRequest> request, bool? forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
-            if (forceDataRefresh)
+            var force = forceDataRefresh.HasValue && forceDataRefresh.Value;
+            if (force)
             {
                 request.CheckIfModified = false;
                 request.RequestFromCache = false;
             }
 
-            var application = Mvx.Resolve<IApplicationService>();
-            var uiThrad = Mvx.Resolve<IUIThreadService>();
+            var application = IoC.Resolve<IApplicationService>();
 
-			var result = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
-            uiThrad.MarshalOnUIThread(() => update(result));
+            var result = await application.Client.ExecuteAsync(request);
+            update(result);
 
             if (result.WasCached)
             {
                 request.RequestFromCache = false;
                 var uncachedTask = application.Client.ExecuteAsync(request);
-                uncachedTask.FireAndForget();
-                uncachedTask.ContinueWith(t => uiThrad.MarshalOnUIThread(() => update(t.Result)), TaskContinuationOptions.OnlyOnRanToCompletion);
+                uncachedTask.ContinueInBackground(update);
             }
 		}
 
-        public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
-										 Action<Action> assignMore, Action<T> newDataAction) where T : new()
+        public static void CreateMore<T>(this object viewModel, GitHubResponse<List<T>> response, 
+										 Action<Task> assignMore, Action<List<T>> newDataAction) where T : new()
         {
             if (response.More == null)
             {
@@ -44,23 +42,21 @@ namespace CodeHub.Core.ViewModels
                 return;
             }
 
-			Action task = () =>
+            assignMore(new Task(() =>
             {
                 response.More.UseCache = false;
-				var moreResponse = Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
+                var moreResponse = IoC.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
-            };
-
-            assignMore(task);
+            }));
         }
 
-        public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
+        public static Task SimpleCollectionLoad<T>(this ReactiveCollection<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh) where T : new()
         {
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
-                viewModel.Items.Reset(response.Data);
+                viewModel.CreateMore(response, m => viewModel.MoreTask = m, x => viewModel.AddRange(x));
+                viewModel.Reset(response.Data);
             });
         }
     }

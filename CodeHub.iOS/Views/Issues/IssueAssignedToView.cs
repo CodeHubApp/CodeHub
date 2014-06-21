@@ -1,55 +1,48 @@
 using System;
 using System.Linq;
+using System.Reactive.Linq;
 using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
+    public class IssueAssignedToView : ViewModelCollectionView<IssueAssignedToViewModel>
     {
 
         public override void ViewDidLoad()
         {
-            Title = "Assignees".t();
-            NoItemsText = "No Assignees".t();
+            Title = "Assignees";
+            NoItemsText = "No Assignees";
 
             base.ViewDidLoad();
 
-			var vm = (IssueAssignedToViewModel)ViewModel;
-			BindCollection(vm.Users, x =>
+			Bind(ViewModel.WhenAnyValue(x => x.Users), x =>
 			{
 				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
 				el.Tapped += () => {
-					if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
-						vm.SelectedUser = null;
+					if (ViewModel.SelectedUser != null && string.Equals(ViewModel.SelectedUser.Login, x.Login))
+						ViewModel.SelectedUser = null;
 					else
-						vm.SelectedUser = x;
+						ViewModel.SelectedUser = x;
 				};
-				if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
+				if (ViewModel.SelectedUser != null && string.Equals(ViewModel.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UITableViewCellAccessory.Checkmark;
 				else
 					el.Accessory = UITableViewCellAccessory.None;
 				return el;
 			});
 
-			vm.Bind(x => x.SelectedUser, x =>
+			ViewModel.WhenAnyValue(x => x.SelectedUser).Where(x => x != null).Subscribe(x =>
 			{
 				if (Root.Count == 0)
 					return;
 				foreach (var m in Root[0].Elements.Cast<UserElement>())
-					m.Accessory = (x != null && string.Equals(vm.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
+					m.Accessory = (x != null && string.Equals(ViewModel.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
 					          	   UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
-			});
-
-			var _hud = new Hud(View);
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x) _hud.Show("Saving...");
-				else _hud.Hide();
 			});
         }
     }

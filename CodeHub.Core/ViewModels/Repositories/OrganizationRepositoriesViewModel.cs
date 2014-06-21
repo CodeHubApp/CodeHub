@@ -1,33 +1,18 @@
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class OrganizationRepositoriesViewModel : RepositoriesViewModel
     {
-        public string Name
-        {
-            get;
-            private set;
-        }
+        public string Name { get; set; }
 
-        public OrganizationRepositoriesViewModel()
+        public OrganizationRepositoriesViewModel(IApplicationService applicationService)
+            : base(applicationService)
         {
             ShowRepositoryOwner = false;
-        }
-
-        public void Init(NavObject navObject)
-        {
-            Name = navObject.Name;
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Repositories.SimpleCollectionLoad(this.GetApplication().Client.Organizations[Name].Repositories.GetAll(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            LoadCommand.RegisterAsyncTask(t => 
+                Repositories.SimpleCollectionLoad(applicationService.Client.Organizations[Name].Repositories.GetAll(), t as bool?));
         }
     }
 }

@@ -1,24 +1,16 @@
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.User
 {
     public class UserFollowersViewModel : BaseUserCollectionViewModel
     {
-        public string Name { get; private set; }
+        public string Username { get; set; }
 
-        public void Init(NavObject navObject)
+        public UserFollowersViewModel(IApplicationService applicationService)
         {
-            Name = navObject.Username;
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Name].GetFollowers(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                    Users.SimpleCollectionLoad(applicationService.Client.Users[Username].GetFollowers(), t as bool?));
         }
     }
 }

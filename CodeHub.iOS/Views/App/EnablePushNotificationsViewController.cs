@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Drawing;
 using MonoTouch.UIKit;
-using Cirrious.CrossCore;
 using CodeHub.Core.Services;
-using CodeFramework.iOS.Utils;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.App
 {
     public partial class EnablePushNotificationsViewController : UIViewController
     {
-        private IHud _hud;
+        private readonly IStatusIndicatorService _statusIndicatorService;
+        private readonly IFeaturesService _featuresService;
 
-        public EnablePushNotificationsViewController() 
+        public EnablePushNotificationsViewController(IStatusIndicatorService statusIndicatorService, IFeaturesService featuresService) 
             : base("EnablePushNotificationsViewController", null)
         {
+            _statusIndicatorService = statusIndicatorService;
+            _featuresService = featuresService;
         }
 
         public event EventHandler Dismissed;
@@ -51,8 +53,6 @@ namespace CodeHub.iOS.Views.App
 
             PushLabel.Layer.CornerRadius = PushLabel.Frame.Width / 2;
             PushLabel.Layer.MasksToBounds = true;
-
-            _hud = new Hud(View);
         }
 
         public override void ViewWillLayoutSubviews()
@@ -80,12 +80,12 @@ namespace CodeHub.iOS.Views.App
 
         void HandlePurchaseError (object sender, Exception e)
         {
-            _hud.Hide();
+            _statusIndicatorService.Hide();
         }
 
         void HandlePurchaseSuccess (object sender, string e)
         {
-            _hud.Hide();
+            _statusIndicatorService.Hide();
             DismissViewController(true, OnDismissed);
         }
 
@@ -105,9 +105,8 @@ namespace CodeHub.iOS.Views.App
 
         private void EnablePushNotifications(object sender, EventArgs e)
         {
-            _hud.Show("Enabling...");
-            var featureService = Mvx.Resolve<IFeaturesService>();
-            featureService.Activate(FeatureIds.PushNotifications);
+            _statusIndicatorService.Show("Enabling...");
+            _featuresService.Activate(FeatureIds.PushNotifications);
         }
     }
 }

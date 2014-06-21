@@ -1,21 +1,14 @@
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
 using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class UserGistsView : GistsView
+    public class UserGistsView : GistsView<UserGistsViewModel>
     {
-        public new UserGistsViewModel ViewModel
-        {
-            get { return (UserGistsViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             Title = "Gists";
+
             base.ViewDidLoad();
 
             if (ViewModel.IsMine)

@@ -1,32 +1,38 @@
 using System;
 using CodeHub.Core.Services;
 using MonoTouch.UIKit;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Services
 {
 	public class PushNotificationsService : IPushNotificationsService
     {
-        private const string RegisterUri = "http://162.243.15.10/register";
+	    private readonly IApplicationService _applicationService;
+	    private readonly IHttpClientService _httpClientService;
+	    private const string RegisterUri = "http://162.243.15.10/register";
         private const string DeregisterUri = "http://162.243.15.10/unregister";
 
-        public async Task Register()
+	    public PushNotificationsService(IApplicationService applicationService, IHttpClientService httpClientService)
+	    {
+	        _applicationService = applicationService;
+	        _httpClientService = httpClientService;
+	    }
+
+	    public async Task Register()
 		{
 			var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
 
 			if (string.IsNullOrEmpty(del.DeviceToken))
 				throw new InvalidOperationException("Push notifications has not been enabled for this app!");
 
-            var applicationService = Mvx.Resolve<IApplicationService>();
-            var user = applicationService.Account;
+            var user = _applicationService.Account;
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = Mvx.Resolve<IHttpClientService>().Create();
+            var client = _httpClientService.Create();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),
@@ -49,16 +55,16 @@ namespace CodeHub.iOS.Services
             if (string.IsNullOrEmpty(del.DeviceToken))
                 throw new InvalidOperationException("Push notifications has not been enabled for this app!");
 
-            var user = Mvx.Resolve<IApplicationService>().Account;
+            var user = _applicationService.Account;
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = Mvx.Resolve<IHttpClientService>().Create();
+            var client = _httpClientService.Create();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),
                 new KeyValuePair<string, string>("oauth", user.OAuth),
-                new KeyValuePair<string, string>("domain", "https://api.github.com"),
+                new KeyValuePair<string, string>("domain", "https://api.github.com")
             });
 
             client.Timeout = new TimeSpan(0, 0, 30);

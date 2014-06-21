@@ -1,53 +1,39 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryCollaboratorsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<BasicUserModel> _collaborators = new CollectionViewModel<BasicUserModel>();
+        public ReactiveCollection<BasicUserModel> Collaborators { get; private set; }
 
-        public CollectionViewModel<BasicUserModel> Collaborators
+        public string Username { get; set; }
+
+        public string Repository { get; set; }
+
+        public IReactiveCommand GoToUserCommand { get; private set; }
+
+        public RepositoryCollaboratorsViewModel(IApplicationService applicationService)
         {
-            get { return _collaborators; }
-        }
+            Collaborators = new ReactiveCollection<BasicUserModel>();
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+            GoToUserCommand = new ReactiveCommand();
+            GoToUserCommand.OfType<BasicUserModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<ProfileViewModel>();
+                vm.Username = x.Login;
+                ShowViewModel(vm);
+            });
 
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
-
-        public ICommand GoToUserCommand
-        {
-            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x.Login })); }
-        }
-
-        public void Init(NavObject navObject) 
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Collaborators.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                Collaborators.SimpleCollectionLoad(
+                    applicationService.Client.Users[Username].Repositories[Repository].GetCollaborators(), t as bool?));
         }
     }
 }

@@ -3,25 +3,19 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using CodeHub.iOS.Views.Filters;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class SourceTreeView : ViewModelCollectionDrivenDialogViewController
+    public class SourceTreeView : ViewModelCollectionView<SourceTreeViewModel>
     {
-        public new SourceTreeViewModel ViewModel
-        {
-            get { return (SourceTreeViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
-                (s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
-            BindCollection(ViewModel.Content, CreateElement);
+//            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+//                (s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
+            Bind(ViewModel.WhenAnyValue(x => x.Content), CreateElement);
         }
 
         public override void ViewWillAppear(bool animated)

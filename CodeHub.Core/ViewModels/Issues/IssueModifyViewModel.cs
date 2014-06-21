@@ -1,11 +1,9 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using System.Linq;
 using GitHubSharp.Models;
-using Cirrious.MvvmCross.Plugins.Messenger;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using System.Threading.Tasks;
-using CodeHub.Core.Messages;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -14,121 +12,91 @@ namespace CodeHub.Core.ViewModels.Issues
 		private string _title;
 		private string _content;
 		private BasicUserModel _assignedTo;
-		private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
+	    private LabelModel[] _labels;
 		private MilestoneModel _milestone;
-		private MvxSubscriptionToken _labelsToken, _milestoneToken, _assignedToken;
-		private bool _isSaving;
 
 		public string Title
 		{
 			get { return _title; }
-			set
-			{
-				_title = value;
-				RaisePropertyChanged(() => Title);
-			}
+			set { this.RaiseAndSetIfChanged(ref _title, value); }
 		}
 
 		public string Content
 		{
 			get { return _content; }
-			set
-			{
-				_content = value;
-				RaisePropertyChanged(() => Content);
-			}
+            set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
 		public MilestoneModel Milestone
 		{
 			get { return _milestone; }
-			set
-			{
-				_milestone = value;
-				RaisePropertyChanged(() => Milestone);
-			}
+            set { this.RaiseAndSetIfChanged(ref _milestone, value); }
 		}
 
-		public CollectionViewModel<LabelModel> Labels
-		{
-			get { return _labels; }
-		}
+        public LabelModel[] Labels
+        {
+            get { return _labels; }
+            set { this.RaiseAndSetIfChanged(ref _labels, value); }
+        }
 
 		public BasicUserModel AssignedTo
 		{
 			get { return _assignedTo; }
-			set
-			{
-				_assignedTo = value;
-				RaisePropertyChanged(() => AssignedTo);
-			}
+            set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
 		}
 
-		public bool IsSaving
-		{
-			get
-			{
-				return _isSaving;
-			}
-			set
-			{
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
-		}
+		public string RepositoryOwner { get; set; }
 
-		public string Username { get; private set; }
+		public string RepositoryName { get; set; }
 
-		public string Repository { get; private set; }
+        public IReactiveCommand GoToLabelsCommand { get; private set; }
 
-		public ICommand GoToLabelsCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Labels);
-					ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository });
-				}); 
-			}
-		}
+        public IReactiveCommand GoToMilestonesCommand { get; private set; }
 
-		public ICommand GoToMilestonesCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Milestone);
-					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
-				});
-			}
-		}
+        public IReactiveCommand GoToAssigneeCommand { get; private set; }
 
-		public ICommand GoToAssigneeCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(AssignedTo);
-					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
-				}); 
-			}
-		}
+		public IReactiveCommand SaveCommand { get; private set; }
 
-		public ICommand SaveCommand
-		{
-			get { return new MvxCommand(() => Save()); }
-		}
+	    protected IssueModifyViewModel()
+	    {
+            SaveCommand = new ReactiveCommand();
+	        SaveCommand.RegisterAsyncTask(t => Save());
 
-		protected void Init(string username, string repository)
-		{
-			Username = username;
-			Repository = repository;
+            GoToAssigneeCommand = new ReactiveCommand();
+	        GoToAssigneeCommand.Subscribe(_ =>
+	        {
+	            var vm = CreateViewModel<IssueAssignedToViewModel>();
+	            vm.RepositoryOwner = RepositoryOwner;
+	            vm.RepositoryName = RepositoryName;
+	            vm.SelectedUser = AssignedTo;
+	            vm.WhenAnyValue(x => x.SelectedUser).Subscribe(x => AssignedTo = x);
+                ShowViewModel(vm);
+	        });
 
-			var messenger = GetService<IMvxMessenger>();
-			_labelsToken = messenger.SubscribeOnMainThread<SelectIssueLabelsMessage>(x => Labels.Items.Reset(x.Labels));
-			_milestoneToken = messenger.SubscribeOnMainThread<SelectedMilestoneMessage>(x => Milestone = x.Milestone);
-			_assignedToken = messenger.SubscribeOnMainThread<SelectedAssignedToMessage>(x => AssignedTo = x.User);
-		}
+
+            GoToMilestonesCommand = new ReactiveCommand();
+            GoToMilestonesCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<IssueMilestonesViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                vm.SelectedMilestone = Milestone;
+                vm.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x => Milestone = x);
+                ShowViewModel(vm);
+            });
+
+            GoToLabelsCommand = new ReactiveCommand();
+            GoToLabelsCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<IssueLabelsViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                vm.SelectedLabels.Reset(Labels);
+                vm.OriginalLabels = Labels;
+                vm.WhenAnyValue(x => x.SelectedLabels).Subscribe(x => Labels = x.ToArray());
+                ShowViewModel(vm);
+            });
+	    }
 
 		protected abstract Task Save();
     }

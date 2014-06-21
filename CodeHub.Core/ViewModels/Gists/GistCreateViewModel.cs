@@ -1,114 +1,68 @@
 ﻿using System;
-using CodeFramework.Core.ViewModels;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System.Linq;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeHub.Core.Messages;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistCreateViewModel : BaseViewModel 
+    public class GistCreateViewModel : BaseViewModel
     {
+        private readonly IApplicationService _applicationService;
         private string _description;
         private bool _public;
         private IDictionary<string, string> _files;
-        private bool _saving;
-
-        public bool IsSaving
-        {
-            get { return _saving; }
-            private set
-            {
-                _saving = value;
-                RaisePropertyChanged(() => IsSaving);
-            }
-        }
 
         public string Description
         {
             get { return _description; }
-            set
-            {
-                _description = value;
-                RaisePropertyChanged(() => Description);
-            }
+            set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
         public bool Public
         {
             get { return _public; }
-            set
-            {
-                _public = value;
-                RaisePropertyChanged(() => Public);
-            }
+            set { this.RaiseAndSetIfChanged(ref _public, value); }
         }
 
         public IDictionary<string, string> Files
         {
             get { return _files; }
-            set
-            {
-                _files = value;
-                RaisePropertyChanged(() => Files);
-            }
+            set { this.RaiseAndSetIfChanged(ref _files, value); }
         }
 
-        public ICommand SaveCommand
+        private GistModel _createdGist;
+        public GistModel CreatedGist
         {
-            get { return new MvxCommand(() => Save()); }
-        }
-            
-        public void Init()
-        {
-            var createGistModel = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as GistCreateModel;
-            if (createGistModel != null)
-            {
-                Description = createGistModel.Description;
-                Public = createGistModel.Public ?? false;
-                Files = createGistModel.Files != null ? 
-                    createGistModel.Files.ToDictionary(x => x.Key, x => x.Value.Content) :
-                    new Dictionary<string, string>();
-            }
-            else
-            {
-                Files = new Dictionary<string, string>();
-            }
+            get { return _createdGist; }
+            private set { this.RaiseAndSetIfChanged(ref _createdGist, value); }
         }
 
-        private async Task Save()
-        {
-            if (_files.Count == 0)
-            {
-                DisplayAlert("You cannot create a Gist without atleast one file! Please correct and try again.");
-                return;
-            }
+        public IReactiveCommand SaveCommand { get; private set; }
 
-            try
+        public GistCreateViewModel(IApplicationService applicationService)
+        {
+            _applicationService = applicationService;
+
+            SaveCommand = new ReactiveCommand();
+            SaveCommand.RegisterAsyncTask(async t =>
             {
-                var createGist = new GistCreateModel()
+                if (_files == null || _files.Count == 0)
+                    throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");
+
+                var createGist = new GistCreateModel
                 {
                     Description = Description,
                     Public = Public,
                     Files = Files.ToDictionary(x => x.Key, x => new GistCreateModel.File { Content = x.Value })
                 };
 
-                IsSaving = true;
-                var newGist = (await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
-                Messenger.Publish(new GistAddMessage(this, newGist));
-                ChangePresentation(new MvxClosePresentationHint(this));
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to create new gist! Please try again.");
-            }
-            finally
-            {
-                IsSaving = false;
-            }
+                var newGist = (await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
+                CreatedGist = newGist;
+                DismissCommand.ExecuteIfCan();
+            });
         }
     }
 }

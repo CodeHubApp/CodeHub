@@ -1,42 +1,20 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.User;
-using GitHubSharp.Models;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
 	public class StargazersViewModel : BaseUserCollectionViewModel
     {
-        public string User
-        {
-            get;
-            private set;
-        }
+        public string RepositoryOwner { get; set; }
 
-        public string Repository
-        {
-            get;
-            private set;
-        }
+        public string RepositoryName { get; set; }
 
-        public void Init(NavObject navObject)
-        {
-            User = navObject.User;
-            Repository = navObject.Repository;
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string User { get; set; }
-            public string Repository { get; set; }
-        }
+	    public StargazersViewModel(IApplicationService applicationService)
+	    {
+	        LoadCommand.RegisterAsyncTask(t =>
+                Users.SimpleCollectionLoad(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetStargazers(), t as bool?));
+	    }
     }
 }
 

@@ -2,7 +2,7 @@ using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {
-    public class NotificationsFilterModel : FilterModel<NotificationsFilterModel>
+    public class NotificationsFilterModel
     {
         public bool All { get; set; }
 
@@ -35,9 +35,9 @@ namespace CodeHub.Core.Filters
             }
         }
 
-        public override NotificationsFilterModel Clone()
+        public NotificationsFilterModel Clone()
         {
-            return (NotificationsFilterModel)this.MemberwiseClone();
+            return (NotificationsFilterModel)MemberwiseClone();
         }
 
         public static NotificationsFilterModel CreateUnreadFilter()

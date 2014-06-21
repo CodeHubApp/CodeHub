@@ -1,51 +1,52 @@
+using System;
 using System.Drawing;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
+using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeFramework.iOS.Utils;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class AddAccountView : MvxViewController
+    public partial class AddAccountView : ViewModelViewController<AddAccountViewModel>
     {
-		private readonly IHud _hud;
+        private readonly IStatusIndicatorService _statusIndicatorService;
 
-        public new AddAccountViewModel ViewModel
-        {
-            get { return (AddAccountViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
-        public AddAccountView()
+        public AddAccountView(IStatusIndicatorService statusIndicatorService)
             : base("AddAccountView", null)
         {
-            Title = "Login".t();
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
-			_hud = this.CreateHud();
+            _statusIndicatorService = statusIndicatorService;
         }
 
         public override void ViewDidLoad()
         {
-            var set = this.CreateBindingSet<AddAccountView, AddAccountViewModel>();
-            set.Bind(User).To(x => x.Username);
-            set.Bind(Password).To(x => x.Password);
-            set.Bind(Domain).To(x => x.Domain);
-            set.Bind(LoginButton).To(x => x.LoginCommand);
-            set.Apply();
+            Title = "Login";
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.DismissCommand.ExecuteIfCan());
 
             base.ViewDidLoad();
 
-			ViewModel.Bind(x => x.IsLoggingIn, x =>
+            ViewModel.LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
 			{
 				if (x)
-					_hud.Show("Logging in...");
+                    _statusIndicatorService.Show("Logging in...");
 				else
-					_hud.Hide();
+                    _statusIndicatorService.Hide();
 			});
+
+            User.ValueChanged += (sender, args) => ViewModel.Username = User.Text;
+            ViewModel.WhenAnyValue(x => x.Username).Subscribe(x => User.Text = x);
+
+            Password.ValueChanged += (sender, args) => ViewModel.Password = Password.Text;
+            ViewModel.WhenAnyValue(x => x.Password).Subscribe(x => Password.Text = x);
+
+            Domain.ValueChanged += (sender, args) => ViewModel.Domain = Domain.Text;
+            ViewModel.WhenAnyValue(x => x.Domain).Subscribe(x => Domain.Text = x);
+
+            LoginButton.TouchUpInside += (sender, args) => ViewModel.LoginCommand.ExecuteIfCan();
+
+
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
             Logo.Image = Images.Logos.GitHub;

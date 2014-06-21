@@ -1,74 +1,64 @@
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
-using GitHubSharp.Models;
-using System.Threading.Tasks;
-using CodeHub.Core.ViewModels.Repositories;
 using System;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
+using GitHubSharp.Models;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesExploreViewModel : BaseViewModel
     {
-        private readonly CollectionViewModel<RepositorySearchModel.RepositoryModel> _repositories = new CollectionViewModel<RepositorySearchModel.RepositoryModel>();
+        private readonly IApplicationService _applicationService;
         private string _searchText;
 
         public bool ShowRepositoryDescription
         {
-			get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
+            get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public CollectionViewModel<RepositorySearchModel.RepositoryModel> Repositories
-        {
-            get { return _repositories; }
-        }
+        public ReactiveCollection<RepositorySearchModel.RepositoryModel> Repositories { get; private set; }
 
         public string SearchText
         {
             get { return _searchText; }
-            set { _searchText = value; RaisePropertyChanged(() => SearchText); }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-		private bool _isSearching;
-		public bool IsSearching
-		{
-			get { return _isSearching; }
-			private set
-			{
-				_isSearching = value;
-				RaisePropertyChanged(() => IsSearching);
-			}
-		}
+        public IReactiveCommand GoToRepositoryCommand { get; private set; }
 
-		public ICommand GoToRepositoryCommand
-		{
-			get { return new MvxCommand<RepositorySearchModel.RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
-		}
+        public IReactiveCommand SearchCommand { get; private set; }
 
-        public ICommand SearchCommand
+        public RepositoriesExploreViewModel(IApplicationService applicationService)
         {
-			get { return new MvxCommand(() => Search(), () => !string.IsNullOrEmpty(SearchText)); }
-        }
+            _applicationService = applicationService;
+            Repositories = new ReactiveCollection<RepositorySearchModel.RepositoryModel>();
 
-		private async Task Search()
-        {
-			try
-			{
-				IsSearching = true;
+            SearchCommand = new ReactiveCommand(this.WhenAnyValue(x => x.SearchText, x => !string.IsNullOrEmpty(x)));
+            SearchCommand.RegisterAsyncTask(async t =>
+            {
+                try
+                {
+                    var request = applicationService.Client.Repositories.SearchRepositories(new[] { SearchText }, new string[] { });
+                    request.UseCache = false;
+                    var response = await applicationService.Client.ExecuteAsync(request);
+                    Repositories.Reset(response.Data.Items);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Unable to search for repositories. Please try again.", e);
+                }
+            });
 
-				var request = this.GetApplication().Client.Repositories.SearchRepositories(new [] { SearchText }, new string[] { });
-                request.UseCache = false;
-				var response = await this.GetApplication().Client.ExecuteAsync(request);
-				Repositories.Items.Reset(response.Data.Items);
-			}
-			catch (Exception e)
-			{
-                DisplayAlert("Unable to search for repositories. Please try again.");
-			}
-			finally
-			{
-				IsSearching = false;
-			}
+            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand.OfType<RepositorySearchModel.RepositoryModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = x.Owner.Login;
+                vm.RepositoryName = x.Name;
+                ShowViewModel(vm);
+            });
         }
     }
 }

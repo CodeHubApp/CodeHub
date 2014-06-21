@@ -2,7 +2,7 @@ using System;
 
 namespace CodeHub.Core.Filters
 {
-	public class IssuesFilterModel : BaseIssuesFilterModel<IssuesFilterModel>
+	public class IssuesFilterModel : BaseIssuesFilterModel
     {
         public string Labels { get; set; }
 
@@ -57,9 +57,9 @@ namespace CodeHub.Core.Filters
             return new IssuesFilterModel { Assignee = username, Open = true };
         }
 
-        public override IssuesFilterModel Clone()
+        public IssuesFilterModel Clone()
         {
-            return (IssuesFilterModel)this.MemberwiseClone();
+            return (IssuesFilterModel)MemberwiseClone();
         }
 
         public override bool Equals(object obj)

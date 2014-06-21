@@ -1,41 +1,36 @@
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using System;
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistViewableFileView : WebView
+    public class GistViewableFileView : WebView<GistViewableFileViewModel>
     {
-        public new GistViewableFileViewModel ViewModel
-        {
-            get { return (GistViewableFileViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        private readonly IAlertDialogService _alertDialogService;
 
-        public GistViewableFileView()
-                : base(true)
+        public GistViewableFileView(IAlertDialogService alertDialogService)
         {
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ViewButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.GoToFileSourceCommand.Execute(null));
+            _alertDialogService = alertDialogService;
         }
 
         public override void ViewDidLoad()
         {
-            base.ViewDidLoad();
-            ViewModel.Bind(x => x.FilePath, path => LoadFile(path));
-        }
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ViewButton, UIBarButtonItemStyle.Plain, (s, e) => 
+                ViewModel.GoToFileSourceCommand.ExecuteIfCan());
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            if (ViewModel != null)
-                Title = ViewModel.GistFile.Filename;
+            base.ViewDidLoad();
+
+            ViewModel.WhenAnyValue(x => x.GistFile).Subscribe(x => Title = x.Filename);
+            ViewModel.WhenAnyValue(x => x.FilePath).Subscribe(x => LoadFile(x));
         }
 
         protected override void OnLoadError(object sender, UIWebErrorArgs e)
         {
             base.OnLoadError(sender, e);
-            MonoTouch.Utilities.ShowAlert("Error", "Unable to display this type of file.");
+            _alertDialogService.Alert("Error", "Unable to display this type of file.");
         }
     }
 }

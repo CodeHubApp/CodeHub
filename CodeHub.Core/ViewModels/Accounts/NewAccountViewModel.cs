@@ -1,19 +1,29 @@
-﻿using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+﻿using System;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class NewAccountViewModel : BaseViewModel
     {
-        public ICommand GoToDotComLoginCommand
-        {
-			get { return new MvxCommand(() => this.ShowViewModel<LoginViewModel>(new LoginViewModel.NavObject())); }
-        }
+        public IReactiveCommand GoToEnterpriseLoginCommand { get; private set; }
 
-        public ICommand GoToEnterpriseLoginCommand
+        public IReactiveCommand GoToDotComLoginCommand { get; private set; }
+
+        public NewAccountViewModel()
         {
-			get { return new MvxCommand(() => this.ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true })); }
+            GoToDotComLoginCommand = new ReactiveCommand();
+            GoToDotComLoginCommand.Subscribe(_ => 
+                ShowViewModel(CreateViewModel<LoginViewModel>()));
+
+            GoToEnterpriseLoginCommand = new ReactiveCommand();
+            GoToEnterpriseLoginCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<AddAccountViewModel>();
+                vm.IsEnterprise = true;
+                ShowViewModel(vm);
+            });
+
         }
     }
 }

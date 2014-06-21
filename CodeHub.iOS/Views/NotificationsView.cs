@@ -1,34 +1,30 @@
 using System;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.iOS.Utils;
 using CodeHub.Core.ViewModels.Notifications;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views
 {
-    public class NotificationsView : ViewModelCollectionDrivenDialogViewController
+    public class NotificationsView : ViewModelCollectionView<NotificationsViewModel>
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
-        private IHud _markHud;
 
         public NotificationsView()
         {
-            _viewSegment = new UISegmentedControl(new object[] { "Unread".t(), "Participating".t(), "All".t() });
+            _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
         }
 
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Notifications".t();
-            Title = "Notifications".t();
+            NoItemsText = "No Notifications";
+            Title = "Notifications";
 
             base.ViewDidLoad();
 
-            _markHud = new Hud(View);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
@@ -36,15 +32,15 @@ namespace CodeHub.iOS.Views
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CheckButton, UIBarButtonItemStyle.Plain, (s, e) => vm.ReadAllCommand.Execute(null));
             vm.ReadAllCommand.CanExecuteChanged += (sender, e) => NavigationItem.RightBarButtonItem.Enabled = vm.ReadAllCommand.CanExecute(null);
 
-            vm.Bind(x => x.IsMarking, x =>
-            {
-                if (x)
-                    _markHud.Show("Marking...");
-                else
-                    _markHud.Hide();
-            });
+//            vm.Bind(x => x.IsMarking, x =>
+//            {
+//                if (x)
+//                    _markHud.Show("Marking...");
+//                else
+//                    _markHud.Hide();
+//            });
 
-            BindCollection(vm.Notifications, x =>
+            Bind(ViewModel.WhenAnyValue(x => x.Notifications), x =>
             {
                 var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.ToDaysAgo(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
@@ -60,13 +56,12 @@ namespace CodeHub.iOS.Views
                 else
                     el.Image = Images.Notifications;
 
-                el.Tapped += () => vm.GoToNotificationCommand.Execute(x);
+                el.Tapped += () => ViewModel.GoToNotificationCommand.Execute(x);
                 return el;
             });
 
-            var set = this.CreateBindingSet<NotificationsView, NotificationsViewModel>();
-            set.Bind(_viewSegment).To(x => x.ShownIndex);
-            set.Apply();
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.ShownIndex = _viewSegment.SelectedSegment;
+            ViewModel.WhenAnyValue(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
         }
 
         protected override Section CreateSection(string text)

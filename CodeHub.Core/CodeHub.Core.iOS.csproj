@@ -39,13 +39,17 @@
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountValidatorService.cs" />
     <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
-    <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
+    <Compile Include="ViewModels\App\CommentViewModel.cs" />
+    <Compile Include="ViewModels\App\MarkdownComposerViewModel.cs" />
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistEditViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistViewableFileViewModel.cs" />
     <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
@@ -55,6 +59,8 @@
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
+    <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
+    <Compile Include="ViewModels\Source\SourceFilterViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\User\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
@@ -89,33 +95,23 @@
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
-    <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
-    <Compile Include="Messages\SelectIssueLabelsMessage.cs" />
-    <Compile Include="Messages\SelectedMilestoneMessage.cs" />
-    <Compile Include="Messages\SelectedAssignedToMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueAssignedToViewModel.cs" />
-    <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
-    <Compile Include="Messages\IssueEditMessage.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
-    <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
     <Compile Include="ViewModels\App\AboutViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
-    <Compile Include="Messages\SourceEditMessage.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
-    <Compile Include="Messages\GistAddMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
-    <Compile Include="Factories\IFeatureFactory.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
     <Compile Include="Factories\LoginFactory.cs" />
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
@@ -124,12 +120,24 @@
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
-    <Compile Include="Messages\PullRequestEditMessage.cs" />
     <Compile Include="Bootstrap.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Reference Include="Monotouch" />
+    <Reference Include="ReactiveUI">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -153,6 +161,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
-  <ItemGroup />
-  <ItemGroup>
 </Project>

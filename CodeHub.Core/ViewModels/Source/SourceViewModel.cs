@@ -1,99 +1,83 @@
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using GitHubSharp.Models;
 using System;
 using CodeFramework.Core.ViewModels;
-using Cirrious.MvvmCross.Plugins.Messenger;
-using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Source
 {
 	public class SourceViewModel : FileSourceViewModel
     {
-		private MvxSubscriptionToken _editToken;
+        private bool _trueBranch;
+        private string _path;
 
-		private string _path;
-		private string _name;
-		private string _gitUrl;
-		private bool _forceBinary;
+		public string Username { get; set; }
 
-		public string Username { get; private set; }
+		public string Repository { get; set; }
 
-		public string Repository { get; private set; }
+		public string Branch { get; set; }
 
-		public string Branch { get; private set; }
+        public bool ForceBinary { get; set; }
 
-		public bool TrueBranch { get; private set; }
+        public string GitUrl { get; set; }
 
-		protected override async Task Load(bool forceCacheInvalidation)
-        {
-			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_name));
-			string mime = string.Empty;
+        public string Name { get; set; }
 
-			using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-			{
-				mime = await this.GetApplication().Client.DownloadRawResource2(_gitUrl, stream) ?? string.Empty;
-			}
+	    public string Path
+	    {
+	        get { return _path; }
+	        set { this.RaiseAndSetIfChanged(ref _path, value); }
+	    }
 
-			FilePath = filepath;
+	    public bool TrueBranch
+	    {
+	        get { return _trueBranch; }
+	        set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
+	    }
 
-			// We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
-			if (_forceBinary)
-				return;
+        public IReactiveCommand GoToEditCommand { get; private set; }
 
-			var isText = mime.Contains("charset");
-			if (isText)
-			{
-				ContentPath = CreateContentFile();
-			}
-        }
+	    public SourceViewModel(IApplicationService applicationService)
+	    {
+            GoToEditCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentPath, y => y.TrueBranch, (x, y) => x != null && y));
+	        GoToEditCommand.Subscribe(_ =>
+	        {
+	            var vm = CreateViewModel<EditSourceViewModel>();
+	            vm.Path = Path;
+	            vm.Branch = Branch;
+	            vm.Username = Username;
+	            vm.Repository = Repository;
+	            ShowViewModel(vm);
+	        });
 
-		public ICommand GoToEditCommand
-		{
-            get { return new MvxCommand(() => ShowViewModel<EditSourceViewModel>(new EditSourceViewModel.NavObject { Path = _path, Branch = Branch, Username = Username, Repository = Repository }), () => ContentPath != null && TrueBranch); }
-		}
+	        this.WhenAnyValue(x => x.Path).Subscribe(x =>
+                Title = System.IO.Path.GetFileName(x) ?? x.Substring(_path.LastIndexOf('/') + 1));
 
-		public void Init(NavObject navObject)
-		{
-			_path = navObject.Path;
-			HtmlUrl = navObject.HtmlUrl;
-			_name = navObject.Name;
-			_gitUrl = navObject.GitUrl;
-			_forceBinary = navObject.ForceBinary;
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			Branch = navObject.Branch;
-			TrueBranch = navObject.TrueBranch;
+	        LoadCommand.RegisterAsyncTask(async t =>
+	        {
+	            var fileName = System.IO.Path.GetFileName(Name);
+	            if (fileName == null)
+	                return;
 
-			//Create the filename
-			var fileName = System.IO.Path.GetFileName(_path);
-			if (fileName == null)
-				fileName = _path.Substring(_path.LastIndexOf('/') + 1);
+                var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+                string mime;
 
-			//Create the temp file path
-			Title = fileName;
+                using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                {
+                    mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
+                }
 
-			_editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
-			{
-				if (x.OldSha == null || x.Update == null)
-					return;
-				_gitUrl = x.Update.Content.GitUrl;
-				LoadCommand.Execute(true);
-			});
-		}
+                FilePath = filepath;
 
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-			public string Branch { get; set; }
-			public string Path { get; set; }
-			public string HtmlUrl { get; set; }
-			public string Name { get; set; }
-			public string GitUrl { get; set; }
-			public bool ForceBinary { get; set; }
-			public bool TrueBranch { get; set; }
-		}
+                // We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
+                if (ForceBinary)
+                    return;
+
+                var isText = mime.Contains("charset");
+                if (isText)
+                {
+                    ContentPath = CreateContentFile();
+                }
+	        });
+	    }
     }
 }

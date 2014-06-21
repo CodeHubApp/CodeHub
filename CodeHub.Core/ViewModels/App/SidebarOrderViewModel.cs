@@ -1,6 +1,5 @@
-﻿using System;
-using CodeFramework.Core.ViewModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {

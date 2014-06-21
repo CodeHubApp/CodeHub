@@ -1,74 +1,65 @@
-﻿using CodeFramework.Core.ViewModels;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using System.Linq;
-using CodeFramework.Core.Services;
+﻿using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using System;
 using System.Threading.Tasks;
+using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class SettingsViewModel : BaseViewModel
     {
+        private readonly IApplicationService _applicationService;
         private readonly IFeaturesService _featuresService;
         private readonly IDefaultValueService _defaultValueService;
+        private readonly IAccountsService _accountsService;
+        private readonly IAnalyticsService _analyticsService;
 
-        public SettingsViewModel(IFeaturesService featuresService, IDefaultValueService defaultValueService)
+        public IReactiveCommand GoToDefaultStartupViewCommand { get; private set; }
+
+        public IReactiveCommand DeleteAllCacheCommand { get; private set; }
+
+        public string DefaultStartupViewName
         {
-            _featuresService = featuresService;
-            _defaultValueService = defaultValueService;
+            get { return _applicationService.Account.DefaultStartupView; }
         }
 
-		public string DefaultStartupViewName
-		{
-			get { return this.GetApplication().Account.DefaultStartupView; }
-		}
-
-		public ICommand GoToDefaultStartupViewCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
-		}
-
-        public ICommand GoToSidebarOrderCommand
+        public bool AnalyticsEnabled
         {
-            get { return new MvxCommand(() => ShowViewModel<SidebarOrderViewModel>()); }
-        }
-
-		public ICommand DeleteAllCacheCommand
-		{
-			get { return new MvxCommand(DeleteCache); }
-		}
-
-        private bool _isSaving;
-        public bool IsSaving
-        {
-            get { return _isSaving; }
-            private set
+            get { return _analyticsService.Enabled; }
+            set
             {
-                _isSaving = value;
-                RaisePropertyChanged(() => IsSaving);
+                if (value == AnalyticsEnabled)
+                    return;
+                _analyticsService.Enabled = value;
+                this.RaisePropertyChanged();
             }
         }
 
-		public bool AnalyticsEnabled
-		{
-			get
-			{
-				return GetService<IAnalyticsService>().Enabled;
-			}
-			set
-			{
-				GetService<IAnalyticsService>().Enabled = value;
-			}
-		}
+        public SettingsViewModel(IApplicationService applicationService, IFeaturesService featuresService, 
+                                 IDefaultValueService defaultValueService, IAccountsService accountsService,
+                                 IAnalyticsService analyticsService)
+        {
+            _applicationService = applicationService;
+            _featuresService = featuresService;
+            _defaultValueService = defaultValueService;
+            _accountsService = accountsService;
+            _analyticsService = analyticsService;
+
+            GoToDefaultStartupViewCommand = new ReactiveCommand();
+            GoToDefaultStartupViewCommand.Subscribe(_ => ShowViewModel(CreateViewModel<DefaultStartupViewModel>()));
+
+            DeleteAllCacheCommand = new ReactiveCommand();
+        }
+
 
         public bool LargeFonts
         {
             get 
             { 
                 bool value;
-                _defaultValueService.TryGet<bool>("large_fonts", out value);
+                _defaultValueService.TryGet("large_fonts", out value);
                 return value;
             }
             set { _defaultValueService.Set("large_fonts", value); }
@@ -83,33 +74,22 @@ namespace CodeHub.Core.ViewModels.App
 		{
             get 
             { 
-                return PushNotificationsActivated && this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; 
+                return PushNotificationsActivated && _applicationService.Account.IsPushNotificationsEnabled.HasValue && _applicationService.Account.IsPushNotificationsEnabled.Value; 
             }
             set 
             { 
-                if (PushNotificationsActivated)
-                    RegisterPushNotifications(value);
-                else
-                {
-                    GetService<IAlertDialogService>()
-                        .PromptYesNo("Requires Activation", "Push notifications require activation. Would you like to go there now to activate push notifications?")
-                        .ContinueWith(t =>
-                        {
-                            if (t.Status == TaskStatus.RanToCompletion && t.Result)
-                                ShowViewModel<UpgradesViewModel>();
-                        });
-                    RaisePropertyChanged(() => PushNotificationsEnabled);
-                }
+                if (!PushNotificationsActivated)
+                    throw new Exception("Push notifications have not been activated");
+                RegisterPushNotifications(value);
             }
 		}
 
-		private async Task RegisterPushNotifications(bool enabled)
+		private async void RegisterPushNotifications(bool enabled)
 		{
 			var notificationService = GetService<IPushNotificationsService>();
 
 			try
 			{
-                IsSaving = true;
 				if (enabled)
                 {
 					await notificationService.Register();
@@ -119,36 +99,26 @@ namespace CodeHub.Core.ViewModels.App
                     await notificationService.Deregister();
                 }
 
-				this.GetApplication().Account.IsPushNotificationsEnabled = enabled;
-				this.GetApplication().Accounts.Update(this.GetApplication().Account);
+				_applicationService.Account.IsPushNotificationsEnabled = enabled;
+				_accountsService.Update(_applicationService.Account);
 			}
 			catch (Exception e)
 			{
-                ReportException(e);
+                System.Diagnostics.Debug.WriteLine("Unable to register push notifications: " + e.Message);
 			}
-            finally
-            {
-                RaisePropertyChanged(() => PushNotificationsEnabled);
-                IsSaving = false;
-            }
-		}
-
-		private void DeleteCache()
-		{
-			if (this.GetApplication().Account.Cache != null)
-				this.GetApplication().Account.Cache.DeleteAll();
 		}
 
 		public float CacheSize
 		{
 			get
 			{
-				if (this.GetApplication().Account.Cache == null)
-					return 0f;
-
-				var totalCacheSize = this.GetApplication().Account.Cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-				var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
-				return totalCacheSizeMB;
+//				if (_applicationService.Account.Cache == null)
+//					return 0f;
+//
+//				var totalCacheSize = _applicationService.Account.Cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
+//				var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
+//				return totalCacheSizeMB;
+			    return 0;
 			}
 		}
     }

@@ -1,92 +1,65 @@
-using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
+using System.Reactive.Linq;
 using CodeHub.Core.Filters;
-using GitHubSharp.Models;
-using System.Collections.Generic;
-using System.Linq;
+using CodeHub.Core.Services;
 using System;
-using Cirrious.MvvmCross.Plugins.Messenger;
-using CodeHub.Core.Messages;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
-        private MvxSubscriptionToken _editToken;
-
 		private int _selectedFilter;
 		public int SelectedFilter
 		{
 			get { return _selectedFilter; }
-			set 
-			{
-				_selectedFilter = value;
-				RaisePropertyChanged(() => SelectedFilter);
-			}
+			set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
 
-        public MyIssuesViewModel()
+        public MyIssuesViewModel(IApplicationService applicationService)
         {
-            _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
-            _issues.GroupingFunction = Group;
-            _issues.Bind(x => x.Filter, () => LoadCommand.Execute(false));
+            Filter = applicationService.Account.Filters.GetFilter<MyIssuesFilterModel>("MyIssues");
+//            Issues.GroupFunc = x =>
+//            {
+//                var @group = base.Group(model);
+//                if (@group != null) return @group;
+//
+//                try
+//                {
+//                    var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
+//                    return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
+//                }
+//                catch (Exception e)
+//                {
+//                    return null;
+//                }
+//            };
 
-			this.Bind(x => x.SelectedFilter, x =>
-			{
-				if (x == 0)
-					_issues.Filter = MyIssuesFilterModel.CreateOpenFilter();
-				else if (x == 1)
-					_issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
-			});
-
-            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(x =>
             {
-                if (x.Issue == null)
-                    return;
-
-                var item = Issues.Items.FirstOrDefault(y => y.Number == x.Issue.Number);
-                if (item == null)
-                    return;
-
-                var index = Issues.Items.IndexOf(item);
-
-                using (Issues.DeferRefresh())
+                switch (x)
                 {
-                    Issues.Items.RemoveAt(index);
-                    Issues.Items.Insert(index, x.Issue);
+                    case 0:
+                        Filter = MyIssuesFilterModel.CreateOpenFilter();
+                        break;
+                    case 1:
+                        Filter = MyIssuesFilterModel.CreateClosedFilter();
+                        break;
                 }
             });
-        }
 
-        protected override List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
-        {
-            var group = base.Group(model);
-            if (group == null)
+            LoadCommand.RegisterAsyncTask(t =>
             {
-                try
-                {
-                    var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
-                    return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
-                }
-                catch (Exception e)
-                {
-                    return null;
-                }
-            }
+                var filter = Filter.FilterType.ToString().ToLower();
+                var direction = Filter.Ascending ? "asc" : "desc";
+                var state = Filter.Open ? "open" : "closed";
+                var sort = Filter.SortType == BaseIssuesFilterModel.Sort.None
+                    ? null : Filter.SortType.ToString().ToLower();
+                var labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
 
-            return group;
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-            string filter = Issues.Filter.FilterType.ToString().ToLower();
-            string direction = Issues.Filter.Ascending ? "asc" : "desc";
-            string state = Issues.Filter.Open ? "open" : "closed";
-            string sort = Issues.Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Issues.Filter.SortType.ToString().ToLower();
-            string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
-
-			var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
-            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
+                var request = applicationService.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels,
+                    state: state, direction: direction, filter: filter);
+                return Issues.SimpleCollectionLoad(request, t as bool?);
+            });
         }
     }
 }

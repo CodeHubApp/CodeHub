@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CodeHub.Core.Services;
 using GitHubSharp;
 using GitHubSharp.Models;
 
@@ -6,34 +7,18 @@ namespace CodeHub.Core.ViewModels.Events
 {
     public class OrganizationEventsViewModel : BaseEventsViewModel
     {
-        public string OrganizationName
-        {
-            get;
-            private set;
-        }
+        public string OrganizationName { get; set; }
 
-        public string Username
-        {
-            get;
-            private set;
-        }
+        public string Username { get; set; }
 
-        public void Init(NavObject navobject)
+        public OrganizationEventsViewModel(IApplicationService applicationService)
+            : base(applicationService)
         {
-            Username = navobject.Username;
-            OrganizationName = navobject.OrganizagtionName;
         }
 
         protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
         {
-			return this.GetApplication().Client.Users[Username].GetOrganizationEvents(OrganizationName, page, perPage);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string OrganizagtionName { get; set; }
+			return ApplicationService.Client.Users[Username].GetOrganizationEvents(OrganizationName, page, perPage);
         }
     }
-
 }

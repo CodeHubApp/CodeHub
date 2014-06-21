@@ -1,62 +1,52 @@
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using System;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Source;
+using ReactiveUI;
+using Xamarin.Utilities.Core.ReactiveAddons;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestFilesViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<CommitModel.CommitFileModel> _files = new CollectionViewModel<CommitModel.CommitFileModel>();
+        public ReactiveCollection<CommitModel.CommitFileModel> Files { get; private set; }
 
-        public CollectionViewModel<CommitModel.CommitFileModel> Files
+        public long PullRequestId { get; set; }
+
+        public string Username { get; set; }
+
+        public string Repository { get; set; }
+
+		public IReactiveCommand GoToSourceCommand { get; private set; }
+
+        public PullRequestFilesViewModel(IApplicationService applicationService)
         {
-            get { return _files; }
-        }
+            Files = new ReactiveCollection<CommitModel.CommitFileModel>
+            {
+                GroupFunc = y =>
+                {
+                    var filename = "/" + y.Filename;
+                    return filename.Substring(0, filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                }
+            };
 
-        public long PullRequestId { get; private set; }
+            GoToSourceCommand =  new ReactiveCommand();
+            GoToSourceCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
+            {
+                var vm = CreateViewModel<SourceViewModel>();
+                vm.Name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                vm.Path = x.Filename;
+                vm.GitUrl = x.ContentsUrl;
+                vm.ForceBinary = x.Patch == null;
+                ShowViewModel(vm);
+            });
 
-        public string Username { get; private set; }
-
-        public string Repository { get; private set; }
-
-		public ICommand GoToSourceCommand
-		{
-			get 
-			{ 
-				return new MvxCommand<CommitModel.CommitFileModel>(x => 
-				{
-					var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-					ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
-				});
-			}
-		}
-
-		public void Init(NavObject navObject)
-        {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			PullRequestId = navObject.PullRequestId;
-
-            _files.GroupingFunction = (x) => x.GroupBy(y => {
-                var filename = "/" + y.Filename;
-                return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-            }).OrderBy(y => y.Key);
-        }
-
-        protected override Task Load(bool forceDataRefresh)
-        {
-			return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public long PullRequestId { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+                Files.SimpleCollectionLoad(
+                    applicationService.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId]
+                        .GetFiles(), t as bool?));
         }
     }
 }

@@ -3,6 +3,9 @@ using CodeFramework.Core.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
+using CodeHub.iOS.Views.App;
+using MonoTouch.UIKit;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Services
 {
@@ -65,6 +68,17 @@ namespace CodeHub.iOS.Services
             var data = await response.Content.ReadAsStringAsync();
             ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
             return ids;
+        }
+
+        public Task PromptPushNotificationFeature()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            var ctrl = IoC.Resolve<EnablePushNotificationsViewController>();
+            ctrl.Dismissed += (sender, e) => tcs.SetResult(null);
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                appDelegate.Window.RootViewController.PresentViewController(ctrl, true, null);
+            return tcs.Task;
         }
     }
 }

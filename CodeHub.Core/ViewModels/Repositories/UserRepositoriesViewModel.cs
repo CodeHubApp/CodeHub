@@ -1,34 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using CodeHub.Core.ViewModels.Repositories;
-using GitHubSharp;
-using GitHubSharp.Models;
+using CodeHub.Core.Services;
+using ReactiveUI;
 
-namespace CodeHub.Core.ViewModels.User
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class UserRepositoriesViewModel : RepositoriesViewModel
     {
-        public string Username { get; private set; }
+        public string Username { get; set; }
 
-        public void Init(NavObject navObject)
+        public UserRepositoriesViewModel(IApplicationService applicationService)
+            : base(applicationService)
         {
-            Username = navObject.Username;
-        }
-
-        protected override Task Load(bool forceCacheInvalidation)
-        {
-            GitHubRequest<List<RepositoryModel>> request;
-            if (string.Equals(this.GetApplication().Account.Username, Username, StringComparison.OrdinalIgnoreCase))
-                request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll();
-            else
-                request = this.GetApplication().Client.Users[Username].Repositories.GetAll();
-            return Repositories.SimpleCollectionLoad(request, forceCacheInvalidation);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            LoadCommand.RegisterAsyncTask(t =>
+            {
+                var request = string.Equals(applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
+                    applicationService.Client.AuthenticatedUser.Repositories.GetAll() : 
+                    applicationService.Client.Users[Username].Repositories.GetAll();
+                return Repositories.SimpleCollectionLoad(request, t as bool?);
+            });
         }
     }
 }
