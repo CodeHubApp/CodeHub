@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
@@ -13,11 +15,13 @@ namespace CodeHub.iOS.Views.Accounts
     public partial class AddAccountView : ViewModelViewController<AddAccountViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
+        private readonly IAlertDialogService _alertDialogService;
 
-        public AddAccountView(IStatusIndicatorService statusIndicatorService)
+        public AddAccountView(IStatusIndicatorService statusIndicatorService, IAlertDialogService alertDialogService)
             : base("AddAccountView", null)
         {
             _statusIndicatorService = statusIndicatorService;
+            _alertDialogService = alertDialogService;
         }
 
         public override void ViewDidLoad()
@@ -34,6 +38,20 @@ namespace CodeHub.iOS.Views.Accounts
 				else
                     _statusIndicatorService.Hide();
 			});
+            
+		    ViewModel.LoginCommand.ThrownExceptions.Subscribe(x =>
+		    {
+		        if (x is LoginService.TwoFactorRequiredException)
+		        {
+		            _alertDialogService.PromptTextBox("Two Factor Authentication",
+		                "This account requires a two factor authentication code", string.Empty, "Ok")
+		                .ContinueWith(t =>
+		                {
+		                    ViewModel.TwoFactor = t.Result;
+                            ViewModel.LoginCommand.ExecuteIfCan();
+		                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+		        }
+		    });
 
             User.ValueChanged += (sender, args) => ViewModel.Username = User.Text;
             ViewModel.WhenAnyValue(x => x.Username).Subscribe(x => User.Text = x);

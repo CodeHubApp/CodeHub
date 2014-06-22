@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             GoToDotComLoginCommand = new ReactiveCommand();
             GoToDotComLoginCommand.Subscribe(_ => 
-                ShowViewModel(CreateViewModel<LoginViewModel>()));
+                CreateAndShowViewModel<LoginViewModel>());
 
             GoToEnterpriseLoginCommand = new ReactiveCommand();
             GoToEnterpriseLoginCommand.Subscribe(_ =>

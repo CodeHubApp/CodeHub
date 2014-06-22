@@ -3,7 +3,6 @@ using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
-using System.Linq;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -15,8 +14,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private readonly ILoginService _loginFactory;
-        private readonly IFeaturesService _featuresService;
-        private readonly IAccountsService _accountsService;
 
         public string LoginUrl
         {
@@ -54,12 +51,9 @@ namespace CodeHub.Core.ViewModels.Accounts
         }
 
         public LoginViewModel(ILoginService loginFactory, 
-                              IFeaturesService featuresService, 
                               IAccountsService accountsService)
         {
             _loginFactory = loginFactory;
-            _featuresService = featuresService;
-            _accountsService = accountsService;
 
             WebDomain = "https://github.com";
 
@@ -67,10 +61,11 @@ namespace CodeHub.Core.ViewModels.Accounts
             GoToOldLoginWaysCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AddAccountViewModel>()));
 
             LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Code, x => !string.IsNullOrEmpty(x)));
-            LoginCommand.RegisterAsyncTask(_ => Login(Code));
+            LoginCommand.RegisterAsyncTask(_ => Login(Code))
+                .Subscribe(x => accountsService.ActiveAccount = x);
         }
 
-        private async Task Login(string code)
+        private async Task<GitHubAccount> Login(string code)
         {
             string apiUrl;
             if (IsEnterprise)
@@ -90,35 +85,9 @@ namespace CodeHub.Core.ViewModels.Accounts
                 apiUrl = GitHubSharp.Client.DefaultApi;
             }
 
-            var shouldPromptPush = false;
             var account = AttemptedAccount;
             var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
-
-            if (!_featuresService.IsPushNotificationsActivated && !IsEnterprise)
-            {
-                try
-                {
-                    var ids = await _featuresService.GetAvailableFeatureIds();
-                    shouldPromptPush = ids.Contains(FeatureIds.PushNotifications);
-                }
-                catch (Exception e)
-                {
-                    System.Diagnostics.Debug.WriteLine("Unable to get available feature ids: {0}", e.Message);
-                }
-            }
-
-            try
-            {
-                // Only prompt if we're allowing that to be enabled.
-                if (shouldPromptPush)
-                    await _featuresService.PromptPushNotificationFeature();
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("Unable to get prompt for push notificatoins: {0}", e.Message);
-            }
-
-            _accountsService.ActiveAccount = loginData.Account;
+            return loginData.Account;
         }
     }
 }

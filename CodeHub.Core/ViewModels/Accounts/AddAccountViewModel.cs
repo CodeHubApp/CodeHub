@@ -12,7 +12,6 @@ namespace CodeHub.Core.ViewModels.Accounts
     public class AddAccountViewModel : BaseViewModel 
     {
         private readonly ILoginService _loginFactory;
-        private readonly IAccountsService _accountsService;
         private string _username;
         private string _password;
         private string _domain;
@@ -51,7 +50,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         public AddAccountViewModel(ILoginService loginFactory, IAccountsService accountsService)
         {
             _loginFactory = loginFactory;
-            _accountsService = accountsService;
 
             this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
             {
@@ -61,10 +59,11 @@ namespace CodeHub.Core.ViewModels.Accounts
             });
 
             LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)));
-            LoginCommand.RegisterAsyncTask(_ => Login());
+            LoginCommand.RegisterAsyncTask(_ => Login())
+                .Subscribe(x => accountsService.ActiveAccount = x);
         }
 
-		private async Task Login()
+		private async Task<GitHubAccount> Login()
         {
             var apiUrl = IsEnterprise ? Domain : null;
             if (apiUrl != null)
@@ -77,24 +76,9 @@ namespace CodeHub.Core.ViewModels.Accounts
                     apiUrl += "api/v3/";
             }
 
-            try
-            {
-				Console.WriteLine(apiUrl);
-                var loginData = await _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
-				await _loginFactory.LoginAccount(loginData.Account);
-                _accountsService.ActiveAccount = loginData.Account;
-            }
-            catch (Exception e)
-            {
-                TwoFactor = null;
-
-                // Don't log an error for a two factor warning
-                if (!(e is LoginService.TwoFactorRequiredException))
-                {
-                    Password = null;
-                    throw;
-                }
-            }
+            var loginData = await _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
+			await _loginFactory.LoginAccount(loginData.Account);
+            return loginData.Account;
         }
     }
 }
