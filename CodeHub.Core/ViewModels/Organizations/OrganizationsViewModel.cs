@@ -18,6 +18,8 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public OrganizationsViewModel(IApplicationService applicationService)
         {
+            Organizations = new ReactiveCollection<BasicUserModel>();
+
             GoToOrganizationCommand = new ReactiveCommand();
             GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
             {

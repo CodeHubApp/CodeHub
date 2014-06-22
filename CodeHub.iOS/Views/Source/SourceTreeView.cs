@@ -39,8 +39,10 @@ namespace CodeHub.iOS.Views.Source
             }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
             {
+                var isTree = x.GitUrl.EndsWith("trees/" + x.Sha, StringComparison.OrdinalIgnoreCase);
+
                 //If there's a size, it's a file
-                if (x.Size != null)
+                if (x.Size != null && !isTree)
                 {
                     return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
                 }

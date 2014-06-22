@@ -38,7 +38,7 @@ namespace CodeHub.Core.Services
                         Client = Client.BasicOAuth(githubAccount.OAuth, githubAccount.Domain ?? Client.DefaultApi);
                     else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
                         Client = Client.Basic(githubAccount.Username, githubAccount.Password, githubAccount.Domain ?? Client.DefaultApi);
-                    Client.Cache = new GitHubCache();
+                    //Client.Cache = new GitHubCache();
                 }
             });
         }

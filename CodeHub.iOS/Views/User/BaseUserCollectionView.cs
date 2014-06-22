@@ -5,7 +5,7 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.User
 {
-    public abstract class BaseUserCollectionView : ViewModelCollectionView<BaseUserCollectionViewModel>
+    public abstract class BaseUserCollectionView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : BaseUserCollectionViewModel
     {
         public override void ViewDidLoad()
         {

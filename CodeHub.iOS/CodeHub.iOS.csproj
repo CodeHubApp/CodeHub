@@ -225,6 +225,13 @@
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
+    <None Include="Views\Repositories\ReadmeRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
+    </None>
+    <Compile Include="Views\Repositories\ReadmeRazorView.cs">
+      <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
@@ -232,15 +239,15 @@
       <Name>CodeFramework.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
-      <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
+      <Project>{9668F603-4C35-40FF-8703-8F8184CC9FC9}</Project>
       <Name>CodeHub.Core.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.iOS.csproj">
-      <Project>{ebba1bd0-8430-4cc1-b636-b89c505c7d1c}</Project>
+      <Project>{EBBA1BD0-8430-4CC1-B636-B89C505C7D1C}</Project>
       <Name>Xamarin.Utilities.Core.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.iOS\Xamarin.Utilities.iOS.csproj">
-      <Project>{5e7e39ca-0cce-41fe-a868-ee0e567e069e}</Project>
+      <Project>{5E7E39CA-0CCE-41FE-A868-EE0E567E069E}</Project>
       <Name>Xamarin.Utilities.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">

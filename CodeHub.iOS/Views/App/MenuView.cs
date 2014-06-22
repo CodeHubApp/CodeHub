@@ -24,24 +24,24 @@ namespace CodeHub.iOS.Views.App
 
             root.Add(new Section
             {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
-                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Images.News),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Flag)
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.ExecuteIfCan(), Images.Person),
+                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
+                new MenuElement("News", () => ViewModel.GoToNewsCommand.ExecuteIfCan(), Images.News),
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Images.Flag)
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event));
 			if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
 				ViewModel.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event)));
             root.Add(eventsSection);
 
             var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
-			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Images.Repo));
+			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Images.Repo));
 			//repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
-            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
-            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Images.Chart));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
+            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Images.Star));
+            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Chart));
+            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Explore));
             root.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
@@ -60,23 +60,23 @@ namespace CodeHub.iOS.Views.App
 			if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
 				ViewModel.Organizations.ForEach(x => orgSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationCommand.Execute(x), Images.Team)));
             else
-				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group));
+				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group));
 
             //There should be atleast 1 thing...
             if (orgSection.Elements.Count > 0)
                 root.Add(orgSection);
 
             var gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Images.Script));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Images.Star2));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Images.Public));
+            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Script));
+            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star2));
+            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Public));
             root.Add(gistsSection);
 //
             var infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.Execute(null), Images.Unlocked));
-			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
+            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
+            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
+			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.ExecuteIfCan(), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Images.User));
             Root = root;
@@ -99,7 +99,7 @@ namespace CodeHub.iOS.Views.App
 
         protected override void ProfileButtonClicked(object sender, EventArgs e)
         {
-            ViewModel.GoToAccountsCommand.Execute(null);
+            ViewModel.GoToAccountsCommand.ExecuteIfCan();
         }
 
         public override void ViewDidLoad()
@@ -122,7 +122,7 @@ namespace CodeHub.iOS.Views.App
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
 
-            ViewModel.LoadCommand.Execute(null);
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
 		private class PinnedRepoElement : MenuElement

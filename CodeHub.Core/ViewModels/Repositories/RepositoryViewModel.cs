@@ -22,12 +22,17 @@ namespace CodeHub.Core.ViewModels.Repositories
         private RepositoryModel _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
+        private string _imageUrl;
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-		public string ImageUrl { get; set; }
+        public string ImageUrl
+        {
+            get { return _imageUrl; }
+            set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
+        }
 
         public bool? IsStarred
         {

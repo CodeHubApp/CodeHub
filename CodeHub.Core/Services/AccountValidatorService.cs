@@ -1,15 +1,14 @@
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.Services
 {
     public class AccountValidatorService : IAccountValidatorService
     {
-        private readonly ILoginFactory _loginFactory;
+        private readonly ILoginService _loginFactory;
 
-        public AccountValidatorService(ILoginFactory loginFactory)
+        public AccountValidatorService(ILoginService loginFactory)
         {
             _loginFactory = loginFactory;
         }

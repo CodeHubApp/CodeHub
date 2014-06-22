@@ -18,7 +18,7 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.App
 {
-	public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseMenuViewModel, IMainViewModel
     {
         private readonly IApplicationService _applicationService;
 		private int _notifications;
@@ -56,7 +56,7 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToAccountsCommand = new ReactiveCommand();
-            GoToAccountsCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AccountsViewModel>()));
+            GoToAccountsCommand.Subscribe(_ => CreateAndShowViewModel<AccountsViewModel>());
 
             GoToProfileCommand = new ReactiveCommand();
             GoToProfileCommand.Subscribe(_ =>
@@ -67,13 +67,13 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToMyIssuesCommand = new ReactiveCommand();
-            GoToMyIssuesCommand.Subscribe(_ => ShowViewModel(CreateViewModel<MyIssuesViewModel>()));
+            GoToMyIssuesCommand.Subscribe(_ => CreateAndShowViewModel<MyIssuesViewModel>());
 
             GoToUpgradesCommand = new ReactiveCommand();
-            GoToUpgradesCommand.Subscribe(_ => ShowViewModel(CreateViewModel<UpgradesViewModel>()));
+            GoToUpgradesCommand.Subscribe(_ => CreateAndShowViewModel<UpgradesViewModel>());
 
             GoToAboutCommand = new ReactiveCommand();
-            GoToAboutCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AboutViewModel>()));
+            GoToAboutCommand.Subscribe(_ => CreateAndShowViewModel<AboutViewModel>());
 
             GoToRepositoryCommand = new ReactiveCommand();
             GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x =>
@@ -85,10 +85,10 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToSettingsCommand = new ReactiveCommand();
-            GoToSettingsCommand.Subscribe(_ => ShowViewModel(CreateViewModel<SettingsViewModel>()));
+            GoToSettingsCommand.Subscribe(_ => CreateAndShowViewModel<SettingsViewModel>());
 
             GoToNewsCommand = new ReactiveCommand();
-            GoToNewsCommand.Subscribe(_ => ShowViewModel(CreateViewModel<NewsViewModel>()));
+            GoToNewsCommand.Subscribe(_ => CreateAndShowViewModel<NewsViewModel>());
 
             GoToOrganizationsCommand = new ReactiveCommand();
             GoToOrganizationsCommand.Subscribe(_ =>
@@ -99,10 +99,10 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToTrendingRepositoriesCommand = new ReactiveCommand();
-            GoToTrendingRepositoriesCommand.Subscribe(_ => ShowViewModel(CreateViewModel<RepositoriesTrendingViewModel>()));
+            GoToTrendingRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesTrendingViewModel>());
 
             GoToExploreRepositoriesCommand = new ReactiveCommand();
-            GoToExploreRepositoriesCommand.Subscribe(_ => ShowViewModel(CreateViewModel<RepositoriesExploreViewModel>()));
+            GoToExploreRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesExploreViewModel>());
 
             GoToOrganizationEventsCommand = new ReactiveCommand();
             GoToOrganizationEventsCommand.OfType<string>().Subscribe(name =>
@@ -129,13 +129,13 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToStarredRepositoriesCommand = new ReactiveCommand();
-            GoToStarredRepositoriesCommand.Subscribe(_ => CreateViewModel<RepositoriesStarredViewModel>());
+            GoToStarredRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesStarredViewModel>());
 
             GoToPublicGistsCommand = new ReactiveCommand();
-            GoToPublicGistsCommand.Subscribe(_ => CreateViewModel<PublicGistsViewModel>());
+            GoToPublicGistsCommand.Subscribe(_ => CreateAndShowViewModel<PublicGistsViewModel>());
 
             GoToStarredGistsCommand = new ReactiveCommand();
-            GoToStarredGistsCommand.Subscribe(_ => CreateViewModel<StarredGistsViewModel>());
+            GoToStarredGistsCommand.Subscribe(_ => CreateAndShowViewModel<StarredGistsViewModel>());
 
             GoToMyGistsCommand = new ReactiveCommand();
             GoToMyGistsCommand.Subscribe(_ =>

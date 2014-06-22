@@ -1,7 +1,7 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using ReactiveUI;
+using CodeFramework.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 	    public SourceViewModel(IApplicationService applicationService)
 	    {
-            GoToEditCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentPath, y => y.TrueBranch, (x, y) => x != null && y));
+            GoToEditCommand = new ReactiveCommand(this.WhenAnyValue(x => x.SourceItem, y => y.TrueBranch, (x, y) => x != null && y));
 	        GoToEditCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<EditSourceViewModel>();
@@ -48,9 +48,6 @@ namespace CodeHub.Core.ViewModels.Source
 	            vm.Repository = Repository;
 	            ShowViewModel(vm);
 	        });
-
-	        this.WhenAnyValue(x => x.Path).Subscribe(x =>
-                Title = System.IO.Path.GetFileName(x) ?? x.Substring(_path.LastIndexOf('/') + 1));
 
 	        LoadCommand.RegisterAsyncTask(async t =>
 	        {
@@ -66,17 +63,9 @@ namespace CodeHub.Core.ViewModels.Source
                     mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
                 }
 
-                FilePath = filepath;
-
                 // We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
-                if (ForceBinary)
-                    return;
-
-                var isText = mime.Contains("charset");
-                if (isText)
-                {
-                    ContentPath = CreateContentFile();
-                }
+                var isBinary = !mime.Contains("charset");
+                SourceItem = new SourceItemViewModel { FilePath = filepath, IsBinary = (ForceBinary || isBinary) };
 	        });
 	    }
     }

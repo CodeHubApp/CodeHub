@@ -1,10 +1,11 @@
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.Foundation;
 using ReactiveUI;
+using CodeFramework.iOS.Views.Source;
 
 namespace CodeHub.iOS.Views.Gists
 {
-	public class GistFileView : Source.FileSourceView<GistFileViewModel>
+	public class GistFileView : FileSourceView<GistFileViewModel>
     {
 		public override void ViewDidLoad()
 		{

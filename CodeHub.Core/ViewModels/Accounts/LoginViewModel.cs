@@ -3,7 +3,6 @@ using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
-using CodeHub.Core.Factories;
 using System.Linq;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
@@ -15,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public const string ClientId = "72f4fb74bdba774b759d";
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
-        private readonly ILoginFactory _loginFactory;
+        private readonly ILoginService _loginFactory;
         private readonly IFeaturesService _featuresService;
         private readonly IAccountsService _accountsService;
 
@@ -54,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _code, value); }
         }
 
-        public LoginViewModel(ILoginFactory loginFactory, 
+        public LoginViewModel(ILoginService loginFactory, 
                               IFeaturesService featuresService, 
                               IAccountsService accountsService)
         {
@@ -62,13 +61,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             _featuresService = featuresService;
             _accountsService = accountsService;
 
+            WebDomain = "https://github.com";
+
             GoToOldLoginWaysCommand = new ReactiveCommand();
-            GoToOldLoginWaysCommand.Subscribe(_ =>
-            {
-                var vm = CreateViewModel<AddAccountViewModel>();
-                vm.IsEnterprise = true;
-                ShowViewModel(vm);
-            });
+            GoToOldLoginWaysCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AddAccountViewModel>()));
 
             LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Code, x => !string.IsNullOrEmpty(x)));
             LoginCommand.RegisterAsyncTask(_ => Login(Code));

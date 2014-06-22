@@ -3,15 +3,15 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
-using CodeHub.Core.Factories;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AddAccountViewModel : BaseViewModel 
     {
-        private readonly ILoginFactory _loginFactory;
+        private readonly ILoginService _loginFactory;
         private readonly IAccountsService _accountsService;
         private string _username;
         private string _password;
@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
         }
 
-        public AddAccountViewModel(ILoginFactory loginFactory, IAccountsService accountsService)
+        public AddAccountViewModel(ILoginService loginFactory, IAccountsService accountsService)
         {
             _loginFactory = loginFactory;
             _accountsService = accountsService;
@@ -89,7 +89,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 TwoFactor = null;
 
                 // Don't log an error for a two factor warning
-                if (!(e is LoginFactory.TwoFactorRequiredException))
+                if (!(e is LoginService.TwoFactorRequiredException))
                 {
                     Password = null;
                     throw;

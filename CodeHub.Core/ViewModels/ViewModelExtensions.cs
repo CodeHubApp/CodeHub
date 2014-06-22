@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels
 		}
 
         public static void CreateMore<T>(this object viewModel, GitHubResponse<List<T>> response, 
-										 Action<Task> assignMore, Action<List<T>> newDataAction) where T : new()
+            Action<Func<Task>> assignMore, Action<List<T>> newDataAction) where T : new()
         {
             if (response.More == null)
             {
@@ -42,20 +42,20 @@ namespace CodeHub.Core.ViewModels
                 return;
             }
 
-            assignMore(new Task(() =>
+            assignMore(async () =>
             {
                 response.More.UseCache = false;
-                var moreResponse = IoC.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
+                var moreResponse = await IoC.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
-            }));
+            });
         }
 
         public static Task SimpleCollectionLoad<T>(this ReactiveCollection<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh) where T : new()
         {
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, m => viewModel.MoreTask = m, x => viewModel.AddRange(x));
+                viewModel.CreateMore(response, m => viewModel.MoreTask = m, viewModel.AddRange);
                 viewModel.Reset(response.Data);
             });
         }

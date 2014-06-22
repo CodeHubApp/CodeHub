@@ -13,6 +13,7 @@ namespace CodeHub.iOS.Views.Repositories
     public class RepositoriesTrendingView : ViewModelCollectionView<RepositoriesTrendingViewModel>
     {
         public RepositoriesTrendingView()
+            : base("Trending")
         {
             EnableSearch = false;
         }
@@ -20,7 +21,6 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             NoItemsText = "No Repositories";
-            Title = "Trending";
 
             base.ViewDidLoad();
 

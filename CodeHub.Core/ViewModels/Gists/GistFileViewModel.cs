@@ -3,6 +3,7 @@ using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
+using CodeFramework.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -54,8 +55,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 var content = GistFile.Content;
                 var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(GistFile.Filename));
 			    System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
-			    FilePath = filePath;
-			    ContentPath = CreateContentFile();
+                SourceItem = new SourceItemViewModel { FilePath = filePath };
             });
 	    }
     }

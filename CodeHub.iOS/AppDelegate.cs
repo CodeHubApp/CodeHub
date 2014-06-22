@@ -21,12 +21,12 @@ namespace CodeHub.iOS
     [Register("AppDelegate")]
     public class AppDelegate : UIApplicationDelegate
     {
+        public string DeviceToken;
+
         /// <summary>
         /// The window.
         /// </summary>
-		public string DeviceToken;
-
-        public new UIWindow Window { get; set; }
+        public override UIWindow Window { get; set; }
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -47,13 +47,9 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            CodeHub.Core.Bootstrap.Init();
-
-
 //			var iRate = MTiRate.iRate.SharedInstance;
 //			iRate.AppStoreID = 707173885;
 
-            IoC.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             // Stamp the date this was installed (first run)
             StampInstallDate();
@@ -70,6 +66,10 @@ namespace CodeHub.iOS
             viewModelViewService.RegisterViewModels(typeof(Xamarin.Utilities.Services.DefaultValueService).Assembly);
             viewModelViewService.RegisterViewModels(typeof(CodeFramework.iOS.Theme).Assembly);
             viewModelViewService.RegisterViewModels(GetType().Assembly);
+
+            IoC.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+            CodeHub.Core.Bootstrap.Init();
+
 
             Theme.Setup();
             SetupPushNotifications();

@@ -48,11 +48,10 @@ namespace CodeHub.Core.ViewModels.Source
             {
                 var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", StringComparison.OrdinalIgnoreCase) + 7);
                 var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.OrdinalIgnoreCase)));
-                var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", StringComparison.OrdinalIgnoreCase) + 1);
                 var vm = CreateViewModel<SourceTreeViewModel>();
                 vm.Username = repoId.Owner;
                 vm.Repository = repoId.Name;
-                vm.Branch = sha;
+                vm.Branch = x.Sha;
                 ShowViewModel(vm);
             });
 
@@ -79,6 +78,7 @@ namespace CodeHub.Core.ViewModels.Source
                 vm.Branch = Branch;
                 vm.Repository = Repository;
                 vm.TrueBranch = TrueBranch;
+                vm.Path = x.Path;
                 ShowViewModel(vm);
             });
 

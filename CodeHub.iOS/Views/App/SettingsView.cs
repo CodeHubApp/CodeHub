@@ -9,7 +9,6 @@ namespace CodeHub.iOS.Views.App
 	{
         public override void ViewWillAppear(bool animated)
         {
-			var vm = (SettingsViewModel)ViewModel;
 //			vm.Bind(x => x.PushNotificationsEnabled, CreateTable);
 //            vm.Bind(x => x.IsSaving, x =>
 //            {

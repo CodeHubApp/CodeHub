@@ -21,7 +21,6 @@ namespace CodeHub.iOS.Views.Accounts
         public override void ViewDidLoad()
         {
             Title = "Account";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
 
             base.ViewDidLoad();
 
@@ -33,12 +32,12 @@ namespace CodeHub.iOS.Views.Accounts
             InternetButton.Layer.ShadowColor = UIColor.Black.CGColor;
             InternetButton.Layer.ShadowOffset = new SizeF(0, 1);
             InternetButton.Layer.ShadowOpacity = 0.3f;
+            InternetButton.TouchUpInside += (sender, e) => ViewModel.GoToDotComLoginCommand.ExecuteIfCan();
 
             EnterpriseButton.Layer.ShadowColor = UIColor.Black.CGColor;
             EnterpriseButton.Layer.ShadowOffset = new SizeF(0, 1);
             EnterpriseButton.Layer.ShadowOpacity = 0.3f;
 
-            EnterpriseButton.TouchUpInside += (sender, e) => ViewModel.GoToDotComLoginCommand.ExecuteIfCan();
             EnterpriseButton.TouchUpInside += (sender, e) => GoToEnterprise();
 
             ScrollView.ContentSize = new SizeF(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);

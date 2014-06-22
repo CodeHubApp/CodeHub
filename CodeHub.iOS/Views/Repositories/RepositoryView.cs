@@ -20,20 +20,22 @@ namespace CodeHub.iOS.Views.Repositories
             base.ViewDidLoad();
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.Enabled = false;
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Repository, x => x != null));
 
-            ViewModel.WhenAnyValue(x => x.Repository).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
             {
 				ViewModel.ImageUrl = (x.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl).AbsoluteUri;
-                NavigationItem.RightBarButtonItem.Enabled = true;
-                Render(x);
+                _header.Subtitle = "Updated " + (ViewModel.Repository.UpdatedAt).ToDaysAgo();
+                Render();
             });
+
+            ViewModel.WhenAnyValue(x => x.ImageUrl).Subscribe(x => _header.ImageUri = x);
 
             ViewModel.WhenAnyValue(x => x.Readme).Where(x => x != null).Subscribe(_ =>
             {
                 // Not very efficient but it'll work for now.
                 if (ViewModel.Repository != null)
-                    Render(ViewModel.Repository);
+                    Render();
             });
         }
 
@@ -62,15 +64,15 @@ namespace CodeHub.iOS.Views.Repositories
                 // Pin to menu
                 if (e.ButtonIndex == pinButton)
                 {
-                    ViewModel.PinCommand.Execute(null);
+                    ViewModel.PinCommand.ExecuteIfCan();
                 }
                 else if (e.ButtonIndex == starButton)
                 {
-                    ViewModel.ToggleStarCommand.Execute(null);
+                    ViewModel.ToggleStarCommand.ExecuteIfCan();
                 }
                 else if (e.ButtonIndex == watchButton)
                 {
-                    ViewModel.ToggleWatchCommand.Execute(null);
+                    ViewModel.ToggleWatchCommand.ExecuteIfCan();
                 }
                 // Fork this repo
 //                else if (e.ButtonIndex == forkButton)
@@ -80,13 +82,108 @@ namespace CodeHub.iOS.Views.Repositories
                 // Show in Bitbucket
                 else if (e.ButtonIndex == showButton)
                 {
-					ViewModel.GoToHtmlUrlCommand.Execute(null);
+					ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
                 }
 
                 _actionSheet = null;
             };
 
             sheet.ShowInView(this.View);
+        }
+
+        private void Render()
+        {
+            var model = ViewModel.Repository;
+            var root = new RootElement(ViewModel.RepositoryName) { UnevenRows = true };
+            root.Add(new Section(_header));
+            var sec1 = new Section();
+
+            if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
+            {
+                var element = new MultilinedElement(model.Description)
+                {
+                    BackgroundColor = UIColor.White,
+                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
+                    ValueColor = Theme.CurrentTheme.MainTextColor
+                };
+                element.CaptionColor = element.ValueColor;
+                element.CaptionFont = element.ValueFont;
+                sec1.Add(element);
+            }
+            //
+            //            sec1.Add(new SplitElement(new SplitElement.Row {
+            //                Text1 = model.Private ? "Private" : "Public",
+            //                Image1 = model.Private ? Images.Locked : Images.Unlocked,
+            //              Text2 = model.Language ?? "N/A",
+            //                Image2 = Images.Language
+            //            }));
+
+
+            //Calculate the best representation of the size
+            string size;
+            if (model.Size / 1024f < 1)
+                size = string.Format("{0:0.##}KB", model.Size);
+            else if ((model.Size / 1024f / 1024f) < 1)
+                size = string.Format("{0:0.##}MB", model.Size / 1024f);
+            else
+                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
+
+            //            sec1.Add(new SplitElement(new SplitElement.Row {
+            //                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues"),
+            //                Image1 = Images.Flag,
+            //                Text2 = model.Forks.ToString() + (model.Forks == 1 ? " Fork" : " Forks"),
+            //                Image2 = Images.Fork
+            //            }));
+            //
+            //            sec1.Add(new SplitElement(new SplitElement.Row {
+            //                Text1 = (model.CreatedAt).ToString("MM/dd/yy"),
+            //                Image1 = Images.Create,
+            //                Text2 = size,
+            //                Image2 = Images.Size
+            //            }));
+
+            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+            sec1.Add(owner);
+
+            if (model.Parent != null)
+            {
+                var parent = new StyledStringElement("Forked From", model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
+                sec1.Add(parent);
+            }
+
+            var followers = new StyledStringElement("Stargazers", "" + model.StargazersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            followers.Tapped += () => ViewModel.GoToStargazersCommand.ExecuteIfCan();
+            sec1.Add(followers);
+
+            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Images.Event);
+            var sec2 = new Section { events };
+
+            if (model.HasIssues)
+            {
+                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.ExecuteIfCan(), Images.Flag));
+            }
+
+            if (ViewModel.Readme != null)
+                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.ExecuteIfCan(), Images.File));
+
+            var sec3 = new Section
+            {
+                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit),
+                new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Images.Hand),
+                new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Script),
+            };
+
+            root.Add(new[] { sec1, sec2, sec3 });
+
+            if (!string.IsNullOrEmpty(model.Homepage))
+            {
+                var web = new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(model.Homepage), Images.Webpage);
+                root.Add(new Section { web });
+            }
+
+            Root = root;
         }
 
 //        private void ForkRepository()
@@ -119,103 +216,5 @@ namespace CodeHub.iOS.Views.Repositories
 //
 //            alert.Show();
 //        }
-
-        public void Render(RepositoryModel model)
-        {
-            Title = model.Name;
-            var root = new RootElement(Title) { UnevenRows = true };
-            _header.Subtitle = "Updated " + (model.UpdatedAt).ToDaysAgo();
-			_header.ImageUri = (model.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl).AbsoluteUri;
-
-            root.Add(new Section(_header));
-            var sec1 = new Section();
-
-            if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
-            {
-                var element = new MultilinedElement(model.Description)
-                {
-                    BackgroundColor = UIColor.White,
-                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
-                    ValueColor = Theme.CurrentTheme.MainTextColor
-                };
-                element.CaptionColor = element.ValueColor;
-                element.CaptionFont = element.ValueFont;
-                sec1.Add(element);
-            }
-//
-//            sec1.Add(new SplitElement(new SplitElement.Row {
-//                Text1 = model.Private ? "Private" : "Public",
-//                Image1 = model.Private ? Images.Locked : Images.Unlocked,
-//				Text2 = model.Language ?? "N/A",
-//                Image2 = Images.Language
-//            }));
-
-
-            //Calculate the best representation of the size
-            string size;
-            if (model.Size / 1024f < 1)
-                size = string.Format("{0:0.##}KB", model.Size);
-            else if ((model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}MB", model.Size / 1024f);
-            else
-                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
-
-//            sec1.Add(new SplitElement(new SplitElement.Row {
-//                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues"),
-//                Image1 = Images.Flag,
-//                Text2 = model.Forks.ToString() + (model.Forks == 1 ? " Fork" : " Forks"),
-//                Image2 = Images.Fork
-//            }));
-//
-//            sec1.Add(new SplitElement(new SplitElement.Row {
-//                Text1 = (model.CreatedAt).ToString("MM/dd/yy"),
-//                Image1 = Images.Create,
-//                Text2 = size,
-//                Image2 = Images.Size
-//            }));
-
-            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
-            sec1.Add(owner);
-
-            if (model.Parent != null)
-            {
-                var parent = new StyledStringElement("Forked From", model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
-                sec1.Add(parent);
-            }
-
-			var followers = new StyledStringElement("Stargazers", "" + model.StargazersCount) { Image = Images.Star, Accessory = UITableViewCellAccessory.DisclosureIndicator };
-			followers.Tapped += () => ViewModel.GoToStargazersCommand.Execute(null);
-            sec1.Add(followers);
-
-			var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-            var sec2 = new Section { events };
-
-            if (model.HasIssues)
-            {
-                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
-            }
-
-            if (ViewModel.Readme != null)
-				sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
-
-            var sec3 = new Section
-            {
-				new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-				new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
-				new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
-            };
-
-            root.Add(new[] { sec1, sec2, sec3 });
-
-            if (!string.IsNullOrEmpty(model.Homepage))
-            {
-				var web = new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(model.Homepage), Images.Webpage);
-                root.Add(new Section { web });
-            }
-
-            Root = root;
-        }
     }
 }

@@ -4,14 +4,14 @@ using CodeHub.Core.Data;
 using GitHubSharp;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.Factories
+namespace CodeHub.Core.Services
 {
-    public class LoginFactory : ILoginFactory
+    public class LoginService : ILoginService
     {
         private static readonly string[] Scopes = { "user", "public_repo", "repo", "notifications", "gist" };
         private readonly IAccountsService _accounts;
 
-        public LoginFactory(IAccountsService accounts)
+        public LoginService(IAccountsService accounts)
         {
             _accounts = accounts;
         }

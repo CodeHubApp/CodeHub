@@ -1,15 +1,27 @@
 using System;
+using ReactiveUI;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
+using System.Reactive.Linq;
+using CodeFramework.iOS.Views.Source;
 
 namespace CodeHub.iOS.Views.Source
 {
 	public class SourceView : FileSourceView<SourceViewModel>
     {
+        private UIActionSheet _actionSheet;
+
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => CreateActionSheet());
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.SourceItem, x => x != null));
+
+            ViewModel.WhenAnyValue(x => x.Path)
+                .DefaultIfEmpty("Source")
+                .Subscribe(x => Title = x.Substring(x.LastIndexOf('/') + 1));
 
 //			ViewModel.Bind(x => x.IsLoading, x =>
 //			{
@@ -26,19 +38,20 @@ namespace CodeHub.iOS.Views.Source
 //			});
 		}
 
-		protected override UIActionSheet CreateActionSheet(string title)
+        protected void CreateActionSheet()
 		{
-			var vm = (SourceViewModel)ViewModel;
-			var sheet = base.CreateActionSheet(title);
-			var editButton = vm.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
-			sheet.Clicked += (sender, e) =>
+            _actionSheet = new UIActionSheet(Title);
+            var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? _actionSheet.AddButton("Edit") : -1;
+            var themeButton = _actionSheet.AddButton("Change Theme");
+            _actionSheet.Clicked += (sender, e) =>
 			{
 				if (e.ButtonIndex == editButton)
-				{
-					vm.GoToEditCommand.Execute(null);
-				}
+                    ViewModel.GoToEditCommand.Execute(null);
+                else if (e.ButtonIndex == themeButton)
+                    ShowThemePicker();
+                _actionSheet = null;
 			};
-			return sheet;
+            _actionSheet.ShowInView(View);
 		}
     }
 }

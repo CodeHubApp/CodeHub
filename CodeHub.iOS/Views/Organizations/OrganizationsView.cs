@@ -7,11 +7,14 @@ namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationsView : ViewModelCollectionView<OrganizationsViewModel>
     {
+        public OrganizationsView()
+            : base("Organizations")
+        {
+            NoItemsText = "No Organizations";
+        }
+
         public override void ViewDidLoad()
         {
-            Title = "Organizations";
-            NoItemsText = "No Organizations";
-
             base.ViewDidLoad();
 
 			Bind(ViewModel.WhenAnyValue(x => x.Organizations), x =>

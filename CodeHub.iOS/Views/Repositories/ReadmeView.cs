@@ -3,6 +3,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -15,7 +16,9 @@ namespace CodeHub.iOS.Views.Repositories
             Web.ScalesPageToFit = true;
             Title = "Readme";
             base.ViewDidLoad();
-            ViewModel.WhenAnyValue(x => x.ContentText).Subscribe(LoadContent);
+            ViewModel.WhenAnyValue(x => x.ContentText)
+                .Where(x => x != null)
+                .Subscribe(x => LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel, x => x != null));

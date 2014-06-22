@@ -14,14 +14,13 @@ namespace CodeHub.iOS.Views.User
         private UIActionSheet _actionSheet;
 
 		public ProfileView()
+            : base(title: "Profile")
 		{
 			Root.UnevenRows = true;
 		}
 
         public override void ViewDidLoad()
         {
-            Title = "Profile";
-
             base.ViewDidLoad();
 
             var header = new HeaderView {Title = ViewModel.Username};

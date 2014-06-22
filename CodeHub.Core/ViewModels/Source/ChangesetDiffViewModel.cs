@@ -7,6 +7,7 @@ using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;
+using CodeFramework.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -79,7 +80,7 @@ namespace CodeHub.Core.ViewModels.Source
                     CommitFile = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
 			    }
 
-                FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename);
+                SourceItem = new SourceItemViewModel { FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename) };
 			    await Comments.SimpleCollectionLoad(branch.Comments.GetAll(), t as bool?);
 
 	        });

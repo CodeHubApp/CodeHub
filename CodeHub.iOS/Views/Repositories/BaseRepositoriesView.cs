@@ -9,9 +9,9 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public abstract class BaseRepositoriesView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : RepositoriesViewModel
     {
-        protected BaseRepositoriesView()
+        protected BaseRepositoriesView(string title = null)
+            : base(title ?? "Repositories")
         {
-            Title = "Repositories";
             NoItemsText = "No Repositories"; 
 //			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
 //				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  

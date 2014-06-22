@@ -6,13 +6,16 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public abstract class CommitsView : ViewModelCollectionView<CommitsViewModel>
+    public abstract class CommitsView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : CommitsViewModel
 	{
+        protected CommitsView()
+            : base("Commits")
+        {
+            Root.UnevenRows = true;
+        }
+
 		public override void ViewDidLoad()
 		{
-			Title = "Commits";
-			Root.UnevenRows = true;
-
 			base.ViewDidLoad();
 
 			Bind(ViewModel.WhenAnyValue(x => x.Commits), x =>

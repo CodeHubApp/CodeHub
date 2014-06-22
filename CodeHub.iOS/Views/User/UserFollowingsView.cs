@@ -1,6 +1,8 @@
+using CodeHub.Core.ViewModels.User;
+
 namespace CodeHub.iOS.Views.User
 {
-    public class UserFollowingsView : BaseUserCollectionView
+    public class UserFollowingsView : BaseUserCollectionView<UserFollowingsViewModel>
     {
         public override void ViewDidLoad()
         {

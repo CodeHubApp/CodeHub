@@ -37,6 +37,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         protected RepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
             ApplicationService = applicationService;
+            Repositories = new ReactiveCollection<RepositoryModel>();
             Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             GoToRepositoryCommand = new ReactiveCommand();
