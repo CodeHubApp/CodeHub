@@ -6,7 +6,7 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
@@ -22,16 +22,17 @@ namespace CodeHub.Core.ViewModels.Repositories
         private RepositoryModel _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
-        private string _imageUrl;
+        private Uri _imageUri;
+        private int? _collaborators;
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-        public string ImageUrl
+        public Uri ImageUri
         {
-            get { return _imageUrl; }
-            set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
+            get { return _imageUri; }
+            set { this.RaiseAndSetIfChanged(ref _imageUri, value); }
         }
 
         public bool? IsStarred
@@ -44,6 +45,12 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             get { return _watched; }
             private set { this.RaiseAndSetIfChanged(ref _watched, value); }
+        }
+
+        public int? Collaborators
+        {
+            get { return _collaborators; }
+            private set { this.RaiseAndSetIfChanged(ref _collaborators, value); }
         }
 
         public RepositoryModel Repository
@@ -69,6 +76,10 @@ namespace CodeHub.Core.ViewModels.Repositories
         public IReactiveCommand GoToForkParentCommand { get; private set; }
 
         public IReactiveCommand GoToStargazersCommand { get; private set; }
+
+        public IReactiveCommand GoToWatchersCommand { get; private set; }
+
+        public IReactiveCommand GoToCollaboratorsCommand { get; private set; }
 
         public IReactiveCommand GoToEventsCommand { get; private set; }
 
@@ -129,7 +140,16 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToStargazersCommand = new ReactiveCommand();
             GoToStargazersCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<StargazersViewModel>();
+                var vm = CreateViewModel<RepositoryStargazersViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
+            });
+
+            GoToWatchersCommand = new ReactiveCommand();
+            GoToWatchersCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<RepositoryWatchersViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 ShowViewModel(vm);
@@ -199,6 +219,15 @@ namespace CodeHub.Core.ViewModels.Repositories
                 ShowViewModel(vm);
             });
 
+            GoToCollaboratorsCommand = new ReactiveCommand();
+            GoToCollaboratorsCommand.Subscribe(_ =>
+            {
+                var vm = CreateViewModel<RepositoryCollaboratorsViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
+            });
+
             GoToHtmlUrlCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             GoToHtmlUrlCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(Repository.HtmlUrl));
 
@@ -221,6 +250,9 @@ namespace CodeHub.Core.ViewModels.Repositories
                 this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].IsStarred(),
                     forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
 
+                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetCollaborators(),
+                    forceCacheInvalidation, response => Collaborators = response.Data.Count).FireAndForget();
+
                 return t1;
             });
         }
@@ -233,7 +265,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             //Is it pinned already or not?
 			var pinnedRepo = ApplicationService.Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
             if (pinnedRepo == null)
-				ApplicationService.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, ImageUrl);
+                ApplicationService.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, ImageUri);
             else
 				ApplicationService.Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
         }

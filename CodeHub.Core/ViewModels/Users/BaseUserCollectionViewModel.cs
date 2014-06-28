@@ -5,7 +5,7 @@ using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;
 using Xamarin.Utilities.Core.ViewModels;
 
-namespace CodeHub.Core.ViewModels.User
+namespace CodeHub.Core.ViewModels.Users
 {
     public abstract class BaseUserCollectionViewModel : LoadableViewModel
     {

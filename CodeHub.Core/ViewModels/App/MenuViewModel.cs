@@ -11,7 +11,7 @@ using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;

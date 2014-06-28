@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Source;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using GitHubSharp;
 using GitHubSharp.Models;
 using CodeFramework.Core.Utils;

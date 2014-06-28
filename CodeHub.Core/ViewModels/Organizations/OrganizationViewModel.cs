@@ -3,7 +3,7 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;

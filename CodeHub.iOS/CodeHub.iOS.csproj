@@ -160,7 +160,6 @@
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
-    <Compile Include="Views\User\OrganizationMembersView.cs" />
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Organizations\OrganizationsView.cs" />
     <Compile Include="Views\Organizations\OrganizationView.cs" />
@@ -168,11 +167,6 @@
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
-    <Compile Include="Views\Repositories\StargazersView.cs" />
-    <Compile Include="Views\User\BaseUserCollectionView.cs" />
-    <Compile Include="Views\User\ProfileView.cs" />
-    <Compile Include="Views\User\UserFollowersView.cs" />
-    <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
@@ -219,7 +213,6 @@
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
-    <Compile Include="Views\Teams\TeamMembersView.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
@@ -232,6 +225,15 @@
     <Compile Include="Views\Repositories\ReadmeRazorView.cs">
       <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Users\OrganizationMembersView.cs" />
+    <Compile Include="Views\Users\BaseUserCollectionView.cs" />
+    <Compile Include="Views\Users\ProfileView.cs" />
+    <Compile Include="Views\Users\UserFollowersView.cs" />
+    <Compile Include="Views\Users\UserFollowingsView.cs" />
+    <Compile Include="Views\Users\RepositoryStargazersView.cs" />
+    <Compile Include="Views\Users\RepositoryCollaboratorsView.cs" />
+    <Compile Include="Views\Users\RepositoryWatchersView.cs" />
+    <Compile Include="Views\Users\TeamMembersView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
@@ -414,10 +416,6 @@
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
-    <BundleResource Include="Images\Web\back.png" />
-    <BundleResource Include="Images\Web\back%402x.png" />
-    <BundleResource Include="Images\Web\forward.png" />
-    <BundleResource Include="Images\Web\forward%402x.png" />
     <Content Include="WebCell\body.html" />
     <Content Include="WebCell\comments.html" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
@@ -451,9 +449,6 @@
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TableViewCells\" />
   </ItemGroup>
   <ItemGroup />
 </Project>

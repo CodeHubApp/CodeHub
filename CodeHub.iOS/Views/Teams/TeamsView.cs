@@ -7,11 +7,13 @@ namespace CodeHub.iOS.Views.Teams
 {
     public class TeamsView : ViewModelCollectionView<TeamsViewModel>
     {
+        public TeamsView()
+            : base("Teams")
+        {
+        }
+
         public override void ViewDidLoad()
         {
-            Title = "Teams";
-            NoItemsText = "No Teams";
-
             base.ViewDidLoad();
 
             Bind(ViewModel.WhenAnyValue(x => x.Teams), 

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
@@ -11,7 +10,7 @@ using CodeFramework.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-	public class ChangesetDiffViewModel : FileSourceViewModel
+    public class ChangesetDiffViewModel : FileSourceViewModel<string>
     {
         private CommitModel.CommitFileModel _commitFile;
         private string _filename;
@@ -40,6 +39,7 @@ namespace CodeHub.Core.ViewModels.Source
         public IReactiveCommand GoToCommentCommand { get; private set; }
 
 	    public ChangesetDiffViewModel(IApplicationService applicationService)
+            : base(null)
 	    {
             Comments = new ReactiveCollection<CommentModel>();
 
@@ -80,7 +80,7 @@ namespace CodeHub.Core.ViewModels.Source
                     CommitFile = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
 			    }
 
-                SourceItem = new SourceItemViewModel { FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename) };
+                SourceItem = new FileSourceItemViewModel { FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename) };
 			    await Comments.SimpleCollectionLoad(branch.Comments.GetAll(), t as bool?);
 
 	        });

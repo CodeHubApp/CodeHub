@@ -22,6 +22,12 @@ namespace CodeHub.iOS
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
+            UIGraphics.BeginImageContext(new System.Drawing.SizeF(1, 64f));
+            UIColor.FromRGB(50, 50, 50).SetFill();
+            UIGraphics.RectFill(new System.Drawing.RectangleF(0, 0, 1, 64));
+            var img = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+
             RepositoryCellView.RoundImages = false;
             MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
             MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
@@ -29,7 +35,9 @@ namespace CodeHub.iOS
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
+            UINavigationBar.Appearance.BackgroundColor = UIColor.FromRGB(50, 50, 50);
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+            UINavigationBar.Appearance.SetBackgroundImage(img, UIBarPosition.Any, UIBarMetrics.Default);
             //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;

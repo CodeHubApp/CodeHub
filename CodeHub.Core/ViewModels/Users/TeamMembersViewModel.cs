@@ -1,7 +1,7 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
 
-namespace CodeHub.Core.ViewModels.User
+namespace CodeHub.Core.ViewModels.Users
 {
     public class TeamMembersViewModel : BaseUserCollectionViewModel
     {

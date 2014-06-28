@@ -15,7 +15,9 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Web.ScalesPageToFit = true;
             Title = "Readme";
+
             base.ViewDidLoad();
+
             ViewModel.WhenAnyValue(x => x.ContentText)
                 .Where(x => x != null)
                 .Subscribe(x => LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));

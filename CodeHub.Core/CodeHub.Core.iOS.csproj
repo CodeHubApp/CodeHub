@@ -62,7 +62,6 @@
     <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceFilterViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
-    <Compile Include="ViewModels\User\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
@@ -72,11 +71,9 @@
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
     <Compile Include="ViewModels\Events\NewsViewModel.cs" />
-    <Compile Include="ViewModels\User\OrganizationMembersViewModel.cs" />
     <Compile Include="ViewModels\Repositories\OrganizationRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
-    <Compile Include="ViewModels\User\ProfileViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
@@ -88,10 +85,6 @@
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\StargazersViewModel.cs" />
-    <Compile Include="ViewModels\User\TeamMembersViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowersViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
@@ -113,7 +106,6 @@
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
@@ -121,6 +113,15 @@
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Services\LoginService.cs" />
     <Compile Include="Services\ILoginService.cs" />
+    <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\Users\TeamMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryStargazersViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryWatchersViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -46,6 +46,12 @@ namespace CodeHub.Core.Data
         public bool? IsPushNotificationsEnabled { get; set; }
 
         /// <summary>
+        /// Get or set the code editing theme
+        /// </summary>
+        /// <value>The code edit theme.</value>
+        public string CodeEditTheme { get; set; }
+
+        /// <summary>
         /// A transient record of the user's name
         /// </summary>
         [Ignore]

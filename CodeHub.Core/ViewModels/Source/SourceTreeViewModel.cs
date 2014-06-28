@@ -58,15 +58,29 @@ namespace CodeHub.Core.ViewModels.Source
             GoToSourceCommand = new ReactiveCommand();
             GoToSourceCommand.OfType<ContentModel>().Subscribe(x =>
             {
-                var vm = CreateViewModel<SourceViewModel>();
-                vm.Name = x.Name;
-                vm.Username = Username;
-                vm.Repository = Repository;
-                vm.Branch = Branch;
-                vm.Path = x.Path;
-                vm.HtmlUrl = x.HtmlUrl;
-                vm.GitUrl = x.GitUrl;
-                vm.TrueBranch = TrueBranch;
+                var otherFiles = Content
+                    .Where(y => string.Equals(y.Type, "file", StringComparison.OrdinalIgnoreCase))
+                    .Where(y => y.Size.HasValue && y.Size.Value > 0)
+                    .Select(y => new SourceViewModel.SourceItemModel 
+                    {
+                        Name = y.Name,
+                        Path = y.Path,
+                        HtmlUrl = y.HtmlUrl,
+                        GitUrl = y.GitUrl
+                    }).ToArray();
+
+
+                var navObject = new SourceViewModel.NavObject
+                {
+                    Branch = Branch,
+                    Username = Username,
+                    Repository = Repository,
+                    TrueBranch = TrueBranch,
+                    Items = otherFiles,
+                    CurrentItemIndex = Array.FindIndex(otherFiles, f => string.Equals(f.GitUrl, x.GitUrl, StringComparison.OrdinalIgnoreCase))
+                };
+
+                var vm = CreateViewModel<SourceViewModel>(navObject);
                 ShowViewModel(vm);
             });
 

@@ -1,12 +1,17 @@
 using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
 
-namespace CodeHub.iOS.Views.User
+namespace CodeHub.iOS.Views.Users
 {
     public abstract class BaseUserCollectionView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : BaseUserCollectionViewModel
     {
+        public BaseUserCollectionView(string title)
+            : base(title)
+        {
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

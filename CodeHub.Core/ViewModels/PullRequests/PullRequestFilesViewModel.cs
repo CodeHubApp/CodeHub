@@ -36,10 +36,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
             GoToSourceCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<SourceViewModel>();
-                vm.Name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
-                vm.Path = x.Filename;
-                vm.GitUrl = x.ContentsUrl;
-                vm.ForceBinary = x.Patch == null;
+//                vm.Name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+//                vm.Path = x.Filename;
+//                vm.GitUrl = x.ContentsUrl;
+//                vm.ForceBinary = x.Patch == null;
                 ShowViewModel(vm);
             });
 

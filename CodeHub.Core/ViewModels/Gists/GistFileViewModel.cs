@@ -7,7 +7,7 @@ using CodeFramework.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-	public class GistFileViewModel : FileSourceViewModel
+    public class GistFileViewModel : FileSourceViewModel<string>
     {
         private string _filename;
         private string _id;
@@ -32,6 +32,7 @@ namespace CodeHub.Core.ViewModels.Gists
 	    }
 
 	    public GistFileViewModel(IApplicationService applicationService)
+            : base(null)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
@@ -55,7 +56,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 var content = GistFile.Content;
                 var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(GistFile.Filename));
 			    System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
-                SourceItem = new SourceItemViewModel { FilePath = filePath };
+                SourceItem = new FileSourceItemViewModel { FilePath = filePath };
             });
 	    }
     }

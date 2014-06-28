@@ -10,18 +10,15 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesExploreView : ViewModelCollectionView<RepositoriesExploreViewModel>
     {
-        private readonly IStatusIndicatorService _statusIndicatorService;
-
-        public RepositoriesExploreView(IStatusIndicatorService statusIndicatorService)
+        public RepositoriesExploreView()
+            :base("Explore")
 		{
-		    _statusIndicatorService = statusIndicatorService;
 		    AutoHideSearch = false;
 		}
 
         public override void ViewDidLoad()
         {
             NoItemsText = "No Repositories";
-            Title = "Explore";
 
             base.ViewDidLoad();
 
@@ -32,14 +29,6 @@ namespace CodeHub.iOS.Views.Repositories
 				search.ResignFirstResponder();
 				ViewModel.SearchCommand.ExecuteIfCan();
 			};
-
-			ViewModel.SearchCommand.IsExecuting.Subscribe(x =>
-			{
-				if (x)
-                    _statusIndicatorService.Show("Searching...");
-				else
-                    _statusIndicatorService.Hide();
-			});
 
 			Bind(ViewModel.WhenAnyValue(x => x.Repositories), repo =>
             {

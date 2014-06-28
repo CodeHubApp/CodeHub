@@ -5,6 +5,7 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;
 using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -30,12 +31,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand SearchCommand { get; private set; }
 
-        public RepositoriesExploreViewModel(IApplicationService applicationService)
+        public RepositoriesExploreViewModel(IApplicationService applicationService, INetworkActivityService networkActivityService)
         {
             _applicationService = applicationService;
             Repositories = new ReactiveCollection<RepositorySearchModel.RepositoryModel>();
 
             SearchCommand = new ReactiveCommand(this.WhenAnyValue(x => x.SearchText, x => !string.IsNullOrEmpty(x)));
+            SearchCommand.IsExecuting.Skip(1).Subscribe(x => 
+            {
+                if (x)
+                    networkActivityService.PushNetworkActive();
+                else
+                    networkActivityService.PopNetworkActive();
+            });
             SearchCommand.RegisterAsyncTask(async t =>
             {
                 try

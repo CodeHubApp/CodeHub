@@ -13,7 +13,7 @@ namespace CodeHub.iOS
             new Route("^gist.github.com/(?<Username>[^/]*)/$", typeof(Core.ViewModels.Gists.UserGistsViewModel)),
             new Route("^gist.github.com/(?<Username>[^/]*)/(?<Id>[^/]*)/$", typeof(Core.ViewModels.Gists.GistViewModel)),
             new Route("^[^/]*/stars/$", typeof(Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(Core.ViewModels.User.ProfileViewModel)),
+            new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(Core.ViewModels.Users.ProfileViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(Core.ViewModels.Repositories.RepositoryViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(Core.ViewModels.PullRequests.PullRequestsViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(Core.ViewModels.PullRequests.PullRequestViewModel)),

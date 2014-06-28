@@ -9,7 +9,7 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 
-namespace CodeHub.Core.ViewModels.User
+namespace CodeHub.Core.ViewModels.Users
 {
     public class ProfileViewModel : LoadableViewModel
     {

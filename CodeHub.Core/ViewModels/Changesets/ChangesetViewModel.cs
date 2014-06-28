@@ -45,12 +45,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             Comments = new ReactiveCollection<CommentModel>();
 
             GoToHtmlUrlCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Commit, x => x != null));
-            GoToHtmlUrlCommand.Subscribe(_ =>
-            {
-                var vm = CreateViewModel<WebBrowserViewModel>();
-                vm.Url = Commit.Url;
-                ShowViewModel(vm);
-            });
+            GoToHtmlUrlCommand.Select(x => Commit).Subscribe(GoToUrlCommand.ExecuteIfCan);
 
             GoToRepositoryCommand = new ReactiveCommand();
             GoToRepositoryCommand.Subscribe(_ =>
@@ -67,11 +62,11 @@ namespace CodeHub.Core.ViewModels.Changesets
                 if (x.Patch == null)
                 {
                     var vm = CreateViewModel<SourceViewModel>();
-                    vm.GitUrl = x.ContentsUrl;
-                    vm.HtmlUrl = x.BlobUrl;
-                    vm.Name = x.Filename;
-                    vm.Path = x.Filename;
-                    vm.ForceBinary = true;
+//                    vm.GitUrl = x.ContentsUrl;
+//                    vm.HtmlUrl = x.BlobUrl;
+//                    vm.Name = x.Filename;
+//                    vm.Path = x.Filename;
+//                    vm.ForceBinary = true;
                     ShowViewModel(vm);
                 }
                 else

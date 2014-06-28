@@ -2,7 +2,7 @@ using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.User;
+using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;

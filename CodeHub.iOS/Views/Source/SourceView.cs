@@ -1,6 +1,5 @@
 using System;
 using ReactiveUI;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
 using System.Reactive.Linq;
@@ -19,9 +18,10 @@ namespace CodeHub.iOS.Views.Source
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => CreateActionSheet());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.SourceItem, x => x != null));
 
-            ViewModel.WhenAnyValue(x => x.Path)
-                .DefaultIfEmpty("Source")
-                .Subscribe(x => Title = x.Substring(x.LastIndexOf('/') + 1));
+            ViewModel
+                .WhenAnyValue(x => x.CurrentItem)
+                .Where(x => x != null)
+                .Subscribe(x => Title = x.Path.Substring(x.Path.LastIndexOf('/') + 1));
 
 //			ViewModel.Bind(x => x.IsLoading, x =>
 //			{
@@ -43,6 +43,7 @@ namespace CodeHub.iOS.Views.Source
             _actionSheet = new UIActionSheet(Title);
             var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? _actionSheet.AddButton("Edit") : -1;
             var themeButton = _actionSheet.AddButton("Change Theme");
+            _actionSheet.CancelButtonIndex = _actionSheet.AddButton("Cancel");
             _actionSheet.Clicked += (sender, e) =>
 			{
 				if (e.ButtonIndex == editButton)
