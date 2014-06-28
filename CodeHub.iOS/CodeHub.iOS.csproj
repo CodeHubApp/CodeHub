@@ -379,7 +379,9 @@
     <Content Include="Images\public.png" />
     <Content Include="Images\repo%402x.png" />
     <Content Include="Images\repo.png" />
+    <BundleResource Include="Images\repository%402x.png" />
     <Content Include="Images\repository.png" />
+    <BundleResource Include="Images\repository_fork%402x.png" />
     <Content Include="Images\repository_fork.png" />
     <Content Include="Images\script%402x.png" />
     <Content Include="Images\script.png" />

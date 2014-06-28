@@ -54,12 +54,12 @@ namespace CodeHub.iOS
 
         public static Uri GitHubRepoUrl
         {
-            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository.png")); }
+            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository@2x.png")); }
         }
 
         public static Uri GitHubRepoForkUrl
         {
-            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository_fork.png")); }
+            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository_fork@2x.png")); }
         }
 		
         public static class Logos
