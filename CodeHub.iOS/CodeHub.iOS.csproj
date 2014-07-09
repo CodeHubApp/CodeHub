@@ -424,8 +424,6 @@
     <BundleResource Include="Images\Buttons\back.png" />
     <BundleResource Include="Images\Buttons\cancel.png" />
     <BundleResource Include="Images\Buttons\cancel%402x.png" />
-    <BundleResource Include="Images\Buttons\three_lines.png" />
-    <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />

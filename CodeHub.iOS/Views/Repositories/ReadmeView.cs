@@ -51,7 +51,7 @@ namespace CodeHub.iOS.Views.Repositories
                 _actionSheet = null;
             };
 
-            _actionSheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            _actionSheet.ShowInView(View);
 		}
     }
 }

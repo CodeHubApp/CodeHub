@@ -7,6 +7,8 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeStash.iOS.Views;
+using System.Drawing;
+using CodeFramework.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -15,6 +17,7 @@ namespace CodeHub.iOS.Views.Repositories
         private ImageAndTitleHeaderView _header;
         private UIActionSheet _actionSheet;
         private SplitButtonElement _split;
+        private SlideUpTitleView _slideUpTitle;
 
         protected override void Scrolled(System.Drawing.PointF point)
         {
@@ -27,6 +30,8 @@ namespace CodeHub.iOS.Views.Repositories
                 if (NavigationController.NavigationBar.ShadowImage == null)
                     NavigationController.NavigationBar.ShadowImage = new UIImage();
             }
+
+            _slideUpTitle.Offset = 108 + 28f - point.Y;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -40,8 +45,41 @@ namespace CodeHub.iOS.Views.Repositories
             base.ViewDidLoad();
 
             NavigationController.NavigationBar.ShadowImage = new UIImage();
+            NavigationItem.TitleView = _slideUpTitle = new SlideUpTitleView(NavigationController.NavigationBar.Bounds.Height);
+            _slideUpTitle.Text = ViewModel.RepositoryName;
+            _slideUpTitle.Offset = 100f;
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s_, e_) => 
+            {
+                var repoModel = ViewModel.Repository;
+                if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
+                    return;
+
+                _actionSheet = new UIActionSheet(repoModel.Name);
+                var pinButton = _actionSheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
+                var starButton = _actionSheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
+                var watchButton = _actionSheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
+                //var forkButton = sheet.AddButton("Fork Repository");
+                var showButton = _actionSheet.AddButton("Show in GitHub");
+                var cancelButton = _actionSheet.AddButton("Cancel");
+                _actionSheet.CancelButtonIndex = cancelButton;
+                _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
+                _actionSheet.Clicked += (s, e) => {
+                    // Pin to menu
+                    if (e.ButtonIndex == pinButton)
+                        ViewModel.PinCommand.ExecuteIfCan();
+                    else if (e.ButtonIndex == starButton)
+                        ViewModel.ToggleStarCommand.ExecuteIfCan();
+                    else if (e.ButtonIndex == watchButton)
+                        ViewModel.ToggleWatchCommand.ExecuteIfCan();
+                    else if (e.ButtonIndex == showButton)
+                        ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
+
+                    _actionSheet = null;
+                };
+
+                _actionSheet.ShowInView(View);
+            });
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Repository, x => x != null));
 
             TableView.SectionHeaderHeight = 0;
@@ -94,46 +132,13 @@ namespace CodeHub.iOS.Views.Repositories
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-            Title = ViewModel.RepositoryName;
             NavigationController.NavigationBar.ShadowImage = new UIImage();
 		}
-
-        private void ShowExtraMenu()
-        {
-            var repoModel = ViewModel.Repository;
-            if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
-                return;
-
-            _actionSheet = new UIActionSheet(repoModel.Name);
-            var pinButton = _actionSheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
-            var starButton = _actionSheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
-            var watchButton = _actionSheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
-            //var forkButton = sheet.AddButton("Fork Repository");
-            var showButton = _actionSheet.AddButton("Show in GitHub");
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) => {
-                // Pin to menu
-                if (e.ButtonIndex == pinButton)
-                    ViewModel.PinCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == starButton)
-                    ViewModel.ToggleStarCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == watchButton)
-                    ViewModel.ToggleWatchCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == showButton)
-					ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
-
-                _actionSheet = null;
-            };
-
-            _actionSheet.ShowInView(View);
-        }
 
         private void Render()
         {
             var model = ViewModel.Repository;
-            var root = new RootElement(ViewModel.RepositoryName) { UnevenRows = true };
+            var root = new RootElement(string.Empty) { UnevenRows = true };
             root.Add(new Section(_header) { _split });
             var sec1 = new Section();
 

@@ -35,6 +35,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand GoToUserCommand { get; private set; }
 
+        public IReactiveCommand GoToForksCommand { get; private set; }
+
         public IReactiveCommand GoToFileSourceCommand { get; private set; }
 
         public IReactiveCommand GoToViewableFileCommand { get; private set; }
@@ -111,6 +113,8 @@ namespace CodeHub.Core.ViewModels.Gists
                 vm.Username = Gist.Owner.Login;
                 ShowViewModel(vm);
             });
+
+            GoToForksCommand = new ReactiveCommand();
 
             LoadCommand.RegisterAsyncTask(t =>
             {

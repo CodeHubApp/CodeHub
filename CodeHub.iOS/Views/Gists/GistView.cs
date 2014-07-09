@@ -1,6 +1,5 @@
 using System;
 using System.Reactive.Linq;
-using CodeFramework.iOS.ViewComponents;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Gists;
@@ -11,12 +10,10 @@ using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ViewModelDialogView<GistViewModel>
+    public class GistView : ViewModelPrettyDialogView<GistViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly IApplicationService _applicationService;
-        private UIBarButtonItem _shareButton, _userButton;
-        private UIButton _starButton;
         private UIActionSheet _actionSheet;
 
         public GistView(IStatusIndicatorService statusIndicatorService, IApplicationService applicationService)
@@ -27,26 +24,160 @@ namespace CodeHub.iOS.Views.Gists
 
         public override void ViewDidLoad()
         {
-            Title = "Gist";
-
             base.ViewDidLoad();
 
-            ToolbarItems = new[]
+            Title = string.Format("Gist #{0}", ViewModel.Id);
+            var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
+
+            var root = new RootElement(string.Empty) { UnevenRows = true };
+            var headerSection = new Section(HeaderView);
+            var detailsSection = new Section();
+            var filesSection = new Section("Files");
+            var commentsSection = new Section("Comments");
+
+            var split = new SplitButtonElement();
+            var files = split.AddButton("Files", "-", () => {});
+            var comments = split.AddButton("Comments", "-", () => {});
+            var forks = split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
+            headerSection.Add(split);
+
+            var descriptionElement = new MultilinedElement(string.Empty);
+            detailsSection.Add(descriptionElement);
+
+            root.Add(headerSection, detailsSection, filesSection, commentsSection);
+            Root = root;
+
+            updatedGistObservable.SubscribeSafe(x =>
             {
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                new UIBarButtonItem((_starButton = ToolbarButton.Create(Images.Gist.Star, () => ViewModel.ToggleStarCommand.Execute(null)))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_userButton = new UIBarButtonItem(ToolbarButton.Create(Images.Gist.User, () => ViewModel.GoToUserCommand.Execute(null)))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_shareButton = new UIBarButtonItem(ToolbarButton.Create(Images.Gist.Share, ShareButtonPress))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)
-            };
+                HeaderView.SubText = string.Format("Created {0}", x.CreatedAt.ToDaysAgo());
+                if (x.Owner != null) HeaderView.ImageUri = x.Owner.AvatarUrl;
+                ReloadData();
+            });
 
-            _shareButton.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Gist, x => x != null));
+            updatedGistObservable.SubscribeSafe(x => files.Text = x.Files.Count.ToString());
+            updatedGistObservable.SubscribeSafe(x => comments.Text = x.Comments.ToString());
+            updatedGistObservable.SubscribeSafe(x => forks.Text = x.Forks.Count.ToString());
+            updatedGistObservable.SubscribeSafe(x => descriptionElement.Caption = x.Description);
+            updatedGistObservable.Take(1).SubscribeSafe(x => detailsSection.Visible = !string.IsNullOrEmpty(x.Description));
 
-            //Disable these buttons until the gist object becomes valid
-            _userButton.Enabled = false;
-            _shareButton.Enabled = false;
+
+//            var splitElement1 = new SplitElement();
+//            detailsSection.Add(splitElement1);
+//
+//            updatedGistObservable.Subscribe(x =>
+//            {
+//                splitElement1.Button1 = new SplitElement.SplitButton(x.Public.HasValue && x.Public.Value ? Images.Unlocked : Images.Locked, model.Private ? "Private" : "Public");
+//                splitElement1.Button2 = new SplitElement.SplitButton(Images.Language, model.Language ?? "N/A");
+//            });
+
+//            updatedGistObservable.Take(1).Subscribe(_ => root.Add(detailsSection));
+//
+//
+            updatedGistObservable.Subscribe(x =>
+            {
+                foreach (var file in x.Files.Keys)
+                {
+                    var sse = new StyledStringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
+                        Accessory = UITableViewCellAccessory.DisclosureIndicator, 
+                        LineBreakMode = UILineBreakMode.TailTruncation,
+                        Lines = 1 
+                    };
+
+                    var fileSaved = file;
+                    var gistFileModel = x.Files[fileSaved];
+
+                    //              if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
+                    //                  sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
+                    //              else
+                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
+
+                    filesSection.Add(sse);
+                }
+
+                filesSection.Visible = filesSection.Count > 0;
+            });
+//
+//            updatedGistObservable.Take(1).Subscribe(_ => Root.Add(filesSection));
+
+//
+//            ViewModel.Comments.Changed.Subscribe(_ =>
+//            {
+//                foreach (var comment in ViewModel.Comments)
+//                {
+//                    var el = new NameTimeStringElement 
+//                    { 
+//                        Name = "Anonymous",
+//                        Image = Theme.CurrentTheme.AnonymousUserImage,
+//                        String = comment.Body,
+//                        Time = comment.CreatedAt.ToDaysAgo(),
+//                    };
+//
+//                    if (comment.User != null)
+//                    {
+//                        el.Name = comment.User.Login;
+//                        el.ImageUri = new Uri(comment.User.AvatarUrl);
+//                    }
+//
+//                    commentsSection.Add(el);
+//                }
+//            });
+//
+//            ViewModel.Comments.Changed.Skip(1).Take(1).Subscribe(_ => Root.Insert(Root.Count, commentsSection));
+
+//
+            //Sometimes there's no user!
+//            d.Name = (model.Owner == null) ? "Anonymous" : model.Owner.Login;
+//            d.ImageUri = (model.Owner == null) ? null : new Uri(model.Owner.AvatarUrl);
+//
+//            sec.Add(d);
+//
+//            var sec2 = new Section("Files");
+//            root.Add(sec2);
+//
+//            foreach (var file in model.Files.Keys)
+//            {
+//                var sse = new StyledStringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
+//                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
+//                    LineBreakMode = UILineBreakMode.TailTruncation,
+//                    Lines = 1 
+//                };
+//
+//                var fileSaved = file;
+//                var gistFileModel = model.Files[fileSaved];
+//
+//                //              if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
+//                //                  sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
+//                //              else
+//                sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
+//
+//
+//                sec2.Add(sse);
+//            }
+//
+//            if (ViewModel.Comments.Count > 0)
+//            {
+//                var sec3 = new Section("Comments");
+//                foreach (var comment in ViewModel.Comments)
+//                {
+//                    var el = new NameTimeStringElement 
+//                    { 
+//                        Name = "Anonymous",
+//                        Image = Theme.CurrentTheme.AnonymousUserImage,
+//                        String = comment.Body,
+//                        Time = comment.CreatedAt.ToDaysAgo(),
+//                    };
+//
+//                    if (comment.User != null)
+//                    {
+//                        el.Name = comment.User.Login;
+//                        el.ImageUri = new Uri(comment.User.AvatarUrl);
+//                    }
+//
+//                    sec3.Add(el);
+//                }
+//                root.Add(sec3);
+//            }
+
 
             ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null).Subscribe(gist =>
             {
@@ -76,19 +207,16 @@ namespace CodeHub.iOS.Views.Gists
                     NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.ForkCommand.CanExecuteObservable);
                     
                 }
-
-                RenderGist();
             });
 
-			ViewModel.Comments.Changed.Subscribe(x => RenderGist());
 
-            ViewModel.WhenAnyValue(x => x.IsStarred).Subscribe(isStarred =>
-            {
-                _starButton.Enabled = isStarred.HasValue;
-                _starButton.SetImage((isStarred.HasValue && isStarred.Value) ? Images.Gist.StarHighlighted : Images.Gist.Star, UIControlState.Normal);
-                _starButton.SetNeedsDisplay();
-            });
-
+//            ViewModel.WhenAnyValue(x => x.IsStarred).Subscribe(isStarred =>
+//            {
+//                _starButton.Enabled = isStarred.HasValue;
+//                _starButton.SetImage((isStarred.HasValue && isStarred.Value) ? Images.Gist.StarHighlighted : Images.Gist.Star, UIControlState.Normal);
+//                _starButton.SetNeedsDisplay();
+//            });
+//
             ViewModel.ForkCommand.IsExecuting.Subscribe(x =>
             {
                 if (x)
@@ -109,103 +237,13 @@ namespace CodeHub.iOS.Views.Gists
             _actionSheet.Clicked += (s, e) => 
 			{
 	            if (e.ButtonIndex == shareButton)
-					ViewModel.ShareCommand.Execute(null);
+					ViewModel.ShareCommand.ExecuteIfCan();
 	            else if (e.ButtonIndex == showButton)
-					ViewModel.GoToHtmlUrlCommand.Execute(null);
+					ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
 			    _actionSheet = null;
 			};
 
-            _actionSheet.ShowFrom(_shareButton, true);
-        }
-
-        public void RenderGist()
-        {
-			if (ViewModel.Gist == null)
-				return;
-
-			var model = ViewModel.Gist;
-
-            _shareButton.Enabled = _userButton.Enabled = model != null;
-            var root = new RootElement(Title) { UnevenRows = true };
-			var sec = new Section();
-			root.Add(sec);
-
-
-            var str = string.IsNullOrEmpty(model.Description) ? "Gist " + model.Id : model.Description;
-            var d = new NameTimeStringElement() { 
-                Time = model.UpdatedAt.ToDaysAgo(), 
-                String = str, 
-                Image = Theme.CurrentTheme.AnonymousUserImage
-            };
-
-            //Sometimes there's no user!
-            d.Name = (model.Owner == null) ? "Anonymous" : model.Owner.Login;
-            d.ImageUri = (model.Owner == null) ? null : new Uri(model.Owner.AvatarUrl);
-
-            sec.Add(d);
-
-			var sec2 = new Section("Files");
-			root.Add(sec2);
-
-            foreach (var file in model.Files.Keys)
-            {
-                var sse = new StyledStringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
-                    LineBreakMode = UILineBreakMode.TailTruncation,
-                    Lines = 1 
-                };
-
-                var fileSaved = file;
-                var gistFileModel = model.Files[fileSaved];
-                
-//				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-//					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-//				else
-					sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
-                
-
-                sec2.Add(sse);
-            }
-
-			if (ViewModel.Comments.Count > 0)
-			{
-				var sec3 = new Section("Comments");
-				foreach (var comment in ViewModel.Comments)
-				{
-					var el = new NameTimeStringElement 
-					{ 
-						Name = "Anonymous",
-						Image = Theme.CurrentTheme.AnonymousUserImage,
-						String = comment.Body,
-			         	Time = comment.CreatedAt.ToDaysAgo(),
-					};
-
-					if (comment.User != null)
-					{
-						el.Name = comment.User.Login;
-						el.ImageUri = new Uri(comment.User.AvatarUrl);
-					}
-
-					sec3.Add(el);
-				}
-				root.Add(sec3);
-			}
-
-            Root = root;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
-            base.ViewWillAppear(animated);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
+            _actionSheet.ShowInView(View);
         }
     }
 }
