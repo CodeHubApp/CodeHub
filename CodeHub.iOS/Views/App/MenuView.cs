@@ -8,6 +8,8 @@ using MonoTouch.UIKit;
 using System.Linq;
 using CodeFramework.Core.Utils;
 using ReactiveUI;
+using Xamarin.Utilities.DialogElements;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -20,9 +22,10 @@ namespace CodeHub.iOS.Views.App
 		{
             var username = ViewModel.Account.Username;
 			Title = username;
-            var root = new RootElement(username);
 
-            root.Add(new Section
+            var sections = new List<Section>();
+
+            sections.Add(new Section
             {
                 new MenuElement("Profile", () => ViewModel.GoToProfileCommand.ExecuteIfCan(), Images.Person),
                 (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
@@ -34,7 +37,7 @@ namespace CodeHub.iOS.Views.App
             eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event));
 			if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
 				ViewModel.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event)));
-            root.Add(eventsSection);
+            sections.Add(eventsSection);
 
             var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
 			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Images.Repo));
@@ -42,14 +45,14 @@ namespace CodeHub.iOS.Views.App
             repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Images.Star));
             repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Chart));
             repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Explore));
-            root.Add(repoSection);
+            sections.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
 			{
 				_favoriteRepoSection = new Section { HeaderView = new MenuSectionView("Favorite Repositories") };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
 					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
-				root.Add(_favoriteRepoSection);
+                sections.Add(_favoriteRepoSection);
 			}
 			else
 			{
@@ -63,23 +66,24 @@ namespace CodeHub.iOS.Views.App
 				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group));
 
             //There should be atleast 1 thing...
-            if (orgSection.Elements.Count > 0)
-                root.Add(orgSection);
+            if (orgSection.Count > 0)
+                sections.Add(orgSection);
 
             var gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };
             gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Script));
             gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star2));
             gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Public));
-            root.Add(gistsSection);
+            sections.Add(gistsSection);
 //
             var infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
-            root.Add(infoSection);
+            sections.Add(infoSection);
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
             infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
 			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.ExecuteIfCan(), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Images.User));
-            Root = root;
+
+            Root.Reset(sections);
 		}
 
         private void PresentUserVoice()
@@ -158,7 +162,7 @@ namespace CodeHub.iOS.Views.App
 		{
 			ViewModel.DeletePinnedRepositoryCommand.Execute(el.PinnedRepo);
 
-			if (_favoriteRepoSection.Elements.Count == 1)
+			if (_favoriteRepoSection.Count == 1)
 			{
 				Root.Remove(_favoriteRepoSection);
 				_favoriteRepoSection = null;
@@ -174,7 +178,7 @@ namespace CodeHub.iOS.Views.App
 			return new EditSource(this);
 		}
 
-		private class EditSource : SizingSource
+		private class EditSource : Source
 		{
 			private readonly MenuView _parent;
 			public EditSource(MenuView dvc) 

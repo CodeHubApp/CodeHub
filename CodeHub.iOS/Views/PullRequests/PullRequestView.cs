@@ -1,21 +1,19 @@
 using System;
-using CodeFramework.iOS.ViewComponents;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
-using CodeFramework.iOS.Views;
-using CodeFramework.iOS.Elements;
 using MonoTouch.UIKit;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Collections.Generic;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestView : ViewModelDialogView<PullRequestViewModel>
+    public class PullRequestView : ViewModelPrettyDialogViewController<PullRequestViewModel>
     {
         private UIActionSheet _actionSheet;
         private SplitElement _split1, _split2;
-        private HeaderView _header;
         private WebElement _descriptionElement;
         private WebElement _commentsElement;
         private StyledStringElement _milestoneElement;
@@ -27,11 +25,7 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             Title = "Pull Request #" + ViewModel.PullRequestId;
 
-            Root.UnevenRows = true;
-
             base.ViewDidLoad();
-
-            _header = new HeaderView();
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement("body");
@@ -67,14 +61,14 @@ namespace CodeHub.iOS.Views.PullRequests
 //                _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
 
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
-                _header.Title = x.Title;
-                _header.Subtitle = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.Text = x.Title;
+                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
 
                 Render();
             });
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.PullRequest, x => x != null));
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.PullRequest).Select(x => x != null));
 
             ViewModel.WhenAnyValue(x => x.Issue).Subscribe(x =>
             {
@@ -88,21 +82,21 @@ namespace CodeHub.iOS.Views.PullRequests
             {
                 var before = _labelsElement.Accessory;
                 _labelsElement.Accessory = ViewModel.GoToLabelsCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_labelsElement.Accessory != before && _labelsElement.GetImmediateRootElement() != null)
+                if (_labelsElement.Accessory != before && _labelsElement.GetRootElement() != null)
                     Root.Reload(_labelsElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToAssigneeCommand.CanExecuteChanged += (sender, e) =>
             {
                 var before = _assigneeElement.Accessory;
                 _assigneeElement.Accessory = ViewModel.GoToAssigneeCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_assigneeElement.Accessory != before && _assigneeElement.GetImmediateRootElement() != null)
+                if (_assigneeElement.Accessory != before && _assigneeElement.GetRootElement() != null)
                     Root.Reload(_assigneeElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToMilestoneCommand.CanExecuteChanged += (sender, e) =>
             {
                 var before = _milestoneElement.Accessory;
                 _milestoneElement.Accessory = ViewModel.GoToMilestoneCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_milestoneElement.Accessory != before && _milestoneElement.GetImmediateRootElement() != null)
+                if (_milestoneElement.Accessory != before && _milestoneElement.GetRootElement() != null)
                     Root.Reload(_milestoneElement, UITableViewRowAnimation.Fade);
             };
 //
@@ -243,8 +237,8 @@ namespace CodeHub.iOS.Views.PullRequests
             if (ViewModel.PullRequest == null)
                 return;
 
-            var root = new RootElement(Title);
-            root.Add(new Section(_header));
+            var sections = new List<Section>();
+            sections.Add(new Section(HeaderView));
 
             var secDetails = new Section();
 //            if (!string.IsNullOrEmpty(_descriptionElement.Value))
@@ -256,9 +250,9 @@ namespace CodeHub.iOS.Views.PullRequests
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
             secDetails.Add(_labelsElement);
-            root.Add(secDetails);
+            sections.Add(secDetails);
 
-            root.Add(new Section
+            sections.Add(new Section
             {
                 new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
                 new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
@@ -266,7 +260,7 @@ namespace CodeHub.iOS.Views.PullRequests
 
             if (!(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
             {
-                MonoTouch.Foundation.NSAction mergeAction = async () =>
+                Action mergeAction = async () =>
                 {
 //                    try
 //                    {
@@ -286,17 +280,15 @@ namespace CodeHub.iOS.Views.PullRequests
                 else
                     el = new StyledStringElement("Unable to merge!") { Image = Images.Fork };
 
-                root.Add(new Section { el });
+                sections.Add(new Section { el });
             }
 //
 //            if (!string.IsNullOrEmpty(_commentsElement.Value))
 //                root.Add(new Section { _commentsElement });
 
-            root.Add(new Section { _addCommentElement });
+            sections.Add(new Section { _addCommentElement });
 
-
-            Root = root;
-
+            Root.Reset(sections);
         }
     }
 }

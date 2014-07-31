@@ -5,7 +5,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class UpgradesViewModel : LoadableViewModel
+    public class UpgradesViewModel : BaseViewModel, ILoadableViewModel
     {
         private string[] _keys;
 
@@ -15,9 +15,11 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _keys, value); }
         }
 
+        public IReactiveCommand LoadCommand { get; private set; }
+
         public UpgradesViewModel(IFeaturesService featuresService)
         {
-            LoadCommand.RegisterAsyncTask(async _ =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 Keys = (await featuresService.GetAvailableFeatureIds()).ToArray();
             });

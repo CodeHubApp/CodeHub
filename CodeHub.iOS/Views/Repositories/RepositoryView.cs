@@ -1,125 +1,38 @@
 using System;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using CodeStash.iOS.Views;
-using System.Drawing;
-using CodeFramework.iOS.ViewComponents;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoryView : ViewModelDialogView<RepositoryViewModel>
+    public class RepositoryView : ViewModelPrettyDialogViewController<RepositoryViewModel>
     {
-        private ImageAndTitleHeaderView _header;
         private UIActionSheet _actionSheet;
         private SplitButtonElement _split;
-        private SlideUpTitleView _slideUpTitle;
-
-        protected override void Scrolled(System.Drawing.PointF point)
-        {
-            if (point.Y > 0)
-            {
-                NavigationController.NavigationBar.ShadowImage = null;
-            }
-            else
-            {
-                if (NavigationController.NavigationBar.ShadowImage == null)
-                    NavigationController.NavigationBar.ShadowImage = new UIImage();
-            }
-
-            _slideUpTitle.Offset = 108 + 28f - point.Y;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.NavigationBar.ShadowImage = null;
-        }
+        private SplitElement[] _splitElements = new SplitElement[3];
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-            NavigationItem.TitleView = _slideUpTitle = new SlideUpTitleView(NavigationController.NavigationBar.Bounds.Height);
-            _slideUpTitle.Text = ViewModel.RepositoryName;
-            _slideUpTitle.Offset = 100f;
+            Title = HeaderView.Text = ViewModel.RepositoryName;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s_, e_) => 
-            {
-                var repoModel = ViewModel.Repository;
-                if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
-                    return;
-
-                _actionSheet = new UIActionSheet(repoModel.Name);
-                var pinButton = _actionSheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
-                var starButton = _actionSheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
-                var watchButton = _actionSheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
-                //var forkButton = sheet.AddButton("Fork Repository");
-                var showButton = _actionSheet.AddButton("Show in GitHub");
-                var cancelButton = _actionSheet.AddButton("Cancel");
-                _actionSheet.CancelButtonIndex = cancelButton;
-                _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-                _actionSheet.Clicked += (s, e) => {
-                    // Pin to menu
-                    if (e.ButtonIndex == pinButton)
-                        ViewModel.PinCommand.ExecuteIfCan();
-                    else if (e.ButtonIndex == starButton)
-                        ViewModel.ToggleStarCommand.ExecuteIfCan();
-                    else if (e.ButtonIndex == watchButton)
-                        ViewModel.ToggleWatchCommand.ExecuteIfCan();
-                    else if (e.ButtonIndex == showButton)
-                        ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
-
-                    _actionSheet = null;
-                };
-
-                _actionSheet.ShowInView(View);
-            });
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Repository, x => x != null));
-
-            TableView.SectionHeaderHeight = 0;
-            RefreshControl.TintColor = UIColor.LightGray;
-
-            _header = new ImageAndTitleHeaderView 
-            { 
-                Text = ViewModel.RepositoryName,
-                BackgroundColor = NavigationController.NavigationBar.BackgroundColor,
-                TextColor = UIColor.White,
-                SubTextColor = UIColor.LightGray,
-                RoundedImage = false,
-                ImageTint = UIColor.White
-            };
-
-            var topBackgroundView = this.CreateTopBackground(_header.BackgroundColor);
-            topBackgroundView.Hidden = true;
-
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowMenu());
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(
+                ViewModel.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
+                .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null));
 
             _split = new SplitButtonElement();
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
             var collaborators = _split.AddButton("Contributors", "-", () => ViewModel.GoToCollaboratorsCommand.ExecuteIfCan());
+            ViewModel.WhenAnyValue(x => x.Collaborators).Subscribe(x => collaborators.Text = x.HasValue ? x.ToString() : "-");
 
-            ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
-            {
-                topBackgroundView.Hidden = false;
-				ViewModel.ImageUri = (x.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl);
-                _header.SubText = "Updated " + (ViewModel.Repository.UpdatedAt).ToDaysAgo();
-                stargazers.Text = x.StargazersCount.ToString();
-                watchers.Text = x.SubscribersCount.ToString();
-                Render();
-            });
-
-            ViewModel.WhenAnyValue(x => x.Collaborators).Where(x => x.HasValue).Subscribe(x => collaborators.Text = x.ToString());
-
-            ViewModel.WhenAnyValue(x => x.ImageUri).Where(x => x != null).Subscribe(x => 
-            {
-                _header.Image = UIImage.FromFile(x.LocalPath).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            });
+            Root.Reset(new Section(HeaderView) { _split });
 
             ViewModel.WhenAnyValue(x => x.Readme).Where(x => x != null).Subscribe(_ =>
             {
@@ -127,57 +40,39 @@ namespace CodeHub.iOS.Views.Repositories
                 if (ViewModel.Repository != null)
                     Render();
             });
-        }
 
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-		}
+            _splitElements[0] = new SplitElement();
+            _splitElements[1] = new SplitElement();
+            _splitElements[2] = new SplitElement();
+            _splitElements[2].Button2 = new SplitElement.SplitButton(Images.Size, "N/A");
+
+            ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
+            {
+                HeaderView.ImageUri = x.Owner.AvatarUrl;
+                HeaderView.SubText = x.Description;
+                stargazers.Text = x.StargazersCount.ToString();
+                watchers.Text = x.SubscribersCount.ToString();
+
+                _splitElements[0].Button1 = new SplitElement.SplitButton(x.Private ? Images.Locked : Images.Unlocked, x.Private ? "Private" : "Public");
+                _splitElements[0].Button2 = new SplitElement.SplitButton(Images.Language, x.Language ?? "N/A");
+
+                _splitElements[1].Button1 = new SplitElement.SplitButton(Images.Flag, x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues"));
+                _splitElements[1].Button2 = new SplitElement.SplitButton(Images.Fork, x.Forks + (x.Forks == 1 ? " Fork" : " Forks"));
+
+                _splitElements[2].Button1 = new SplitElement.SplitButton(Images.Create, (x.CreatedAt.ToLocalTime()).ToString("MM/dd/yy"));
+
+                Render();
+            });
+
+            ViewModel.WhenAnyValue(x => x.RepositorySize).Subscribe(x => _splitElements[2].Button2.Text = x ?? "N/A");
+
+        }
 
         private void Render()
         {
             var model = ViewModel.Repository;
-            var root = new RootElement(string.Empty) { UnevenRows = true };
-            root.Add(new Section(_header) { _split });
             var sec1 = new Section();
-
-            if (!string.IsNullOrEmpty(model.Description) && !string.IsNullOrWhiteSpace(model.Description))
-            {
-                var element = new MultilinedElement(model.Description)
-                {
-                    BackgroundColor = UIColor.White,
-                    CaptionColor = Theme.CurrentTheme.MainTitleColor, 
-                    ValueColor = Theme.CurrentTheme.MainTextColor
-                };
-                element.CaptionColor = element.ValueColor;
-                element.CaptionFont = element.ValueFont;
-                sec1.Add(element);
-            }
-
-            //Calculate the best representation of the size
-            string size;
-            if (model.Size / 1024f < 1)
-                size = string.Format("{0:0.##}KB", model.Size);
-            else if ((model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}MB", model.Size / 1024f);
-            else
-                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
-
-            var splitElement1 = new SplitElement();
-            splitElement1.Button1 = new SplitElement.SplitButton(model.Private ? Images.Locked : Images.Unlocked, model.Private ? "Private" : "Public");
-            splitElement1.Button2 = new SplitElement.SplitButton(Images.Language, model.Language ?? "N/A");
-            sec1.Add(splitElement1);
-
-            var splitElement2 = new SplitElement();
-            splitElement2.Button1 = new SplitElement.SplitButton(Images.Flag, model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues"));
-            splitElement2.Button2 = new SplitElement.SplitButton(Images.Fork, model.Forks + (model.Forks == 1 ? " Fork" : " Forks"));
-            sec1.Add(splitElement2);
-
-            var splitElement3 = new SplitElement();
-            splitElement3.Button1 = new SplitElement.SplitButton(Images.Create, (model.CreatedAt.ToLocalTime()).ToString("MM/dd/yy"));
-            splitElement3.Button2 = new SplitElement.SplitButton(Images.Size, size);
-            sec1.Add(splitElement3);
+            sec1.Add(_splitElements);
 
             var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
@@ -208,15 +103,41 @@ namespace CodeHub.iOS.Views.Repositories
                 new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Script),
             };
 
-            root.Add(new[] { sec1, sec2, sec3 });
+            Root.Reset(new Section(HeaderView) { _split }, sec1, sec2, sec3);
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {
                 var web = new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(model.Homepage), Images.Webpage);
-                root.Add(new Section { web });
+                Root.Add(new Section { web });
             }
+        }
 
-            Root = root;
+        private void ShowMenu()
+        {
+            _actionSheet = new UIActionSheet(ViewModel.Repository.Name);
+            var pinButton = _actionSheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
+            var starButton = _actionSheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
+            var watchButton = _actionSheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
+            //var forkButton = sheet.AddButton("Fork Repository");
+            var showButton = _actionSheet.AddButton("Show in GitHub");
+            var cancelButton = _actionSheet.AddButton("Cancel");
+            _actionSheet.CancelButtonIndex = cancelButton;
+            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
+            _actionSheet.Clicked += (s, e) => {
+                // Pin to menu
+                if (e.ButtonIndex == pinButton)
+                    ViewModel.PinCommand.ExecuteIfCan();
+                else if (e.ButtonIndex == starButton)
+                    ViewModel.ToggleStarCommand.ExecuteIfCan();
+                else if (e.ButtonIndex == watchButton)
+                    ViewModel.ToggleWatchCommand.ExecuteIfCan();
+                else if (e.ButtonIndex == showButton)
+                    ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
+
+                _actionSheet = null;
+            };
+
+            _actionSheet.ShowInView(View);
         }
     }
 }

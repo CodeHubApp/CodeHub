@@ -2,32 +2,32 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Views;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesTrendingView : ViewModelCollectionView<RepositoriesTrendingViewModel>
+    public class RepositoriesTrendingView : ViewModelCollectionViewController<RepositoriesTrendingViewModel>
     {
         public RepositoriesTrendingView()
-            : base("Trending")
+            : base(unevenRows: true, searchbarEnabled: false)
         {
-            EnableSearch = false;
+            Title = "Trending";
         }
 
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Repositories";
+            //NoItemsText = "No Repositories";
 
             base.ViewDidLoad();
 
-			Bind(ViewModel.WhenAnyValue(x => x.Repositories), repo =>
+            this.BindList(ViewModel.Repositories, repo =>
             {
 				var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var imageUrl = Images.GitHubRepoUrl;
+                var imageUrl = new Uri(repo.AvatarUrl);
                 var sse = new RepositoryElement(repo.Name, repo.Stars, repo.Forks, description, repo.Owner, imageUrl) { ShowOwner = true };
                 sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
                 return sse;

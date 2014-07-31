@@ -15,13 +15,13 @@ namespace CodeHub.Core.ViewModels.App
             get { return _environmentService.ApplicationVersion; }
         }
 
-        public IReactiveCommand GoToSourceCodeCommand { get; private set; }
+        public IReactiveCommand<object> GoToSourceCodeCommand { get; private set; }
 
         public AboutViewModel(IEnvironmentalService environmentService)
         {
             _environmentService = environmentService;
 
-            GoToSourceCodeCommand = new ReactiveCommand();
+            GoToSourceCodeCommand = ReactiveCommand.Create();
             GoToSourceCodeCommand.Subscribe(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();

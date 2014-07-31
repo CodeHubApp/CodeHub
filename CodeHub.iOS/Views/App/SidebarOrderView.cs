@@ -4,12 +4,15 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using System.Linq;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class SidebarOrderView : ViewModelDialogView<SidebarOrderViewModel>
+    public class SidebarOrderView : ViewModelDialogViewController<SidebarOrderViewModel>
     {
         public SidebarOrderView()
+            : base(style: MonoTouch.UIKit.UITableViewStyle.Plain)
         {
         }
 
@@ -19,26 +22,22 @@ namespace CodeHub.iOS.Views.App
             Title = "Sidebar Order";
             var vm = (SidebarOrderViewModel)ViewModel;
 
-            var root = new RootElement(Title);
-            root.Add(new Section
+            Root.Add(new Section
             {
                 vm.Items.Select(x => new StyledStringElement(x))
             });
 
-            Root = root;
-
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
             this.Editing = true;
         }
 
-        public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+        public override Source CreateSizingSource(bool unevenRows)
         {
             return new EditingSource(this);
         }
 
-        private class EditingSource : DialogViewController.Source
+        private class EditingSource : Source
         {
-            public EditingSource(DialogViewController ctrl)
+            public EditingSource(SidebarOrderView ctrl)
                 : base(ctrl)
             {
             }

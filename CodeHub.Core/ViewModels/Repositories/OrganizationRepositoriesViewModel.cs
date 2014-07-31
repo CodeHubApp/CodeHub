@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             : base(applicationService)
         {
             ShowRepositoryOwner = false;
-            LoadCommand.RegisterAsyncTask(t => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 Repositories.SimpleCollectionLoad(applicationService.Client.Organizations[Name].Repositories.GetAll(), t as bool?));
         }
     }

@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistViewModel : LoadableViewModel
+    public class GistViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
         private GistModel _gist;
@@ -33,32 +33,35 @@ namespace CodeHub.Core.ViewModels.Gists
 
 		public ReactiveCollection<GistCommentModel> Comments { get; private set; }
 
-        public IReactiveCommand GoToUserCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-        public IReactiveCommand GoToForksCommand { get; private set; }
+        public IReactiveCommand<object> GoToUserCommand { get; private set; }
 
-        public IReactiveCommand GoToFileSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToForksCommand { get; private set; }
 
-        public IReactiveCommand GoToViewableFileCommand { get; private set; }
+        public IReactiveCommand<object> GoToFileSourceCommand { get; private set; }
 
-        public IReactiveCommand GoToHtmlUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToViewableFileCommand { get; private set; }
+
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
         public IReactiveCommand ForkCommand { get; private set; }
 
         public IReactiveCommand ToggleStarCommand { get; private set; }
 
-		public IReactiveCommand ShareCommand { get; private set; }
+		public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public GistViewModel(IApplicationService applicationService, IShareService shareService)
         {
             _applicationService = applicationService;
             Comments = new ReactiveCollection<GistCommentModel>();
 
-            ShareCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Gist, x => x != null));
+            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Gist.HtmlUrl));
 
-            ToggleStarCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsStarred, x => x.HasValue));
-            ToggleStarCommand.RegisterAsyncTask(async t =>
+            ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue),
+                async t =>
             {
                 try
                 {
@@ -73,8 +76,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 }
             });
 
-            ForkCommand = new ReactiveCommand();
-            ForkCommand.RegisterAsyncTask(async t =>
+            ForkCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 var data =
                     await _applicationService.Client.ExecuteAsync(_applicationService.Client.Gists[Id].ForkGist());
@@ -85,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            GoToViewableFileCommand = new ReactiveCommand();
+            GoToViewableFileCommand = ReactiveCommand.Create();
             GoToViewableFileCommand.OfType<GistFileModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<GistViewableFileViewModel>();
@@ -93,10 +95,10 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            GoToHtmlUrlCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Gist, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
+            GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             GoToHtmlUrlCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(Gist.HtmlUrl));
 
-            GoToFileSourceCommand = new ReactiveCommand();
+            GoToFileSourceCommand = ReactiveCommand.Create();
             GoToFileSourceCommand.OfType<GistFileModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<GistFileViewModel>();
@@ -106,7 +108,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            GoToUserCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Gist, x => x != null));
+            GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             GoToUserCommand.Subscribe(x =>
             {
                 var vm = CreateViewModel<ProfileViewModel>();
@@ -114,9 +116,9 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            GoToForksCommand = new ReactiveCommand();
+            GoToForksCommand = ReactiveCommand.Create();
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
                 var t1 = this.RequestModel(_applicationService.Client.Gists[Id].Get(), forceCacheInvalidation, response => Gist = response.Data);

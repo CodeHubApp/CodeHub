@@ -5,6 +5,7 @@ using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -39,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string WebDomain { get; set; }
 
-        public IReactiveCommand GoToOldLoginWaysCommand { get; private set; }
+        public IReactiveCommand<object> GoToOldLoginWaysCommand { get; private set; }
 
         public IReactiveCommand LoginCommand { get; private set; }
 
@@ -57,12 +58,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             WebDomain = "https://github.com";
 
-            GoToOldLoginWaysCommand = new ReactiveCommand();
+            GoToOldLoginWaysCommand = ReactiveCommand.Create();
             GoToOldLoginWaysCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AddAccountViewModel>()));
 
-            LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Code, x => !string.IsNullOrEmpty(x)));
-            LoginCommand.RegisterAsyncTask(_ => Login(Code))
-                .Subscribe(x => accountsService.ActiveAccount = x);
+            var loginCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x)), _ => Login(Code));
+            loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            LoginCommand = loginCommand;
         }
 
         private async Task<GitHubAccount> Login(string code)

@@ -1,78 +1,63 @@
 using System;
 using CodeFramework.Elements;
-using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Linq;
 using MonoTouch.Foundation;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using System.Reactive.Linq;
-using CodeStash.iOS.Views;
 using GitHubSharp.Models;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetView : ViewModelDialogView<ChangesetViewModel>
+    public class ChangesetView : ViewModelPrettyDialogViewController<ChangesetViewModel>
     {
-        private ImageAndTitleHeaderView _header;
-        private UIActionSheet _actionSheet;
         private SplitButtonElement _split;
+        private UIActionSheet _actionSheet;
 
         public ChangesetView()
-            : base(title: "Commit")
         {
-            Root.UnevenRows = true;
+            Title = "Commit";
         }
 
         public override void ViewDidLoad()
         {
-
             base.ViewDidLoad();
 
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Commit, x => x != null));
-
-            TableView.SectionHeaderHeight = 0;
-            RefreshControl.TintColor = UIColor.LightGray;
-
-            _header = new ImageAndTitleHeaderView 
-            { 
-                BackgroundColor = NavigationController.NavigationBar.BackgroundColor,
-                TextColor = UIColor.White,
-                SubTextColor = UIColor.LightGray,
-                ImageTint = UIColor.White
-            };
-
-            this.CreateTopBackground(_header.BackgroundColor);
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Commit).Select(x => x != null));
 
             _split = new SplitButtonElement();
             var additions = _split.AddButton("Additions", "-");
             var deletions = _split.AddButton("Deletions", "-");
             var parents = _split.AddButton("Parents", "-");
 
+            var headerSection = new Section(HeaderView) { _split };
+            Root.Reset(headerSection);
+
             ViewModel.WhenAnyValue(x => x.Commit).Where(x => x != null).Subscribe(x =>
             {
-                _header.Image = Images.LoginUserUnknown;
+                HeaderView.Image = Images.LoginUserUnknown;
 
                 if (x.Author != null)
                 {
-                    _header.Text = x.Author.Login;
-                    _header.ImageUri = x.Author.AvatarUrl;
+                    HeaderView.Text = x.Author.Login;
+                    HeaderView.ImageUri = x.Author.AvatarUrl;
                 }
                 else
                 {
-                    _header.Text = "Unknown Author";
+                    HeaderView.Text = "Unknown Author";
                 }
 
-                _header.SubText = "Commited " + (x.Commit.Committer.Date).ToDaysAgo();
+                HeaderView.SubText = "Commited " + (x.Commit.Committer.Date).ToDaysAgo();
 
                 additions.Text = x.Stats.Additions.ToString();
                 deletions.Text = x.Stats.Deletions.ToString();
                 parents.Text = x.Parents.Count.ToString();
+
+                ReloadData();
             });
 
             ViewModel.WhenAnyValue(x => x.Commit).Where(x => x != null).Subscribe(Render);
@@ -80,40 +65,11 @@ namespace CodeHub.iOS.Views.Source
             //ViewModel.BindCollection(x => x.Comments, a => Render());
         }
 
-        protected override void Scrolled(System.Drawing.PointF point)
-        {
-            if (point.Y > 0)
-            {
-                NavigationController.NavigationBar.ShadowImage = null;
-            }
-            else
-            {
-                if (NavigationController.NavigationBar.ShadowImage == null)
-                    NavigationController.NavigationBar.ShadowImage = new UIImage();
-            }
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.NavigationBar.ShadowImage = null;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-        }
-
         public void Render(CommitModel commitModel)
         {
-            var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
-
-            var headerSection = new Section(_header) { _split };
-            root.Add(headerSection);
-
+            var headerSection = new Section(HeaderView) { _split };
             var detailSection = new Section();
-            root.Add(detailSection);
+            Root.Reset(headerSection, detailSection);
 
             var user = "Unknown";
             if (commitModel.Commit.Author != null)
@@ -157,7 +113,7 @@ namespace CodeHub.iOS.Views.Source
 					sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
 					fileSection.Add(sse);
 				}
-				root.Add(fileSection);
+				Root.Add(fileSection);
 			}
 //
 //			var fileSection = new Section();
@@ -189,13 +145,12 @@ namespace CodeHub.iOS.Views.Source
                 });
             }
 
-			if (commentSection.Elements.Count > 0)
-				root.Add(commentSection);
+			if (commentSection.Count > 0)
+				Root.Add(commentSection);
 
             var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             addComment.Tapped += AddCommentTapped;
-			root.Add(new Section { addComment });
-            Root = root; 
+            Root.Add(new Section { addComment });
         }
 
         void AddCommentTapped()

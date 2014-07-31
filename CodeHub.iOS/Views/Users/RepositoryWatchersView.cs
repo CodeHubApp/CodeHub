@@ -5,8 +5,8 @@ namespace CodeHub.iOS.Views.Users
     public class RepositoryWatchersView : BaseUserCollectionView<RepositoryWatchersViewModel>
     {
         public RepositoryWatchersView()
-            : base("Watchers")
         {
+            Title = "Watchers";
         }
     }
 }

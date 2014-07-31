@@ -9,7 +9,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class IssueLabelsViewModel : LoadableViewModel
+    public class IssueLabelsViewModel : BaseViewModel, ILoadableViewModel
     {
 		public ReactiveCollection<LabelModel> Labels { get; private set; }
 
@@ -27,13 +27,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand SelectLabelsCommand { get; private set; }
 
+        public IReactiveCommand LoadCommand { get; private set; }
+
 	    public IssueLabelsViewModel(IApplicationService applicationService)
 	    {
 	        Labels = new ReactiveCollection<LabelModel>();
             SelectedLabels = new ReactiveList<LabelModel>();
 
-            SelectLabelsCommand = new ReactiveCommand();
-	        SelectLabelsCommand.RegisterAsyncTask(async t =>
+            SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            var selectedLabels = t as IEnumerable<LabelModel>;
                 if (selectedLabels != null)
@@ -67,7 +68,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 DismissCommand.ExecuteIfCan();
 	        });
 
-	        LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
 	            Labels.SimpleCollectionLoad(
 	                applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Labels.GetAll(),
 	                t as bool?));

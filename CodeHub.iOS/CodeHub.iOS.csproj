@@ -260,10 +260,6 @@
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>MonoTouch.Dialog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
       <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
       <Name>CodeFramework.Core</Name>
@@ -273,30 +269,21 @@
     <Reference Include="ReactiveUI">
       <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI.Cocoa">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.Cocoa.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI.Events">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.Events.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI.Mobile">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.Mobile.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Reactive.Core">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Core.dll</HintPath>
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Interfaces.dll</HintPath>
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Linq">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Linq.dll</HintPath>
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.PlatformServices">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.PlatformServices.dll</HintPath>
+    <Reference Include="Splat">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\Splat.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

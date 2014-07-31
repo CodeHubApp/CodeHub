@@ -13,7 +13,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueViewModel : LoadableViewModel
+    public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
         private IssueModel _issueModel;
@@ -38,19 +38,21 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
-        public IReactiveCommand GoToAssigneeCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-        public IReactiveCommand GoToMilestoneCommand { get; private set; }
+        public IReactiveCommand<object> GoToAssigneeCommand { get; private set; }
 
-        public IReactiveCommand GoToLabelsCommand { get; private set; }
+        public IReactiveCommand<object> GoToMilestoneCommand { get; private set; }
 
-		public IReactiveCommand GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
+
+		public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
         public IReactiveCommand ToggleStateCommand { get; private set; }
 
-        public IReactiveCommand ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public IReactiveCommand AddCommentCommand { get; private set; }
+        public IReactiveCommand<object> AddCommentCommand { get; private set; }
 
         public ReactiveCollection<IssueCommentModel> Comments { get; private set; }
 
@@ -61,16 +63,16 @@ namespace CodeHub.Core.ViewModels.Issues
             _applicationService = applicationService;
             Comments = new ReactiveCollection<IssueCommentModel>();
             Events = new ReactiveCollection<IssueEventModel>();
-            var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x != null);
+            var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
 
-            ShareCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
+            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Issue.HtmlUrl));
 
-            AddCommentCommand = new ReactiveCommand();
+            AddCommentCommand = ReactiveCommand.Create();
             AddCommentCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<CommentViewModel>();
-                vm.SaveCommand.RegisterAsyncTask(async t =>
+                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
                 {
                     var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId];
                     var comment = await _applicationService.Client.ExecuteAsync(issue.CreateComment(vm.Comment));
@@ -80,8 +82,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            ToggleStateCommand = new ReactiveCommand(issuePresenceObservable);
-            ToggleStateCommand.RegisterAsyncTask(async t =>
+            ToggleStateCommand = ReactiveCommand.CreateAsyncTask(issuePresenceObservable, async t =>
             {
                 var close = string.Equals(Issue.State, "open", StringComparison.OrdinalIgnoreCase);
                 try
@@ -96,7 +97,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 }
             });
 
-            GoToEditCommand = new ReactiveCommand(issuePresenceObservable);
+            GoToEditCommand = ReactiveCommand.Create(issuePresenceObservable);
             GoToEditCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueEditViewModel>();
@@ -108,7 +109,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            GoToAssigneeCommand = new ReactiveCommand(issuePresenceObservable);
+            GoToAssigneeCommand = ReactiveCommand.Create(issuePresenceObservable);
             GoToAssigneeCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueAssignedToViewModel>();
@@ -125,7 +126,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            GoToLabelsCommand = new ReactiveCommand(issuePresenceObservable);
+            GoToLabelsCommand = ReactiveCommand.Create(issuePresenceObservable);
             GoToLabelsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueLabelsViewModel>();
@@ -142,7 +143,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            GoToMilestoneCommand = new ReactiveCommand(issuePresenceObservable);
+            GoToMilestoneCommand = ReactiveCommand.Create(issuePresenceObservable);
             GoToMilestoneCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueMilestonesViewModel>();
@@ -159,7 +160,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
                 var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId];

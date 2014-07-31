@@ -12,7 +12,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : LoadableViewModel
+    public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly IApplicationService ApplicationService;
         private RepositoriesFilterModel _filter;
@@ -32,7 +32,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool ShowRepositoryOwner { get; protected set; }
 
-        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; protected set; }
+
+        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
         protected RepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
@@ -40,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             Repositories = new ReactiveCollection<RepositoryModel>();
             Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();

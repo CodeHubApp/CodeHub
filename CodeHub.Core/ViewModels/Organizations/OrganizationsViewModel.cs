@@ -8,19 +8,21 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
-    public class OrganizationsViewModel : LoadableViewModel
+    public class OrganizationsViewModel : BaseViewModel, ILoadableViewModel
 	{
         public ReactiveCollection<BasicUserModel> Organizations { get; private set; }
 
         public string Username { get; set; }
 
-        public IReactiveCommand GoToOrganizationCommand { get; private set; }
+        public IReactiveCommand<object> GoToOrganizationCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public OrganizationsViewModel(IApplicationService applicationService)
         {
             Organizations = new ReactiveCollection<BasicUserModel>();
 
-            GoToOrganizationCommand = new ReactiveCommand();
+            GoToOrganizationCommand = ReactiveCommand.Create();
             GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
@@ -28,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Organizations.SimpleCollectionLoad(applicationService.Client.Users[Username].GetOrganizations(),
                     t as bool?));
         }

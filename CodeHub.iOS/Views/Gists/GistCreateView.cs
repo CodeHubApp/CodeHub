@@ -6,10 +6,12 @@ using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ViewModelDialogView<GistCreateViewModel>
+    public class GistCreateView : ViewModelDialogViewController<GistCreateViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -63,19 +65,15 @@ namespace CodeHub.iOS.Views.Gists
 
         protected void UpdateView()
         {
-            var root = new RootElement(Title) { UnevenRows = true };
             var section = new Section();
-            root.Add(section);
+            var fileSection = new Section();
 
             var desc = new MultilinedElement("Description") { Value = ViewModel.Description };
             desc.Tapped += ChangeDescription;
             section.Add(desc);
 
-            var pub = new TrueFalseElement("Public", ViewModel.Public, (e) => ViewModel.Public = e.Value); 
+            var pub = new BooleanElement("Public", ViewModel.Public, (e) => ViewModel.Public = e.Value); 
             section.Add(pub);
-
-            var fileSection = new Section();
-            root.Add(fileSection);
 
             foreach (var file in ViewModel.Files.Keys)
             {
@@ -110,7 +108,7 @@ namespace CodeHub.iOS.Views.Gists
 
             fileSection.Add(new StyledStringElement("Add New File", AddFile));
 
-            Root = root;
+            Root.Reset(section, fileSection);
         }
 
         private void ChangeDescription()
@@ -122,7 +120,7 @@ namespace CodeHub.iOS.Views.Gists
 //            });
         }
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override Source CreateSizingSource(bool unevenRows)
         {
             return new EditSource(this);
         }
@@ -132,7 +130,7 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.Files.Remove(element.Caption);
         }
 
-        private class EditSource : DialogViewController.SizingSource
+        private class EditSource : Source
         {
             private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 

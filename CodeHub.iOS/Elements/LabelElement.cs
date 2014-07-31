@@ -1,7 +1,7 @@
 using System.Drawing;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Elements
 {

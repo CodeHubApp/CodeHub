@@ -58,9 +58,11 @@ namespace CodeHub.Core.ViewModels.Accounts
                 Domain = x.Domain;
             });
 
-            LoginCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)));
-            LoginCommand.RegisterAsyncTask(_ => Login())
-                .Subscribe(x => accountsService.ActiveAccount = x);
+            var loginCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)),
+                _ => Login());
+            loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            LoginCommand = loginCommand;
         }
 
 		private async Task<GitHubAccount> Login()

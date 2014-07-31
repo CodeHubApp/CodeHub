@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
-    public class OrganizationViewModel : LoadableViewModel
+    public class OrganizationViewModel : BaseViewModel, ILoadableViewModel
 	{
         private UserModel _userModel;
 
@@ -23,21 +23,23 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
         }
 
-        public IReactiveCommand GoToMembersCommand { get; private set; }
+        public IReactiveCommand<object> GoToMembersCommand { get; private set; }
 
-        public IReactiveCommand GoToTeamsCommand { get; private set; }
+        public IReactiveCommand<object> GoToTeamsCommand { get; private set; }
 
-        public IReactiveCommand GoToFollowersCommand { get; private set; }
+        public IReactiveCommand<object> GoToFollowersCommand { get; private set; }
 
-        public IReactiveCommand GoToEventsCommand { get; private set; }
+        public IReactiveCommand<object> GoToEventsCommand { get; private set; }
 
-        public IReactiveCommand GoToGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToGistsCommand { get; private set; }
 
-        public IReactiveCommand GoToRepositoriesCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public OrganizationViewModel(IApplicationService applicationService)
         {
-            GoToMembersCommand = new ReactiveCommand();
+            GoToMembersCommand = ReactiveCommand.Create();
             GoToMembersCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<OrganizationMembersViewModel>();
@@ -45,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            GoToTeamsCommand = new ReactiveCommand();
+            GoToTeamsCommand = ReactiveCommand.Create();
             GoToTeamsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<TeamsViewModel>();
@@ -53,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            GoToFollowersCommand = new ReactiveCommand();
+            GoToFollowersCommand = ReactiveCommand.Create();
             GoToFollowersCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserFollowersViewModel>();
@@ -61,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            GoToEventsCommand = new ReactiveCommand();
+            GoToEventsCommand = ReactiveCommand.Create();
             GoToEventsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
@@ -69,7 +71,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            GoToGistsCommand = new ReactiveCommand();
+            GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserGistsViewModel>();
@@ -77,7 +79,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            GoToRepositoriesCommand = new ReactiveCommand();
+            GoToRepositoriesCommand = ReactiveCommand.Create();
             GoToRepositoriesCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<OrganizationRepositoriesViewModel>();
@@ -85,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 this.RequestModel(applicationService.Client.Organizations[Name].Get(), t as bool?,
                     response => Organization = response.Data));
         }

@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             ShowRepositoryOwner = true;
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Repositories.SimpleCollectionLoad(
                     applicationService.Client.AuthenticatedUser.Repositories.GetStarred(), t as bool?));
         }

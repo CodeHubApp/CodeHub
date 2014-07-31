@@ -9,7 +9,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestFilesViewModel : LoadableViewModel
+    public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
     {
         public ReactiveCollection<CommitModel.CommitFileModel> Files { get; private set; }
 
@@ -19,7 +19,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; set; }
 
-		public IReactiveCommand GoToSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToSourceCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public PullRequestFilesViewModel(IApplicationService applicationService)
         {
@@ -32,7 +34,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
             };
 
-            GoToSourceCommand =  new ReactiveCommand();
+            GoToSourceCommand =  ReactiveCommand.Create();
             GoToSourceCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<SourceViewModel>();
@@ -43,7 +45,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Files.SimpleCollectionLoad(
                     applicationService.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId]
                         .GetFiles(), t as bool?));

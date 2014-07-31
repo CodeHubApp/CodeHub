@@ -7,10 +7,12 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ViewModelPrettyDialogView<GistViewModel>
+    public class GistView : ViewModelPrettyDialogViewController<GistViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly IApplicationService _applicationService;
@@ -29,7 +31,6 @@ namespace CodeHub.iOS.Views.Gists
             Title = string.Format("Gist #{0}", ViewModel.Id);
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
-            var root = new RootElement(string.Empty) { UnevenRows = true };
             var headerSection = new Section(HeaderView);
             var detailsSection = new Section();
             var filesSection = new Section("Files");
@@ -44,8 +45,7 @@ namespace CodeHub.iOS.Views.Gists
             var descriptionElement = new MultilinedElement(string.Empty);
             detailsSection.Add(descriptionElement);
 
-            root.Add(headerSection, detailsSection, filesSection, commentsSection);
-            Root = root;
+            Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 
             updatedGistObservable.SubscribeSafe(x =>
             {
@@ -58,7 +58,7 @@ namespace CodeHub.iOS.Views.Gists
             updatedGistObservable.SubscribeSafe(x => comments.Text = x.Comments.ToString());
             updatedGistObservable.SubscribeSafe(x => forks.Text = x.Forks.Count.ToString());
             updatedGistObservable.SubscribeSafe(x => descriptionElement.Caption = x.Description);
-            updatedGistObservable.Take(1).SubscribeSafe(x => detailsSection.Visible = !string.IsNullOrEmpty(x.Description));
+            //updatedGistObservable.Take(1).SubscribeSafe(x => detailsSection.Visible = !string.IsNullOrEmpty(x.Description));
 
 
 //            var splitElement1 = new SplitElement();
@@ -94,7 +94,7 @@ namespace CodeHub.iOS.Views.Gists
                     filesSection.Add(sse);
                 }
 
-                filesSection.Visible = filesSection.Count > 0;
+                //filesSection.Visible = filesSection.Count > 0;
             });
 //
 //            updatedGistObservable.Take(1).Subscribe(_ => Root.Add(filesSection));

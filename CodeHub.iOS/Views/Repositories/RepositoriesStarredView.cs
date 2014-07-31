@@ -4,8 +4,9 @@ namespace CodeHub.iOS.Views.Repositories
 {
 	public class RepositoriesStarredView : BaseRepositoriesView<RepositoriesStarredViewModel>
     {
-        public RepositoriesStarredView() : base("Starred")
+        public RepositoriesStarredView()
         {
+            Title = "Starred";
         }
     }
 }

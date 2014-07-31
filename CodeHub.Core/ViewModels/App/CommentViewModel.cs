@@ -1,5 +1,6 @@
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -13,11 +14,11 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _comment, value); }
         }
 
-        public IReactiveCommand SaveCommand { get; private set; }
+        public ReactiveUI.Legacy.ReactiveCommand SaveCommand { get; private set; }
 
         public CommentViewModel()
         {
-            SaveCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Comment, x => !string.IsNullOrEmpty(x)));
+            SaveCommand = new ReactiveUI.Legacy.ReactiveCommand(this.WhenAnyValue(x => x.Comment).Select(x => !string.IsNullOrEmpty(x)));
         }
     }
 }

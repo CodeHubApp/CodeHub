@@ -122,6 +122,7 @@
     <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryStargazersViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryWatchersViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IBaseIssuesViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -129,18 +130,21 @@
       <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Reactive.Core">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Linq">
-      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\System.Reactive.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\iOS\Splat.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">

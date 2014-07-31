@@ -1,20 +1,17 @@
 using System;
 using System.Reactive.Linq;
-using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
-using MonoTouch.Dialog;
-using CodeFramework.iOS.Elements;
 using System.Linq;
 using System.Collections.Generic;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : ViewModelDialogView<IssueViewModel>
+    public class IssueView : ViewModelPrettyDialogViewController<IssueViewModel>
     {
-        protected HeaderView _header;
         protected WebElement _descriptionElement;
         protected WebElement _commentsElement;
         protected StyledStringElement _milestoneElement;
@@ -23,31 +20,18 @@ namespace CodeHub.iOS.Views.Issues
         protected StyledStringElement _addCommentElement;
         private UIActionSheet _actionSheet;
 
-        public new IssueViewModel ViewModel
-        {
-            get { return (IssueViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
-
-        public IssueView()
-        {
-            Root.UnevenRows = true;
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            _header = new HeaderView();
-
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement("body");
-            _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             //_descriptionElement.HeightChanged = x => Render();
 
             var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
             _commentsElement = new WebElement("comments");
-            _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
+            _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             //_commentsElement.HeightChanged = x => Render();
 
             _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
@@ -65,14 +49,15 @@ namespace CodeHub.iOS.Views.Issues
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.LoadCommand.IsExecuting.Select(x => !x));
 
-            ViewModel.WhenAnyValue(x => x.Issue).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Issue).Where(x => x != null).Subscribe(x =>
             {
                 _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
-                _header.Title = x.Title;
-                _header.Subtitle = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.Text = x.Title;
+                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.ImageUri = x.User.AvatarUrl;
                 Render();
             });
 //
@@ -152,8 +137,8 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
-            var root = new RootElement(Title);
-            root.Add(new Section(_header));
+            var sections = new List<Section>();
+            sections.Add(new Section(HeaderView));
 
             var secDetails = new Section();
 //            if (!string.IsNullOrEmpty(_descriptionElement.Value))
@@ -162,13 +147,13 @@ namespace CodeHub.iOS.Views.Issues
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
             secDetails.Add(_labelsElement);
-            root.Add(secDetails);
+            sections.Add(secDetails);
 
 //            if (!string.IsNullOrEmpty(_commentsElement.Value))
 //                root.Add(new Section { _commentsElement });
 
-            root.Add(new Section { _addCommentElement });
-            Root = root;
+            sections.Add(new Section { _addCommentElement });
+            Root.Reset(sections);
         }
 
         void AddCommentTapped()
@@ -200,16 +185,16 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
-            var sheet = _actionSheet = new UIActionSheet(Title);
-            var editButton = sheet.AddButton("Edit");
-            var openButton = sheet.AddButton(ViewModel.Issue.State == "open" ? "Close" : "Open");
-            var commentButton = sheet.AddButton("Comment");
-            var shareButton = sheet.AddButton("Share");
-            var showButton = sheet.AddButton("Show in GitHub");
-            var cancelButton = sheet.AddButton("Cancel");
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
+            _actionSheet = new UIActionSheet(Title);
+            var editButton = _actionSheet.AddButton("Edit");
+            var openButton = _actionSheet.AddButton(ViewModel.Issue.State == "open" ? "Close" : "Open");
+            var commentButton = _actionSheet.AddButton("Comment");
+            var shareButton = _actionSheet.AddButton("Share");
+            var showButton = _actionSheet.AddButton("Show in GitHub");
+            var cancelButton = _actionSheet.AddButton("Cancel");
+            _actionSheet.CancelButtonIndex = cancelButton;
+            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
+            _actionSheet.Clicked += (s, e) => {
                 if (e.ButtonIndex == editButton)
                     ViewModel.GoToEditCommand.Execute(null);
                 else if (e.ButtonIndex == openButton)
@@ -223,7 +208,7 @@ namespace CodeHub.iOS.Views.Issues
                 _actionSheet = null;
             };
 
-            sheet.ShowInView(View);
+            _actionSheet.ShowInView(View);
         }
 
         private class CommentModel

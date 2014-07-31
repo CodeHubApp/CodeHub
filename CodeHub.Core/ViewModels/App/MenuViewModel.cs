@@ -15,6 +15,7 @@ using CodeHub.Core.ViewModels.Users;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -48,17 +49,17 @@ namespace CodeHub.Core.ViewModels.App
         {
             _applicationService = applicationService;
 
-            GoToNotificationsCommand = new ReactiveCommand();
+            GoToNotificationsCommand = ReactiveCommand.Create();
             GoToNotificationsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<NotificationsViewModel>();
                 ShowViewModel(vm);
             });
 
-            GoToAccountsCommand = new ReactiveCommand();
+            GoToAccountsCommand = ReactiveCommand.Create();
             GoToAccountsCommand.Subscribe(_ => CreateAndShowViewModel<AccountsViewModel>());
 
-            GoToProfileCommand = new ReactiveCommand();
+            GoToProfileCommand = ReactiveCommand.Create();
             GoToProfileCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<ProfileViewModel>();
@@ -66,16 +67,16 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToMyIssuesCommand = new ReactiveCommand();
+            GoToMyIssuesCommand = ReactiveCommand.Create();
             GoToMyIssuesCommand.Subscribe(_ => CreateAndShowViewModel<MyIssuesViewModel>());
 
-            GoToUpgradesCommand = new ReactiveCommand();
+            GoToUpgradesCommand = ReactiveCommand.Create();
             GoToUpgradesCommand.Subscribe(_ => CreateAndShowViewModel<UpgradesViewModel>());
 
-            GoToAboutCommand = new ReactiveCommand();
+            GoToAboutCommand = ReactiveCommand.Create();
             GoToAboutCommand.Subscribe(_ => CreateAndShowViewModel<AboutViewModel>());
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();
@@ -84,13 +85,13 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToSettingsCommand = new ReactiveCommand();
+            GoToSettingsCommand = ReactiveCommand.Create();
             GoToSettingsCommand.Subscribe(_ => CreateAndShowViewModel<SettingsViewModel>());
 
-            GoToNewsCommand = new ReactiveCommand();
+            GoToNewsCommand = ReactiveCommand.Create();
             GoToNewsCommand.Subscribe(_ => CreateAndShowViewModel<NewsViewModel>());
 
-            GoToOrganizationsCommand = new ReactiveCommand();
+            GoToOrganizationsCommand = ReactiveCommand.Create();
             GoToOrganizationsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<OrganizationsViewModel>();
@@ -98,13 +99,13 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToTrendingRepositoriesCommand = new ReactiveCommand();
+            GoToTrendingRepositoriesCommand = ReactiveCommand.Create();
             GoToTrendingRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesTrendingViewModel>());
 
-            GoToExploreRepositoriesCommand = new ReactiveCommand();
+            GoToExploreRepositoriesCommand = ReactiveCommand.Create();
             GoToExploreRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesExploreViewModel>());
 
-            GoToOrganizationEventsCommand = new ReactiveCommand();
+            GoToOrganizationEventsCommand = ReactiveCommand.Create();
             GoToOrganizationEventsCommand.OfType<string>().Subscribe(name =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
@@ -112,7 +113,7 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToOrganizationCommand = new ReactiveCommand();
+            GoToOrganizationCommand = ReactiveCommand.Create();
             GoToOrganizationCommand.OfType<string>().Subscribe(name =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
@@ -120,7 +121,7 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToOwnedRepositoriesCommand = new ReactiveCommand();
+            GoToOwnedRepositoriesCommand = ReactiveCommand.Create();
             GoToOwnedRepositoriesCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserRepositoriesViewModel>();
@@ -128,16 +129,16 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToStarredRepositoriesCommand = new ReactiveCommand();
+            GoToStarredRepositoriesCommand = ReactiveCommand.Create();
             GoToStarredRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesStarredViewModel>());
 
-            GoToPublicGistsCommand = new ReactiveCommand();
+            GoToPublicGistsCommand = ReactiveCommand.Create();
             GoToPublicGistsCommand.Subscribe(_ => CreateAndShowViewModel<PublicGistsViewModel>());
 
-            GoToStarredGistsCommand = new ReactiveCommand();
+            GoToStarredGistsCommand = ReactiveCommand.Create();
             GoToStarredGistsCommand.Subscribe(_ => CreateAndShowViewModel<StarredGistsViewModel>());
 
-            GoToMyGistsCommand = new ReactiveCommand();
+            GoToMyGistsCommand = ReactiveCommand.Create();
             GoToMyGistsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserGistsViewModel>();
@@ -145,7 +146,7 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToMyEvents = new ReactiveCommand();
+            GoToMyEvents = ReactiveCommand.Create();
             GoToMyEvents.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
@@ -153,74 +154,75 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            LoadCommand = new ReactiveCommand();
-            LoadCommand.Subscribe(_ =>
+            var loadCommand = ReactiveCommand.Create();
+            loadCommand.Subscribe(_ =>
             {
                 var notificationRequest = applicationService.Client.Notifications.GetAll();
                 notificationRequest.RequestFromCache = false;
                 notificationRequest.CheckIfModified = false;
 
                 applicationService.Client.ExecuteAsync(notificationRequest)
-                    .ContinueWith(t => Notifications = t.Result.Data.Count);
+                    .ContinueWith(t => Notifications = t.Result.Data.Count, TaskScheduler.FromCurrentSynchronizationContext());
 
                 applicationService.Client.ExecuteAsync(applicationService.Client.AuthenticatedUser.GetOrganizations())
-                    .ContinueWith(t => Organizations = t.Result.Data.Select(y => y.Login).ToList());
+                    .ContinueWith(t => Organizations = t.Result.Data.Select(y => y.Login).ToList(), TaskScheduler.FromCurrentSynchronizationContext());
             });
+            LoadCommand = loadCommand;
 
         }
 
-        public IReactiveCommand GoToAccountsCommand { get; private set; }
+        public IReactiveCommand<object> GoToAccountsCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Profile")]
-        public IReactiveCommand GoToProfileCommand { get; private set; }
+        public IReactiveCommand<object> GoToProfileCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Notifications")]
-        public IReactiveCommand GoToNotificationsCommand { get; private set; }
+        public IReactiveCommand<object> GoToNotificationsCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("My Issues")]
-        public IReactiveCommand GoToMyIssuesCommand { get; private set; }
+        public IReactiveCommand<object> GoToMyIssuesCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("My Events")]
-        public IReactiveCommand GoToMyEvents { get; private set; }
+        public IReactiveCommand<object> GoToMyEvents { get; private set; }
 
 		[PotentialStartupViewAttribute("My Gists")]
-        public IReactiveCommand GoToMyGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToMyGistsCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Starred Gists")]
-        public IReactiveCommand GoToStarredGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToStarredGistsCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Public Gists")]
-        public IReactiveCommand GoToPublicGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToPublicGistsCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Starred Repositories")]
-        public IReactiveCommand GoToStarredRepositoriesCommand { get; private set; }
+        public IReactiveCommand<object> GoToStarredRepositoriesCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Owned Repositories")]
-		public IReactiveCommand GoToOwnedRepositoriesCommand { get; private set; }
+		public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Explore Repositories")]
-		public IReactiveCommand GoToExploreRepositoriesCommand { get; private set; }
+		public IReactiveCommand<object> GoToExploreRepositoriesCommand { get; private set; }
 
         [PotentialStartupViewAttribute("Trending Repositories")]
-        public IReactiveCommand GoToTrendingRepositoriesCommand { get; private set; }
+        public IReactiveCommand<object> GoToTrendingRepositoriesCommand { get; private set; }
 
-		public IReactiveCommand GoToOrganizationEventsCommand { get; private set; }
+		public IReactiveCommand<object> GoToOrganizationEventsCommand { get; private set; }
 
-		public IReactiveCommand GoToOrganizationCommand { get; private set; }
+		public IReactiveCommand<object> GoToOrganizationCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Organizations")]
-		public IReactiveCommand GoToOrganizationsCommand { get; private set; }
+		public IReactiveCommand<object> GoToOrganizationsCommand { get; private set; }
 
 		[DefaultStartupViewAttribute]
 		[PotentialStartupViewAttribute("News")]
-        public IReactiveCommand GoToNewsCommand { get; private set; }
+        public IReactiveCommand<object> GoToNewsCommand { get; private set; }
 
-		public IReactiveCommand GoToSettingsCommand { get; private set; }
+		public IReactiveCommand<object> GoToSettingsCommand { get; private set; }
 
-		public IReactiveCommand GoToRepositoryCommand { get; private set; }
+		public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
-		public IReactiveCommand GoToAboutCommand { get; private set; }
+		public IReactiveCommand<object> GoToAboutCommand { get; private set; }
 
-        public IReactiveCommand GoToUpgradesCommand { get; private set; }
+        public IReactiveCommand<object> GoToUpgradesCommand { get; private set; }
     }
 }

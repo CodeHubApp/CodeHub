@@ -1,30 +1,30 @@
 using System;
 using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Events
 {
-    public abstract class BaseEventsView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : BaseEventsViewModel
+    public abstract class BaseEventsView<TViewModel> : ViewModelCollectionViewController<TViewModel> where TViewModel : BaseEventsViewModel
     {
         protected BaseEventsView()
+            : base(unevenRows: true, searchbarEnabled: false)
         {
             Title = "Events";
-            Root.UnevenRows = true;
-            EnableSearch = false;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
-            Bind(ViewModel.WhenAnyValue(x => x.Events), CreateElement);
+            this.BindList(ViewModel.Events, CreateElement);
         }
 
-        private static MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
+        private static Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
         {
             try
             {

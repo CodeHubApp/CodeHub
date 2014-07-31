@@ -8,7 +8,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : LoadableViewModel
+    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {
         public ReactiveCollection<PullRequestModel> PullRequests { get; private set; }
 
@@ -23,13 +23,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
         }
 
-        public IReactiveCommand GoToPullRequestCommand { get; private set; }
+        public IReactiveCommand<object> GoToPullRequestCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public PullRequestsViewModel(IApplicationService applicationService)
 		{
             PullRequests = new ReactiveCollection<PullRequestModel>();
 
-            GoToPullRequestCommand = new ReactiveCommand();
+            GoToPullRequestCommand = ReactiveCommand.Create();
 		    GoToPullRequestCommand.OfType<PullRequestModel>().Subscribe(pullRequest =>
 		    {
 		        var vm = CreateViewModel<PullRequestViewModel>();
@@ -49,7 +51,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var state = SelectedFilter == 0 ? "open" : "closed";
 			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);

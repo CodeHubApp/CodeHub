@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.Source
 			base.ViewDidLoad();
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => CreateActionSheet());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.SourceItem, x => x != null));
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
 
             ViewModel
                 .WhenAnyValue(x => x.CurrentItem)

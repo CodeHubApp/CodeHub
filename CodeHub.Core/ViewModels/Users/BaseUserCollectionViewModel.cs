@@ -7,16 +7,16 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : LoadableViewModel
+    public abstract class BaseUserCollectionViewModel : BaseViewModel
     {
         public ReactiveCollection<BasicUserModel> Users { get; private set; }
 
-        public IReactiveCommand GoToUserCommand { get; private set; }
+        public IReactiveCommand<object> GoToUserCommand { get; private set; }
 
         protected BaseUserCollectionViewModel()
         {
             Users = new ReactiveCollection<BasicUserModel>();
-            GoToUserCommand = new ReactiveCommand();
+            GoToUserCommand = ReactiveCommand.Create();
             GoToUserCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<ProfileViewModel>();

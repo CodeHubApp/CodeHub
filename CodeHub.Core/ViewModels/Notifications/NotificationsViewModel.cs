@@ -15,7 +15,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
-    public class NotificationsViewModel : LoadableViewModel
+    public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
         private int _shownIndex;
@@ -35,11 +35,13 @@ namespace CodeHub.Core.ViewModels.Notifications
             private set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
+        public IReactiveCommand LoadCommand { get; private set; }
+
         public IReactiveCommand ReadRepositoriesCommand { get; private set; }
 
         public IReactiveCommand ReadAllCommand { get; private set; }
 
-        public IReactiveCommand GoToNotificationCommand { get; private set; }
+        public IReactiveCommand<object> GoToNotificationCommand { get; private set; }
 		
         private void GoToNotification(NotificationModel x)
         {
@@ -88,17 +90,17 @@ namespace CodeHub.Core.ViewModels.Notifications
             _applicationService = applicationService;
             Notifications = new ReactiveCollection<NotificationModel> {GroupFunc = x => x.Repository.FullName};
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var req = applicationService.Client.Notifications.GetAll(all: Filter.All, participating: Filter.Participating);
                 return this.RequestModel(req, t as bool?, response => Notifications.Reset(response.Data));
             });
 
-            GoToNotificationCommand = new ReactiveCommand();
+            GoToNotificationCommand = ReactiveCommand.Create();
             GoToNotificationCommand.OfType<NotificationModel>().Subscribe(GoToNotification);
 
-            ReadAllCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ShownIndex, x => x != 2));
-            ReadAllCommand.RegisterAsyncTask(async t =>
+            ReadAllCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.ShownIndex).Select(x => x != 2), async t =>
             {
                 try
                 {
@@ -112,8 +114,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 }
             });
 
-            ReadRepositoriesCommand = new ReactiveCommand();
-            ReadRepositoriesCommand.RegisterAsyncTask(async t =>
+            ReadRepositoriesCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 try
                 {

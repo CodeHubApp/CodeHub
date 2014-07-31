@@ -3,10 +3,12 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
+    public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>, ILoadableViewModel
     {
 		private int _selectedFilter;
 		public int SelectedFilter
@@ -14,6 +16,8 @@ namespace CodeHub.Core.ViewModels.Issues
 			get { return _selectedFilter; }
 			set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
 		}
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public MyIssuesViewModel(IApplicationService applicationService)
         {
@@ -47,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 }
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var filter = Filter.FilterType.ToString().ToLower();
                 var direction = Filter.Ascending ? "asc" : "desc";
@@ -58,7 +62,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 var request = applicationService.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels,
                     state: state, direction: direction, filter: filter);
-                return Issues.SimpleCollectionLoad(request, t as bool?);
+                return IssuesCollection.SimpleCollectionLoad(request, t as bool?);
             });
         }
     }

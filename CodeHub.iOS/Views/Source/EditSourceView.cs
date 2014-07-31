@@ -10,7 +10,7 @@ using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class EditSourceView : ViewModelDialogView<EditSourceViewModel>
+	public class EditSourceView : ViewModelDialogViewController<EditSourceViewModel>
     {
 		readonly ComposerView _composerView;
 	

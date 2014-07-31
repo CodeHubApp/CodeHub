@@ -7,7 +7,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueMilestonesViewModel : LoadableViewModel
+    public class IssueMilestonesViewModel : BaseViewModel, ILoadableViewModel
     {
         private MilestoneModel _selectedMilestone;
         public MilestoneModel SelectedMilestone
@@ -28,12 +28,13 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand SelectMilestoneCommand { get; private set; }
 
+        public IReactiveCommand LoadCommand { get; private set; }
+
         public IssueMilestonesViewModel(IApplicationService applicationService)
         {
             Milestones = new ReactiveCollection<MilestoneModel>();
 
-            SelectMilestoneCommand = new ReactiveCommand();
-            SelectMilestoneCommand.RegisterAsyncTask(async t =>
+            SelectMilestoneCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 var milestone = t as MilestoneModel;
                 if (milestone != null)
@@ -57,7 +58,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 DismissCommand.ExecuteIfCan();
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Milestones.SimpleCollectionLoad(
                     applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Milestones.GetAll(),
                     t as bool?));

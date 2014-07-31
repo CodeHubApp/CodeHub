@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoriesTrendingViewModel : LoadableViewModel
+    public class RepositoriesTrendingViewModel : BaseViewModel, ILoadableViewModel
     {
         private const string LanguagesUrl = "http://codehub-trending.herokuapp.com/languages";
         private const string TrendingUrl = "http://codehub-trending.herokuapp.com/trending";
@@ -53,7 +53,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public RepositoriesTrendingViewModel(IApplicationService applicationService, IJsonHttpClientService jsonHttpClient)
         {
@@ -63,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             Languages = new ReactiveList<LanguageModel>();
             Repositories = new ReactiveCollection<RepositoryModel>();
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();
@@ -79,7 +81,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             this.WhenAnyValue(x => x.SelectedTime, x => x.SelectedLanguage, (x, y) => Unit.Default)
                 .Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-            LoadCommand.RegisterAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 var query = "?";
                 if (SelectedLanguage != null && SelectedLanguage.Slug != null)
@@ -158,6 +160,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             public string Url { get; set; }
             public string Owner { get; set; }
+            public string AvatarUrl { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
             public int Stars { get; set; }

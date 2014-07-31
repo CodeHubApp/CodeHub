@@ -1,7 +1,6 @@
 ﻿using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using System;
-using System.Threading.Tasks;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
@@ -16,7 +15,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IAccountsService _accountsService;
         private readonly IAnalyticsService _analyticsService;
 
-        public IReactiveCommand GoToDefaultStartupViewCommand { get; private set; }
+        public IReactiveCommand<object> GoToDefaultStartupViewCommand { get; private set; }
 
         public IReactiveCommand DeleteAllCacheCommand { get; private set; }
 
@@ -47,10 +46,10 @@ namespace CodeHub.Core.ViewModels.App
             _accountsService = accountsService;
             _analyticsService = analyticsService;
 
-            GoToDefaultStartupViewCommand = new ReactiveCommand();
+            GoToDefaultStartupViewCommand = ReactiveCommand.Create();
             GoToDefaultStartupViewCommand.Subscribe(_ => ShowViewModel(CreateViewModel<DefaultStartupViewModel>()));
 
-            DeleteAllCacheCommand = new ReactiveCommand();
+            DeleteAllCacheCommand = ReactiveCommand.Create();
         }
 
 

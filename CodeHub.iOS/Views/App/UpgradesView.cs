@@ -9,10 +9,12 @@ using CodeHub.Core.ViewModels.App;
 using System.Threading.Tasks;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class UpgradesView : ViewModelDialogView<UpgradesViewModel>
+    public class UpgradesView : ViewModelDialogViewController<UpgradesViewModel>
     {
         private readonly IFeaturesService _featuresService;
         private readonly INetworkActivityService _networkActivityService;
@@ -20,12 +22,11 @@ namespace CodeHub.iOS.Views.App
         private readonly List<Item> _items = new List<Item>();
 
         public UpgradesView(IFeaturesService featuresService, INetworkActivityService networkActivityService, IAlertDialogService alertDialogService)
+            : base(style: MonoTouch.UIKit.UITableViewStyle.Plain)
         {
             _featuresService = featuresService;
             _networkActivityService = networkActivityService;
             _alertDialogService = alertDialogService;
-            EnableSearch = false;
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
         }
 
         public override void ViewDidLoad()
@@ -94,9 +95,7 @@ namespace CodeHub.iOS.Views.App
                 return el;
             }));
 
-            var root = new RootElement(Title) { UnevenRows = true };
-            root.Add(section);
-            Root = root;
+            Root.Reset(section);
         }
 
         private void Restore()

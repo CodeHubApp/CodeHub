@@ -7,17 +7,17 @@ namespace CodeHub.Core.ViewModels.Accounts
 {
     public class NewAccountViewModel : BaseViewModel, IAddAccountViewModel
     {
-        public IReactiveCommand GoToEnterpriseLoginCommand { get; private set; }
+        public IReactiveCommand<object> GoToEnterpriseLoginCommand { get; private set; }
 
-        public IReactiveCommand GoToDotComLoginCommand { get; private set; }
+        public IReactiveCommand<object> GoToDotComLoginCommand { get; private set; }
 
         public NewAccountViewModel()
         {
-            GoToDotComLoginCommand = new ReactiveCommand();
+            GoToDotComLoginCommand = ReactiveCommand.Create();
             GoToDotComLoginCommand.Subscribe(_ => 
                 CreateAndShowViewModel<LoginViewModel>());
 
-            GoToEnterpriseLoginCommand = new ReactiveCommand();
+            GoToEnterpriseLoginCommand = ReactiveCommand.Create();
             GoToEnterpriseLoginCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<AddAccountViewModel>();

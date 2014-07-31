@@ -9,21 +9,23 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-	public abstract class CommitsViewModel : LoadableViewModel
+    public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel
 	{
 		public string RepositoryOwner { get; set; }
 
 		public string RepositoryName { get; set; }
 
-		public IReactiveCommand GoToChangesetCommand { get; private set; }
+        public IReactiveCommand<object> GoToChangesetCommand { get; private set; }
 
 		public ReactiveCollection<CommitModel> Commits { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
 	    protected CommitsViewModel()
 	    {
 	        Commits = new ReactiveCollection<CommitModel>();
 
-            GoToChangesetCommand = new ReactiveCommand();
+            GoToChangesetCommand = ReactiveCommand.Create();
 	        GoToChangesetCommand.OfType<CommitModel>().Subscribe(x =>
 	        {
 	            var vm = CreateViewModel<ChangesetViewModel>();
@@ -33,7 +35,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 ShowViewModel(vm);
 	        });
 
-	        LoadCommand.RegisterAsyncTask(x => Commits.SimpleCollectionLoad(GetRequest(), x as bool?));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(x => Commits.SimpleCollectionLoad(GetRequest(), x as bool?));
 	    }
 
 		protected abstract GitHubRequest<List<CommitModel>> GetRequest();

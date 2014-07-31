@@ -32,14 +32,14 @@ namespace CodeHub.Core.ViewModels.Gists
 			get { return _applicationService.Account.Username.Equals(Username); }
         }
 
-        public IReactiveCommand GoToCreateGistCommand { get; private set; }
+        public IReactiveCommand<object> GoToCreateGistCommand { get; private set; }
 
         public UserGistsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
             Username = _applicationService.Account.Username;
 
-            GoToCreateGistCommand = new ReactiveCommand();
+            GoToCreateGistCommand = ReactiveCommand.Create();
             GoToCreateGistCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<GistCreateViewModel>();

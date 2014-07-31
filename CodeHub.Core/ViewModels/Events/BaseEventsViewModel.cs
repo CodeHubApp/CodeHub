@@ -18,15 +18,17 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Events
 {
-    public abstract class BaseEventsViewModel : LoadableViewModel
+    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly IApplicationService ApplicationService;
 
         public ReactiveCollection<Tuple<EventModel, EventBlock>> Events { get; private set; }
 
-        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
-        public IReactiveCommand GoToGistCommand { get; private set; }
+        public IReactiveCommand<object> GoToGistCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public bool ReportRepository
         {
@@ -40,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Events
             Events = new ReactiveCollection<Tuple<EventModel, EventBlock>>();
             ReportRepository = true;
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<EventModel.RepoModel>().Subscribe(x =>
             {
                 var repoId = new RepositoryIdentifier(x.Name);
@@ -50,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Events
                 ShowViewModel(vm);
             });
 
-            GoToGistCommand = new ReactiveCommand();
+            GoToGistCommand = ReactiveCommand.Create();
             GoToGistCommand.OfType<EventModel.GistEvent>().Subscribe(x =>
             {
                 var vm = CreateViewModel<GistViewModel>();
@@ -59,7 +61,7 @@ namespace CodeHub.Core.ViewModels.Events
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 this.RequestModel(CreateRequest(0, 100), t as bool?, response =>
                 {
                     this.CreateMore(response, m => Events.MoreTask = m, d => Events.AddRange(CreateDataFromLoad(d)));

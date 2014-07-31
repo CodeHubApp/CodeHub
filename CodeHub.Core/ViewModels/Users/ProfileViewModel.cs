@@ -8,10 +8,11 @@ using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public class ProfileViewModel : LoadableViewModel
+    public class ProfileViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
 
@@ -36,17 +37,19 @@ namespace CodeHub.Core.ViewModels.Users
 			get { return string.Equals(Username, _applicationService.Account.Username); }
 		}
 
-        public IReactiveCommand GoToFollowersCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-        public IReactiveCommand GoToFollowingCommand { get; private set; }
+        public IReactiveCommand<object> GoToFollowersCommand { get; private set; }
 
-        public IReactiveCommand GoToEventsCommand { get; private set; }
+        public IReactiveCommand<object> GoToFollowingCommand { get; private set; }
 
-        public IReactiveCommand GoToOrganizationsCommand  { get; private set; }
+        public IReactiveCommand<object> GoToEventsCommand { get; private set; }
 
-        public IReactiveCommand GoToRepositoriesCommand { get; private set; }
+        public IReactiveCommand<object> GoToOrganizationsCommand  { get; private set; }
 
-        public IReactiveCommand GoToGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; private set; }
+
+        public IReactiveCommand<object> GoToGistsCommand { get; private set; }
 
 		public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
@@ -65,10 +68,10 @@ namespace CodeHub.Core.ViewModels.Users
         {
             _applicationService = applicationService;
 
-            ToggleFollowingCommand = new ReactiveCommand(this.WhenAnyValue(x => x.IsFollowing, x => x.HasValue));
-            ToggleFollowingCommand.RegisterAsyncTask(t => ToggleFollowing());
+            ToggleFollowingCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue), t => ToggleFollowing());
 
-            GoToGistsCommand = new ReactiveCommand();
+            GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserGistsViewModel>();
@@ -76,7 +79,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            GoToRepositoriesCommand = new ReactiveCommand();
+            GoToRepositoriesCommand = ReactiveCommand.Create();
             GoToRepositoriesCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserRepositoriesViewModel>();
@@ -84,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            GoToOrganizationsCommand = new ReactiveCommand();
+            GoToOrganizationsCommand = ReactiveCommand.Create();
             GoToOrganizationsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<OrganizationsViewModel>();
@@ -92,7 +95,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            GoToEventsCommand = new ReactiveCommand();
+            GoToEventsCommand = ReactiveCommand.Create();
             GoToEventsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
@@ -100,7 +103,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            GoToFollowingCommand = new ReactiveCommand();
+            GoToFollowingCommand = ReactiveCommand.Create();
             GoToFollowingCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserFollowingsViewModel>();
@@ -108,7 +111,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            GoToFollowersCommand = new ReactiveCommand();
+            GoToFollowersCommand = ReactiveCommand.Create();
             GoToFollowersCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<UserFollowersViewModel>();
@@ -116,7 +119,7 @@ namespace CodeHub.Core.ViewModels.Users
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 this.RequestModel(applicationService.Client.AuthenticatedUser.IsFollowing(Username), t as bool?, x => IsFollowing = x.Data).FireAndForget();
                 return this.RequestModel(applicationService.Client.Users[Username].Get(), t as bool?, response => User = response.Data);

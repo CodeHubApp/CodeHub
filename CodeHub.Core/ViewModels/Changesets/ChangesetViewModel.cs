@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public class ChangesetViewModel : LoadableViewModel
+    public class ChangesetViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
 
@@ -30,11 +30,13 @@ namespace CodeHub.Core.ViewModels.Changesets
             private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
         }
 
-        public IReactiveCommand GoToFileCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand<object> GoToFileCommand { get; private set; }
 
-		public IReactiveCommand GoToHtmlUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
+
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
         public ReactiveCollection<CommentModel> Comments { get; private set; }
         
@@ -44,10 +46,10 @@ namespace CodeHub.Core.ViewModels.Changesets
 
             Comments = new ReactiveCollection<CommentModel>();
 
-            GoToHtmlUrlCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Commit, x => x != null));
+            GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
             GoToHtmlUrlCommand.Select(x => Commit).Subscribe(GoToUrlCommand.ExecuteIfCan);
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();
@@ -56,17 +58,27 @@ namespace CodeHub.Core.ViewModels.Changesets
                 ShowViewModel(vm);
             });
 
-            GoToFileCommand = new ReactiveCommand();
+            GoToFileCommand = ReactiveCommand.Create();
             GoToFileCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
             {
                 if (x.Patch == null)
                 {
                     var vm = CreateViewModel<SourceViewModel>();
-//                    vm.GitUrl = x.ContentsUrl;
-//                    vm.HtmlUrl = x.BlobUrl;
-//                    vm.Name = x.Filename;
-//                    vm.Path = x.Filename;
-//                    vm.ForceBinary = true;
+                    vm.Branch = Commit.Sha;
+                    vm.Username = RepositoryOwner;
+                    vm.Repository = RepositoryName;
+                    vm.Items = new [] 
+                    { 
+                        new SourceViewModel.SourceItemModel 
+                        {
+                            ForceBinary = true,
+                            GitUrl = x.BlobUrl,
+                            Name = x.Filename,
+                            Path = x.Filename,
+                            HtmlUrl = x.BlobUrl
+                        }
+                    };
+                    vm.CurrentItemIndex = 0;
                     ShowViewModel(vm);
                 }
                 else
@@ -75,12 +87,12 @@ namespace CodeHub.Core.ViewModels.Changesets
                     vm.Username = RepositoryOwner;
                     vm.Repository = RepositoryName;
                     vm.Branch = Commit.Sha;
-                    vm.HtmlUrl = x.BlobUrl;
+                    vm.Filename = x.Filename;
                     ShowViewModel(vm);
                 }
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
                 var t1 = this.RequestModel(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Get(), forceCacheInvalidation, response => Commit = response.Data);

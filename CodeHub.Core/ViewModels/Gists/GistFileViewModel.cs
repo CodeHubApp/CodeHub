@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
@@ -31,15 +30,20 @@ namespace CodeHub.Core.ViewModels.Gists
 	        set { this.RaiseAndSetIfChanged(ref _gistFile, value); }
 	    }
 
+        private IReactiveCommand _loadCommand;
+        public override IReactiveCommand LoadCommand
+        {
+            get { return _loadCommand; }
+        }
+
 	    public GistFileViewModel(IApplicationService applicationService)
-            : base(null)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
 	            Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
 	        });
 
-            LoadCommand.RegisterAsyncTask(async t =>
+            _loadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 if (GistFile == null)
 			    {

@@ -10,7 +10,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-	public class ReadmeViewModel : LoadableViewModel
+    public class ReadmeViewModel : BaseViewModel, ILoadableViewModel
     {
         public string RepositoryOwner { get; set; }
 
@@ -30,24 +30,26 @@ namespace CodeHub.Core.ViewModels.Repositories
 	        private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
 	    }
 
-		public IReactiveCommand GoToGitHubCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-		public IReactiveCommand GoToLinkCommand { get; private set; }
+        public IReactiveCommand<object> GoToGitHubCommand { get; private set; }
 
-		public IReactiveCommand ShareCommand { get; private set; }
+        public IReactiveCommand<object> GoToLinkCommand { get; private set; }
+
+        public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public ReadmeViewModel(IApplicationService applicationService, IMarkdownService markdownService, IShareService shareService)
         {
-            ShareCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentModel, x => x != null));
+            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
 
-            GoToGitHubCommand = new ReactiveCommand(this.WhenAnyValue(x => x.ContentModel, x => x != null));
+            GoToGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
             GoToGitHubCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(ContentModel.HtmlUrl));
 
-            GoToLinkCommand = new ReactiveCommand();
+            GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
 
-            LoadCommand.RegisterAsyncTask(x => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
                 this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme(), x as bool?, r =>
                 {
                     ContentModel = r.Data;

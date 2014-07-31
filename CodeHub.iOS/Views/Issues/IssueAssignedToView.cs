@@ -2,24 +2,24 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAssignedToView : ViewModelCollectionView<IssueAssignedToViewModel>
+    public class IssueAssignedToView : ViewModelCollectionViewController<IssueAssignedToViewModel>
     {
 
         public override void ViewDidLoad()
         {
             Title = "Assignees";
-            NoItemsText = "No Assignees";
+            //NoItemsText = "No Assignees";
 
             base.ViewDidLoad();
 
-			Bind(ViewModel.WhenAnyValue(x => x.Users), x =>
+            this.BindList(ViewModel.Users, x =>
 			{
 				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
 				el.Tapped += () => {
@@ -39,7 +39,7 @@ namespace CodeHub.iOS.Views.Issues
 			{
 				if (Root.Count == 0)
 					return;
-				foreach (var m in Root[0].Elements.Cast<UserElement>())
+				foreach (var m in Root[0].Cast<UserElement>())
 					m.Accessory = (x != null && string.Equals(ViewModel.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
 					          	   UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);

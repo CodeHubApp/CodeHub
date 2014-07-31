@@ -6,7 +6,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-	public class EditSourceViewModel : LoadableViewModel
+    public class EditSourceViewModel : BaseViewModel, ILoadableViewModel
     {
 		private string _text;
 		public string Text
@@ -32,26 +32,27 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string Branch { get; set; }
 
-        public IReactiveCommand SaveCommand { get; private set; }
+        public IReactiveCommand LoadCommand { get; private set; }
+
+        public IReactiveCommand<object> SaveCommand { get; private set; }
 
 	    public EditSourceViewModel(IApplicationService applicationService)
 	    {
-            SaveCommand = new ReactiveCommand();
+            SaveCommand = ReactiveCommand.Create();
 	        SaveCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<CommitMessageViewModel>();
-	            vm.SaveCommand.RegisterAsyncTask(async t =>
-	            {
-                    var request = applicationService.Client.Users[Username].Repositories[Repository]
-                        .UpdateContentFile(Path, vm.Message, Text, BlobSha, Branch);
-                    var response = await applicationService.Client.ExecuteAsync(request);
-	                Content = response.Data;
-                    DismissCommand.ExecuteIfCan();
-	            });
+                vm.Username = Username;
+                vm.Repository = Repository;
+                vm.Path = Path;
+                vm.Text = Text;
+                vm.BlobSha = BlobSha;
+                vm.Branch = Branch;
+                vm.ContentChanged.Subscribe(x => Content = x);
                 ShowViewModel(vm);
 	        });
 
-	        LoadCommand.RegisterAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            var path = Path;
                 if (!path.StartsWith("/", StringComparison.Ordinal))

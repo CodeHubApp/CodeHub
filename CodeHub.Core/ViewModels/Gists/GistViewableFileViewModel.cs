@@ -1,14 +1,12 @@
 ﻿using System.Text;
-using System.Windows.Input;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using ReactiveUI.Legacy;
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistViewableFileViewModel : LoadableViewModel
+    public class GistViewableFileViewModel : BaseViewModel, ILoadableViewModel
     {
         private GistFileModel _gistFile;
         private string _filePath;
@@ -25,13 +23,15 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _filePath, value); }
         }
 
-        public ICommand GoToFileSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToFileSourceCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public GistViewableFileViewModel(IApplicationService applicationService)
         {
-            GoToFileSourceCommand = new ReactiveAsyncCommand();
+            GoToFileSourceCommand = ReactiveCommand.Create();
 
-            LoadCommand.RegisterAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 string data;
                 using (var ms = new System.IO.MemoryStream())

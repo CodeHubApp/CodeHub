@@ -1,26 +1,26 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestsView : ViewModelCollectionView<PullRequestsViewModel>
+    public class PullRequestsView : ViewModelCollectionViewController<PullRequestsViewModel>
     {
         private UISegmentedControl _viewSegment;
         private UIBarButtonItem _segmentBarButtonItem;
 
         public PullRequestsView()
+            : base(unevenRows: true)
         {
-            Root.UnevenRows = true;
         }
 
         public override void ViewDidLoad()
         {
             Title = "Pull Requests";
-            NoItemsText = "No Pull Requests";
+            //NoItemsText = "No Pull Requests";
 
             base.ViewDidLoad();
 
@@ -32,7 +32,7 @@ namespace CodeHub.iOS.Views.PullRequests
             ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
 
 
-            Bind(ViewModel.WhenAnyValue(x => x.PullRequests), s =>
+            this.BindList(ViewModel.PullRequests, s =>
             {
                 var sse = new NameTimeStringElement
                 {

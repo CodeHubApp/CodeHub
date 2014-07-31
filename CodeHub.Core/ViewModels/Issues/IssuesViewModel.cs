@@ -3,30 +3,33 @@ using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>
+    public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>, ILoadableViewModel
     {
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-		public IReactiveCommand GoToNewIssueCommand { get; private set; }
+        public IReactiveCommand<object> GoToNewIssueCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
 	    public IssuesViewModel(IApplicationService applicationService)
 	    {
-            GoToNewIssueCommand = new ReactiveCommand();
+            GoToNewIssueCommand = ReactiveCommand.Create();
 	        GoToNewIssueCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<IssueAddViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-	            vm.WhenAnyValue(x => x.Issue).Skip(1).Where(x => x != null).Subscribe(x => Issues.Add(x));
+                vm.CreatedIssue.Where(x => x != null).Subscribe(x => IssuesCollection.Add(x));
                 ShowViewModel(vm);
 	        });
 
-	        LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
 	        {
 	            var direction = Filter.Ascending ? "asc" : "desc";
 	            var state = Filter.Open ? "open" : "closed";
@@ -40,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Issues
 	            var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.GetAll(
 	                sort: sort, labels: labels, state: state, direction: direction,
 	                assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
-	            return Issues.SimpleCollectionLoad(request, t as bool?);
+                return IssuesCollection.SimpleCollectionLoad(request, t as bool?);
 	        });
 	    }
     }

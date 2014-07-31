@@ -1,21 +1,29 @@
 using System.Globalization;
 using CodeFramework.Elements;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
+using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class BaseIssuesView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : ReactiveObject, IBaseIssuesViewModel
+    public abstract class BaseIssuesView<TViewModel> : ViewModelCollectionViewController<TViewModel> where TViewModel : class, IBaseViewModel, IBaseIssuesViewModel
     {
         protected BaseIssuesView()
+            : base(unevenRows: true)
         {
-            Root.UnevenRows = true;
             Title = "Issues";
         }
 
-        protected MonoTouch.Dialog.Element CreateElement(IssueModel x)
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            this.BindList(ViewModel.Issues, CreateElement);
+        }
+
+        protected Element CreateElement(IssueModel x)
         {
 			var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
             var assigned = x.Assignee != null ? x.Assignee.Login : "unassigned";

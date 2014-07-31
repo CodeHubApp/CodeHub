@@ -5,9 +5,9 @@ namespace CodeHub.iOS.Views.Users
     public class UserFollowingsView : BaseUserCollectionView<UserFollowingsViewModel>
     {
         public UserFollowingsView()
-            : base("Following")
         {
-            NoItemsText = "Not Following Anyone";
+            Title = "Following";
+            //NoItemsText = "Not Following Anyone";
         }
     }
 }

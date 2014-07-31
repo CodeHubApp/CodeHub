@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.Repositories
                 .Subscribe(x => LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel, x => x != null));
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
         }
 
 		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)

@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         public UserRepositoriesViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var request = string.Equals(applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
                     applicationService.Client.AuthenticatedUser.Repositories.GetAll() : 

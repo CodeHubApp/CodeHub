@@ -46,8 +46,7 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             _applicationService = applicationService;
 
-            SaveCommand = new ReactiveCommand();
-            SaveCommand.RegisterAsyncTask(async t =>
+            SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 if (_files == null || _files.Count == 0)
                     throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");

@@ -5,8 +5,8 @@ namespace CodeHub.iOS.Views.Users
     public class OrganizationMembersView : BaseUserCollectionView<OrganizationMembersViewModel>
     {
         public OrganizationMembersView()
-            : base("Members")
         {
+            Title = "Members";
         }
     }
 }

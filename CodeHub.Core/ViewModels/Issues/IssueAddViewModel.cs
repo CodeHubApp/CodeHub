@@ -5,27 +5,27 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueAddViewModel : IssueModifyViewModel
 	{
+        private readonly Subject<IssueModel> _createdIssueSubject = new Subject<IssueModel>();
 	    private readonly IApplicationService _applicationService;
-	    private IssueModel _issue;
 
-	    public IssueModel Issue
-	    {
-	        get { return _issue; }
-	        private set { this.RaiseAndSetIfChanged(ref _issue, value); }
-	    }
+        public IObservable<IssueModel> CreatedIssue
+        {
+            get { return _createdIssueSubject; }
+        }
 
-	    public IReactiveCommand GoToDescriptionCommand { get; private set; }
+        public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
         public IssueAddViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
 
-            GoToDescriptionCommand = new ReactiveCommand();
+            GoToDescriptionCommand = ReactiveCommand.Create();
             GoToDescriptionCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<MarkdownComposerViewModel>();
@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				var content = Content ?? string.Empty;
 
                 var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Title, content, assignedTo, milestone, labels));
-			    Issue = data.Data;
+                _createdIssueSubject.OnNext(data.Data);
                 DismissCommand.ExecuteIfCan();
 			}
 			catch (Exception e)

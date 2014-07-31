@@ -1,22 +1,22 @@
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Teams
 {
-    public class TeamsView : ViewModelCollectionView<TeamsViewModel>
+    public class TeamsView : ViewModelCollectionViewController<TeamsViewModel>
     {
         public TeamsView()
-            : base("Teams")
         {
+            Title = "Teams";
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            Bind(ViewModel.WhenAnyValue(x => x.Teams), 
+            this.BindList(ViewModel.Teams, 
                 x => new StyledStringElement(x.Name, () => ViewModel.GoToTeamCommand.Execute(x)));
         }
     }

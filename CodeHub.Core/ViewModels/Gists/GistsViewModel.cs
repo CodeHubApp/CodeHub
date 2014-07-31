@@ -9,17 +9,19 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public abstract class GistsViewModel : LoadableViewModel
+    public abstract class GistsViewModel : BaseViewModel, ILoadableViewModel
     {
         public ReactiveCollection<GistModel> Gists { get; private set; }
 
-        public IReactiveCommand GoToGistCommand { get; private set; }
+        public IReactiveCommand<object> GoToGistCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         protected GistsViewModel()
         {
             Gists = new ReactiveCollection<GistModel>();
 
-            GoToGistCommand = new ReactiveCommand();
+            GoToGistCommand = ReactiveCommand.Create();
             GoToGistCommand.OfType<GistModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<GistViewModel>();
@@ -28,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(t => Gists.SimpleCollectionLoad(CreateRequest(), t as bool?));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => Gists.SimpleCollectionLoad(CreateRequest(), t as bool?));
         }
 
         protected abstract GitHubRequest<List<GistModel>> CreateRequest();

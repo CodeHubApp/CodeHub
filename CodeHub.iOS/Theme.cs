@@ -2,6 +2,7 @@
 using MonoTouch.UIKit;
 using CodeFramework.iOS.Cells;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS
 {
@@ -28,9 +29,8 @@ namespace CodeHub.iOS
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
 
-            RepositoryCellView.RoundImages = false;
-            MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
-            MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
+            NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
+            //Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;

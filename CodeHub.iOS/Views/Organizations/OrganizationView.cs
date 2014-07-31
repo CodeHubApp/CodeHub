@@ -1,14 +1,14 @@
 using System;
 using System.Reactive.Linq;
 using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Organizations;
-using MonoTouch.Dialog;
 using ReactiveUI;
+using Xamarin.Utilities.DialogElements;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationView : ViewModelDialogView<OrganizationViewModel>
+    public class OrganizationView : ViewModelPrettyDialogViewController<OrganizationViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Organizations
             var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
             var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
             var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Images.Script);
-            Root = new RootElement(ViewModel.Name) { new Section(header), new Section { members, teams }, new Section { events, followers }, new Section { repos, gists } };
+            Root.Reset(new Section(header), new Section { members, teams }, new Section { events, followers }, new Section { repos, gists });
         }
     }
 }

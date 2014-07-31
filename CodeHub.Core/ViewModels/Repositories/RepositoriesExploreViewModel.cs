@@ -27,7 +27,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
         public IReactiveCommand SearchCommand { get; private set; }
 
@@ -36,15 +36,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             _applicationService = applicationService;
             Repositories = new ReactiveCollection<RepositorySearchModel.RepositoryModel>();
 
-            SearchCommand = new ReactiveCommand(this.WhenAnyValue(x => x.SearchText, x => !string.IsNullOrEmpty(x)));
-            SearchCommand.IsExecuting.Skip(1).Subscribe(x => 
-            {
-                if (x)
-                    networkActivityService.PushNetworkActive();
-                else
-                    networkActivityService.PopNetworkActive();
-            });
-            SearchCommand.RegisterAsyncTask(async t =>
+            SearchCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x)),
+                async t =>
             {
                 try
                 {
@@ -58,8 +52,16 @@ namespace CodeHub.Core.ViewModels.Repositories
                     throw new Exception("Unable to search for repositories. Please try again.", e);
                 }
             });
+            
+            SearchCommand.IsExecuting.Skip(1).Subscribe(x => 
+            {
+                if (x)
+                    networkActivityService.PushNetworkActive();
+                else
+                    networkActivityService.PopNetworkActive();
+            });
 
-            GoToRepositoryCommand = new ReactiveCommand();
+            GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositorySearchModel.RepositoryModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();

@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Issues;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueEditView : ViewModelDialogView<IssueEditViewModel>
+    public class IssueEditView : ViewModelDialogViewController<IssueEditViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
 
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.Issues
             var content = new MultilinedElement("Description");
             content.Tapped += () => ViewModel.GoToDescriptionCommand.ExecuteIfCan();
 
-            var state = new TrueFalseElement("Open", true);
+            var state = new BooleanElement("Open", true);
             state.ValueChanged += (sender, e) => ViewModel.IsOpen = state.Value;
 
             ViewModel.WhenAnyValue(x => x.Issue.Title).Subscribe(x => title.Value = x);
@@ -56,13 +56,13 @@ namespace CodeHub.iOS.Views.Issues
 
             ViewModel.WhenAnyValue(x => x.AssignedTo).Subscribe(x => {
                 assignedTo.Value = x == null ? "Unassigned" : x.Login;
-                if (assignedTo.GetImmediateRootElement() != null)
+                if (assignedTo.GetRootElement() != null)
                     Root.Reload(assignedTo, UITableViewRowAnimation.None);
             });
 
             ViewModel.WhenAnyValue(x => x.Milestone).Subscribe(x => {
                 milestone.Value = x == null ? "None" : x.Title;
-                if (assignedTo.GetImmediateRootElement() != null)
+                if (assignedTo.GetRootElement() != null)
                     Root.Reload(milestone, UITableViewRowAnimation.None);
             });
 
@@ -71,14 +71,14 @@ namespace CodeHub.iOS.Views.Issues
                 labels.Value = (ViewModel.Labels == null && ViewModel.Labels.Length == 0) ? 
                                 "None" : string.Join(", ", ViewModel.Labels.Select(i => i.Name));
 
-                if (assignedTo.GetImmediateRootElement() != null)
+                if (assignedTo.GetRootElement() != null)
                     Root.Reload(labels, UITableViewRowAnimation.None);
             });
 
             ViewModel.WhenAnyValue(x => x.IsOpen).Subscribe(x =>
             {
                 state.Value = x;
-                if (assignedTo.GetImmediateRootElement() != null)
+                if (assignedTo.GetRootElement() != null)
                     Root.Reload(state, UITableViewRowAnimation.None);
             });
 
@@ -90,7 +90,7 @@ namespace CodeHub.iOS.Views.Issues
                     _statusIndicatorService.Hide();
             });
 
-            Root = new RootElement(Title) { new Section { title, assignedTo, milestone, labels }, new Section { state }, new Section { content } };
+            Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { state }, new Section { content });
         }
     }
 }

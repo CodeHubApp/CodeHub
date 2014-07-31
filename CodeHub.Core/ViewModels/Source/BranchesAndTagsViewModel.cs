@@ -9,7 +9,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-	public class BranchesAndTagsViewModel : LoadableViewModel
+    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel
 	{
 		private ShowIndex _selectedFilter;
         public ShowIndex SelectedFilter
@@ -24,13 +24,15 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public ReactiveCollection<ViewObject> Items { get; private set; }
 
-		public IReactiveCommand GoToSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToSourceCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
             Items = new ReactiveCollection<ViewObject>();
 
-            GoToSourceCommand = new ReactiveCommand();
+            GoToSourceCommand = ReactiveCommand.Create();
 		    GoToSourceCommand.OfType<BranchModel>().Subscribe(x =>
 		    {
 		        var vm = CreateViewModel<SourceTreeViewModel>();
@@ -52,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-		    LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
 		    {
                 if (SelectedFilter == ShowIndex.Branches)
                 {

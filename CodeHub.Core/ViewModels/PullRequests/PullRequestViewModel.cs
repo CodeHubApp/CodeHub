@@ -14,7 +14,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestViewModel : LoadableViewModel
+    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
         private readonly IMarkdownService _markdownService;
@@ -51,27 +51,29 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
-        public IReactiveCommand GoToAssigneeCommand { get; private set; }
+        public IReactiveCommand<object> GoToAssigneeCommand { get; private set; }
 
-        public IReactiveCommand GoToMilestoneCommand { get; private set; }
+        public IReactiveCommand<object> GoToMilestoneCommand { get; private set; }
 
-        public IReactiveCommand GoToLabelsCommand { get; private set; }
+        public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
 
-        public IReactiveCommand GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
-        public IReactiveCommand ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public IReactiveCommand ToggleStateCommand { get; private set; }
 
-        public IReactiveCommand GoToCommitsCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
 
-        public IReactiveCommand GoToFilesCommand { get; private set; }
+        public IReactiveCommand<object> GoToFilesCommand { get; private set; }
 
-        public IReactiveCommand GoToAddCommentCommand { get; private set; }
+        public IReactiveCommand<object> GoToAddCommentCommand { get; private set; }
 
         public ReactiveCollection<IssueCommentModel> Comments { get; private set; }
 
         public ReactiveCollection<IssueEventModel> Events { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public string ConvertToMarkdown(string str)
         {
@@ -88,9 +90,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Comments = new ReactiveCollection<IssueCommentModel>();
             Events = new ReactiveCollection<IssueEventModel>();
 
-            MergeCommand = new ReactiveCommand(this.WhenAnyValue(x => x.PullRequest, x => 
-                x != null && x.Merged.HasValue && !x.Merged.Value && x.Mergable.HasValue && x.Mergable.Value));
-            MergeCommand.RegisterAsyncTask(async t =>
+            MergeCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.PullRequest).Select(x =>
+                x != null && x.Merged.HasValue && !x.Merged.Value && x.Mergable.HasValue && x.Mergable.Value),
+                async t =>
             {
                 try
                 {
@@ -106,8 +109,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
             });
 
-            ToggleStateCommand = new ReactiveCommand(this.WhenAnyValue(x => x.PullRequest, x => x != null));
-            ToggleStateCommand.RegisterAsyncTask(async t =>
+            ToggleStateCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.PullRequest).Select(x => x != null), async t =>
             {
                 var close = string.Equals(PullRequest.State, "open", StringComparison.OrdinalIgnoreCase);
 
@@ -123,7 +126,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
             });
 
-            GoToCommitsCommand = new ReactiveCommand();
+            GoToCommitsCommand = ReactiveCommand.Create();
             GoToCommitsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<PullRequestCommitsViewModel>();
@@ -133,7 +136,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            GoToFilesCommand = new ReactiveCommand();
+            GoToFilesCommand = ReactiveCommand.Create();
             GoToFilesCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<PullRequestFilesViewModel>();
@@ -143,10 +146,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            ShareCommand = new ReactiveCommand(this.WhenAnyValue(x => x.PullRequest, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
+            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.PullRequest).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(PullRequest.HtmlUrl));
 
-            GoToEditCommand = new ReactiveCommand();
+            GoToEditCommand = ReactiveCommand.Create();
             GoToEditCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueEditViewModel>();
@@ -158,7 +161,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            GoToLabelsCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null));
+            GoToLabelsCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
             GoToLabelsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueLabelsViewModel>();
@@ -175,7 +178,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            GoToMilestoneCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null));
+            GoToMilestoneCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
             GoToMilestoneCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueMilestonesViewModel>();
@@ -192,7 +195,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            GoToAssigneeCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null));
+            GoToAssigneeCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
             GoToAssigneeCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueAssignedToViewModel>();
@@ -209,11 +212,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 ShowViewModel(vm);
             });
 
-            GoToAddCommentCommand = new ReactiveCommand();
+            GoToAddCommentCommand = ReactiveCommand.Create();
             GoToAddCommentCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<CommentViewModel>();
-                vm.SaveCommand.RegisterAsyncTask(async t =>
+                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
                 {
                     var req =
                         _applicationService.Client.Users[RepositoryOwner]
@@ -224,7 +227,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 });
             });
 
-            LoadCommand.RegisterAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
                 var pullRequest = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].Get();

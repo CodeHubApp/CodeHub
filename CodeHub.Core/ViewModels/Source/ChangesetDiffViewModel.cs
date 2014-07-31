@@ -36,18 +36,23 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public ReactiveCollection<CommentModel> Comments { get; private set; }
 
-        public IReactiveCommand GoToCommentCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommentCommand { get; private set; }
+
+        private readonly IReactiveCommand _loadCommand;
+        public override IReactiveCommand LoadCommand
+        {
+            get { return _loadCommand; }
+        }
 
 	    public ChangesetDiffViewModel(IApplicationService applicationService)
-            : base(null)
 	    {
             Comments = new ReactiveCollection<CommentModel>();
 
-            GoToCommentCommand = new ReactiveCommand();
+            GoToCommentCommand = ReactiveCommand.Create();
             GoToCommentCommand.OfType<int?>().Subscribe(line =>
             {
                 var vm = CreateViewModel<CommentViewModel>();
-                vm.SaveCommand.RegisterAsyncTask(async t =>
+                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
                 {
                     var req = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(vm.Comment, Filename, line);
                     var response = await applicationService.Client.ExecuteAsync(req);
@@ -69,7 +74,7 @@ namespace CodeHub.Core.ViewModels.Source
 	            }
 	        });
 
-	        LoadCommand.RegisterAsyncTask(async t =>
+            _loadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            var branch = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch];
 

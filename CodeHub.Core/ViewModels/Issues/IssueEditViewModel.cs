@@ -29,13 +29,13 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public long Id { get; set; }
 
-	    public IReactiveCommand GoToDescriptionCommand { get; private set; }
+        public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
 	    public IssueEditViewModel(IApplicationService applicationService)
 	    {
 	        _applicationService = applicationService;
 
-            GoToDescriptionCommand = new ReactiveCommand(this.WhenAnyValue(x => x.Issue, x => x != null));
+            GoToDescriptionCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
 	        GoToDescriptionCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<ComposerViewModel>();

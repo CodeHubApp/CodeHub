@@ -1,5 +1,6 @@
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -26,11 +27,6 @@ namespace CodeHub.iOS.Views.Issues
 //                // If there is searching going on. Finish it.
 //                FinishSearch();
 //			});
-
-//			BindCollection(vm.Issues, CreateElement);
-//			var set = this.CreateBindingSet<MyIssuesView, MyIssuesViewModel>();
-//			set.Bind(_viewSegment).To(x => x.SelectedFilter);
-//			set.Apply();
         }
 
         public override void ViewWillAppear(bool animated)

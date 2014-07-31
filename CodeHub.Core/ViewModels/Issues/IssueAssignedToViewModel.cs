@@ -6,7 +6,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueAssignedToViewModel : LoadableViewModel
+    public class IssueAssignedToViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
 
@@ -25,6 +25,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public long IssueId { get; set; }
 
+        public IReactiveCommand LoadCommand { get; private set; }
+
         public bool SaveOnSelect { get; set; }
 
         public IReactiveCommand SelectUserCommand { get; private set; }
@@ -34,8 +36,7 @@ namespace CodeHub.Core.ViewModels.Issues
             _applicationService = applicationService;
             Users = new ReactiveCollection<BasicUserModel>();
 
-            SelectUserCommand = new ReactiveCommand();
-            SelectUserCommand.RegisterAsyncTask(async t =>
+            SelectUserCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 var selectedUser = t as BasicUserModel;
                 if (selectedUser != null)
@@ -51,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 DismissCommand.ExecuteIfCan();
             });
 
-            LoadCommand.RegisterAsyncTask(t => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 Users.SimpleCollectionLoad(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetAssignees(), t as bool?));
         }
     }

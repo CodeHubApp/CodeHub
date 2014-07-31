@@ -1,24 +1,23 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
-using System.Linq;
 using CodeHub.iOS.Elements;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueLabelsView : ViewModelCollectionView<IssueLabelsViewModel>
+    public class IssueLabelsView : ViewModelCollectionViewController<IssueLabelsViewModel>
     {
 		public IssueLabelsView()
+            : base(searchbarEnabled: false)
 		{
-			EnableSearch = false;
 		}
 
         public override void ViewDidLoad()
         {
             Title = "Labels";
-            NoItemsText = "No Labels";
+            //NoItemsText = "No Labels";
 
             base.ViewDidLoad();
 
@@ -30,7 +29,7 @@ namespace CodeHub.iOS.Views.Issues
 			    });
 
 
-            Bind(ViewModel.WhenAnyValue(x => x.Labels), label =>
+            this.BindList(ViewModel.Labels, label =>
             {
                 var element = new LabelElement(label);
                 element.Tapped += () =>

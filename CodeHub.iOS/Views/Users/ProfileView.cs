@@ -1,73 +1,22 @@
 using System;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Users;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using CodeStash.iOS.Views;
-using CodeFramework.iOS.ViewComponents;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public class ProfileView : ViewModelDialogView<ProfileViewModel>
+    public class ProfileView : ViewModelPrettyDialogViewController<ProfileViewModel>
     {
         private UIActionSheet _actionSheet;
-        private SlideUpTitleView _slideUpTitle;
-
-		public ProfileView()
-		{
-			Root.UnevenRows = true;
-		}
-
-        protected override void Scrolled(System.Drawing.PointF point)
-        {
-            if (point.Y > 0)
-            {
-                NavigationController.NavigationBar.ShadowImage = null;
-            }
-            else
-            {
-                if (NavigationController.NavigationBar.ShadowImage == null)
-                    NavigationController.NavigationBar.ShadowImage = new UIImage();
-            }
-
-            _slideUpTitle.Offset = 108 + 28f - point.Y;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.NavigationBar.ShadowImage = null;
-        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.TitleView = _slideUpTitle = new SlideUpTitleView(NavigationController.NavigationBar.Bounds.Height);
-            _slideUpTitle.Text = ViewModel.Username;
-            _slideUpTitle.Offset = 100f;
-
-            TableView.SectionHeaderHeight = 0;
-            RefreshControl.TintColor = UIColor.LightGray;
-
-            var header = new ImageAndTitleHeaderView 
-            { 
-                Text = ViewModel.Username,
-                BackgroundColor = NavigationController.NavigationBar.BackgroundColor,
-                TextColor = UIColor.White,
-                SubTextColor = UIColor.LightGray
-            };
-
-            var topBackgroundView = this.CreateTopBackground(header.BackgroundColor);
-            topBackgroundView.Hidden = true;
+            HeaderView.Text = ViewModel.Username;
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
@@ -77,7 +26,7 @@ namespace CodeHub.iOS.Views.Users
 			var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Images.Repo);
 			var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Script);
 
-            Root.Add(new [] { new Section(header) { split }, new Section { events, organizations, repos, gists } });
+            Root.Reset(new [] { new Section(HeaderView) { split }, new Section { events, organizations, repos, gists } });
 
 			if (!ViewModel.IsLoggedInUser)
             {
@@ -104,14 +53,13 @@ namespace CodeHub.iOS.Views.Users
 
             ViewModel.WhenAnyValue(x => x.User).Where(x => x != null).Subscribe(x =>
             {
-                topBackgroundView.Hidden = false;
-                //header.Subtitle = x.Name;
-                header.ImageUri = x.AvatarUrl;
+                HeaderView.SubText = x.Name;
+                HeaderView.ImageUri = x.AvatarUrl;
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
 
                 if (!string.IsNullOrEmpty(x.Name))
-                    header.SubText = x.Name;
+                    HeaderView.SubText = x.Name;
                 ReloadData();
             });
 

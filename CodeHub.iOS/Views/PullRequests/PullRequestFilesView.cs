@@ -1,21 +1,21 @@
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestFilesView : ViewModelCollectionView<PullRequestFilesViewModel>
+    public class PullRequestFilesView : ViewModelCollectionViewController<PullRequestFilesViewModel>
     {
         public override void ViewDidLoad()
         {
             Title = "Files";
-            NoItemsText = "No Files";
+            //NoItemsText = "No Files";
 
             base.ViewDidLoad();
 
-            Bind(ViewModel.WhenAnyValue(x => x.Files), x =>
+            this.BindList(ViewModel.Files, x =>
             {
                 var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
                 var el = new StyledStringElement(name, x.Status, UITableViewCellStyle.Subtitle)
@@ -35,7 +35,7 @@ namespace CodeHub.iOS.Views.PullRequests
     
 		private class CustomSource : Source
         {
-            public CustomSource(DialogViewController parent)
+            public CustomSource(PullRequestFilesView parent)
                 : base(parent)
             {
             }

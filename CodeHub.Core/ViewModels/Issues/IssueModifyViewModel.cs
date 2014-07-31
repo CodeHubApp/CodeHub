@@ -49,20 +49,19 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public string RepositoryName { get; set; }
 
-        public IReactiveCommand GoToLabelsCommand { get; private set; }
+        public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
 
-        public IReactiveCommand GoToMilestonesCommand { get; private set; }
+        public IReactiveCommand<object> GoToMilestonesCommand { get; private set; }
 
-        public IReactiveCommand GoToAssigneeCommand { get; private set; }
+        public IReactiveCommand<object> GoToAssigneeCommand { get; private set; }
 
 		public IReactiveCommand SaveCommand { get; private set; }
 
 	    protected IssueModifyViewModel()
 	    {
-            SaveCommand = new ReactiveCommand();
-	        SaveCommand.RegisterAsyncTask(t => Save());
+            SaveCommand = ReactiveCommand.CreateAsyncTask(t => Save());
 
-            GoToAssigneeCommand = new ReactiveCommand();
+            GoToAssigneeCommand = ReactiveCommand.Create();
 	        GoToAssigneeCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<IssueAssignedToViewModel>();
@@ -74,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Issues
 	        });
 
 
-            GoToMilestonesCommand = new ReactiveCommand();
+            GoToMilestonesCommand = ReactiveCommand.Create();
             GoToMilestonesCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueMilestonesViewModel>();
@@ -85,7 +84,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 ShowViewModel(vm);
             });
 
-            GoToLabelsCommand = new ReactiveCommand();
+            GoToLabelsCommand = ReactiveCommand.Create();
             GoToLabelsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<IssueLabelsViewModel>();

@@ -5,21 +5,21 @@ using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesExploreView : ViewModelCollectionView<RepositoriesExploreViewModel>
+    public class RepositoriesExploreView : ViewModelCollectionViewController<RepositoriesExploreViewModel>
     {
         public RepositoriesExploreView()
-            :base("Explore")
 		{
+            Title = "Explore";
 		    AutoHideSearch = false;
+            //NoItemsText = "No Repositories";
 		}
 
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Repositories";
-
             base.ViewDidLoad();
 
             var search = (UISearchBar)TableView.TableHeaderView;
@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Views.Repositories
 				ViewModel.SearchCommand.ExecuteIfCan();
 			};
 
-			Bind(ViewModel.WhenAnyValue(x => x.Repositories), repo =>
+            this.BindList(ViewModel.Repositories, repo =>
             {
 				var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
                 var imageUrl = repo.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;

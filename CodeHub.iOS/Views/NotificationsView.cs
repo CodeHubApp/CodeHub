@@ -1,13 +1,13 @@
 using System;
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views
 {
-    public class NotificationsView : ViewModelCollectionView<NotificationsViewModel>
+    public class NotificationsView : ViewModelCollectionViewController<NotificationsViewModel>
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views
 
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Notifications";
+            //NoItemsText = "No Notifications";
             Title = "Notifications";
 
             base.ViewDidLoad();
@@ -40,7 +40,7 @@ namespace CodeHub.iOS.Views
 //                    _markHud.Hide();
 //            });
 
-            Bind(ViewModel.WhenAnyValue(x => x.Notifications), x =>
+            this.BindList(ViewModel.Notifications, x =>
             {
                 var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.ToDaysAgo(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
@@ -64,7 +64,7 @@ namespace CodeHub.iOS.Views
             ViewModel.WhenAnyValue(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
         }
 
-        protected override Section CreateSection(string text)
+        protected Section CreateSection(string text)
         {
             return new Section(new MarkReadSection(text, this, _viewSegment.SelectedSegment != 2));
         }

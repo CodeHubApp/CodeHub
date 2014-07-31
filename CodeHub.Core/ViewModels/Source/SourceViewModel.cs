@@ -9,24 +9,37 @@ namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceViewModel : FileSourceViewModel<SourceViewModel.SourceItemModel>
     {
-        public IReactiveCommand GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
-        public SourceViewModel(NavObject navObject, IApplicationService applicationService, IAccountsService accountsService)
-            : base(navObject)
+        public string Branch { get; set; }
+
+        public string Username { get; set; }
+
+        public string Repository { get; set; }
+
+        private bool _trueBranch;
+        public bool TrueBranch
+        {
+            get { return _trueBranch; }
+            set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
+        }
+
+        private IReactiveCommand _loadCommand;
+        public override IReactiveCommand LoadCommand
+        {
+            get { return _loadCommand; }
+        }
+
+        public SourceViewModel(IApplicationService applicationService, IAccountsService accountsService)
 	    {
-            var branch = navObject.Branch;
-            var username = navObject.Username;
-            var repository = navObject.Repository;
-            var trueBranch = navObject.TrueBranch;
-
-            GoToEditCommand = new ReactiveCommand(this.WhenAnyValue(x => x.SourceItem, x => x != null && trueBranch));
+            GoToEditCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch).Select(x => x.Item1 != null && x.Item2));
 	        GoToEditCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<EditSourceViewModel>();
                 vm.Path = CurrentItem.Path;
-                vm.Branch = branch;
-                vm.Username = username;
-                vm.Repository = repository;
+                vm.Branch = Branch;
+                vm.Username = Username;
+                vm.Repository = Repository;
 	            ShowViewModel(vm);
             });
 
@@ -42,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Source
                 .Where(x => x != null)
                 .Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-	        LoadCommand.RegisterAsyncTask(async t =>
+            _loadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
                 var fileName = System.IO.Path.GetFileName(CurrentItem.Name);
 	            if (fileName == null)
@@ -60,15 +73,9 @@ namespace CodeHub.Core.ViewModels.Source
                 var isBinary = !mime.Contains("charset");
                 SourceItem = new FileSourceItemViewModel { FilePath = filepath, IsBinary = (CurrentItem.ForceBinary || isBinary) };
 	        });
-	    }
 
-        public new class NavObject : FileSourceViewModel<SourceViewModel.SourceItemModel>.NavObject
-        {
-            public string Branch { get; set; }
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public bool TrueBranch { get; set; }
-        }
+            SetupRx();
+	    }
 
         public class SourceItemModel
         {

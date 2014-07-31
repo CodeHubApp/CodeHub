@@ -9,19 +9,21 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Teams
 {
-    public class TeamsViewModel : LoadableViewModel
+    public class TeamsViewModel : BaseViewModel, ILoadableViewModel
     {
         public ReactiveCollection<TeamShortModel> Teams { get; private set; }
 
         public string OrganizationName { get; set; }
 
-        public IReactiveCommand GoToTeamCommand { get; private set; }
+        public IReactiveCommand<object> GoToTeamCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
 
         public TeamsViewModel(IApplicationService applicationService)
         {
             Teams = new ReactiveCollection<TeamShortModel>();
 
-            GoToTeamCommand =  new ReactiveCommand();
+            GoToTeamCommand =  ReactiveCommand.Create();
             GoToTeamCommand.OfType<TeamShortModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<TeamMembersViewModel>();
@@ -29,7 +31,7 @@ namespace CodeHub.Core.ViewModels.Teams
                 ShowViewModel(vm);
             });
 
-            LoadCommand.RegisterAsyncTask(x => 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
                 			Teams.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetTeams(), x as bool?));
         }
     }

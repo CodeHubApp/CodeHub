@@ -4,10 +4,12 @@ using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class SourceTreeView : ViewModelCollectionView<SourceTreeViewModel>
+    public class SourceTreeView : ViewModelCollectionViewController<SourceTreeViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -15,7 +17,7 @@ namespace CodeHub.iOS.Views.Source
 
 //            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
 //                (s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
-            Bind(ViewModel.WhenAnyValue(x => x.Content), CreateElement);
+            this.BindList(ViewModel.Content, CreateElement);
         }
 
         public override void ViewWillAppear(bool animated)

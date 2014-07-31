@@ -6,16 +6,17 @@ using System.Linq;
 using CodeHub.iOS.Elements;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueMilestonesView : ViewModelCollectionView<IssueMilestonesViewModel>
+    public class IssueMilestonesView : ViewModelCollectionViewController<IssueMilestonesViewModel>
     {
 		public IssueMilestonesView()
+            : base(searchbarEnabled: false)
 		{
 			Title = "Milestones";
-			NoItemsText = "No Milestones";
-			EnableSearch = false;
+			//NoItemsText = "No Milestones";
 		}
 
         public override void ViewDidLoad()
@@ -25,7 +26,7 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = 80f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
 
-            Bind(ViewModel.WhenAnyValue(x => x.Milestones), x => {
+            this.BindList(ViewModel.Milestones, x => {
                 var e = new MilestoneElement(x);
 				e.Tapped += () => {
                     if (ViewModel.SelectedMilestone != null && ViewModel.SelectedMilestone.Number == x.Number)
@@ -42,7 +43,7 @@ namespace CodeHub.iOS.Views.Issues
 			{
 				if (Root.Count == 0)
 					return;
-				foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
+				foreach (var m in Root[0].Cast<MilestoneElement>())
 					m.Accessory = (x != null && m.Milestone.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});

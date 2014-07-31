@@ -7,10 +7,12 @@ using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueAddView : ViewModelDialogView<IssueAddViewModel>
+	public class IssueAddView : ViewModelDialogViewController<IssueAddViewModel>
 	{
 	    private readonly IStatusIndicatorService _statusIndicatorService;
 
@@ -74,7 +76,7 @@ namespace CodeHub.iOS.Views.Issues
                     _statusIndicatorService.Hide();
 			});
 
-			Root = new RootElement(Title) { new Section { title, assignedTo, milestone, labels }, new Section { content } };
+            Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { content });
 		}
     }
 }

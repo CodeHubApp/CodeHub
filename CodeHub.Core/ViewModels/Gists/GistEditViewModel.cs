@@ -11,9 +11,9 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public GistEditViewModel()
         {
-            SaveCommand = new ReactiveCommand();
+            SaveCommand = ReactiveCommand.Create();
 
-            GoToDescriptionCommand = new ReactiveCommand();
+            GoToDescriptionCommand = ReactiveCommand.Create();
         }
 
 

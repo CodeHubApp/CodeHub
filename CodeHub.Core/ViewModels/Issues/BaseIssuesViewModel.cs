@@ -3,20 +3,19 @@ using GitHubSharp.Models;
 using CodeHub.Core.Filters;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using CodeFramework.Core.Utils;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.ViewModels.PullRequests;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssuesViewModel<TFilterModel> : LoadableViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel
+    public abstract class BaseIssuesViewModel<TFilterModel> : BaseViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel
     {
+        protected readonly ReactiveCollection<IssueModel> IssuesCollection = new ReactiveCollection<IssueModel>();
         private TFilterModel _filter;
-
-		public ReactiveCollection<IssueModel> Issues { get; private set; }
-
-        public IReactiveCommand GoToIssueCommand { get; private set; }
 
         public TFilterModel Filter
 	    {
@@ -24,27 +23,40 @@ namespace CodeHub.Core.ViewModels.Issues
 	        set { this.RaiseAndSetIfChanged(ref _filter, value); }
 	    }
 
+        public IReadOnlyReactiveList<IssueModel> Issues { get; private set; }
+
+        public IReactiveCommand GoToIssueCommand { get; private set; }
+
 	    protected BaseIssuesViewModel()
 	    {
-	        Issues = new ReactiveCollection<IssueModel>();
-	    }
+            Issues = IssuesCollection.CreateDerivedCollection(x => x);
 
-//		{
-//			get 
-//			{ 
-//				return new MvxCommand<IssueModel>(x =>
-//				{
-//					var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
-//					var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-//					var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
-//
-//					if (isPullRequest)
-//						ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-//					else
-//						ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
-//				});
-//			}
-//		}
+            var gotoIssueCommand = ReactiveCommand.Create();
+            gotoIssueCommand.OfType<IssueModel>().Subscribe(x =>
+            {
+                var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
+                var s1 = x.Url.Substring(x.Url.IndexOf("/repos/", StringComparison.Ordinal) + 7);
+                var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues", StringComparison.Ordinal)));
+
+                if (isPullRequest)
+                {
+                    var vm = CreateViewModel<PullRequestViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                    vm.PullRequestId = x.Number;
+                    ShowViewModel(vm);
+                }
+                else
+                {
+                    var vm = CreateViewModel<IssueViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                    vm.IssueId = x.Number;
+                    ShowViewModel(vm);
+                }
+            });
+            GoToIssueCommand = gotoIssueCommand;
+	    }
 
         protected virtual List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
 		{
@@ -72,11 +84,5 @@ namespace CodeHub.Core.ViewModels.Issues
 		}
     }
 
-    public interface IBaseIssuesViewModel
-    {
-        ReactiveCollection<IssueModel> Issues { get; }
-
-        IReactiveCommand GoToIssueCommand { get; }
-    }
 }
 

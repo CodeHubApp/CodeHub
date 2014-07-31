@@ -8,10 +8,12 @@ using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class EditGistController : ViewModelDialogView<GistEditViewModel>
+    public class EditGistController : ViewModelDialogViewController<GistEditViewModel>
     {
         public EditGistController()
         {
@@ -97,7 +99,7 @@ namespace CodeHub.iOS.Views.Gists
 //            Root = root;
 //        }
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override Source CreateSizingSource(bool unevenRows)
         {
             return new EditSource(this);
         }
@@ -133,7 +135,7 @@ namespace CodeHub.iOS.Views.Gists
             }
         }
 
-        private class EditSource : DialogViewController.SizingSource
+        private class EditSource : Source
         {
             private readonly EditGistController _parent;
             public EditSource(EditGistController dvc) 

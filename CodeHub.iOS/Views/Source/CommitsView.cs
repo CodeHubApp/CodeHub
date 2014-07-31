@@ -3,22 +3,24 @@ using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public abstract class CommitsView<TViewModel> : ViewModelCollectionView<TViewModel> where TViewModel : CommitsViewModel
+    public abstract class CommitsView<TViewModel> : ViewModelCollectionViewController<TViewModel> where TViewModel : CommitsViewModel
 	{
         protected CommitsView()
-            : base("Commits")
+            : base(unevenRows: true)
         {
-            Root.UnevenRows = true;
+            Title = "Commits";
         }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			Bind(ViewModel.WhenAnyValue(x => x.Commits), x =>
+            this.BindList(ViewModel.Commits, x =>
 			{
 				var msg = x.Commit.Message ?? string.Empty;
 				var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);

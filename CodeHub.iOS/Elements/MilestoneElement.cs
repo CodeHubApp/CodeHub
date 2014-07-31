@@ -5,6 +5,7 @@ using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Elements
 {
@@ -16,19 +17,13 @@ namespace CodeHub.iOS.Elements
         public UITableViewCellAccessory Accessory = UITableViewCellAccessory.None;
 
         public MilestoneElement(MilestoneModel m)
-            : base(m.Title)
         {
             Milestone = m;
         }
 
-        protected override NSString CellKey
-        {
-            get { return new NSString("milestone"); }
-        }
-
         public override UITableViewCell GetCell(UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(CellKey) as MilestoneTableViewCell ?? new MilestoneTableViewCell
+            var cell = tv.DequeueReusableCell(MilestoneTableViewCell.Key) as MilestoneTableViewCell ?? new MilestoneTableViewCell
             {
                 SelectionStyle = UITableViewCellSelectionStyle.Blue
             };
@@ -38,11 +33,11 @@ namespace CodeHub.iOS.Elements
             return cell;
         }
 
-        public override void Selected(DialogViewController dvc, UITableView tableView, NSIndexPath path)
+        public override void Selected(UITableView tableView, NSIndexPath path)
         {
             if (Tapped != null)
                 Tapped();
-            tableView.DeselectRow(path, true);
+            base.Selected(tableView, path);
         }
 
         public float GetHeight(UITableView tableView, NSIndexPath indexPath)
@@ -52,6 +47,7 @@ namespace CodeHub.iOS.Elements
 
         private class MilestoneTableViewCell : UITableViewCell
         {
+            public const string Key = "milestonecellview";
             private readonly MilestoneView _milestoneView;
 
             public void Init(string title, int openIssues, int closedIssues, DateTimeOffset? dueDate)
@@ -70,8 +66,9 @@ namespace CodeHub.iOS.Elements
             }
 
             public MilestoneTableViewCell()
-                : base(new RectangleF(0, 0, 320f, 80))
+                : base(UITableViewCellStyle.Default, Key)
             {
+                Frame = new RectangleF(0, 0, 320f, 80);
                 AutosizesSubviews = true;
                 ContentView.AutosizesSubviews = true;
                 SeparatorInset = UIEdgeInsets.Zero;
