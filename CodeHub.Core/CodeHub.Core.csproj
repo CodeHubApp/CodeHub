@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5FE666BA-2AE7-4283-957F-E0EB99A957A6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CodeHub.Core</RootNamespace>
+    <AssemblyName>CodeHub.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
+      <Project>{268171be-a003-4047-beb7-390c74a07b7f}</Project>
+      <Name>CodeFramework.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.csproj">
+      <Project>{0ca8cc58-18fa-4f91-9e47-cae155ce3965}</Project>
+      <Name>Xamarin.Utilities.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.csproj">
+      <Project>{07cd9573-cf93-4cf9-b3d6-501d30b6ad12}</Project>
+      <Name>GitHubSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bootstrap.cs" />
+    <Compile Include="Data\GitHubAccount.cs" />
+    <Compile Include="Filters\BaseIssuesFilterModel.cs" />
+    <Compile Include="Filters\IssuesFilterModel.cs" />
+    <Compile Include="Filters\MyIssuesFilterModel.cs" />
+    <Compile Include="Filters\NotificationsFilterModel.cs" />
+    <Compile Include="Filters\RepositoriesFilterModel.cs" />
+    <Compile Include="Filters\SourceFilterModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AccountValidatorService.cs" />
+    <Compile Include="Services\ApplicationService.cs" />
+    <Compile Include="Services\GitHubAccountsService.cs" />
+    <Compile Include="Services\IApplicationService.cs" />
+    <Compile Include="Services\IFeaturesService.cs" />
+    <Compile Include="Services\ILoginService.cs" />
+    <Compile Include="Services\IPushNotificationsService.cs" />
+    <Compile Include="Services\LoginService.cs" />
+    <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
+    <Compile Include="ViewModels\App\AboutViewModel.cs" />
+    <Compile Include="ViewModels\App\CommentViewModel.cs" />
+    <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
+    <Compile Include="ViewModels\App\MarkdownComposerViewModel.cs" />
+    <Compile Include="ViewModels\App\MenuViewModel.cs" />
+    <Compile Include="ViewModels\App\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
+    <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
+    <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
+    <Compile Include="ViewModels\Events\NewsViewModel.cs" />
+    <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
+    <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
+    <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistEditViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistViewableFileViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistViewModel.cs" />
+    <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
+    <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
+    <Compile Include="ViewModels\Gists\UserGistsViewModel.cs" />
+    <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IBaseIssuesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAssignedToViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
+    <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
+    <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\OrganizationRepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesExploreViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesStarredViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesWatchedViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
+    <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
+    <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
+    <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
+    <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
+    <Compile Include="ViewModels\Source\SourceFilterViewModel.cs" />
+    <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
+    <Compile Include="ViewModels\Source\SourceViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
+    <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryStargazersViewModel.cs" />
+    <Compile Include="ViewModels\Users\RepositoryWatchersViewModel.cs" />
+    <Compile Include="ViewModels\Users\TeamMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Akavache">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\lib\CodeFramework\lib\Xamarin.Utilities\lib\Common\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

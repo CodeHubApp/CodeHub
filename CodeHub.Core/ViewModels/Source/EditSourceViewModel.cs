@@ -62,7 +62,8 @@ namespace CodeHub.Core.ViewModels.Source
 			    request.UseCache = false;
 			    var data = await applicationService.Client.ExecuteAsync(request);
 			    BlobSha = data.Data.Sha;
-			    Text = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(data.Data.Content));
+	            var content = Convert.FromBase64String(data.Data.Content);
+                Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length);
 	        });
 	    }
     }

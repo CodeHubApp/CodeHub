@@ -42,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public SourceTreeViewModel(IApplicationService applicationService)
         {
-            Filter = applicationService.Account.Filters.GetFilter<SourceFilterModel>("SourceViewModel");
+            //Filter = applicationService.Account.Filters.GetFilter<SourceFilterModel>("SourceViewModel");
             Content = new ReactiveCollection<ContentModel>();
 
             GoToSubmoduleCommand = ReactiveCommand.Create();

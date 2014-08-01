@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using CodeFramework.Core.Data;
-using SQLite;
 
 namespace CodeHub.Core.Data
 {
-    public class GitHubAccount : BaseAccount
+    public class GitHubAccount : IAccount
     {
         /// <summary>
         /// Gets or sets the OAuth string
@@ -33,7 +33,7 @@ namespace CodeHub.Core.Data
         public bool ExpandOrganizations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="BaseAccount"/> hides the repository
+        /// Gets or sets a value indicating whether this <see cref="GitHubAccount"/> hides the repository
         /// description in list.
         /// </summary>
         /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
@@ -51,21 +51,8 @@ namespace CodeHub.Core.Data
         /// <value>The code edit theme.</value>
         public string CodeEditTheme { get; set; }
 
-        /// <summary>
-        /// A transient record of the user's name
-        /// </summary>
-        [Ignore]
-        public string FullName { get; set; }
-
-        /// <summary>
-        /// A list of the current notifications
-        /// </summary>
-        /// <value>The notifications.</value>
-        [Ignore]
-        public int? Notifications { get; set; }
-
 		/// <summary>
-		/// Initializes a new instance of the <see cref="BaseAccount"/> class.
+		/// Initializes a new instance of the <see cref="GitHubAccount"/> class.
 		/// </summary>
 		public GitHubAccount()
 		{
@@ -75,6 +62,24 @@ namespace CodeHub.Core.Data
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
 		}
+
+        public bool DontRemember { get; set; }
+
+        public string Key { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public string AvatarUrl { get; set; }
+
+        public string Domain { get; set; }
+
+        public Dictionary<string, object> Filters { get; set; }
+
+        public List<PinnedRepository> PinnnedRepositories { get; set; }
+
+        public string DefaultStartupView { get; set; }
     }
 }
 

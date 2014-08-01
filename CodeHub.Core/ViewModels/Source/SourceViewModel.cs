@@ -4,6 +4,7 @@ using ReactiveUI;
 using CodeFramework.Core.ViewModels.Source;
 using CodeFramework.Core.Services;
 using System.Reactive.Linq;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -24,13 +25,13 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
         }
 
-        private IReactiveCommand _loadCommand;
+        private readonly IReactiveCommand _loadCommand;
         public override IReactiveCommand LoadCommand
         {
             get { return _loadCommand; }
         }
 
-        public SourceViewModel(IApplicationService applicationService, IAccountsService accountsService)
+        public SourceViewModel(IApplicationService applicationService, IAccountsService accountsService, IFilesystemService filesystemService)
 	    {
             GoToEditCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch).Select(x => x.Item1 != null && x.Item2));
 	        GoToEditCommand.Subscribe(_ =>
@@ -61,10 +62,10 @@ namespace CodeHub.Core.ViewModels.Source
 	            if (fileName == null)
 	                return;
 
-                var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+	            string filepath;
                 string mime;
 
-                using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                using (var stream = filesystemService.CreateTempFile(out filepath))
                 {
                     mime = await applicationService.Client.DownloadRawResource2(CurrentItem.GitUrl, stream) ?? string.Empty;
                 }

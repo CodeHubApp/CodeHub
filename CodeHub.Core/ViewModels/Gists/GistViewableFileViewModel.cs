@@ -2,6 +2,7 @@
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
+using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
@@ -27,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand LoadCommand { get; private set; }
 
-        public GistViewableFileViewModel(IApplicationService applicationService)
+        public GistViewableFileViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
         {
             GoToFileSourceCommand = ReactiveCommand.Create();
 
@@ -44,9 +45,15 @@ namespace CodeHub.Core.ViewModels.Gists
                 if (GistFile.Language.Equals("Markdown"))
                     data = await applicationService.Client.Markdown.GetMarkdown(data);
 
-                var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
-                    System.IO.Path.GetTempFileName() + ".html");
-                System.IO.File.WriteAllText(path, data, Encoding.UTF8);
+                string path;
+                using (var stream = filesystemService.CreateTempFile(out path, "gist.html"))
+                {
+                    using (var fs = new System.IO.StreamWriter(stream))
+                    {
+                        fs.Write(data);
+                    }
+                }
+
                 FilePath = path;
             });
         }

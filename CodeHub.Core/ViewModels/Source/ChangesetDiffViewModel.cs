@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
@@ -7,6 +8,7 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ReactiveAddons;
 using CodeFramework.Core.ViewModels.Source;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -44,7 +46,7 @@ namespace CodeHub.Core.ViewModels.Source
             get { return _loadCommand; }
         }
 
-	    public ChangesetDiffViewModel(IApplicationService applicationService)
+	    public ChangesetDiffViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
 	    {
             Comments = new ReactiveCollection<CommentModel>();
 
@@ -85,7 +87,16 @@ namespace CodeHub.Core.ViewModels.Source
                     CommitFile = data.Data.Files.First(x => string.Equals(x.Filename, Filename));
 			    }
 
-                SourceItem = new FileSourceItemViewModel { FilePath = CreatePlainContentFile(CommitFile.Patch, _actualFilename) };
+	            string path;
+	            using (var stream = filesystemService.CreateTempFile(out path))
+	            {
+	                using (var fs = new StreamWriter(stream))
+	                {
+	                    fs.Write(CommitFile.Patch);
+	                }
+	            }
+
+                SourceItem = new FileSourceItemViewModel { FilePath = path };
 			    await Comments.SimpleCollectionLoad(branch.Comments.GetAll(), t as bool?);
 
 	        });

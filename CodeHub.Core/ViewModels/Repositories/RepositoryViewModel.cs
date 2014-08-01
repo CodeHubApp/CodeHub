@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using CodeFramework.Core.Data;
+using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -18,12 +21,12 @@ namespace CodeHub.Core.ViewModels.Repositories
     public class RepositoryViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly IApplicationService ApplicationService;
+        private readonly IAccountsService _accountsService;
         private bool? _starred;
         private bool? _watched;
         private RepositoryModel _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
-        private Uri _imageUri;
         private int? _collaborators;
         private string _repositorySize;
 
@@ -101,7 +104,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool IsPinned
         {
-            get { return ApplicationService.Account.PinnnedRepositories.GetPinnedRepository(RepositoryOwner, RepositoryName) != null; }
+            get
+            {
+                return ApplicationService.Account.PinnnedRepositories.Any(x => x.Owner.Equals(RepositoryOwner) && x.Name.Equals(RepositoryName));
+            }
         }
 
         public IReactiveCommand<object> PinCommand { get; private set; }
@@ -110,9 +116,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand ToggleWatchCommand { get; private set; }
 
-        public RepositoryViewModel(IApplicationService applicationService)
+        public RepositoryViewModel(IApplicationService applicationService, IAccountsService accountsService)
         {
             ApplicationService = applicationService;
+            _accountsService = accountsService;
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue), t => ToggleStar());
@@ -282,11 +289,20 @@ namespace CodeHub.Core.ViewModels.Repositories
             var repoName = Repository.Name;
 
             //Is it pinned already or not?
-			var pinnedRepo = ApplicationService.Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
+			var pinnedRepo = ApplicationService.Account.PinnnedRepositories.FirstOrDefault(x => x.Owner.Equals(repoOwner) && x.Name.Equals(repoName));
             if (pinnedRepo == null)
-                ApplicationService.Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, new Uri(Repository.Owner.AvatarUrl));
+            {
+                ApplicationService.Account.PinnnedRepositories.Add(new PinnedRepository
+                {
+                    Owner = repoOwner,
+                    Name = repoName,
+                    ImageUri = Repository.Owner.AvatarUrl,
+                    Slug = Repository.FullName
+                });
+                _accountsService.Update(ApplicationService.Account);
+            }
             else
-				ApplicationService.Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
+                ApplicationService.Account.PinnnedRepositories.Remove(pinnedRepo);
         }
 
 		private async Task ToggleWatch()

@@ -53,7 +53,8 @@ namespace CodeHub.Core.ViewModels.Repositories
                 this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme(), x as bool?, r =>
                 {
                     ContentModel = r.Data;
-                    ContentText = markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(ContentModel.Content)));
+                    var content = Convert.FromBase64String(ContentModel.Content);
+                    ContentText = markdownService.Convert(Encoding.UTF8.GetString(content, 0, content.Length));
                 }));
         }
     }

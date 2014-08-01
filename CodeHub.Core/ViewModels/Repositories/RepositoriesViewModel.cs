@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             ApplicationService = applicationService;
             Repositories = new ReactiveCollection<RepositoryModel>();
-            Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
+            //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>

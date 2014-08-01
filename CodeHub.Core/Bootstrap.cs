@@ -15,8 +15,7 @@ namespace CodeHub.Core
         {
             RxApp.DefaultExceptionHandler = Observer.Create((Exception e) =>
             {
-                //IoC.Resolve<IAlertDialogService>().Alert("Error", e.Message);
-                Console.WriteLine("Exception occured: " + e.Message + " at " + e.StackTrace);
+                IoC.Resolve<IAlertDialogService>().Alert("Error", e.Message);
             });
 
             var httpService = IoC.Resolve<IHttpClientService>();

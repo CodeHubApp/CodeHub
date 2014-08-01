@@ -115,7 +115,6 @@ namespace CodeHub.Core.Services
         /// <summary>
         /// Goofy exception so we can catch and do two factor auth
         /// </summary>
-        [Serializable]
         public class TwoFactorRequiredException : Exception
         {
             public TwoFactorRequiredException()

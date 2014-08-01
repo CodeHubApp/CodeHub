@@ -1,8 +1,10 @@
 using System;
+using System.Text;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
 using CodeFramework.Core.ViewModels.Source;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -30,13 +32,13 @@ namespace CodeHub.Core.ViewModels.Gists
 	        set { this.RaiseAndSetIfChanged(ref _gistFile, value); }
 	    }
 
-        private IReactiveCommand _loadCommand;
+        private readonly IReactiveCommand _loadCommand;
         public override IReactiveCommand LoadCommand
         {
             get { return _loadCommand; }
         }
 
-	    public GistFileViewModel(IApplicationService applicationService)
+	    public GistFileViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
@@ -58,8 +60,17 @@ namespace CodeHub.Core.ViewModels.Gists
 			    }
 
                 var content = GistFile.Content;
-                var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(GistFile.Filename));
-			    System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
+                var gistFileName = System.IO.Path.GetFileName(GistFile.Filename);
+                string filePath;
+                
+                using (var stream = filesystemService.CreateTempFile(out filePath, gistFileName))
+                {
+                    using (var fs = new System.IO.StreamWriter(stream))
+                    {
+                        fs.Write(content);
+                    }
+                }
+
                 SourceItem = new FileSourceItemViewModel { FilePath = filePath };
             });
 	    }
