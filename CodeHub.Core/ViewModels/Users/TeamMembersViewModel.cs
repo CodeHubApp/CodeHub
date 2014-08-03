@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Users
         public TeamMembersViewModel(IApplicationService applicationService)
         {
             LoadCommand = ReactiveCommand.CreateAsyncTask(
-                t => Users.SimpleCollectionLoad(applicationService.Client.Teams[Id].GetMembers(), t as bool?));
+                t => UsersCollection.SimpleCollectionLoad(applicationService.Client.Teams[Id].GetMembers(), t as bool?));
         }
     }
 }

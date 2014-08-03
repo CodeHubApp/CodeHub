@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Users
 	    public RepositoryStargazersViewModel(IApplicationService applicationService)
 	    {
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Users.SimpleCollectionLoad(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetStargazers(), t as bool?));
+                UsersCollection.SimpleCollectionLoad(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetStargazers(), t as bool?));
 	    }
     }
 }

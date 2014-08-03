@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Users
         public RepositoryCollaboratorsViewModel(IApplicationService applicationService)
         {
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Users.SimpleCollectionLoad(
+                UsersCollection.SimpleCollectionLoad(
                     applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetCollaborators(), t as bool?));
         }
     }

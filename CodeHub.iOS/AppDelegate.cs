@@ -104,9 +104,6 @@ namespace CodeHub.iOS
 
         private void SetupPushNotifications()
         {
-            InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
-            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
-
             var features = IoC.Resolve<IFeaturesService>();
 
             // Automatic activations in debug mode!
@@ -151,21 +148,18 @@ namespace CodeHub.iOS
             }
         }
 
-        void HandlePurchaseSuccess (object sender, string e)
-        {
-            IoC.Resolve<IDefaultValueService>().Set(e, true);
+        // TODO: IMPORTANT!!!
+//        void HandlePurchaseSuccess (object sender, string e)
+//        {
+//            IoC.Resolve<IDefaultValueService>().Set(e, true);
+//
+//            if (string.Equals(e, FeatureIds.PushNotifications))
+//            {
+//                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
+//                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+//            }
+//        }
 
-            if (string.Equals(e, FeatureIds.PushNotifications))
-            {
-                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-            }
-        }
-
-        void HandlePurchaseError (object sender, Exception e)
-        {
-            IoC.Resolve<IAlertDialogService>().Alert("Unable to make purchase", e.Message);
-        }
 
 		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
 		{

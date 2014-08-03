@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Users
         public UserFollowingsViewModel(IApplicationService applicationService)
         {
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Users.SimpleCollectionLoad(applicationService.Client.Users[Username].GetFollowing(), t as bool?));
+                UsersCollection.SimpleCollectionLoad(applicationService.Client.Users[Username].GetFollowing(), t as bool?));
         }
     }
 }

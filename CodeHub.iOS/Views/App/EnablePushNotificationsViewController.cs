@@ -64,20 +64,6 @@ namespace CodeHub.iOS.Views.App
                                                  ContainerView.Frame.Width, ContainerView.Frame.Height);
         }
 
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
-            InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            InAppPurchases.Instance.PurchaseSuccess -= HandlePurchaseSuccess;
-            InAppPurchases.Instance.PurchaseError -= HandlePurchaseError;
-        }
-
         void HandlePurchaseError (object sender, Exception e)
         {
             _statusIndicatorService.Hide();

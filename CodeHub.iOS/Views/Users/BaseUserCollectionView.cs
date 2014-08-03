@@ -2,6 +2,7 @@ using CodeFramework.iOS.Elements;
 using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
+using System;
 
 namespace CodeHub.iOS.Views.Users
 {
@@ -10,6 +11,8 @@ namespace CodeHub.iOS.Views.Users
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x);
 
             this.BindList(ViewModel.Users, x =>
             {

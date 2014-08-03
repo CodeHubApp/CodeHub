@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CodeHub.iOS.Views.App;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Purchases;
 
 namespace CodeHub.iOS.Services
 {
@@ -49,7 +50,7 @@ namespace CodeHub.iOS.Services
 
         public void Activate(string id)
         {
-            InAppPurchases.Instance.PurchaseProduct(id);
+            //InAppPurchases.Instance.PurchaseProduct(id);
         }
 
         public bool IsActivated(string id)

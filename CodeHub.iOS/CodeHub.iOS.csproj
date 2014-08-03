@@ -195,7 +195,6 @@
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
-    <Compile Include="InAppPurchases.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="Views\App\UpgradesView.cs" />
     <Compile Include="UrlRouterProvider.cs" />

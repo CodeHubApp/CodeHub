@@ -11,6 +11,7 @@ using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using Xamarin.Utilities.Purchases;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -44,7 +45,7 @@ namespace CodeHub.iOS.Views.App
             try
             {
                 _networkActivityService.PushNetworkActive();
-                var data = await InAppPurchases.RequestProductData(keys);
+                var data = await InAppPurchases.Instance.RequestProductData(keys);
                 _items.Clear();
                 _items.AddRange(data.Products.Select(x => new Item { Id = x.ProductIdentifier, Name = x.LocalizedTitle, Description = x.LocalizedDescription, Price = x.LocalizedPrice() }));
                 Render();
@@ -57,23 +58,6 @@ namespace CodeHub.iOS.Views.App
             {
                 _networkActivityService.PopNetworkActive();
             }
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            InAppPurchases.Instance.PurchaseSuccess -= HandlePurchaseSuccess;
-        }
-
-        void HandlePurchaseSuccess (object sender, string e)
-        {
-            Render();
         }
 
         private void Render()
