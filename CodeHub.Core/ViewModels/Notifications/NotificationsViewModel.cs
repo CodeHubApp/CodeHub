@@ -10,7 +10,7 @@ using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Notifications
@@ -20,8 +20,9 @@ namespace CodeHub.Core.ViewModels.Notifications
         private readonly IApplicationService _applicationService;
         private int _shownIndex;
         private NotificationsFilterModel _filter;
+        private ReactiveList<NotificationModel> _notifications; 
 
-        public ReactiveCollection<NotificationModel> Notifications { get; private set; }
+        public IReadOnlyReactiveList<NotificationModel> Notifications { get; private set; }
 
 		public int ShownIndex
 		{
@@ -88,12 +89,13 @@ namespace CodeHub.Core.ViewModels.Notifications
         public NotificationsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
-            Notifications = new ReactiveCollection<NotificationModel> {GroupFunc = x => x.Repository.FullName};
+            _notifications = new ReactiveList<NotificationModel>();
+            Notifications = _notifications.CreateDerivedCollection(x => x);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var req = applicationService.Client.Notifications.GetAll(all: Filter.All, participating: Filter.Participating);
-                return this.RequestModel(req, t as bool?, response => Notifications.Reset(response.Data));
+                return this.RequestModel(req, t as bool?, response => _notifications.Reset(response.Data));
             });
 
             GoToNotificationCommand = ReactiveCommand.Create();
@@ -106,7 +108,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 {
                     if (!Notifications.Any()) return;
                     await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
-                    Notifications.Clear();
+                    _notifications.Clear();
                 }
                 catch (Exception e)
                 {
@@ -122,7 +124,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                     if (repo == null) return;
                     var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
                     await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
-                    Notifications.RemoveAll(Notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
+                    _notifications.RemoveAll(Notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 }
                 catch (Exception e)
                 {
@@ -159,7 +161,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 if (response.Data)
                 {
                     notification.Unread = false;
-                    Notifications.Remove(notification);
+                    _notifications.Remove(notification);
                 }
             }
             catch (Exception e)

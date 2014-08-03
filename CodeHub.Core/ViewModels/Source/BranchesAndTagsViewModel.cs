@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string RepositoryName { get; set; }
 
-		public ReactiveCollection<ViewObject> Items { get; private set; }
+		public ReactiveList<ViewObject> Items { get; private set; }
 
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
-            Items = new ReactiveCollection<ViewObject>();
+            Items = new ReactiveList<ViewObject>();
 
             GoToSourceCommand = ReactiveCommand.Create();
 		    GoToSourceCommand.OfType<BranchModel>().Subscribe(x =>
@@ -61,7 +61,7 @@ namespace CodeHub.Core.ViewModels.Source
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches();
                     return this.RequestModel(request, t as bool?, response =>
                     {
-                        this.CreateMore(response, m => Items.MoreTask = m, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
+                        this.CreateMore(response, m => { }, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
                         Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
                     });
                 }
@@ -70,7 +70,7 @@ namespace CodeHub.Core.ViewModels.Source
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetTags();
                     return this.RequestModel(request, t as bool?, response =>
                     {
-                        this.CreateMore(response, m => Items.MoreTask = m, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
+                        this.CreateMore(response, m => { }, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
                         Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
                     });
                 }

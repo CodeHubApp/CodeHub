@@ -4,7 +4,7 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public string RepositoryName { get; set; }
 
-        public ReactiveCollection<BranchModel> Branches { get; private set; }
+        public ReactiveList<BranchModel> Branches { get; private set; }
 
         public IReactiveCommand<object> GoToBranchCommand { get; private set; }
 
@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ChangesetBranchesViewModel(IApplicationService applicationService)
         {
-            Branches = new ReactiveCollection<BranchModel>();
+            Branches = new ReactiveList<BranchModel>();
 
             GoToBranchCommand = ReactiveCommand.Create();
             GoToBranchCommand.OfType<BranchModel>().Subscribe(x =>

@@ -4,14 +4,14 @@ using System.Reactive.Linq;
 using GitHubSharp;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public abstract class GistsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveCollection<GistModel> Gists { get; private set; }
+        public ReactiveList<GistModel> Gists { get; private set; }
 
         public IReactiveCommand<object> GoToGistCommand { get; private set; }
 
@@ -19,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         protected GistsViewModel()
         {
-            Gists = new ReactiveCollection<GistModel>();
+            Gists = new ReactiveList<GistModel>();
 
             GoToGistCommand = ReactiveCommand.Create();
             GoToGistCommand.OfType<GistModel>().Subscribe(x =>

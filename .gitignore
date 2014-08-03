@@ -2,3 +2,4 @@
 */obj
 *.suo
 *.userprefs
+*.csproj.user

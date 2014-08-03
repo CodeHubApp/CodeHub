@@ -3,14 +3,14 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveCollection<PullRequestModel> PullRequests { get; private set; }
+        public ReactiveList<PullRequestModel> PullRequests { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public PullRequestsViewModel(IApplicationService applicationService)
 		{
-            PullRequests = new ReactiveCollection<PullRequestModel>();
+            PullRequests = new ReactiveList<PullRequestModel>();
 
             GoToPullRequestCommand = ReactiveCommand.Create();
 		    GoToPullRequestCommand.OfType<PullRequestModel>().Subscribe(pullRequest =>

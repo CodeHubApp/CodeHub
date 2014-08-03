@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 using Xamarin.Utilities.Core.Services;
 
@@ -19,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public ReactiveCollection<RepositorySearchModel.RepositoryModel> Repositories { get; private set; }
+        public ReactiveList<RepositorySearchModel.RepositoryModel> Repositories { get; private set; }
 
         public string SearchText
         {
@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         public RepositoriesExploreViewModel(IApplicationService applicationService, INetworkActivityService networkActivityService)
         {
             _applicationService = applicationService;
-            Repositories = new ReactiveCollection<RepositorySearchModel.RepositoryModel>();
+            Repositories = new ReactiveList<RepositorySearchModel.RepositoryModel>();
 
             SearchCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x)),

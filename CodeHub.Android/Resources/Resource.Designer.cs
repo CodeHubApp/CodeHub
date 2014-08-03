@@ -29,8 +29,6 @@ namespace CodeHub.Android
 			global::Splat.Resource.String.library_name = global::CodeHub.Android.Resource.String.library_name;
 			global::CodeFramework.Android.Resource.String.ApplicationName = global::CodeHub.Android.Resource.String.ApplicationName;
 			global::CodeFramework.Android.Resource.String.Hello = global::CodeHub.Android.Resource.String.Hello;
-			global::Xamarin.Utilities.Android.Resource.String.ApplicationName = global::CodeHub.Android.Resource.String.ApplicationName;
-			global::Xamarin.Utilities.Android.Resource.String.Hello = global::CodeHub.Android.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -65,6 +63,9 @@ namespace CodeHub.Android
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050001
+			public const int List = 2131034113;
+			
 			// aapt resource value: 0x7f050000
 			public const int MyButton = 2131034112;
 			
@@ -83,6 +84,9 @@ namespace CodeHub.Android
 			
 			// aapt resource value: 0x7f030000
 			public const int Main = 2130903040;
+			
+			// aapt resource value: 0x7f030001
+			public const int UsersLayout = 2130903041;
 			
 			static Layout()
 			{

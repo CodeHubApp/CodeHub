@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _times; }
         }
 
-        public ReactiveCollection<RepositoryModel> Repositories { get; private set; }
+        public ReactiveList<RepositoryModel> Repositories { get; private set; }
 
         public ReactiveList<LanguageModel> Languages { get; private set; }
 
@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             _jsonHttpClient = jsonHttpClient;
 
             Languages = new ReactiveList<LanguageModel>();
-            Repositories = new ReactiveCollection<RepositoryModel>();
+            Repositories = new ReactiveList<RepositoryModel>();
 
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>

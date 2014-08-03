@@ -236,21 +236,25 @@
     <Compile Include="Views\Users\TeamMembersView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
-      <Project>{5fe666ba-2ae7-4283-957f-e0eb99a957a6}</Project>
-      <Name>CodeHub.Core</Name>
+    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
+      <Project>{3c8dc5d3-37a5-4f65-bf11-a7eb83f5336d}</Project>
+      <Name>CodeHub.Core.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Common\CodeFramework.Common.csproj">
       <Project>{6e1c9e25-915a-4454-8bbd-61e6918bfcf1}</Project>
       <Name>CodeFramework.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.iOS.csproj">
+      <Project>{60a19d9d-b902-4942-abd5-0fb3a19ca3e5}</Project>
+      <Name>CodeFramework.Core.iOS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
       <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
       <Name>CodeFramework.iOS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.csproj">
-      <Project>{0ca8cc58-18fa-4f91-9e47-cae155ce3965}</Project>
-      <Name>Xamarin.Utilities.Core</Name>
+    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.iOS.csproj">
+      <Project>{fdf746eb-46c2-4b70-80ac-07b542140836}</Project>
+      <Name>Xamarin.Utilities.Core.iOS</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.iOS\Xamarin.Utilities.iOS.csproj">
       <Project>{5E7E39CA-0CCE-41FE-A868-EE0E567E069E}</Project>
@@ -259,10 +263,6 @@
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
       <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
       <Name>MonoTouch.SlideoutNavigation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
-      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.csproj">
       <Project>{07cd9573-cf93-4cf9-b3d6-501d30b6ad12}</Project>

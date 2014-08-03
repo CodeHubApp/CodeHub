@@ -1,7 +1,7 @@
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
@@ -17,7 +17,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _selectedUser, value); }
         }
 
-        public ReactiveCollection<BasicUserModel> Users { get; private set; }
+        public ReactiveList<BasicUserModel> Users { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IssueAssignedToViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
-            Users = new ReactiveCollection<BasicUserModel>();
+            Users = new ReactiveList<BasicUserModel>();
 
             SelectUserCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

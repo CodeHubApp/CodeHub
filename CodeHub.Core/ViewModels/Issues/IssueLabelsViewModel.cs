@@ -4,14 +4,14 @@ using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueLabelsViewModel : BaseViewModel, ILoadableViewModel
     {
-		public ReactiveCollection<LabelModel> Labels { get; private set; }
+		public ReactiveList<LabelModel> Labels { get; private set; }
 
 	    public ReactiveList<LabelModel> SelectedLabels { get; private set; }
 
@@ -31,7 +31,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 	    public IssueLabelsViewModel(IApplicationService applicationService)
 	    {
-	        Labels = new ReactiveCollection<LabelModel>();
+	        Labels = new ReactiveList<LabelModel>();
             SelectedLabels = new ReactiveList<LabelModel>();
 
             SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(async t =>

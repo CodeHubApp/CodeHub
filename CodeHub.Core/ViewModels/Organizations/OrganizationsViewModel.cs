@@ -3,14 +3,14 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : BaseViewModel, ILoadableViewModel
 	{
-        public ReactiveCollection<BasicUserModel> Organizations { get; private set; }
+        public ReactiveList<BasicUserModel> Organizations { get; private set; }
 
         public string Username { get; set; }
 
@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public OrganizationsViewModel(IApplicationService applicationService)
         {
-            Organizations = new ReactiveCollection<BasicUserModel>();
+            Organizations = new ReactiveList<BasicUserModel>();
 
             GoToOrganizationCommand = ReactiveCommand.Create();
             GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>

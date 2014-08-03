@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Android", "CodeHub.Android.csproj", "{09857459-B522-4110-B607-70F2D344DA3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core", "..\CodeHub.Core\CodeHub.Core.csproj", "{5FE666BA-2AE7-4283-957F-E0EB99A957A6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{9E155872-20C9-4F5B-A18E-4E3628D84590}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Core", "..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj", "{268171BE-A003-4047-BEB7-390C74A07B7F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Android", "..\lib\CodeFramework\CodeFramework.Android\CodeFramework.Android.csproj", "{20D25235-5C9C-4F93-8227-A0322D1230D8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Utilities.Core", "..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.csproj", "{0CA8CC58-18FA-4F91-9E47-CAE155CE3965}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Utilities.Android", "..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Android\Xamarin.Utilities.Android.csproj", "{9D4EB2B6-0F07-46EF-B88D-08BF7813AEA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitHubSharp", "..\lib\GitHubSharp\GitHubSharp.csproj", "{07CD9573-CF93-4CF9-B3D6-501D30B6AD12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core.Android", "..\CodeHub.Core\CodeHub.Core.Android.csproj", "{2831422B-5BB4-4F61-AE9D-6992FA7F4764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Utilities.Core.Android", "..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.Android.csproj", "{2C53C231-048E-4143-AEFA-1F83CF020329}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFramework.Core.Android", "..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.Android.csproj", "{CFC1635C-7681-4850-85E0-D4401E005679}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,22 +29,10 @@ Global
 		{09857459-B522-4110-B607-70F2D344DA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09857459-B522-4110-B607-70F2D344DA3E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09857459-B522-4110-B607-70F2D344DA3E}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{5FE666BA-2AE7-4283-957F-E0EB99A957A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5FE666BA-2AE7-4283-957F-E0EB99A957A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5FE666BA-2AE7-4283-957F-E0EB99A957A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FE666BA-2AE7-4283-957F-E0EB99A957A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{268171BE-A003-4047-BEB7-390C74A07B7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{268171BE-A003-4047-BEB7-390C74A07B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{268171BE-A003-4047-BEB7-390C74A07B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{268171BE-A003-4047-BEB7-390C74A07B7F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20D25235-5C9C-4F93-8227-A0322D1230D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{20D25235-5C9C-4F93-8227-A0322D1230D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20D25235-5C9C-4F93-8227-A0322D1230D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20D25235-5C9C-4F93-8227-A0322D1230D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0CA8CC58-18FA-4F91-9E47-CAE155CE3965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0CA8CC58-18FA-4F91-9E47-CAE155CE3965}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0CA8CC58-18FA-4F91-9E47-CAE155CE3965}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0CA8CC58-18FA-4F91-9E47-CAE155CE3965}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D4EB2B6-0F07-46EF-B88D-08BF7813AEA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D4EB2B6-0F07-46EF-B88D-08BF7813AEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D4EB2B6-0F07-46EF-B88D-08BF7813AEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,15 +41,27 @@ Global
 		{07CD9573-CF93-4CF9-B3D6-501D30B6AD12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07CD9573-CF93-4CF9-B3D6-501D30B6AD12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07CD9573-CF93-4CF9-B3D6-501D30B6AD12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2831422B-5BB4-4F61-AE9D-6992FA7F4764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2831422B-5BB4-4F61-AE9D-6992FA7F4764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2831422B-5BB4-4F61-AE9D-6992FA7F4764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2831422B-5BB4-4F61-AE9D-6992FA7F4764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C53C231-048E-4143-AEFA-1F83CF020329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C53C231-048E-4143-AEFA-1F83CF020329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C53C231-048E-4143-AEFA-1F83CF020329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C53C231-048E-4143-AEFA-1F83CF020329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFC1635C-7681-4850-85E0-D4401E005679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC1635C-7681-4850-85E0-D4401E005679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC1635C-7681-4850-85E0-D4401E005679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC1635C-7681-4850-85E0-D4401E005679}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{268171BE-A003-4047-BEB7-390C74A07B7F} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
 		{20D25235-5C9C-4F93-8227-A0322D1230D8} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
-		{0CA8CC58-18FA-4F91-9E47-CAE155CE3965} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
 		{9D4EB2B6-0F07-46EF-B88D-08BF7813AEA7} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
 		{07CD9573-CF93-4CF9-B3D6-501D30B6AD12} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
+		{2C53C231-048E-4143-AEFA-1F83CF020329} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
+		{CFC1635C-7681-4850-85E0-D4401E005679} = {9E155872-20C9-4F5B-A18E-4E3628D84590}
 	EndGlobalSection
 EndGlobal

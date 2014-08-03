@@ -4,7 +4,7 @@ using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels
@@ -51,11 +51,11 @@ namespace CodeHub.Core.ViewModels
             });
         }
 
-        public static Task SimpleCollectionLoad<T>(this ReactiveCollection<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh) where T : new()
+        public static Task SimpleCollectionLoad<T>(this ReactiveList<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh) where T : new()
         {
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, m => viewModel.MoreTask = m, viewModel.AddRange);
+                viewModel.CreateMore(response, m => { }, viewModel.AddRange);
                 viewModel.Reset(response.Data);
             });
         }

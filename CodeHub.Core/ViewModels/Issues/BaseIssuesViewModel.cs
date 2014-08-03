@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using CodeFramework.Core.Utils;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.ViewModels.PullRequests;
 
@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class BaseIssuesViewModel<TFilterModel> : BaseViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel
     {
-        protected readonly ReactiveCollection<IssueModel> IssuesCollection = new ReactiveCollection<IssueModel>();
+        protected readonly ReactiveList<IssueModel> IssuesCollection = new ReactiveList<IssueModel>();
         private TFilterModel _filter;
 
         public TFilterModel Filter

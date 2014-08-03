@@ -7,7 +7,7 @@ using GitHubSharp.Models;
 using CodeFramework.Core.Services;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -54,15 +54,15 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> AddCommentCommand { get; private set; }
 
-        public ReactiveCollection<IssueCommentModel> Comments { get; private set; }
+        public ReactiveList<IssueCommentModel> Comments { get; private set; }
 
-        public ReactiveCollection<IssueEventModel> Events { get; private set; }
+        public ReactiveList<IssueEventModel> Events { get; private set; }
 
         public IssueViewModel(IApplicationService applicationService, IShareService shareService)
         {
             _applicationService = applicationService;
-            Comments = new ReactiveCollection<IssueCommentModel>();
-            Events = new ReactiveCollection<IssueEventModel>();
+            Comments = new ReactiveList<IssueCommentModel>();
+            Events = new ReactiveList<IssueEventModel>();
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));

@@ -13,7 +13,7 @@ using GitHubSharp.Models;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Events
@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Events
     {
         protected readonly IApplicationService ApplicationService;
 
-        public ReactiveCollection<Tuple<EventModel, EventBlock>> Events { get; private set; }
+        public ReactiveList<Tuple<EventModel, EventBlock>> Events { get; private set; }
 
         public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Events
         protected BaseEventsViewModel(IApplicationService applicationService)
         {
             ApplicationService = applicationService;
-            Events = new ReactiveCollection<Tuple<EventModel, EventBlock>>();
+            Events = new ReactiveList<Tuple<EventModel, EventBlock>>();
             ReportRepository = true;
 
             GoToRepositoryCommand = ReactiveCommand.Create();
@@ -64,7 +64,7 @@ namespace CodeHub.Core.ViewModels.Events
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 this.RequestModel(CreateRequest(0, 100), t as bool?, response =>
                 {
-                    this.CreateMore(response, m => Events.MoreTask = m, d => Events.AddRange(CreateDataFromLoad(d)));
+                    this.CreateMore(response, m => { }, d => Events.AddRange(CreateDataFromLoad(d)));
                     Events.Reset(CreateDataFromLoad(response.Data));
                 }));
         }

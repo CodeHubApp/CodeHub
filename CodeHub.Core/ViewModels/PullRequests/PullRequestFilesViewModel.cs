@@ -4,14 +4,14 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveCollection<CommitModel.CommitFileModel> Files { get; private set; }
+        public IReadOnlyReactiveList<CommitModel.CommitFileModel> Files { get; private set; }
 
         public long PullRequestId { get; set; }
 
@@ -25,14 +25,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public PullRequestFilesViewModel(IApplicationService applicationService)
         {
-            Files = new ReactiveCollection<CommitModel.CommitFileModel>
+            var files = new ReactiveList<CommitModel.CommitFileModel>()
             {
-                GroupFunc = y =>
-                {
-                    var filename = "/" + y.Filename;
-                    return filename.Substring(0, filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
-                }
+//                GroupFunc = y =>
+//                {
+//                    var filename = "/" + y.Filename;
+//                    return filename.Substring(0, filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+//                }
             };
+            Files = files.CreateDerivedCollection(x => x);
 
             GoToSourceCommand =  ReactiveCommand.Create();
             GoToSourceCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
@@ -46,7 +47,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Files.SimpleCollectionLoad(
+                files.SimpleCollectionLoad(
                     applicationService.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId]
                         .GetFiles(), t as bool?));
         }

@@ -6,7 +6,7 @@ using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
@@ -38,13 +38,13 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
-        public ReactiveCollection<CommentModel> Comments { get; private set; }
+        public ReactiveList<CommentModel> Comments { get; private set; }
         
         public ChangesetViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
 
-            Comments = new ReactiveCollection<CommentModel>();
+            Comments = new ReactiveList<CommentModel>();
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
             GoToHtmlUrlCommand.Select(x => Commit).Subscribe(GoToUrlCommand.ExecuteIfCan);

@@ -6,14 +6,14 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeFramework.Core.Utils;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveCollection<ContentModel> Content { get; private set; }
+        public IReadOnlyReactiveList<ContentModel> Content { get; private set; }
 
 		public string Username { get; set; }
 
@@ -43,7 +43,8 @@ namespace CodeHub.Core.ViewModels.Source
         public SourceTreeViewModel(IApplicationService applicationService)
         {
             //Filter = applicationService.Account.Filters.GetFilter<SourceFilterModel>("SourceViewModel");
-            Content = new ReactiveCollection<ContentModel>();
+            var content = new ReactiveList<ContentModel>();
+            Content = content.CreateDerivedCollection(x => x);
 
             GoToSubmoduleCommand = ReactiveCommand.Create();
             GoToSubmoduleCommand.OfType<ContentModel>().Subscribe(x =>
@@ -95,31 +96,31 @@ namespace CodeHub.Core.ViewModels.Source
 
             this.WhenAnyValue(x => x.Filter).Subscribe(filter =>
             {
-                if (filter == null)
-                {
-                    Content.OrderFunc = null;
-                }
-                else
-                {
-                    Content.OrderFunc = x =>
-                    {
-                        switch (filter.OrderBy)
-                        {
-                            case SourceFilterModel.Order.FoldersThenFiles:
-                                x = x.OrderBy(y => y.Type).ThenBy(y => y.Name);
-                                break;
-                            default:
-                                x = x.OrderBy(y => y.Name);
-                                break;
-                        }
-
-                        return filter.Ascending ? x : x.Reverse();
-                    };
-                }
+//                if (filter == null)
+//                {
+//                    Content.OrderFunc = null;
+//                }
+//                else
+//                {
+//                    Content.OrderFunc = x =>
+//                    {
+//                        switch (filter.OrderBy)
+//                        {
+//                            case SourceFilterModel.Order.FoldersThenFiles:
+//                                x = x.OrderBy(y => y.Type).ThenBy(y => y.Name);
+//                                break;
+//                            default:
+//                                x = x.OrderBy(y => y.Name);
+//                                break;
+//                        }
+//
+//                        return filter.Ascending ? x : x.Reverse();
+//                    };
+//                }
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Content.SimpleCollectionLoad(
+                content.SimpleCollectionLoad(
                     applicationService.Client.Users[Username].Repositories[Repository].GetContent(
                         Path ?? string.Empty, Branch ?? "master"), t as bool?));
         }

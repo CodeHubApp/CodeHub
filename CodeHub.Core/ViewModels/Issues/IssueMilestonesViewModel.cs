@@ -2,7 +2,7 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _selectedMilestone, value); }
         }
 
-        public ReactiveCollection<MilestoneModel> Milestones { get; private set; }
+        public ReactiveList<MilestoneModel> Milestones { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueMilestonesViewModel(IApplicationService applicationService)
         {
-            Milestones = new ReactiveCollection<MilestoneModel>();
+            Milestones = new ReactiveList<MilestoneModel>();
 
             SelectMilestoneCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

@@ -6,7 +6,7 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using CodeFramework.Core.ViewModels.Source;
 using Xamarin.Utilities.Core.Services;
 
@@ -36,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Source
 	        set { this.RaiseAndSetIfChanged(ref _commitFile, value); }
 	    }
 
-		public ReactiveCollection<CommentModel> Comments { get; private set; }
+		public ReactiveList<CommentModel> Comments { get; private set; }
 
         public IReactiveCommand<object> GoToCommentCommand { get; private set; }
 
@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 	    public ChangesetDiffViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
 	    {
-            Comments = new ReactiveCollection<CommentModel>();
+            Comments = new ReactiveList<CommentModel>();
 
             GoToCommentCommand = ReactiveCommand.Create();
             GoToCommentCommand.OfType<int?>().Subscribe(line =>
@@ -70,7 +70,7 @@ namespace CodeHub.Core.ViewModels.Source
 	                Title = "Diff";
 	            else
 	            {
-	                _actualFilename = System.IO.Path.GetFileName(Filename) ??
+	                _actualFilename = Path.GetFileName(Filename) ??
 	                                  Filename.Substring(Filename.LastIndexOf('/') + 1);
 	                Title = _actualFilename;
 	            }

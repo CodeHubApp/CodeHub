@@ -7,7 +7,7 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return ApplicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public ReactiveCollection<RepositoryModel> Repositories { get; private set; }
+        public ReactiveList<RepositoryModel> Repositories { get; private set; }
 
         public bool ShowRepositoryOwner { get; protected set; }
 
@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         protected RepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
             ApplicationService = applicationService;
-            Repositories = new ReactiveCollection<RepositoryModel>();
+            Repositories = new ReactiveList<RepositoryModel>();
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             GoToRepositoryCommand = ReactiveCommand.Create();

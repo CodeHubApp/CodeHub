@@ -8,7 +8,7 @@ using GitHubSharp.Models;
 using CodeFramework.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -69,9 +69,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand<object> GoToAddCommentCommand { get; private set; }
 
-        public ReactiveCollection<IssueCommentModel> Comments { get; private set; }
+        public ReactiveList<IssueCommentModel> Comments { get; private set; }
 
-        public ReactiveCollection<IssueEventModel> Events { get; private set; }
+        public ReactiveList<IssueEventModel> Events { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
@@ -87,8 +87,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             _applicationService = applicationService;
             _markdownService = markdownService;
 
-            Comments = new ReactiveCollection<IssueCommentModel>();
-            Events = new ReactiveCollection<IssueEventModel>();
+            Comments = new ReactiveList<IssueCommentModel>();
+            Events = new ReactiveList<IssueEventModel>();
 
             MergeCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.PullRequest).Select(x =>

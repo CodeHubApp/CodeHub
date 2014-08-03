@@ -76,13 +76,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="Activities\Users\UserFollowersActivity.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\UsersLayout.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
@@ -97,25 +101,25 @@
     <Content Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
-      <Project>{5fe666ba-2ae7-4283-957f-e0eb99a957a6}</Project>
-      <Name>CodeHub.Core</Name>
+    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.Android.csproj">
+      <Project>{2831422b-5bb4-4f61-ae9d-6992fa7f4764}</Project>
+      <Name>CodeHub.Core.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Android\CodeFramework.Android.csproj">
       <Project>{20d25235-5c9c-4f93-8227-a0322d1230d8}</Project>
       <Name>CodeFramework.Android</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
-      <Project>{268171be-a003-4047-beb7-390c74a07b7f}</Project>
-      <Name>CodeFramework.Core</Name>
+    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.Android.csproj">
+      <Project>{cfc1635c-7681-4850-85e0-d4401e005679}</Project>
+      <Name>CodeFramework.Core.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Android\Xamarin.Utilities.Android.csproj">
       <Project>{9d4eb2b6-0f07-46ef-b88d-08bf7813aea7}</Project>
       <Name>Xamarin.Utilities.Android</Name>
     </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.csproj">
-      <Project>{0ca8cc58-18fa-4f91-9e47-cae155ce3965}</Project>
-      <Name>Xamarin.Utilities.Core</Name>
+    <ProjectReference Include="..\lib\CodeFramework\lib\Xamarin.Utilities\Xamarin.Utilities.Core\Xamarin.Utilities.Core.Android.csproj">
+      <Project>{2c53c231-048e-4143-aefa-1f83cf020329}</Project>
+      <Name>Xamarin.Utilities.Core.Android</Name>
     </ProjectReference>
     <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.csproj">
       <Project>{07cd9573-cf93-4cf9-b3d6-501d30b6ad12}</Project>

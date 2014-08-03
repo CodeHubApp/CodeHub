@@ -46,7 +46,7 @@ namespace CodeHub.iOS
             else if (toViewController is MenuView)
             {
                 var nav = ((UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController);
-                var slideout = new SimpleSlideoutNavigationController();
+                var slideout = new SlideoutNavigationController();
                 slideout.MenuViewController = new MenuNavigationController(toViewController, slideout);
                 UIView.Transition(nav.View, 0.1, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
                     () => nav.PushViewController(slideout, false), null);

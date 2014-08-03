@@ -5,7 +5,7 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -31,7 +31,7 @@ namespace CodeHub.Core.ViewModels.Gists
             private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
-		public ReactiveCollection<GistCommentModel> Comments { get; private set; }
+		public ReactiveList<GistCommentModel> Comments { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public GistViewModel(IApplicationService applicationService, IShareService shareService)
         {
             _applicationService = applicationService;
-            Comments = new ReactiveCollection<GistCommentModel>();
+            Comments = new ReactiveList<GistCommentModel>();
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Gist.HtmlUrl));

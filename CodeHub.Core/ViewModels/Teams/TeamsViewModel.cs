@@ -4,14 +4,14 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Teams
 {
     public class TeamsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveCollection<TeamShortModel> Teams { get; private set; }
+        public ReactiveList<TeamShortModel> Teams { get; private set; }
 
         public string OrganizationName { get; set; }
 
@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Teams
 
         public TeamsViewModel(IApplicationService applicationService)
         {
-            Teams = new ReactiveCollection<TeamShortModel>();
+            Teams = new ReactiveList<TeamShortModel>();
 
             GoToTeamCommand =  ReactiveCommand.Create();
             GoToTeamCommand.OfType<TeamShortModel>().Subscribe(x =>

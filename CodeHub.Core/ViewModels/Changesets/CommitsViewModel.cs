@@ -4,7 +4,7 @@ using GitHubSharp.Models;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ReactiveAddons;
+
 using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
@@ -17,13 +17,13 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToChangesetCommand { get; private set; }
 
-		public ReactiveCollection<CommitModel> Commits { get; private set; }
+		public ReactiveList<CommitModel> Commits { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
 	    protected CommitsViewModel()
 	    {
-	        Commits = new ReactiveCollection<CommitModel>();
+	        Commits = new ReactiveList<CommitModel>();
 
             GoToChangesetCommand = ReactiveCommand.Create();
 	        GoToChangesetCommand.OfType<CommitModel>().Subscribe(x =>
