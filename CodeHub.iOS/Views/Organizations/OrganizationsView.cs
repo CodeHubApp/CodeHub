@@ -1,8 +1,7 @@
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Organizations;
-using CodeFramework.iOS.Elements;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Organizations
 {

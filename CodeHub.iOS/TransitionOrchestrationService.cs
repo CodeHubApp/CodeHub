@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.iOS.Views.Application;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
@@ -35,7 +34,7 @@ namespace CodeHub.iOS
             if (toViewController is AccountsView)
             {
                 var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
-                toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(CodeFramework.iOS.Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
+                toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 toViewDismissCommand.Subscribe(_ => rootNav.DismissViewController(true, null));
                 rootNav.PresentViewController(new UINavigationController(toViewController), true, null);
             }

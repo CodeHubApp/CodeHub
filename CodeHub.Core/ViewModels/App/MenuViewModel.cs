@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using CodeFramework.Core.Services;
-using CodeFramework.Core.ViewModels.Application;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
@@ -12,14 +10,14 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
-using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
 using System.Threading.Tasks;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class MenuViewModel : BaseMenuViewModel, IMainViewModel
+    public class MenuViewModel : BaseMenuViewModel
     {
         private readonly IApplicationService _applicationService;
 		private int _notifications;

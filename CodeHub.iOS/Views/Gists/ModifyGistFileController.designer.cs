@@ -6,7 +6,7 @@
 //
 using MonoTouch.Foundation;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Gists
 {
 	[Register ("ModifyGistFileController")]
 	partial class ModifyGistFileController

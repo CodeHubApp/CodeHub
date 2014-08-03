@@ -10,11 +10,11 @@ using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp;
 using GitHubSharp.Models;
-using CodeFramework.Core.Utils;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Events
 {

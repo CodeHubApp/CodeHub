@@ -1,11 +1,10 @@
 ﻿using System;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
-using CodeFramework.Core.ViewModels.Application;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class NewAccountViewModel : BaseViewModel, IAddAccountViewModel
+    public class NewAccountViewModel : BaseViewModel
     {
         public IReactiveCommand<object> GoToEnterpriseLoginCommand { get; private set; }
 

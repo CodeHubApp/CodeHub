@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
@@ -24,7 +19,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
 
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton,
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel,
                 UIBarButtonItemStyle.Plain, (s, e) =>
                     ViewModel.DismissCommand.ExecuteIfCan());
             NavigationItem.LeftBarButtonItem.EnableIfExecutable(ViewModel.DismissCommand.CanExecuteObservable);

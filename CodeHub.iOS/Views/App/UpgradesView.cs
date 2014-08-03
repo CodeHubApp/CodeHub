@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using System.Linq;
 using CodeHub.Core.Services;
 using System;

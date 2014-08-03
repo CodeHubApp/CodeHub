@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Accounts
         public override void ViewDidLoad()
         {
             Title = "Login";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.DismissCommand.ExecuteIfCan());
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.DismissCommand.ExecuteIfCan());
 
             base.ViewDidLoad();
 

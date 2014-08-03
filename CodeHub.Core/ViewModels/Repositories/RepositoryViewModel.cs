@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -15,6 +13,7 @@ using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

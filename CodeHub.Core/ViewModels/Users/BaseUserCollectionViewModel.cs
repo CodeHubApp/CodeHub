@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public abstract class BaseUserCollectionViewModel : BaseViewModel
     {
-        protected readonly ReactiveCollection<BasicUserModel> UsersCollection = new ReactiveCollection<BasicUserModel>();
+        protected readonly ReactiveList<BasicUserModel> UsersCollection = new ReactiveList<BasicUserModel>();
 
         public IReadOnlyReactiveList<BasicUserModel> Users { get; private set; }
 

@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.UIKit;
 using System.Drawing;

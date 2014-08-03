@@ -1,10 +1,8 @@
 using System;
 using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories

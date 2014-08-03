@@ -1,8 +1,6 @@
 using System;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using CodeFramework.Core.ViewModels.Source;
-using CodeFramework.Core.Services;
 using System.Reactive.Linq;
 using Xamarin.Utilities.Core.Services;
 

@@ -6,8 +6,6 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
-
-using CodeFramework.Core.ViewModels.Source;
 using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source

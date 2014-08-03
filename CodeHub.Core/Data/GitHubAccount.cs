@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using CodeFramework.Core.Data;
 
 namespace CodeHub.Core.Data
 {
-    public class GitHubAccount : IAccount
+    public class GitHubAccount
     {
         /// <summary>
         /// Gets or sets the OAuth string

@@ -2,7 +2,6 @@
 using ReactiveUI;
 using System.Reactive;
 using System;
-using CodeFramework.Core.ViewModels.Application;
 
 namespace CodeHub.Core
 {
@@ -20,9 +19,6 @@ namespace CodeHub.Core
 
             var httpService = IoC.Resolve<IHttpClientService>();
 			GitHubSharp.Client.ClientConstructor = httpService.Create;
-
-            IoC.RegisterAsInstance<IAddAccountViewModel, CodeHub.Core.ViewModels.Accounts.NewAccountViewModel>();
-            IoC.RegisterAsInstance<IMainViewModel, CodeHub.Core.ViewModels.App.MenuViewModel>();
         }
     }
 }

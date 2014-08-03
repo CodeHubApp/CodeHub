@@ -1,8 +1,4 @@
-﻿using System;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels.App;
-using MonoTouch.Dialog;
+﻿using CodeHub.Core.ViewModels.App;
 using System.Linq;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;

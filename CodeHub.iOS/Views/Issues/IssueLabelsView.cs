@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Issues
 
             base.ViewDidLoad();
 
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain,
 			    (s, e) =>
 			    {
 			        if (ViewModel.SaveOnSelect)

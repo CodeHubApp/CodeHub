@@ -1,4 +1,3 @@
-using CodeFramework.iOS.Views;
 using CodeHub.Core.Services;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.App;

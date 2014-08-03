@@ -4,10 +4,10 @@ using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
-using CodeFramework.Core.Utils;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Source
 {

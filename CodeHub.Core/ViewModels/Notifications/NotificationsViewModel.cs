@@ -12,6 +12,7 @@ using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
@@ -122,7 +123,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 {
                     var repo = t as string;
                     if (repo == null) return;
-                    var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
+                    var repoId = new RepositoryIdentifier(repo);
                     await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
                     _notifications.RemoveAll(Notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 }

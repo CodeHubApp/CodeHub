@@ -3,3 +3,4 @@
 *.suo
 *.userprefs
 *.csproj.user
+/packages

@@ -3,7 +3,6 @@ using ReactiveUI;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Views.Source;
 
 namespace CodeHub.iOS.Views.Source
 {

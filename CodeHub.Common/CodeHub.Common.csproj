@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6E1C9E25-915A-4454-8BBD-61E6918BFCF1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CodeHub</RootNamespace>
+    <AssemblyName>CodeFramework</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <BundleResource Include="SourceBrowser\highlight.pack.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Markdown\MarkdownView.cs">
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SourceBrowser\SourceBrowserModel.cs" />
+    <Compile Include="SourceBrowser\SyntaxHighlighterView.cs">
+      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\arta.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\ascetic.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-dune.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-dune.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-forest.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-forest.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-heath.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-heath.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-lakeside.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-lakeside.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-seaside.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\atelier-seaside.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\brown_paper.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\brown_papersq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\default.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\docco.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\far.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\foundation.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\github.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\googlecode.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\idea.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\ir_black.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\magula.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\mono-blue.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\monokai.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\monokai_sublime.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\obsidian.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\paraiso.dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\paraiso.light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\pojoaque.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\pojoaque.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\railscasts.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\rainbow.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\school_book.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\school_book.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\solarized_dark.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\solarized_light.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\sunburst.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\tomorrow-night-blue.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\tomorrow-night-bright.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\tomorrow-night-eighties.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\tomorrow-night.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\tomorrow.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\vs.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\xcode.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="SourceBrowser\styles\zenburn.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Markdown\MarkdownView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
+    </None>
+    <None Include="SourceBrowser\SyntaxHighlighterView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Diff\app.js" />
+    <Content Include="Diff\diffindex.html" />
+    <Content Include="Diff\difflib.js" />
+    <Content Include="Diff\diffview.css" />
+    <Content Include="Diff\diffview.js" />
+    <Content Include="Diff\jquery.min.js" />
+    <Content Include="Markdown\marked.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

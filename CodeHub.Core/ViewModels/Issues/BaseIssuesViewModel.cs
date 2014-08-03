@@ -4,11 +4,11 @@ using CodeHub.Core.Filters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using CodeFramework.Core.Utils;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.ViewModels.PullRequests;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

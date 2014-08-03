@@ -6,10 +6,11 @@ using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Linq;
-using CodeFramework.Core.Utils;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
+using CodeHub.Core.Data;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -131,13 +132,9 @@ namespace CodeHub.iOS.Views.App
 
 		private class PinnedRepoElement : MenuElement
 		{
-			public CodeFramework.Core.Data.PinnedRepository PinnedRepo
-			{
-				get;
-				private set; 
-			}
+            public PinnedRepository PinnedRepo { get; private set; }
 
-			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
+			public PinnedRepoElement(PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
 				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
 			{
 				PinnedRepo = pinnedRepo;

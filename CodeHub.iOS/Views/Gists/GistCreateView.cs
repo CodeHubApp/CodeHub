@@ -1,10 +1,7 @@
 using System;
 using System.Reactive;
-using CodeFramework.iOS.Views;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;

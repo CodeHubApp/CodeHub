@@ -1,7 +1,5 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Source;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;

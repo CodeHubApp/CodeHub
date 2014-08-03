@@ -1,6 +1,5 @@
 using System;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using System.Linq;
 using CodeHub.iOS.Elements;

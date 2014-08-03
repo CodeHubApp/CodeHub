@@ -1,5 +1,3 @@
-using CodeFramework.Core.ViewModels;
-
 namespace CodeHub.Core.Filters
 {
     public class NotificationsFilterModel

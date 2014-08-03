@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Reactive.Linq;
-using CodeFramework.iOS.Elements;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues
 {

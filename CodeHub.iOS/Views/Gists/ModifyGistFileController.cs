@@ -1,11 +1,10 @@
 using System;
 using System.Drawing;
-using CodeFramework.iOS.Views;
 using CodeHub.iOS;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Gists
 {
     public partial class ModifyGistFileController : UIViewController
     {
@@ -21,7 +20,7 @@ namespace CodeHub.ViewControllers
             _content = content;
 
             Title = "New File";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 
                 var newName = Name.Text;

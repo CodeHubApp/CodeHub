@@ -1,10 +1,9 @@
 using System;
-using System.Text;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using CodeFramework.Core.ViewModels.Source;
 using Xamarin.Utilities.Core.Services;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

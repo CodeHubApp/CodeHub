@@ -1,12 +1,10 @@
-﻿using CodeFramework.iOS;
-using MonoTouch.UIKit;
-using CodeFramework.iOS.Cells;
+﻿using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS
 {
-    public class Theme : ICodeFrameworkTheme
+    public class Theme
     {
         public static Theme CurrentTheme { get; private set; }
 
@@ -14,7 +12,6 @@ namespace CodeHub.iOS
         {
             var theme = new Theme();
             CurrentTheme = theme;
-            CodeFramework.iOS.Theme.CurrentTheme = theme;
 
             var defaultValues = IoC.Resolve<IDefaultValueService>();
 
@@ -39,8 +36,8 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             UINavigationBar.Appearance.SetBackgroundImage(img, UIBarPosition.Any, UIBarMetrics.Default);
             //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-            UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
-            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
+            UINavigationBar.Appearance.BackIndicatorImage = Images.BackButton;
+            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.BackButton;
 
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
@@ -80,10 +77,9 @@ namespace CodeHub.iOS
                 };
             }
         }
+
         public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
-        public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
         public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
-        public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
         public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
         public UIImage SaveButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
         public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }

@@ -1,7 +1,5 @@
 using CodeHub.Core.ViewModels.Gists;
-using MonoTouch.Foundation;
-using ReactiveUI;
-using CodeFramework.iOS.Views.Source;
+using CodeHub.iOS.Views.Source;
 
 namespace CodeHub.iOS.Views.Gists
 {
