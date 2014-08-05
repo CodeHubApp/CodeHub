@@ -4,10 +4,10 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class PublicGistsView : GistsView<PublicGistsViewModel>
     {
-        public override void ViewDidLoad()
+        public PublicGistsView()
+            : base(false)
         {
             Title = "Public Gists";
-            base.ViewDidLoad();
         }
     }
 }

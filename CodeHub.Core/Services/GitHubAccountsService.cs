@@ -32,7 +32,7 @@ namespace CodeHub.Core.Services
             get { return _accountSubject; }
         }
 
-        protected GitHubAccountsService(IDefaultValueService defaults)
+        public GitHubAccountsService(IDefaultValueService defaults)
         {
             _defaults = defaults;
         }
@@ -70,13 +70,20 @@ namespace CodeHub.Core.Services
 
         public GitHubAccount Find(string key)
         {
-            return BlobCache.UserAccount.GetObject<GitHubAccount>("user_" + key).Wait();
+            try
+            {
+                return BlobCache.UserAccount.GetObject<GitHubAccount>("user_" + key).Wait();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public IEnumerator<GitHubAccount> GetEnumerator()
         {
             return BlobCache.UserAccount.GetAllKeys().Wait()
-                .Where(x => x.StartsWith("user_"))
+                .Where(x => x.StartsWith("user_", StringComparison.Ordinal))
                 .Select(k => BlobCache.UserAccount.GetObject<GitHubAccount>(k).Wait())
                 .Select(dummy => dummy).GetEnumerator();
         }

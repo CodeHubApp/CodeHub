@@ -5,14 +5,17 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class UserGistsView : GistsView<UserGistsViewModel>
     {
-        public override void ViewDidLoad()
+        public UserGistsView()
+            : base(true)
         {
             Title = "Gists";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
-
             if (ViewModel.IsMine)
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.GoToCreateGistCommand.Execute(null));
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add).WithCommand(ViewModel.GoToCreateGistCommand);
         }
 
         public override void ViewWillAppear(bool animated)

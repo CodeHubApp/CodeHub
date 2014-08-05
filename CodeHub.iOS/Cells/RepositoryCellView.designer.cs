@@ -1,11 +1,11 @@
 // WARNING
 //
 // This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the Xcode designer. If it is removed, they will be lost.
+// actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-
 using MonoTouch.Foundation;
+using System.CodeDom.Compiler;
 
 namespace CodeFramework.iOS.Cells
 {
@@ -13,77 +13,77 @@ namespace CodeFramework.iOS.Cells
 	partial class RepositoryCellView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIImageView BigImage { get; set; }
+		MonoTouch.UIKit.UILabel CaptionLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Caption { get; set; }
+		MonoTouch.UIKit.UILabel ContentLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Description { get; set; }
+		MonoTouch.UIKit.UIImageView FollowersImageVIew { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image1 { get; set; }
+		MonoTouch.UIKit.UILabel FollowersLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image3 { get; set; }
+		MonoTouch.UIKit.UIImageView ForksImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label1 { get; set; }
+		MonoTouch.UIKit.UILabel ForksLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label3 { get; set; }
+		MonoTouch.UIKit.UIImageView OwnerImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel RepoName { get; set; }
+		MonoTouch.UIKit.UIImageView UserImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView UserImage { get; set; }
+		MonoTouch.UIKit.UILabel UserLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (BigImage != null) {
-				BigImage.Dispose ();
-				BigImage = null;
+			if (OwnerImageView != null) {
+				OwnerImageView.Dispose ();
+				OwnerImageView = null;
 			}
 
-			if (Caption != null) {
-				Caption.Dispose ();
-				Caption = null;
+			if (CaptionLabel != null) {
+				CaptionLabel.Dispose ();
+				CaptionLabel = null;
 			}
 
-			if (Description != null) {
-				Description.Dispose ();
-				Description = null;
+			if (ContentLabel != null) {
+				ContentLabel.Dispose ();
+				ContentLabel = null;
 			}
 
-			if (Image1 != null) {
-				Image1.Dispose ();
-				Image1 = null;
+			if (FollowersImageVIew != null) {
+				FollowersImageVIew.Dispose ();
+				FollowersImageVIew = null;
 			}
 
-			if (Image3 != null) {
-				Image3.Dispose ();
-				Image3 = null;
+			if (FollowersLabel != null) {
+				FollowersLabel.Dispose ();
+				FollowersLabel = null;
 			}
 
-			if (Label1 != null) {
-				Label1.Dispose ();
-				Label1 = null;
+			if (ForksImageView != null) {
+				ForksImageView.Dispose ();
+				ForksImageView = null;
 			}
 
-			if (Label3 != null) {
-				Label3.Dispose ();
-				Label3 = null;
+			if (ForksLabel != null) {
+				ForksLabel.Dispose ();
+				ForksLabel = null;
 			}
 
-			if (RepoName != null) {
-				RepoName.Dispose ();
-				RepoName = null;
+			if (UserImageView != null) {
+				UserImageView.Dispose ();
+				UserImageView = null;
 			}
 
-			if (UserImage != null) {
-				UserImage.Dispose ();
-				UserImage = null;
+			if (UserLabel != null) {
+				UserLabel.Dispose ();
+				UserLabel = null;
 			}
 		}
 	}

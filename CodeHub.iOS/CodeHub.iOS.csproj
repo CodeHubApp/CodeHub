@@ -201,7 +201,6 @@
     <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
-    <None Include="RELEASE-NOTES.txt" />
     <Compile Include="Views\App\MarkdownComposerView.cs" />
     <Compile Include="Views\App\SidebarOrderView.cs" />
     <Compile Include="Views\App\EnablePushNotificationsViewController.cs" />
@@ -264,6 +263,13 @@
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <None Include="packages.config" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Cells\GistCellView.cs" />
+    <Compile Include="Cells\GistCellView.designer.cs">
+      <DependentUpon>GistCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\GistCellView.xib" />
+    <Compile Include="Elements\GistElement.cs" />
+    <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -601,5 +607,6 @@
     <Folder Include="Cells\" />
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\Navigation\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>

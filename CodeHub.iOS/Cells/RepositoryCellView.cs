@@ -1,6 +1,5 @@
 using System;
 using MonoTouch.Foundation;
-using MonoTouch.ObjCRuntime;
 using MonoTouch.UIKit;
 using CodeHub.iOS;
 
@@ -8,45 +7,25 @@ namespace CodeFramework.iOS.Cells
 {
     public partial class RepositoryCellView : UITableViewCell
     {
+        public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
         public static bool RoundImages = true;
-
-        public static UIFont CaptionFont
-        {
-            get { return UIFont.BoldSystemFontOfSize(15f); }
-        }
-
-        public static UIFont DescriptionFont
-        {
-            get { return UIFont.SystemFontOfSize(13f); }
-        }
 
         public override string ReuseIdentifier { get { return Key; } }
 
         public static RepositoryCellView Create()
         {
-            var cell = new RepositoryCellView();
-            var views = NSBundle.MainBundle.LoadNib("RepositoryCellView", cell, null);
-            cell = Runtime.GetNSObject( views.ValueAt(0) ) as RepositoryCellView;
+            var cell = (RepositoryCellView)Nib.Instantiate(null, null)[0];
 
-            if (cell != null)
-            {
-                cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
-                cell.Caption.Font = CaptionFont;
+            cell.CaptionLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            cell.ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
 
-                cell.Description.TextColor = Theme.CurrentTheme.MainTextColor;
-                cell.Description.Font = DescriptionFont;
+            cell.FollowersImageVIew.Image = Theme.CurrentTheme.RepositoryCellFollowers;
+            cell.ForksImageView.Image = Theme.CurrentTheme.RepositoryCellForks;
+            cell.UserImageView.Image = Theme.CurrentTheme.RepositoryCellUser;
 
-                cell.Image1.Image = Theme.CurrentTheme.RepositoryCellFollowers;
-                cell.Image3.Image = Theme.CurrentTheme.RepositoryCellForks;
-                cell.UserImage.Image = Theme.CurrentTheme.RepositoryCellUser;
-
-                if (RoundImages)
-                {
-                    cell.BigImage.Layer.MasksToBounds = true;
-                    cell.BigImage.Layer.CornerRadius = cell.BigImage.Bounds.Height / 2f;
-                }
-            }
+            cell.OwnerImageView.Layer.MasksToBounds = true;
+            cell.OwnerImageView.Layer.CornerRadius = cell.OwnerImageView.Bounds.Height / 2f;
 
             //Create the icons
             return cell;
@@ -54,12 +33,8 @@ namespace CodeFramework.iOS.Cells
 
         public UIImage RepositoryImage
         {
-            get { return BigImage.Image; }
-            set { BigImage.Image = value; }
-        }
-
-        public RepositoryCellView()
-        {
+            get { return OwnerImageView.Image; }
+            set { OwnerImageView.Image = value; }
         }
 
         public RepositoryCellView(IntPtr handle)
@@ -69,21 +44,23 @@ namespace CodeFramework.iOS.Cells
 
         public void Bind(string name, string name2, string name3, string description, string repoOwner, UIImage logoImage)
         {
-            Caption.Text = name;
-            Label1.Text = name2;
-            Label3.Text = name3;
-            BigImage.Image = logoImage;
-            Description.Hidden = description == null;
-            Description.Text = description ?? string.Empty;
+            CaptionLabel.Text = name;
+            FollowersLabel.Text = name2;
+            ForksLabel.Text = name3;
+            OwnerImageView.Image = logoImage;
+            ContentLabel.Hidden = description == null;
+            ContentLabel.Text = description ?? string.Empty;
+            UserLabel.Hidden = repoOwner == null;
+            UserImageView.Hidden = UserLabel.Hidden;
+            UserLabel.Text = repoOwner ?? string.Empty;
+        }
 
-            var frame = Description.Frame;
-            frame.Y = 29f;
-            frame.Height = Bounds.Height - frame.Y - 16f - 12f;
-            Description.Frame = frame;
-
-            RepoName.Hidden = repoOwner == null;
-            UserImage.Hidden = RepoName.Hidden;
-            RepoName.Text = repoOwner ?? string.Empty;
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            ContentView.SetNeedsLayout();
+            ContentView.LayoutIfNeeded();
+            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
         }
     }
 }

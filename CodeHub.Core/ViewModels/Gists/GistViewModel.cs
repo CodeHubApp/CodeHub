@@ -78,8 +78,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
             ForkCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var data =
-                    await _applicationService.Client.ExecuteAsync(_applicationService.Client.Gists[Id].ForkGist());
+                var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Gists[Id].ForkGist());
                 var forkedGist = data.Data;
                 var vm = CreateViewModel<GistViewModel>();
                 vm.Id = forkedGist.Id;

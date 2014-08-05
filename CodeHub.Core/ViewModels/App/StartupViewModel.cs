@@ -10,7 +10,8 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel, ILoadableViewModel
     {
-        protected readonly IAccountsService AccountsService;
+        private readonly IAccountsService _accountsService;
+        private readonly ILoginService _loginService;
 
         public IReactiveCommand<object> GoToAccountsCommand { get; private set; }
 
@@ -43,9 +44,10 @@ namespace CodeHub.Core.ViewModels.App
             protected set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
-        public StartupViewModel(IAccountsService accountsService)
+        public StartupViewModel(IAccountsService accountsService, ILoginService loginService)
         {
-            AccountsService = accountsService;
+            _accountsService = accountsService;
+            _loginService = loginService;
 
             GoToMainCommand = ReactiveCommand.Create();
             GoToAccountsCommand = ReactiveCommand.Create();
@@ -63,7 +65,7 @@ namespace CodeHub.Core.ViewModels.App
 
         private void GoToAccountsOrNewUser()
         {
-            if (AccountsService.Any())
+            if (_accountsService.Any())
                 GoToAccountsCommand.Execute(null);
             else
                 GoToNewUserCommand.Execute(null);
@@ -71,7 +73,7 @@ namespace CodeHub.Core.ViewModels.App
 
         private async Task Load()
         {
-            var account = AccountsService.GetDefault();
+            var account = _accountsService.GetDefault();
 
             // Account no longer exists
             if (account == null)
@@ -89,8 +91,8 @@ namespace CodeHub.Core.ViewModels.App
                         ImageUrl = avatarUri;
 
                     IsLoggingIn = true;
-                    //await AccountValidator.Validate(account);
-                    AccountsService.ActiveAccount = account;
+                    await _loginService.LoginAccount(account);
+                    _accountsService.ActiveAccount = account;
                     GoToMainCommand.Execute(null);
                 }
                 catch

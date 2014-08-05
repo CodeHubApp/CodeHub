@@ -115,35 +115,6 @@ namespace CodeHub.iOS
             }
         }
 
-        /// <summary>
-        /// Record the date this application was installed (or the date that we started recording installation date).
-        /// </summary>
-        private static void StampInstallDate()
-        {
-            try
-            {
-                var query = new SecRecord(SecKind.GenericPassword) { Generic = NSData.FromString("codehub_install_date") };
-                SecStatusCode secStatusCode;
-                SecKeyChain.QueryAsRecord(query, out secStatusCode);
-                if (secStatusCode == SecStatusCode.Success) 
-                    return;
-
-                var newRec = new SecRecord(SecKind.GenericPassword)
-                {
-                    Label = "CodeHub Install Date",
-                    Description = "The first date CodeHub was installed",
-                    ValueData = NSData.FromString(DateTime.UtcNow.ToString()),
-                    Generic = NSData.FromString("codehub_install_date")
-                };
-
-                SecKeyChain.Add(newRec);
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-            }
-        }
-
         // TODO: IMPORTANT!!!
 //        void HandlePurchaseSuccess (object sender, string e)
 //        {
@@ -225,7 +196,7 @@ namespace CodeHub.iOS
 
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
-			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
+            DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
 
             var app = IoC.Resolve<IApplicationService>();
             var accounts = IoC.Resolve<IAccountsService>();

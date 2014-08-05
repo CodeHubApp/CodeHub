@@ -4,6 +4,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.DialogElements;
 using Xamarin.Utilities.Images;
+using System.Drawing;
 
 namespace CodeFramework.iOS.Elements
 {
@@ -21,6 +22,8 @@ namespace CodeFramework.iOS.Elements
 
         public bool ShowOwner { get; set; }
 
+        public event NSAction Tapped;
+
         public RepositoryElement(string name, int followers, int forks, string description, string owner, Uri imageUri = null, UIImage image = null)
         {
             _name = name;
@@ -32,16 +35,6 @@ namespace CodeFramework.iOS.Elements
             _image = image;
             ShowOwner = true;
         }
-
-        public float GetHeight (UITableView tableView, NSIndexPath indexPath)
-        {
-            var descriptionHeight = 0f;
-            if (!string.IsNullOrEmpty(_description))
-                descriptionHeight = _description.MonoStringHeight(RepositoryCellView.DescriptionFont, tableView.Bounds.Width - 56f - 28f) + 8f;
-            return 52f + descriptionHeight;
-        }
-        
-        public event NSAction Tapped;
         
         public override UITableViewCell GetCell (UITableView tv)
         {
@@ -65,6 +58,25 @@ namespace CodeFramework.iOS.Elements
             var activeCell = GetActiveCell() as RepositoryCellView;
             if (activeCell != null && img != null)
                 activeCell.RepositoryImage = img;
+        }
+
+        public float GetHeight(UITableView tableView, NSIndexPath indexPath)
+        {
+            if (GetRootElement() == null)
+                return 44f;
+
+            var cell = GetRootElement().GetOffscreenCell(RepositoryCellView.Key, () => RepositoryCellView.Create());
+            cell.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
+
+            cell.SetNeedsUpdateConstraints();
+            cell.UpdateConstraintsIfNeeded();
+
+            cell.Bounds = new RectangleF(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
+
+            cell.SetNeedsLayout();
+            cell.LayoutIfNeeded();
+
+            return cell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height + 1;
         }
     }
 }

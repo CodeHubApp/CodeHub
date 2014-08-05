@@ -135,6 +135,7 @@
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -183,6 +184,7 @@
   <ItemGroup>
     <Folder Include="Utilities\" />
     <Folder Include="Messages\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

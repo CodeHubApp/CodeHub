@@ -7,6 +7,8 @@ using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using System.Collections.Generic;
+using System.Security.AccessControl;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -30,7 +32,6 @@ namespace CodeHub.iOS.Views.Gists
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
             var headerSection = new Section(HeaderView);
-            var detailsSection = new Section();
             var filesSection = new Section("Files");
             var commentsSection = new Section("Comments");
 
@@ -40,14 +41,11 @@ namespace CodeHub.iOS.Views.Gists
             var forks = split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
             headerSection.Add(split);
 
-            var descriptionElement = new MultilinedElement(string.Empty);
-            detailsSection.Add(descriptionElement);
-
-            Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
+            Root.Reset(headerSection, filesSection, commentsSection);
 
             updatedGistObservable.SubscribeSafe(x =>
             {
-                HeaderView.SubText = string.Format("Created {0}", x.CreatedAt.ToDaysAgo());
+                HeaderView.SubText = x.Description;
                 if (x.Owner != null) HeaderView.ImageUri = x.Owner.AvatarUrl;
                 ReloadData();
             });
@@ -55,7 +53,6 @@ namespace CodeHub.iOS.Views.Gists
             updatedGistObservable.SubscribeSafe(x => files.Text = x.Files.Count.ToString());
             updatedGistObservable.SubscribeSafe(x => comments.Text = x.Comments.ToString());
             updatedGistObservable.SubscribeSafe(x => forks.Text = x.Forks.Count.ToString());
-            updatedGistObservable.SubscribeSafe(x => descriptionElement.Caption = x.Description);
             //updatedGistObservable.Take(1).SubscribeSafe(x => detailsSection.Visible = !string.IsNullOrEmpty(x.Description));
 
 
@@ -73,6 +70,7 @@ namespace CodeHub.iOS.Views.Gists
 //
             updatedGistObservable.Subscribe(x =>
             {
+                var elements = new List<Element>();
                 foreach (var file in x.Files.Keys)
                 {
                     var sse = new StyledStringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
@@ -88,11 +86,10 @@ namespace CodeHub.iOS.Views.Gists
                     //                  sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
                     //              else
                     sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
-
-                    filesSection.Add(sse);
+                    elements.Add(sse);
                 }
 
-                //filesSection.Visible = filesSection.Count > 0;
+                filesSection.Reset(elements);
             });
 //
 //            updatedGistObservable.Take(1).Subscribe(_ => Root.Add(filesSection));
@@ -131,26 +128,6 @@ namespace CodeHub.iOS.Views.Gists
 //
 //            var sec2 = new Section("Files");
 //            root.Add(sec2);
-//
-//            foreach (var file in model.Files.Keys)
-//            {
-//                var sse = new StyledStringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
-//                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
-//                    LineBreakMode = UILineBreakMode.TailTruncation,
-//                    Lines = 1 
-//                };
-//
-//                var fileSaved = file;
-//                var gistFileModel = model.Files[fileSaved];
-//
-//                //              if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-//                //                  sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-//                //              else
-//                sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
-//
-//
-//                sec2.Add(sse);
-//            }
 //
 //            if (ViewModel.Comments.Count > 0)
 //            {

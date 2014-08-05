@@ -4,10 +4,10 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class StarredGistsView : GistsView<StarredGistsViewModel>
     {
-        public override void ViewDidLoad()
+        public StarredGistsView()
+            : base(true)
         {
             Title = "Starred Gists";
-            base.ViewDidLoad();
         }
     }
 }
