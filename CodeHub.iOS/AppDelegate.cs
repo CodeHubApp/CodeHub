@@ -46,9 +46,8 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-//			var iRate = MTiRate.iRate.SharedInstance;
-//			iRate.AppStoreID = 707173885;
-
+			var iRate = MTiRate.iRate.SharedInstance;
+			iRate.AppStoreID = 707173885;
 
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());

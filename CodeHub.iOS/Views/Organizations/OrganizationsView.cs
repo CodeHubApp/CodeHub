@@ -1,3 +1,4 @@
+using System;
 using CodeHub.Core.ViewModels.Organizations;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
@@ -11,6 +12,11 @@ namespace CodeHub.iOS.Views.Organizations
         {
             Title = "Organizations";
             //NoItemsText = "No Organizations";
+
+            this.WhenActivated(d =>
+            {
+                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
+            });
         }
 
         public override void ViewDidLoad()

@@ -49,6 +49,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="ResourceLoader.cs" />
+    <Compile Include="Resources.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="SourceBrowser\styles\arta.css" />
@@ -208,7 +210,6 @@
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
     <Content Include="Diff\jquery.min.js" />
-    <Content Include="Markdown\marked.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -218,4 +219,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <EmbeddedResource Include="Markdown\marked.js" />
+  </ItemGroup>
 </Project>

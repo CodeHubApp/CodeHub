@@ -1,6 +1,7 @@
 using CodeFramework.Core.Services;
 using MonoTouch.Foundation;
 using MonoTouch.JavaScriptCore;
+using CodeHub;
 
 namespace CodeFramework.iOS.Services
 {
@@ -13,8 +14,7 @@ namespace CodeFramework.iOS.Services
 		public MarkdownService()
 		{
 			_ctx = new JSContext(_vm);
-			var script = System.IO.File.ReadAllText("Markdown/marked.js", System.Text.Encoding.UTF8);
-			_ctx.EvaluateScript(script);
+            _ctx.EvaluateScript(Resources.MarkdownScript);
 			_val = _ctx[new NSString("marked")];
 		}
 

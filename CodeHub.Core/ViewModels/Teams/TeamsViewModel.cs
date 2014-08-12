@@ -11,7 +11,9 @@ namespace CodeHub.Core.ViewModels.Teams
 {
     public class TeamsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveList<TeamShortModel> Teams { get; private set; }
+        private readonly ReactiveList<TeamShortModel> _teams = new ReactiveList<TeamShortModel>();
+
+        public IReadOnlyReactiveList<TeamShortModel> Teams { get; private set; }
 
         public string OrganizationName { get; set; }
 
@@ -19,9 +21,18 @@ namespace CodeHub.Core.ViewModels.Teams
 
         public IReactiveCommand LoadCommand { get; private set; }
 
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
+
         public TeamsViewModel(IApplicationService applicationService)
         {
-            Teams = new ReactiveList<TeamShortModel>();
+            Teams = _teams.CreateDerivedCollection(x => x,
+                x => x.Name.ContainsKeyword(SearchKeyword),
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToTeamCommand =  ReactiveCommand.Create();
             GoToTeamCommand.OfType<TeamShortModel>().Subscribe(x =>
@@ -32,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Teams
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
-                			Teams.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetTeams(), x as bool?));
+                			_teams.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetTeams(), x as bool?));
         }
     }
 }

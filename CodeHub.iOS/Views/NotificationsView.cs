@@ -16,6 +16,11 @@ namespace CodeHub.iOS.Views
         {
             _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            this.WhenActivated(d =>
+            {
+                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
+            });
         }
 
         public override void ViewDidLoad()
@@ -30,7 +35,7 @@ namespace CodeHub.iOS.Views
 
             var vm = (NotificationsViewModel)ViewModel;
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CheckButton, UIBarButtonItemStyle.Plain, (s, e) => vm.ReadAllCommand.Execute(null));
-            vm.ReadAllCommand.CanExecuteChanged += (sender, e) => NavigationItem.RightBarButtonItem.Enabled = vm.ReadAllCommand.CanExecute(null);
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(vm.ReadAllCommand);
 
 //            vm.Bind(x => x.IsMarking, x =>
 //            {

@@ -8,6 +8,11 @@ namespace CodeHub.iOS.Views.App
 {
 	public class SettingsView : ViewModelDialogViewController<SettingsViewModel>
 	{
+        public SettingsView()
+        {
+            Title = "Settings";
+        }
+
         public override void ViewWillAppear(bool animated)
         {
 //			vm.Bind(x => x.PushNotificationsEnabled, CreateTable);

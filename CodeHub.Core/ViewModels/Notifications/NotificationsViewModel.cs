@@ -18,10 +18,10 @@ namespace CodeHub.Core.ViewModels.Notifications
 {
     public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly ReactiveList<NotificationModel> _notifications = new ReactiveList<NotificationModel>();
         private readonly IApplicationService _applicationService;
         private int _shownIndex;
         private NotificationsFilterModel _filter;
-        private ReactiveList<NotificationModel> _notifications; 
 
         public IReadOnlyReactiveList<NotificationModel> Notifications { get; private set; }
 
@@ -44,6 +44,13 @@ namespace CodeHub.Core.ViewModels.Notifications
         public IReactiveCommand ReadAllCommand { get; private set; }
 
         public IReactiveCommand<object> GoToNotificationCommand { get; private set; }
+
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
 		
         private void GoToNotification(NotificationModel x)
         {
@@ -90,8 +97,9 @@ namespace CodeHub.Core.ViewModels.Notifications
         public NotificationsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
-            _notifications = new ReactiveList<NotificationModel>();
-            Notifications = _notifications.CreateDerivedCollection(x => x);
+            Notifications = _notifications.CreateDerivedCollection(x => x, 
+                x => x.Subject.Title.ContainsKeyword(SearchKeyword), 
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
@@ -102,20 +110,24 @@ namespace CodeHub.Core.ViewModels.Notifications
             GoToNotificationCommand = ReactiveCommand.Create();
             GoToNotificationCommand.OfType<NotificationModel>().Subscribe(GoToNotification);
 
-            ReadAllCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.ShownIndex).Select(x => x != 2), async t =>
-            {
-                try
+
+            var canReadAll = Notifications.CountChanged.Select(x => x > 0).CombineLatest(
+                this.WhenAnyValue(x => x.ShownIndex).Select(x => x != 2), (x, y) => x & y);
+
+            ReadAllCommand = ReactiveCommand.CreateAsyncTask(canReadAll, async t =>
                 {
-                    if (!Notifications.Any()) return;
-                    await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
-                    _notifications.Clear();
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Unable to mark all notifications as read. Please try again.", e);
-                }
-            });
+                    try
+                    {
+                        if (!Notifications.Any())
+                            return;
+                        await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
+                        _notifications.Clear();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Unable to mark all notifications as read. Please try again.", e);
+                    }
+                });
 
             ReadRepositoriesCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

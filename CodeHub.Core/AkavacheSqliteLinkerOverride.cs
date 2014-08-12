@@ -3,14 +3,14 @@ using Akavache.Sqlite3;
 
 // Note: This class file is *required* for iOS to work correctly, and is 
 // also a good idea for Android if you enable "Link All Assemblies".
-namespace WorkaroundAssemblyEarlyLoadingAndPreventLinkerStripping
+namespace CodeHub.Core
 {
     [Preserve]
     public static class LinkerPreserve
     {
         static LinkerPreserve()
         {
-            Console.WriteLine(typeof(SQLitePersistentBlobCache));
+            throw new Exception(typeof(SQLitePersistentBlobCache).FullName);
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
@@ -10,6 +11,11 @@ namespace CodeHub.iOS.Views.Teams
         public TeamsView()
         {
             Title = "Teams";
+
+            this.WhenActivated(d =>
+            {
+                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
+            });
         }
 
         public override void ViewDidLoad()
