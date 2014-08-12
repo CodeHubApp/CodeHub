@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Text;
-using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;

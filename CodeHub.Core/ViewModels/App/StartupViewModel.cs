@@ -66,9 +66,9 @@ namespace CodeHub.Core.ViewModels.App
         private void GoToAccountsOrNewUser()
         {
             if (_accountsService.Any())
-                GoToAccountsCommand.Execute(null);
+                GoToAccountsCommand.ExecuteIfCan();
             else
-                GoToNewUserCommand.Execute(null);
+                GoToNewUserCommand.ExecuteIfCan();
         }
 
         private async Task Load()
@@ -93,7 +93,7 @@ namespace CodeHub.Core.ViewModels.App
                     IsLoggingIn = true;
                     await _loginService.LoginAccount(account);
                     _accountsService.ActiveAccount = account;
-                    GoToMainCommand.Execute(null);
+                    GoToMainCommand.ExecuteIfCan();
                 }
                 catch
                 {

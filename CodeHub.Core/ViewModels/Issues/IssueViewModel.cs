@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
-using CodeFramework.Core.Services;
 using System;
 using ReactiveUI;
 

@@ -12,10 +12,8 @@ namespace CodeHub.Core
     {
         public static void Init()
         {
-            RxApp.DefaultExceptionHandler = Observer.Create((Exception e) =>
-            {
-                IoC.Resolve<IAlertDialogService>().Alert("Error", e.Message);
-            });
+            RxApp.DefaultExceptionHandler = Observer.Create((Exception e) => 
+                IoC.Resolve<IAlertDialogService>().Alert("Error", e.Message));
 
             var httpService = IoC.Resolve<IHttpClientService>();
 			GitHubSharp.Client.ClientConstructor = httpService.Create;

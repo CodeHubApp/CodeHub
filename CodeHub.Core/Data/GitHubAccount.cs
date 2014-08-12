@@ -64,7 +64,10 @@ namespace CodeHub.Core.Data
 
         public bool DontRemember { get; set; }
 
-        public string Key { get; set; }
+        public string Key
+        {
+            get { return Domain + Username; }
+        }
 
         public string Username { get; set; }
 

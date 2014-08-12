@@ -1,3 +1,5 @@
+using System;
+using System.Reactive.Linq;
 using Android.App;
 using Android.OS;
 using Android.Widget;
@@ -19,8 +21,11 @@ namespace CodeHub.Android.Activities.Users
             SetContentView(Resource.Layout.UsersLayout);
             this.WireUpControls();
 
-            var adapter = new ReactiveListAdapter<BasicUserModel>(ViewModel.Users, (vm, parent) => null);
-            List.Adapter = adapter;
+            this.WhenAnyValue(x => x.ViewModel).Where(x => x != null).Subscribe(x =>
+            {
+                var adapter = new ReactiveListAdapter<BasicUserModel>(ViewModel.Users, (vm, parent) => null);
+                List.Adapter = adapter;
+            });
         }
     }
 }

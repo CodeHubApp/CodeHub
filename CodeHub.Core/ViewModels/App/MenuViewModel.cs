@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
+using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
@@ -13,7 +14,6 @@ using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
 using System.Threading.Tasks;
-using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -212,7 +212,7 @@ namespace CodeHub.Core.ViewModels.App
 		public IReactiveCommand<object> GoToOrganizationsCommand { get; private set; }
 
 		[DefaultStartupViewAttribute]
-		[PotentialStartupViewAttribute("News")]
+		[PotentialStartupView("News")]
         public IReactiveCommand<object> GoToNewsCommand { get; private set; }
 
 		public IReactiveCommand<object> GoToSettingsCommand { get; private set; }

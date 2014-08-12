@@ -1,5 +1,4 @@
 ﻿using System.Reactive.Linq;
-using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using GitHubSharp;
 using System;

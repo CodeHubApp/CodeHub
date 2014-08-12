@@ -1,7 +1,6 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CodeFramework.Core.Services;
 using CodeHub.Core.Data;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;

@@ -82,10 +82,13 @@ namespace CodeHub.Core.Services
 
         public IEnumerator<GitHubAccount> GetEnumerator()
         {
-            return BlobCache.UserAccount.GetAllKeys().Wait()
+            var crap =
+                BlobCache.UserAccount.Get("user_https://api.github.comthedillonb").Wait();
+
+            var e = BlobCache.UserAccount.GetAllKeys().Wait()
                 .Where(x => x.StartsWith("user_", StringComparison.Ordinal))
-                .Select(k => BlobCache.UserAccount.GetObject<GitHubAccount>(k).Wait())
-                .Select(dummy => dummy).GetEnumerator();
+                .Select(k => BlobCache.UserAccount.GetObject<GitHubAccount>(k).Wait());
+            return e.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
