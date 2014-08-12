@@ -26,9 +26,6 @@ namespace CodeHub.Android
 		
 		public static void UpdateIdValues()
 		{
-			global::Splat.Resource.String.library_name = global::CodeHub.Android.Resource.String.library_name;
-			global::CodeFramework.Android.Resource.String.ApplicationName = global::CodeHub.Android.Resource.String.ApplicationName;
-			global::CodeFramework.Android.Resource.String.Hello = global::CodeHub.Android.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -106,9 +103,6 @@ namespace CodeHub.Android
 			
 			// aapt resource value: 0x7f040000
 			public const int Hello = 2130968576;
-			
-			// aapt resource value: 0x7f040002
-			public const int library_name = 2130968578;
 			
 			static String()
 			{
