@@ -6,6 +6,8 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.Cells;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Events
 {
@@ -20,7 +22,7 @@ namespace CodeHub.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
+			TableView.SeparatorInset = NewsCellView.EdgeInsets;
             this.BindList(ViewModel.Events, CreateElement);
         }
 

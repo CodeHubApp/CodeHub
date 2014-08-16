@@ -1,12 +1,14 @@
-using GitHubSharp.Models;
 using ReactiveUI;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public interface IBaseIssuesViewModel
+    public interface IBaseIssuesViewModel : IBaseViewModel
     {
-        IReadOnlyReactiveList<IssueModel> Issues { get; }
+        IReadOnlyReactiveList<IssueItemViewModel> Issues { get; }
 
         IReactiveCommand GoToIssueCommand { get; }
+
+        string SearchKeyword { get; set; }
     }
 }

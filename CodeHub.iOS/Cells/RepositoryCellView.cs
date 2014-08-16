@@ -10,6 +10,7 @@ namespace CodeFramework.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
         public static bool RoundImages = true;
+        private static float DefaultConstraintSize = 0.0f;
 
         public override string ReuseIdentifier { get { return Key; } }
 
@@ -26,8 +27,7 @@ namespace CodeFramework.iOS.Cells
 
             cell.OwnerImageView.Layer.MasksToBounds = true;
             cell.OwnerImageView.Layer.CornerRadius = cell.OwnerImageView.Bounds.Height / 2f;
-
-            //Create the icons
+            DefaultConstraintSize = cell.ContentConstraint.Constant;
             return cell;
         }
 
@@ -53,6 +53,11 @@ namespace CodeFramework.iOS.Cells
             UserLabel.Hidden = repoOwner == null;
             UserImageView.Hidden = UserLabel.Hidden;
             UserLabel.Text = repoOwner ?? string.Empty;
+
+            if (string.IsNullOrEmpty(ContentLabel.Text))
+                ContentConstraint.Constant = 0f;
+            else
+                ContentConstraint.Constant = DefaultConstraintSize;
         }
 
         public override void LayoutSubviews()

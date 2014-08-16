@@ -136,6 +136,7 @@
     <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

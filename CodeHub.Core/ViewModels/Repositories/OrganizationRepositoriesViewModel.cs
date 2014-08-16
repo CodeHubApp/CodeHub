@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             ShowRepositoryOwner = false;
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
-                Repositories.SimpleCollectionLoad(applicationService.Client.Organizations[Name].Repositories.GetAll(), t as bool?));
+                RepositoryCollection.SimpleCollectionLoad(applicationService.Client.Organizations[Name].Repositories.GetAll(), t as bool?));
         }
     }
 }

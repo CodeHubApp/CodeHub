@@ -14,6 +14,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel
     {
+        protected readonly ReactiveList<RepositoryModel> RepositoryCollection = new ReactiveList<RepositoryModel>();
         protected readonly IApplicationService ApplicationService;
         private RepositoriesFilterModel _filter;
 
@@ -28,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return ApplicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public ReactiveList<RepositoryModel> Repositories { get; private set; }
+        public IReadOnlyReactiveList<RepositoryModel> Repositories { get; private set; }
 
         public bool ShowRepositoryOwner { get; protected set; }
 
@@ -36,10 +37,21 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
+
         protected RepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
             ApplicationService = applicationService;
-            Repositories = new ReactiveList<RepositoryModel>();
+
+            Repositories = RepositoryCollection.CreateDerivedCollection(
+                x => x, x => x.Name.ContainsKeyword(SearchKeyword),
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             GoToRepositoryCommand = ReactiveCommand.Create();

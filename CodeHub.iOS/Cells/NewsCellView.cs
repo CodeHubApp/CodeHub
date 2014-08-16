@@ -4,7 +4,7 @@ using MonoTouch.UIKit;
 using System.Collections.Generic;
 using CodeHub.iOS;
 
-namespace CodeFramework.iOS
+namespace CodeHub.iOS.Cells
 {
     public partial class NewsCellView : UITableViewCell
     {
@@ -68,6 +68,16 @@ namespace CodeFramework.iOS
                 {
                     Console.WriteLine("Unable to callback on TTTAttributedLabel: {0}", e.Message);
                 }
+            }
+        }
+
+        public UIImage UserImage
+        {
+            get { return Image.Image; }
+            set
+            {
+                Image.Image = value;
+                Image.SetNeedsDisplay();
             }
         }
 

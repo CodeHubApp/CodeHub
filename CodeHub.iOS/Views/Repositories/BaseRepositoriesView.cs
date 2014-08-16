@@ -15,6 +15,11 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Title = "Repositories";
 
+            this.WhenActivated(d =>
+            {
+                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
+            });
+
             //NoItemsText = "No Repositories"; 
 //			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
 //				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  

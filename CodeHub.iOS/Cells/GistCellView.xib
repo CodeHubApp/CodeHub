@@ -27,7 +27,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="250" text="Content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="OkK-9y-U4D">
-                        <rect key="frame" x="48" y="50" width="264" height="125"/>
+                        <rect key="frame" x="48" y="48" width="264" height="127"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <nil key="highlightedColor"/>
@@ -47,7 +47,7 @@
                     <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="KOS-3J-OAt" secondAttribute="leading" id="GLI-Pv-7pu"/>
                     <constraint firstAttribute="trailing" secondItem="t8o-AX-aOj" secondAttribute="trailing" constant="8" id="Orf-4s-y46"/>
                     <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="QEc-1F-ogM" secondAttribute="trailing" constant="8" id="Xow-LE-tBp"/>
-                    <constraint firstItem="OkK-9y-U4D" firstAttribute="top" secondItem="KOS-3J-OAt" secondAttribute="bottom" constant="8" id="Z5t-DH-Uft"/>
+                    <constraint firstItem="OkK-9y-U4D" firstAttribute="top" secondItem="KOS-3J-OAt" secondAttribute="bottom" constant="6" id="Z5t-DH-Uft"/>
                     <constraint firstAttribute="bottom" secondItem="OkK-9y-U4D" secondAttribute="bottom" constant="8" id="eeX-RN-QPu"/>
                     <constraint firstItem="OkK-9y-U4D" firstAttribute="leading" secondItem="KOS-3J-OAt" secondAttribute="leading" id="mAH-Sq-iyS"/>
                     <constraint firstItem="KOS-3J-OAt" firstAttribute="top" secondItem="t8o-AX-aOj" secondAttribute="bottom" constant="1" id="nsk-Cc-3Ma"/>
@@ -58,6 +58,7 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="ContentConstraint" destination="Z5t-DH-Uft" id="0B2-Cd-Gsi"/>
                 <outlet property="ContentLabel" destination="OkK-9y-U4D" id="JHo-No-foG"/>
                 <outlet property="MainImageView" destination="QEc-1F-ogM" id="hKO-Ko-teH"/>
                 <outlet property="TimeLabel" destination="KOS-3J-OAt" id="1y1-le-85X"/>

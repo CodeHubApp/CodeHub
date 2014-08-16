@@ -34,8 +34,7 @@ namespace CodeHub.iOS.Views
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
             var vm = (NotificationsViewModel)ViewModel;
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CheckButton, UIBarButtonItemStyle.Plain, (s, e) => vm.ReadAllCommand.Execute(null));
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(vm.ReadAllCommand);
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CheckButton }.WithCommand(vm.ReadAllCommand);
 
 //            vm.Bind(x => x.IsMarking, x =>
 //            {
@@ -61,7 +60,7 @@ namespace CodeHub.iOS.Views
                 else
                     el.Image = Images.Notifications;
 
-                el.Tapped += () => ViewModel.GoToNotificationCommand.Execute(x);
+                el.Tapped += () => ViewModel.GoToNotificationCommand.ExecuteIfCan(x);
                 return el;
             });
 

@@ -21,6 +21,9 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public MyIssuesViewModel(IApplicationService applicationService)
         {
+            Filter = MyIssuesFilterModel.CreateOpenFilter();
+
+
             //Filter = applicationService.Account.Filters.GetFilter<MyIssuesFilterModel>("MyIssues");
 //            Issues.GroupFunc = x =>
 //            {

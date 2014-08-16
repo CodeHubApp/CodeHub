@@ -1,7 +1,7 @@
-using CodeFramework.Core.Services;
 using MonoTouch.Foundation;
 using MonoTouch.JavaScriptCore;
 using CodeHub;
+using CodeHub.Core.Services;
 
 namespace CodeFramework.iOS.Services
 {

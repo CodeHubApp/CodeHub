@@ -7,7 +7,7 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace CodeFramework.iOS
+namespace CodeHub.iOS.Cells
 {
 	[Register ("NewsCellView")]
 	partial class NewsCellView

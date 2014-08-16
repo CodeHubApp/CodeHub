@@ -2,17 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using MonoTouch.CoreGraphics;
-using MonoTouch.Dialog;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.DialogElements;
 using Xamarin.Utilities.Images;
 using CodeHub.iOS;
+using CodeHub.iOS.Cells;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
-    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground, IImageUpdated
+    public class NewsFeedElement : Element, IElementSizing, IImageUpdated
     {
         private readonly string _time;
         private readonly Uri _imageUri;
@@ -153,6 +152,11 @@ namespace CodeFramework.iOS.Elements
         public override UITableViewCell GetCell (UITableView tv)
         {
             var cell = tv.DequeueReusableCell(NewsCellView.Key) as NewsCellView ?? NewsCellView.Create();
+
+            UIImage image = null;
+            if (_imageUri != null)
+                image = ImageLoader.DefaultRequestImage(_imageUri, this);
+            cell.Set(image, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
             return cell;
         }
 
@@ -164,35 +168,18 @@ namespace CodeFramework.iOS.Elements
             tableView.DeselectRow (path, true);
         }
 
-        void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-        {
-            var c = cell as NewsCellView;
-            if (c == null)
-                return;
-
-            UIImage image = null;
-            if (_imageUri != null)
-                image = ImageLoader.DefaultRequestImage(_imageUri, this);
-
-            c.Set(image, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
-        }
-
-        #region IImageUpdated implementation
-
         public void UpdatedImage(Uri uri)
         {
             var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-                return;
-
-            if (uri == null)
-                return;
-            var root = this.GetRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new [] { IndexPath }, UITableViewRowAnimation.None);
+            if (img != null)
+            {
+                var cell = GetActiveCell() as NewsCellView;
+                if (cell != null)
+                {
+                    cell.UserImage = img;
+                    cell.SetNeedsDisplay();
+                }
+            }
         }
-
-        #endregion
     }
 }

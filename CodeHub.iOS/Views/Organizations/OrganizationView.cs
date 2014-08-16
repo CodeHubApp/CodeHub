@@ -13,19 +13,21 @@ namespace CodeHub.iOS.Views.Organizations
         {
             base.ViewDidLoad();
 
+            Title = ViewModel.Name;
+
             ViewModel.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
             {
-                HeaderView.Text = string.IsNullOrEmpty(x.Name) ? x.Login : x.Name;
+                Title = HeaderView.Text = string.IsNullOrEmpty(x.Name) ? x.Login : x.Name;
                 HeaderView.ImageUri = x.AvatarUrl;
                 ReloadData();
             });
 
-            var members = new StyledStringElement("Members", () => ViewModel.GoToMembersCommand.Execute(null), Images.Following);
-            var teams = new StyledStringElement("Teams", () => ViewModel.GoToTeamsCommand.Execute(null), Images.Team);
-            var followers = new StyledStringElement("Followers", () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-            var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
-            var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Images.Script);
+            var members = new StyledStringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Images.Following);
+            var teams = new StyledStringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Images.Team);
+            var followers = new StyledStringElement("Followers", ViewModel.GoToFollowersCommand.ExecuteIfCan, Images.Heart);
+            var events = new StyledStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Event);
+            var repos = new StyledStringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Images.Repo);
+            var gists = new StyledStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Script);
             Root.Reset(new Section(HeaderView), new Section { members, teams }, new Section { events, followers }, new Section { repos, gists });
         }
     }

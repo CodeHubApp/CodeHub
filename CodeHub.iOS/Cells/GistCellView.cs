@@ -10,6 +10,7 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("GistCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("GistCellView");
+        private static float DefaultContentConstraintSize = 0.0f;
 
         public override string ReuseIdentifier { get { return Key; } }
 
@@ -27,6 +28,7 @@ namespace CodeHub.iOS.Cells
             cell.TitleLabel.TextColor = UIColor.FromRGB(0, 64, 128);
             cell.TimeLabel.TextColor = UIColor.Gray;
             cell.ContentLabel.TextColor = UIColor.FromRGB(41, 41, 41);
+            DefaultContentConstraintSize = cell.ContentConstraint.Constant;
             return cell;
         }
 
@@ -45,7 +47,14 @@ namespace CodeHub.iOS.Cells
         public string Content
         {
             get { return ContentLabel.Text; }
-            set { ContentLabel.Text = value; }
+            set 
+            { 
+                ContentLabel.Text = value; 
+                if (string.IsNullOrEmpty(value))
+                    ContentConstraint.Constant = 0f;
+                else
+                    ContentConstraint.Constant = DefaultContentConstraintSize;
+            }
         }
 
         public int Lines

@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 var request = string.Equals(applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
                     applicationService.Client.AuthenticatedUser.Repositories.GetAll() : 
                     applicationService.Client.Users[Username].Repositories.GetAll();
-                return Repositories.SimpleCollectionLoad(request, t as bool?);
+                return RepositoryCollection.SimpleCollectionLoad(request, t as bool?);
             });
         }
     }

@@ -16,6 +16,9 @@ namespace CodeFramework.iOS.Cells
 		MonoTouch.UIKit.UILabel CaptionLabel { get; set; }
 
 		[Outlet]
+		MonoTouch.UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UILabel ContentLabel { get; set; }
 
 		[Outlet]
@@ -41,11 +44,6 @@ namespace CodeFramework.iOS.Cells
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (OwnerImageView != null) {
-				OwnerImageView.Dispose ();
-				OwnerImageView = null;
-			}
-
 			if (CaptionLabel != null) {
 				CaptionLabel.Dispose ();
 				CaptionLabel = null;
@@ -76,6 +74,11 @@ namespace CodeFramework.iOS.Cells
 				ForksLabel = null;
 			}
 
+			if (OwnerImageView != null) {
+				OwnerImageView.Dispose ();
+				OwnerImageView = null;
+			}
+
 			if (UserImageView != null) {
 				UserImageView.Dispose ();
 				UserImageView = null;
@@ -84,6 +87,11 @@ namespace CodeFramework.iOS.Cells
 			if (UserLabel != null) {
 				UserLabel.Dispose ();
 				UserLabel = null;
+			}
+
+			if (ContentConstraint != null) {
+				ContentConstraint.Dispose ();
+				ContentConstraint = null;
 			}
 		}
 	}

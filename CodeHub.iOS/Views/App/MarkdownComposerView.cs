@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using CodeFramework.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;

@@ -13,6 +13,9 @@ namespace CodeHub.iOS.Cells
 	partial class GistCellView
 	{
 		[Outlet]
+		MonoTouch.UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+
+		[Outlet]
 		MonoTouch.UIKit.UILabel ContentLabel { get; set; }
 
 		[Outlet]
@@ -26,14 +29,14 @@ namespace CodeHub.iOS.Cells
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ContentLabel != null) {
+				ContentLabel.Dispose ();
+				ContentLabel = null;
+			}
+
 			if (MainImageView != null) {
 				MainImageView.Dispose ();
 				MainImageView = null;
-			}
-
-			if (TitleLabel != null) {
-				TitleLabel.Dispose ();
-				TitleLabel = null;
 			}
 
 			if (TimeLabel != null) {
@@ -41,9 +44,14 @@ namespace CodeHub.iOS.Cells
 				TimeLabel = null;
 			}
 
-			if (ContentLabel != null) {
-				ContentLabel.Dispose ();
-				ContentLabel = null;
+			if (TitleLabel != null) {
+				TitleLabel.Dispose ();
+				TitleLabel = null;
+			}
+
+			if (ContentConstraint != null) {
+				ContentConstraint.Dispose ();
+				ContentConstraint = null;
 			}
 		}
 	}
