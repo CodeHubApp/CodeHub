@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class OrganizationRepositoriesViewModel : RepositoriesViewModel
+    public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
     {
         public string Name { get; set; }
 

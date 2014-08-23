@@ -38,11 +38,12 @@ namespace CodeFramework.iOS.Elements
         
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(RepositoryCellView.Key) as RepositoryCellView ?? RepositoryCellView.Create();
-            if (_image == null && _imageUri != null)
-                _image = ImageLoader.DefaultRequestImage(_imageUri, this);
-            cell.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
-            return cell;
+//             var cell = tv.DequeueReusableCell(RepositoryCellView.Key) as RepositoryCellView ?? RepositoryCellView.Create();
+//            if (_image == null && _imageUri != null)
+//                _image = ImageLoader.DefaultRequestImage(_imageUri, this);
+//            cell.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
+//            return cell;
+            return null;
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)
@@ -55,9 +56,9 @@ namespace CodeFramework.iOS.Elements
         public void UpdatedImage(Uri uri)
         {
             var img = ImageLoader.DefaultRequestImage(uri, this);
-            var activeCell = GetActiveCell() as RepositoryCellView;
-            if (activeCell != null && img != null)
-                activeCell.RepositoryImage = img;
+            //var activeCell = GetActiveCell() as RepositoryCellView;
+//            if (activeCell != null && img != null)
+//                activeCell.RepositoryImage = img;
         }
 
         public float GetHeight(UITableView tableView, NSIndexPath indexPath)
@@ -65,18 +66,19 @@ namespace CodeFramework.iOS.Elements
             if (GetRootElement() == null)
                 return 44f;
 
-            var cell = GetRootElement().GetOffscreenCell(RepositoryCellView.Key, () => RepositoryCellView.Create());
-            cell.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
-
-            cell.SetNeedsUpdateConstraints();
-            cell.UpdateConstraintsIfNeeded();
-
-            cell.Bounds = new RectangleF(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
-
-            cell.SetNeedsLayout();
-            cell.LayoutIfNeeded();
-
-            return cell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height + 1;
+//            var cell = GetRootElement().GetOffscreenCell(RepositoryCellView.Key, () => RepositoryCellView.Create());
+//            cell.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
+//
+//            cell.SetNeedsUpdateConstraints();
+//            cell.UpdateConstraintsIfNeeded();
+//
+//            cell.Bounds = new RectangleF(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
+//
+//            cell.SetNeedsLayout();
+//            cell.LayoutIfNeeded();
+//
+//            return cell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height + 1;
+            return 0;
         }
     }
 }

@@ -2,62 +2,58 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.iOS;
+using CodeHub.Core.ViewModels.Repositories;
+using CodeHub.iOS.Views;
+using ReactiveUI;
+using System.Reactive.Linq;
+using SDWebImage;
 
-namespace CodeFramework.iOS.Cells
+namespace CodeHub.iOS.Cells
 {
-    public partial class RepositoryCellView : UITableViewCell
+    public partial class RepositoryCellView : ReactiveTableViewCell<RepositoryItemViewModel>
     {
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
         public static bool RoundImages = true;
         private static float DefaultConstraintSize = 0.0f;
 
-        public override string ReuseIdentifier { get { return Key; } }
-
-        public static RepositoryCellView Create()
-        {
-            var cell = (RepositoryCellView)Nib.Instantiate(null, null)[0];
-
-            cell.CaptionLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
-            cell.ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
-
-            cell.FollowersImageVIew.Image = Theme.CurrentTheme.RepositoryCellFollowers;
-            cell.ForksImageView.Image = Theme.CurrentTheme.RepositoryCellForks;
-            cell.UserImageView.Image = Theme.CurrentTheme.RepositoryCellUser;
-
-            cell.OwnerImageView.Layer.MasksToBounds = true;
-            cell.OwnerImageView.Layer.CornerRadius = cell.OwnerImageView.Bounds.Height / 2f;
-            DefaultConstraintSize = cell.ContentConstraint.Constant;
-            return cell;
-        }
-
-        public UIImage RepositoryImage
-        {
-            get { return OwnerImageView.Image; }
-            set { OwnerImageView.Image = value; }
-        }
-
         public RepositoryCellView(IntPtr handle)
             : base(handle)
         {
+            SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
-        public void Bind(string name, string name2, string name3, string description, string repoOwner, UIImage logoImage)
+        public override void AwakeFromNib()
         {
-            CaptionLabel.Text = name;
-            FollowersLabel.Text = name2;
-            ForksLabel.Text = name3;
-            OwnerImageView.Image = logoImage;
-            ContentLabel.Hidden = description == null;
-            ContentLabel.Text = description ?? string.Empty;
-            UserLabel.Hidden = repoOwner == null;
-            UserImageView.Hidden = UserLabel.Hidden;
-            UserLabel.Text = repoOwner ?? string.Empty;
+            base.AwakeFromNib();
 
-            if (string.IsNullOrEmpty(ContentLabel.Text))
-                ContentConstraint.Constant = 0f;
-            else
-                ContentConstraint.Constant = DefaultConstraintSize;
+            CaptionLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+
+            FollowersImageVIew.Image = Theme.CurrentTheme.RepositoryCellFollowers;
+            ForksImageView.Image = Theme.CurrentTheme.RepositoryCellForks;
+            UserImageView.Image = Theme.CurrentTheme.RepositoryCellUser;
+
+            OwnerImageView.Layer.MasksToBounds = true;
+            OwnerImageView.Layer.CornerRadius = OwnerImageView.Bounds.Height / 2f;
+            DefaultConstraintSize = ContentConstraint.Constant;
+            ContentView.Opaque = true;
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .Where(x => x != null)
+                .Subscribe(x =>
+                {
+                    CaptionLabel.Text = x.Name;
+                    FollowersLabel.Text = x.Stars.ToString();
+                    ForksLabel.Text = x.Forks.ToString();
+                    OwnerImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+                    ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
+                    ContentLabel.Text = x.Description ?? string.Empty;
+                    UserLabel.Hidden = string.IsNullOrEmpty(x.Owner);
+                    UserImageView.Hidden = UserLabel.Hidden;
+                    UserLabel.Text = x.Owner ?? string.Empty;
+                    ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
+                });
         }
 
         public override void LayoutSubviews()

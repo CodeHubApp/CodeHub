@@ -12,7 +12,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class RepositoriesViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly ReactiveList<RepositoryModel> RepositoryCollection = new ReactiveList<RepositoryModel>();
         protected readonly IApplicationService ApplicationService;
@@ -29,13 +29,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return ApplicationService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public IReadOnlyReactiveList<RepositoryModel> Repositories { get; private set; }
+        public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; private set; }
 
         public bool ShowRepositoryOwner { get; protected set; }
 
         public IReactiveCommand LoadCommand { get; protected set; }
-
-        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -44,24 +42,25 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected RepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
+        protected BaseRepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
             ApplicationService = applicationService;
 
-            Repositories = RepositoryCollection.CreateDerivedCollection(
-                x => x, x => x.Name.ContainsKeyword(SearchKeyword),
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
-
-            GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.OfType<RepositoryModel>().Subscribe(x =>
+            var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = x.Owner.Login;
+                vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
                 ShowViewModel(vm);
             });
+
+            Repositories = RepositoryCollection.CreateDerivedCollection(
+                x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
+                                                 x.Description, x.StargazersCount, x.ForksCount, gotoRepository), 
+                x => x.Name.ContainsKeyword(SearchKeyword),
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
+            //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 

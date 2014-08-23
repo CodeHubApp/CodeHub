@@ -48,6 +48,7 @@ namespace CodeHub.iOS
         public static UIImage Language { get { return UIImageHelper.FromFileAuto("Images/language"); } }
         public static UIImage Unlocked { get { return UIImageHelper.FromFileAuto("Images/unlocked"); } }
         public static UIImage Locked { get { return UIImageHelper.FromFileAuto("Images/locked"); } }
+        public static UIImage DownChevron { get { return UIImageHelper.FromFileAuto("Images/down_chevron"); } }
 
 
         public static Uri GitHubRepoUrl

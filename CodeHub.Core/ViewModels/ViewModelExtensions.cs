@@ -51,11 +51,18 @@ namespace CodeHub.Core.ViewModels
             });
         }
 
-        public static Task SimpleCollectionLoad<T>(this ReactiveList<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh) where T : new()
+        public static Task SimpleCollectionLoad<T>(this ReactiveList<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh, Action<Func<Task>> assignMore = null) where T : new()
         {
+            if (assignMore == null)
+                assignMore = (x) => {};
+
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, m => { }, viewModel.AddRange);
+                viewModel.CreateMore(response, assignMore, x => 
+                {
+                    viewModel.AddRange(x);
+                    Console.WriteLine("The size is: " + viewModel.Count);
+                });
                 viewModel.Reset(response.Data);
             });
         }

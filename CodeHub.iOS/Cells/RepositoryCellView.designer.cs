@@ -7,7 +7,7 @@
 using MonoTouch.Foundation;
 using System.CodeDom.Compiler;
 
-namespace CodeFramework.iOS.Cells
+namespace CodeHub.iOS.Cells
 {
 	[Register ("RepositoryCellView")]
 	partial class RepositoryCellView

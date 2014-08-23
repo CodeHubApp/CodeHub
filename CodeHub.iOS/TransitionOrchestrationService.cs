@@ -6,6 +6,9 @@ using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.iOS.Views.Accounts;
 using CodeHub.iOS.Views.App;
 using MonoTouch.SlideoutNavigation;
+using CodeHub.iOS.Views.Languages;
+using CodeHub.iOS.Views.Repositories;
+using RepositoryStumble.Transitions;
 
 namespace CodeHub.iOS
 {
@@ -58,6 +61,14 @@ namespace CodeHub.iOS
             else if (fromViewController is MenuView)
             {
                 fromViewController.NavigationController.PushViewController(toViewController, true);
+            }
+            else if (toViewController is LanguagesView && fromViewController is RepositoriesTrendingView)
+            {
+                toViewDismissCommand.Subscribe(_ => fromViewController.DismissViewController(true, null));
+                toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => toViewDismissCommand.ExecuteIfCan());
+                var ctrlToPresent = new UINavigationController(toViewController);
+                ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
+                fromViewController.PresentViewController(ctrlToPresent, true, null);
             }
             else
             {

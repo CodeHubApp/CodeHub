@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoriesStarredViewModel : RepositoriesViewModel
+    public class RepositoriesStarredViewModel : BaseRepositoriesViewModel
     {
         public RepositoriesStarredViewModel(IApplicationService applicationService) : base(applicationService)
         {

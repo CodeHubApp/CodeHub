@@ -270,6 +270,17 @@
     <Compile Include="Elements\GistElement.cs" />
     <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Views\ReactiveTableViewController.cs" />
+    <Compile Include="Views\ReactiveTableViewCell.cs" />
+    <Compile Include="Views\Users\UserTableViewCell.cs" />
+    <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
+    <Compile Include="Delegates\ObservableSearchDelegate.cs" />
+    <Compile Include="TableViewSources\UserTableViewSource.cs" />
+    <Compile Include="Extensions\ReactiveTableViewControllerExtensions.cs" />
+    <Compile Include="Views\Repositories\LanguagesView.cs" />
+    <Compile Include="Transitions\SlideDownTransition.cs" />
+    <Compile Include="TableViewSources\LanguageTableViewSource.cs" />
+    <Compile Include="Cells\LanguageTableViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -319,9 +330,6 @@
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.5.0\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.0.3\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.0.1\lib\MonoTouch\Akavache.dll</HintPath>
     </Reference>
@@ -331,14 +339,20 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.4.1\lib\monotouch\Splat.dll</HintPath>
-    </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>..\lib\MonoTouch\BTProgressHUD.dll</HintPath>
     </Reference>
     <Reference Include="MTiRate">
       <HintPath>..\lib\MonoTouch\MTiRate.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.0.5\lib\Monotouch\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.4.2.1\lib\monotouch\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\lib\MonoTouch\SDWebImage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -602,6 +616,8 @@
     <BundleResource Include="Images\Navigation\login_user_unknown%402x.png">
       <DependentUpon>login_user_unknown.png</DependentUpon>
     </BundleResource>
+    <BundleResource Include="Images\down_chevron.png" />
+    <BundleResource Include="Images\down_chevron%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
@@ -614,5 +630,8 @@
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\Navigation\" />
     <Folder Include="Extensions\" />
+    <Folder Include="TableViewSources\" />
+    <Folder Include="Delegates\" />
+    <Folder Include="Transitions\" />
   </ItemGroup>
 </Project>

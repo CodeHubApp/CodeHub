@@ -1,40 +1,32 @@
 using System;
-using CodeFramework.iOS.Elements;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.Cells;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.Delegates;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesExploreView : ViewModelCollectionViewController<RepositoriesExploreViewModel>
+    public class RepositoriesExploreView : ReactiveTableViewController<RepositoriesExploreViewModel>
     {
-        public RepositoriesExploreView()
-            : base(unevenRows: true)
-		{
+        public override void ViewDidLoad()
+        {
             Title = "Explore";
-		    AutoHideSearch = false;
-            //NoItemsText = "No Repositories";
+
+            base.ViewDidLoad();
+
+            TableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
+            TableView.Source = new RepositoryTableViewSource(TableView, ViewModel.Repositories);
+
+            var searchDelegate = this.AddSearchBar();
 
             this.WhenActivated(d =>
             {
-                d(SearchTextChanged.Subscribe(x => 
+                d(searchDelegate.SearchTextChanged.Subscribe(x => 
                 {
                     ViewModel.SearchText = x;
                     ViewModel.SearchCommand.ExecuteIfCan();
                 }));
-            });
-		}
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            this.BindList(ViewModel.Repositories, repo =>
-            {
-				var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, new Uri(repo.Owner.AvatarUrl)) { ShowOwner = true };
-				sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
-                return sse;
             });
         }
     }

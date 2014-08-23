@@ -4,7 +4,7 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class UserRepositoriesViewModel : RepositoriesViewModel
+    public class UserRepositoriesViewModel : BaseRepositoriesViewModel
     {
         public string Username { get; set; }
 
