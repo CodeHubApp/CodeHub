@@ -28,6 +28,13 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand LoadCommand { get; private set; }
 
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
+
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
             Items = new ReactiveList<ViewObject>();
@@ -74,7 +81,6 @@ namespace CodeHub.Core.ViewModels.Source
                         Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
                     });
                 }
-
 		    });
 		}
 

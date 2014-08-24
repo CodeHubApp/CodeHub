@@ -115,12 +115,15 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Cells\NotificationTableViewCell.cs" />
     <Compile Include="Elements\LabelElement.cs" />
     <Compile Include="Elements\MilestoneElement.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="TableViewSources\NotificationTableViewSource.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="TransitionOrchestrationService.cs" />
+    <Compile Include="ViewComponents\NotificationHeaderView.cs" />
     <Compile Include="ViewComponents\ProgressBarView.cs" />
     <Compile Include="Views\Accounts\NewAccountView.cs" />
     <Compile Include="Views\Accounts\NewAccountView.designer.cs">
@@ -153,7 +156,7 @@
     <Compile Include="Views\Issues\IssueView.cs" />
     <Compile Include="ViewComponents\MilestoneView.cs" />
     <Compile Include="Views\Issues\MyIssuesView.cs" />
-    <Compile Include="Views\NotificationsView.cs" />
+    <Compile Include="Views\Notifications\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
@@ -625,13 +628,5 @@
     <ITunesArtwork Include="iTunesArtwork%402x" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Cells\" />
-    <Folder Include="ViewControllers\" />
-    <Folder Include="Images\Navigation\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="TableViewSources\" />
-    <Folder Include="Delegates\" />
-    <Folder Include="Transitions\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

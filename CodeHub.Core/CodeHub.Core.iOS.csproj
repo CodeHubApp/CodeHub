@@ -48,6 +48,7 @@
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
     <Compile Include="Services\LoginService.cs" />
+    <Compile Include="Utilities\GroupedCollection.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
+    <Compile Include="ViewModels\Notifications\NotificationGroupViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
@@ -190,12 +192,7 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Utilities\" />
-    <Folder Include="Messages\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

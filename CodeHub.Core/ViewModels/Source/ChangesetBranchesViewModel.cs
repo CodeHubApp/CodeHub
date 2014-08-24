@@ -15,15 +15,26 @@ namespace CodeHub.Core.ViewModels.Source
 
         public string RepositoryName { get; set; }
 
-        public ReactiveList<BranchModel> Branches { get; private set; }
+        public IReadOnlyReactiveList<BranchModel> Branches { get; private set; }
 
         public IReactiveCommand<object> GoToBranchCommand { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
+
         public ChangesetBranchesViewModel(IApplicationService applicationService)
         {
-            Branches = new ReactiveList<BranchModel>();
+            var branches = new ReactiveList<BranchModel>();
+            Branches = branches.CreateDerivedCollection(
+                x => x,
+                x => x.Name.ContainsKeyword(SearchKeyword),
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToBranchCommand = ReactiveCommand.Create();
             GoToBranchCommand.OfType<BranchModel>().Subscribe(x =>
@@ -35,8 +46,9 @@ namespace CodeHub.Core.ViewModels.Source
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                Branches.SimpleCollectionLoad(
+                branches.SimpleCollectionLoad(
                     applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches(), t as bool?));
+            LoadCommand.ExecuteIfCan();
         }
     }
 }

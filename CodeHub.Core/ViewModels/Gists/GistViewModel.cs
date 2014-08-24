@@ -14,17 +14,17 @@ namespace CodeHub.Core.ViewModels.Gists
     public class GistViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly IApplicationService _applicationService;
-        private GistModel _gist;
-        private bool? _starred;
 
         public string Id { get; set; }
 
+        private GistModel _gist;
         public GistModel Gist
         {
             get { return _gist; }
             set { this.RaiseAndSetIfChanged(ref _gist, value); }
         }
 
+        private bool? _starred;
         public bool? IsStarred
         {
             get { return _starred; }

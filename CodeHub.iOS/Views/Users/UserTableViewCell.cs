@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Views.Users
     public class UserTableViewCell : ReactiveTableViewCell<UserItemViewModel>
     {
         public static NSString Key = new NSString("usercell");
-        private const float ImageSpacing = 8f;
+        private const float ImageSpacing = 10f;
         private static RectangleF ImageFrame = new RectangleF(ImageSpacing, 6f, 32, 32);
 
         public UserTableViewCell(IntPtr handle)

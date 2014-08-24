@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Filters;
@@ -18,12 +20,16 @@ namespace CodeHub.Core.ViewModels.Notifications
 {
     public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly ReactiveList<NotificationModel> _notifications = new ReactiveList<NotificationModel>();
+        private readonly ReactiveList<NotificationModel> _notifications = new ReactiveList<NotificationModel>(); 
         private readonly IApplicationService _applicationService;
         private int _shownIndex;
         private NotificationsFilterModel _filter;
 
-        public IReadOnlyReactiveList<NotificationModel> Notifications { get; private set; }
+        private readonly ObservableAsPropertyHelper<IEnumerable<NotificationGroupViewModel>> _groupedNotifications;
+        public IEnumerable<NotificationGroupViewModel> GroupedNotifications
+        {
+            get { return _groupedNotifications.Value; }
+        }
 
 		public int ShownIndex
 		{
@@ -45,13 +51,6 @@ namespace CodeHub.Core.ViewModels.Notifications
 
         public IReactiveCommand<object> GoToNotificationCommand { get; private set; }
 
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-		
         private void GoToNotification(NotificationModel x)
         {
             var subject = x.Subject.Type.ToLower();
@@ -97,9 +96,15 @@ namespace CodeHub.Core.ViewModels.Notifications
         public NotificationsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
-            Notifications = _notifications.CreateDerivedCollection(x => x, 
-                x => x.Subject.Title.ContainsKeyword(SearchKeyword), 
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
+            var whenNotificationsChange =
+                _notifications.Changed.Select(_ => Unit.Default)
+                    .Merge(_notifications.ItemChanged.Select(_ => Unit.Default));
+
+            _groupedNotifications = whenNotificationsChange.Select(_ =>
+                _notifications.GroupBy(x => x.Repository.FullName)
+                    .Select(x => new NotificationGroupViewModel(x.Key, new ReactiveList<NotificationModel>(x), __ => { })))
+                .ToProperty(this, t => t.GroupedNotifications);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
@@ -111,14 +116,14 @@ namespace CodeHub.Core.ViewModels.Notifications
             GoToNotificationCommand.OfType<NotificationModel>().Subscribe(GoToNotification);
 
 
-            var canReadAll = Notifications.CountChanged.Select(x => x > 0).CombineLatest(
+            var canReadAll = _notifications.CountChanged.Select(x => x > 0).CombineLatest(
                 this.WhenAnyValue(x => x.ShownIndex).Select(x => x != 2), (x, y) => x & y);
 
             ReadAllCommand = ReactiveCommand.CreateAsyncTask(canReadAll, async t =>
                 {
                     try
                     {
-                        if (!Notifications.Any())
+                        if (!_notifications.Any())
                             return;
                         await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
                         _notifications.Clear();
@@ -137,7 +142,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                     if (repo == null) return;
                     var repoId = new RepositoryIdentifier(repo);
                     await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
-                    _notifications.RemoveAll(Notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
+                    _notifications.RemoveAll(_notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 }
                 catch (Exception e)
                 {
