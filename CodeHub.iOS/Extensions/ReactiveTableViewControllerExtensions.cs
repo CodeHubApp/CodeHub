@@ -7,7 +7,7 @@ namespace ReactiveUI
 {
     public static class ReactiveTableViewControllerExtensions
     {
-        public static ObservableSearchDelegate AddSearchBar<T>(this ReactiveTableViewController<T> @this) where T : class
+        public static ObservableSearchDelegate AddSearchBar(this ReactiveTableViewController @this)
         {
             var searchBar = new UISearchBar(new RectangleF(0f, 0f, 320f, 44f));
             searchBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
@@ -20,14 +20,22 @@ namespace ReactiveUI
             return searchDelegate;
         }
 
-        public static ObservableSearchDelegate AddSearchBar<T>(this ReactiveTableViewController<T> @this, Action<string> searchAction) where T : class
+        public static ObservableSearchDelegate AddSearchBar(this ReactiveTableViewController @this, Action<string> searchAction)
         {
-            var searchDelegate = AddSearchBar<T>(@this);
+            var searchDelegate = AddSearchBar(@this);
 
-            @this.WhenActivated(d =>
+            var supportsActivation = @this as IActivatable;
+            if (supportsActivation != null)
             {
-                d(searchDelegate.SearchTextChanging.Subscribe(searchAction));
-            });
+                supportsActivation.WhenActivated(d =>
+                {
+                    d(searchDelegate.SearchTextChanging.Subscribe(searchAction));
+                });
+            }
+            else
+            {
+                searchDelegate.SearchTextChanging.Subscribe(searchAction);
+            }
 
             return searchDelegate;
         }

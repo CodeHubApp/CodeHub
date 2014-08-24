@@ -3,10 +3,9 @@ using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class UserGistsView : GistsView<UserGistsViewModel>
+    public class UserGistsView : BaseGistsView<UserGistsViewModel>
     {
         public UserGistsView()
-            : base(true)
         {
             Title = "Gists";
         }

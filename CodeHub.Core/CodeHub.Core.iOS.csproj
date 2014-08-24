@@ -70,7 +70,6 @@
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistEditViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistViewableFileViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistViewModel.cs" />
     <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
@@ -144,6 +143,8 @@
     <Compile Include="ViewModels\Repositories\LangaugeItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
+    <Compile Include="ViewModels\Gists\BaseGistsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

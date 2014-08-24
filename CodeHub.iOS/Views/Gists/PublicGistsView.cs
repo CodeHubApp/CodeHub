@@ -1,11 +1,11 @@
 using CodeHub.Core.ViewModels.Gists;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class PublicGistsView : GistsView<PublicGistsViewModel>
+    public class PublicGistsView : BaseGistsView<PublicGistsViewModel>
     {
         public PublicGistsView()
-            : base(false)
         {
             Title = "Public Gists";
         }

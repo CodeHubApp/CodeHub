@@ -140,7 +140,6 @@
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
-    <Compile Include="Views\Gists\GistsView.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Gists\ModifyGistFileController.cs" />
     <Compile Include="Views\Gists\ModifyGistFileController.designer.cs">
@@ -266,7 +265,6 @@
       <DependentUpon>GistCellView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Cells\GistCellView.xib" />
-    <Compile Include="Elements\GistElement.cs" />
     <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Views\ReactiveTableViewController.cs" />
@@ -281,6 +279,8 @@
     <Compile Include="TableViewSources\LanguageTableViewSource.cs" />
     <Compile Include="Cells\LanguageTableViewCell.cs" />
     <Compile Include="Views\Users\UserView.cs" />
+    <Compile Include="Views\Gists\BaseGistsView.cs" />
+    <Compile Include="TableViewSources\GistTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
