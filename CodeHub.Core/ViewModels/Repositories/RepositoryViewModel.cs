@@ -14,6 +14,7 @@ using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
 using CodeHub.Core.Data;
+using CodeHub.Core.ViewModels.Organizations;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -126,12 +127,21 @@ namespace CodeHub.Core.ViewModels.Repositories
             ToggleWatchCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsWatched, x => x.HasValue), t => ToggleWatch());
 
-            GoToOwnerCommand = ReactiveCommand.Create();
-            GoToOwnerCommand.Subscribe(_ =>
+            GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));
+            GoToOwnerCommand.Select(_ => Repository.Owner).Subscribe(x =>
             {
-                var vm = CreateViewModel<ProfileViewModel>();
-                vm.Username = RepositoryOwner;
-                ShowViewModel(vm);
+                if (string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase))
+                {
+                    var vm = CreateViewModel<OrganizationViewModel>();
+                    vm.Username = RepositoryOwner;
+                    ShowViewModel(vm);
+                }
+                else
+                {
+                    var vm = CreateViewModel<UserViewModel>();
+                    vm.Username = RepositoryOwner;
+                    ShowViewModel(vm);
+                }
             });
 
             PinCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));

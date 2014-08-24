@@ -37,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Organizations
             GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
-                vm.Name = x.Login;
+                vm.Username = x.Login;
                 ShowViewModel(vm);
             });
 

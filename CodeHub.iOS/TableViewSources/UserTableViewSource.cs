@@ -4,9 +4,9 @@ using CodeHub.iOS.Views.Users;
 
 namespace CodeHub.iOS.TableViewSources
 {
-    public class UserTableViewSource : ReactiveTableViewSource<UserViewModel>
+    public class UserTableViewSource : ReactiveTableViewSource<UserItemViewModel>
     {
-        public UserTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<UserViewModel> collection) 
+        public UserTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<UserItemViewModel> collection) 
             : base(tableView, collection,  UserTableViewCell.Key, 44.0f)
         {
             tableView.RegisterClassForCellReuse(typeof(UserTableViewCell), UserTableViewCell.Key);
@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as UserViewModel;
+            var item = ItemAt(indexPath) as UserItemViewModel;
             if (item != null)
                 item.GoToCommand.ExecuteIfCan();
         }

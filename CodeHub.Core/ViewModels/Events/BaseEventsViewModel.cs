@@ -101,7 +101,7 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToUser(string username)
         {
             if (string.IsNullOrEmpty(username)) return;
-            var vm = CreateViewModel<ProfileViewModel>();
+            var vm = CreateViewModel<UserViewModel>();
             vm.Username = username;
             ShowViewModel(vm);
         }

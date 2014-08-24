@@ -113,7 +113,6 @@
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
-    <Compile Include="ViewModels\Users\ProfileViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryStargazersViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryWatchersViewModel.cs" />
@@ -136,7 +135,6 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
-    <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
     <Compile Include="ViewModels\Repositories\BaseRepositoriesViewModel.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
@@ -144,6 +142,8 @@
     <Compile Include="Models\LanguageModel.cs" />
     <Compile Include="Models\TrendingRepositoryModel.cs" />
     <Compile Include="ViewModels\Repositories\LangaugeItemViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

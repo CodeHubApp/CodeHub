@@ -224,7 +224,6 @@
     </Compile>
     <Compile Include="Views\Users\OrganizationMembersView.cs" />
     <Compile Include="Views\Users\BaseUserCollectionView.cs" />
-    <Compile Include="Views\Users\ProfileView.cs" />
     <Compile Include="Views\Users\UserFollowersView.cs" />
     <Compile Include="Views\Users\UserFollowingsView.cs" />
     <Compile Include="Views\Users\RepositoryStargazersView.cs" />
@@ -281,6 +280,7 @@
     <Compile Include="Transitions\SlideDownTransition.cs" />
     <Compile Include="TableViewSources\LanguageTableViewSource.cs" />
     <Compile Include="Cells\LanguageTableViewCell.cs" />
+    <Compile Include="Views\Users\UserView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

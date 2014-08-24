@@ -8,7 +8,7 @@ using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public class ProfileView : ViewModelPrettyDialogViewController<ProfileViewModel>
+    public class UserView : ViewModelPrettyDialogViewController<UserViewModel>
     {
         private UIActionSheet _actionSheet;
 

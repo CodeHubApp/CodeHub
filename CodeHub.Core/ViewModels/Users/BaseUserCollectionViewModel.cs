@@ -6,6 +6,7 @@ using Xamarin.Utilities.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp;
 using System.Collections.Generic;
+using CodeHub.Core.ViewModels.Organizations;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -13,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Users
     {
         protected readonly ReactiveList<BasicUserModel> UsersCollection = new ReactiveList<BasicUserModel>();
 
-        public IReadOnlyReactiveList<UserViewModel> Users { get; private set; }
+        public IReadOnlyReactiveList<UserItemViewModel> Users { get; private set; }
 
         private IReactiveCommand _loadMore;
         public IReactiveCommand LoadMore
@@ -39,15 +40,24 @@ namespace CodeHub.Core.ViewModels.Users
 
         protected BaseUserCollectionViewModel()
         {
-            var gotoUser = new Action<UserViewModel>(x =>
+            var gotoUser = new Action<UserItemViewModel>(x =>
             {
-                var vm = CreateViewModel<ProfileViewModel>();
-                vm.Username = x.Name;
-                ShowViewModel(vm);
+                if (x.IsOrganization)
+                {
+                    var vm = CreateViewModel<OrganizationViewModel>();
+                    vm.Username = x.Name;
+                    ShowViewModel(vm);
+                }
+                else
+                {
+                    var vm = CreateViewModel<UserViewModel>();
+                    vm.Username = x.Name;
+                    ShowViewModel(vm);
+                }
             });
 
             Users = UsersCollection.CreateDerivedCollection(
-                x => new UserViewModel(x.Login, x.AvatarUrl, gotoUser), 
+                x => new UserItemViewModel(x.Login, x.AvatarUrl, string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase), gotoUser), 
                 x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
         }

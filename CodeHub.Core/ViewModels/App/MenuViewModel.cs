@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.App
             GoToProfileCommand = ReactiveCommand.Create();
             GoToProfileCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<ProfileViewModel>();
+                var vm = CreateViewModel<UserViewModel>();
                 vm.Username = Account.Username;
                 ShowViewModel(vm);
             });
@@ -115,7 +115,7 @@ namespace CodeHub.Core.ViewModels.App
             GoToOrganizationCommand.OfType<string>().Subscribe(name =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
-                vm.Name = name;
+                vm.Username = name;
                 ShowViewModel(vm);
             });
 

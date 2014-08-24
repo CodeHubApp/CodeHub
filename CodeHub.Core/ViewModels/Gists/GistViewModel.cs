@@ -110,7 +110,7 @@ namespace CodeHub.Core.ViewModels.Gists
             GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             GoToUserCommand.Subscribe(x =>
             {
-                var vm = CreateViewModel<ProfileViewModel>();
+                var vm = CreateViewModel<UserViewModel>();
                 vm.Username = Gist.Owner.Login;
                 ShowViewModel(vm);
             });
