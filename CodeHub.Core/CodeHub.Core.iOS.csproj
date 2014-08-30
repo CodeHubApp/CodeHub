@@ -147,6 +147,7 @@
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
     <Compile Include="ViewModels\Gists\BaseGistsViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

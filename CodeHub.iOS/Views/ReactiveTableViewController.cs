@@ -14,6 +14,16 @@
             get { return _viewModel; }
             set { ViewModel = (TViewModel)value; }
         }
+
+        public override void LoadView()
+        {
+            base.LoadView();
+
+            this.WhenActivated(d =>
+            {
+                // Do nothing. This allows the VM to get called.
+            });
+        }
     }
 }
 

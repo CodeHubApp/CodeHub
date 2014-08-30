@@ -246,8 +246,6 @@
     <Compile Include="Elements\IssueElement.cs" />
     <Compile Include="Elements\MenuElement.cs" />
     <Compile Include="Elements\NewsFeedElement.cs" />
-    <Compile Include="Elements\ProfileElement.cs" />
-    <Compile Include="Elements\RepositoryElement.cs" />
     <Compile Include="Elements\UserElement.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
@@ -284,6 +282,8 @@
     <Compile Include="Views\Users\UserView.cs" />
     <Compile Include="Views\Gists\BaseGistsView.cs" />
     <Compile Include="TableViewSources\GistTableViewSource.cs" />
+    <Compile Include="TableViewSources\AccountTableViewSource.cs" />
+    <Compile Include="Cells\AccountCellView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
