@@ -22,8 +22,8 @@ namespace CodeHub.iOS.Views.App
 
         public override void ViewDidLoad()
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.GoToAddAccountCommand.ExecuteIfCan());
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.DismissCommand.ExecuteIfCan());
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add).WithCommand(ViewModel.GoToAddAccountCommand);
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Cancel }.WithCommand(ViewModel.DismissCommand);
 
             TableView.RowHeight = 74f;
             TableView.SeparatorInset = new UIEdgeInsets(0, TableView.RowHeight, 0, 0);

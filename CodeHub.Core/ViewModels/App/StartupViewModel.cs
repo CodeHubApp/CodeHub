@@ -49,16 +49,10 @@ namespace CodeHub.Core.ViewModels.App
             _accountsService = accountsService;
             _loginService = loginService;
 
-            GoToMainCommand = ReactiveCommand.Create();
-            GoToAccountsCommand = ReactiveCommand.Create();
-            GoToNewUserCommand = ReactiveCommand.Create();
+            GoToMainCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<MenuViewModel>()));
+            GoToAccountsCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<AccountsViewModel>()));
+            GoToNewUserCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<NewAccountViewModel>()));
             BecomeActiveWindowCommand = ReactiveCommand.Create();
-
-            GoToAccountsCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AccountsViewModel>()));
-
-            GoToNewUserCommand.Subscribe(_ => ShowViewModel(CreateViewModel<NewAccountViewModel>()));
-
-            GoToMainCommand.Subscribe(_ => ShowViewModel(CreateViewModel<MenuViewModel>()));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }

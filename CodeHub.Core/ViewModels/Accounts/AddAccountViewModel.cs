@@ -5,6 +5,7 @@ using CodeHub.Core.Data;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Services;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -61,6 +62,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)),
                 _ => Login());
             loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
         }
 

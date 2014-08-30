@@ -65,7 +65,6 @@ namespace CodeHub.iOS
             IoC.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
             CodeHub.Core.Bootstrap.Init();
 
-
             Theme.Setup();
             SetupPushNotifications();
             HandleNotificationOptions(options);

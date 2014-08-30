@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -63,6 +64,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             var loginCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x)), _ => Login(Code));
             loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
         }
 

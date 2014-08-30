@@ -30,6 +30,8 @@ namespace CodeHub.Core.ViewModels.App
             }
         }
 
+        public new IReactiveCommand DismissCommand { get; private set; }
+
         public ReactiveList<GitHubAccount> Accounts { get; private set; }
 
         public IReactiveCommand<object> LoginCommand { get; private set; }
@@ -42,10 +44,8 @@ namespace CodeHub.Core.ViewModels.App
         {
             _accountsService = accountsService;
             Accounts = new ReactiveList<GitHubAccount>(accountsService);
-            LoginCommand = ReactiveCommand.Create();
-            GoToAddAccountCommand = ReactiveCommand.Create();
-            DeleteAccountCommand = ReactiveCommand.Create();
 
+            DeleteAccountCommand = ReactiveCommand.Create();
             DeleteAccountCommand.OfType<GitHubAccount>().Subscribe(x =>
             {
                 if (Equals(accountsService.ActiveAccount, x))
@@ -54,6 +54,7 @@ namespace CodeHub.Core.ViewModels.App
                 Accounts.Remove(x);
             });
 
+            LoginCommand = ReactiveCommand.Create();
             LoginCommand.OfType<GitHubAccount>().Subscribe(x =>
             {
                 if (Equals(accountsService.ActiveAccount, x))
@@ -66,7 +67,10 @@ namespace CodeHub.Core.ViewModels.App
                 }
             });
 
-            GoToAddAccountCommand.Subscribe(_ => ShowViewModel(CreateViewModel<NewAccountViewModel>()));
+            DismissCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ActiveAccount).Select(x => x != null));
+
+            GoToAddAccountCommand = ReactiveCommand.Create().WithSubscription(_ => 
+                ShowViewModel(CreateViewModel<NewAccountViewModel>()));
 
             this.WhenActivated(d => Accounts.Reset(accountsService));
         }
