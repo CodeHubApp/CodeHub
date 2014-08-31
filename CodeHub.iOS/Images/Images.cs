@@ -81,7 +81,7 @@ namespace CodeHub.iOS
             public static UIImage User { get { return UIImageHelper.FromFileAuto("Images/Gist/user"); } }
         }
 
-        public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/Navigation/login_user_unknown"); } }
+        public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown"); } }
         public static UIImage Cancel { get { return UIImage.FromBundle("Images/Navigation/cancel"); } }
         public static UIImage BackButton { get { return UIImage.FromBundle("Images/Navigation/back"); } }
 

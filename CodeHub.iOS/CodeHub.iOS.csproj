@@ -615,12 +615,10 @@
     <BundleResource Include="Images\Navigation\cancel%402x.png">
       <DependentUpon>cancel.png</DependentUpon>
     </BundleResource>
-    <BundleResource Include="Images\Navigation\login_user_unknown.png" />
-    <BundleResource Include="Images\Navigation\login_user_unknown%402x.png">
-      <DependentUpon>login_user_unknown.png</DependentUpon>
-    </BundleResource>
     <BundleResource Include="Images\down_chevron.png" />
-    <BundleResource Include="Images\down_chevron%402x.png" />
+    <BundleResource Include="Images\down_chevron%402x.png">
+      <DependentUpon>down_chevron.png</DependentUpon>
+    </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
