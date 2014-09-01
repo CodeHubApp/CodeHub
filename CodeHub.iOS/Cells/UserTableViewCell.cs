@@ -7,7 +7,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
 
-namespace CodeHub.iOS.Views.Users
+namespace CodeHub.iOS.Cells
 {
     public class UserTableViewCell : ReactiveTableViewCell<UserItemViewModel>
     {

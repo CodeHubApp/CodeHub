@@ -48,7 +48,6 @@ namespace CodeHub.Core.ViewModels.Source
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 branches.SimpleCollectionLoad(
                     applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches(), t as bool?));
-            LoadCommand.ExecuteIfCan();
         }
     }
 }

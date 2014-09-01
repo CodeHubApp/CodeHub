@@ -1,7 +1,7 @@
 ﻿using System;
 using ReactiveUI;
 
-namespace CodeHub.iOS.Views
+namespace CodeHub.iOS.Cells
 {
     public abstract class ReactiveTableViewCell<TViewModel> : ReactiveTableViewCell, IViewFor<TViewModel> where TViewModel : class
     {

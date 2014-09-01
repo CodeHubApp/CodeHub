@@ -2,48 +2,47 @@ using System;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.Cells;
+using GitHubSharp.Models;
+using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class BranchesAndTagsView : ViewModelCollectionViewController<BranchesAndTagsViewModel>
+    public class BranchesAndTagsView : ReactiveTableViewController<BranchesAndTagsViewModel>
 	{
 		private UISegmentedControl _viewSegment;
-		private UIBarButtonItem _segmentBarButton;
-
-        public BranchesAndTagsView()
-        {
-            Title = "Source";
-            //NoItemsText = "No Items";
-        }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			_viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
-			_segmentBarButton = new UIBarButtonItem(_viewSegment) { Width = View.Frame.Width - 10f };
-		    _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) _viewSegment.SelectedSegment;
-		    ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (int)x);
-            this.BindList(ViewModel.Items, x => new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x.Object)));
+            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
 
-            ToolbarItems = new[] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+            _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) _viewSegment.SelectedSegment;
+            ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (int)x);
+            NavigationItem.TitleView = _viewSegment;
+
+            TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
+            TableView.RegisterClassForCellReuse(typeof(TagCellView), TagCellView.Key);
+
+            var source = new ReactiveTableViewSource<object>(TableView);
+            var section = new TableSectionInformation<object, UITableViewCell>(ViewModel.Items, SelectCell, 44f);
+            TableView.Source = source;
+            source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
+            source.Data = new [] { section };
+
+            ViewModel.LoadCommand.ExecuteIfCan();
 		}
 
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-			if (ToolbarItems != null)
-				NavigationController.SetToolbarHidden(false, animated);
-		}
-
-		public override void ViewWillDisappear(bool animated)
-		{
-			base.ViewWillDisappear(animated);
-			if (ToolbarItems != null)
-				NavigationController.SetToolbarHidden(true, animated);
-		}
+        private static NSString SelectCell(object x)
+        {
+            if (x is TagModel)
+                return TagCellView.Key;
+            if (x is BranchModel)
+                return BranchCellView.Key;
+            return null;
+        }
 	}
 }
 

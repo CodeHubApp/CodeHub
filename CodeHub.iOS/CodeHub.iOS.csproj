@@ -267,8 +267,6 @@
     <InterfaceDefinition Include="Cells\GistCellView.xib" />
     <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
     <Compile Include="Views\ReactiveTableViewController.cs" />
-    <Compile Include="Views\ReactiveTableViewCell.cs" />
-    <Compile Include="Views\Users\UserTableViewCell.cs" />
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
     <Compile Include="Delegates\ObservableSearchDelegate.cs" />
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
@@ -284,6 +282,11 @@
     <Compile Include="Cells\AccountCellView.cs" />
     <Compile Include="TableViewSources\EventTableViewSource.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Cells\ReactiveTableViewCell.cs" />
+    <Compile Include="Cells\UserTableViewCell.cs" />
+    <Compile Include="Cells\TeamCellView.cs" />
+    <Compile Include="Cells\BranchCellView.cs" />
+    <Compile Include="Cells\TagCellView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

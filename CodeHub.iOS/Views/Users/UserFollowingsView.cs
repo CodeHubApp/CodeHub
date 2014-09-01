@@ -7,7 +7,6 @@ namespace CodeHub.iOS.Views.Users
         public UserFollowingsView()
         {
             Title = "Following";
-            //NoItemsText = "Not Following Anyone";
         }
     }
 }

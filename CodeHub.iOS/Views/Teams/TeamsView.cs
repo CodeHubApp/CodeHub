@@ -1,29 +1,24 @@
 using System;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
+using GitHubSharp.Models;
+using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.Views.Teams
 {
-    public class TeamsView : ViewModelCollectionViewController<TeamsViewModel>
+    public class TeamsView : ReactiveTableViewController<TeamsViewModel>
     {
-        public TeamsView()
-        {
-            Title = "Teams";
-
-            this.WhenActivated(d =>
-            {
-                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
-            });
-        }
-
         public override void ViewDidLoad()
         {
+            Title = "Teams";
             base.ViewDidLoad();
+            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
+            TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
+            var source = new ReactiveTableViewSource<TeamShortModel>(TableView, ViewModel.Teams, TeamCellView.Key, 44f);
+            source.ElementSelected.Subscribe(ViewModel.GoToTeamCommand.ExecuteIfCan);
+            TableView.Source = source;
 
-            this.BindList(ViewModel.Teams, 
-                x => new StyledStringElement(x.Name, () => ViewModel.GoToTeamCommand.Execute(x)));
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

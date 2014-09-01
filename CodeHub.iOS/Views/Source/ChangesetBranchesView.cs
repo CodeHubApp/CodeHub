@@ -1,20 +1,25 @@
+using System;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
+using GitHubSharp.Models;
+using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetBranchesView : ViewModelCollectionViewController<ChangesetBranchesViewModel>
+    public class ChangesetBranchesView : ReactiveTableViewController<ChangesetBranchesViewModel>
     {
         public override void ViewDidLoad()
         {
             Title = "Changeset Branch";
-            //NoItemsText = "No Branches";
 
             base.ViewDidLoad();
 
-            this.BindList(ViewModel.Branches, x => new StyledStringElement(x.Name, () => ViewModel.GoToBranchCommand.Execute(x)));
+            TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
+            var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
+            source.ElementSelected.Subscribe(ViewModel.GoToBranchCommand.ExecuteIfCan);
+            TableView.Source = source;
+
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 using CodeHub.Core.ViewModels.Users;
-using CodeHub.iOS.Views.Users;
+using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.TableViewSources
 {

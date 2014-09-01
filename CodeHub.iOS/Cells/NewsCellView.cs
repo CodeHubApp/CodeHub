@@ -3,7 +3,6 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using CodeHub.iOS;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Events;
 using ReactiveUI;
 using System.Reactive.Linq;

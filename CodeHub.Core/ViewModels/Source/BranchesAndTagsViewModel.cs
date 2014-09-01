@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string RepositoryName { get; set; }
 
-		public ReactiveList<ViewObject> Items { get; private set; }
+        public IReadOnlyReactiveList<object> Items { get; private set; }
 
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
@@ -37,7 +37,10 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
-            Items = new ReactiveList<ViewObject>();
+            var items = new ReactiveList<object>();
+            Items = items.CreateDerivedCollection(x => x, 
+                ListContainsSearchKeyword, 
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToSourceCommand = ReactiveCommand.Create();
 		    GoToSourceCommand.OfType<BranchModel>().Subscribe(x =>
@@ -66,28 +69,25 @@ namespace CodeHub.Core.ViewModels.Source
                 if (SelectedFilter == ShowIndex.Branches)
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches();
-                    return this.RequestModel(request, t as bool?, response =>
-                    {
-                        this.CreateMore(response, m => { }, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-                        Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
-                    });
+                    return this.RequestModel(request, t as bool?, response => items.Reset(response.Data));
                 }
                 else
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetTags();
-                    return this.RequestModel(request, t as bool?, response =>
-                    {
-                        this.CreateMore(response, m => { }, d => Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
-                        Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
-                    });
+                    return this.RequestModel(request, t as bool?, response => items.Reset(response.Data));
                 }
 		    });
 		}
 
-        public class ViewObject
+        private bool ListContainsSearchKeyword(object x)
         {
-            public string Name { get; set; }
-            public object Object { get; set; }
+            var tagModel = x as TagModel;
+            if (tagModel != null)
+                return tagModel.Name.ContainsKeyword(SearchKeyword);
+            var branchModel = x as BranchModel;
+            if (branchModel != null)
+                return branchModel.Name.ContainsKeyword(SearchKeyword);
+            return false;
         }
 
 	    public enum ShowIndex

@@ -3,7 +3,6 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.iOS;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.iOS.Views;
 using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
