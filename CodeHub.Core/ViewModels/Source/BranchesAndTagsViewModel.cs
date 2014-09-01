@@ -22,7 +22,9 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string RepositoryName { get; set; }
 
-        public IReadOnlyReactiveList<object> Items { get; private set; }
+        public IReadOnlyReactiveList<BranchModel> Branches { get; private set; }
+
+        public IReadOnlyReactiveList<TagModel> Tags { get; private set; }
 
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
@@ -37,9 +39,14 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
-            var items = new ReactiveList<object>();
-            Items = items.CreateDerivedCollection(x => x, 
-                ListContainsSearchKeyword, 
+            var branches = new ReactiveList<BranchModel>();
+            Branches = branches.CreateDerivedCollection(x => x, 
+                x => x.Name.ContainsKeyword(SearchKeyword), 
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
+            var tags = new ReactiveList<TagModel>();
+            Tags = tags.CreateDerivedCollection(x => x, 
+                x => x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToSourceCommand = ReactiveCommand.Create();
@@ -64,31 +71,41 @@ namespace CodeHub.Core.ViewModels.Source
 
 		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 		    {
                 if (SelectedFilter == ShowIndex.Branches)
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches();
-                    return this.RequestModel(request, t as bool?, response => items.Reset(response.Data));
+                    branches.Clear();
+
+                    while (request != null)
+                    {
+                        request.RequestFromCache = false;
+                        var result = await applicationService.Client.ExecuteAsync(request);
+                        branches.AddRange(result.Data.Where(x => x != null));
+                        request = result.More;
+                    }
+
                 }
                 else
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetTags();
-                    return this.RequestModel(request, t as bool?, response => items.Reset(response.Data));
+
+                    tags.Clear();
+
+                    while (request != null)
+                    {
+                        request.RequestFromCache = false;
+                        var result = await applicationService.Client.ExecuteAsync(request);
+                        tags.AddRange(result.Data.Where(x => x != null));
+                        request = result.More;
+                    }
+
+
+                    //return tags.LoadAll<TagModel>(request);
                 }
 		    });
 		}
-
-        private bool ListContainsSearchKeyword(object x)
-        {
-            var tagModel = x as TagModel;
-            if (tagModel != null)
-                return tagModel.Name.ContainsKeyword(SearchKeyword);
-            var branchModel = x as BranchModel;
-            if (branchModel != null)
-                return branchModel.Name.ContainsKeyword(SearchKeyword);
-            return false;
-        }
 
 	    public enum ShowIndex
 	    {

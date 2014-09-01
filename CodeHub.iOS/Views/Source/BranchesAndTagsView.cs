@@ -4,7 +4,6 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using GitHubSharp.Models;
-using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -25,24 +24,32 @@ namespace CodeHub.iOS.Views.Source
 
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             TableView.RegisterClassForCellReuse(typeof(TagCellView), TagCellView.Key);
+ 
+            ViewModel.WhenAnyValue(x => x.SelectedFilter)
+                .Subscribe(x =>
+                {
+                    if (TableView.Source != null)
+                    {
+                        TableView.Source.Dispose();
+                        TableView.Source = null;
+                    }
 
-            var source = new ReactiveTableViewSource<object>(TableView);
-            var section = new TableSectionInformation<object, UITableViewCell>(ViewModel.Items, SelectCell, 44f);
-            TableView.Source = source;
-            source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
-            source.Data = new [] { section };
+                    if (x == BranchesAndTagsViewModel.ShowIndex.Branches)
+                    {
+                        var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
+                        source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
+                        TableView.Source = source;
+                    }
+                    else
+                    {
+                        var source = new ReactiveTableViewSource<TagModel>(TableView, ViewModel.Tags, TagCellView.Key, 44f);
+                        source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
+                        TableView.Source = source;
+                    }
+                });
 
             ViewModel.LoadCommand.ExecuteIfCan();
 		}
-
-        private static NSString SelectCell(object x)
-        {
-            if (x is TagModel)
-                return TagCellView.Key;
-            if (x is BranchModel)
-                return BranchCellView.Key;
-            return null;
-        }
 	}
 }
 

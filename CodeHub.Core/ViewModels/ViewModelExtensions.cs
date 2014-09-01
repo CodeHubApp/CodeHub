@@ -4,8 +4,7 @@ using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -65,6 +64,20 @@ namespace CodeHub.Core.ViewModels
                 });
                 viewModel.Reset(response.Data);
             });
+        }
+
+        public static async Task LoadAll<T>(this ReactiveList<T> @this, GitHubRequest<List<T>> request) where T : new()
+        {
+            var application = IoC.Resolve<IApplicationService>();
+            @this.Clear();
+
+            while (request != null)
+            {
+                request.RequestFromCache = false;
+                var result = await application.Client.ExecuteAsync(request);
+                @this.AddRange(result.Data.Where(x => x != null));
+                request = result.More;
+            }
         }
     }
 }
