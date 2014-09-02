@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             Repositories = repositories.CreateDerivedCollection(x => 
                 new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
                                             x.Description, x.StargazersCount, x.ForksCount,
-                                            gotoRepository));
+                                            true, gotoRepository));
 
             SearchCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x)),

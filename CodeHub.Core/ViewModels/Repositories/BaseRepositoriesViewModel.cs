@@ -45,6 +45,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         protected BaseRepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
         {
             ApplicationService = applicationService;
+            ShowRepositoryOwner = true;
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
@@ -56,7 +57,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             Repositories = RepositoryCollection.CreateDerivedCollection(
                 x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
-                                                 x.Description, x.StargazersCount, x.ForksCount, gotoRepository), 
+                    ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
+                    ShowRepositoryOwner, gotoRepository), 
                 x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 

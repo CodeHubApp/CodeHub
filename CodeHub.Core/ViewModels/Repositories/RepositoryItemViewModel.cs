@@ -17,10 +17,13 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public int Forks { get; private set; }
 
+        public bool ShowOwner { get; private set; }
+
         public IReactiveCommand GoToCommand { get; private set; }
 
         internal RepositoryItemViewModel(string name, string owner, string imageUrl,
                                          string description, int stars, int forks,
+                                         bool showOwner,
                                          Action<RepositoryItemViewModel> gotoCommand)
         {
             Name = name;
@@ -29,6 +32,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             Description = description;
             Stars = stars;
             Forks = forks;
+            ShowOwner = showOwner;
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
         }
     }

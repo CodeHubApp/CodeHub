@@ -90,7 +90,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
                 Repositories = requests.Select(r =>
                 {
-                    var transformedRepos = r.Query.Result.Select(x => new RepositoryItemViewModel(x.Name, x.Owner, x.AvatarUrl, x.Description, x.Stars, x.Forks, gotoRepository));
+                    var transformedRepos = r.Query.Result.Select(x => 
+                        new RepositoryItemViewModel(x.Name, x.Owner, x.AvatarUrl, x.Description, x.Stars, x.Forks, true, gotoRepository));
                     return new GroupedCollection<RepositoryItemViewModel>(r.Time.Name, new ReactiveList<RepositoryItemViewModel>(transformedRepos));
                 }).ToList();
             });

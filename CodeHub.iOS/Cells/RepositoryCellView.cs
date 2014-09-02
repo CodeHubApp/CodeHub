@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Cells
                     OwnerImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
-                    UserLabel.Hidden = string.IsNullOrEmpty(x.Owner);
+                    UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);
                     UserImageView.Hidden = UserLabel.Hidden;
                     UserLabel.Text = x.Owner ?? string.Empty;
                     ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;

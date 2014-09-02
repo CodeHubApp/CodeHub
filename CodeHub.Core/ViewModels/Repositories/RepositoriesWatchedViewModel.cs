@@ -7,8 +7,6 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         public RepositoriesWatchedViewModel(IApplicationService applicationService) : base(applicationService)
         {
-            ShowRepositoryOwner = true;
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 RepositoryCollection.SimpleCollectionLoad(
                     applicationService.Client.AuthenticatedUser.Repositories.GetWatching(), t as bool?));
