@@ -1,34 +1,20 @@
-using System;
 using CodeHub.Core.ViewModels.Organizations;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationsView : ViewModelCollectionViewController<OrganizationsViewModel>
+    public class OrganizationsView : ReactiveTableViewController<OrganizationsViewModel>
     {
-        public OrganizationsView()
-        {
-            Title = "Organizations";
-            //NoItemsText = "No Organizations";
-
-            this.WhenActivated(d =>
-            {
-                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
-            });
-        }
-
         public override void ViewDidLoad()
         {
+            Title = "Organizations";
+
             base.ViewDidLoad();
 
-            this.BindList(ViewModel.Organizations, x =>
-			{
-				var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-				e.Tapped += () => ViewModel.GoToOrganizationCommand.Execute(x);
-				return e;
-			});
+            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
+            TableView.Source = new UserTableViewSource(TableView, ViewModel.Organizations);
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
 	}
 }

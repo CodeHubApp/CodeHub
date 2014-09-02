@@ -14,18 +14,18 @@ namespace CodeHub.iOS.TableViewSources
 {
     public class NotificationTableViewSource : ReactiveTableViewSource<NotificationModel>
     {
-        private NotificationTableViewCell _usedForHeight;
+        private NotificationViewCell _usedForHeight;
 
         public NotificationTableViewSource(UITableView tableView)
             : base(tableView)
         {
-            tableView.RegisterClassForCellReuse(typeof(NotificationTableViewCell), NotificationTableViewCell.Key);
+            tableView.RegisterClassForCellReuse(typeof(NotificationViewCell), NotificationViewCell.Key);
         }
 
         public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (NotificationTableViewCell)tableView.DequeueReusableCell(NotificationTableViewCell.Key);
+                _usedForHeight = (NotificationViewCell)tableView.DequeueReusableCell(NotificationViewCell.Key);
 
             var item = ItemAt(indexPath) as NotificationModel;
             if (item == null) 
@@ -40,8 +40,8 @@ namespace CodeHub.iOS.TableViewSources
             Data = collections.Select(x =>
             {
                 var headerView = new NotificationHeaderView(x);
-                return new TableSectionInformation<NotificationModel, NotificationTableViewCell>(x.Notifications,
-                    NotificationTableViewCell.Key, 44f)
+                return new TableSectionInformation<NotificationModel, NotificationViewCell>(x.Notifications,
+                    NotificationViewCell.Key, 44f)
                 {
                     Header = new TableSectionHeader(() => headerView, 32f)
                 };

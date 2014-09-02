@@ -102,6 +102,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
+        public IReactiveCommand GoToForksCommand { get; private set; }
+
         public bool IsPinned
         {
             get
@@ -243,6 +245,14 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToCollaboratorsCommand.Subscribe(_ =>
             {
                 var vm = CreateViewModel<RepositoryCollaboratorsViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
+            });
+
+            GoToForksCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = CreateViewModel<RepositoryForksViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 ShowViewModel(vm);

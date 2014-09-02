@@ -42,7 +42,7 @@ namespace CodeHub.iOS.Cells
                 .Subscribe(x =>
                 {
                     TitleLabel.Text = x.Account.Username;
-                    SubtitleLabel.Text = x.Account.Domain;
+                    SubtitleLabel.Text = x.Account.WebDomain;
                     ImageView.SetImage(new NSUrl(x.Account.AvatarUrl), Images.LoginUserUnknown);
                 });
 

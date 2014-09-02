@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using CodeHub.iOS.Views;
 using GitHubSharp.Models;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
@@ -9,12 +8,12 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Cells
 {
-    public class NotificationTableViewCell : ReactiveTableViewCell<NotificationModel>
+    public class NotificationViewCell : ReactiveTableViewCell<NotificationModel>
     {
         public static NSString Key = new NSString("NotificationTableViewCell");
 
         [Export("initWithStyle:reuseIdentifier:")]
-        public NotificationTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
+        public NotificationViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
             : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
         {
             TextLabel.Lines = 0;

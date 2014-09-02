@@ -29,8 +29,7 @@ namespace CodeHub.iOS.Views.Repositories
             _split = new SplitButtonElement();
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
-            var collaborators = _split.AddButton("Contributors", "-", () => ViewModel.GoToCollaboratorsCommand.ExecuteIfCan());
-            ViewModel.WhenAnyValue(x => x.Collaborators).Subscribe(x => collaborators.Text = x.HasValue ? x.ToString() : "-");
+            var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
 
             Root.Reset(new Section(HeaderView) { _split });
 
@@ -52,6 +51,7 @@ namespace CodeHub.iOS.Views.Repositories
                 HeaderView.SubText = x.Description;
                 stargazers.Text = x.StargazersCount.ToString();
                 watchers.Text = x.SubscribersCount.ToString();
+                forks.Text = x.ForksCount.ToString();
 
                 _splitElements[0].Button1 = new SplitElement.SplitButton(x.Private ? Images.Locked : Images.Unlocked, x.Private ? "Private" : "Public");
                 _splitElements[0].Button2 = new SplitElement.SplitButton(Images.Language, x.Language ?? "N/A");

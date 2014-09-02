@@ -46,6 +46,8 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             _applicationService = applicationService;
 
+            Files = new Dictionary<string, string>();
+
             SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 if (_files == null || _files.Count == 0)

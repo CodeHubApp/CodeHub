@@ -77,9 +77,19 @@ namespace CodeHub.Core.Data
 
         public string Domain { get; set; }
 
-        public Dictionary<string, object> Filters { get; set; }
+        private Dictionary<string, object> _filters = new Dictionary<string, object>();
+        public Dictionary<string, object> Filters 
+        {
+            get { return _filters; }
+            set { _filters = value ?? new Dictionary<string, object>(); }
+        }
 
-        public List<PinnedRepository> PinnnedRepositories { get; set; }
+        private List<PinnedRepository> _pinnedRepositories = new List<PinnedRepository>();
+        public List<PinnedRepository> PinnnedRepositories
+        {
+            get { return _pinnedRepositories; }
+            set { _pinnedRepositories = value ?? new List<PinnedRepository>(); }
+        }
 
         public string DefaultStartupView { get; set; }
 

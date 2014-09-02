@@ -115,7 +115,6 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Cells\NotificationTableViewCell.cs" />
     <Compile Include="Elements\LabelElement.cs" />
     <Compile Include="Elements\MilestoneElement.cs" />
     <Compile Include="Images\Images.cs" />
@@ -287,6 +286,8 @@
     <Compile Include="Cells\TeamCellView.cs" />
     <Compile Include="Cells\BranchCellView.cs" />
     <Compile Include="Cells\TagCellView.cs" />
+    <Compile Include="Cells\NotificationViewCell.cs" />
+    <Compile Include="Views\Repositories\RepositoryForksView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

@@ -149,6 +149,7 @@
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryForksViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

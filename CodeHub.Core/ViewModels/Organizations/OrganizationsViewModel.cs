@@ -5,14 +5,13 @@ using GitHubSharp.Models;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.ViewModels.Users;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : BaseViewModel, ILoadableViewModel
 	{
-        private readonly ReactiveList<BasicUserModel> _organizations = new ReactiveList<BasicUserModel>();
-
-        public IReadOnlyReactiveList<BasicUserModel> Organizations { get; private set; }
+        public IReadOnlyReactiveList<UserItemViewModel> Organizations { get; private set; }
 
         public string Username { get; set; }
 
@@ -29,20 +28,22 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public OrganizationsViewModel(IApplicationService applicationService)
         {
-            Organizations = _organizations.CreateDerivedCollection(x => x,
+            var organizations = new ReactiveList<BasicUserModel>();
+            Organizations = organizations.CreateDerivedCollection(
+                x => new UserItemViewModel(x.Login, x.AvatarUrl, true, GoToOrganizationCommand.ExecuteIfCan),
                 x => x.Login.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToOrganizationCommand = ReactiveCommand.Create();
-            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
+            GoToOrganizationCommand.OfType<UserItemViewModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
-                vm.Username = x.Login;
+                vm.Username = x.Name;
                 ShowViewModel(vm);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                _organizations.SimpleCollectionLoad(applicationService.Client.Users[Username].GetOrganizations(),
+                organizations.SimpleCollectionLoad(applicationService.Client.Users[Username].GetOrganizations(),
                     t as bool?));
         }
 	}

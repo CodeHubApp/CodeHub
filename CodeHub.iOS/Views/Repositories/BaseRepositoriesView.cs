@@ -12,8 +12,9 @@ namespace CodeHub.iOS.Views.Repositories
 
             base.ViewDidLoad();
 
-            TableView.Source = new RepositoryTableViewSource(TableView, ViewModel.Repositories);
             this.AddSearchBar(x => ViewModel.SearchKeyword = x);
+            TableView.Source = new RepositoryTableViewSource(TableView, ViewModel.Repositories);
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

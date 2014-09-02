@@ -18,7 +18,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             base.ViewDidLoad();
 
-            var titleButton = new TitleButton { Frame = new RectangleF(0, 0, 320f, 44f) };
+            var titleButton = new TitleButton { Frame = new RectangleF(0, 0, 200f, 32f) };
             titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
             ViewModel.WhenAnyValue(x => x.SelectedLanguage).Subscribe(x => titleButton.Text = x.Name);
             NavigationItem.TitleView = titleButton;
