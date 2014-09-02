@@ -259,9 +259,7 @@
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <None Include="packages.config" />
     <Compile Include="Cells\GistCellView.cs" />
-    <Compile Include="Cells\GistCellView.designer.cs">
-      <DependentUpon>GistCellView.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Cells\GistCellView.designer.cs" />
     <InterfaceDefinition Include="Cells\GistCellView.xib" />
     <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
     <Compile Include="Views\ReactiveTableViewController.cs" />
@@ -288,6 +286,10 @@
     <Compile Include="Cells\NotificationViewCell.cs" />
     <Compile Include="Views\Repositories\RepositoryForksView.cs" />
     <Compile Include="Views\Source\CommitBranchsView.cs" />
+    <Compile Include="Cells\CommitCellView.cs" />
+    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
+    <Compile Include="Cells\CommitCellView.designer.cs" />
+    <Compile Include="TableViewSources\CommitTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

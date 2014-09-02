@@ -42,6 +42,7 @@ namespace CodeHub.Core.ViewModels.Source
                 var vm = CreateViewModel<ChangesetsViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
+                vm.Branch = x.Name;
                 ShowViewModel(vm);
             });
 

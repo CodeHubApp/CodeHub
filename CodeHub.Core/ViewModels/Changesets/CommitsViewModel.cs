@@ -6,12 +6,15 @@ using System.Collections.Generic;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
     public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel
 	{
-        private readonly ReactiveList<CommitModel> _commits = new ReactiveList<CommitModel>();
+        private const string GitHubDefaultGravitar = "https%3A%2F%2Fassets-cdn.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png&r=x&s=140";
+        private MD5 _md5 = MD5.Create();
 
 		public string RepositoryOwner { get; set; }
 
@@ -19,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToChangesetCommand { get; private set; }
 
-        public IReadOnlyReactiveList<CommitViewModel> Commits { get; private set; }
+        public IReadOnlyReactiveList<CommitItemViewModel> Commits { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
@@ -32,19 +35,23 @@ namespace CodeHub.Core.ViewModels.Changesets
 
 	    protected CommitsViewModel()
 	    {
-            Commits = _commits.CreateDerivedCollection(CreateViewModel, ContainsSearchKeyword, signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+            var commits = new ReactiveList<CommitModel>();
+            Commits = commits.CreateDerivedCollection(
+                CreateViewModel, 
+                ContainsSearchKeyword, 
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToChangesetCommand = ReactiveCommand.Create();
-            GoToChangesetCommand.OfType<CommitViewModel>().Subscribe(x =>
+            GoToChangesetCommand.OfType<CommitItemViewModel>().Subscribe(x =>
 	        {
 	            var vm = CreateViewModel<ChangesetViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-	            vm.Node = x.Sha;
+	            //vm.Node = x.Sha;
                 ShowViewModel(vm);
 	        });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => _commits.SimpleCollectionLoad(GetRequest(), x as bool?));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(x => commits.SimpleCollectionLoad(GetRequest(), x as bool?));
 	    }
 
         protected abstract GitHubRequest<List<CommitModel>> GetRequest();
@@ -61,7 +68,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             }
         }
 
-        private static CommitViewModel CreateViewModel(CommitModel x)
+        private CommitItemViewModel CreateViewModel(CommitModel x)
         {
             var msg = x.Commit.Message ?? string.Empty;
             var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
@@ -72,14 +79,27 @@ namespace CodeHub.Core.ViewModels.Changesets
             if (x.Commit.Committer != null)
                 date = x.Commit.Committer.Date;
 
-            return new CommitViewModel
+            var avatar = default(string);
+            try
             {
-                Message = desc,
-                Commiter = login,
-                CommitDate = date,
-                Sha = x.Sha
-            };
+                avatar = CreateGravatarUrl(x.Commit.Author.Email);
+            }
+            catch {}
+
+            return new CommitItemViewModel(login, avatar, desc, date, _ => {});
         }
+
+        public string CreateGravatarUrl(string email)
+        {
+            var inputBytes = Encoding.ASCII.GetBytes(email.Trim().ToLower());
+            var hash = _md5.ComputeHash(inputBytes);
+            var sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+                sb.Append(hash[i].ToString("x2"));
+            return string.Format("http://www.gravatar.com/avatar/{0}?d={1}", sb, GitHubDefaultGravitar);
+        }
+
+
 
         private static string GenerateCommiterName(CommitModel x)
         {
@@ -90,14 +110,6 @@ namespace CodeHub.Core.ViewModels.Changesets
             if (x.Author != null)
                 return x.Author.Login;
             return x.Committer != null ? x.Committer.Login : "Unknown";
-        }
-            
-        public class CommitViewModel
-        {
-            public string Message { get; set; }
-            public DateTimeOffset CommitDate { get; set; }
-            public string Commiter { get; set; }
-            public string Sha { get; set; }
         }
 	}
 }
