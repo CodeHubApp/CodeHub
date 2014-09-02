@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
@@ -71,38 +70,17 @@ namespace CodeHub.Core.ViewModels.Source
 
 		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
 		    {
                 if (SelectedFilter == ShowIndex.Branches)
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches();
-                    branches.Clear();
-
-                    while (request != null)
-                    {
-                        request.RequestFromCache = false;
-                        var result = await applicationService.Client.ExecuteAsync(request);
-                        branches.AddRange(result.Data.Where(x => x != null));
-                        request = result.More;
-                    }
-
+                    return branches.LoadAll<BranchModel>(request);
                 }
                 else
                 {
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetTags();
-
-                    tags.Clear();
-
-                    while (request != null)
-                    {
-                        request.RequestFromCache = false;
-                        var result = await applicationService.Client.ExecuteAsync(request);
-                        tags.AddRange(result.Data.Where(x => x != null));
-                        request = result.More;
-                    }
-
-
-                    //return tags.LoadAll<TagModel>(request);
+                    return tags.LoadAll<TagModel>(request);
                 }
 		    });
 		}
