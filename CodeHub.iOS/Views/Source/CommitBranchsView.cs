@@ -6,13 +6,15 @@ using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetBranchesView : ReactiveTableViewController<ChangesetBranchesViewModel>
+    public class CommitBranchsView : ReactiveTableViewController<CommitBranchesViewModel>
     {
         public override void ViewDidLoad()
         {
-            Title = "Changeset Branch";
-
             base.ViewDidLoad();
+
+            Title = "Commit Branch";
+
+            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
 
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);

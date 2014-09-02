@@ -9,7 +9,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class ChangesetBranchesViewModel : BaseViewModel, ILoadableViewModel
+    public class CommitBranchesViewModel : BaseViewModel, ILoadableViewModel
     {
         public string RepositoryOwner { get; set; }
 
@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public ChangesetBranchesViewModel(IApplicationService applicationService)
+        public CommitBranchesViewModel(IApplicationService applicationService)
         {
             var branches = new ReactiveList<BranchModel>();
             Branches = branches.CreateDerivedCollection(
@@ -46,8 +46,7 @@ namespace CodeHub.Core.ViewModels.Source
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                branches.SimpleCollectionLoad(
-                    applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches(), t as bool?));
+                branches.LoadAll(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches()));
         }
     }
 }

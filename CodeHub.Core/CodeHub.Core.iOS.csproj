@@ -104,7 +104,6 @@
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
-    <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
@@ -150,6 +149,7 @@
     <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryForksViewModel.cs" />
+    <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

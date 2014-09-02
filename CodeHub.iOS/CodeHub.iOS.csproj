@@ -158,7 +158,6 @@
     <Compile Include="Views\Notifications\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
@@ -288,6 +287,7 @@
     <Compile Include="Cells\TagCellView.cs" />
     <Compile Include="Cells\NotificationViewCell.cs" />
     <Compile Include="Views\Repositories\RepositoryForksView.cs" />
+    <Compile Include="Views\Source\CommitBranchsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

@@ -216,7 +216,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 }
                 else
                 {
-                    var vm = CreateViewModel<ChangesetBranchesViewModel>();
+                    var vm = CreateViewModel<CommitBranchesViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     ShowViewModel(vm);
