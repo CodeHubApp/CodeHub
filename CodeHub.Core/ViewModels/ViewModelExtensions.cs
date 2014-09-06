@@ -75,7 +75,10 @@ namespace CodeHub.Core.ViewModels
             {
                 request.RequestFromCache = false;
                 var result = await application.Client.ExecuteAsync(request);
-                @this.AddRange(result.Data.Where(x => x != null));
+                if (@this.Count == 0)
+                    @this.Reset(result.Data.Where(x => x != null));
+                else
+                    @this.AddRange(result.Data.Where(x => x != null));
                 request = result.More;
             }
         }

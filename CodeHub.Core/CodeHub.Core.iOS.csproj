@@ -151,6 +151,7 @@
     <Compile Include="ViewModels\Repositories\RepositoryForksViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

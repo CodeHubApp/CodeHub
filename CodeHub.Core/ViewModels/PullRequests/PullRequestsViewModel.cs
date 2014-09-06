@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
     {
-        public ReactiveList<PullRequestModel> PullRequests { get; private set; }
+        public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -27,9 +27,21 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand LoadCommand { get; private set; }
 
+        private string _searchKeyword;
+        public string SearchKeyword
+        {
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+        }
+
+
         public PullRequestsViewModel(IApplicationService applicationService)
 		{
-            PullRequests = new ReactiveList<PullRequestModel>();
+            var pullRequests = new ReactiveList<PullRequestModel>();
+            PullRequests = pullRequests.CreateDerivedCollection(
+                x => new PullRequestItemViewModel(x, GoToPullRequestCommand),
+                x => x.Title.ContainsKeyword(SearchKeyword),
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToPullRequestCommand = ReactiveCommand.Create();
 		    GoToPullRequestCommand.OfType<PullRequestModel>().Subscribe(pullRequest =>
@@ -39,13 +51,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
 		        vm.RepositoryName = RepositoryName;
 		        vm.PullRequestId = pullRequest.Number;
 		        vm.PullRequest = pullRequest;
-		        vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
-		        {
-                    var index = PullRequests.IndexOf(pullRequest);
-                    if (index < 0) return;
-                    PullRequests[index] = x;
-                    PullRequests.Reset();
-		        });
+//		        vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
+//		        {
+//                    var index = PullRequests.IndexOf(pullRequest);
+//                    if (index < 0) return;
+//                    PullRequests[index] = x;
+//                    PullRequests.Reset();
+//		        });
                 ShowViewModel(vm);
 		    });
 
@@ -55,7 +67,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             {
                 var state = SelectedFilter == 0 ? "open" : "closed";
 			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);
-                return PullRequests.SimpleCollectionLoad(request, t as bool?);
+                return pullRequests.SimpleCollectionLoad(request, t as bool?);
             });
 		}
     }

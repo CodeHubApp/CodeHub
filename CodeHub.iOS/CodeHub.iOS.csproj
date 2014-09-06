@@ -290,6 +290,10 @@
     <InterfaceDefinition Include="Cells\CommitCellView.xib" />
     <Compile Include="Cells\CommitCellView.designer.cs" />
     <Compile Include="TableViewSources\CommitTableViewSource.cs" />
+    <Compile Include="Cells\PullRequestCellView.cs" />
+    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
+    <Compile Include="Cells\PullRequestCellView.designer.cs" />
+    <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
