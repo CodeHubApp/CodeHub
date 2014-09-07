@@ -60,9 +60,6 @@ namespace CodeHub.Core.ViewModels.Repositories
                 langs.Insert(0, DefaultLanguage);
                 languages.Reset(langs);
             });
-
-            LoadCommand.TriggerNetworkActivity(networkActivity);
-            LoadCommand.ExecuteIfCan();
         }
     }
 }

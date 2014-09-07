@@ -14,6 +14,7 @@ using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
 using System.Threading.Tasks;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -38,6 +39,13 @@ namespace CodeHub.Core.ViewModels.App
         public GitHubAccount Account
         {
             get { return _applicationService.Account; }
+        }
+
+        private UserAuthenticatedModel _user;
+        public UserAuthenticatedModel User
+        {
+            get { return _user; }
+            private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
         public IReactiveCommand LoadCommand { get; private set; }
@@ -127,17 +135,16 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToStarredRepositoriesCommand = ReactiveCommand.Create();
-            GoToStarredRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesStarredViewModel>());
+            GoToStarredRepositoriesCommand = ReactiveCommand.Create().WithSubscription(
+                _ => CreateAndShowViewModel<RepositoriesStarredViewModel>());
 
-            GoToPublicGistsCommand = ReactiveCommand.Create();
-            GoToPublicGistsCommand.Subscribe(_ => CreateAndShowViewModel<PublicGistsViewModel>());
+            GoToPublicGistsCommand = ReactiveCommand.Create().WithSubscription(
+                _ => CreateAndShowViewModel<PublicGistsViewModel>());
 
-            GoToStarredGistsCommand = ReactiveCommand.Create();
-            GoToStarredGistsCommand.Subscribe(_ => CreateAndShowViewModel<StarredGistsViewModel>());
+            GoToStarredGistsCommand = ReactiveCommand.Create().WithSubscription(
+                _ => CreateAndShowViewModel<StarredGistsViewModel>());
 
-            GoToMyGistsCommand = ReactiveCommand.Create();
-            GoToMyGistsCommand.Subscribe(_ =>
+            GoToMyGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = CreateViewModel<UserGistsViewModel>();
                 vm.Username = Account.Username;
@@ -152,21 +159,20 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            var loadCommand = ReactiveCommand.Create();
-            loadCommand.Subscribe(_ =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
                 var notificationRequest = applicationService.Client.Notifications.GetAll();
                 notificationRequest.RequestFromCache = false;
                 notificationRequest.CheckIfModified = false;
 
-                applicationService.Client.ExecuteAsync(notificationRequest)
+                var task2 = applicationService.Client.ExecuteAsync(notificationRequest)
                     .ContinueWith(t => Notifications = t.Result.Data.Count, TaskScheduler.FromCurrentSynchronizationContext());
 
-                applicationService.Client.ExecuteAsync(applicationService.Client.AuthenticatedUser.GetOrganizations())
+                var task3 = applicationService.Client.ExecuteAsync(applicationService.Client.AuthenticatedUser.GetOrganizations())
                     .ContinueWith(t => Organizations = t.Result.Data.Select(y => y.Login).ToList(), TaskScheduler.FromCurrentSynchronizationContext());
-            });
-            LoadCommand = loadCommand;
 
+                return Task.WhenAll(task2, task3);
+            });
         }
 
         public IReactiveCommand<object> GoToAccountsCommand { get; private set; }

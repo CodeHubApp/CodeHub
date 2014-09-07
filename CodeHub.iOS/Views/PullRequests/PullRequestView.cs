@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -20,6 +21,12 @@ namespace CodeHub.iOS.Views.PullRequests
         private StyledStringElement _assigneeElement;
         private StyledStringElement _labelsElement;
         private StyledStringElement _addCommentElement;
+        private readonly IMarkdownService _markdownService;
+
+        public PullRequestView(IMarkdownService markdownService)
+        {
+            _markdownService = markdownService;
+        }
 
         public override void ViewDidLoad()
         {
@@ -46,11 +53,13 @@ namespace CodeHub.iOS.Views.PullRequests
 
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             _addCommentElement.Tapped += AddCommentTapped;
+
+            ViewModel.WhenAnyValue(x => x.MarkdownDescription).Subscribe(x => _descriptionElement.Value = x);
 //
 //            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge });
 //            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Person, Image2 = Images.Create });
 
-            ViewModel.WhenAnyValue(x => x.PullRequest).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.PullRequest).IsNotNull().Subscribe(x =>
             {
                 var merged = (x.Merged != null && x.Merged.Value);
 
@@ -60,7 +69,7 @@ namespace CodeHub.iOS.Views.PullRequests
 //                _split2.Value.Text1 = x.User.Login;
 //                _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
 
-                _descriptionElement.Value = ViewModel.MarkdownDescription;
+                HeaderView.ImageUri = x.User.AvatarUrl;
                 HeaderView.Text = x.Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
 
@@ -70,7 +79,7 @@ namespace CodeHub.iOS.Views.PullRequests
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.PullRequest).Select(x => x != null));
 
-            ViewModel.WhenAnyValue(x => x.Issue).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Issue).IsNotNull().Subscribe(x =>
             {
                 _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
@@ -111,7 +120,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 AvatarUrl = x.User.AvatarUrl, 
                 Login = x.User.Login, 
                 CreatedAt = x.CreatedAt,
-                Body = ViewModel.ConvertToMarkdown(x.Body)
+                Body = _markdownService.Convert(x.Body)
             })
                 .Concat(ViewModel.Events.Select(x => new CommentModel
             {

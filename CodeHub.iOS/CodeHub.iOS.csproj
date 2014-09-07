@@ -247,7 +247,6 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
     <Compile Include="ViewComponents\MenuSectionView.cs" />
-    <Compile Include="ViewComponents\ProfileButton.cs" />
     <Compile Include="ViewComponents\TableViewSectionView.cs" />
     <Compile Include="ViewComponents\ToolbarButton.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
@@ -294,6 +293,9 @@
     <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
     <Compile Include="Cells\PullRequestCellView.designer.cs" />
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
+    <Compile Include="ViewComponents\TrendingTitleButton.cs" />
+    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
+    <Compile Include="ViewComponents\MenuProfileView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

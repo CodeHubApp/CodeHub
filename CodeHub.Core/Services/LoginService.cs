@@ -19,15 +19,17 @@ namespace CodeHub.Core.Services
         {
 			var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
 			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
-			var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
-            var username = info.Data.Login;
+            var info = (await client.ExecuteAsync(client.AuthenticatedUser.GetInfo())).Data;
+            var username = info.Login;
 
             //Does this user exist?
             var exists = account != null;
 			if (!exists)
                 account = new GitHubAccount { Username = username };
 			account.OAuth = token.AccessToken;
-            account.AvatarUrl = info.Data.AvatarUrl;
+            account.AvatarUrl = info.AvatarUrl;
+            account.Name = info.Name;
+            account.Email = info.Email;
 			account.Domain = apiDomain;
 			account.WebDomain = requestDomain;
 			client.Username = username;
@@ -55,6 +57,8 @@ namespace CodeHub.Core.Services
 			var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
 			var userInfo = data.Data;
             account.Username = userInfo.Login;
+            account.Name = userInfo.Name;
+            account.Email = userInfo.Email;
             account.AvatarUrl = userInfo.AvatarUrl;
 			client.Username = userInfo.Login;
             _accounts.Update(account);

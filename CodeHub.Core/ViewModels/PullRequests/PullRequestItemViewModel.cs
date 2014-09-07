@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Title = pullRequest.Title ?? "No Title";
             ImageUrl = pullRequest.User.AvatarUrl;
             Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.ToDaysAgo(), pullRequest.User.Login);
-            GoToCommand = ReactiveCommand.CreateCombined(action);
+            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => action.ExecuteIfCan(this));
         }
     }
 }

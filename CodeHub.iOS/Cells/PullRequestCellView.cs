@@ -24,9 +24,11 @@ namespace CodeHub.iOS.Cells
 
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
+            ContentView.Opaque = true;
+
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = UIColor.FromRGB(0, 64, 128);
-            TimeLabel.TextColor = UIColor.Gray;
+            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            TimeLabel.TextColor = Theme.CurrentTheme.MainTextColor;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)

@@ -6,7 +6,6 @@ using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.iOS.Views.Accounts;
 using CodeHub.iOS.Views.App;
 using MonoTouch.SlideoutNavigation;
-using CodeHub.iOS.Views.Languages;
 using CodeHub.iOS.Views.Repositories;
 using RepositoryStumble.Transitions;
 

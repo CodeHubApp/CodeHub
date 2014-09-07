@@ -43,7 +43,7 @@ namespace CodeHub.iOS.TableViewSources
                 return new TableSectionInformation<NotificationModel, NotificationViewCell>(x.Notifications,
                     NotificationViewCell.Key, 44f)
                 {
-                    Header = new TableSectionHeader(() => headerView, 32f)
+                    Header = new TableSectionHeader(() => headerView, 30f)
                 };
 
             }).ToList();

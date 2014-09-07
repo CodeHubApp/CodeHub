@@ -152,6 +152,8 @@
     <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
+    <Compile Include="ViewModels\ISearchableViewModel.cs" />
+    <Compile Include="Extensions\ObservableExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

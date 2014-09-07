@@ -2,6 +2,7 @@
 using CodeHub.iOS.Delegates;
 using MonoTouch.UIKit;
 using System.Drawing;
+using System.Reactive.Disposables;
 
 namespace ReactiveUI
 {

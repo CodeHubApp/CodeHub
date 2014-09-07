@@ -21,10 +21,11 @@ namespace CodeHub.iOS.Views.Notifications
 
         public override void ViewDidLoad()
         {
-            //NoItemsText = "No Notifications";
             Title = "Notifications";
 
             base.ViewDidLoad();
+
+            RefreshControl = ViewModel.LoadCommand.ToRefreshControl();
 
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };

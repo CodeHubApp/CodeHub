@@ -1,6 +1,7 @@
 using CodeHub.Core.ViewModels.Notifications;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using System;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -9,7 +10,7 @@ namespace CodeHub.iOS.ViewComponents
         readonly UIButton _button;
 
         public NotificationHeaderView(NotificationGroupViewModel viewModel)
-            : base(new System.Drawing.RectangleF(0, 0, 320, 28f))
+            : base(new System.Drawing.RectangleF(0, 0, 320, 30f))
         {
             TextLabel.Text = viewModel.Name;
             TextLabel.Font = TextLabel.Font.WithSize(TextLabel.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
@@ -22,6 +23,8 @@ namespace CodeHub.iOS.ViewComponents
                 _button.TintColor = UIColor.FromRGB(50, 50, 50);
                 _button.TouchUpInside += (sender, e) => viewModel.ReadAllCommand.ExecuteIfCan();
                 Add(_button);
+
+
             }
         }
 
@@ -30,7 +33,9 @@ namespace CodeHub.iOS.ViewComponents
             base.LayoutSubviews();
 
             if (_button != null)
+            {
                 _button.Frame = new System.Drawing.RectangleF(Frame.Width - 42f, 1, 26, 26);
+            }
         }
     }
 

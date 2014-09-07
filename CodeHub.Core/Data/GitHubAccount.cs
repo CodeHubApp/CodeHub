@@ -51,6 +51,18 @@ namespace CodeHub.Core.Data
         public string CodeEditTheme { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the user
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the email of the user
+        /// </summary>
+        /// <value>The email.</value>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GitHubAccount"/> class.
         /// </summary>
         public GitHubAccount()

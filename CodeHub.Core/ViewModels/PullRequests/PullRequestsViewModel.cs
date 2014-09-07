@@ -34,7 +34,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-
         public PullRequestsViewModel(IApplicationService applicationService)
 		{
             var pullRequests = new ReactiveList<PullRequestModel>();
@@ -44,13 +43,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToPullRequestCommand = ReactiveCommand.Create();
-		    GoToPullRequestCommand.OfType<PullRequestModel>().Subscribe(pullRequest =>
+            GoToPullRequestCommand.OfType<PullRequestItemViewModel>().Subscribe(x =>
 		    {
 		        var vm = CreateViewModel<PullRequestViewModel>();
 		        vm.RepositoryOwner = RepositoryOwner;
 		        vm.RepositoryName = RepositoryName;
-		        vm.PullRequestId = pullRequest.Number;
-		        vm.PullRequest = pullRequest;
+                vm.PullRequestId = x.PullRequest.Number;
+                vm.PullRequest = x.PullRequest;
 //		        vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
 //		        {
 //                    var index = PullRequests.IndexOf(pullRequest);

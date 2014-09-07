@@ -12,7 +12,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel, ISearchableViewModel
     {
         protected readonly ReactiveList<RepositoryModel> RepositoryCollection = new ReactiveList<RepositoryModel>();
         protected readonly IApplicationService ApplicationService;

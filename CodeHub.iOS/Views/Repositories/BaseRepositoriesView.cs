@@ -6,15 +6,16 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public abstract class BaseRepositoriesView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseRepositoriesViewModel
     {
-        public override void ViewDidLoad()
+        protected BaseRepositoriesView()
         {
             Title = "Repositories";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
             TableView.Source = new RepositoryTableViewSource(TableView, ViewModel.Repositories);
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

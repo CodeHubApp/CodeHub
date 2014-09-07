@@ -4,9 +4,8 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryForksView : BaseRepositoriesView<RepositoryForksViewModel>
     {
-        public override void ViewDidLoad()
+        public RepositoryForksView()
         {
-            base.ViewDidLoad();
             Title = "Forks";
         }
     }

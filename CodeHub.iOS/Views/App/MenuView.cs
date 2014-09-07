@@ -1,9 +1,7 @@
 using System;
 using CodeFramework.iOS.Elements;
 using CodeFramework.iOS.ViewComponents;
-using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
-using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Linq;
 using ReactiveUI;
@@ -11,6 +9,8 @@ using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
+using CodeHub.iOS.ViewControllers;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -22,7 +22,9 @@ namespace CodeHub.iOS.Views.App
 	    protected override void CreateMenuRoot()
 		{
             var username = ViewModel.Account.Username;
-			Title = username;
+            ProfileButton.Name = string.IsNullOrEmpty(ViewModel.Account.Name) ? ViewModel.Account.Username : ViewModel.Account.Name;
+            ProfileButton.Username = ViewModel.Account.Email;
+            ProfileButton.ImageUri = ViewModel.Account.AvatarUrl;
 
             var sections = new List<Section>();
 
@@ -113,9 +115,6 @@ namespace CodeHub.iOS.Views.App
 
 			TableView.SeparatorInset = UIEdgeInsets.Zero;
 			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
-
-			if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
-				ProfileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
 
             ViewModel.WhenAnyValue(x => x.Notifications).Subscribe(x =>
             {
