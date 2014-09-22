@@ -162,11 +162,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 vm.IssueId = PullRequestId;
                 vm.SaveOnSelect = true;
                 vm.SelectedLabels.Reset(Issue.Labels);
-                vm.WhenAnyValue(x => x.Labels).Skip(1).Subscribe(x =>
-                {
-                    Issue.Labels = x.ToList();
-                    this.RaisePropertyChanged("Issue");
-                });
+//                vm.WhenAnyValue(x => x.Labels).Skip(1).Subscribe(x =>
+//                {
+//                    Issue.Labels = x.ToList();
+//                    this.RaisePropertyChanged("Issue");
+//                });
                 ShowViewModel(vm);
             });
 

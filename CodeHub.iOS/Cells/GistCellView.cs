@@ -1,7 +1,6 @@
 ﻿using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using System.Reactive.Linq;

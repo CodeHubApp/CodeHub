@@ -14,7 +14,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalCompressionResistancePriority="1000" text="This is a Repository" lineBreakMode="tailTruncation" minimumFontSize="13" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6">
-                        <rect key="frame" x="52" y="8" width="260" height="32"/>
+                        <rect key="frame" x="52" y="8" width="260" height="36"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.25098040700000002" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -60,7 +60,7 @@
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Hey Guys" lineBreakMode="tailTruncation" numberOfLines="0" minimumFontSize="12" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="260" translatesAutoresizingMaskIntoConstraints="NO" id="36">
-                        <rect key="frame" x="52" y="46" width="260" height="16"/>
+                        <rect key="frame" x="52" y="48" width="260" height="16"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -102,11 +102,11 @@
                     <constraint firstItem="31" firstAttribute="centerY" secondItem="40" secondAttribute="centerY" id="9e6-nA-gl0"/>
                     <constraint firstItem="46" firstAttribute="leading" secondItem="31" secondAttribute="trailing" constant="8" id="FHk-eS-wAZ"/>
                     <constraint firstItem="43" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="I34-Eb-v1I"/>
-                    <constraint firstItem="36" firstAttribute="top" secondItem="6" secondAttribute="bottom" constant="6" id="KXW-MQ-1DX"/>
+                    <constraint firstItem="36" firstAttribute="top" secondItem="6" secondAttribute="bottom" constant="4" id="KXW-MQ-1DX"/>
                     <constraint firstItem="6" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="NCm-z4-JYf"/>
                     <constraint firstItem="46" firstAttribute="top" secondItem="30" secondAttribute="top" id="ROE-oI-gG4"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" id="UEK-at-WWu"/>
-                    <constraint firstItem="46" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="8" id="W0a-gq-cHX"/>
+                    <constraint firstItem="46" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="6" id="W0a-gq-cHX"/>
                     <constraint firstAttribute="trailing" secondItem="6" secondAttribute="trailing" constant="8" id="XiP-59-wz3"/>
                     <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" constant="8" id="fMe-fN-8a4"/>
                     <constraint firstItem="6" firstAttribute="leading" secondItem="43" secondAttribute="trailing" constant="8" id="gvt-73-dnh"/>

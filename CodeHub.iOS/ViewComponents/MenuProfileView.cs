@@ -57,8 +57,6 @@ namespace CodeHub.iOS.ViewComponents
         {
             base.LayoutSubviews();
 
-            Console.WriteLine(Frame + " _ " + Bounds);
-
             var imageSize = Bounds.Height - 8f;
             _imageView.Frame = new RectangleF(new PointF(0, 4f), new SizeF(imageSize, imageSize));
             _imageView.Layer.CornerRadius = _imageView.Frame.Height / 2f;
