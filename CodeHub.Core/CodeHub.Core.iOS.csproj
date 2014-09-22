@@ -52,7 +52,6 @@
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
-    <Compile Include="ViewModels\App\AboutViewModel.cs" />
     <Compile Include="ViewModels\App\CommentViewModel.cs" />
     <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\App\MarkdownComposerViewModel.cs" />

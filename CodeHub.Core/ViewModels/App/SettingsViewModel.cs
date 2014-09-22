@@ -3,6 +3,7 @@ using System;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -13,6 +14,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IDefaultValueService _defaultValueService;
         private readonly IAccountsService _accountsService;
         private readonly IAnalyticsService _analyticsService;
+        private readonly IEnvironmentalService _environmentService;
 
         public IReactiveCommand<object> GoToDefaultStartupViewCommand { get; private set; }
 
@@ -23,44 +25,36 @@ namespace CodeHub.Core.ViewModels.App
             get { return _applicationService.Account.DefaultStartupView; }
         }
 
-        public bool AnalyticsEnabled
+        public string Version
         {
-            get { return _analyticsService.Enabled; }
-            set
-            {
-                if (value == AnalyticsEnabled)
-                    return;
-                _analyticsService.Enabled = value;
-                this.RaisePropertyChanged();
-            }
+            get { return _environmentService.ApplicationVersion; }
         }
+
+        public IReactiveCommand GoToSourceCodeCommand { get; private set; }
 
         public SettingsViewModel(IApplicationService applicationService, IFeaturesService featuresService, 
                                  IDefaultValueService defaultValueService, IAccountsService accountsService,
-                                 IAnalyticsService analyticsService)
+                                 IAnalyticsService analyticsService, IEnvironmentalService environmentalService)
         {
             _applicationService = applicationService;
             _featuresService = featuresService;
             _defaultValueService = defaultValueService;
             _accountsService = accountsService;
             _analyticsService = analyticsService;
+            _environmentService = environmentalService;
 
             GoToDefaultStartupViewCommand = ReactiveCommand.Create();
             GoToDefaultStartupViewCommand.Subscribe(_ => ShowViewModel(CreateViewModel<DefaultStartupViewModel>()));
 
             DeleteAllCacheCommand = ReactiveCommand.Create();
-        }
 
-
-        public bool LargeFonts
-        {
-            get 
-            { 
-                bool value;
-                _defaultValueService.TryGet("large_fonts", out value);
-                return value;
-            }
-            set { _defaultValueService.Set("large_fonts", value); }
+            GoToSourceCodeCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = "thedillonb";
+                vm.RepositoryName = "codehub";
+                ShowViewModel(vm);
+            });
         }
 
         public bool PushNotificationsActivated

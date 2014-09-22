@@ -82,7 +82,6 @@ namespace CodeHub.iOS.Views.App
             sections.Add(infoSection);
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
             infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
-			infoSection.Add(new MenuElement("About", () => ViewModel.GoToAboutCommand.ExecuteIfCan(), Images.Info));
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Images.User));
 

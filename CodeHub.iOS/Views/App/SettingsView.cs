@@ -1,8 +1,10 @@
 using CodeHub.Core.Services;
-using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.App;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using MonoTouch.UIKit;
+using MonoTouch.Foundation;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -64,30 +66,19 @@ namespace CodeHub.iOS.Views.App
 
             //var sidebarOrder = new StyledStringElement("Sidebar Order", () => vm.GoToSidebarOrderCommand.Execute(null));
 
-            var largeFonts = new BooleanElement("Large Fonts", vm.LargeFonts, x =>
-            {
-                vm.LargeFonts = x.Value;
-                Theme.Setup();
-                CreateTable();
-            });
-
             accountSection.Add(new BooleanElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
-
-			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache", string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
-			deleteCache.Tapped += () =>
-			{ 
-				vm.DeleteAllCacheCommand.Execute(null);
-				deleteCache.Value = string.Format("{0} MB", 0);
-				ReloadData();
-			};
-
-            var usage = new BooleanElement("Send Anonymous Usage", vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value);
 
 			//Assign the root
             Root.Add(accountSection);
-            Root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView, largeFonts });
-            Root.Add(new Section ("Internal") { deleteCache, usage });
+            Root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
+
+            Root.Add(new Section("About", "Thank you for downloading. Enjoy!")
+            {
+                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
+                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
+                new StyledStringElement("Source Code", () => ViewModel.GoToSourceCodeCommand.ExecuteIfCan()),
+                new StyledStringElement("App Version", ViewModel.Version)
+            });
 		}
     }
 }

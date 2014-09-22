@@ -207,7 +207,6 @@
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
-    <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
@@ -633,6 +632,8 @@
     <BundleResource Include="Images\down_chevron%402x.png">
       <DependentUpon>down_chevron.png</DependentUpon>
     </BundleResource>
+    <BundleResource Include="Settings.bundle\Root.plist" />
+    <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

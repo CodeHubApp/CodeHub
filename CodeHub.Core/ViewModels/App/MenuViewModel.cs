@@ -78,10 +78,7 @@ namespace CodeHub.Core.ViewModels.App
 
             GoToUpgradesCommand = ReactiveCommand.Create();
             GoToUpgradesCommand.Subscribe(_ => CreateAndShowViewModel<UpgradesViewModel>());
-
-            GoToAboutCommand = ReactiveCommand.Create();
-            GoToAboutCommand.Subscribe(_ => CreateAndShowViewModel<AboutViewModel>());
-
+     
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x =>
             {
@@ -224,8 +221,6 @@ namespace CodeHub.Core.ViewModels.App
 		public IReactiveCommand<object> GoToSettingsCommand { get; private set; }
 
 		public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
-
-		public IReactiveCommand<object> GoToAboutCommand { get; private set; }
 
         public IReactiveCommand<object> GoToUpgradesCommand { get; private set; }
     }
