@@ -634,6 +634,10 @@
     </BundleResource>
     <BundleResource Include="Settings.bundle\Root.plist" />
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
+    <BundleResource Include="Images\update%402x.png">
+      <DependentUpon>update.png</DependentUpon>
+    </BundleResource>
+    <BundleResource Include="Images\update.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

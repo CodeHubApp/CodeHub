@@ -41,6 +41,7 @@ namespace CodeHub.iOS
         public static UIImage Anonymous { get { return UIImage.FromBundle("/Images/anonymous"); } }
 
         public static UIImage News { get { return UIImageHelper.FromFileAuto("Images/news"); } }
+        public static UIImage Update { get { return UIImageHelper.FromFileAuto("Images/update"); } }
         public static UIImage Chart { get { return UIImageHelper.FromFileAuto("Images/chart"); } }
         public static UIImage Explore { get { return UIImageHelper.FromFileAuto("Images/explore"); } }
         public static UIImage Notifications { get { return UIImageHelper.FromFileAuto("Images/notifications"); } }

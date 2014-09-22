@@ -51,6 +51,10 @@
     </Compile>
     <Compile Include="ResourceLoader.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Comments\CommentsView.cs">
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Comments\Comment.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="SourceBrowser\styles\arta.css" />
@@ -202,6 +206,10 @@
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
     </None>
+    <None Include="Comments\CommentsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Diff\app.js" />
@@ -221,5 +229,8 @@
   -->
   <ItemGroup>
     <EmbeddedResource Include="Markdown\marked.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Comments\" />
   </ItemGroup>
 </Project>

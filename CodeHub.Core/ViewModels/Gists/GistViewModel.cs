@@ -37,8 +37,6 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToUserCommand { get; private set; }
 
-        public IReactiveCommand<object> GoToForksCommand { get; private set; }
-
         public IReactiveCommand<object> GoToFileSourceCommand { get; private set; }
 
         public IReactiveCommand<object> GoToViewableFileCommand { get; private set; }
@@ -107,15 +105,13 @@ namespace CodeHub.Core.ViewModels.Gists
                 ShowViewModel(vm);
             });
 
-            GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
+            GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && x.Owner != null));
             GoToUserCommand.Subscribe(x =>
             {
                 var vm = CreateViewModel<UserViewModel>();
                 vm.Username = Gist.Owner.Login;
                 ShowViewModel(vm);
             });
-
-            GoToForksCommand = ReactiveCommand.Create();
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
