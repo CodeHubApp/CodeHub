@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.App
     {
         private readonly IApplicationService _applicationService;
 		private int _notifications;
-		private List<string> _organizations;
+        private List<BasicUserModel> _organizations;
 
 		public int Notifications
         {
@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.App
             set { this.RaiseAndSetIfChanged(ref _notifications, value); }
         }
 
-		public List<string> Organizations
+        public List<BasicUserModel> Organizations
         {
             get { return _organizations; }
             set { this.RaiseAndSetIfChanged(ref _organizations, value); }
@@ -117,10 +117,10 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToOrganizationCommand = ReactiveCommand.Create();
-            GoToOrganizationCommand.OfType<string>().Subscribe(name =>
+            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(name =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
-                vm.Username = name;
+                vm.Username = name.Login;
                 ShowViewModel(vm);
             });
 
@@ -166,7 +166,7 @@ namespace CodeHub.Core.ViewModels.App
                     .ContinueWith(t => Notifications = t.Result.Data.Count, TaskScheduler.FromCurrentSynchronizationContext());
 
                 var task3 = applicationService.Client.ExecuteAsync(applicationService.Client.AuthenticatedUser.GetOrganizations())
-                    .ContinueWith(t => Organizations = t.Result.Data.Select(y => y.Login).ToList(), TaskScheduler.FromCurrentSynchronizationContext());
+                    .ContinueWith(t => Organizations = t.Result.Data, TaskScheduler.FromCurrentSynchronizationContext());
 
                 return Task.WhenAll(task2, task3);
             });

@@ -31,8 +31,6 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
 
-            TableView.SectionFooterHeight = 8f;
-
             Title = string.Format("Gist #{0}", ViewModel.Id);
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 

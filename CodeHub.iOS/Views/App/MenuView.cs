@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers;
-using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -37,9 +36,12 @@ namespace CodeHub.iOS.Views.App
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event));
-			if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
-				ViewModel.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event)));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event) { ImageUri = new Uri(ViewModel.Account.AvatarUrl) });
+            if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
+            {
+                eventsSection.Add(ViewModel.Organizations.Select(x =>
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event) { ImageUri = new Uri(x.AvatarUrl) }));
+            }
             sections.Add(eventsSection);
 
             var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
@@ -63,8 +65,11 @@ namespace CodeHub.iOS.Views.App
 			}
 
             var orgSection = new Section { HeaderView = new MenuSectionView("Organizations") };
-			if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
-				ViewModel.Organizations.ForEach(x => orgSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationCommand.Execute(x), Images.Team)));
+            if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
+            {
+                orgSection.Add(ViewModel.Organizations.Select(x => 
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Team) { ImageUri = new Uri(x.AvatarUrl) }));
+            }
             else
 				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group));
 
@@ -120,7 +125,7 @@ namespace CodeHub.iOS.Views.App
                 if (_notifications == null)
                     return;
                 _notifications.NotificationNumber = x;
-                Root.Reload(_notifications, UITableViewRowAnimation.None);
+                Root.Reload(_notifications);
             });
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
