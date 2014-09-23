@@ -14,22 +14,22 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="User Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t8o-AX-aOj">
-                        <rect key="frame" x="48" y="8" width="264" height="18"/>
+                        <rect key="frame" x="48" y="7" width="264" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Time Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOS-3J-OAt">
-                        <rect key="frame" x="48" y="27" width="264" height="15"/>
+                        <rect key="frame" x="48" y="28" width="264" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="250" text="Content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="264" translatesAutoresizingMaskIntoConstraints="NO" id="OkK-9y-U4D">
-                        <rect key="frame" x="48" y="48" width="264" height="127"/>
+                        <rect key="frame" x="48" y="49" width="264" height="126"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="QEc-1F-ogM">
@@ -43,7 +43,7 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="QEc-1F-ogM" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" constant="8" id="56b-yc-H0B"/>
-                    <constraint firstItem="t8o-AX-aOj" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" constant="8" id="DL8-YT-wOO"/>
+                    <constraint firstItem="t8o-AX-aOj" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" constant="7" id="DL8-YT-wOO"/>
                     <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="KOS-3J-OAt" secondAttribute="leading" id="GLI-Pv-7pu"/>
                     <constraint firstAttribute="trailing" secondItem="t8o-AX-aOj" secondAttribute="trailing" constant="8" id="Orf-4s-y46"/>
                     <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="QEc-1F-ogM" secondAttribute="trailing" constant="8" id="Xow-LE-tBp"/>

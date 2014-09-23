@@ -26,9 +26,9 @@ namespace CodeHub.iOS.Cells
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = UIColor.FromRGB(0, 64, 128);
+            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
             TimeLabel.TextColor = UIColor.Gray;
-            ContentLabel.TextColor = UIColor.FromRGB(41, 41, 41);
+            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)

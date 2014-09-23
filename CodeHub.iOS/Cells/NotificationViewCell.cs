@@ -18,6 +18,12 @@ namespace CodeHub.iOS.Cells
         {
             TextLabel.Lines = 0;
             TextLabel.LineBreakMode = UILineBreakMode.WordWrap;
+            TextLabel.Font = UIFont.BoldSystemFontOfSize(14f);
+            TextLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+
+
+            DetailTextLabel.Font = UIFont.SystemFontOfSize(12f);
+            DetailTextLabel.TextColor = Theme.CurrentTheme.MainTextColor;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)

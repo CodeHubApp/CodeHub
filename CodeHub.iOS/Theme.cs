@@ -39,8 +39,8 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.BackIndicatorImage = Images.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.BackButton;
 
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(-1000, -64), UIBarMetrics.LandscapePhone);
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(-1000, -64), UIBarMetrics.Default);
 //
 //            UserVoice.UVStyleSheet.Instance.NavigationBarTintColor = UIColor.White;
 //            UserVoice.UVStyleSheet.Instance.NavigationBarTextColor = UIColor.White;

@@ -21,17 +21,17 @@ namespace CodeHub.iOS.Cells
 
         public static UIFont TimeFont
         {
-            get { return UIFont.SystemFontOfSize(12f * Theme.CurrentTheme.FontSizeRatio); }
+            get { return UIFont.SystemFontOfSize(12f); }
         }
 
         public static UIFont HeaderFont
         {
-            get { return UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio); }
+            get { return UIFont.SystemFontOfSize(13f); }
         }
 
         public static UIFont BodyFont
         {
-            get { return UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio); }
+            get { return UIFont.SystemFontOfSize(13f); }
         }
 
         public NSMutableAttributedString HeaderString { get; private set; }
