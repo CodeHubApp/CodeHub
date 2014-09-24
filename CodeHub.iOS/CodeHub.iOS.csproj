@@ -297,6 +297,7 @@
     <Compile Include="Cells\IssueLabelCellView.cs" />
     <Compile Include="Services\GraphicService.cs" />
     <Compile Include="TableViewSources\IssueLabelTableViewSource.cs" />
+    <Compile Include="Views\Users\RepositoryContributorsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

@@ -33,17 +33,21 @@ namespace CodeHub.iOS.Views.Repositories
 
             Root.Reset(new Section(HeaderView) { _split });
 
-            ViewModel.WhenAnyValue(x => x.Readme).Where(x => x != null).Subscribe(_ =>
-            {
-                // Not very efficient but it'll work for now.
-                if (ViewModel.Repository != null)
-                    Render();
-            });
+            // Not very efficient but it'll work for now.
+            ViewModel.WhenAnyValue(x => x.Readme).IsNotNull()
+                .Select(_ => ViewModel.Repository).IsNotNull().Subscribe(_ => Render());
 
             _splitElements[0] = new SplitElement();
+            _splitElements[0].Button1 = new SplitElement.SplitButton(Images.Locked, string.Empty);
+            _splitElements[0].Button2 = new SplitElement.SplitButton(Images.Language, string.Empty);
+
             _splitElements[1] = new SplitElement();
+            _splitElements[1].Button1 = new SplitElement.SplitButton(Images.Flag, string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
+            _splitElements[1].Button2 = new SplitElement.SplitButton(Images.Team, string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
+
             _splitElements[2] = new SplitElement();
-            _splitElements[2].Button2 = new SplitElement.SplitButton(Images.Size, "N/A");
+            _splitElements[2].Button1 = new SplitElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
+            _splitElements[2].Button2 = new SplitElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
 
             ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
             {
@@ -53,19 +57,22 @@ namespace CodeHub.iOS.Views.Repositories
                 watchers.Text = x.SubscribersCount.ToString();
                 forks.Text = x.ForksCount.ToString();
 
-                _splitElements[0].Button1 = new SplitElement.SplitButton(x.Private ? Images.Locked : Images.Unlocked, x.Private ? "Private" : "Public");
-                _splitElements[0].Button2 = new SplitElement.SplitButton(Images.Language, x.Language ?? "N/A");
-
-                _splitElements[1].Button1 = new SplitElement.SplitButton(Images.Flag, x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues"));
-                _splitElements[1].Button2 = new SplitElement.SplitButton(Images.Fork, x.Forks + (x.Forks == 1 ? " Fork" : " Forks"));
-
-                _splitElements[2].Button1 = new SplitElement.SplitButton(Images.Create, (x.CreatedAt.ToLocalTime()).ToString("MM/dd/yy"));
+                _splitElements[0].Button1.Image = x.Private ? Images.Locked : Images.Unlocked;
+                _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
+                _splitElements[0].Button2.Text = x.Language ?? "N/A";
+                _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
 
                 Render();
             });
 
-            ViewModel.WhenAnyValue(x => x.RepositorySize).Subscribe(x => _splitElements[2].Button2.Text = x ?? "N/A");
+            ViewModel.WhenAnyValue(x => x.Contributors).Where(x => x.HasValue).SubscribeSafe(x => 
+                _splitElements[1].Button2.Text = x + (x == 1 ? " Contributor" : " Contributors"));
 
+            ViewModel.WhenAnyValue(x => x.Branches).Where(x => x != null).SubscribeSafe(x => 
+                _splitElements[2].Button2.Text = x.Count + (x.Count == 1 ? " Branch" : " Branches"));
+
+            ViewModel.WhenAnyValue(x => x.Releases).Where(x => x.HasValue).SubscribeSafe(x => 
+                _splitElements[2].Button1.Text = x + (x == 1 ? " Release" : " Releases"));
         }
 
         private void Render()
@@ -74,7 +81,7 @@ namespace CodeHub.iOS.Views.Repositories
             var sec1 = new Section();
             sec1.Add(_splitElements);
 
-            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.User,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
             sec1.Add(owner);
 

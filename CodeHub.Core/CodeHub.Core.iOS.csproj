@@ -155,6 +155,7 @@
     <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelItemViewModel.cs" />
     <Compile Include="Services\IGraphicService.cs" />
+    <Compile Include="ViewModels\Users\RepositoryContributorsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

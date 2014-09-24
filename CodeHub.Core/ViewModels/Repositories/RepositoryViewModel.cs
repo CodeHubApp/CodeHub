@@ -27,8 +27,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         private RepositoryModel _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
-        private int? _collaborators;
-        private string _repositorySize;
+        private int? _contributors;
 
         public string RepositoryOwner { get; set; }
 
@@ -46,16 +45,10 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _watched, value); }
         }
 
-        public int? Collaborators
+        public int? Contributors
         {
-            get { return _collaborators; }
-            private set { this.RaiseAndSetIfChanged(ref _collaborators, value); }
-        }
-
-        public string RepositorySize
-        {
-            get { return _repositorySize; }
-            private set { this.RaiseAndSetIfChanged(ref _repositorySize, value); }
+            get { return _contributors; }
+            private set { this.RaiseAndSetIfChanged(ref _contributors, value); }
         }
 
         public RepositoryModel Repository
@@ -76,6 +69,20 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
+        private int? _languages;
+        public int? Languages
+        {
+            get { return _languages; }
+            private set { this.RaiseAndSetIfChanged(ref _languages, value); }
+        }
+
+        private int? _releases;
+        public int? Releases
+        {
+            get { return _releases; }
+            private set { this.RaiseAndSetIfChanged(ref _releases, value); }
+        }
+
         public IReactiveCommand LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
@@ -86,7 +93,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToWatchersCommand { get; private set; }
 
-        public IReactiveCommand<object> GoToCollaboratorsCommand { get; private set; }
+        public IReactiveCommand<object> GoToContributors { get; private set; }
 
         public IReactiveCommand<object> GoToEventsCommand { get; private set; }
 
@@ -96,11 +103,15 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
 
+        public IReactiveCommand GoToBranchesCommand { get; private set; }
+
         public IReactiveCommand<object> GoToPullRequestsCommand { get; private set; }
 
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
+
+        public IReactiveCommand GoToReleasesCommand { get; private set; }
 
         public IReactiveCommand GoToForksCommand { get; private set; }
 
@@ -204,6 +215,14 @@ namespace CodeHub.Core.ViewModels.Repositories
                 ShowViewModel(vm);
             });
 
+            GoToBranchesCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = CreateViewModel<CommitBranchesViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
+            });
+
             GoToCommitsCommand = ReactiveCommand.Create();
             GoToCommitsCommand.Subscribe(_ =>
             {
@@ -216,10 +235,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 }
                 else
                 {
-                    var vm = CreateViewModel<CommitBranchesViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    ShowViewModel(vm);
+                    GoToBranchesCommand.ExecuteIfCan();
                 }
             });
 
@@ -241,10 +257,10 @@ namespace CodeHub.Core.ViewModels.Repositories
                 ShowViewModel(vm);
             });
 
-            GoToCollaboratorsCommand = ReactiveCommand.Create();
-            GoToCollaboratorsCommand.Subscribe(_ =>
+            GoToContributors = ReactiveCommand.Create();
+            GoToContributors.Subscribe(_ =>
             {
-                var vm = CreateViewModel<RepositoryCollaboratorsViewModel>();
+                var vm = CreateViewModel<RepositoryContributorsViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 ShowViewModel(vm);
@@ -258,19 +274,12 @@ namespace CodeHub.Core.ViewModels.Repositories
                 ShowViewModel(vm);
             });
 
-            this.WhenAnyValue(x => x.Repository).Subscribe(x =>
+            GoToReleasesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                if (x == null)
-                    RepositorySize = null;
-                else
-                {
-                    if (x.Size / 1024f < 1)
-                        RepositorySize = string.Format("{0:0.##}KB", x.Size);
-                    else if ((x.Size / 1024f / 1024f) < 1)
-                        RepositorySize = string.Format("{0:0.##}MB", x.Size / 1024f);
-                    else
-                        RepositorySize = string.Format("{0:0.##}GB", x.Size / 1024f / 1024f);
-                }
+//                var vm = CreateViewModel<RepositoryForksViewModel>();
+//                vm.RepositoryOwner = RepositoryOwner;
+//                vm.RepositoryName = RepositoryName;
+//                ShowViewModel(vm);
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
@@ -295,8 +304,14 @@ namespace CodeHub.Core.ViewModels.Repositories
                 this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].IsStarred(),
                     forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetCollaborators(),
-                    forceCacheInvalidation, response => Collaborators = response.Data.Count).FireAndForget();
+                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors(),
+                    forceCacheInvalidation, response => Contributors = response.Data.Count).FireAndForget();
+
+                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetLanguages(),
+                    forceCacheInvalidation, response => Languages = response.Data.Count).FireAndForget();
+
+                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases(),
+                    forceCacheInvalidation, response => Releases = response.Data.Count).FireAndForget();
 
                 return t1;
             });
