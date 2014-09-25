@@ -1,6 +1,5 @@
 ﻿using ReactiveUI;
 using CodeHub.iOS.Cells;
-using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.iOS.TableViewSources
@@ -44,7 +43,7 @@ namespace CodeHub.iOS.TableViewSources
         public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as GistItemViewModel;
+            var item = ItemAt(indexPath) as CommitItemViewModel;
             if (item != null)
                 item.GoToCommand.ExecuteIfCan();
         }

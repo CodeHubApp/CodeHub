@@ -156,6 +156,7 @@
     <Compile Include="ViewModels\Issues\IssueLabelItemViewModel.cs" />
     <Compile Include="Services\IGraphicService.cs" />
     <Compile Include="ViewModels\Users\RepositoryContributorsViewModel.cs" />
+    <Compile Include="Utilities\GitHubSharpModelExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

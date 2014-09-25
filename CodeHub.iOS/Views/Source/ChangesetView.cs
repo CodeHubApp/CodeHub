@@ -37,7 +37,7 @@ namespace CodeHub.iOS.Views.Source
             var headerSection = new Section(HeaderView) { _split };
             Root.Reset(headerSection);
 
-            ViewModel.WhenAnyValue(x => x.Commit).Where(x => x != null).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(x =>
             {
                 HeaderView.Image = Images.LoginUserUnknown;
 

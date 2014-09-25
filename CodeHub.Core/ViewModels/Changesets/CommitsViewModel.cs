@@ -13,9 +13,6 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel
 	{
-        private const string GitHubDefaultGravitar = "https%3A%2F%2Fassets-cdn.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png&r=x&s=140";
-        private MD5 _md5 = MD5.Create();
-
 		public string RepositoryOwner { get; set; }
 
 		public string RepositoryName { get; set; }
@@ -37,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 	    {
             var commits = new ReactiveList<CommitModel>();
             Commits = commits.CreateDerivedCollection(
-                CreateViewModel, 
+                x => new CommitItemViewModel(x, GoToChangesetCommand.ExecuteIfCan), 
                 ContainsSearchKeyword, 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
@@ -47,7 +44,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 	            var vm = CreateViewModel<ChangesetViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-	            //vm.Node = x.Sha;
+                vm.Node = x.Commit.Sha;
                 ShowViewModel(vm);
 	        });
 
@@ -60,56 +57,12 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             try
             {
-                return x.Commit.Message.ContainsKeyword(SearchKeyword) || GenerateCommiterName(x).ContainsKeyword(SearchKeyword);
+                return x.Commit.Message.ContainsKeyword(SearchKeyword) || x.GenerateCommiterName().ContainsKeyword(SearchKeyword);
             }
             catch
             {
                 return false;
             }
-        }
-
-        private CommitItemViewModel CreateViewModel(CommitModel x)
-        {
-            var msg = x.Commit.Message ?? string.Empty;
-            var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
-            var desc = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
-
-            string login = GenerateCommiterName(x);
-            var date = DateTimeOffset.MinValue;
-            if (x.Commit.Committer != null)
-                date = x.Commit.Committer.Date;
-
-            var avatar = default(string);
-            try
-            {
-                avatar = CreateGravatarUrl(x.Commit.Author.Email);
-            }
-            catch {}
-
-            return new CommitItemViewModel(login, avatar, desc, date, _ => {});
-        }
-
-        public string CreateGravatarUrl(string email)
-        {
-            var inputBytes = Encoding.ASCII.GetBytes(email.Trim().ToLower());
-            var hash = _md5.ComputeHash(inputBytes);
-            var sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-                sb.Append(hash[i].ToString("x2"));
-            return string.Format("http://www.gravatar.com/avatar/{0}?d={1}", sb, GitHubDefaultGravitar);
-        }
-
-
-
-        private static string GenerateCommiterName(CommitModel x)
-        {
-            if (x.Commit.Author != null && !string.IsNullOrEmpty(x.Commit.Author.Name))
-                return x.Commit.Author.Name;
-            if (x.Commit.Committer != null && !string.IsNullOrEmpty(x.Commit.Committer.Name))
-                return x.Commit.Committer.Name;
-            if (x.Author != null)
-                return x.Author.Login;
-            return x.Committer != null ? x.Committer.Login : "Unknown";
         }
 	}
 }

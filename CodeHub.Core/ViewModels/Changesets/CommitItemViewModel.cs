@@ -1,5 +1,6 @@
 ﻿using System;
 using ReactiveUI;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -15,12 +16,21 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand GoToCommand { get; private set; }
 
-        internal CommitItemViewModel(string name, string imageUrl, string description, DateTimeOffset time, Action<CommitItemViewModel> action)
+        internal CommitModel Commit { get; private set; }
+
+        internal CommitItemViewModel(CommitModel commit, Action<CommitItemViewModel> action)
         {
-            Name = name;
-            ImageUrl = imageUrl;
-            Description = description;
-            Time = time;
+            var msg = commit.Commit.Message ?? string.Empty;
+            var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
+            Description = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
+
+            Time = DateTimeOffset.MinValue;
+            if (commit.Commit.Committer != null)
+                Time = commit.Commit.Committer.Date;
+
+            Name = commit.GenerateCommiterName();
+            ImageUrl = commit.GenerateGravatarUrl();
+            Commit = commit;
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => action(this));
         }
     }
