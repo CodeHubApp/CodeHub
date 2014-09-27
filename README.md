@@ -1,5 +1,6 @@
 [CodeHub](http://thedillonb.github.io/CodeHub/)
 =======
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/thedillonb/CodeHub?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 CodeHub is the best way to browse and maintain your GitHub repositories on any iPhone, iPod Touch, and iPad device! Keep an eye on your projects with the ability to view everything from pull requests to commenting on individual file diffs in the latest change set. CodeHub brings GitHub to your finger tips in a sleek and efficient design. 
 
