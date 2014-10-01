@@ -37,19 +37,16 @@ namespace CodeHub.iOS.Views.Source
             var headerSection = new Section(HeaderView) { _split };
             Root.Reset(headerSection);
 
-            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().SubscribeSafe(x =>
             {
                 HeaderView.Image = Images.LoginUserUnknown;
 
                 if (x.Author != null)
-                {
-                    HeaderView.Text = x.Author.Login;
                     HeaderView.ImageUri = x.Author.AvatarUrl;
-                }
-                else
-                {
-                    HeaderView.Text = "Unknown Author";
-                }
+
+                var msg = x.Commit.Message ?? string.Empty;
+                var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
+                HeaderView.Text = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 
                 HeaderView.SubText = "Commited " + (x.Commit.Committer.Date).ToDaysAgo();
 
@@ -179,7 +176,7 @@ namespace CodeHub.iOS.Views.Source
             var addComment = _actionSheet.AddButton("Add Comment");
             var copySha = _actionSheet.AddButton("Copy Sha");
             var shareButton = _actionSheet.AddButton("Share");
-			//var showButton = sheet.AddButton("Show in GitHub");
+            var showButton = _actionSheet.AddButton("Show in GitHub");
             var cancelButton = _actionSheet.AddButton("Cancel");
             _actionSheet.CancelButtonIndex = cancelButton;
             _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
@@ -198,16 +195,16 @@ namespace CodeHub.iOS.Views.Source
 					}
 					else if (e.ButtonIndex == shareButton)
 					{
-						var item = new NSUrl(ViewModel.Commit.Url);
-						var activityItems = new MonoTouch.Foundation.NSObject[] { item };
+                        var item = new NSUrl(ViewModel.Commit.HtmlUrl);
+						var activityItems = new NSObject[] { item };
 						UIActivity[] applicationActivities = null;
 						var activityController = new UIActivityViewController (activityItems, applicationActivities);
 						PresentViewController (activityController, true, null);
 					}
-	//				else if (e.ButtonIndex == showButton)
-	//				{
-	//					ViewModel.GoToHtmlUrlCommand.Execute(null);
-	//				}
+					else if (e.ButtonIndex == showButton)
+					{
+						ViewModel.GoToHtmlUrlCommand.Execute(null);
+					}
 				}
 				catch
 				{

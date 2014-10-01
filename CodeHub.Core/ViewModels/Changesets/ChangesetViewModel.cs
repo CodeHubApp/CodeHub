@@ -47,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             Comments = new ReactiveList<CommentModel>();
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
-            GoToHtmlUrlCommand.Select(x => Commit).Subscribe(GoToUrlCommand.ExecuteIfCan);
+            GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(GoToUrlCommand.ExecuteIfCan);
 
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.Subscribe(_ =>

@@ -48,7 +48,6 @@ namespace CodeHub.Core.ViewModels.Gists
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 GistsCollection.SimpleCollectionLoad(applicationService.Client.Users[Username].Gists.GetGists(), t as bool?));
-            LoadCommand.ExecuteIfCan();
         }
     }
 }

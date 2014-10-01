@@ -1,5 +1,6 @@
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -15,6 +16,7 @@ namespace CodeHub.iOS.Views.Gists
             base.ViewDidLoad();
             if (ViewModel.IsMine)
                 NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add).WithCommand(ViewModel.GoToCreateGistCommand);
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
         public override void ViewWillAppear(bool animated)

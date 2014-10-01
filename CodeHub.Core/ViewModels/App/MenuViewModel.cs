@@ -109,18 +109,18 @@ namespace CodeHub.Core.ViewModels.App
             GoToExploreRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesExploreViewModel>());
 
             GoToOrganizationEventsCommand = ReactiveCommand.Create();
-            GoToOrganizationEventsCommand.OfType<string>().Subscribe(name =>
+            GoToOrganizationEventsCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
-                vm.Username = name;
+                vm.Username = x.Login;
                 ShowViewModel(vm);
             });
 
             GoToOrganizationCommand = ReactiveCommand.Create();
-            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(name =>
+            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<OrganizationViewModel>();
-                vm.Username = name.Login;
+                vm.Username = x.Login;
                 ShowViewModel(vm);
             });
 
