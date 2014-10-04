@@ -298,6 +298,10 @@
     <Compile Include="Services\GraphicService.cs" />
     <Compile Include="TableViewSources\IssueLabelTableViewSource.cs" />
     <Compile Include="Views\Users\RepositoryContributorsView.cs" />
+    <Compile Include="Views\Source\CommitCommentView.cs" />
+    <Compile Include="Views\Releases\ReleasesView.cs" />
+    <Compile Include="TableViewSources\ReleasesTableViewSource.cs" />
+    <Compile Include="Cells\ReleaseTableViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -362,14 +366,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.5.0\lib\monotouch\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.0.7\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.6.1\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.1.0\lib\Monotouch\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.5.1\lib\monotouch\Splat.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -647,4 +651,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Releases\" />
+  </ItemGroup>
 </Project>

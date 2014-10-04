@@ -36,17 +36,17 @@ namespace CodeHub.Core.ViewModels.Issues
 	        _applicationService = applicationService;
 
             GoToDescriptionCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
-	        GoToDescriptionCommand.Subscribe(_ =>
-	        {
-	            var vm = CreateViewModel<ComposerViewModel>();
-	            vm.Text = Issue.Body;
-	            vm.SaveCommand.Subscribe(__ =>
-	            {
-	                Issue.Body = vm.Text;
-                    vm.DismissCommand.ExecuteIfCan();
-	            });
-	            ShowViewModel(vm);
-	        });
+//	        GoToDescriptionCommand.Subscribe(_ =>
+//	        {
+//	            var vm = CreateViewModel<ComposerViewModel>();
+//	            vm.Text = Issue.Body;
+//	            vm.SaveCommand.Subscribe(__ =>
+//	            {
+//	                Issue.Body = vm.Text;
+//                    vm.DismissCommand.ExecuteIfCan();
+//	            });
+//	            ShowViewModel(vm);
+//	        });
 
 	        this.WhenAnyValue(x => x.Issue).Where(x => x != null).Subscribe(x =>
 	        {

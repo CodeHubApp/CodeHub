@@ -157,6 +157,10 @@
     <Compile Include="Services\IGraphicService.cs" />
     <Compile Include="ViewModels\Users\RepositoryContributorsViewModel.cs" />
     <Compile Include="Utilities\GitHubSharpModelExtensions.cs" />
+    <Compile Include="ViewModels\Changesets\CommitCommentViewModel.cs" />
+    <Compile Include="Models\ImgurModel.cs" />
+    <Compile Include="ViewModels\Releases\ReleasesViewModel.cs" />
+    <Compile Include="ViewModels\Releases\ReleaseItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -191,19 +195,22 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.5.0\lib\monotouch\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.0.7\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.6.1\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.1.0\lib\Monotouch\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.5.1\lib\monotouch\Splat.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Releases\" />
   </ItemGroup>
 </Project>

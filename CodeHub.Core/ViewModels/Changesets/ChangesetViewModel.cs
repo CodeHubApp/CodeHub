@@ -38,6 +38,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
+        public IReactiveCommand GoToCommentCommand { get; private set; }
+
         public ReactiveList<CommentModel> Comments { get; private set; }
         
         public ChangesetViewModel(IApplicationService applicationService)
@@ -55,6 +57,16 @@ namespace CodeHub.Core.ViewModels.Changesets
                 var vm = CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
+            });
+
+            GoToCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = CreateViewModel<CommitCommentViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                vm.Node = Node;
+                vm.CommentAdded.Subscribe(Comments.Add);
                 ShowViewModel(vm);
             });
 
@@ -99,12 +111,6 @@ namespace CodeHub.Core.ViewModels.Changesets
                 Comments.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
                 return t1;
             });
-        }
-
-        public async Task AddComment(string text)
-        {
-            var c = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.Create(text));
-            Comments.Add(c.Data);
         }
     }
 }

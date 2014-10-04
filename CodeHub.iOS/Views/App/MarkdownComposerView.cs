@@ -1,30 +1,34 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
+using CodeHub.Core.Services;
+using CodeFramework.Markdown;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class MarkdownComposerView : ComposerViewController<MarkdownComposerViewModel>
+    public abstract class MarkdownComposerView<TViewModel> : ComposerViewController<TViewModel> where TViewModel : MarkdownComposerViewModel
     {
         private readonly IAlertDialogService _alertDialogService;
-        private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly UISegmentedControl _viewSegment;
         private UIWebView _previewView;
 
-        public MarkdownComposerView(IAlertDialogService alertDialogService, IStatusIndicatorService statusIndicatorService)
+        protected MarkdownComposerView(IAlertDialogService alertDialogService)
         {
             _alertDialogService = alertDialogService;
-            _statusIndicatorService = statusIndicatorService;
             _viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
             _viewSegment.SelectedSegment = 0;
             NavigationItem.TitleView = _viewSegment;
             _viewSegment.ValueChanged += SegmentValueChanged;
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             var pictureImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/picture");
             var linkImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/link");
@@ -41,7 +45,7 @@ namespace CodeHub.iOS.Views.App
                     TextView.InsertText("![]()");
                     TextView.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 4, 0);
                 }),
-                CreateAccessoryButton(photoImage, () => SelectImage()),
+                CreateAccessoryButton(photoImage, SelectImage),
                 CreateAccessoryButton(linkImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("[]()");
@@ -59,6 +63,9 @@ namespace CodeHub.iOS.Views.App
             };
 
             SetAccesoryButtons(buttons);
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem("Save", UIBarButtonItemStyle.Done, (s, e) => ViewModel.SaveCommand.ExecuteIfCan());
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand);
         }
 
         private class ImagePickerDelegate : UINavigationControllerDelegate
@@ -69,54 +76,23 @@ namespace CodeHub.iOS.Views.App
             }
         }
 
-        private class ImgurModel
-        {
-            public ImgurDataModel Data { get; set; }
-            public bool Success { get; set; }
-
-            public class ImgurDataModel
-            {
-                public string Link { get; set; }
-            }
-        }
-
+       
         private async void UploadImage(UIImage img)
         {
-            _statusIndicatorService.Show("Uploading...");
+            if (!ViewModel.PostToImgurCommand.CanExecute(null))
+                return;
 
             try
             {
-                var returnData = await Task.Run<byte[]>(() => 
-                {
-                    using (var w = new WebClient())
-                    {
-                        var data = img.AsJPEG();
-                        byte[] dataBytes = new byte[data.Length];
-                        System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
-
-                        w.Headers.Set("Authorization", "Client-ID aa5d7d0bc1dffa6");
-
-                        var values = new NameValueCollection
-                        {
-                            { "image", Convert.ToBase64String(dataBytes) }
-                        };
-
-                        return w.UploadValues("https://api.imgur.com/3/image", values);
-                    }
-                });
-
-
-                var json = IoC.Resolve<IJsonSerializationService>();
-                var imgurModel = json.Deserialize<ImgurModel>(System.Text.Encoding.UTF8.GetString(returnData));
-                TextView.InsertText("![](" + imgurModel.Data.Link + ")");
+                var data = img.AsJPEG();
+                var dataBytes = new byte[data.Length];
+                System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
+                var imgurModel = await ViewModel.PostToImgurCommand.ExecuteAsync(dataBytes);
+                TextView.InsertText("![Image](" + imgurModel.Data.Link + ")");
             }
-            catch (Exception e)
+            catch
             {
-                _alertDialogService.Alert("Error", "Unable to upload image: " + e.Message);
-            }
-            finally
-            {
-                _statusIndicatorService.Hide();
+                // Uh, that was weird...
             }
         }
 
@@ -164,8 +140,7 @@ namespace CodeHub.iOS.Views.App
                     if(originalImage != null) {
                         // do something with the image
                         try
-                        {
-                            UploadImage(originalImage);
+                        { UploadImage(originalImage);
                         }
                         catch
                         {
@@ -208,16 +183,15 @@ namespace CodeHub.iOS.Views.App
             }
             else
             {
-//                if (_previewView == null)
-//                    _previewView = new UIWebView(this.View.Bounds);
-//
-//                TextView.RemoveFromSuperview();
-//                Add(_previewView);
-//
-//                var markdownService = IoC.Resolve<IMarkdownService>();
-//                var path = MarkdownHtmlGenerator.CreateFile(markdownService.Convert(Text));
-//                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-//                _previewView.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
+                if (_previewView == null)
+                    _previewView = new UIWebView(this.View.Bounds);
+
+                TextView.RemoveFromSuperview();
+                Add(_previewView);
+
+                var markdownService = IoC.Resolve<IMarkdownService>();
+                var markdownView = new MarkdownView() { Model = markdownService.Convert(TextView.Text) };
+                _previewView.LoadHtmlString(markdownView.GenerateString(), null);
             }
         }
     }

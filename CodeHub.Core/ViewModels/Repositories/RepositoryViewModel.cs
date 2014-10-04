@@ -15,6 +15,7 @@ using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.ViewModels.Organizations;
+using CodeHub.Core.ViewModels.Releases;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -277,10 +278,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             GoToReleasesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-//                var vm = CreateViewModel<RepositoryForksViewModel>();
-//                vm.RepositoryOwner = RepositoryOwner;
-//                vm.RepositoryName = RepositoryName;
-//                ShowViewModel(vm);
+                var vm = CreateViewModel<ReleasesViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                ShowViewModel(vm);
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));

@@ -26,17 +26,17 @@ namespace CodeHub.Core.ViewModels.Issues
             _applicationService = applicationService;
 
             GoToDescriptionCommand = ReactiveCommand.Create();
-            GoToDescriptionCommand.Subscribe(_ =>
-            {
-                var vm = CreateViewModel<MarkdownComposerViewModel>();
-                vm.Text = Content;
-                vm.SaveCommand.Subscribe(__ =>
-                {
-                    Content = vm.Text;
-                    vm.DismissCommand.ExecuteIfCan();
-                });
-                ShowViewModel(vm);
-            });
+//            GoToDescriptionCommand.Subscribe(_ =>
+//            {
+//                var vm = CreateViewModel<MarkdownComposerViewModel>();
+//                vm.Text = Content;
+//                vm.SaveCommand.Subscribe(__ =>
+//                {
+//                    Content = vm.Text;
+//                    vm.DismissCommand.ExecuteIfCan();
+//                });
+//                ShowViewModel(vm);
+//            });
         }
 
 		protected override async Task Save()

@@ -9,17 +9,24 @@ using System.Reactive.Linq;
 using GitHubSharp.Models;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using System.Reactive;
+using System.Collections.Generic;
+using CodeHub.Comments;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : ViewModelPrettyDialogViewController<ChangesetViewModel>
     {
+        private readonly IMarkdownService _markdownService;
         private SplitButtonElement _split;
         private UIActionSheet _actionSheet;
+        private Section _commentSection = new Section();
 
-        public ChangesetView()
+        public ChangesetView(IMarkdownService markdownService)
         {
             Title = "Commit";
+            _markdownService = markdownService;
         }
 
         public override void ViewDidLoad()
@@ -33,6 +40,10 @@ namespace CodeHub.iOS.Views.Source
             var additions = _split.AddButton("Additions", "-");
             var deletions = _split.AddButton("Deletions", "-");
             var parents = _split.AddButton("Parents", "-");
+
+            var commentsElement = new WebElement("comments");
+            commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
+            //commentsSection.Add(commentsElement);
 
             var headerSection = new Section(HeaderView) { _split };
             Root.Reset(headerSection);
@@ -59,7 +70,22 @@ namespace CodeHub.iOS.Views.Source
 
             ViewModel.WhenAnyValue(x => x.Commit).Where(x => x != null).Subscribe(Render);
 
-            //ViewModel.BindCollection(x => x.Comments, a => Render());
+            ViewModel.Comments.Changed
+                .Select(_ => new Unit())
+                .StartWith(new Unit())
+                .Subscribe(x =>
+            {
+                    var commentModels = ViewModel.Comments.Select(c => {
+                        var body = _markdownService.Convert(c.Body);
+                        return new Comment(c.User.AvatarUrl, c.User.Login, body, c.CreatedAt.ToDaysAgo());
+                    });
+                    var razorView = new CommentsView { Model = commentModels };
+                    var html = razorView.GenerateString();
+                    commentsElement.Value = html;
+
+                    if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
+                        _commentSection.Add(commentsElement);
+            });
         }
 
         public void Render(CommitModel commitModel)
@@ -112,62 +138,12 @@ namespace CodeHub.iOS.Views.Source
 				}
 				Root.Add(fileSection);
 			}
-//
-//			var fileSection = new Section();
-//            commitModel.Files.ForEach(x => {
-//                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-//                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-//                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
-//                fileSection.Add(sse);
-//            });
 
-//            if (fileSection.Elements.Count > 0)
-//                root.Add(fileSection);
-//
-
-			var commentSection = new Section();
-            foreach (var comment in ViewModel.Comments)
-            {
-                //The path should be empty to indicate it's a comment on the entire commit, not a specific file
-                if (!string.IsNullOrEmpty(comment.Path))
-                    continue;
-
-                commentSection.Add(new CommentElement {
-                    Name = comment.User.Login,
-                    Time = comment.CreatedAt.ToDaysAgo(),
-                    String = comment.Body,
-                    Image = Images.Anonymous,
-                    ImageUri = new Uri(comment.User.AvatarUrl),
-                    BackgroundColor = UIColor.White,
-                });
-            }
-
-			if (commentSection.Count > 0)
-				Root.Add(commentSection);
+            Root.Add(_commentSection);
 
             var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-            addComment.Tapped += AddCommentTapped;
+            addComment.Tapped += () => ViewModel.GoToCommentCommand.ExecuteIfCan();
             Root.Add(new Section { addComment });
-        }
-
-        void AddCommentTapped()
-        {
-//            var composer = new MarkdownComposerViewController();
-//			composer.NewComment(this, async (text) => {
-//                try
-//                {
-//					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
-//					composer.CloseComposer();
-//                }
-//                catch (Exception e)
-//                {
-//					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
-//                }
-//                finally
-//                {
-//                    composer.EnableSendButton = true;
-//                }
-//            });
         }
 
 		private void ShowExtraMenu()
@@ -187,7 +163,7 @@ namespace CodeHub.iOS.Views.Source
 					// Pin to menu
 					if (e.ButtonIndex == addComment)
 					{
-						AddCommentTapped();
+                        ViewModel.GoToCommentCommand.ExecuteIfCan();
 					}
 					else if (e.ButtonIndex == copySha)
 					{

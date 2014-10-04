@@ -69,7 +69,7 @@ WriteLiteral(">");
 
 
 #line 98 "MarkdownView.cshtml"
-                       Write(Model);
+            WriteLiteral(Model);
 
 
 #line default
