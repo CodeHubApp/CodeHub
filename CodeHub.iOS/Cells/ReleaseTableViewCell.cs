@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Cells
 
         [Export("initWithStyle:reuseIdentifier:")]
         public ReleaseTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
-            : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
+            : base(UITableViewCellStyle.Value1, reuseIdentifier)
         { 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
@@ -23,6 +23,8 @@ namespace CodeHub.iOS.Cells
                     TextLabel.Text = x.Name;
                     DetailTextLabel.Text = x.Created;
                 });
+
+            DetailTextLabel.Font = UIFont.PreferredFootnote;
         }
     }
 }

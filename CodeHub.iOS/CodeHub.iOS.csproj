@@ -302,6 +302,15 @@
     <Compile Include="Views\Releases\ReleasesView.cs" />
     <Compile Include="TableViewSources\ReleasesTableViewSource.cs" />
     <Compile Include="Cells\ReleaseTableViewCell.cs" />
+    <Compile Include="Views\Releases\ReleaseView.cs" />
+    <None Include="Views\Releases\ReleaseRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
+    </None>
+    <Compile Include="Views\Releases\ReleaseRazorView.cs">
+      <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

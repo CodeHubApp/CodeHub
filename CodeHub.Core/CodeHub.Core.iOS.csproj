@@ -161,6 +161,7 @@
     <Compile Include="Models\ImgurModel.cs" />
     <Compile Include="ViewModels\Releases\ReleasesViewModel.cs" />
     <Compile Include="ViewModels\Releases\ReleaseItemViewModel.cs" />
+    <Compile Include="ViewModels\Releases\ReleaseViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

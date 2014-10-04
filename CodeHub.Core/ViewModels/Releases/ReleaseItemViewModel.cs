@@ -9,11 +9,14 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public string Created { get; private set; }
 
+        public long Id { get; private set; }
+
         public IReactiveCommand GoToCommand { get; private set; }
 
-        internal ReleaseItemViewModel(string name, DateTimeOffset createdAt,
+        internal ReleaseItemViewModel(long id, string name, DateTimeOffset createdAt,
             Action<ReleaseItemViewModel> gotoCommand)
         {
+            Id = id;
             Name = name;
             Created = createdAt.LocalDateTime.ToShortDateString();
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));

@@ -66,13 +66,13 @@ namespace CodeHub.iOS.Views.Repositories
             });
 
             ViewModel.WhenAnyValue(x => x.Contributors).Where(x => x.HasValue).SubscribeSafe(x => 
-                _splitElements[1].Button2.Text = x + (x == 1 ? " Contributor" : " Contributors"));
+                _splitElements[1].Button2.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"));
 
             ViewModel.WhenAnyValue(x => x.Branches).Where(x => x != null).SubscribeSafe(x => 
-                _splitElements[2].Button2.Text = x.Count + (x.Count == 1 ? " Branch" : " Branches"));
+                _splitElements[2].Button2.Text = (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"));
 
             ViewModel.WhenAnyValue(x => x.Releases).Where(x => x.HasValue).SubscribeSafe(x => 
-                _splitElements[2].Button1.Text = x + (x == 1 ? " Release" : " Releases"));
+                _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"));
         }
 
         private void Render()

@@ -3,6 +3,7 @@ using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
@@ -29,7 +30,14 @@ namespace CodeHub.Core.ViewModels.Releases
             Releases = releases.CreateDerivedCollection(
                 x => {
                     var published = x.PublishedAt.HasValue ? x.PublishedAt.Value : x.CreatedAt;
-                    return new ReleaseItemViewModel(x.Name, published, _ => {});
+                    return new ReleaseItemViewModel(x.Id, x.Name, published, _ => {
+                        var vm = CreateViewModel<ReleaseViewModel>();
+                        vm.RepositoryName = RepositoryName;
+                        vm.RepositoryOwner = RepositoryOwner;
+                        vm.ReleaseId = x.Id;
+                        vm.ReleaseModel = x;
+                        ShowViewModel(vm);
+                    });
                 },
                 x => !x.Draft && x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
