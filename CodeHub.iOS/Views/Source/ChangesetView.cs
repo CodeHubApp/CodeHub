@@ -18,15 +18,13 @@ namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : ViewModelPrettyDialogViewController<ChangesetViewModel>
     {
-        private readonly IMarkdownService _markdownService;
         private SplitButtonElement _split;
         private UIActionSheet _actionSheet;
         private Section _commentSection = new Section();
 
-        public ChangesetView(IMarkdownService markdownService)
+        public ChangesetView()
         {
             Title = "Commit";
-            _markdownService = markdownService;
         }
 
         public override void ViewDidLoad()
@@ -75,10 +73,8 @@ namespace CodeHub.iOS.Views.Source
                 .StartWith(new Unit())
                 .Subscribe(x =>
             {
-                    var commentModels = ViewModel.Comments.Select(c => {
-                        var body = _markdownService.Convert(c.Body);
-                        return new Comment(c.User.AvatarUrl, c.User.Login, body, c.CreatedAt.ToDaysAgo());
-                    });
+                    var commentModels = ViewModel.Comments.Select(c => 
+                        new Comment(c.User.AvatarUrl, c.User.Login, c.BodyHtml, c.CreatedAt.ToDaysAgo()));
                     var razorView = new CommentsView { Model = commentModels };
                     var html = razorView.GenerateString();
                     commentsElement.Value = html;

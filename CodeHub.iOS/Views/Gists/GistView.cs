@@ -17,14 +17,12 @@ namespace CodeHub.iOS.Views.Gists
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly IApplicationService _applicationService;
-        private readonly IMarkdownService _markdownService;
         private UIActionSheet _actionSheet;
 
-        public GistView(IStatusIndicatorService statusIndicatorService, IApplicationService applicationService, IMarkdownService markdownService)
+        public GistView(IStatusIndicatorService statusIndicatorService, IApplicationService applicationService)
         {
             _statusIndicatorService = statusIndicatorService;
             _applicationService = applicationService;
-            _markdownService = markdownService;
         }
 
         public override void ViewDidLoad()
@@ -138,10 +136,8 @@ namespace CodeHub.iOS.Views.Gists
 
             ViewModel.Comments.Changed.Subscribe(_ =>
             {
-                var commentModels = ViewModel.Comments.Select(x => {
-                    var body = _markdownService.Convert(x.Body);
-                    return new Comment(x.User.AvatarUrl, x.User.Login, body, x.CreatedAt.ToDaysAgo());
-                });
+                var commentModels = ViewModel.Comments.Select(x => 
+                    new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.ToDaysAgo()));
                 var razorView = new CommentsView { Model = commentModels };
                 var html = razorView.GenerateString();
                 commentsElement.Value = html;

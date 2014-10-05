@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reactive.Linq;
-using System.Text;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
@@ -19,7 +18,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         public string ContentText
         {
             get { return _contentText; }
-            set { this.RaiseAndSetIfChanged(ref _contentText, value); }
+            private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
 	    private ContentModel _contentModel;
@@ -37,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public ReadmeViewModel(IApplicationService applicationService, IMarkdownService markdownService, IShareService shareService)
+        public ReadmeViewModel(IApplicationService applicationService, IShareService shareService)
         {
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
@@ -48,13 +47,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
-                this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme(), x as bool?, r =>
-                {
-                    ContentModel = r.Data;
-                    var content = Convert.FromBase64String(ContentModel.Content);
-                    ContentText = markdownService.Convert(Encoding.UTF8.GetString(content, 0, content.Length));
-                }));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async x =>
+            {
+                var repository = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName];
+                ContentText = await repository.GetReadmeRendered();
+                ContentModel = (await applicationService.Client.ExecuteAsync(repository.GetReadme())).Data;
+            });
         }
     }
 }

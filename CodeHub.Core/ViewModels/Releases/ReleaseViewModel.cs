@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public ReleaseViewModel(IApplicationService applicationService, IMarkdownService markdownService, IShareService shareService)
+        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService)
         {
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ReleaseModel.HtmlUrl));
@@ -46,7 +46,7 @@ namespace CodeHub.Core.ViewModels.Releases
             GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
 
             _contentText = this.WhenAnyValue(x => x.ReleaseModel).IsNotNull()
-                .Select(x => markdownService.Convert(x.Body)).ToProperty(this, x => x.ContentText);
+                .Select(x => x.BodyHtml).ToProperty(this, x => x.ContentText);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
                 this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetRelease(ReleaseId), 
