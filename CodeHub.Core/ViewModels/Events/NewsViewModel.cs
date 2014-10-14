@@ -8,6 +8,7 @@ namespace CodeHub.Core.ViewModels.Events
     {
         public NewsViewModel(IApplicationService applicationService) : base(applicationService)
         {
+            Title = "News";
         }
 
         protected override GitHubSharp.GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)

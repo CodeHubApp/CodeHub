@@ -26,9 +26,9 @@ namespace CodeHub.iOS.Cells
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = UIColor.FromRGB(0, 64, 128);
-            TimeLabel.TextColor = UIColor.Gray;
-            ContentLabel.TextColor = UIColor.FromRGB(41, 41, 41);
+            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            TimeLabel.TextColor = Theme.CurrentTheme.MainSubtitleColor;
+            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)
@@ -36,7 +36,7 @@ namespace CodeHub.iOS.Cells
                 .Subscribe(x =>
                 {
                     MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
-                    TitleLabel.Text = x.Owner;
+                    TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
                     TimeLabel.Text = x.UpdatedAt.ToDaysAgo();
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;

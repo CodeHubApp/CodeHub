@@ -11,7 +11,6 @@ namespace CodeHub.iOS.Views.Releases
             Title = "Releases";
             base.ViewDidLoad();
             TableView.Source = new ReleasesTableViewSource(TableView, ViewModel.Releases);
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
         }
     }
 }

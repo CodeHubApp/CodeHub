@@ -1,16 +1,16 @@
 ﻿using System;
 using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseUserCollectionViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         protected readonly ReactiveList<BasicUserModel> UsersCollection = new ReactiveList<BasicUserModel>();
 

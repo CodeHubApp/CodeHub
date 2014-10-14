@@ -18,19 +18,6 @@ namespace CodeHub.iOS.Views.Source
             this.BindList(ViewModel.Content, CreateElement);
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            if (string.IsNullOrEmpty(ViewModel.Path))
-                Title = ViewModel.Repository;
-            else
-            {
-                var path = ViewModel.Path.TrimEnd('/');
-                Title = path.Substring(path.LastIndexOf('/') + 1);
-            } 
-        }
-
         private Element CreateElement(ContentModel x)
         {
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))

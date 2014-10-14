@@ -16,7 +16,16 @@ namespace CodeHub.Core.ViewModels.Users
     {
         private readonly IApplicationService _applicationService;
 
-        public string Username { get; set; }
+        private string _username;
+        public string Username 
+        {
+            get { return _username; }
+            set
+            {
+                _username = value;
+                Title = value;
+            }
+        }
 
         private UserModel _userModel;
         public UserModel User

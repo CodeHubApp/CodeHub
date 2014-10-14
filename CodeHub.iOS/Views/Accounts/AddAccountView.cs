@@ -53,18 +53,17 @@ namespace CodeHub.iOS.Views.Accounts
 		        }
 		    });
 
-            User.ValueChanged += (sender, args) => ViewModel.Username = User.Text;
+            User.EditingChanged += (sender, args) => ViewModel.Username = User.Text;
             ViewModel.WhenAnyValue(x => x.Username).Subscribe(x => User.Text = x);
 
-            Password.ValueChanged += (sender, args) => ViewModel.Password = Password.Text;
+            Password.EditingChanged += (sender, args) => ViewModel.Password = Password.Text;
             ViewModel.WhenAnyValue(x => x.Password).Subscribe(x => Password.Text = x);
 
             Domain.ValueChanged += (sender, args) => ViewModel.Domain = Domain.Text;
             ViewModel.WhenAnyValue(x => x.Domain).Subscribe(x => Domain.Text = x);
 
             LoginButton.TouchUpInside += (sender, args) => ViewModel.LoginCommand.ExecuteIfCan();
-
-
+            ViewModel.LoginCommand.CanExecuteObservable.Subscribe(x => LoginButton.Enabled = x);
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
             Logo.Image = Images.Logos.GitHub;

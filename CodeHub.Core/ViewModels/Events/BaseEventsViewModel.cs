@@ -39,6 +39,8 @@ namespace CodeHub.Core.ViewModels.Events
         protected BaseEventsViewModel(IApplicationService applicationService)
         {
             ApplicationService = applicationService;
+            Title = "Events";
+
             var events = new ReactiveList<EventModel>();
             Events = events.CreateDerivedCollection(CreateEventTextBlocks);
             ReportRepository = true;

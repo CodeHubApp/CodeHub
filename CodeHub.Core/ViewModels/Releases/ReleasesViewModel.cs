@@ -3,11 +3,11 @@ using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
-using System.Reactive.Linq;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
-    public class ReleasesViewModel : BaseViewModel, ILoadableViewModel
+    public class ReleasesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         public IReactiveCommand LoadCommand { get; private set; }
 

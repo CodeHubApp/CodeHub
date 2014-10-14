@@ -10,9 +10,7 @@ namespace CodeHub.iOS.Views.Source
 		{
 			base.ViewDidLoad();
 
-            Title = "Commits";
             TableView.Source = new CommitTableViewSource(TableView, ViewModel.Commits);
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
             ViewModel.LoadCommand.ExecuteIfCan();
 		}
 	}

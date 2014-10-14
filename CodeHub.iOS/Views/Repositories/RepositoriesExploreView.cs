@@ -8,11 +8,6 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesExploreView : ReactiveTableViewController<RepositoriesExploreViewModel>
     {
-        public RepositoriesExploreView()
-        {
-            Title = "Explore";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

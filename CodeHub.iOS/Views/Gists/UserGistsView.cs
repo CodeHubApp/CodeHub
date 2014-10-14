@@ -6,11 +6,6 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class UserGistsView : BaseGistsView<UserGistsViewModel>
     {
-        public UserGistsView()
-        {
-            Title = "Gists";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

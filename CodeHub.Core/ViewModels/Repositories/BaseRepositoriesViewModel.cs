@@ -6,13 +6,13 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Utilities;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel, ISearchableViewModel
+    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         protected readonly ReactiveList<RepositoryModel> RepositoryCollection = new ReactiveList<RepositoryModel>();
         protected readonly IApplicationService ApplicationService;
@@ -46,6 +46,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             ApplicationService = applicationService;
             ShowRepositoryOwner = true;
+            Title = "Repositories";
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {

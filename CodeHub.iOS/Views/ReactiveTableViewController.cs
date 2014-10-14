@@ -1,5 +1,7 @@
-﻿using Xamarin.Utilities.Core.ViewModels;
-using CodeHub.Core.ViewModels;
+﻿using System;
+using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core;
+using MonoTouch.UIKit;
 
 namespace ReactiveUI
 {
@@ -22,10 +24,16 @@ namespace ReactiveUI
         {
             base.LoadView();
 
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+
             this.WhenActivated(d =>
             {
-                // Do nothing. This allows the VM to get called.
+                // Always keep this around since it calls the VM WhenActivated
             });
+
+            var providesTitle = ViewModel as IProvidesTitle;
+            if (providesTitle != null)
+                providesTitle.WhenAnyValue(x => x.Title).Subscribe(x => Title = x ?? string.Empty);
 
             CreateRefreshControl();
             CreateSearchBar();
@@ -48,7 +56,7 @@ namespace ReactiveUI
 
         protected virtual void CreateSearchBar()
         {
-            var searchableViewModel = ViewModel as ISearchableViewModel;
+            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
             if (searchableViewModel != null)
                 this.AddSearchBar(x => searchableViewModel.SearchKeyword = x);
         }

@@ -9,6 +9,7 @@ namespace CodeHub.Core.ViewModels.Users
 
         public OrganizationMembersViewModel(IApplicationService applicationService)
         {
+            Title = "Members";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 Load(applicationService.Client.Organizations[OrganizationName].GetMembers(), t as bool?));
         }

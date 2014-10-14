@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CodeHub.Comments
+﻿namespace CodeHub.iOS.WebViews
 {
     public class Comment
     {

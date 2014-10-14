@@ -1,6 +1,5 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -10,6 +9,7 @@ namespace CodeHub.Core.ViewModels.Users
 
         public TeamMembersViewModel(IApplicationService applicationService)
         {
+            Title = "Members";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => Load(applicationService.Client.Teams[Id].GetMembers(), t as bool?));
         }
     }

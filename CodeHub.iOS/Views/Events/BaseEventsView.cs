@@ -6,11 +6,6 @@ namespace CodeHub.iOS.Views.Events
 {
     public abstract class BaseEventsView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseEventsViewModel
     {
-        protected BaseEventsView()
-        {
-            Title = "Events";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

@@ -13,6 +13,8 @@ namespace CodeHub.Core.ViewModels.Repositories
         public RepositoryForksViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
+            Title = "Forks";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forks = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetForks();

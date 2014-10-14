@@ -4,10 +4,6 @@ namespace CodeHub.iOS.Views.Users
 {
     public class RepositoryCollaboratorsView : BaseUserCollectionView<RepositoryCollaboratorsViewModel>
     {
-        public RepositoryCollaboratorsView()
-        {
-            Title = "Collaborators";
-        }
     }
 }
 

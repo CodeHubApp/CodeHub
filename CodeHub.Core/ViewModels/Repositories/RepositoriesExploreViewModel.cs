@@ -33,6 +33,8 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             _applicationService = applicationService;
 
+            Title = "Explore";
+
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
                 var vm = CreateViewModel<RepositoryViewModel>();

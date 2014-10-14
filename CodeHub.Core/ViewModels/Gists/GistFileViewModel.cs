@@ -4,47 +4,62 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using CodeHub.Core.ViewModels.Source;
+using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistFileViewModel : FileSourceViewModel<string>
+    public class GistFileViewModel : FileSourceViewModel, ILoadableViewModel
     {
-        private string _filename;
-        private string _id;
-        private GistFileModel _gistFile;
+        public const string MarkdownLanguage = "Markdown";
 
+        private string _id;
 	    public string Id
 	    {
 	        get { return _id; }
 	        set { this.RaiseAndSetIfChanged(ref _id, value); }
 	    }
 
+        private string _filename;
 	    public string Filename
 	    {
 	        get { return _filename; }
 	        set { this.RaiseAndSetIfChanged(ref _filename, value); }
 	    }
 
+        private GistFileModel _gistFile;
 	    public GistFileModel GistFile
 	    {
 	        get { return _gistFile; }
 	        set { this.RaiseAndSetIfChanged(ref _gistFile, value); }
 	    }
 
-        private readonly IReactiveCommand _loadCommand;
-        public override IReactiveCommand LoadCommand
+        private readonly ObservableAsPropertyHelper<bool> _isMarkdown;
+        public bool IsMarkdown
         {
-            get { return _loadCommand; }
+            get { return _isMarkdown.Value; }
         }
 
-	    public GistFileViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
+        public IReactiveCommand<object> ShareCommand { get; private set; }
+
+        public IReactiveCommand<object> OpenWithCommand { get; private set; }
+
+        public IReactiveCommand LoadCommand { get; private set; }
+
+        public GistFileViewModel(IAccountsService accounts, IApplicationService applicationService, IFilesystemService filesystemService, IShareService shareService)
+            : base(accounts)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
 	            Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
 	        });
 
-            _loadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            OpenWithCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
+
+            _isMarkdown = this.WhenAnyValue(x => x.GistFile).IsNotNull().Select(x => 
+                string.Equals(x.Language, MarkdownLanguage, StringComparison.OrdinalIgnoreCase)).ToProperty(this, x => x.IsMarkdown);
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
                 if (GistFile == null)
 			    {
@@ -59,6 +74,9 @@ namespace CodeHub.Core.ViewModels.Gists
 			    }
 
                 var content = GistFile.Content;
+                if (MarkdownLanguage.Equals(GistFile.Language, StringComparison.OrdinalIgnoreCase))
+                    content = await applicationService.Client.Markdown.GetMarkdown(content);
+
                 var gistFileName = System.IO.Path.GetFileName(GistFile.Filename);
                 string filePath;
                 
@@ -70,7 +88,9 @@ namespace CodeHub.Core.ViewModels.Gists
                     }
                 }
 
-                SourceItem = new FileSourceItemViewModel { FilePath = filePath };
+
+                var fileUri = new Uri(filePath);
+                SourceItem = new FileSourceItemViewModel(fileUri, false);
             });
 	    }
     }

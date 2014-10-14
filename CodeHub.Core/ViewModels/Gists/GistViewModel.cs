@@ -1,11 +1,11 @@
 using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
 
@@ -54,6 +54,12 @@ namespace CodeHub.Core.ViewModels.Gists
             _applicationService = applicationService;
             Comments = new ReactiveList<GistCommentModel>();
 
+            Title = "Gist";
+
+            this.WhenAnyValue(x => x.Gist).Where(x => x != null && x.Files != null && x.Files.Count > 0)
+                .Select(x => x.Files.First().Key).Subscribe(x => 
+                    Title = x);
+
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Gist.HtmlUrl));
 
@@ -87,9 +93,7 @@ namespace CodeHub.Core.ViewModels.Gists
             GoToViewableFileCommand = ReactiveCommand.Create();
             GoToViewableFileCommand.OfType<GistFileModel>().Subscribe(x =>
             {
-                var vm = CreateViewModel<GistViewableFileViewModel>();
-                vm.GistFile = x;
-                ShowViewModel(vm);
+
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));

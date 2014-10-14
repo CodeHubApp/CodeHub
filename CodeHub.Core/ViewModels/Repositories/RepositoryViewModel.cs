@@ -32,7 +32,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public string RepositoryOwner { get; set; }
 
-        public string RepositoryName { get; set; }
+        private string _repositoryName;
+        public string RepositoryName
+        {
+            get { return _repositoryName; }
+            set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
+        }
 
         public bool? IsStarred
         {
@@ -134,6 +139,8 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             ApplicationService = applicationService;
             _accountsService = accountsService;
+
+            this.WhenAnyValue(x => x.RepositoryName).Subscribe(x => Title = x);
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue), t => ToggleStar());

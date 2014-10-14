@@ -14,13 +14,13 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             Web.ScalesPageToFit = true;
-            Title = "Readme";
 
             base.ViewDidLoad();
 
-            ViewModel.WhenAnyValue(x => x.ContentText)
-                .Where(x => x != null)
-                .Subscribe(x => LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
+            this.WhenViewModel(x => x.Title).Subscribe(x => Title = x);
+
+            this.WhenViewModel(x => x.ContentText).IsNotNull().Subscribe(x =>
+                LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel).Select(x => x != null));

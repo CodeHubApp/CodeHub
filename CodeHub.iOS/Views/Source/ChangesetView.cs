@@ -11,8 +11,7 @@ using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
 using System.Reactive;
 using System.Collections.Generic;
-using CodeHub.Comments;
-using CodeHub.Core.Services;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -21,11 +20,6 @@ namespace CodeHub.iOS.Views.Source
         private SplitButtonElement _split;
         private UIActionSheet _actionSheet;
         private Section _commentSection = new Section();
-
-        public ChangesetView()
-        {
-            Title = "Commit";
-        }
 
         public override void ViewDidLoad()
         {

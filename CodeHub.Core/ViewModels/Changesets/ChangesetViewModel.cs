@@ -46,6 +46,8 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             _applicationService = applicationService;
 
+            Title = "Commit";
+
             Comments = new ReactiveList<CommentModel>();
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
@@ -79,18 +81,18 @@ namespace CodeHub.Core.ViewModels.Changesets
                     vm.Branch = Commit.Sha;
                     vm.Username = RepositoryOwner;
                     vm.Repository = RepositoryName;
-                    vm.Items = new [] 
-                    { 
-                        new SourceViewModel.SourceItemModel 
-                        {
-                            ForceBinary = true,
-                            GitUrl = x.BlobUrl,
-                            Name = x.Filename,
-                            Path = x.Filename,
-                            HtmlUrl = x.BlobUrl
-                        }
-                    };
-                    vm.CurrentItemIndex = 0;
+//                    vm.Items = new [] 
+//                    { 
+//                        new SourceViewModel.SourceItemModel 
+//                        {
+//                            ForceBinary = true,
+//                            GitUrl = x.BlobUrl,
+//                            Name = x.Filename,
+//                            Path = x.Filename,
+//                            HtmlUrl = x.BlobUrl
+//                        }
+//                    };
+//                    vm.CurrentItemIndex = 0;
                     ShowViewModel(vm);
                 }
                 else

@@ -99,6 +99,13 @@ namespace CodeHub.Core.Services
 	                account.OAuth = auth.Data.Token;
 				}
 
+                var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
+                var userInfo = data.Data;
+                account.Username = userInfo.Login;
+                account.Name = userInfo.Name;
+                account.Email = userInfo.Email;
+                account.AvatarUrl = userInfo.AvatarUrl;
+
                 if (exists)
                     _accounts.Update(account);
                 else

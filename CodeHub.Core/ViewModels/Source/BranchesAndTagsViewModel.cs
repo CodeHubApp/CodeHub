@@ -5,10 +5,11 @@ using GitHubSharp.Models;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel
+    public class BranchesAndTagsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
 	{
 		private ShowIndex _selectedFilter;
         public ShowIndex SelectedFilter

@@ -1,6 +1,5 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -12,6 +11,7 @@ namespace CodeHub.Core.ViewModels.Users
 
 	    public RepositoryStargazersViewModel(IApplicationService applicationService)
 	    {
+            Title = "Stargazers";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Load(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetStargazers(), t as bool?));
 	    }

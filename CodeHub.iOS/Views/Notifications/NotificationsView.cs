@@ -21,8 +21,6 @@ namespace CodeHub.iOS.Views.Notifications
 
         public override void ViewDidLoad()
         {
-            Title = "Notifications";
-
             base.ViewDidLoad();
 
             RefreshControl = ViewModel.LoadCommand.ToRefreshControl();

@@ -46,6 +46,7 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             _applicationService = applicationService;
 
+            Title = "Create Gist";
             Files = new Dictionary<string, string>();
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>

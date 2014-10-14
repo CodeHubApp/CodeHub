@@ -1,10 +1,8 @@
 ﻿using System;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Drawing;
-using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
 
@@ -37,23 +35,11 @@ namespace CodeHub.iOS.Cells
             ContentView.Add(TitleLabel);
             ContentView.Add(SubtitleLabel);
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TitleLabel.Text = x.Account.Username;
-                    SubtitleLabel.Text = x.Account.WebDomain;
-                    ImageView.SetImage(new NSUrl(x.Account.AvatarUrl), Images.LoginUserUnknown);
-                });
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Select(x => x.WhenAnyValue(y => y.Selected))
-                .Switch()
-                .Subscribe(x =>
-                {
-                    Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                });
+            this.WhenViewModel(x => x.Username).Subscribe(x => TitleLabel.Text = x);
+            this.WhenViewModel(x => x.Domain).Subscribe(x => SubtitleLabel.Text = x);
+            this.WhenViewModel(x => x.AvatarUrl).Where(x => !string.IsNullOrEmpty(x)).Subscribe(x => ImageView.SetImage(new NSUrl(x), Images.LoginUserUnknown));
+            this.WhenViewModel(x => x.AvatarUrl).Where(x => string.IsNullOrEmpty(x)).Subscribe(_ => ImageView.Image = Images.LoginUserUnknown);
+            this.WhenViewModel(x => x.Selected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
         }
 
         public override void LayoutSubviews()

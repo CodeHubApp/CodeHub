@@ -53,6 +53,8 @@ namespace CodeHub.Core.ViewModels.Repositories
             _applicationService = applicationService;
             _jsonHttpClient = jsonHttpClient;
 
+            Title = "Trending";
+
             var defaultLanguage = LanguagesViewModel.DefaultLanguage;
             SelectedLanguage = new LanguageItemViewModel(defaultLanguage.Name, defaultLanguage.Slug);
 

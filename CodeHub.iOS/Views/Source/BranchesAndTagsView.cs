@@ -9,15 +9,12 @@ namespace CodeHub.iOS.Views.Source
 {
     public class BranchesAndTagsView : ReactiveTableViewController<BranchesAndTagsViewModel>
 	{
-		private UISegmentedControl _viewSegment;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
-
-            _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
             _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) _viewSegment.SelectedSegment;
             ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (int)x);
             NavigationItem.TitleView = _viewSegment;

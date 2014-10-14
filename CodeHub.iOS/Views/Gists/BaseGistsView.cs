@@ -10,7 +10,6 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
             TableView.Source = new GistTableViewSource(TableView, ViewModel.Gists);
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
         }
     }
 }

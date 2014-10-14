@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 using CodeHub.Core.Services;
-using CodeFramework.Markdown;
+using System.Reactive.Linq;
 using ReactiveUI;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.App
 {

@@ -9,7 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CodeFramework.Markdown
+namespace CodeHub.iOS.WebViews
 {
 using System;
 using System.Collections.Generic;

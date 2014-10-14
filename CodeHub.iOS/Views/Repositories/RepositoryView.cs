@@ -19,8 +19,6 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
 
-            Title = HeaderView.Text = ViewModel.RepositoryName;
-
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowMenu());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(
                 ViewModel.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
@@ -73,6 +71,8 @@ namespace CodeHub.iOS.Views.Repositories
 
             ViewModel.WhenAnyValue(x => x.Releases).Where(x => x.HasValue).SubscribeSafe(x => 
                 _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"));
+
+            ViewModel.WhenAnyValue(x => x.RepositoryName).Subscribe(x => HeaderView.Text = x);
         }
 
         private void Render()

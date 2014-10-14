@@ -4,12 +4,12 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Teams
 {
-    public class TeamsViewModel : BaseViewModel, ILoadableViewModel
+    public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         private readonly ReactiveList<TeamShortModel> _teams = new ReactiveList<TeamShortModel>();
 
@@ -30,6 +30,7 @@ namespace CodeHub.Core.ViewModels.Teams
 
         public TeamsViewModel(IApplicationService applicationService)
         {
+            Title = "Teams";
             Teams = _teams.CreateDerivedCollection(x => x,
                 x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));

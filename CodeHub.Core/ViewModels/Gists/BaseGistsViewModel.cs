@@ -2,10 +2,12 @@ using System;
 using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public abstract class BaseGistsViewModel : BaseViewModel
+    public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword
     {
         protected readonly ReactiveList<GistModel> GistsCollection = new ReactiveList<GistModel>();
 
@@ -36,10 +38,12 @@ namespace CodeHub.Core.ViewModels.Gists
 
         private static GistItemViewModel CreateGistItemViewModel(GistModel gist, Action<GistItemViewModel> action)
         {
-            var owner = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
+            var title = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
             var description = string.IsNullOrEmpty(gist.Description) ? "Gist " + gist.Id : gist.Description;
             var imageUrl = (gist.Owner == null) ? null : gist.Owner.AvatarUrl;
-            return new GistItemViewModel(owner, imageUrl, description, gist.UpdatedAt, action);
+            if (gist.Files.Count > 0)
+                title = gist.Files.First().Key;
+            return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, action);
         }
     }
 }

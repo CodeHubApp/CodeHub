@@ -10,6 +10,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public StarredGistsViewModel(IApplicationService applicationService)
         {
+            Title = "Starred Gists";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 GistsCollection.SimpleCollectionLoad(applicationService.Client.Gists.GetStarredGists(), t as bool?));
             LoadCommand.ExecuteIfCan();

@@ -12,7 +12,6 @@ namespace CodeHub.iOS.Views.Organizations
 
             base.ViewDidLoad();
 
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
             TableView.Source = new UserTableViewSource(TableView, ViewModel.Organizations);
             ViewModel.LoadCommand.ExecuteIfCan();
         }

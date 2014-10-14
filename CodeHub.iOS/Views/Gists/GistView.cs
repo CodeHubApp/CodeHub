@@ -5,11 +5,11 @@ using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
-using CodeHub.Comments;
 using System.Linq;
+using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -29,7 +29,6 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
 
-            Title = string.Format("Gist #{0}", ViewModel.Id);
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
             var headerSection = new Section(HeaderView);
@@ -103,9 +102,9 @@ namespace CodeHub.iOS.Views.Gists
                 Root.Reload(headerSection);
             });
 
-            updatedGistObservable.SubscribeSafe(x => files.Text = x.Files.Count.ToString());
+            updatedGistObservable.Select(x => x.Files == null ? 0 : x.Files.Count()).SubscribeSafe(x => files.Text = x.ToString());
             updatedGistObservable.SubscribeSafe(x => comments.Text = x.Comments.ToString());
-            updatedGistObservable.SubscribeSafe(x => forks.Text = x.Forks.Count.ToString());
+            updatedGistObservable.Select(x => x.Forks == null ? 0 : x.Forks.Count()).SubscribeSafe(x => forks.Text = x.ToString());
 
             updatedGistObservable.Subscribe(x =>
             {

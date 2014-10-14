@@ -3,13 +3,13 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.ViewModels.Users;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
-    public class OrganizationsViewModel : BaseViewModel, ILoadableViewModel
+    public class OrganizationsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
 	{
         public IReadOnlyReactiveList<UserItemViewModel> Organizations { get; private set; }
 

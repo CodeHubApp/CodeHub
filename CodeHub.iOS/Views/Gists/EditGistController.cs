@@ -10,11 +10,6 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class EditGistController : ViewModelDialogViewController<GistEditViewModel>
     {
-        public EditGistController()
-        {
-            Title = "Edit Gist";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

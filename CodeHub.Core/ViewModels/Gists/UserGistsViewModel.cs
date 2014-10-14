@@ -9,20 +9,11 @@ namespace CodeHub.Core.ViewModels.Gists
     {
         private readonly IApplicationService _applicationService;
 
-        public string Username { get; set; }
-
-        public string Title
+        private string _username;
+        public string Username
         {
-            get
-            {
-                if (Username == null) 
-                    return "Gists";
-                if (IsMine)
-                    return "My Gists";
-                if (Username.EndsWith("s", StringComparison.OrdinalIgnoreCase))
-                    return Username + "' Gists";
-                return Username + "'s Gists";
-            }
+            get { return _username; }
+            set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
         public bool IsMine
@@ -44,6 +35,18 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var vm = CreateViewModel<GistCreateViewModel>();
                 ShowViewModel(vm);
+            });
+
+            this.WhenAnyValue(x => x.Username).Subscribe(x =>
+            {
+                if (IsMine)
+                    Title = "My Gists";
+                else if (x == null) 
+                    Title = "Gists";
+                else if (x.EndsWith("s", StringComparison.OrdinalIgnoreCase))
+                    Title = x + "' Gists";
+                else
+                    Title = x + "'s Gists";
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 

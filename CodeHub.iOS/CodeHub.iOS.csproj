@@ -24,7 +24,7 @@
     <MtouchDebug>true</MtouchDebug>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>i386</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -136,7 +136,6 @@
     <Compile Include="Views\Events\NewsView.cs" />
     <Compile Include="Views\Events\OrganizationEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
-    <Compile Include="Views\Gists\GistViewableFileView.cs" />
     <Compile Include="Views\Gists\PublicGistsView.cs" />
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
@@ -311,15 +310,34 @@
       <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
+    <Compile Include="WebViews\MarkdownView.cs">
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
+    </Compile>
+    <None Include="WebViews\MarkdownView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\SyntaxHighlighterView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\SyntaxHighlighterView.cs">
+      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\SourceBrowserModel.cs" />
+    <Compile Include="WebViews\Comment.cs" />
+    <None Include="WebViews\CommentsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\CommentsView.cs">
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
       <Project>{3C8DC5D3-37A5-4F65-BF11-A7EB83F5336D}</Project>
       <Name>CodeHub.Core.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodeHub.Common\CodeHub.Common.csproj">
-      <Project>{6E1C9E25-915A-4454-8BBD-61E6918BFCF1}</Project>
-      <Name>CodeHub.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -652,6 +670,61 @@
       <DependentUpon>update.png</DependentUpon>
     </BundleResource>
     <BundleResource Include="Images\update.png" />
+    <Content Include="WebResources\highlight.pack.js" />
+    <Content Include="WebResources\styles\arta.css" />
+    <Content Include="WebResources\styles\ascetic.css" />
+    <Content Include="WebResources\styles\atelier-dune.dark.css" />
+    <Content Include="WebResources\styles\atelier-dune.light.css" />
+    <Content Include="WebResources\styles\atelier-forest.dark.css" />
+    <Content Include="WebResources\styles\atelier-forest.light.css" />
+    <Content Include="WebResources\styles\atelier-heath.dark.css" />
+    <Content Include="WebResources\styles\atelier-heath.light.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
+    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
+    <Content Include="WebResources\styles\atelier-seaside.light.css" />
+    <Content Include="WebResources\styles\brown_paper.css" />
+    <Content Include="WebResources\styles\brown_papersq.png" />
+    <Content Include="WebResources\styles\dark.css" />
+    <Content Include="WebResources\styles\default.css" />
+    <Content Include="WebResources\styles\docco.css" />
+    <Content Include="WebResources\styles\far.css" />
+    <Content Include="WebResources\styles\foundation.css" />
+    <Content Include="WebResources\styles\github.css" />
+    <Content Include="WebResources\styles\googlecode.css" />
+    <Content Include="WebResources\styles\idea.css" />
+    <Content Include="WebResources\styles\ir_black.css" />
+    <Content Include="WebResources\styles\magula.css" />
+    <Content Include="WebResources\styles\mono-blue.css" />
+    <Content Include="WebResources\styles\monokai.css" />
+    <Content Include="WebResources\styles\monokai_sublime.css" />
+    <Content Include="WebResources\styles\obsidian.css" />
+    <Content Include="WebResources\styles\paraiso.dark.css" />
+    <Content Include="WebResources\styles\paraiso.light.css" />
+    <Content Include="WebResources\styles\pojoaque.css" />
+    <Content Include="WebResources\styles\pojoaque.jpg" />
+    <Content Include="WebResources\styles\railscasts.css" />
+    <Content Include="WebResources\styles\rainbow.css" />
+    <Content Include="WebResources\styles\school_book.css" />
+    <Content Include="WebResources\styles\school_book.png" />
+    <Content Include="WebResources\styles\solarized_dark.css" />
+    <Content Include="WebResources\styles\solarized_light.css" />
+    <Content Include="WebResources\styles\sunburst.css" />
+    <Content Include="WebResources\styles\tomorrow.css" />
+    <Content Include="WebResources\styles\tomorrow-night.css" />
+    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
+    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
+    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <Content Include="WebResources\styles\vs.css" />
+    <Content Include="WebResources\styles\xcode.css" />
+    <Content Include="WebResources\styles\zenburn.css" />
+    <Content Include="Diff\app.js" />
+    <Content Include="Diff\diffindex.html" />
+    <Content Include="Diff\difflib.js" />
+    <Content Include="Diff\diffview.css" />
+    <Content Include="Diff\diffview.js" />
+    <Content Include="Diff\jquery.min.js" />
+    <Content Include="WebResources\marked.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>

@@ -38,6 +38,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ReadmeViewModel(IApplicationService applicationService, IShareService shareService)
         {
+            Title = "Readme";
+
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
 

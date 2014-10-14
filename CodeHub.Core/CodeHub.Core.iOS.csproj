@@ -70,7 +70,6 @@
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistEditViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistViewableFileViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistViewModel.cs" />
     <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
@@ -151,7 +150,6 @@
     <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
-    <Compile Include="ViewModels\ISearchableViewModel.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelItemViewModel.cs" />
     <Compile Include="Services\IGraphicService.cs" />

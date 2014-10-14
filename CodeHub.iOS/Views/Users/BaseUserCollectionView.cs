@@ -16,8 +16,6 @@ namespace CodeHub.iOS.Views.Users
             TableView.Source = new UserTableViewSource(TableView, ViewModel.Users);
             ViewModel.LoadCommand.ExecuteIfCan();
 
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
-
 //            TableView.Scrolled += (object sender, EventArgs e) => 
 //            {
 //                if ((TableView.ContentSize.Height - TableView.ContentOffset.Y) / TableView.ContentSize.Height < .3f)

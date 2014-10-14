@@ -16,25 +16,6 @@ namespace CodeHub.iOS.Views.Source
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => CreateActionSheet());
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
-
-            ViewModel
-                .WhenAnyValue(x => x.CurrentItem)
-                .Where(x => x != null)
-                .Subscribe(x => Title = x.Path.Substring(x.Path.LastIndexOf('/') + 1));
-
-//			ViewModel.Bind(x => x.IsLoading, x =>
-//			{
-//				if (x) return;
-//				if (!string.IsNullOrEmpty(ViewModel.ContentPath))
-//				{
-//					var data = System.IO.File.ReadAllText(ViewModel.ContentPath, System.Text.Encoding.UTF8);
-//					LoadContent(data, System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
-//				}
-//				else if (!string.IsNullOrEmpty(ViewModel.FilePath))
-//				{
-//					LoadFile(ViewModel.FilePath);
-//				}
-//			});
 		}
 
         protected void CreateActionSheet()

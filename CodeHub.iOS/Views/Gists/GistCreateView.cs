@@ -12,7 +12,6 @@ namespace CodeHub.iOS.Views.Gists
     {
         public override void ViewDidLoad()
         {
-            Title = "Create Gist";
             base.ViewDidLoad();
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
 

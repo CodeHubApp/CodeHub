@@ -15,8 +15,6 @@ namespace CodeHub.iOS.Views.Repositories
     {
         public override void ViewDidLoad()
         {
-            Title = "Trending";
-
             base.ViewDidLoad();
 
             var titleButton = new TrendingTitleButton { Frame = new RectangleF(0, 0, 200f, 32f) };

@@ -5,9 +5,9 @@ namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistItemViewModel : ReactiveObject
     {
-        public string Owner { get; private set; }
-
         public string ImageUrl { get; private set; }
+
+        public string Title { get; private set; }
 
         public string Description { get; private set; }
 
@@ -15,9 +15,9 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand GoToCommand { get; private set; }
 
-        public GistItemViewModel(string owner, string imageUrl, string description, DateTimeOffset updatedAt, Action<GistItemViewModel> gotoAction)
+        public GistItemViewModel(string title, string imageUrl, string description, DateTimeOffset updatedAt, Action<GistItemViewModel> gotoAction)
         {
-            Owner = owner;
+            Title = title;
             ImageUrl = imageUrl;
             Description = description;
             UpdatedAt = updatedAt;

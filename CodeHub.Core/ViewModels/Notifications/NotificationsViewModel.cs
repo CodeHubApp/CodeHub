@@ -97,6 +97,8 @@ namespace CodeHub.Core.ViewModels.Notifications
         {
             _applicationService = applicationService;
 
+            Title = "Notifications";
+
             var whenNotificationsChange =
                 _notifications.Changed.Select(_ => Unit.Default)
                     .Merge(_notifications.ItemChanged.Select(_ => Unit.Default));

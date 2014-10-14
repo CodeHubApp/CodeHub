@@ -12,10 +12,6 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            Title = "Commit Branch";
-
-            this.AddSearchBar(x => ViewModel.SearchKeyword = x);
-
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
             source.ElementSelected.Subscribe(ViewModel.GoToBranchCommand.ExecuteIfCan);

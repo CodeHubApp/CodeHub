@@ -7,10 +7,11 @@ using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class ChangesetDiffViewModel : FileSourceViewModel<string>
+    public class ChangesetDiffViewModel : FileSourceViewModel, ILoadableViewModel
     {
         private CommitModel.CommitFileModel _commitFile;
         private string _filename;
@@ -38,13 +39,10 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<object> GoToCommentCommand { get; private set; }
 
-        private readonly IReactiveCommand _loadCommand;
-        public override IReactiveCommand LoadCommand
-        {
-            get { return _loadCommand; }
-        }
+        public IReactiveCommand LoadCommand { get; private set; }
 
-	    public ChangesetDiffViewModel(IApplicationService applicationService, IFilesystemService filesystemService)
+	    public ChangesetDiffViewModel(IAccountsService accounts, IApplicationService applicationService, IFilesystemService filesystemService)
+            : base(accounts)
 	    {
             Comments = new ReactiveList<CommentModel>();
 
@@ -74,7 +72,7 @@ namespace CodeHub.Core.ViewModels.Source
 	            }
 	        });
 
-            _loadCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            var branch = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch];
 
@@ -94,7 +92,7 @@ namespace CodeHub.Core.ViewModels.Source
 	                }
 	            }
 
-                SourceItem = new FileSourceItemViewModel { FilePath = path };
+                //SourceItem = new FileSourceItemViewModel { FilePath = path };
 			    await Comments.SimpleCollectionLoad(branch.Comments.GetAll(), t as bool?);
 
 	        });

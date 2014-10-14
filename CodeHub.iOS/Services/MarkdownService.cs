@@ -13,8 +13,11 @@ namespace CodeFramework.iOS.Services
 
 		public MarkdownService()
 		{
-			_ctx = new JSContext(_vm);
-            _ctx.EvaluateScript(Resources.MarkdownScript);
+            var scriptPath = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "WebResources", "marked.js");
+            var scriptContents = System.IO.File.ReadAllText(scriptPath);
+
+            _ctx = new JSContext(_vm);
+            _ctx.EvaluateScript(scriptContents);
 			_val = _ctx[new NSString("marked")];
 		}
 

@@ -11,6 +11,7 @@ namespace CodeHub.Core.ViewModels.Users
 
         public RepositoryContributorsViewModel(IApplicationService applicationService)
         {
+            Title = "Contributors";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 Load(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors(), t as bool?));
         }

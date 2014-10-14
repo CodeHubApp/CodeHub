@@ -4,12 +4,12 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class CommitBranchesViewModel : BaseViewModel, ILoadableViewModel
+    public class CommitBranchesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         public string RepositoryOwner { get; set; }
 
@@ -30,6 +30,8 @@ namespace CodeHub.Core.ViewModels.Source
 
         public CommitBranchesViewModel(IApplicationService applicationService)
         {
+            Title = "Commit Branch";
+
             var branches = new ReactiveList<BranchModel>();
             Branches = branches.CreateDerivedCollection(
                 x => x,

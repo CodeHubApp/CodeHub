@@ -4,14 +4,12 @@ using GitHubSharp.Models;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
-using System.Security.Cryptography;
-using System.Text;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
 	{
 		public string RepositoryOwner { get; set; }
 
@@ -32,6 +30,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
 	    protected CommitsViewModel()
 	    {
+            Title = "Commits";
+
             var commits = new ReactiveList<CommitModel>();
             Commits = commits.CreateDerivedCollection(
                 x => new CommitItemViewModel(x, GoToChangesetCommand.ExecuteIfCan), 

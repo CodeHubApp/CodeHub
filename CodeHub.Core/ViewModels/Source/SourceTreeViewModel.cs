@@ -46,6 +46,17 @@ namespace CodeHub.Core.ViewModels.Source
             var content = new ReactiveList<ContentModel>();
             Content = content.CreateDerivedCollection(x => x);
 
+            this.WhenActivated(d =>
+            {
+                if (string.IsNullOrEmpty(Path))
+                    Title = Repository;
+                else
+                {
+                    var path = Path.TrimEnd('/');
+                    Title = path.Substring(path.LastIndexOf('/') + 1);
+                } 
+            });
+
             GoToSubmoduleCommand = ReactiveCommand.Create();
             GoToSubmoduleCommand.OfType<ContentModel>().Subscribe(x =>
             {
@@ -61,24 +72,28 @@ namespace CodeHub.Core.ViewModels.Source
             GoToSourceCommand = ReactiveCommand.Create();
             GoToSourceCommand.OfType<ContentModel>().Subscribe(x =>
             {
-                var otherFiles = Content
-                    .Where(y => string.Equals(y.Type, "file", StringComparison.OrdinalIgnoreCase))
-                    .Where(y => y.Size.HasValue && y.Size.Value > 0)
-                    .Select(y => new SourceViewModel.SourceItemModel 
-                    {
-                        Name = y.Name,
-                        Path = y.Path,
-                        HtmlUrl = y.HtmlUrl,
-                        GitUrl = y.GitUrl
-                    }).ToArray();
+//                var otherFiles = Content
+//                    .Where(y => string.Equals(y.Type, "file", StringComparison.OrdinalIgnoreCase))
+//                    .Where(y => y.Size.HasValue && y.Size.Value > 0)
+//                    .Select(y => new SourceViewModel.SourceItemModel 
+//                    {
+//                        Name = y.Name,
+//                        Path = y.Path,
+//                        HtmlUrl = y.HtmlUrl,
+//                        GitUrl = y.GitUrl
+//                    }).ToArray();
 
                 var vm = CreateViewModel<SourceViewModel>();
                 vm.Branch = Branch;
                 vm.Username = Username;
                 vm.Repository = Repository;
                 vm.TrueBranch = TrueBranch;
-                vm.Items = otherFiles;
-                vm.CurrentItemIndex = Array.FindIndex(otherFiles, f => string.Equals(f.GitUrl, x.GitUrl, StringComparison.OrdinalIgnoreCase));
+                vm.Name = x.Name;
+                vm.HtmlUrl = x.HtmlUrl;
+                vm.Path = x.Path;
+                vm.GitUrl = x.GitUrl;
+//                vm.Items = otherFiles;
+//                vm.CurrentItemIndex = Array.FindIndex(otherFiles, f => string.Equals(f.GitUrl, x.GitUrl, StringComparison.OrdinalIgnoreCase));
                 ShowViewModel(vm);
             });
 
