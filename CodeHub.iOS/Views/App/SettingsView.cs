@@ -58,6 +58,12 @@ namespace CodeHub.iOS.Views.App
 //				application.Accounts.Update(currentAccount);
 			});
 
+            var openUrlsInCodeHub = new BooleanElement("Open URLs in CodeHub", currentAccount.OpenUrlsInApp, e =>
+            { 
+                //              currentAccount.ShowRepositoryDescriptionInList = e.Value;
+                //              application.Accounts.Update(currentAccount);
+            });
+
 			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, MonoTouch.UIKit.UITableViewCellStyle.Value1)
 			{ 
 				Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,
@@ -70,7 +76,7 @@ namespace CodeHub.iOS.Views.App
 
 			//Assign the root
             Root.Add(accountSection);
-            Root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView });
+            Root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, openUrlsInCodeHub, startupView });
 
             Root.Add(new Section("About", "Thank you for downloading. Enjoy!")
             {

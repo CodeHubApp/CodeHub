@@ -118,7 +118,7 @@ namespace CodeHub.Core.ViewModels.Events
             var vm = CreateViewModel<IssueViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
-            vm.IssueId = id;
+            vm.Id = id;
         }
 
         private void GoToPullRequest(RepositoryIdentifier repo, long id)
@@ -128,7 +128,7 @@ namespace CodeHub.Core.ViewModels.Events
             var vm = CreateViewModel<PullRequestViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
-            vm.PullRequestId = id;
+            vm.Id = id;
             ShowViewModel(vm);
         }
 

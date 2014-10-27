@@ -232,7 +232,9 @@ namespace CodeHub.iOS
                 var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
                 var firstIsDomain = first.Contains(".");
 
-                return UrlRouteProvider.Handle(path);
+                var viewModel = IoC.Resolve<IUrlRouterService>().Handle(path);
+                //TODO: Show the ViewModel
+                return true;
             }
         }
     }

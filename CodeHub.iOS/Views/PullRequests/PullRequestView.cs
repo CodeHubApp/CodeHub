@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Views.PullRequests
 
         public override void ViewDidLoad()
         {
-            Title = "Pull Request #" + ViewModel.PullRequestId;
+            Title = "Pull Request #" + ViewModel.Id;
 
             base.ViewDidLoad();
 

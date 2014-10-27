@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 		        var vm = CreateViewModel<PullRequestViewModel>();
 		        vm.RepositoryOwner = RepositoryOwner;
 		        vm.RepositoryName = RepositoryName;
-                vm.PullRequestId = x.PullRequest.Number;
+                vm.Id = x.PullRequest.Number;
                 vm.PullRequest = x.PullRequest;
 //		        vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
 //		        {

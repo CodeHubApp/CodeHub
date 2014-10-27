@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         private readonly IApplicationService _applicationService;
         private readonly IMarkdownService _markdownService;
 
-        public long PullRequestId { get; set; }
+        public long Id { get; set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -93,10 +93,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
                     try
                     {
                         var response = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner]
-                                                                .Repositories[RepositoryName].PullRequests[PullRequestId].Merge());
+                                                                .Repositories[RepositoryName].PullRequests[Id].Merge());
                         if (!response.Data.Merged)
                             throw new Exception(response.Data.Message);
-                        var pullRequest = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].Get();
+                        var pullRequest = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[Id].Get();
                         await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
                     }
                     catch (Exception e)
@@ -113,7 +113,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 try
                 {
                     var data = await _applicationService.Client.ExecuteAsync(
-                        _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].UpdateState(close ? "closed" : "open"));
+                        _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[Id].UpdateState(close ? "closed" : "open"));
                     PullRequest = data.Data;
                 }
                 catch (Exception e)
@@ -127,7 +127,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<PullRequestCommitsViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.PullRequestId = PullRequestId;
+                vm.PullRequestId = Id;
                 ShowViewModel(vm);
             });
 
@@ -136,7 +136,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<PullRequestFilesViewModel>();
                 vm.Username = RepositoryOwner;
                 vm.Repository = RepositoryName;
-                vm.PullRequestId = PullRequestId;
+                vm.PullRequestId = Id;
                 ShowViewModel(vm);
             });
 
@@ -148,7 +148,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<IssueEditViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.Id = PullRequestId;
+                vm.Id = Id;
                 vm.Issue = Issue;
                 vm.WhenAnyValue(x => x.Issue).Skip(1).Subscribe(x => Issue = x);
                 ShowViewModel(vm);
@@ -159,7 +159,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<IssueLabelsViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = PullRequestId;
+                vm.IssueId = Id;
                 vm.SaveOnSelect = true;
                 vm.SelectedLabels.Reset(Issue.Labels);
 //                vm.WhenAnyValue(x => x.Labels).Skip(1).Subscribe(x =>
@@ -175,7 +175,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<IssueMilestonesViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = PullRequestId;
+                vm.IssueId = Id;
                 vm.SaveOnSelect = true;
                 vm.SelectedMilestone = Issue.Milestone;
                 vm.WhenAnyValue(x => x.SelectedMilestone).Skip(1).Subscribe(x =>
@@ -191,7 +191,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = CreateViewModel<IssueAssignedToViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = PullRequestId;
+                vm.IssueId = Id;
                 vm.SaveOnSelect = true;
                 vm.SelectedUser = Issue.Assignee;
                 vm.WhenAnyValue(x => x.SelectedUser).Skip(1).Subscribe(x =>
@@ -209,7 +209,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 {
                     var req =
                         _applicationService.Client.Users[RepositoryOwner]
-                        .Repositories[RepositoryName].Issues[PullRequestId].CreateComment(vm.Comment);
+                        .Repositories[RepositoryName].Issues[Id].CreateComment(vm.Comment);
                     var comment = await _applicationService.Client.ExecuteAsync(req);
                     Comments.Add(comment.Data);
                     vm.DismissCommand.ExecuteIfCan();
@@ -223,11 +223,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
-                var pullRequest = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].Get();
+                var pullRequest = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[Id].Get();
                 var t1 = this.RequestModel(pullRequest, forceCacheInvalidation, response => PullRequest = response.Data);
-                Events.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[PullRequestId].GetEvents(), forceCacheInvalidation).FireAndForget();
-                Comments.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[PullRequestId].GetComments(), forceCacheInvalidation).FireAndForget();
-                this.RequestModel(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[PullRequestId].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
+                Events.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
+                Comments.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
+                this.RequestModel(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
                 return t1;
             });
         }

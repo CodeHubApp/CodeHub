@@ -79,8 +79,8 @@ namespace CodeHub.Core.ViewModels.Changesets
                 {
                     var vm = CreateViewModel<SourceViewModel>();
                     vm.Branch = Commit.Sha;
-                    vm.Username = RepositoryOwner;
-                    vm.Repository = RepositoryName;
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
 //                    vm.Items = new [] 
 //                    { 
 //                        new SourceViewModel.SourceItemModel 

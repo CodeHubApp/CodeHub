@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService)
+        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService, IUrlRouterService urlRouterService)
         {
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ReleaseModel.HtmlUrl));
@@ -43,7 +43,14 @@ namespace CodeHub.Core.ViewModels.Releases
             GoToGitHubCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(ReleaseModel.HtmlUrl));
 
             GoToLinkCommand = ReactiveCommand.Create();
-            GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
+            GoToLinkCommand.OfType<string>().Subscribe(x =>
+            {
+                var handledViewModel = urlRouterService.Handle(x);
+                if (handledViewModel != null && applicationService.Account.OpenUrlsInApp)
+                    ShowViewModel(handledViewModel);
+                else
+                    GoToUrlCommand.ExecuteIfCan(x);
+            });
 
             _contentText = this.WhenAnyValue(x => x.ReleaseModel).IsNotNull()
                 .Select(x => x.BodyHtml).ToProperty(this, x => x.ContentText);

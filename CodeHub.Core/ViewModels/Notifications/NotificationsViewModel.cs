@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 var vm = CreateViewModel<IssueViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
-                vm.IssueId = long.Parse(node);
+                vm.Id = long.Parse(node);
                 ShowViewModel(vm);
             }
             else if (subject.Equals("pullrequest"))
@@ -69,7 +69,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 var vm = CreateViewModel<PullRequestViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
-                vm.PullRequestId = long.Parse(node);
+                vm.Id = long.Parse(node);
                 ShowViewModel(vm);
             }
             else if (subject.Equals("commit"))

@@ -53,8 +53,8 @@ namespace CodeHub.Core.ViewModels.Source
 		    GoToSourceCommand.OfType<BranchModel>().Subscribe(x =>
 		    {
 		        var vm = CreateViewModel<SourceTreeViewModel>();
-		        vm.Username = RepositoryOwner;
-		        vm.Repository = RepositoryName;
+		        vm.RepositoryOwner = RepositoryOwner;
+		        vm.RepositoryName = RepositoryName;
 		        vm.Branch = x.Name;
 		        vm.TrueBranch = true;
                 ShowViewModel(vm);
@@ -62,8 +62,8 @@ namespace CodeHub.Core.ViewModels.Source
             GoToSourceCommand.OfType<TagModel>().Subscribe(x =>
             {
                 var vm = CreateViewModel<SourceTreeViewModel>();
-                vm.Username = RepositoryOwner;
-                vm.Repository = RepositoryName;
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
                 vm.Branch = x.Commit.Sha;
                 ShowViewModel(vm);
             });

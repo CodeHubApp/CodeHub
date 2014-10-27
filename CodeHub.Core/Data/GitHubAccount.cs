@@ -63,6 +63,11 @@ namespace CodeHub.Core.Data
         public string Email { get; set; }
 
         /// <summary>
+        /// Gets or sets whether URLs should be resolved to the app
+        /// </summary>
+        public bool OpenUrlsInApp { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GitHubAccount"/> class.
         /// </summary>
         public GitHubAccount()
@@ -72,6 +77,7 @@ namespace CodeHub.Core.Data
             ShowOrganizationsInEvents = true;
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
+            OpenUrlsInApp = true;
         }
 
         public bool DontRemember { get; set; }

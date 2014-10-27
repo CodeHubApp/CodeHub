@@ -17,7 +17,7 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly IApplicationService _applicationService;
         private IssueModel _issueModel;
 
-        public long IssueId { get; set; }
+        public long Id { get; set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -73,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 var vm = CreateViewModel<CommentViewModel>();
                 ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
                 {
-                    var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId];
+                    var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
                     var comment = await _applicationService.Client.ExecuteAsync(issue.CreateComment(vm.Comment));
                     Comments.Add(comment.Data);
                     vm.DismissCommand.ExecuteIfCan();
@@ -102,7 +102,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 var vm = CreateViewModel<IssueEditViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.Id = IssueId;
+                vm.Id = Id;
                 vm.Issue = Issue;
                 vm.WhenAnyValue(x => x.Issue).Skip(1).Subscribe(x => Issue = x);
                 ShowViewModel(vm);
@@ -115,7 +115,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.SaveOnSelect = true;
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = IssueId;
+                vm.IssueId = Id;
                 vm.SelectedUser = Issue.Assignee;
                 vm.WhenAnyValue(x => x.SelectedUser).Subscribe(x =>
                 {
@@ -132,7 +132,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.SaveOnSelect = true;
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = IssueId;
+                vm.IssueId = Id;
                 vm.SelectedLabels.Reset(Issue.Labels);
                 vm.WhenAnyValue(x => x.SelectedLabels).Subscribe(x =>
                 {
@@ -149,7 +149,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.SaveOnSelect = true;
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.IssueId = IssueId;
+                vm.IssueId = Id;
                 vm.SelectedMilestone = Issue.Milestone;
                 vm.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x =>
                 {
@@ -162,7 +162,7 @@ namespace CodeHub.Core.ViewModels.Issues
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var forceCacheInvalidation = t as bool?;
-                var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId];
+                var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
                 var t1 = this.RequestModel(issue.Get(), forceCacheInvalidation, response => Issue = response.Data);
                 Comments.SimpleCollectionLoad(issue.GetComments(), forceCacheInvalidation).FireAndForget();
                 Events.SimpleCollectionLoad(issue.GetEvents(), forceCacheInvalidation).FireAndForget();

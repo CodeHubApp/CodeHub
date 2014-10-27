@@ -68,7 +68,7 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            Title = "Issue #" + ViewModel.IssueId;
+            Title = "Issue #" + ViewModel.Id;
         }
 
         private IEnumerable<CommentModel> CreateCommentList()

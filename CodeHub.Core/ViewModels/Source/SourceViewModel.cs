@@ -4,18 +4,21 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Linq;
+using System.IO;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
     {
+        private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
         public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
         public string Branch { get; set; }
 
-        public string Username { get; set; }
+        public string RepositoryOwner { get; set; }
 
-        public string Repository { get; set; }
+        public string RepositoryName { get; set; }
 
         public string Path { get; set; }
 
@@ -23,9 +26,20 @@ namespace CodeHub.Core.ViewModels.Source
 
         public string GitUrl { get; set; }
 
-        public string Name { get; set; }
-
         public string HtmlUrl { get; set; }
+
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set { this.RaiseAndSetIfChanged(ref _name, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _isMarkdown;
+        public bool IsMarkdown
+        {
+            get { return _isMarkdown.Value; }
+        }
 
         private bool _trueBranch;
         public bool TrueBranch
@@ -45,55 +59,42 @@ namespace CodeHub.Core.ViewModels.Source
 	            var vm = CreateViewModel<EditSourceViewModel>();
                 vm.Path = Path;
                 vm.Branch = Branch;
-                vm.Username = Username;
-                vm.Repository = Repository;
+                vm.Username = RepositoryOwner;
+                vm.Repository = RepositoryName;
 	            ShowViewModel(vm);
             });
+
+            this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? string.Empty);
+
+            _isMarkdown = this.WhenAnyValue(x => x.Path).IsNotNull().Select(x => 
+                MarkdownExtensions.Any(Path.EndsWith)).ToProperty(this, x => x.IsMarkdown);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            string filepath;
-                string mime;
+                bool isBinary = false;
 
                 using (var stream = filesystemService.CreateTempFile(out filepath))
                 {
-                    mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
+                    if (MarkdownExtensions.Any(Path.EndsWith))
+                    {
+                        var renderedContent = await applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFileRendered(Path, Branch);
+                        using (var stringWriter = new StreamWriter(stream))
+                        {
+                            await stringWriter.WriteAsync(renderedContent);
+                        }
+                    }
+                    else
+                    {
+                        var mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
+                        isBinary = !(mime ?? string.Empty).Contains("charset");
+                    }
                 }
 
                 // We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
-                var isBinary = !mime.Contains("charset");
                 var fileUri = new Uri(filepath);
                 SourceItem = new FileSourceItemViewModel(fileUri, ForceBinary || isBinary);
 	        });
 	    }
-
-        public class SourceItemModel
-        {
-            public bool ForceBinary { get; set; }
-            public string Path { get; set; }
-            public string GitUrl { get; set; }
-            public string Name { get; set; }
-            public string HtmlUrl { get; set; }
-
-            public override bool Equals(object obj)
-            {
-                if (obj == null)
-                    return false;
-                if (ReferenceEquals(this, obj))
-                    return true;
-                if (obj.GetType() != typeof(SourceItemModel))
-                    return false;
-                SourceItemModel other = (SourceItemModel)obj;
-                return GitUrl == other.GitUrl;
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return (GitUrl != null ? GitUrl.GetHashCode() : 0);
-                }
-            }
-        }
     }
 }
