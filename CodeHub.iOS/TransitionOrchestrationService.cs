@@ -10,6 +10,8 @@ using CodeHub.iOS.Views.Repositories;
 using RepositoryStumble.Transitions;
 using CodeHub.iOS.ViewControllers;
 using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.Views.Gists;
+using CodeHub.iOS.Views.Source;
 
 namespace CodeHub.iOS
 {
@@ -35,7 +37,8 @@ namespace CodeHub.iOS
 //                toViewDismissCommand.Subscribe(__ => toViewController.DismissViewController(true, null));
 //                fromViewController.PresentViewController(new UINavigationController(toViewController), true, null);
 //            }
-            if (toViewController is AccountsView || toViewController is WebBrowserViewController)
+            if (toViewController is AccountsView || toViewController is WebBrowserViewController || toViewController is GistCommentView || 
+                toViewController is CommitCommentView)
             {
                 var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());

@@ -53,12 +53,15 @@ namespace CodeHub.iOS.Views.Gists
 
             var splitElement2 = new SplitElement();
             splitElement2.Button1 = new SplitElement.SplitButton(Images.Update, string.Empty);
-            splitElement2.Button2 = new SplitElement.SplitButton(Images.Star2, string.Empty);
+            splitElement2.Button2 = new SplitElement.SplitButton(Images.Star2, string.Empty, ViewModel.ToggleStarCommand.ExecuteIfCan);
             detailsSection.Add(splitElement2);
 
             var owner = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
             owner.Tapped += () => ViewModel.GoToUserCommand.ExecuteIfCan();
             detailsSection.Add(owner);
+
+            var addComment = new StyledStringElement("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan, Images.Pencil);
+            commentsSection.Add(addComment);
 
             updatedGistObservable.SubscribeSafe(x =>
             {
@@ -93,7 +96,6 @@ namespace CodeHub.iOS.Views.Gists
                 splitElement2.Button2.Image = x.Value ? Images.Star : Images.Star2;
             });
 
-            Root.Reset(headerSection, detailsSection, filesSection);
 
             updatedGistObservable.SubscribeSafe(x =>
             {
@@ -117,34 +119,36 @@ namespace CodeHub.iOS.Views.Gists
                         Lines = 1 
                     };
 
-                    var fileSaved = file;
-                    var gistFileModel = x.Files[fileSaved];
-
-                    //              if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-                    //                  sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-                    //              else
-                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
+                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);
                 }
 
                 filesSection.Reset(elements);
             });
-//
-//            updatedGistObservable.Take(1).Subscribe(_ => Root.Add(filesSection));
 
 
             ViewModel.Comments.Changed.Subscribe(_ =>
             {
-                var commentModels = ViewModel.Comments.Select(x => 
-                    new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.ToDaysAgo()));
-                var razorView = new CommentsView { Model = commentModels };
-                var html = razorView.GenerateString();
-                commentsElement.Value = html;
+                var commentModels = ViewModel.Comments
+                    .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.ToDaysAgo()))
+                    .ToList();
+
+                if (commentModels.Count > 0)
+                {
+                    var razorView = new CommentsView { Model = commentModels };
+                    var html = razorView.GenerateString();
+                    commentsElement.Value = html;
+
+                    if (!commentsSection.Contains(commentsElement))
+                        commentsSection.Insert(0, UITableViewRowAnimation.Fade, commentsElement);
+                }
+                else
+                {
+                    commentsSection.Remove(commentsElement);
+                }
             });
 
-            ViewModel.Comments.Changed.Take(1).Select(x => ViewModel.Comments).Where(x => x.Count > 0)
-                .Subscribe(_ => Root.Insert(Root.Count, commentsSection));
-
+            Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 
             ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null).Subscribe(gist =>
             {

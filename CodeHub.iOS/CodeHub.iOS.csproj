@@ -340,6 +340,7 @@
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Themes\DefaultTheme.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
+    <Compile Include="Views\Gists\GistCommentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">

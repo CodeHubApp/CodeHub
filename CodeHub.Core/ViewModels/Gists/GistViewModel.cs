@@ -49,6 +49,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand ToggleStarCommand { get; private set; }
 
+        public IReactiveCommand AddCommentCommand { get; private set; }
+
 		public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public GistViewModel(IApplicationService applicationService, IShareService shareService)
@@ -123,6 +125,14 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var vm = CreateViewModel<UserViewModel>();
                 vm.Username = Gist.Owner.Login;
+                ShowViewModel(vm);
+            });
+
+            AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = CreateViewModel<GistCommentViewModel>();
+                vm.Id = Id;
+                vm.CommentAdded.Subscribe(Comments.Add);
                 ShowViewModel(vm);
             });
 
