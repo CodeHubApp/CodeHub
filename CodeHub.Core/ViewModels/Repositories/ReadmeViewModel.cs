@@ -44,10 +44,10 @@ namespace CodeHub.Core.ViewModels.Repositories
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
 
             GoToGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
-            GoToGitHubCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(ContentModel.HtmlUrl));
+            GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(this.ShowWebBrowser);
 
             GoToLinkCommand = ReactiveCommand.Create();
-            GoToLinkCommand.OfType<string>().Subscribe(x => GoToUrlCommand.ExecuteIfCan(x));
+            GoToLinkCommand.OfType<string>().Subscribe(this.ShowWebBrowser);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async x =>
             {

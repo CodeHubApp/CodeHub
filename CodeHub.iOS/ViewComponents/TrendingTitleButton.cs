@@ -1,5 +1,4 @@
-﻿using System;
-using MonoTouch.UIKit;
+﻿using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -18,16 +17,24 @@ namespace CodeHub.iOS.ViewComponents
             }
         }
 
+        public UIColor TintColor
+        {
+            get { return _label.TextColor; }
+            set 
+            { 
+                _label.TextColor = value; 
+                _imageView.TintColor = value;
+            }
+        }
+
         public TrendingTitleButton()
         {
             _label = new UILabel();
-            _label.TextColor = UINavigationBar.Appearance.TintColor;
             _label.TextAlignment = UITextAlignment.Center;
             Add(_label);
 
             _imageView = new UIImageView();
             _imageView.Frame = new System.Drawing.RectangleF(0, 0, 12, 12);
-            _imageView.TintColor = UINavigationBar.Appearance.TintColor;
             _imageView.Image = Images.DownChevron.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
             Add(_imageView);
         }

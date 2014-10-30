@@ -44,6 +44,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> OpenWithCommand { get; private set; }
 
+        public IReactiveCommand GoToUrlCommand { get; private set; }
+
         public IReactiveCommand LoadCommand { get; private set; }
 
         public GistFileViewModel(IAccountsService accounts, IApplicationService applicationService, IFilesystemService filesystemService, IShareService shareService)
@@ -53,6 +55,8 @@ namespace CodeHub.Core.ViewModels.Gists
 	        {
 	            Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
 	        });
+
+            GoToUrlCommand = this.CreateUrlCommand();
 
             OpenWithCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
 

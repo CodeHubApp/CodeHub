@@ -12,7 +12,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueViewModel : BaseViewModel, ILoadableViewModel
+    public class IssueViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
     {
         private readonly IApplicationService _applicationService;
         private IssueModel _issueModel;
@@ -49,6 +49,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand ToggleStateCommand { get; private set; }
 
+        public IReactiveCommand GoToUrlCommand { get; private set; }
+
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public IReactiveCommand<object> AddCommentCommand { get; private set; }
@@ -63,6 +65,8 @@ namespace CodeHub.Core.ViewModels.Issues
             Comments = new ReactiveList<IssueCommentModel>();
             Events = new ReactiveList<IssueEventModel>();
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
+
+            GoToUrlCommand = this.CreateUrlCommand();
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Issue.HtmlUrl));

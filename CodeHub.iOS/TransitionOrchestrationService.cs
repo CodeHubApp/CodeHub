@@ -8,6 +8,8 @@ using CodeHub.iOS.Views.App;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.Views.Repositories;
 using RepositoryStumble.Transitions;
+using CodeHub.iOS.ViewControllers;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS
 {
@@ -33,12 +35,12 @@ namespace CodeHub.iOS
 //                toViewDismissCommand.Subscribe(__ => toViewController.DismissViewController(true, null));
 //                fromViewController.PresentViewController(new UINavigationController(toViewController), true, null);
 //            }
-            if (toViewController is AccountsView)
+            if (toViewController is AccountsView || toViewController is WebBrowserViewController)
             {
                 var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 toViewDismissCommand.Subscribe(_ => rootNav.DismissViewController(true, null));
-                rootNav.PresentViewController(new UINavigationController(toViewController), true, null);
+                rootNav.PresentViewController(new ThemedNavigationController(toViewController), true, null);
             }
 //            else if (fromViewController is RepositoriesViewController)
 //            {
@@ -55,7 +57,7 @@ namespace CodeHub.iOS
             else if (toViewController is NewAccountView && fromViewController is StartupView)
             {
                 toViewDismissCommand.Subscribe(_ => toViewController.DismissViewController(true, null));
-                fromViewController.PresentViewController(new UINavigationController(toViewController), true, null);
+                fromViewController.PresentViewController(new ThemedNavigationController(toViewController), true, null);
             }
             else if (fromViewController is MenuView)
             {
@@ -65,7 +67,7 @@ namespace CodeHub.iOS
             {
                 toViewDismissCommand.Subscribe(_ => fromViewController.DismissViewController(true, null));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => toViewDismissCommand.ExecuteIfCan());
-                var ctrlToPresent = new UINavigationController(toViewController);
+                var ctrlToPresent = new ThemedNavigationController(toViewController);
                 ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
                 fromViewController.PresentViewController(ctrlToPresent, true, null);
             }
@@ -75,6 +77,5 @@ namespace CodeHub.iOS
                 fromViewController.NavigationController.PushViewController(toViewController, true);
             }
         }
-
     }
 }

@@ -10,6 +10,7 @@ using GitHubSharp.Models;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Utilities;
 using System;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -27,13 +28,14 @@ namespace CodeHub.iOS.Views.Issues
             _segmentBarButton.Width = View.Frame.Width - 10f;
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
 
-
-
-            ViewModel.Issues.Changed.Select(x => Unit.Default).Merge(
-                ViewModel.WhenAnyValue(x => x.Filter).Select(x => Unit.Default)).Subscribe(_ =>
-                    Root.Reset(ViewModel.Issues.GroupBy(x => x.RepositoryFullName).Select(x => new Section(x.Key) { x.Select(CreateElement) })));
-
+//
+//
+//            ViewModel.Issues.Changed.Select(x => Unit.Default).Merge(
+//                ViewModel.WhenAnyValue(x => x.Filter).Select(x => Unit.Default)).Subscribe(_ =>
+//                    Root.Reset(ViewModel.Issues.GroupBy(x => x.RepositoryFullName).Select(x => new Section(x.Key) { x.Select(CreateElement) })));
+//
 
 //			vm.Bind(x => x.SelectedFilter, x =>
 //			{

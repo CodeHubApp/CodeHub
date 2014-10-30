@@ -163,6 +163,7 @@
     <Compile Include="Services\IUrlRouterService.cs" />
     <Compile Include="Services\UrlRouterService.cs" />
     <Compile Include="ViewModels\Source\SourceItemViewModel.cs" />
+    <Compile Include="ViewModels\ICanGoToUrl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

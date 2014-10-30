@@ -1,6 +1,9 @@
 ﻿using MonoTouch.UIKit;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.ViewControllers;
+using MonoTouch.SlideoutNavigation;
+using System.Linq;
 
 namespace CodeHub.iOS
 {
@@ -30,14 +33,19 @@ namespace CodeHub.iOS
             //Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
-            UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
-            UINavigationBar.Appearance.BackgroundColor = UIColor.FromRGB(50, 50, 50);
-            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-            UINavigationBar.Appearance.SetBackgroundImage(img, UIBarPosition.Any, UIBarMetrics.Default);
-            //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-            UINavigationBar.Appearance.BackIndicatorImage = Images.BackButton;
-            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.BackButton;
+
+            var navBarContainers = new [] { typeof(MenuNavigationController), typeof(ThemedNavigationController), typeof(MainNavigationController) };
+            foreach (var navbarAppearance in navBarContainers.Select(x => UINavigationBar.AppearanceWhenContainedIn(x)))
+            {
+                navbarAppearance.TintColor = UIColor.White;
+                navbarAppearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
+                navbarAppearance.BackgroundColor = UIColor.FromRGB(50, 50, 50);
+                navbarAppearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+                navbarAppearance.SetBackgroundImage(img, UIBarPosition.Any, UIBarMetrics.Default);
+                //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+                navbarAppearance.BackIndicatorImage = Images.BackButton;
+                navbarAppearance.BackIndicatorTransitionMaskImage = Images.BackButton;
+            }
 
 
 //            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(-1000, -64), UIBarMetrics.LandscapePhone);

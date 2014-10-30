@@ -121,6 +121,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand GoToForksCommand { get; private set; }
 
+        public IReactiveCommand<object> GoToHomepageCommand { get; private set; }
+
         public bool IsPinned
         {
             get
@@ -292,7 +294,10 @@ namespace CodeHub.Core.ViewModels.Repositories
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
-            GoToHtmlUrlCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(Repository.HtmlUrl));
+            GoToHtmlUrlCommand.Select(_ => Repository.HtmlUrl).Subscribe(this.ShowWebBrowser);
+
+            GoToHomepageCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.Homepage)));
+            GoToHomepageCommand.Select(_ => Repository.Homepage).Subscribe(this.ShowWebBrowser);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {

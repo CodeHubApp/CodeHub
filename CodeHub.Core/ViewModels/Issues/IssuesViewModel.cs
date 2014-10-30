@@ -7,27 +7,72 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>, ILoadableViewModel
+    public class IssuesViewModel : BaseIssuesViewModel, ILoadableViewModel
     {
+        private readonly IssuesFilterModel _openFilter = IssuesFilterModel.CreateOpenFilter();
+        private readonly IssuesFilterModel _closedFilter = IssuesFilterModel.CreateClosedFilter();
+        private readonly IssuesFilterModel _mineFilter;
+
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
         public IReactiveCommand<object> GoToNewIssueCommand { get; private set; }
 
+        public IReactiveCommand<object> GoToCustomFilterCommand { get; private set; }
+
         public IReactiveCommand LoadCommand { get; private set; }
+
+        private IssuesFilterModel _filter;
+        private IssuesFilterModel Filter
+        {
+            get { return _filter; }
+            set { this.RaiseAndSetIfChanged(ref _filter, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<IssueFilterSelection> _filterSelection;
+        public IssueFilterSelection FilterSelection
+        {
+            get { return _filterSelection.Value; }
+            set
+            {
+                if (value == IssueFilterSelection.Open)
+                    Filter = _openFilter;
+                else if (value == IssueFilterSelection.Closed)
+                    Filter = _closedFilter;
+                else if (value == IssueFilterSelection.Mine)
+                    Filter = _mineFilter;
+            }
+        }
 
 	    public IssuesViewModel(IApplicationService applicationService)
 	    {
+            _mineFilter = IssuesFilterModel.CreateMineFilter(applicationService.Account.Username);
+
+            _filterSelection = this.WhenAnyValue(x => x.Filter)
+                .Select(x =>
+                {
+                    if (x == null || _openFilter.Equals(x))
+                        return IssueFilterSelection.Open;
+                    if (_closedFilter.Equals(x))
+                        return IssueFilterSelection.Closed;
+                    if (_mineFilter.Equals(x))
+                        return IssueFilterSelection.Mine;
+                    return IssueFilterSelection.Custom;
+                })
+                .ToProperty(this, Xamarin => Xamarin.FilterSelection);
+
             GoToNewIssueCommand = ReactiveCommand.Create();
 	        GoToNewIssueCommand.Subscribe(_ =>
 	        {
 	            var vm = CreateViewModel<IssueAddViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-                vm.CreatedIssue.Where(x => x != null).Subscribe(x => IssuesCollection.Add(x));
+                vm.CreatedIssue.IsNotNull().Subscribe(IssuesCollection.Add);
                 ShowViewModel(vm);
 	        });
+
+            GoToCustomFilterCommand = ReactiveCommand.Create();
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
 	        {
@@ -46,6 +91,14 @@ namespace CodeHub.Core.ViewModels.Issues
                 return IssuesCollection.SimpleCollectionLoad(request, t as bool?);
 	        });
 	    }
+
+        public enum IssueFilterSelection
+        {
+            Open = 0,
+            Closed,
+            Mine,
+            Custom
+        }
     }
 }
 

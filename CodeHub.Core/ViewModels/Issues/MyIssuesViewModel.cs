@@ -4,25 +4,56 @@ using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
-using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>, ILoadableViewModel
+    public class MyIssuesViewModel : BaseIssuesViewModel, ILoadableViewModel
     {
-		private int _selectedFilter;
+        private readonly MyIssuesFilterModel _openFilter = MyIssuesFilterModel.CreateOpenFilter();
+        private readonly MyIssuesFilterModel _closedFilter = MyIssuesFilterModel.CreateClosedFilter();
+
+        private readonly ObservableAsPropertyHelper<int> _selectedFilter;
 		public int SelectedFilter
 		{
-			get { return _selectedFilter; }
-			set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
+            get { return _selectedFilter.Value; }
+			set
+            {
+                switch (value)
+                {
+                    case 0:
+                        Filter = _openFilter;
+                        break;
+                    case 1:
+                        Filter = _closedFilter;
+                        break;
+                }
+            }
 		}
+
+        private MyIssuesFilterModel _filter;
+        private MyIssuesFilterModel Filter
+        {
+            get { return _filter; }
+            set { this.RaiseAndSetIfChanged(ref _filter, value); }
+        }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
         public MyIssuesViewModel(IApplicationService applicationService)
         {
+            Title = "My Issues";
             Filter = MyIssuesFilterModel.CreateOpenFilter();
 
+            _selectedFilter = this.WhenAnyValue(x => x.Filter)
+                .Select(x =>
+                {
+                    if (x == null || _openFilter.Equals(x))
+                        return 0;
+                    return _closedFilter.Equals(x) ? 1 : -1;
+                })
+                .ToProperty(this, x => x.SelectedFilter);
+
+            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(LoadCommand.ExecuteIfCan);
 
             //Filter = applicationService.Account.Filters.GetFilter<MyIssuesFilterModel>("MyIssues");
 //            Issues.GroupFunc = x =>
@@ -41,18 +72,7 @@ namespace CodeHub.Core.ViewModels.Issues
 //                }
 //            };
 
-            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(x =>
-            {
-                switch (x)
-                {
-                    case 0:
-                        Filter = MyIssuesFilterModel.CreateOpenFilter();
-                        break;
-                    case 1:
-                        Filter = MyIssuesFilterModel.CreateClosedFilter();
-                        break;
-                }
-            });
+
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {

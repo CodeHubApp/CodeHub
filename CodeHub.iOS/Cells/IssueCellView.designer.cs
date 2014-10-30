@@ -7,7 +7,7 @@
 
 using MonoTouch.Foundation;
 
-namespace CodeFramework.iOS.Cells
+namespace CodeHub.iOS.Cells
 {
 	[Register ("IssueCellView")]
 	partial class IssueCellView

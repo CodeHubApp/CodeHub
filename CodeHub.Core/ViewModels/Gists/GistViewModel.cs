@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistViewModel : BaseViewModel, ILoadableViewModel
+    public class GistViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
     {
         private readonly IApplicationService _applicationService;
 
@@ -43,6 +43,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
+        public IReactiveCommand GoToUrlCommand { get; private set; }
+
         public IReactiveCommand ForkCommand { get; private set; }
 
         public IReactiveCommand ToggleStarCommand { get; private set; }
@@ -55,6 +57,8 @@ namespace CodeHub.Core.ViewModels.Gists
             Comments = new ReactiveList<GistCommentModel>();
 
             Title = "Gist";
+
+            GoToUrlCommand = this.CreateUrlCommand();
 
             this.WhenAnyValue(x => x.Gist).Where(x => x != null && x.Files != null && x.Files.Count > 0)
                 .Select(x => x.Files.First().Key).Subscribe(x => 
@@ -97,7 +101,12 @@ namespace CodeHub.Core.ViewModels.Gists
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
-            GoToHtmlUrlCommand.Subscribe(_ => GoToUrlCommand.ExecuteIfCan(Gist.HtmlUrl));
+            GoToHtmlUrlCommand.Select(_ => Gist.HtmlUrl).Subscribe(x =>
+            {
+                var vm = CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+
+            });
 
             GoToFileSourceCommand = ReactiveCommand.Create();
             GoToFileSourceCommand.OfType<GistFileModel>().Subscribe(x =>

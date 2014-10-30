@@ -8,11 +8,6 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class LanguagesView : ReactiveTableViewController<LanguagesViewModel>
     {
-        public LanguagesView()
-        {
-            Title = "Languages";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

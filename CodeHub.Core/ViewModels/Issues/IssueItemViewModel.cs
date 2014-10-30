@@ -1,9 +1,9 @@
-﻿using System;
-using GitHubSharp.Models;
+﻿using GitHubSharp.Models;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueItemViewModel
+    public class IssueItemViewModel : ReactiveObject
     {
         public IssueModel Issue { get; set; }
 
@@ -14,6 +14,8 @@ namespace CodeHub.Core.ViewModels.Issues
         public string RepositoryOwner { get; set; }
 
         public bool IsPullRequest { get; set; }
+
+        public IReactiveCommand GoToCommand { get; private set; }
     }
 }
 

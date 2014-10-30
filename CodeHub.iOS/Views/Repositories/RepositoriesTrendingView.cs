@@ -8,34 +8,40 @@ using CodeHub.iOS.Cells;
 using CodeHub.iOS.TableViewSources;
 using System.Drawing;
 using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesTrendingView : ReactiveTableViewController<RepositoriesTrendingViewModel>
     {
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
+        private readonly IThemeService _themeService;
 
-            var titleButton = new TrendingTitleButton { Frame = new RectangleF(0, 0, 200f, 32f) };
+        public RepositoriesTrendingView(IThemeService themeService)
+        {
+            _themeService = themeService;
+
+            var titleButton = new TrendingTitleButton
+            {
+                Frame = new RectangleF(0, 0, 200f, 32f),
+                TintColor = themeService.CurrentTheme.NavigationBarTextColor
+            };
             titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
-            ViewModel.WhenAnyValue(x => x.SelectedLanguage).Subscribe(x => titleButton.Text = x.Name);
             NavigationItem.TitleView = titleButton;
 
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
 
-            ViewModel.WhenAnyValue(x => x.Repositories)
+            this.WhenViewModel(x => x.Repositories)
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    source.Data = x.Select(g =>
-                    {
-                        var t = new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f);
-                        t.Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f);
-                        return t;
+                    source.Data = x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
+                        Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
                     }).ToList();
                 });
+
+            this.WhenViewModel(x => x.SelectedLanguage)
+                .Subscribe(x => titleButton.Text = x.Name);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -50,12 +56,12 @@ namespace CodeHub.iOS.Views.Repositories
             NavigationController.NavigationBar.ShadowImage = null;
         }
 
-        private static UILabel CreateHeaderView(string name)
+        private UILabel CreateHeaderView(string name)
         {
-            var v = new UILabel(new RectangleF(0, 0, 320f, 26f)) { BackgroundColor = UINavigationBar.Appearance.BarTintColor };
+            var v = new UILabel(new RectangleF(0, 0, 320f, 26f)) { BackgroundColor = _themeService.CurrentTheme.NavigationBarColor };
             v.Text = name;
             v.Font = UIFont.BoldSystemFontOfSize(14f);
-            v.TextColor = UINavigationBar.Appearance.TintColor;
+            v.TextColor = _themeService.CurrentTheme.NavigationBarTextColor;
             v.TextAlignment = UITextAlignment.Center;
             return v;
         }

@@ -5,11 +5,27 @@ using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
 using System.Linq;
+using System.Reactive.Linq;
+using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
+        public static void ShowWebBrowser(this BaseViewModel @this, string url)
+        {
+            var vm = @this.CreateViewModel<WebBrowserViewModel>();
+            vm.Url = url;
+            @this.ShowViewModel(vm);
+        }
+
+        public static IReactiveCommand CreateUrlCommand(this BaseViewModel @this)
+        {
+            var command = ReactiveCommand.Create();
+            command.OfType<string>().Subscribe(@this.ShowWebBrowser);
+            return command;
+        }
+
         public static async Task RequestModel<TRequest>(this object viewModel, GitHubRequest<TRequest> request, bool? forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
             var force = forceDataRefresh.HasValue && forceDataRefresh.Value;

@@ -334,6 +334,12 @@
     </Compile>
     <Compile Include="TableViewSources\SourceContentTableViewSource.cs" />
     <Compile Include="Cells\SourceContentCellView.cs" />
+    <Compile Include="ViewControllers\ThemedNavigationController.cs" />
+    <Compile Include="Themes\ITheme.cs" />
+    <Compile Include="Services\IThemeService.cs" />
+    <Compile Include="Services\ThemeService.cs" />
+    <Compile Include="Themes\DefaultTheme.cs" />
+    <Compile Include="TableViewSources\IssueTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -736,5 +742,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Views\Releases\" />
+    <Folder Include="Themes\" />
   </ItemGroup>
 </Project>

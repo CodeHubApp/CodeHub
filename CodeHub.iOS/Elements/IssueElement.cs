@@ -1,5 +1,4 @@
 using System;
-using CodeFramework.iOS.Cells;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using Xamarin.Utilities.DialogElements;
@@ -44,9 +43,11 @@ namespace CodeFramework.Elements
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            var cell = tv.DequeueReusableCell(IssueCellView.Key) as IssueCellView ?? IssueCellView.Create();
-            cell.Bind(Title, Status, Priority, Assigned, LastUpdated.ToDaysAgo(), Id, Kind);
-            return cell;
+//            var cell = tv.DequeueReusableCell(IssueCellView.Key) as IssueCellView ?? IssueCellView.Create();
+//            cell.Bind(Title, Status, Priority, Assigned, LastUpdated.ToDaysAgo(), Id, Kind);
+//            return cell;
+
+            return null;
         }
 
 

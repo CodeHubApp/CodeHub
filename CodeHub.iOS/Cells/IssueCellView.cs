@@ -2,80 +2,59 @@ using System;
 using System.Drawing;
 using MonoTouch.CoreGraphics;
 using MonoTouch.Foundation;
-using MonoTouch.ObjCRuntime;
 using MonoTouch.UIKit;
 using CodeHub.iOS;
+using CodeHub.Core.ViewModels.Issues;
+using CodeHub.iOS.Cells;
+using ReactiveUI;
+using System.Reactive.Linq;
 
-namespace CodeFramework.iOS.Cells
+namespace CodeHub.iOS.Cells
 {
-    public partial class IssueCellView : UITableViewCell
+    public partial class IssueCellView : ReactiveTableViewCell<IssueItemViewModel>
     {
+        public static readonly UINib Nib = UINib.FromName("IssueCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("IssueCellView");
 
-        public override string ReuseIdentifier { get { return Key; } }
-
-        public static IssueCellView Create()
-        {
-            var cell = new IssueCellView();
-            var views = NSBundle.MainBundle.LoadNib("IssueCellView", cell, null);
-            cell = Runtime.GetNSObject( views.ValueAt(0) ) as IssueCellView;
-
-            if (cell == null)
-            {
-                Console.WriteLine("Null cell!");
-            }
-            else
-            {
-                cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
-                cell.Number.TextColor = Theme.CurrentTheme.MainTitleColor;
-                cell.AddSubview(new SeperatorIssues {Frame = new RectangleF(65f, 5f, 1f, cell.Frame.Height - 10f)});
-                cell.Image1.Image = Theme.CurrentTheme.IssueCellImage1;
-                cell.Image2.Image = Theme.CurrentTheme.IssueCellImage2;
-                cell.Image3.Image = Theme.CurrentTheme.IssueCellImage3;
-                cell.Image4.Image = Theme.CurrentTheme.IssueCellImage4;
-                cell.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
-
-                cell.Caption.Font = cell.Caption.Font.WithSize(cell.Caption.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.Number.Font = cell.Number.Font.WithSize(cell.Number.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.Label1.Font = cell.Label1.Font.WithSize(cell.Label1.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.Label2.Font = cell.Label2.Font.WithSize(cell.Label2.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.Label3.Font = cell.Label3.Font.WithSize(cell.Label3.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.Label4.Font = cell.Label4.Font.WithSize(cell.Label4.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-                cell.IssueType.Font = cell.IssueType.Font.WithSize(cell.IssueType.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            }
-
-            //Create the icons
-            return cell;
-        }
-
-        public IssueCellView()
-        {
-        }
-
-        public IssueCellView(IntPtr handle)
+        public IssueCellView(IntPtr handle) 
             : base(handle)
         {
         }
 
-        public void Bind(string title, string status, string priority, string assigned, string lastUpdated, string id, string kind)
+        public override void AwakeFromNib()
         {
-            Caption.Text = title;
-            Label1.Text = status;
-            Label2.Text = priority;
-            Label3.Text = assigned;
-            Label4.Text = lastUpdated;
-            Number.Text = "#" + id;
-            IssueType.Text = kind;
+            base.AwakeFromNib();
 
-            /*
-            if (model.CommentCount > 0)
-            {
-                var ms = model.CommentCount.ToString ();
-                var ssize = ms.MonoStringLength(CountFont);
-                var boxWidth = Math.Min (22 + ssize, 18);
-                AddSubview(new CounterView(model.CommentCount) { Frame = new RectangleF(Bounds.Width-30-boxWidth, Bounds.Height / 2 - 8, boxWidth, 16) });
-            }
-            */
+            Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
+            Number.TextColor = Theme.CurrentTheme.MainTitleColor;
+            AddSubview(new SeperatorIssues {Frame = new RectangleF(65f, 5f, 1f, Frame.Height - 10f)});
+            Image1.Image = Theme.CurrentTheme.IssueCellImage1;
+            Image2.Image = Theme.CurrentTheme.IssueCellImage2;
+            Image3.Image = Theme.CurrentTheme.IssueCellImage3;
+            Image4.Image = Theme.CurrentTheme.IssueCellImage4;
+            SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
+
+            Caption.Font = Caption.Font.WithSize(Caption.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            Number.Font = Number.Font.WithSize(Number.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            Label1.Font = Label1.Font.WithSize(Label1.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            Label2.Font = Label2.Font.WithSize(Label2.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            Label3.Font = Label3.Font.WithSize(Label3.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            Label4.Font = Label4.Font.WithSize(Label4.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+            IssueType.Font = IssueType.Font.WithSize(IssueType.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
+
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .Where(x => x != null)
+                .Subscribe(x =>
+                {
+                    Caption.Text = x.Issue.Title;
+                    Label1.Text = x.Issue.State;
+                    Label2.Text = x.Issue.Comments == 1 ? "1 comment" : x.Issue.Comments + " comments";
+                    Label3.Text = x.Issue.Assignee != null ? x.Issue.Assignee.Login : "Unassigned";
+                    Label4.Text = x.Issue.UpdatedAt.ToDaysAgo();
+                    Number.Text = "#" + x.Issue.Number;
+                    IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
+                });
         }
 //
 //        static readonly UIFont CountFont = UIFont.BoldSystemFontOfSize (13);

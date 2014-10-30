@@ -35,6 +35,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public LanguagesViewModel(IJsonSerializationService jsonSerializationService, INetworkActivityService networkActivity)
         {
+            Title = "Languages";
+
             var languages = new ReactiveList<LanguageModel>();
 
             Languages = languages.CreateDerivedCollection(

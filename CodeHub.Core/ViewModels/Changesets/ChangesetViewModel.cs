@@ -11,7 +11,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public class ChangesetViewModel : BaseViewModel, ILoadableViewModel
+    public class ChangesetViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
     {
         private readonly IApplicationService _applicationService;
 
@@ -41,6 +41,8 @@ namespace CodeHub.Core.ViewModels.Changesets
         public IReactiveCommand GoToCommentCommand { get; private set; }
 
         public ReactiveList<CommentModel> Comments { get; private set; }
+
+        public IReactiveCommand GoToUrlCommand { get; private set; }
         
         public ChangesetViewModel(IApplicationService applicationService)
         {
@@ -48,10 +50,13 @@ namespace CodeHub.Core.ViewModels.Changesets
 
             Title = "Commit";
 
+            GoToUrlCommand = this.CreateUrlCommand();
+
             Comments = new ReactiveList<CommentModel>();
 
+            var goToUrlCommand = this.CreateUrlCommand();
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
-            GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(GoToUrlCommand.ExecuteIfCan);
+            GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(goToUrlCommand.ExecuteIfCan);
 
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.Subscribe(_ =>

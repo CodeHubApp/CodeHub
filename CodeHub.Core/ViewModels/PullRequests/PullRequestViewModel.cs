@@ -13,7 +13,7 @@ using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
     {
         private readonly IApplicationService _applicationService;
         private readonly IMarkdownService _markdownService;
@@ -69,6 +69,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand GoToAddCommentCommand { get; private set; }
 
+        public IReactiveCommand GoToUrlCommand { get; private set; }
+
         public ReactiveList<IssueCommentModel> Comments { get; private set; }
 
         public ReactiveList<IssueEventModel> Events { get; private set; }
@@ -81,6 +83,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             _applicationService = applicationService;
             _markdownService = markdownService;
+
+            GoToUrlCommand = this.CreateUrlCommand();
 
             Comments = new ReactiveList<IssueCommentModel>();
             Events = new ReactiveList<IssueEventModel>();
