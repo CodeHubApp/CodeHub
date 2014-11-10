@@ -26,6 +26,8 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public ReleasesViewModel(IApplicationService applicationService)
         {
+            Title = "Releases";
+
             var releases = new ReactiveList<ReleaseModel>();
             Releases = releases.CreateDerivedCollection(
                 x => {

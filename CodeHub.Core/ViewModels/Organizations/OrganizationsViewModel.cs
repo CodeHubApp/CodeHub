@@ -28,6 +28,8 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public OrganizationsViewModel(IApplicationService applicationService)
         {
+            Title = "Organizations";
+
             var organizations = new ReactiveList<BasicUserModel>();
             Organizations = organizations.CreateDerivedCollection(
                 x => new UserItemViewModel(x.Login, x.AvatarUrl, true, GoToOrganizationCommand.ExecuteIfCan),

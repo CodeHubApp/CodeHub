@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.Releases
         {
             Id = id;
             Name = name;
-            Created = createdAt.LocalDateTime.ToShortDateString();
+            Created = createdAt.LocalDateTime.ToString("d");
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
         }
     }

@@ -10,7 +10,6 @@ namespace CodeHub.iOS.Views.Events
         {
             base.ViewDidLoad();
             TableView.Source = new EventTableViewSource(TableView, ViewModel.Events);
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

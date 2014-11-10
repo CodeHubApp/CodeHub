@@ -39,6 +39,8 @@ namespace CodeHub.Core.ViewModels.App
         {
             _accountsService = accountsService;
 
+            Title = "Accounts";
+
             _accounts = new ReactiveList<GitHubAccount>(accountsService.OrderBy(x => x.Username));
             this.WhenActivated(d => _accounts.Reset(accountsService.OrderBy(x => x.Username)));
             Accounts = _accounts.CreateDerivedCollection(CreateAccountItem);

@@ -44,8 +44,6 @@ namespace CodeHub.iOS.Views.Source
                         TableView.Source = source;
                     }
                 });
-
-            ViewModel.LoadCommand.ExecuteIfCan();
 		}
 	}
 }

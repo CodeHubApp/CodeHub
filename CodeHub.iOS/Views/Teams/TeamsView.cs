@@ -15,8 +15,6 @@ namespace CodeHub.iOS.Views.Teams
             var source = new ReactiveTableViewSource<TeamShortModel>(TableView, ViewModel.Teams, TeamCellView.Key, 44f);
             source.ElementSelected.Subscribe(ViewModel.GoToTeamCommand.ExecuteIfCan);
             TableView.Source = source;
-
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

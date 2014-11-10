@@ -13,7 +13,6 @@ namespace CodeHub.Core.ViewModels.Gists
             Title = "Public Gists";
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 GistsCollection.SimpleCollectionLoad(applicationService.Client.Gists.GetPublicGists(), t as bool?));
-            LoadCommand.ExecuteIfCan();
         }
     }
 }

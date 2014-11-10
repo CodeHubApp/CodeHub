@@ -1,57 +1,32 @@
 using System;
 using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
-using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 using System.Reactive.Linq;
+using Xamarin.Utilities.Core.Services;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class ReadmeView : WebView<ReadmeViewModel>
+    public class ReadmeView : ReactiveWebViewController<ReadmeViewModel>
     {
-        private UIActionSheet _actionSheet;
-
-        public override void ViewDidLoad()
+        public ReadmeView(INetworkActivityService networkActivityService)
+            : base(networkActivityService)
         {
             Web.ScalesPageToFit = true;
-
-            base.ViewDidLoad();
-
-            this.WhenViewModel(x => x.Title).Subscribe(x => Title = x);
 
             this.WhenViewModel(x => x.ContentText).IsNotNull().Subscribe(x =>
                 LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
+            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
+                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
 
 		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
 		{
 		    if (request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
 		        return base.ShouldStartLoad(request, navigationType);
-		    ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
+            ViewModel.GoToLinkCommand.ExecuteIfCan(request.Url.AbsoluteString);
 		    return false;
-		}
-
-		private void ShareButtonPress()
-		{
-            _actionSheet = new UIActionSheet("Readme");
-            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? _actionSheet.AddButton("Share") : -1;
-		    var showButton = ViewModel.GoToGitHubCommand.CanExecute(null) ? _actionSheet.AddButton("Show in GitHub") : -1;
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) =>
-            {
-				if (e.ButtonIndex == showButton)
-                    ViewModel.GoToGitHubCommand.ExecuteIfCan();
-				else if (e.ButtonIndex == shareButton)
-					ViewModel.ShareCommand.ExecuteIfCan();
-                _actionSheet = null;
-            };
-
-            _actionSheet.ShowInView(View);
 		}
     }
 }

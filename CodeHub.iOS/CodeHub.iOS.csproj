@@ -341,6 +341,17 @@
     <Compile Include="Themes\DefaultTheme.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
     <Compile Include="Views\Gists\GistCommentView.cs" />
+    <Compile Include="TableViewSources\FeedbackTableViewSource.cs" />
+    <Compile Include="Cells\FeedbackCellView.cs" />
+    <Compile Include="Cells\FeedbackCellView.designer.cs">
+      <DependentUpon>FeedbackCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
+    <Compile Include="Views\App\FeedbackFeaturesView.cs" />
+    <Compile Include="Views\App\FeedbackView.cs" />
+    <Compile Include="Views\ReactiveViewController.cs" />
+    <Compile Include="Views\ReactiveWebViewController.cs" />
+    <Compile Include="Services\ActionMenuService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -361,9 +372,6 @@
     </Reference>
     <Reference Include="MonoTouch.TTTAttributedLabel">
       <HintPath>..\lib\MonoTouch\MonoTouch.TTTAttributedLabel.dll</HintPath>
-    </Reference>
-    <Reference Include="UserVoice">
-      <HintPath>..\lib\MonoTouch\UserVoice.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Utilities.Core">
       <HintPath>..\lib\MonoTouch\Xamarin.Utilities.Core.dll</HintPath>
@@ -410,6 +418,10 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.30.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png">

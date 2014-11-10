@@ -14,8 +14,9 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);
 
-            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, x => x.Public, (x, x1, x2) => Unit.Default)
+            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, x => x.IsPublic, (x, x1, x2) => Unit.Default)
                 .Subscribe(x => UpdateView());
 
             ViewModel.SaveCommand.IsExecuting.Subscribe( x =>
@@ -68,7 +69,7 @@ namespace CodeHub.iOS.Views.Gists
             desc.Tapped += ChangeDescription;
             section.Add(desc);
 
-            var pub = new BooleanElement("Public", ViewModel.Public, (e) => ViewModel.Public = e.Value); 
+            var pub = new BooleanElement("Public", ViewModel.IsPublic, (e) => ViewModel.IsPublic = e.Value); 
             section.Add(pub);
 
             foreach (var file in ViewModel.Files.Keys)

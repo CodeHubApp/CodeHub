@@ -5,6 +5,7 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -36,18 +37,30 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public ReadmeViewModel(IApplicationService applicationService, IShareService shareService)
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+
+        public ReadmeViewModel(IApplicationService applicationService, IShareService shareService, IActionMenuService actionMenuService)
         {
             Title = "Readme";
 
-            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
+            var nonNullContentModel = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
+
+            ShareCommand = ReactiveCommand.Create(nonNullContentModel);
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
 
-            GoToGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ContentModel).Select(x => x != null));
+            GoToGitHubCommand = ReactiveCommand.Create(nonNullContentModel);
             GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(this.ShowWebBrowser);
 
             GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(this.ShowWebBrowser);
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, _ =>
+            {
+                var menu = actionMenuService.Create(Title);
+                menu.AddButton("Share", ShareCommand);
+                menu.AddButton("Show in GitHub", GoToGitHubCommand);
+                return menu.Show();
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async x =>
             {

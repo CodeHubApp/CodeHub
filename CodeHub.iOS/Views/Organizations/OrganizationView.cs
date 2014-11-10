@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Organizations
         {
             base.ViewDidLoad();
 
-            Title = ViewModel.Username;
+            HeaderView.SubText = "Organization";
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
@@ -27,8 +27,6 @@ namespace CodeHub.iOS.Views.Organizations
 
             ViewModel.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
             {
-                Title = HeaderView.Text = string.IsNullOrEmpty(x.Name) ? x.Login : x.Name;
-                HeaderView.SubText = "Organization";
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
                 HeaderView.ImageUri = x.AvatarUrl;

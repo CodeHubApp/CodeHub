@@ -17,5 +17,12 @@ public static class ReactiveCommandExtensions
         });
         return refreshControl;
     }
+
+    public static UIBarButtonItem ToBarButtonItem(this IReactiveCommand @this, UIBarButtonSystemItem item)
+    {
+        var button = new UIBarButtonItem(item, (s, e) => @this.ExecuteIfCan());
+        button.EnableIfExecutable(@this);
+        return button;
+    }
 }
 

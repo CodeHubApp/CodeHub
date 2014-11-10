@@ -165,6 +165,10 @@
     <Compile Include="ViewModels\Source\SourceItemViewModel.cs" />
     <Compile Include="ViewModels\ICanGoToUrl.cs" />
     <Compile Include="ViewModels\Gists\GistCommentViewModel.cs" />
+    <Compile Include="ViewModels\App\FeedbackItemViewModel.cs" />
+    <Compile Include="ViewModels\App\FeedbackFeaturesViewModel.cs" />
+    <Compile Include="ViewModels\App\FeedbackViewModel.cs" />
+    <Compile Include="Services\IActionMenuService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -207,6 +211,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.30.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />

@@ -16,6 +16,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Releases;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -123,6 +124,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToHomepageCommand { get; private set; }
 
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+
         public bool IsPinned
         {
             get
@@ -137,7 +140,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand ToggleWatchCommand { get; private set; }
 
-        public RepositoryViewModel(IApplicationService applicationService, IAccountsService accountsService)
+        public RepositoryViewModel(IApplicationService applicationService, IAccountsService accountsService, IActionMenuService actionMenuService)
         {
             ApplicationService = applicationService;
             _accountsService = accountsService;
@@ -292,6 +295,19 @@ namespace CodeHub.Core.ViewModels.Repositories
                 vm.RepositoryName = RepositoryName;
                 ShowViewModel(vm);
             });
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
+                .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null),
+                _ =>
+                {
+                    var menu = actionMenuService.Create(Title);
+                    menu.AddButton(IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu", PinCommand);
+                    menu.AddButton(IsStarred.Value ? "Unstar This Repo" : "Star This Repo", ToggleStarCommand);
+                    menu.AddButton(IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo", ToggleWatchCommand);
+                    menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                    return menu.Show();
+                });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             GoToHtmlUrlCommand.Select(_ => Repository.HtmlUrl).Subscribe(this.ShowWebBrowser);

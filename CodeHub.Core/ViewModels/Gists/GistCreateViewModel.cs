@@ -5,15 +5,22 @@ using GitHubSharp.Models;
 using System.Linq;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistCreateViewModel : BaseViewModel
     {
         private readonly IApplicationService _applicationService;
+        private readonly Subject<GistModel> _createdGistSubject = new Subject<GistModel>();
         private string _description;
-        private bool _public;
+        private bool _isPublic;
         private IDictionary<string, string> _files;
+
+        public IObservable<GistModel> CreatedGist 
+        { 
+            get { return _createdGistSubject; } 
+        }
 
         public string Description
         {
@@ -21,23 +28,16 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
-        public bool Public
+        public bool IsPublic
         {
-            get { return _public; }
-            set { this.RaiseAndSetIfChanged(ref _public, value); }
+            get { return _isPublic; }
+            set { this.RaiseAndSetIfChanged(ref _isPublic, value); }
         }
 
         public IDictionary<string, string> Files
         {
             get { return _files; }
             set { this.RaiseAndSetIfChanged(ref _files, value); }
-        }
-
-        private GistModel _createdGist;
-        public GistModel CreatedGist
-        {
-            get { return _createdGist; }
-            private set { this.RaiseAndSetIfChanged(ref _createdGist, value); }
         }
 
         public IReactiveCommand SaveCommand { get; private set; }
@@ -57,12 +57,12 @@ namespace CodeHub.Core.ViewModels.Gists
                 var createGist = new GistCreateModel
                 {
                     Description = Description,
-                    Public = Public,
+                    Public = IsPublic,
                     Files = Files.ToDictionary(x => x.Key, x => new GistCreateModel.File { Content = x.Value })
                 };
 
-                var newGist = (await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
-                CreatedGist = newGist;
+                var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
+                _createdGistSubject.OnNext((await _applicationService.Client.ExecuteAsync(request)).Data);
                 DismissCommand.ExecuteIfCan();
             });
         }

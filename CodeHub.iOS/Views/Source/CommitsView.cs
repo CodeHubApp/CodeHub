@@ -9,9 +9,7 @@ namespace CodeHub.iOS.Views.Source
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-
             TableView.Source = new CommitTableViewSource(TableView, ViewModel.Commits);
-            ViewModel.LoadCommand.ExecuteIfCan();
 		}
 	}
 }

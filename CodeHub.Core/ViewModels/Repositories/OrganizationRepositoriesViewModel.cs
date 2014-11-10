@@ -1,3 +1,4 @@
+using System;
 using CodeHub.Core.Services;
 using ReactiveUI;
 
@@ -5,11 +6,17 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
     {
-        public string Name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set { this.RaiseAndSetIfChanged(ref _name, value); }
+        }
 
         public OrganizationRepositoriesViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
+            this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? "Repositories");
             ShowRepositoryOwner = false;
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
                 RepositoryCollection.SimpleCollectionLoad(applicationService.Client.Organizations[Name].Repositories.GetAll(), t as bool?));

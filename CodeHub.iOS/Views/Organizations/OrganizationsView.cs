@@ -8,12 +8,8 @@ namespace CodeHub.iOS.Views.Organizations
     {
         public override void ViewDidLoad()
         {
-            Title = "Organizations";
-
             base.ViewDidLoad();
-
             TableView.Source = new UserTableViewSource(TableView, ViewModel.Organizations);
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
 	}
 }

@@ -38,7 +38,7 @@ namespace CodeHub.iOS
 //                fromViewController.PresentViewController(new UINavigationController(toViewController), true, null);
 //            }
             if (toViewController is AccountsView || toViewController is WebBrowserViewController || toViewController is GistCommentView || 
-                toViewController is CommitCommentView)
+                toViewController is CommitCommentView || toViewController is GistCreateView)
             {
                 var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());

@@ -1,10 +1,8 @@
 using System;
 using System.Reactive.Linq;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,21 +13,15 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class GistView : ViewModelPrettyDialogViewController<GistViewModel>
     {
-        private readonly IStatusIndicatorService _statusIndicatorService;
-        private readonly IApplicationService _applicationService;
-        private UIActionSheet _actionSheet;
-
-        public GistView(IStatusIndicatorService statusIndicatorService, IApplicationService applicationService)
+        public GistView()
         {
-            _statusIndicatorService = statusIndicatorService;
-            _applicationService = applicationService;
+            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
+                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
             var headerSection = new Section(HeaderView);
             var filesSection = new Section("Files");
@@ -58,10 +50,21 @@ namespace CodeHub.iOS.Views.Gists
 
             var owner = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
             owner.Tapped += () => ViewModel.GoToUserCommand.ExecuteIfCan();
-            detailsSection.Add(owner);
 
             var addComment = new StyledStringElement("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan, Images.Pencil);
             commentsSection.Add(addComment);
+
+            Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
+
+            var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
+
+            ViewModel.WhenAnyValue(x => x.Gist).IsNotNull().Select(x => x.Owner).Subscribe(x =>
+            {
+                if (x == null)
+                    detailsSection.Remove(owner);
+                else if (x != null && !detailsSection.Contains(owner))
+                    detailsSection.Add(owner);
+            });
 
             updatedGistObservable.SubscribeSafe(x =>
             {
@@ -96,11 +99,13 @@ namespace CodeHub.iOS.Views.Gists
                 splitElement2.Button2.Image = x.Value ? Images.Star : Images.Star2;
             });
 
-
             updatedGistObservable.SubscribeSafe(x =>
             {
                 HeaderView.SubText = x.Description;
-                if (x.Owner != null) HeaderView.ImageUri = x.Owner.AvatarUrl;
+                if (x.Owner != null) 
+                    HeaderView.ImageUri = x.Owner.AvatarUrl;
+                else
+                    HeaderView.Image = Images.LoginUserUnknown;
                 Root.Reload(headerSection);
             });
 
@@ -147,66 +152,6 @@ namespace CodeHub.iOS.Views.Gists
                     commentsSection.Remove(commentsElement);
                 }
             });
-
-            Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
-
-            ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null).Subscribe(gist =>
-            {
-                if (string.Equals(_applicationService.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
-                {
-                    NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, (s, e) => { });
-
-//                    			try
-//					{
-//						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
-//						var gistController = new EditGistController(data.Data);
-//						gistController.Created = editedGist => ViewModel.Gist = editedGist;
-//						var navController = new UINavigationController(gistController);
-//						PresentViewController(navController, true, null);
-//
-//					}
-//					catch (Exception ex)
-//					{
-//						MonoTouch.Utilities.ShowAlert("Error", ex.Message);
-//					}
-                }
-                else
-                {
-                    NavigationItem.RightBarButtonItem = 
-                        new UIBarButtonItem(Theme.CurrentTheme.ForkButton, UIBarButtonItemStyle.Plain, (s, e) => 
-                            ViewModel.ForkCommand.ExecuteIfCan());
-                    NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.ForkCommand.CanExecuteObservable);
-                    
-                }
-            });
-
-            ViewModel.ForkCommand.IsExecuting.Subscribe(x =>
-            {
-                if (x)
-                    _statusIndicatorService.Show("Forking...");
-                else
-                    _statusIndicatorService.Hide();
-            });
-        }
-        
-        private void ShareButtonPress()
-        {
-            _actionSheet = new UIActionSheet("Gist");
-            var shareButton = _actionSheet.AddButton("Share");
-            var showButton = _actionSheet.AddButton("Show in GitHub");
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) => 
-			{
-	            if (e.ButtonIndex == shareButton)
-					ViewModel.ShareCommand.ExecuteIfCan();
-	            else if (e.ButtonIndex == showButton)
-					ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
-			    _actionSheet = null;
-			};
-
-            _actionSheet.ShowInView(View);
         }
     }
 }

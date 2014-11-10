@@ -1,25 +1,25 @@
 ﻿using System;
-using Xamarin.Utilities.ViewControllers;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Views;
-using System.Linq;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.WebViews;
-using MonoTouch.Foundation;
+using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public abstract class FileSourceView<TViewModel> : WebView<TViewModel> where TViewModel : FileSourceViewModel
+    public abstract class FileSourceView<TViewModel> : ReactiveWebViewController<TViewModel> where TViewModel : FileSourceViewModel
     {
         private bool _fullScreen;
+
+        protected FileSourceView(INetworkActivityService networkActivityService)
+            : base(networkActivityService)
+        {
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => Title = x ?? string.Empty);
 
             ViewModel.WhenAnyValue(x => x.Theme)
                 .Select(_ => ViewModel.SourceItem)
@@ -70,28 +70,6 @@ namespace CodeHub.iOS.Views.Source
             };
 
             LoadContent(razorView.GenerateString());
-        }
-
-        protected void ShowThemePicker()
-        {
-            var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "WebResources", "styles");
-            if (!System.IO.Directory.Exists(path))
-                return;
-
-            var themes = System.IO.Directory.GetFiles(path)
-                .Where(x => x.EndsWith(".css", StringComparison.Ordinal))
-                .Select(x => System.IO.Path.GetFileNameWithoutExtension(x))
-                .ToList();
-
-            var selected = themes.IndexOf(ViewModel.Theme ?? "idea");
-            if (selected <= 0)
-                selected = 0;
-
-            new PickerAlertView(themes.ToArray(), selected, x =>
-            {
-                if (x < themes.Count)
-                    ViewModel.Theme = themes[x];
-            }).Show();
         }
     }
 }

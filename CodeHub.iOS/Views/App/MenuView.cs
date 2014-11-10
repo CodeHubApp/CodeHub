@@ -87,26 +87,11 @@ namespace CodeHub.iOS.Views.App
             sections.Add(infoSection);
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
             infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
-            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Images.Flag));
+            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Flag));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Images.User));
 
             Root.Reset(sections);
 		}
-
-        private void PresentUserVoice()
-        {
-//            var config = new UserVoice.UVConfig() {
-//                Key = "95D8N9Q3UT1Asn89F7d3lA",
-//                Secret = "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4",
-//                Site = "codehub.uservoice.com",
-//                ShowContactUs = true,
-//                ShowForum = true,
-//                ShowPostIdea = true,
-//                ShowKnowledgeBase = true,
-//            };
-//            UserVoice.UserVoice.Initialize(config);
-//            UserVoice.UserVoice.PresentUserVoiceInterfaceForParentViewController(this);
-        }
 
         protected override void ProfileButtonClicked(object sender, EventArgs e)
         {

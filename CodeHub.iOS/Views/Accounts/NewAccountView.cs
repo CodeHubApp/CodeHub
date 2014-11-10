@@ -1,14 +1,14 @@
+using System;
 using System.Drawing;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class NewAccountView : ViewModelViewController<NewAccountViewModel>
+    public partial class NewAccountView : ReactiveViewController<NewAccountViewModel>
     {
         private readonly IFeaturesService _featuresService;
 
@@ -20,8 +20,6 @@ namespace CodeHub.iOS.Views.Accounts
 
         public override void ViewDidLoad()
         {
-            Title = "Account";
-
             base.ViewDidLoad();
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);

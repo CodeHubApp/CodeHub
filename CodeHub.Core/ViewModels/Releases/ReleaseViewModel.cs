@@ -5,6 +5,7 @@ using ReactiveUI;
 using GitHubSharp.Models;
 using Xamarin.Utilities.Core.Services;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
@@ -34,8 +35,14 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService, IUrlRouterService urlRouterService)
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+
+        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService, 
+            IUrlRouterService urlRouterService, IActionMenuService actionMenuService)
         {
+            this.WhenAnyValue(x => x.ReleaseModel)
+                .Select(x => x == null ? "Release" : x.Name).Subscribe(x => Title = x);
+
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(ReleaseModel.HtmlUrl));
 
@@ -53,6 +60,16 @@ namespace CodeHub.Core.ViewModels.Releases
                 else
                     gotoUrlCommand.ExecuteIfCan(x);
             });
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null),
+                _ =>
+                {
+                    var menu = actionMenuService.Create(Title);
+                    menu.AddButton("Share", ShowMenuCommand);
+                    menu.AddButton("Show in GitHub", GoToGitHubCommand);
+                    return menu.Show();
+                });
 
             _contentText = this.WhenAnyValue(x => x.ReleaseModel).IsNotNull()
                 .Select(x => x.BodyHtml).ToProperty(this, x => x.ContentText);

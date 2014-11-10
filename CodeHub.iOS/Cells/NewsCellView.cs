@@ -8,6 +8,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
 using GitHubSharp.Models;
+using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -113,7 +114,7 @@ namespace CodeHub.iOS.Cells
                         Image.Image = null;
 
                     ActionImage.Image = ChooseImage(x.Event);
-                    Time.Text = x.Event.CreatedAt.ToDaysAgo();
+                    Time.Text = x.Event.CreatedAt.UtcDateTime.Humanize();
 
                     List<NewsCellView.Link> headerLinks;
                     HeaderString = CreateAttributedStringFromBlocks(x.HeaderBlocks, out headerLinks);

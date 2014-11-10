@@ -17,7 +17,12 @@ namespace CodeHub.Core.ViewModels.Organizations
 	{
         private readonly IApplicationService _applicationService;
 
-        public string Username { get; set; }
+        private string _username;
+        public string Username
+        {
+            get { return _username; }
+            set { this.RaiseAndSetIfChanged(ref _username, value); }
+        }
 
         private UserModel _userModel;
         public UserModel Organization
@@ -54,6 +59,11 @@ namespace CodeHub.Core.ViewModels.Organizations
         public OrganizationViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
+
+            this.WhenAnyValue(x => x.Organization, x => x.Username, 
+                (x, y) => x == null ? y : (string.IsNullOrEmpty(x.Name) ? x.Login : x.Name))
+                .Select(x => x ?? "Organization")
+                .Subscribe(x => Title = x);
 
             GoToMembersCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {

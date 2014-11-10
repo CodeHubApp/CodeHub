@@ -1,89 +1,29 @@
 using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using System.Text;
 using ReactiveUI;
 using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public class LoginView : WebView<LoginViewModel>
+    public class LoginView : ReactiveWebViewController<LoginViewModel>
     {
         private readonly IAlertDialogService _alertDialogService;
-        private readonly IStatusIndicatorService _statusIndicatorService;
-        private UIActionSheet _actionSheet;
 
-        public LoginView(IAlertDialogService alertDialogService, IStatusIndicatorService statusIndicatorService)
+        public LoginView(IAlertDialogService alertDialogService, INetworkActivityService networkActivityService)
+            : base(networkActivityService)
         {
             _alertDialogService = alertDialogService;
-            _statusIndicatorService = statusIndicatorService;
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => 
+                ViewModel.ShowLoginOptionsCommand.ExecuteIfCan());
+
+            this.WhenViewModel(x => x.Title).IsNotNull().Subscribe(x => Title = x);
+            this.WhenViewModel(x => x.LoginUrl).IsNotNull().Subscribe(LoadRequest);
         }
-
-		private void ShowExtraMenu()
-		{
-            _actionSheet = new UIActionSheet("Login");
-            var basicButton = _actionSheet.AddButton("Login via BASIC");
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) =>
-            {
-				if (e.ButtonIndex == basicButton)
-					ViewModel.GoToOldLoginWaysCommand.ExecuteIfCan();
-                _actionSheet = null;
-            };
-
-			_actionSheet.ShowInView(View);
-		}
-
-		public override void ViewDidLoad()
-		{
-            Title = "Login";
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-
-			base.ViewDidLoad();
-
-			if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
-				LoadRequest();
-
-            ViewModel.LoginCommand.IsExecuting.Skip(1).Subscribe(x => 
-            {
-                if (x)
-                    _statusIndicatorService.Show("Logging in...");
-                else
-                    _statusIndicatorService.Hide();
-            });
-		}
-
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(animated);
-
-			if (ViewModel.IsEnterprise && string.IsNullOrEmpty(ViewModel.WebDomain))
-			{
-				Stuff();
-			}
-		}
-
-		private async Task Stuff()
-		{
-		    try
-		    {
-                var response = await _alertDialogService.PromptTextBox("Enterprise URL",
-                                      "Please enter the webpage address for the GitHub Enterprise installation", 
-                                      ViewModel.WebDomain, "Ok");
-                ViewModel.WebDomain = response;
-                LoadRequest();
-		    }
-		    catch (Exception)
-		    {
-		        ViewModel.DismissCommand.ExecuteIfCan();
-		    }
-		}
 
 		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
@@ -103,6 +43,12 @@ namespace CodeHub.iOS.Views.Accounts
             return base.ShouldStartLoad(request, navigationType);
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            ViewModel.LoadCommand.ExecuteIfCan();
+        }
+
 		protected override void OnLoadError(object sender, UIWebErrorArgs e)
 		{
 			base.OnLoadError(sender, e);
@@ -114,7 +60,7 @@ namespace CodeHub.iOS.Views.Accounts
 			if (ViewModel.IsEnterprise)
             {
                 var alert = _alertDialogService.Alert("Error", "Unable to communicate with GitHub with given Url. " + e.Error.LocalizedDescription);
-                alert.ContinueWith(t => Stuff(), TaskContinuationOptions.OnlyOnRanToCompletion);
+                alert.ContinueWith(t => ViewModel.LoadCommand.ExecuteIfCan(), TaskContinuationOptions.OnlyOnRanToCompletion);
             }
 			else
                 _alertDialogService.Alert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription);
@@ -143,7 +89,7 @@ namespace CodeHub.iOS.Views.Accounts
             Web.EvaluateJavascript("(function(){setTimeout(function(){" + script +"}, 100); })();");
         }
 
-        private void LoadRequest()
+        private void LoadRequest(string loginUrl)
         {
             try
             {
@@ -151,7 +97,7 @@ namespace CodeHub.iOS.Views.Accounts
                 foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
                     MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
                 MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-    			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(ViewModel.LoginUrl)));
+    			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(loginUrl)));
             }
             catch (Exception e)
             {

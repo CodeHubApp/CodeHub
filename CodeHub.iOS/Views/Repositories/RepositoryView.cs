@@ -11,20 +11,15 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryView : ViewModelPrettyDialogViewController<RepositoryViewModel>
     {
-        private UIActionSheet _actionSheet;
-        private SplitButtonElement _split;
-        private SplitElement[] _splitElements = new SplitElement[3];
+        private readonly SplitButtonElement _split = new SplitButtonElement();
+        private readonly SplitElement[] _splitElements = new SplitElement[3];
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowMenu());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(
-                ViewModel.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
-                .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null));
+            NavigationItem.RightBarButtonItem = ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action);
 
-            _split = new SplitButtonElement();
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
             var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
@@ -117,34 +112,6 @@ namespace CodeHub.iOS.Views.Repositories
                 var web = new StyledStringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Images.Webpage);
                 Root.Add(new Section { web });
             }
-        }
-
-        private void ShowMenu()
-        {
-            _actionSheet = new UIActionSheet(ViewModel.Repository.Name);
-            var pinButton = _actionSheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
-            var starButton = _actionSheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
-            var watchButton = _actionSheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
-            //var forkButton = sheet.AddButton("Fork Repository");
-            var showButton = _actionSheet.AddButton("Show in GitHub");
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) => {
-                // Pin to menu
-                if (e.ButtonIndex == pinButton)
-                    ViewModel.PinCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == starButton)
-                    ViewModel.ToggleStarCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == watchButton)
-                    ViewModel.ToggleWatchCommand.ExecuteIfCan();
-                else if (e.ButtonIndex == showButton)
-                    ViewModel.GoToHtmlUrlCommand.ExecuteIfCan();
-
-                _actionSheet = null;
-            };
-
-            _actionSheet.ShowInView(View);
         }
     }
 }

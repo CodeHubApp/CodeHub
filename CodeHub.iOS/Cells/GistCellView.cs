@@ -35,7 +35,10 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+                    if (x.ImageUrl == null)
+                        MainImageView.Image = Images.LoginUserUnknown;
+                    else
+                        MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
                     TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
                     TimeLabel.Text = x.UpdatedAt.ToDaysAgo();

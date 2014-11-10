@@ -148,13 +148,15 @@ namespace CodeHub.Core.ViewModels.App
                 ShowViewModel(vm);
             });
 
-            GoToMyEvents = ReactiveCommand.Create();
-            GoToMyEvents.Subscribe(_ =>
+            GoToMyEvents = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = CreateViewModel<UserEventsViewModel>();
                 vm.Username = Account.Username;
                 ShowViewModel(vm);
             });
+
+            GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ => 
+                CreateAndShowViewModel<FeedbackViewModel>());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
@@ -184,7 +186,7 @@ namespace CodeHub.Core.ViewModels.App
         public IReactiveCommand<object> GoToMyIssuesCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("My Events")]
-        public IReactiveCommand<object> GoToMyEvents { get; private set; }
+        public IReactiveCommand GoToMyEvents { get; private set; }
 
 		[PotentialStartupViewAttribute("My Gists")]
         public IReactiveCommand<object> GoToMyGistsCommand { get; private set; }
@@ -223,5 +225,7 @@ namespace CodeHub.Core.ViewModels.App
 		public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
         public IReactiveCommand<object> GoToUpgradesCommand { get; private set; }
+
+        public IReactiveCommand GoToFeedbackCommand { get; private set; }
     }
 }

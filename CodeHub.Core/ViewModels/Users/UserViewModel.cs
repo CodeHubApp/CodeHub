@@ -9,6 +9,7 @@ using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -62,6 +63,7 @@ namespace CodeHub.Core.ViewModels.Users
 
 		public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
 		private async Task ToggleFollowing()
 		{
@@ -73,7 +75,7 @@ namespace CodeHub.Core.ViewModels.Users
 			IsFollowing = !IsFollowing.Value;
 		}
 
-        public UserViewModel(IApplicationService applicationService)
+        public UserViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
         {
             _applicationService = applicationService;
 
@@ -127,6 +129,15 @@ namespace CodeHub.Core.ViewModels.Users
                 vm.Username = Username;
                 ShowViewModel(vm);
             });
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue),
+                _ =>
+                {
+                    var menu = actionMenuService.Create(Title);
+                    menu.AddButton(IsFollowing.Value ? "Unfollow" : "Follow", ToggleFollowingCommand);
+                    return menu.Show();
+                });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {

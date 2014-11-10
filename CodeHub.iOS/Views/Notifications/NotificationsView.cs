@@ -17,13 +17,13 @@ namespace CodeHub.iOS.Views.Notifications
         {
             _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            this.WhenViewModel(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            RefreshControl = ViewModel.LoadCommand.ToRefreshControl();
 
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
@@ -36,7 +36,6 @@ namespace CodeHub.iOS.Views.Notifications
             TableView.Source = notificationSource;
 
             _viewSegment.ValueChanged += (sender, args) => ViewModel.ShownIndex = _viewSegment.SelectedSegment;
-            ViewModel.WhenAnyValue(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
         }
 
         public override void ViewWillAppear(bool animated)

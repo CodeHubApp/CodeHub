@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
@@ -6,6 +7,7 @@ using Xamarin.Utilities.Core.Services;
 using CodeHub.Core.ViewModels.Source;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -48,7 +50,12 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand LoadCommand { get; private set; }
 
-        public GistFileViewModel(IAccountsService accounts, IApplicationService applicationService, IFilesystemService filesystemService, IShareService shareService)
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+
+        public IReactiveCommand<Unit> ShowThemePickerCommand { get; private set; }
+
+        public GistFileViewModel(IAccountsService accounts, IApplicationService applicationService, 
+            IFilesystemService filesystemService, IShareService shareService, IActionMenuService actionMenuService)
             : base(accounts)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
@@ -62,6 +69,38 @@ namespace CodeHub.Core.ViewModels.Gists
 
             _isMarkdown = this.WhenAnyValue(x => x.GistFile).IsNotNull().Select(x => 
                 string.Equals(x.Language, MarkdownLanguage, StringComparison.OrdinalIgnoreCase)).ToProperty(this, x => x.IsMarkdown);
+
+            ShowThemePickerCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+            {
+                var path = System.IO.Path.Combine("WebResources", "styles");
+                if (!System.IO.Directory.Exists(path))
+                    return;
+
+                var themes = System.IO.Directory.GetFiles(path)
+                    .Where(x => x.EndsWith(".css", StringComparison.Ordinal))
+                    .Select(x => System.IO.Path.GetFileNameWithoutExtension(x))
+                    .ToList();
+
+                var picker = actionMenuService.CreatePicker();
+                themes.ForEach(picker.Options.Add);
+                picker.SelectedOption = themes.IndexOf(Theme ?? "idea");
+
+                var selected = await picker.Show();
+
+                if (selected >= 0 && selected <= themes.Count)
+                    Theme = themes[selected];
+            });
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
+                _ =>
+            {
+                var menu = actionMenuService.Create(Title);
+                menu.AddButton("Open With", OpenWithCommand);
+                if (!IsMarkdown) 
+                    menu.AddButton("Change Theme", ShowThemePickerCommand);
+                return menu.Show();
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
@@ -91,7 +130,6 @@ namespace CodeHub.Core.ViewModels.Gists
                         fs.Write(content);
                     }
                 }
-
 
                 var fileUri = new Uri(filePath);
                 SourceItem = new FileSourceItemViewModel(fileUri, false);

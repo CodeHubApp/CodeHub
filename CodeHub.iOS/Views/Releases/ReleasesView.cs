@@ -8,7 +8,6 @@ namespace CodeHub.iOS.Views.Releases
     {
         public override void ViewDidLoad()
         {
-            Title = "Releases";
             base.ViewDidLoad();
             TableView.Source = new ReleasesTableViewSource(TableView, ViewModel.Releases);
         }

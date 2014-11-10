@@ -9,11 +9,9 @@ namespace CodeHub.iOS.Views.App
 	{
         public override void ViewDidLoad()
         {
-            Title = "Accounts";
-
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add).WithCommand(ViewModel.GoToAddAccountCommand);
+            NavigationItem.RightBarButtonItem = ViewModel.GoToAddAccountCommand.ToBarButtonItem(UIBarButtonSystemItem.Add);
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Cancel }.WithCommand(ViewModel.DismissCommand);
             TableView.Source = new AccountTableViewSource(TableView, ViewModel.Accounts);
         }

@@ -19,6 +19,13 @@ namespace CodeHub.Core.ViewModels.Gists
         }
 
 
+//        public async Task Edit(GistEditModel editModel)
+//        {
+//            var response = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Gists[Id].EditGist(editModel));
+//            Gist = response.Data;
+//        }
+//
+
 //        protected virtual void Save()
 //        {
 //            if (_model.Files.Count(x => x.Value != null) == 0)

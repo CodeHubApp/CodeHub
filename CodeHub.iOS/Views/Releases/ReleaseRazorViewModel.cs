@@ -1,5 +1,5 @@
-﻿using System;
-using GitHubSharp.Models;
+﻿using GitHubSharp.Models;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Releases
 {
@@ -13,10 +13,9 @@ namespace CodeHub.iOS.Views.Releases
         {
             get
             {
-                if (Release.PublishedAt.HasValue)
-                    return Release.PublishedAt.Value.ToDaysAgo();
-                else
-                    return Release.CreatedAt.ToDaysAgo();
+                return Release.PublishedAt.HasValue ? 
+                    Release.PublishedAt.Value.UtcDateTime.Humanize() : 
+                    Release.CreatedAt.UtcDateTime.Humanize();
             }
         }
     }
