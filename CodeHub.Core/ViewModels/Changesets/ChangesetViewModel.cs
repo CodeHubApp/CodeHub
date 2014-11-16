@@ -8,6 +8,7 @@ using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 
 using Xamarin.Utilities.Core.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -43,8 +44,10 @@ namespace CodeHub.Core.ViewModels.Changesets
         public ReactiveList<CommentModel> Comments { get; private set; }
 
         public IReactiveCommand GoToUrlCommand { get; private set; }
+
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
         
-        public ChangesetViewModel(IApplicationService applicationService)
+        public ChangesetViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
         {
             _applicationService = applicationService;
 
@@ -109,6 +112,22 @@ namespace CodeHub.Core.ViewModels.Changesets
                     vm.Filename = x.Filename;
                     ShowViewModel(vm);
                 }
+            });
+
+            var copyShaCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null))
+                .WithSubscription(x => actionMenuService.SendToPasteBoard(this.Commit.Sha));
+
+            var shareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null))
+                .WithSubscription(x => actionMenuService.ShareUrl(this.Commit.HtmlUrl));
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            {
+                var menu = actionMenuService.Create(Title);
+                menu.AddButton("Add Comment", GoToCommentCommand);
+                menu.AddButton("Copy SHA", copyShaCommand);
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                return menu.Show();
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>

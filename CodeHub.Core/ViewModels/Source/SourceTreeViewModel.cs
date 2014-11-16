@@ -50,7 +50,7 @@ namespace CodeHub.Core.ViewModels.Source
             var content = new ReactiveList<ContentModel>();
             Content = content.CreateDerivedCollection(
                 x => CreateSourceItemViewModel(x),
-                x => x.Name.ContainsKeyword(SearchKeyword),
+                filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             this.WhenActivated(d =>

@@ -2,58 +2,56 @@
 using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using System.Threading.Tasks;
 using GitHubSharp.Models;
-using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Issues;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class FeedbackViewModel : BaseViewModel, ILoadableViewModel
+    public class FeedbackViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
         private const string CodeHubOwner = "thedillonb";
         private const string CodeHubName = "codehub";
 
-        private int? _contributors;
-        public int? Contributors
-        {
-            get { return _contributors; }
-            private set { this.RaiseAndSetIfChanged(ref _contributors, value); }
-        }
+        public IReadOnlyReactiveList<FeedbackItemViewModel> Items { get; private set; }
 
-        private readonly ObservableAsPropertyHelper<DateTimeOffset?> _lastCommit;
-        public DateTimeOffset? LastCommit
+        private string _searchKeyword;
+        public string SearchKeyword
         {
-            get { return _lastCommit.Value; }
-        }
-
-
-        private RepositoryModel _repository;
-        public RepositoryModel Repository
-        {
-            get { return _repository; }
-            private set { this.RaiseAndSetIfChanged(ref _repository, value); }
+            get { return _searchKeyword; }
+            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
         public FeedbackViewModel(IApplicationService applicationService)
         {
-            Title = "Feedback & Support";
+            Title = "Feedback";
 
-            _lastCommit = this.WhenAnyValue(x => x.Repository).IsNotNull()
-                .Select(x => x.PushedAt).ToProperty(this, x => x.LastCommit);
+            var items = new ReactiveList<IssueModel>();
+            Items = items.CreateDerivedCollection(x => CreateItemViewModel(x), 
+                filter: x => x.Title.ContainsKeyword(SearchKeyword), 
+                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
-                var repoRequest = applicationService.Client.Users[CodeHubOwner].Repositories[CodeHubName];
-
-                this.RequestModel(repoRequest.GetContributors(), true, 
-                    response => Contributors = response.Data.Count).FireAndForget();
-
-                return this.RequestModel(repoRequest.Get(), true, response => Repository = response.Data);
+                var request = applicationService.Client.Users[CodeHubOwner].Repositories[CodeHubName].Issues.GetAll(state: "open");
+                return items.LoadAll(request);
             });
         }
 
+        private FeedbackItemViewModel CreateItemViewModel(IssueModel x)
+        {
+            return new FeedbackItemViewModel(x, () =>
+            {
+                var vm = CreateViewModel<IssueViewModel>();
+                vm.RepositoryOwner = CodeHubOwner;
+                vm.RepositoryName = CodeHubName;
+                vm.Id = x.Number;
+                vm.Issue = x;
+                ShowViewModel(vm);
+            });
+        }
     }
 }
 

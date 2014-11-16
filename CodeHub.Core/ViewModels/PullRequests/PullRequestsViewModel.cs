@@ -36,10 +36,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public PullRequestsViewModel(IApplicationService applicationService)
 		{
+            Title = "Pull Requests";
+
             var pullRequests = new ReactiveList<PullRequestModel>();
             PullRequests = pullRequests.CreateDerivedCollection(
                 x => new PullRequestItemViewModel(x, GoToPullRequestCommand),
-                x => x.Title.ContainsKeyword(SearchKeyword),
+                filter: x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             GoToPullRequestCommand = ReactiveCommand.Create();

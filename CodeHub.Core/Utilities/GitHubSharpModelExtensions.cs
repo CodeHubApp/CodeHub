@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace GitHubSharp.Models
 {
-    static class ModelExtensions
+    public static class ModelExtensions
     {
         private const string GitHubDefaultGravitar = "https%3A%2F%2Fassets-cdn.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png&r=x&s=140";
 
@@ -20,6 +20,9 @@ namespace GitHubSharp.Models
 
         public static string GenerateGravatarUrl(this CommitModel x)
         {
+            if (x.Author != null && !string.IsNullOrEmpty(x.Author.AvatarUrl))
+                return x.Author.AvatarUrl;
+
             try
             {
                 var inputBytes = Encoding.ASCII.GetBytes(x.Commit.Author.Email.Trim().ToLower());

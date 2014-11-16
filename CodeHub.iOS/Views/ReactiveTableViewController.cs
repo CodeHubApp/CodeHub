@@ -4,7 +4,6 @@ using Xamarin.Utilities.Core;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
 using System.Drawing;
-using MonoTouch.CoreGraphics;
 
 namespace ReactiveUI
 {
@@ -47,7 +46,7 @@ namespace ReactiveUI
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
             if (iLoadableViewModel != null)
             {
-                var activityView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.WhiteLarge) { 
+                var activityView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White) { 
                     Frame = new RectangleF(0, 0, 320f, 88f),
                     Color = NavigationController.NavigationBar.BackgroundColor,
                 };

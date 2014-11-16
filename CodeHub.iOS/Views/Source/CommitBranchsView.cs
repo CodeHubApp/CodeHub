@@ -16,8 +16,6 @@ namespace CodeHub.iOS.Views.Source
             var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
             source.ElementSelected.Subscribe(ViewModel.GoToBranchCommand.ExecuteIfCan);
             TableView.Source = source;
-
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
     }
 }

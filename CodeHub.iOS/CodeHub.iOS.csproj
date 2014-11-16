@@ -272,7 +272,6 @@
     <Compile Include="TableViewSources\AccountTableViewSource.cs" />
     <Compile Include="Cells\AccountCellView.cs" />
     <Compile Include="TableViewSources\EventTableViewSource.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Cells\ReactiveTableViewCell.cs" />
     <Compile Include="Cells\UserTableViewCell.cs" />
     <Compile Include="Cells\TeamCellView.cs" />
@@ -347,11 +346,18 @@
       <DependentUpon>FeedbackCellView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
-    <Compile Include="Views\App\FeedbackFeaturesView.cs" />
-    <Compile Include="Views\App\FeedbackView.cs" />
     <Compile Include="Views\ReactiveViewController.cs" />
     <Compile Include="Views\ReactiveWebViewController.cs" />
     <Compile Include="Services\ActionMenuService.cs" />
+    <Compile Include="Views\App\SupportView.cs" />
+    <Compile Include="Views\App\FeedbackView.cs" />
+    <Compile Include="Views\App\FeedbackComposerView.cs" />
+    <Compile Include="ViewComponents\ButtonAccessoryView.cs" />
+    <Compile Include="ViewComponents\MarkdownAccessoryView.cs" />
+    <Compile Include="Views\ReactiveDialogViewController.cs" />
+    <Compile Include="Services\MediaPickerService.cs" />
+    <Compile Include="Extensions\UIWindowExtensions.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
@@ -400,12 +406,6 @@
     <Reference Include="SDWebImage">
       <HintPath>..\lib\MonoTouch\SDWebImage.dll</HintPath>
     </Reference>
-    <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.0.3.2\lib\MonoTouch\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.0.3.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.6.1\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
     </Reference>
@@ -418,10 +418,16 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.30.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Services" />
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.31.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.0.4\lib\MonoTouch\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.0.4\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png">

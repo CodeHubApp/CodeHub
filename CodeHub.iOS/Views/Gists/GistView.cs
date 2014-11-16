@@ -106,7 +106,7 @@ namespace CodeHub.iOS.Views.Gists
                     HeaderView.ImageUri = x.Owner.AvatarUrl;
                 else
                     HeaderView.Image = Images.LoginUserUnknown;
-                Root.Reload(headerSection);
+                ReloadData();
             });
 
             updatedGistObservable.Select(x => x.Files == null ? 0 : x.Files.Count()).SubscribeSafe(x => files.Text = x.ToString());

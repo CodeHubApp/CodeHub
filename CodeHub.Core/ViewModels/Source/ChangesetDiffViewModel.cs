@@ -63,12 +63,12 @@ namespace CodeHub.Core.ViewModels.Source
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
 	            if (string.IsNullOrEmpty(x))
-	                Title = "Diff";
+                    Title = "Diff";
 	            else
 	            {
 	                _actualFilename = Path.GetFileName(Filename) ??
 	                                  Filename.Substring(Filename.LastIndexOf('/') + 1);
-	                Title = _actualFilename;
+                    Title = _actualFilename;
 	            }
 	        });
 

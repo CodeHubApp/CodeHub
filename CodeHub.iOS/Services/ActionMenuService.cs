@@ -6,6 +6,7 @@ using ReactiveUI;
 using System.Threading.Tasks;
 using Xamarin.Utilities.Views;
 using System.Linq;
+using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Services
 {
@@ -13,12 +14,27 @@ namespace CodeHub.iOS.Services
     {
         public IActionMenu Create(string title)
         {
-            return new ActionMenu(title, UIApplication.SharedApplication.Delegate.Window);
+            return new ActionMenu(title, UIApplication.SharedApplication.KeyWindow);
         }
 
         public IPickerMenu CreatePicker()
         {
             return new PickerMenu();
+        }
+
+        public Task ShareUrl(string url)
+        {
+            var item = new NSUrl(url);
+            var activityItems = new NSObject[] { item };
+            UIActivity[] applicationActivities = null;
+            var activityController = new UIActivityViewController (activityItems, applicationActivities);
+            var topViewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
+            return topViewController.PresentViewControllerAsync(activityController, true);
+        }
+
+        public void SendToPasteBoard(string str)
+        {
+            UIPasteboard.General.String = str;
         }
 
         private class ActionMenu : IActionMenu

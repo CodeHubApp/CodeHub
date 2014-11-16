@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
             Gists = GistsCollection.CreateDerivedCollection(
                 x => CreateGistItemViewModel(x, _ => gotoCommand(x)),
-                x => x.Description.ContainsKeyword(SearchKeyword),
+                filter: x => x.Description.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
         }
 

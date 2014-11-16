@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Gists
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
-	            Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
+                Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
 	        });
 
             GoToUrlCommand = this.CreateUrlCommand();

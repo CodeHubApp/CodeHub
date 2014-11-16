@@ -2,7 +2,6 @@ using System;
 using CodeFramework.Elements;
 using MonoTouch.UIKit;
 using System.Linq;
-using MonoTouch.Foundation;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -17,18 +16,19 @@ namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : ViewModelPrettyDialogViewController<ChangesetViewModel>
     {
-        private SplitButtonElement _split;
-        private UIActionSheet _actionSheet;
-        private Section _commentSection = new Section();
+        private readonly SplitButtonElement _split = new SplitButtonElement();
+        private readonly Section _commentSection = new Section();
+
+        public ChangesetView()
+        {
+            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x => 
+                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Action) : null);
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.WhenAnyValue(x => x.Commit).Select(x => x != null));
-
-            _split = new SplitButtonElement();
             var additions = _split.AddButton("Additions", "-");
             var deletions = _split.AddButton("Deletions", "-");
             var parents = _split.AddButton("Parents", "-");
@@ -43,9 +43,7 @@ namespace CodeHub.iOS.Views.Source
             ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().SubscribeSafe(x =>
             {
                 HeaderView.Image = Images.LoginUserUnknown;
-
-                if (x.Author != null)
-                    HeaderView.ImageUri = x.Author.AvatarUrl;
+                HeaderView.ImageUri = x.GenerateGravatarUrl();
 
                 var msg = x.Commit.Message ?? string.Empty;
                 var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
@@ -135,52 +133,6 @@ namespace CodeHub.iOS.Views.Source
             addComment.Tapped += () => ViewModel.GoToCommentCommand.ExecuteIfCan();
             Root.Add(new Section { addComment });
         }
-
-		private void ShowExtraMenu()
-		{
-            _actionSheet = new UIActionSheet(Title);
-            var addComment = _actionSheet.AddButton("Add Comment");
-            var copySha = _actionSheet.AddButton("Copy Sha");
-            var shareButton = _actionSheet.AddButton("Share");
-            var showButton = _actionSheet.AddButton("Show in GitHub");
-            var cancelButton = _actionSheet.AddButton("Cancel");
-            _actionSheet.CancelButtonIndex = cancelButton;
-            _actionSheet.DismissWithClickedButtonIndex(cancelButton, true);
-            _actionSheet.Clicked += (s, e) => 
-			{
-				try
-				{
-					// Pin to menu
-					if (e.ButtonIndex == addComment)
-					{
-                        ViewModel.GoToCommentCommand.ExecuteIfCan();
-					}
-					else if (e.ButtonIndex == copySha)
-					{
-						UIPasteboard.General.String = ViewModel.Commit.Sha;
-					}
-					else if (e.ButtonIndex == shareButton)
-					{
-                        var item = new NSUrl(ViewModel.Commit.HtmlUrl);
-						var activityItems = new NSObject[] { item };
-						UIActivity[] applicationActivities = null;
-						var activityController = new UIActivityViewController (activityItems, applicationActivities);
-						PresentViewController (activityController, true, null);
-					}
-					else if (e.ButtonIndex == showButton)
-					{
-						ViewModel.GoToHtmlUrlCommand.Execute(null);
-					}
-				}
-				catch
-				{
-				}
-
-			    _actionSheet = null;
-			};
-
-            _actionSheet.ShowInView(this.View);
-		}
     }
 }
 

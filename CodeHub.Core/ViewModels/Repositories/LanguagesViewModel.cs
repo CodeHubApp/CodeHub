@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             Languages = languages.CreateDerivedCollection(
                 x => new LanguageItemViewModel(x.Name, x.Slug), 
-                x => x.Name.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase), 
+                filter: x => x.Name.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             Languages

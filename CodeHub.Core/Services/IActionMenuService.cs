@@ -9,6 +9,10 @@ namespace CodeHub.Core.Services
         IActionMenu Create(string title);
 
         IPickerMenu CreatePicker();
+
+        Task ShareUrl(string url);
+
+        void SendToPasteBoard(string str);
     }
 
     public interface IActionMenu

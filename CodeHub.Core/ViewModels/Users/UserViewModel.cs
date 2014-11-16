@@ -134,7 +134,7 @@ namespace CodeHub.Core.ViewModels.Users
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue),
                 _ =>
                 {
-                    var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create(Title);
                     menu.AddButton(IsFollowing.Value ? "Unfollow" : "Follow", ToggleFollowingCommand);
                     return menu.Show();
                 });

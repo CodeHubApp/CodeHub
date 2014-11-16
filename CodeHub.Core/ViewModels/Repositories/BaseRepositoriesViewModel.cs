@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
                     ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
                     ShowRepositoryOwner, gotoRepository), 
-                x => x.Name.ContainsKeyword(SearchKeyword),
+                filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);

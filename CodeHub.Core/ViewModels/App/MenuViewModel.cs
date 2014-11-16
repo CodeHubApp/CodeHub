@@ -156,7 +156,7 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ => 
-                CreateAndShowViewModel<FeedbackViewModel>());
+                CreateAndShowViewModel<SupportViewModel>());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {

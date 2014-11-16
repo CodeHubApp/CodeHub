@@ -301,7 +301,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null),
                 _ =>
                 {
-                    var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create(Title);
                     menu.AddButton(IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu", PinCommand);
                     menu.AddButton(IsStarred.Value ? "Unstar This Repo" : "Star This Repo", ToggleStarCommand);
                     menu.AddButton(IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo", ToggleWatchCommand);
