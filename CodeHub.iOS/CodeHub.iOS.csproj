@@ -368,12 +368,6 @@
     <Compile Include="Elements\HtmlElement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
-      <Project>{3C8DC5D3-37A5-4F65-BF11-A7EB83F5336D}</Project>
-      <Name>CodeHub.Core.iOS</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
