@@ -69,7 +69,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 var vm = CreateViewModel<PullRequestViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
-                vm.Id = long.Parse(node);
+                vm.Id = int.Parse(node);
                 ShowViewModel(vm);
             }
             else if (subject.Equals("commit"))

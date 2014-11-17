@@ -19,6 +19,11 @@ namespace CodeHub.Core.ViewModels
             @this.ShowViewModel(vm);
         }
 
+        public static void ShowWebBrowser(this BaseViewModel @this, Uri uri)
+        {
+            ShowWebBrowser(@this, uri.AbsoluteUri);
+        }
+
         public static IReactiveCommand CreateUrlCommand(this BaseViewModel @this)
         {
             var command = ReactiveCommand.Create();

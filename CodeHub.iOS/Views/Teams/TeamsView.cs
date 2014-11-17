@@ -1,8 +1,8 @@
 using System;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
-using GitHubSharp.Models;
 using CodeHub.iOS.Cells;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Teams
 {
@@ -12,8 +12,8 @@ namespace CodeHub.iOS.Views.Teams
         {
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
-            var source = new ReactiveTableViewSource<TeamShortModel>(TableView, ViewModel.Teams, TeamCellView.Key, 44f);
-            source.ElementSelected.Subscribe(ViewModel.GoToTeamCommand.ExecuteIfCan);
+            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Teams, TeamCellView.Key, 44f);
+            source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
             TableView.Source = source;
         }
     }

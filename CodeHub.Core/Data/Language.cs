@@ -1,9 +1,8 @@
-﻿namespace CodeHub.Core.Models
+namespace CodeHub.Core.Data
 {
-    public class LanguageModel
+    public class Language
     {
-        public string Name { get; set; }
-
+		public string Name { get; set; }
         public string Slug { get; set; }
 
         public override bool Equals(object obj)
@@ -12,9 +11,9 @@
                 return false;
             if (ReferenceEquals(this, obj))
                 return true;
-            if (obj.GetType() != typeof(LanguageModel))
+            if (obj.GetType() != typeof(Language))
                 return false;
-            var other = (LanguageModel)obj;
+            var other = (Language)obj;
             return Name == other.Name && Slug == other.Slug;
         }
 

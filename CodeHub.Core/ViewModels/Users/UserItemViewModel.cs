@@ -13,12 +13,12 @@ namespace CodeHub.Core.ViewModels.Users
 
         public IReactiveCommand GoToCommand { get; private set; }
 
-        internal UserItemViewModel(string name, string url, bool organization, Action<UserItemViewModel> gotoAction)
+        internal UserItemViewModel(string name, string url, bool organization, Action gotoAction)
         {
             Name = name;
             Url = url;
             IsOrganization = organization;
-            GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoAction(this));
+            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction());
         }
     }
 }

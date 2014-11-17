@@ -1,8 +1,5 @@
-using System;
-using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
-using GitHubSharp.Models;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using Xamarin.Utilities.Core;
@@ -11,13 +8,9 @@ namespace CodeHub.Core.ViewModels.Teams
 {
     public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
-        private readonly ReactiveList<TeamShortModel> _teams = new ReactiveList<TeamShortModel>();
-
-        public IReadOnlyReactiveList<TeamShortModel> Teams { get; private set; }
+        public IReadOnlyReactiveList<TeamItemViewModel> Teams { get; private set; }
 
         public string OrganizationName { get; set; }
-
-        public IReactiveCommand<object> GoToTeamCommand { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
@@ -31,20 +24,20 @@ namespace CodeHub.Core.ViewModels.Teams
         public TeamsViewModel(IApplicationService applicationService)
         {
             Title = "Teams";
-            Teams = _teams.CreateDerivedCollection(x => x,
+
+            var teams = new ReactiveList<Octokit.Team>();
+            Teams = teams.CreateDerivedCollection(
+                x => new TeamItemViewModel(x.Name, () => 
+                {
+                    var vm = CreateViewModel<TeamMembersViewModel>();
+                    vm.Id = x.Id;
+                    ShowViewModel(vm);
+                }),
                 x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            GoToTeamCommand =  ReactiveCommand.Create();
-            GoToTeamCommand.OfType<TeamShortModel>().Subscribe(x =>
-            {
-                var vm = CreateViewModel<TeamMembersViewModel>();
-                vm.Id = x.Id;
-                ShowViewModel(vm);
-            });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
-                			_teams.SimpleCollectionLoad(applicationService.Client.Organizations[OrganizationName].GetTeams(), x as bool?));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => 
+                teams.Reset(await applicationService.GitHubClient.Organization.Team.GetAll(OrganizationName)));
         }
     }
 }

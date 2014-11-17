@@ -4,11 +4,9 @@ using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
-using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Organizations
@@ -24,18 +22,11 @@ namespace CodeHub.Core.ViewModels.Organizations
             set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
-        private UserModel _userModel;
-        public UserModel Organization
+        private Octokit.Organization _userModel;
+        public Octokit.Organization Organization
         {
             get { return _userModel; }
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
-        }
-
-        private bool? _isFollowing;
-        public bool? IsFollowing
-        {
-            get { return _isFollowing; }
-            private set { this.RaiseAndSetIfChanged(ref _isFollowing, value); }
         }
 
         public IReactiveCommand GoToMembersCommand { get; private set; }
@@ -114,23 +105,8 @@ namespace CodeHub.Core.ViewModels.Organizations
                 ShowViewModel(vm);
             });
 
-            ToggleFollowingCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue), 
-                async _ => 
-                {
-                    if (!IsFollowing.HasValue) return;
-                    if (IsFollowing.Value)
-                        await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Unfollow(Username));
-                    else
-                        await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Follow(Username));
-                    IsFollowing = !IsFollowing.Value;
-                });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                this.RequestModel(applicationService.Client.AuthenticatedUser.IsFollowing(Username), t as bool?, x => IsFollowing = x.Data).FireAndForget();
-                return this.RequestModel(applicationService.Client.Organizations[Username].Get(), t as bool?, response => Organization = response.Data);
-            });
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+                Organization = await _applicationService.GitHubClient.Organization.Get(Username));
         }
 	}
 }

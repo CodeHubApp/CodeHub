@@ -35,7 +35,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 var vm = CreateViewModel<PullRequestViewModel>();
                 vm.RepositoryOwner = x.RepositoryOwner;
                 vm.RepositoryName = x.RepositoryName;
-                vm.Id = x.Issue.Number;
+                vm.Id = (int)x.Issue.Number;
                 ShowViewModel(vm);
 
             });

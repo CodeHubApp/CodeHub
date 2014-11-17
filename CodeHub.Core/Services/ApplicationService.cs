@@ -3,6 +3,8 @@ using CodeHub.Core.Data;
 using GitHubSharp;
 using System;
 using ReactiveUI;
+using Octokit;
+using Octokit.Internal;
 
 namespace CodeHub.Core.Services
 {
@@ -13,6 +15,8 @@ namespace CodeHub.Core.Services
 
         public Client Client { get; private set; }
 
+        public IGitHubClient GitHubClient { get; private set; }
+
         public GitHubAccount Account
         {
             get { return _accountsService.ActiveAccount as GitHubAccount; }
@@ -22,23 +26,33 @@ namespace CodeHub.Core.Services
         {
             _accountsService = accountsService;
 
-            //TODO Put back
-            //System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             accountsService.WhenAnyObservable(x => x.ActiveAccountChanged).StartWith(accountsService.ActiveAccount).Subscribe(account =>
             {
                 if (account == null)
                 {
                     Client = null;
+                    GitHubClient = null;
                 }
                 else
                 {
                     var githubAccount = (GitHubAccount) account;
+                    var domain = githubAccount.Domain ?? Client.DefaultApi;
                     if (!string.IsNullOrEmpty(githubAccount.OAuth))
-                        Client = Client.BasicOAuth(githubAccount.OAuth, githubAccount.Domain ?? Client.DefaultApi);
+                    {
+                        Client = Client.BasicOAuth(githubAccount.OAuth, domain);
+                        GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
+                            new InMemoryCredentialStore(new Credentials(githubAccount.OAuth)), 
+                            new Uri(domain));
+                    }
                     else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
-                        Client = Client.Basic(githubAccount.Username, githubAccount.Password, githubAccount.Domain ?? Client.DefaultApi);
-                    //Client.Cache = new GitHubCache();
+                    {
+                        Client = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
+                        GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
+                            new InMemoryCredentialStore(new Credentials(githubAccount.Username, githubAccount.Password)), 
+                            new Uri(domain));
+                    }
                 }
             });
         }

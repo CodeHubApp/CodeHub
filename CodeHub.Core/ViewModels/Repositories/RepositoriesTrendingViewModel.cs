@@ -4,19 +4,14 @@ using System.Reactive.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.Core.ViewModels;
-using CodeHub.Core.Models;
 using System.Threading.Tasks;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesTrendingViewModel : BaseViewModel, ILoadableViewModel
     {
-        private const string TrendingUrl = "http://trending.codehub-app.com/trending";
-        private readonly IApplicationService _applicationService;
-        private readonly IJsonHttpClientService _jsonHttpClient;
         private readonly TimeModel[] _times = 
         {
             new TimeModel { Name = "Daily", Slug = "daily" },
@@ -38,24 +33,19 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _selectedLanguage, value); }
         }
 
-        public bool ShowRepositoryDescription
-        {
-            get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
-        }
+        public bool ShowRepositoryDescription { get; private set; }
 
         public IReactiveCommand GoToLanguages { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
-        public RepositoriesTrendingViewModel(IApplicationService applicationService, 
-            IJsonHttpClientService jsonHttpClient, INetworkActivityService networkActivityService)
+        public RepositoriesTrendingViewModel(IApplicationService applicationService, TrendingRepository trendingRepository)
         {
-            _applicationService = applicationService;
-            _jsonHttpClient = jsonHttpClient;
+            ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
 
             Title = "Trending";
 
-            var defaultLanguage = LanguagesViewModel.DefaultLanguage;
+            var defaultLanguage = LanguageRepository.DefaultLanguage;
             SelectedLanguage = new LanguageItemViewModel(defaultLanguage.Name, defaultLanguage.Slug);
 
             GoToLanguages = ReactiveCommand.Create().WithSubscription(_ =>
@@ -80,12 +70,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
+                Repositories = null;
+
                 var requests = _times.Select(t =>
                 {
-                    var query = "?since=" + t.Slug;
-                    if (SelectedLanguage != null && SelectedLanguage.Slug != null)
-                        query += string.Format("&language={0}", SelectedLanguage.Slug);
-                    return new { Time = t, Query = _jsonHttpClient.Get<List<TrendingRepositoryModel>>(TrendingUrl + query) };
+                    var language = (SelectedLanguage != null && SelectedLanguage.Slug != null) ? SelectedLanguage.Slug : null;
+                    return new { Time = t, Query = trendingRepository.GetTrendingRepositories(t.Slug, language) };
                 }).ToArray();
 
                 await Task.WhenAll(requests.Select(x => x.Query));
@@ -93,13 +83,12 @@ namespace CodeHub.Core.ViewModels.Repositories
                 Repositories = requests.Select(r =>
                 {
                     var transformedRepos = r.Query.Result.Select(x => 
-                        new RepositoryItemViewModel(x.Name, x.Owner, x.AvatarUrl, x.Description, x.Stars, x.Forks, true, gotoRepository));
+                        new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, x.Description, x.StargazersCount, x.ForksCount, true, gotoRepository));
                     return new GroupedCollection<RepositoryItemViewModel>(r.Time.Name, new ReactiveList<RepositoryItemViewModel>(transformedRepos));
                 }).ToList();
             });
 
-            LoadCommand.TriggerNetworkActivity(networkActivityService);
-            this.WhenAnyValue(x => x.SelectedLanguage).Subscribe(_ => LoadCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.SelectedLanguage).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
         }
 
         private class TimeModel

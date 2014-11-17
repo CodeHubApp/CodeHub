@@ -1,12 +1,12 @@
 ﻿using System;
 using ReactiveUI;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 using MonoTouch.Foundation;
+using CodeHub.Core.ViewModels.Teams;
 
 namespace CodeHub.iOS.Cells
 {
-    public class TeamCellView : ReactiveTableViewCell<TeamShortModel>
+    public class TeamCellView : ReactiveTableViewCell<TeamItemViewModel>
     {
         public static NSString Key = new NSString("TeamCell");
 

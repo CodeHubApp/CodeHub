@@ -12,17 +12,14 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand GoToCommand { get; private set; }
 
-        public PullRequestModel PullRequest { get; private set; }
-
         public string Details { get; private set; }
 
-        internal PullRequestItemViewModel(PullRequestModel pullRequest, IReactiveCommand action) 
+        internal PullRequestItemViewModel(PullRequestModel pullRequest, Action gotoAction) 
         {
-            PullRequest = pullRequest;
             Title = pullRequest.Title ?? "No Title";
             ImageUrl = pullRequest.User.AvatarUrl;
             Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.ToDaysAgo(), pullRequest.User.Login);
-            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => action.ExecuteIfCan(this));
+            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction());
         }
     }
 }

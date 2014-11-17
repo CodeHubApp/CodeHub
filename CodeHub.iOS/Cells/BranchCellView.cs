@@ -1,12 +1,12 @@
 ﻿using System;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive.Linq;
 using MonoTouch.Foundation;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Cells
 {
-    public class BranchCellView : ReactiveTableViewCell<BranchModel>
+    public class BranchCellView : ReactiveTableViewCell<BranchItemViewModel>
     {
         public static NSString Key = new NSString("BranchCell");
 

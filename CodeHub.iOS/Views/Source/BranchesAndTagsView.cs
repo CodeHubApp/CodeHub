@@ -3,7 +3,7 @@ using CodeHub.Core.ViewModels.Source;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
-using GitHubSharp.Models;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -33,14 +33,14 @@ namespace CodeHub.iOS.Views.Source
 
                     if (x == BranchesAndTagsViewModel.ShowIndex.Branches)
                     {
-                        var source = new ReactiveTableViewSource<BranchModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
-                        source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
+                        var source = new ReactiveTableViewSource<BranchItemViewModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
+                        source.ElementSelected.OfType<BranchItemViewModel>().Subscribe(y => y.GoToCommand.ExecuteIfCan());
                         TableView.Source = source;
                     }
                     else
                     {
-                        var source = new ReactiveTableViewSource<TagModel>(TableView, ViewModel.Tags, TagCellView.Key, 44f);
-                        source.ElementSelected.Subscribe(ViewModel.GoToSourceCommand.ExecuteIfCan);
+                        var source = new ReactiveTableViewSource<TagItemViewModel>(TableView, ViewModel.Tags, TagCellView.Key, 44f);
+                        source.ElementSelected.OfType<TagItemViewModel>().Subscribe(y => y.GoToCommand.ExecuteIfCan());
                         TableView.Source = source;
                     }
                 });

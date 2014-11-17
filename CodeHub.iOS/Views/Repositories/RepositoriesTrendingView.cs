@@ -9,6 +9,7 @@ using CodeHub.iOS.TableViewSources;
 using System.Drawing;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.Services;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -19,11 +20,16 @@ namespace CodeHub.iOS.Views.Repositories
         public RepositoriesTrendingView(IThemeService themeService)
         {
             _themeService = themeService;
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             var titleButton = new TrendingTitleButton
             {
                 Frame = new RectangleF(0, 0, 200f, 32f),
-                TintColor = themeService.CurrentTheme.NavigationBarTextColor
+                TintColor = _themeService.CurrentTheme.NavigationBarTextColor
             };
             titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
             NavigationItem.TitleView = titleButton;
@@ -32,12 +38,18 @@ namespace CodeHub.iOS.Views.Repositories
             TableView.Source = source;
 
             this.WhenViewModel(x => x.Repositories)
-                .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    source.Data = x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
-                        Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
-                    }).ToList();
+                    if (x == null)
+                    {
+                        source.Data = new List<TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>>();
+                    }
+                    else
+                    {
+                        source.Data = x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
+                            Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
+                        }).ToList();
+                    }
                 });
 
             this.WhenViewModel(x => x.SelectedLanguage)

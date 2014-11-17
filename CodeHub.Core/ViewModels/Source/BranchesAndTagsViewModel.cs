@@ -1,9 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
 using Xamarin.Utilities.Core;
 
@@ -22,11 +20,9 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string RepositoryName { get; set; }
 
-        public IReadOnlyReactiveList<BranchModel> Branches { get; private set; }
+        public IReadOnlyReactiveList<BranchItemViewModel> Branches { get; private set; }
 
-        public IReadOnlyReactiveList<TagModel> Tags { get; private set; }
-
-        public IReactiveCommand<object> GoToSourceCommand { get; private set; }
+        public IReadOnlyReactiveList<TagItemViewModel> Tags { get; private set; }
 
         public IReactiveCommand LoadCommand { get; private set; }
 
@@ -39,51 +35,46 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public BranchesAndTagsViewModel(IApplicationService applicationService)
 		{
-            var branches = new ReactiveList<BranchModel>();
-            Branches = branches.CreateDerivedCollection(x => x, 
+            var branches = new ReactiveList<Octokit.Branch>();
+            Branches = branches.CreateDerivedCollection(
+                x => new BranchItemViewModel(x.Name, () =>
+                {
+                    var vm = CreateViewModel<SourceTreeViewModel>();
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
+                    vm.Branch = x.Name;
+                    vm.TrueBranch = true;
+                    ShowViewModel(vm);
+                }), 
                 x => x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            var tags = new ReactiveList<TagModel>();
-            Tags = tags.CreateDerivedCollection(x => x, 
+            var tags = new ReactiveList<Octokit.RepositoryTag>();
+            Tags = tags.CreateDerivedCollection(
+                x => new TagItemViewModel(x.Name, () =>
+                {
+                    var vm = CreateViewModel<SourceTreeViewModel>();
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
+                    vm.Branch = x.Commit.Sha;
+                    ShowViewModel(vm);
+                }), 
                 x => x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            GoToSourceCommand = ReactiveCommand.Create();
-		    GoToSourceCommand.OfType<BranchModel>().Subscribe(x =>
-		    {
-		        var vm = CreateViewModel<SourceTreeViewModel>();
-		        vm.RepositoryOwner = RepositoryOwner;
-		        vm.RepositoryName = RepositoryName;
-		        vm.Branch = x.Name;
-		        vm.TrueBranch = true;
-                ShowViewModel(vm);
-		    });
-            GoToSourceCommand.OfType<TagModel>().Subscribe(x =>
-            {
-                var vm = CreateViewModel<SourceTreeViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.Branch = x.Commit.Sha;
-                ShowViewModel(vm);
-            });
-
-
-		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 		    {
                 if (SelectedFilter == ShowIndex.Branches)
                 {
-                    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches();
-                    return branches.LoadAll<BranchModel>(request);
+                    branches.Reset(await applicationService.GitHubClient.Repository.GetAllBranches(RepositoryOwner, RepositoryName));
                 }
                 else
                 {
-                    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetTags();
-                    return tags.LoadAll<TagModel>(request);
+                    tags.Reset(await applicationService.GitHubClient.Repository.GetAllTags(RepositoryOwner, RepositoryName));
                 }
 		    });
+
+            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 		}
 
 	    public enum ShowIndex

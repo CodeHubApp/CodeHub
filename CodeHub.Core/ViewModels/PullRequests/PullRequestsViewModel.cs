@@ -23,8 +23,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
         }
 
-        public IReactiveCommand<object> GoToPullRequestCommand { get; private set; }
-
         public IReactiveCommand LoadCommand { get; private set; }
 
         private string _searchKeyword;
@@ -40,29 +38,24 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
             var pullRequests = new ReactiveList<PullRequestModel>();
             PullRequests = pullRequests.CreateDerivedCollection(
-                x => new PullRequestItemViewModel(x, GoToPullRequestCommand),
+                x => new PullRequestItemViewModel(x, () =>
+                {
+                    var vm = CreateViewModel<PullRequestViewModel>();
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
+                    vm.Id = (int)x.Number;
+                    //vm.PullRequest = x.PullRequest;
+                    //              vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
+                    //              {
+                    //                    var index = PullRequests.IndexOf(pullRequest);
+                    //                    if (index < 0) return;
+                    //                    PullRequests[index] = x;
+                    //                    PullRequests.Reset();
+                    //              });
+                    ShowViewModel(vm);
+                }),
                 filter: x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            GoToPullRequestCommand = ReactiveCommand.Create();
-            GoToPullRequestCommand.OfType<PullRequestItemViewModel>().Subscribe(x =>
-		    {
-		        var vm = CreateViewModel<PullRequestViewModel>();
-		        vm.RepositoryOwner = RepositoryOwner;
-		        vm.RepositoryName = RepositoryName;
-                vm.Id = x.PullRequest.Number;
-                vm.PullRequest = x.PullRequest;
-//		        vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
-//		        {
-//                    var index = PullRequests.IndexOf(pullRequest);
-//                    if (index < 0) return;
-//                    PullRequests[index] = x;
-//                    PullRequests.Reset();
-//		        });
-                ShowViewModel(vm);
-		    });
-
-		    this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
@@ -70,6 +63,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
 			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);
                 return pullRequests.SimpleCollectionLoad(request, t as bool?);
             });
+
+            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 		}
     }
 }

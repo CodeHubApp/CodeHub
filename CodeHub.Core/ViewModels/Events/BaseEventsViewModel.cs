@@ -122,7 +122,7 @@ namespace CodeHub.Core.ViewModels.Events
             vm.Id = id;
         }
 
-        private void GoToPullRequest(RepositoryIdentifier repo, long id)
+        private void GoToPullRequest(RepositoryIdentifier repo, int id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
@@ -341,7 +341,7 @@ namespace CodeHub.Core.ViewModels.Events
 
 				if (commentEvent.Issue.PullRequest != null && !string.IsNullOrEmpty(commentEvent.Issue.PullRequest.HtmlUrl))
 				{
-					eventAction = () => GoToPullRequest(repoId, commentEvent.Issue.Number);
+                    eventAction = () => GoToPullRequest(repoId, (int)commentEvent.Issue.Number);
 					headerBlocks.Add(new TextBlock(" commented on pull request "));
 				}
 				else
@@ -415,7 +415,7 @@ namespace CodeHub.Core.ViewModels.Events
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
             {
                 var pullEvent = (EventModel.PullRequestEvent)eventModel.PayloadObject;
-                eventAction = () => GoToPullRequest(repoId, pullEvent.Number);
+                eventAction = () => GoToPullRequest(repoId, (int)pullEvent.Number);
 
                 if (pullEvent.Action.Equals("closed"))
                     headerBlocks.Add(new TextBlock(" closed pull request "));

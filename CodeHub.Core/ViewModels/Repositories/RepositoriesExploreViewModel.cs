@@ -1,22 +1,16 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
-
 using Xamarin.Utilities.Core.ViewModels;
 using Xamarin.Utilities.Core.Services;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesExploreViewModel : BaseViewModel
     {
-        private readonly IApplicationService _applicationService;
-
-        public bool ShowRepositoryDescription
-        {
-            get { return _applicationService.Account.ShowRepositoryDescriptionInList; }
-        }
+        public bool ShowRepositoryDescription { get; private set; }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; private set; }
 
@@ -27,11 +21,11 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
-        public IReactiveCommand SearchCommand { get; private set; }
+        public IReactiveCommand<Unit> SearchCommand { get; private set; }
 
         public RepositoriesExploreViewModel(IApplicationService applicationService, INetworkActivityService networkActivityService)
         {
-            _applicationService = applicationService;
+            ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
 
             Title = "Explore";
 
@@ -43,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 ShowViewModel(vm);
             });
 
-            var repositories = new ReactiveList<RepositorySearchModel.RepositoryModel>();
+            var repositories = new ReactiveList<Octokit.Repository>();
             Repositories = repositories.CreateDerivedCollection(x => 
                 new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
                                             x.Description, x.StargazersCount, x.ForksCount,
@@ -53,12 +47,13 @@ namespace CodeHub.Core.ViewModels.Repositories
                 this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x)),
                 async t =>
             {
+                repositories.Clear();
+
                 try
                 {
-                    var request = applicationService.Client.Repositories.SearchRepositories(new[] { SearchText }, new string[] { });
-                    request.UseCache = false;
-                    var response = await applicationService.Client.ExecuteAsync(request);
-                    repositories.Reset(response.Data.Items);
+                    var request = new Octokit.SearchRepositoriesRequest(SearchText);
+                    var response = await applicationService.GitHubClient.Search.SearchRepo(request);
+                    repositories.Reset(response.Items);
                 }
                 catch (Exception e)
                 {

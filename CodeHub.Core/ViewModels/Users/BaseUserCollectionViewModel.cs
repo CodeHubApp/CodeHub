@@ -40,24 +40,26 @@ namespace CodeHub.Core.ViewModels.Users
 
         protected BaseUserCollectionViewModel()
         {
-            var gotoUser = new Action<UserItemViewModel>(x =>
-            {
-                if (x.IsOrganization)
-                {
-                    var vm = CreateViewModel<OrganizationViewModel>();
-                    vm.Username = x.Name;
-                    ShowViewModel(vm);
-                }
-                else
-                {
-                    var vm = CreateViewModel<UserViewModel>();
-                    vm.Username = x.Name;
-                    ShowViewModel(vm);
-                }
-            });
-
             Users = UsersCollection.CreateDerivedCollection(
-                x => new UserItemViewModel(x.Login, x.AvatarUrl, string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase), gotoUser), 
+                x => 
+                {
+                    var isOrg = string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase);
+                    return new UserItemViewModel(x.Login, x.AvatarUrl, isOrg, () =>
+                    {
+                        if (isOrg)
+                        {
+                            var vm = CreateViewModel<OrganizationViewModel>();
+                            vm.Username = x.Login;
+                            ShowViewModel(vm);
+                        }
+                        else
+                        {
+                            var vm = CreateViewModel<UserViewModel>();
+                            vm.Username = x.Login;
+                            ShowViewModel(vm);
+                        }
+                    });
+                },
                 x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
         }

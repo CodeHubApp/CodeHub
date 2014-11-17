@@ -1,12 +1,12 @@
 ﻿using System;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive.Linq;
 using MonoTouch.Foundation;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Cells
 {
-    public class TagCellView : ReactiveTableViewCell<TagModel>
+    public class TagCellView : ReactiveTableViewCell<TagItemViewModel>
     {
         public static NSString Key = new NSString("TagCell");
 

@@ -2,19 +2,15 @@
 using ReactiveUI;
 using Xamarin.Utilities.Core.ViewModels;
 using System.Collections.Generic;
-using Xamarin.Utilities.Core.Services;
-using Akavache;
-using CodeHub.Core.Models;
 using System.Reactive.Linq;
 using System.Reactive;
+using CodeHub.Core.Data;
+using Xamarin.Utilities.Core;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class LanguagesViewModel : BaseViewModel, ILoadableViewModel
+    public class LanguagesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
-        private const string LanguagesUrl = "http://trending.codehub-app.com/languages";
-        public static LanguageModel DefaultLanguage = new LanguageModel { Name = "All Languages", Slug = null };
-
         public IReactiveCommand LoadCommand { get; private set; }
 
         private LanguageItemViewModel _selectedLanguage;
@@ -33,12 +29,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReadOnlyReactiveList<LanguageItemViewModel> Languages { get; private set; }
 
-        public LanguagesViewModel(IJsonSerializationService jsonSerializationService, INetworkActivityService networkActivity)
+        public LanguagesViewModel(LanguageRepository languageRepository)
         {
             Title = "Languages";
 
-            var languages = new ReactiveList<LanguageModel>();
-
+            var languages = new ReactiveList<Language>();
             Languages = languages.CreateDerivedCollection(
                 x => new LanguageItemViewModel(x.Name, x.Slug), 
                 filter: x => x.Name.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase), 
@@ -57,9 +52,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var trendingData = await BlobCache.LocalMachine.DownloadUrl(LanguagesUrl, absoluteExpiration: DateTimeOffset.Now.AddDays(1));
-                var langs = jsonSerializationService.Deserialize<List<LanguageModel>>(System.Text.Encoding.UTF8.GetString(trendingData));
-                langs.Insert(0, DefaultLanguage);
+                var langs = await languageRepository.GetLanguages();
+                langs.Insert(0, LanguageRepository.DefaultLanguage);
                 languages.Reset(langs);
             });
         }

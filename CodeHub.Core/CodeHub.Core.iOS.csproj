@@ -136,8 +136,6 @@
     <Compile Include="ViewModels\Repositories\BaseRepositoriesViewModel.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="ViewModels\Repositories\LanguagesViewModel.cs" />
-    <Compile Include="Models\LanguageModel.cs" />
-    <Compile Include="Models\TrendingRepositoryModel.cs" />
     <Compile Include="ViewModels\Repositories\LangaugeItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
@@ -174,6 +172,17 @@
     <Compile Include="Services\IMediaPickerService.cs" />
     <Compile Include="Extensions\StatusIndicatorExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Data\ShowcaseRepository.cs" />
+    <Compile Include="Data\TrendingRepository.cs" />
+    <Compile Include="Data\LanguageRepository.cs" />
+    <Compile Include="Data\Language.cs" />
+    <Compile Include="Utilities\UnderscoreContractResolver.cs" />
+    <Compile Include="Data\Showcase.cs" />
+    <Compile Include="ViewModels\Source\BranchItemViewModel.cs" />
+    <Compile Include="ViewModels\Source\TagItemViewModel.cs" />
+    <Compile Include="ViewModels\Teams\TeamItemViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestCommentViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueCommentViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -219,6 +228,15 @@
     </Reference>
     <Reference Include="Akavache.Sqlite3">
       <HintPath>..\packages\akavache.sqlite3.4.0.4\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.5.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
