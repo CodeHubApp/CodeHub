@@ -1,16 +1,22 @@
 using CodeHub.Core.Services;
-using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Users
 {
     public class UserFollowingsViewModel : BaseUserCollectionViewModel
     {
+        private readonly IApplicationService _applicationService;
+
         public string Username { get; set; }
 
         public UserFollowingsViewModel(IApplicationService applicationService)
         {
+            _applicationService = applicationService;
             Title = "Following";
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => Load(applicationService.Client.Users[Username].GetFollowing(), t as bool?));
+        }
+
+        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        {
+            return _applicationService.Client.Users[Username].GetFollowing();
         }
     }
 }

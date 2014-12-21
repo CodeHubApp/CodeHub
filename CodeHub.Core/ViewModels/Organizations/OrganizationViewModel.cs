@@ -6,15 +6,14 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationViewModel : BaseViewModel, ILoadableViewModel
 	{
-        private readonly IApplicationService _applicationService;
-
         private string _username;
         public string Username
         {
@@ -43,14 +42,12 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public IReactiveCommand GoToRepositoriesCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
         public OrganizationViewModel(IApplicationService applicationService)
         {
-            _applicationService = applicationService;
-
             this.WhenAnyValue(x => x.Organization, x => x.Username, 
                 (x, y) => x == null ? y : (string.IsNullOrEmpty(x.Name) ? x.Login : x.Name))
                 .Select(x => x ?? "Organization")
@@ -58,55 +55,57 @@ namespace CodeHub.Core.ViewModels.Organizations
 
             GoToMembersCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<OrganizationMembersViewModel>();
+                var vm = this.CreateViewModel<OrganizationMembersViewModel>();
                 vm.OrganizationName = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToTeamsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<TeamsViewModel>();
+                var vm = this.CreateViewModel<TeamsViewModel>();
                 vm.OrganizationName = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToFollowersCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserFollowersViewModel>();
+                var vm = this.CreateViewModel<UserFollowersViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToFollowingCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserFollowingsViewModel>();
+                var vm = this.CreateViewModel<UserFollowingsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToEventsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserEventsViewModel>();
+                var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserGistsViewModel>();
+                var vm = this.CreateViewModel<UserGistsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<OrganizationRepositoriesViewModel>();
+                var vm = this.CreateViewModel<OrganizationRepositoriesViewModel>();
                 vm.Name = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                Organization = await _applicationService.GitHubClient.Organization.Get(Username));
+            {
+                Organization = await applicationService.GitHubClient.Organization.Get(Username);
+            });
         }
 	}
 }

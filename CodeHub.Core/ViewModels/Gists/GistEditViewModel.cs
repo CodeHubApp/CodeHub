@@ -1,5 +1,5 @@
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -9,11 +9,14 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand GoToDescriptionCommand { get; private set; }
 
+        public IReactiveCommand<object> DismissCommand { get; private set; }
+
         public GistEditViewModel()
         {
             Title = "Edit Gist";
 
             SaveCommand = ReactiveCommand.Create();
+            DismissCommand = ReactiveCommand.Create();
 
             GoToDescriptionCommand = ReactiveCommand.Create();
         }

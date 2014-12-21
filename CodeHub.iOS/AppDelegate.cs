@@ -3,12 +3,19 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
-using MonoTouch.Security;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using CodeHub.iOS.Views.App;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.App;
+using Splat;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities;
+using Xamarin.Utilities.Factories;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Views;
+using CodeHub.iOS.Services;
+using CodeHub.Core.Utilities;
+using CodeHub.iOS.Views.Settings;
 
 namespace CodeHub.iOS
 {
@@ -46,31 +53,42 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            #if DEBUG
+            Locator.CurrentMutable.Register(() => new DiagnosticLogger(), typeof(ILogger));
+            #endif 
+
 			var iRate = MTiRate.iRate.SharedInstance;
 			iRate.AppStoreID = 707173885;
 
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
-            // Load the IoC
-            IoC.RegisterAssemblyServicesAsSingletons(typeof(Xamarin.Utilities.Core.Services.IDefaultValueService).Assembly);
-            IoC.RegisterAssemblyServicesAsSingletons(typeof(Xamarin.Utilities.Services.DefaultValueService).Assembly);
-            IoC.RegisterAssemblyServicesAsSingletons(typeof(Core.Services.IApplicationService).Assembly);
-            IoC.RegisterAssemblyServicesAsSingletons(GetType().Assembly);
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            var viewModelViewService = IoC.Resolve<IViewModelViewService>();
-            viewModelViewService.RegisterViewModels(typeof(Xamarin.Utilities.Services.DefaultValueService).Assembly);
-            viewModelViewService.RegisterViewModels(GetType().Assembly);
-
-            IoC.Resolve<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+            Locator.CurrentMutable.InitializeXamarinUtilities();
+            Locator.CurrentMutable.InitializeLocal();
             CodeHub.Core.Bootstrap.Init();
+            Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             Theme.Setup();
             SetupPushNotifications();
             HandleNotificationOptions(options);
 
-            var startupViewController = new StartupView { ViewModel = IoC.Resolve<StartupViewModel>() };
-            startupViewController.ViewModel.View = startupViewController;
+            var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
+            viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
+            viewModelViews.RegisterViewModels(typeof(WebBrowserView).Assembly);
+
+            var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
+            var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+            var vm = serviceConstructor.Construct<StartupViewModel>();
+            var startupViewController = new StartupView { ViewModel = vm };
+            ((Xamarin.Utilities.ViewModels.IRoutableViewModel)vm).RequestNavigation.Subscribe(x =>
+            {
+                var toViewType = viewModelViews.GetViewFor(x.GetType());
+                var toView = serviceConstructor.Construct(toViewType) as IViewFor;
+                toView.ViewModel = x;
+                transitionOrchestration.Transition(startupViewController, toView);
+            });
 
             var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
             MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ =>
@@ -83,6 +101,7 @@ namespace CodeHub.iOS
             Window.MakeKeyAndVisible();
             return true;
         }
+
 
         private void HandleNotificationOptions(NSDictionary options)
         {
@@ -98,11 +117,11 @@ namespace CodeHub.iOS
 
         private void SetupPushNotifications()
         {
-            var features = IoC.Resolve<IFeaturesService>();
+            var features = Locator.Current.GetService<IFeaturesService>();
 
             // Automatic activations in debug mode!
 #if DEBUG
-            IoC.Resolve<IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
+            Locator.Current.GetService<IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
 #endif
 
             // Notifications don't work on teh simulator so don't bother
@@ -196,11 +215,11 @@ namespace CodeHub.iOS
 		{
             DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
 
-            var app = IoC.Resolve<IApplicationService>();
-            var accounts = IoC.Resolve<IAccountsService>();
+            var app = Locator.Current.GetService<IApplicationService>();
+            var accounts = Locator.Current.GetService<IAccountsService>();
             if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
             {
-                Task.Run(() => IoC.Resolve<IPushNotificationsService>().Register());
+                Task.Run(() => Locator.Current.GetService<IPushNotificationsService>().Register());
                 app.Account.IsPushNotificationsEnabled = true;
                 accounts.Update(app.Account);
             }
@@ -208,7 +227,7 @@ namespace CodeHub.iOS
 
 		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
 		{
-            IoC.Resolve<IAlertDialogService>().Alert("Error Registering for Notifications", error.LocalizedDescription);
+            Locator.Current.GetService<IAlertDialogFactory>().Alert("Error Registering for Notifications", error.LocalizedDescription);
 		}
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
@@ -232,7 +251,7 @@ namespace CodeHub.iOS
                 var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
                 var firstIsDomain = first.Contains(".");
 
-                var viewModel = IoC.Resolve<IUrlRouterService>().Handle(path);
+                var viewModel = Locator.Current.GetService<IUrlRouterService>().Handle(path);
                 //TODO: Show the ViewModel
                 return true;
             }

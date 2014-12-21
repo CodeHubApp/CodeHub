@@ -1,45 +1,45 @@
 using System;
 using System.Linq;
-using GitHubSharp.Models;
 using System.Threading.Tasks;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
 	public abstract class IssueModifyViewModel : BaseViewModel
     {
-		private string _title;
+        private string _subject;
+        public string Subject
+        {
+            get { return _subject; }
+            set { this.RaiseAndSetIfChanged(ref _subject, value); }
+        }
+
 		private string _content;
-		private BasicUserModel _assignedTo;
-	    private LabelModel[] _labels;
-		private MilestoneModel _milestone;
-
-		public string Title
-		{
-			get { return _title; }
-			set { this.RaiseAndSetIfChanged(ref _title, value); }
-		}
-
 		public string Content
 		{
 			get { return _content; }
             set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
-		public MilestoneModel Milestone
+        private Octokit.Milestone _milestone;
+        public Octokit.Milestone Milestone
 		{
 			get { return _milestone; }
             set { this.RaiseAndSetIfChanged(ref _milestone, value); }
 		}
 
-        public LabelModel[] Labels
+        private Octokit.Label[] _labels;
+        public Octokit.Label[] Labels
         {
             get { return _labels; }
             set { this.RaiseAndSetIfChanged(ref _labels, value); }
         }
 
-		public BasicUserModel AssignedTo
+        private Octokit.User _assignedTo;
+        public Octokit.User AssignedTo
 		{
 			get { return _assignedTo; }
             set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
@@ -55,45 +55,49 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToAssigneeCommand { get; private set; }
 
-		public IReactiveCommand SaveCommand { get; private set; }
+		public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-	    protected IssueModifyViewModel()
+        protected IssueModifyViewModel(IStatusIndicatorService statusIndicatorService)
 	    {
-            SaveCommand = ReactiveCommand.CreateAsyncTask(t => Save());
+            SaveCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                using (statusIndicatorService.Activate("Saving..."))
+                    await Save();
+                Dismiss();
+            });
 
             GoToAssigneeCommand = ReactiveCommand.Create();
 	        GoToAssigneeCommand.Subscribe(_ =>
 	        {
-	            var vm = CreateViewModel<IssueAssignedToViewModel>();
+	            var vm = this.CreateViewModel<IssueAssignedToViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
 	            vm.SelectedUser = AssignedTo;
 	            vm.WhenAnyValue(x => x.SelectedUser).Subscribe(x => AssignedTo = x);
-                ShowViewModel(vm);
+                NavigateTo(vm);
 	        });
 
 
             GoToMilestonesCommand = ReactiveCommand.Create();
             GoToMilestonesCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<IssueMilestonesViewModel>();
+                var vm = this.CreateViewModel<IssueMilestonesViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.SelectedMilestone = Milestone;
                 vm.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x => Milestone = x);
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToLabelsCommand = ReactiveCommand.Create();
             GoToLabelsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<IssueLabelsViewModel>();
+                var vm = this.CreateViewModel<IssueLabelsViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.SelectedLabels.Reset(Labels);
                 vm.OriginalLabels = Labels;
                 vm.WhenAnyValue(x => x.SelectedLabels).Subscribe(x => Labels = x.ToArray());
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 	    }
 

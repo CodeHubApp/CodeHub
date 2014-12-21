@@ -1,28 +1,32 @@
+﻿using Xamarin.Utilities.ViewModels;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using System.Reactive.Linq;
-using CodeHub.Core.Services;
 using System.Reactive.Subjects;
 using System;
+using System.Reactive.Linq;
 using GitHubSharp.Models;
+using CodeHub.Core.Services;
+using Xamarin.Utilities.Services;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class CommitMessageViewModel : BaseViewModel
     {
-        private readonly Subject<ContentUpdateModel> _contentSubject = new Subject<ContentUpdateModel>();
+        private readonly ISubject<ContentUpdateModel> _contentUpdateSubject = new Subject<ContentUpdateModel>();
 
-        private string _message;
-        public string Message
+        private string _commitMessage;
+        public string CommitMessage
         {
-            get { return _message; }
-            set { this.RaiseAndSetIfChanged(ref _message, value); }
+            get { return _commitMessage; }
+            set { this.RaiseAndSetIfChanged(ref _commitMessage, value); }
         }
 
-        public IObservable<ContentUpdateModel> ContentChanged
+        public IObservable<ContentUpdateModel> Saved
         {
-            get { return _contentSubject; }
+            get { return _contentUpdateSubject; }
         }
+
+        public string Text { get; set; }
 
         public string Username { get; set; }
 
@@ -34,22 +38,27 @@ namespace CodeHub.Core.ViewModels.Source
 
         public string Branch { get; set; }
 
-        public string Text { get; set; }
+        public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public IReactiveCommand SaveCommand { get; private set; }
-
-        public CommitMessageViewModel(IApplicationService applicationService)
+        public CommitMessageViewModel(IApplicationService applicationService, IStatusIndicatorService statusIndicator)
         {
+            Title = "Commit Message";
+
             SaveCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Message).Select(x => !string.IsNullOrEmpty(x)),
+                this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)),
                 async _ =>
+            {
+                var path = Path.StartsWith("/", StringComparison.Ordinal) ? Path : string.Concat("/", Path);
+                var request = applicationService.Client.Users[Username].Repositories[Repository]
+                    .UpdateContentFile(path, CommitMessage, Text, BlobSha, Branch);
+
+                using (statusIndicator.Activate("Commiting..."))
                 {
-                    var request = applicationService.Client.Users[Username].Repositories[Repository]
-                        .UpdateContentFile(Path, Message, Text, BlobSha, Branch);
                     var response = await applicationService.Client.ExecuteAsync(request);
-                    _contentSubject.OnNext(response.Data);
-                    DismissCommand.ExecuteIfCan();
-                });
+                    _contentUpdateSubject.OnNext(response.Data);
+                }
+            });
         }
     }
 }
+

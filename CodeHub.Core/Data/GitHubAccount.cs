@@ -63,9 +63,16 @@ namespace CodeHub.Core.Data
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets whether URLs should be resolved to the app
+        /// The default view on startup
         /// </summary>
-        public bool OpenUrlsInApp { get; set; }
+        /// <value>The default startup view.</value>
+        public string DefaultStartupView { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="CodeHub.Core.Data.GitHubAccount"/> save credentails.
+        /// </summary>
+        /// <value><c>true</c> if save credentails; otherwise, <c>false</c>.</value>
+        public bool SaveCredentails { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GitHubAccount"/> class.
@@ -73,14 +80,12 @@ namespace CodeHub.Core.Data
         public GitHubAccount()
         {
             //Set some default values
-            DontRemember = false;
+            SaveCredentails = true;
             ShowOrganizationsInEvents = true;
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
-            OpenUrlsInApp = true;
+            DefaultStartupView = "News";
         }
-
-        public bool DontRemember { get; set; }
 
         public string Key
         {
@@ -109,7 +114,6 @@ namespace CodeHub.Core.Data
             set { _pinnedRepositories = value ?? new List<PinnedRepository>(); }
         }
 
-        public string DefaultStartupView { get; set; }
 
         public override bool Equals(object obj)
         {

@@ -22,7 +22,7 @@ namespace CodeHub.Core.Filters
         public enum Order
         { 
             Alphabetical, 
-            [EnumDescription("Folders Then Files")]
+            //[EnumDescription("Folders Then Files")]
             FoldersThenFiles,
         };
     }

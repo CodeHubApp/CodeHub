@@ -6,22 +6,21 @@ using System;
 using CodeHub.Core.ViewModels.App;
 using System.Threading.Tasks;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Services;
 using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.Purchases;
+using Splat;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class UpgradesView : ViewModelDialogViewController<UpgradesViewModel>
+    public class UpgradesView : ReactiveTableViewController<UpgradesViewModel>
     {
         private readonly IFeaturesService _featuresService;
         private readonly INetworkActivityService _networkActivityService;
-        private readonly IAlertDialogService _alertDialogService;
+        private readonly IAlertDialogFactory _alertDialogService;
         private readonly List<Item> _items = new List<Item>();
 
-        public UpgradesView(IFeaturesService featuresService, INetworkActivityService networkActivityService, IAlertDialogService alertDialogService)
-            : base(style: MonoTouch.UIKit.UITableViewStyle.Plain)
+        public UpgradesView(IFeaturesService featuresService, INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogService)
         {
             _featuresService = featuresService;
             _networkActivityService = networkActivityService;
@@ -30,11 +29,9 @@ namespace CodeHub.iOS.Views.App
 
         public override void ViewDidLoad()
         {
-            Title = "Upgrades";
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
-
             base.ViewDidLoad();
 
+            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
             ViewModel.WhenAnyValue(x => x.Keys).Where(x => x != null && x.Length > 0).Subscribe(x => LoadProducts(x));
         }
 
@@ -43,7 +40,7 @@ namespace CodeHub.iOS.Views.App
             try
             {
                 _networkActivityService.PushNetworkActive();
-                var data = await InAppPurchases.Instance.RequestProductData(keys);
+                var data = await Locator.Current.GetService<InAppPurchaseService>().RequestProductData(keys);
                 _items.Clear();
                 _items.AddRange(data.Products.Select(x => new Item { Id = x.ProductIdentifier, Name = x.LocalizedTitle, Description = x.LocalizedDescription, Price = x.LocalizedPrice() }));
                 Render();
@@ -60,29 +57,29 @@ namespace CodeHub.iOS.Views.App
 
         private void Render()
         {
-            var section = new Section();
-            section.AddAll(_items.Select(item =>
-            {
-                var el = new MultilinedElement(item.Name + " (" + item.Price + ")", item.Description);
-                if (_featuresService.IsActivated(item.Id))
-                {
-                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.Checkmark;
-                }
-                else
-                {
-                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
-                    el.Tapped += () => Tapped(item);
-                }
-
-                return el;
-            }));
-
-            Root.Reset(section);
+//            var section = new Section();
+//            section.AddAll(_items.Select(item =>
+//            {
+//                var el = new MultilinedElement(item.Name + " (" + item.Price + ")", item.Description);
+//                if (_featuresService.IsActivated(item.Id))
+//                {
+//                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.Checkmark;
+//                }
+//                else
+//                {
+//                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
+//                    el.Tapped += () => Tapped(item);
+//                }
+//
+//                return el;
+//            }));
+//
+//            Root.Reset(section);
         }
 
         private void Restore()
         {
-            InAppPurchases.Instance.Restore();
+            Locator.Current.GetService<InAppPurchaseService>().Restore();
         }
 
         private void Tapped(Item item)

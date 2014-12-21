@@ -1,17 +1,16 @@
 ﻿using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.Data;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class LanguagesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private LanguageItemViewModel _selectedLanguage;
         public LanguageItemViewModel SelectedLanguage
@@ -29,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReadOnlyReactiveList<LanguageItemViewModel> Languages { get; private set; }
 
-        public LanguagesViewModel(LanguageRepository languageRepository)
+        public LanguagesViewModel()
         {
             Title = "Languages";
 
@@ -50,8 +49,13 @@ namespace CodeHub.Core.ViewModels.Repositories
                         l.Selected = l.Slug == x.Slug;
                 });
 
+            this.WhenAnyValue(x => x.SelectedLanguage)
+                .IsNotNull()
+                .Subscribe(_ => Dismiss());
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
+                var languageRepository = new LanguageRepository();
                 var langs = await languageRepository.GetLanguages();
                 langs.Insert(0, LanguageRepository.DefaultLanguage);
                 languages.Reset(langs);

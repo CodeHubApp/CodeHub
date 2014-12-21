@@ -4,12 +4,11 @@ using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoryView : ViewModelPrettyDialogViewController<RepositoryViewModel>
+    public class RepositoryView : ReactiveDialogViewController<RepositoryViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitElement[] _splitElements = new SplitElement[3];
@@ -24,7 +23,7 @@ namespace CodeHub.iOS.Views.Repositories
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
             var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
 
-            Root.Reset(new Section(HeaderView) { _split });
+            Root.Reset(new Section { _split });
 
             // Not very efficient but it'll work for now.
             ViewModel.WhenAnyValue(x => x.Readme).IsNotNull()
@@ -105,7 +104,7 @@ namespace CodeHub.iOS.Views.Repositories
                 new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Script),
             };
 
-            Root.Reset(new Section(HeaderView) { _split }, sec1, sec2, sec3);
+            Root.Reset(new Section { _split }, sec1, sec2, sec3);
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {

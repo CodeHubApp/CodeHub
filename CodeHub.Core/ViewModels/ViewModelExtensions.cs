@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using GitHubSharp;
@@ -6,29 +6,17 @@ using System.Collections.Generic;
 using ReactiveUI;
 using System.Linq;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Core.ViewModels;
+using Splat;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static void ShowWebBrowser(this BaseViewModel @this, string url)
+        public static T CreateViewModel<T>(this IBaseViewModel @this)
         {
-            var vm = @this.CreateViewModel<WebBrowserViewModel>();
-            vm.Url = url;
-            @this.ShowViewModel(vm);
-        }
-
-        public static void ShowWebBrowser(this BaseViewModel @this, Uri uri)
-        {
-            ShowWebBrowser(@this, uri.AbsoluteUri);
-        }
-
-        public static IReactiveCommand CreateUrlCommand(this BaseViewModel @this)
-        {
-            var command = ReactiveCommand.Create();
-            command.OfType<string>().Subscribe(@this.ShowWebBrowser);
-            return command;
+            return Locator.Current.GetService<IServiceConstructor>().Construct<T>();
         }
 
         public static async Task RequestModel<TRequest>(this object viewModel, GitHubRequest<TRequest> request, bool? forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
@@ -40,7 +28,7 @@ namespace CodeHub.Core.ViewModels
                 request.RequestFromCache = false;
             }
 
-            var application = IoC.Resolve<IApplicationService>();
+            var application = Locator.Current.GetService<IApplicationService>();
 
             var result = await application.Client.ExecuteAsync(request);
             update(result);
@@ -51,7 +39,7 @@ namespace CodeHub.Core.ViewModels
                 var uncachedTask = application.Client.ExecuteAsync(request);
                 uncachedTask.ContinueInBackground(update);
             }
-		}
+        }
 
         public static void CreateMore<T>(this object viewModel, GitHubResponse<List<T>> response, 
             Action<Func<Task>> assignMore, Action<List<T>> newDataAction) where T : new()
@@ -65,7 +53,7 @@ namespace CodeHub.Core.ViewModels
             assignMore(async () =>
             {
                 response.More.UseCache = false;
-                var moreResponse = await IoC.Resolve<IApplicationService>().Client.ExecuteAsync(response.More);
+                var moreResponse = await Locator.Current.GetService<IApplicationService>().Client.ExecuteAsync(response.More);
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
             });
@@ -78,30 +66,17 @@ namespace CodeHub.Core.ViewModels
 
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, assignMore, x => 
+                viewModel.CreateMore(response, assignMore, x =>
                 {
-                    viewModel.AddRange(x);
-                    Console.WriteLine("The size is: " + viewModel.Count);
+                    // This is fucking broken for iOS because it can't handle estimated rows and the insertions
+                    // that ReactiveUI seems to be producing
+                    using (viewModel.SuppressChangeNotifications())
+                    {
+                        viewModel.AddRange(x);
+                    }
                 });
                 viewModel.Reset(response.Data);
             });
-        }
-
-        public static async Task LoadAll<T>(this ReactiveList<T> @this, GitHubRequest<List<T>> request) where T : new()
-        {
-            var application = IoC.Resolve<IApplicationService>();
-            @this.Clear();
-
-            while (request != null)
-            {
-                request.RequestFromCache = false;
-                var result = await application.Client.ExecuteAsync(request);
-                if (@this.Count == 0)
-                    @this.Reset(result.Data.Where(x => x != null));
-                else
-                    @this.AddRange(result.Data.Where(x => x != null));
-                request = result.More;
-            }
         }
     }
 }

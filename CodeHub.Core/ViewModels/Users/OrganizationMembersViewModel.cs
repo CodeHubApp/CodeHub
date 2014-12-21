@@ -1,17 +1,22 @@
 using CodeHub.Core.Services;
-using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Users
 {
     public class OrganizationMembersViewModel : BaseUserCollectionViewModel
     {
+        private readonly IApplicationService _applicationService;
+
         public string OrganizationName { get; set; }
 
         public OrganizationMembersViewModel(IApplicationService applicationService)
         {
+            _applicationService = applicationService;
             Title = "Members";
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
-                Load(applicationService.Client.Organizations[OrganizationName].GetMembers(), t as bool?));
+        }
+
+        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        {
+            return _applicationService.Client.Organizations[OrganizationName].GetMembers();
         }
     }
 }

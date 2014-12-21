@@ -15,6 +15,9 @@ using CodeHub.Core.ViewModels.Notifications;
 using ReactiveUI;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
+using CodeHub.Core.ViewModels.Settings;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -48,7 +51,7 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 		
         public MenuViewModel(IApplicationService applicationService, IAccountsService accountsService)
             : base(accountsService)
@@ -58,105 +61,105 @@ namespace CodeHub.Core.ViewModels.App
             GoToNotificationsCommand = ReactiveCommand.Create();
             GoToNotificationsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<NotificationsViewModel>();
-                ShowViewModel(vm);
+                var vm = this.CreateViewModel<NotificationsViewModel>();
+                NavigateTo(vm);
             });
 
-            GoToAccountsCommand = ReactiveCommand.Create();
-            GoToAccountsCommand.Subscribe(_ => CreateAndShowViewModel<AccountsViewModel>());
+            GoToAccountsCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<AccountsViewModel>()));
 
             GoToProfileCommand = ReactiveCommand.Create();
             GoToProfileCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserViewModel>();
+                var vm = this.CreateViewModel<UserViewModel>();
                 vm.Username = Account.Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
-            GoToMyIssuesCommand = ReactiveCommand.Create();
-            GoToMyIssuesCommand.Subscribe(_ => CreateAndShowViewModel<MyIssuesViewModel>());
+            GoToMyIssuesCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<MyIssuesViewModel>()));
 
-            GoToUpgradesCommand = ReactiveCommand.Create();
-            GoToUpgradesCommand.Subscribe(_ => CreateAndShowViewModel<UpgradesViewModel>());
+            GoToUpgradesCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<UpgradesViewModel>()));
      
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x =>
             {
-                var vm = CreateViewModel<RepositoryViewModel>();
+                var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
-            GoToSettingsCommand = ReactiveCommand.Create();
-            GoToSettingsCommand.Subscribe(_ => CreateAndShowViewModel<SettingsViewModel>());
+            GoToSettingsCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<SettingsViewModel>()));
 
-            GoToNewsCommand = ReactiveCommand.Create();
-            GoToNewsCommand.Subscribe(_ => CreateAndShowViewModel<NewsViewModel>());
+            GoToNewsCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<NewsViewModel>()));
 
             GoToOrganizationsCommand = ReactiveCommand.Create();
             GoToOrganizationsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<OrganizationsViewModel>();
+                var vm = this.CreateViewModel<OrganizationsViewModel>();
                 vm.Username = Account.Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
-            GoToTrendingRepositoriesCommand = ReactiveCommand.Create();
-            GoToTrendingRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesTrendingViewModel>());
+            GoToTrendingRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<RepositoriesTrendingViewModel>()));
 
-            GoToExploreRepositoriesCommand = ReactiveCommand.Create();
-            GoToExploreRepositoriesCommand.Subscribe(_ => CreateAndShowViewModel<RepositoriesExploreViewModel>());
+            GoToExploreRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<RepositoriesExploreViewModel>()));
 
             GoToOrganizationEventsCommand = ReactiveCommand.Create();
             GoToOrganizationEventsCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
-                var vm = CreateViewModel<UserEventsViewModel>();
+                var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = x.Login;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToOrganizationCommand = ReactiveCommand.Create();
             GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
             {
-                var vm = CreateViewModel<OrganizationViewModel>();
+                var vm = this.CreateViewModel<OrganizationViewModel>();
                 vm.Username = x.Login;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToOwnedRepositoriesCommand = ReactiveCommand.Create();
             GoToOwnedRepositoriesCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserRepositoriesViewModel>();
+                var vm = this.CreateViewModel<UserRepositoriesViewModel>();
                 vm.Username = Account.Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToStarredRepositoriesCommand = ReactiveCommand.Create().WithSubscription(
-                _ => CreateAndShowViewModel<RepositoriesStarredViewModel>());
+                _ => NavigateTo(this.CreateViewModel<RepositoriesStarredViewModel>()));
 
             GoToPublicGistsCommand = ReactiveCommand.Create().WithSubscription(
-                _ => CreateAndShowViewModel<PublicGistsViewModel>());
+                _ => NavigateTo(this.CreateViewModel<PublicGistsViewModel>()));
 
             GoToStarredGistsCommand = ReactiveCommand.Create().WithSubscription(
-                _ => CreateAndShowViewModel<StarredGistsViewModel>());
+                _ => NavigateTo(this.CreateViewModel<StarredGistsViewModel>()));
 
             GoToMyGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserGistsViewModel>();
+                var vm = this.CreateViewModel<UserGistsViewModel>();
                 vm.Username = Account.Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToMyEvents = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<UserEventsViewModel>();
+                var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Account.Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ => 
-                CreateAndShowViewModel<SupportViewModel>());
+                NavigateTo(this.CreateViewModel<SupportViewModel>()));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {

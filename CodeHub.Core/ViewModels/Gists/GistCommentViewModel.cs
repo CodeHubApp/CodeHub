@@ -3,7 +3,6 @@ using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
 using System.Reactive.Subjects;
 using GitHubSharp.Models;
-using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -16,8 +15,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IObservable<GistCommentModel> CommentAdded { get { return _commendAdded; } }
 
-        public GistCommentViewModel(IStatusIndicatorService status, IAlertDialogService alert, IJsonHttpClientService jsonClient, IApplicationService applicationService) 
-            : base(status, alert, jsonClient)
+        public GistCommentViewModel(IApplicationService applicationService) 
         {
             _applicationService = applicationService;
         }

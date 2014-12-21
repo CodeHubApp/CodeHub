@@ -4,6 +4,7 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Releases;
+using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -14,17 +15,19 @@ namespace CodeHub.iOS.Cells
 
         [Export("initWithStyle:reuseIdentifier:")]
         public ReleaseTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
-            : base(UITableViewCellStyle.Value1, reuseIdentifier)
+            : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
         { 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
                     TextLabel.Text = x.Name;
-                    DetailTextLabel.Text = x.Created;
+                    DetailTextLabel.Text = x.Created.Humanize();
                 });
 
+            TextLabel.TextColor = Theme.MainTitleColor;
             DetailTextLabel.Font = UIFont.PreferredFootnote;
+            DetailTextLabel.TextColor = Theme.MainSubtitleColor;
         }
     }
 }

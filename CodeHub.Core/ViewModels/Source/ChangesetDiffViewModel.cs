@@ -6,12 +6,13 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class ChangesetDiffViewModel : FileSourceViewModel, ILoadableViewModel
+    public class ChangesetDiffViewModel : ContentViewModel, ILoadableViewModel
     {
         private CommitModel.CommitFileModel _commitFile;
         private string _filename;
@@ -39,7 +40,12 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<object> GoToCommentCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+
+        public override bool IsMarkdown 
+        {
+            get { return false; }
+        }
 
 	    public ChangesetDiffViewModel(IAccountsService accounts, IApplicationService applicationService, IFilesystemService filesystemService)
             : base(accounts)
@@ -49,15 +55,15 @@ namespace CodeHub.Core.ViewModels.Source
             GoToCommentCommand = ReactiveCommand.Create();
             GoToCommentCommand.OfType<int?>().Subscribe(line =>
             {
-                var vm = CreateViewModel<CommentViewModel>();
+                var vm = this.CreateViewModel<CommentViewModel>();
                 ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
                 {
                     var req = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(vm.Comment, Filename, line);
                     var response = await applicationService.Client.ExecuteAsync(req);
 			        Comments.Add(response.Data);
-                    vm.DismissCommand.ExecuteIfCan();
+                    Dismiss();
                 });
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>

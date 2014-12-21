@@ -3,8 +3,8 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             PullRequests = pullRequests.CreateDerivedCollection(
                 x => new PullRequestItemViewModel(x, () =>
                 {
-                    var vm = CreateViewModel<PullRequestViewModel>();
+                    var vm = this.CreateViewModel<PullRequestViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     vm.Id = (int)x.Number;
@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                     //                    PullRequests[index] = x;
                     //                    PullRequests.Reset();
                     //              });
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 }),
                 filter: x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));

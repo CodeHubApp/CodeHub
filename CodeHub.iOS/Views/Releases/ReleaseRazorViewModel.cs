@@ -7,6 +7,8 @@ namespace CodeHub.iOS.Views.Releases
     {
         public string Body { get; set; }
 
+        public string Name { get; set; }
+
         public ReleaseModel Release { get; set; }
 
         public string ReleaseTime

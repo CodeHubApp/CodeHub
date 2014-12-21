@@ -1,6 +1,4 @@
 using System;
-using CodeFramework.iOS.Elements;
-using CodeFramework.iOS.ViewComponents;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
 using System.Linq;
@@ -9,21 +7,41 @@ using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
-using CodeHub.iOS.ViewControllers;
+using Xamarin.Utilities.Delegates;
+using System.Drawing;
+using CodeHub.iOS.ViewComponents;
+using Xamarin.Utilities.ViewControllers;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class MenuView : MenuBaseViewController<MenuViewModel>
+    public class MenuView : ReactiveTableViewController<MenuViewModel>
     {
         private MenuElement _notifications;
 		private Section _favoriteRepoSection;
+        private DialogTableViewSource _dialogSource;
+        private readonly MenuProfileView _profileButton;
 
-	    protected override void CreateMenuRoot()
+        public MenuView()
+        {
+            _profileButton = new MenuProfileView(new RectangleF(0, 0, 320f, 44f));
+            _profileButton.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
+            _profileButton.TouchUpInside += (sender, e) => ViewModel.GoToAccountsCommand.ExecuteIfCan();
+            NavigationItem.TitleView = _profileButton;
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            CreateMenuRoot();
+        }
+
+	    private void CreateMenuRoot()
 		{
             var username = ViewModel.Account.Username;
-            ProfileButton.Name = string.IsNullOrEmpty(ViewModel.Account.Name) ? ViewModel.Account.Username : ViewModel.Account.Name;
-            ProfileButton.Username = ViewModel.Account.Email;
-            ProfileButton.ImageUri = ViewModel.Account.AvatarUrl;
+            _profileButton.Name = string.IsNullOrEmpty(ViewModel.Account.Name) ? ViewModel.Account.Username : ViewModel.Account.Name;
+            _profileButton.Username = ViewModel.Account.Email;
+            _profileButton.ImageUri = ViewModel.Account.AvatarUrl;
 
             var sections = new List<Section>();
 
@@ -36,11 +54,11 @@ namespace CodeHub.iOS.Views.App
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event) { ImageUri = new Uri(ViewModel.Account.AvatarUrl) });
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event, ViewModel.Account.AvatarUrl));
             if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
             {
                 eventsSection.Add(ViewModel.Organizations.Select(x =>
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event) { ImageUri = new Uri(x.AvatarUrl) }));
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event, x.AvatarUrl)));
             }
             sections.Add(eventsSection);
 
@@ -68,7 +86,7 @@ namespace CodeHub.iOS.Views.App
             if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
             {
                 orgSection.Add(ViewModel.Organizations.Select(x => 
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Team) { ImageUri = new Uri(x.AvatarUrl) }));
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Team, x.AvatarUrl)));
             }
             else
 				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group));
@@ -88,29 +106,31 @@ namespace CodeHub.iOS.Views.App
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
             infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
             infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Flag));
-            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Images.User));
+            infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Images.User));
 
-            Root.Reset(sections);
+            _dialogSource.Root.Reset(sections);
 		}
-
-        protected override void ProfileButtonClicked(object sender, EventArgs e)
-        {
-            ViewModel.GoToAccountsCommand.ExecuteIfCan();
-        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            _dialogSource = new MenuTableViewSource(this);
+
+            //Add some nice looking colors and effects
+            TableView.TableFooterView = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
+            TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
+            TableView.ScrollsToTop = false;
 			TableView.SeparatorInset = UIEdgeInsets.Zero;
 			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
+            TableView.Source = _dialogSource;
 
             ViewModel.WhenAnyValue(x => x.Notifications).Subscribe(x =>
             {
                 if (_notifications == null)
                     return;
                 _notifications.NotificationNumber = x;
-                Root.Reload(_notifications);
+                //_dialogSource.Root.Reload(_notifications);
             });
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
@@ -122,24 +142,29 @@ namespace CodeHub.iOS.Views.App
 		{
             public PinnedRepository PinnedRepo { get; private set; }
 
+            private static UIImage GetStaticImage(PinnedRepository pinnedRepository)
+            {
+                if (pinnedRepository.ImageUri.EndsWith("repository.png", StringComparison.Ordinal))
+                    return UIImage.FromFile("Images/repository.png");
+                if (pinnedRepository.ImageUri.EndsWith("repository_fork.png", StringComparison.Ordinal))
+                    return UIImage.FromFile("Images/repository_fork.png");
+                return Images.Repo;
+            }
+
+            private static string GetActualImage(PinnedRepository pinnedRepository)
+            {
+                if (pinnedRepository.ImageUri.StartsWith("http", StringComparison.Ordinal))
+                    return pinnedRepository.ImageUri;
+                return null;
+            }
+
 			public PinnedRepoElement(PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
+                : base(pinnedRepo.Name, 
+                    () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), 
+                    GetStaticImage(pinnedRepo),
+                    GetActualImage(pinnedRepo))
 			{
 				PinnedRepo = pinnedRepo;
-
-                // BUG FIX: App keeps getting relocated so the URLs become off
-                if (PinnedRepo.ImageUri.EndsWith("repository.png", StringComparison.Ordinal))
-                {
-                    Image = UIImage.FromFile("Images/repository.png");
-                }
-                else if (PinnedRepo.ImageUri.EndsWith("repository_fork.png", StringComparison.Ordinal))
-                {
-                    Image = UIImage.FromFile("Images/repository_fork.png");
-                }
-                else
-                {
-                    ImageUri = new Uri(PinnedRepo.ImageUri);
-                }
 			}
 		}
 
@@ -149,7 +174,7 @@ namespace CodeHub.iOS.Views.App
 
 			if (_favoriteRepoSection.Count == 1)
 			{
-				Root.Remove(_favoriteRepoSection);
+                _dialogSource.Root.Remove(_favoriteRepoSection);
 				_favoriteRepoSection = null;
 			}
 			else
@@ -158,16 +183,12 @@ namespace CodeHub.iOS.Views.App
 			}
 		}
 
-		public override Source CreateSizingSource(bool unevenRows)
-		{
-			return new EditSource(this);
-		}
-
-		private class EditSource : Source
+        private class MenuTableViewSource : DialogTableViewSource
 		{
 			private readonly MenuView _parent;
-			public EditSource(MenuView dvc) 
-				: base (dvc)
+
+            public MenuTableViewSource(MenuView dvc) 
+				: base (dvc.TableView)
 			{
 				_parent = dvc;
 			}
@@ -176,14 +197,14 @@ namespace CodeHub.iOS.Views.App
 			{
 				if (_parent._favoriteRepoSection == null)
 					return false;
-				if (_parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+				if (Root[indexPath.Section] == _parent._favoriteRepoSection)
 					return true;
 				return false;
 			}
 
 			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 			{
-				if (_parent._favoriteRepoSection != null && _parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+				if (_parent._favoriteRepoSection != null && Root[indexPath.Section] == _parent._favoriteRepoSection)
 					return UITableViewCellEditingStyle.Delete;
 				return UITableViewCellEditingStyle.None;
 			}
@@ -193,7 +214,7 @@ namespace CodeHub.iOS.Views.App
 				switch (editingStyle)
 				{
 					case UITableViewCellEditingStyle.Delete:
-						var section = _parent.Root[indexPath.Section];
+						var section = Root[indexPath.Section];
 						var element = section[indexPath.Row];
 						_parent.DeletePinnedRepo(element as PinnedRepoElement);
 						break;

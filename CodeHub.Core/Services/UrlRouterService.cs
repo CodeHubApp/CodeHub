@@ -2,7 +2,8 @@
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.Services
 {
@@ -19,8 +20,8 @@ namespace CodeHub.Core.Services
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/pulls/$", typeof(Core.ViewModels.PullRequests.PullRequestsViewModel)),
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(Core.ViewModels.PullRequests.PullRequestViewModel)),
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/issues/$", typeof(Core.ViewModels.Issues.IssuesViewModel)),
-            new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/commits/$", typeof(Core.ViewModels.Changesets.CommitsViewModel)),
-            new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/commits/(?<Node>[^/]*)/$", typeof(Core.ViewModels.Changesets.ChangesetViewModel)),
+            new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/commits/$", typeof(Core.ViewModels.Changesets.BaseCommitsViewModel)),
+            new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/commits/(?<Node>[^/]*)/$", typeof(Core.ViewModels.Changesets.CommitViewModel)),
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/issues/(?<Id>[^/]*)/$", typeof(Core.ViewModels.Issues.IssueViewModel)),
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(Core.ViewModels.Source.SourceTreeViewModel)),
         };
@@ -62,15 +63,15 @@ namespace CodeHub.Core.Services
 
                     if (match.Success)
                     {
-                        var vm = IoC.Resolve(route.ViewModelType);
-                        foreach (var group in groups)
-                        {
-                            var property = vm.GetType().GetProperty(group);
-                            if (property != null)
-                                property.SetValue(vm, match.Groups[group].Value);
-                        }
-
-                        return vm as IBaseViewModel;
+//                        var vm = Locator.Current.GetService(route.ViewModelType);
+////                        foreach (var group in groups)
+////                        {
+////                            var property = vm.GetType().GetProperty(group);
+////                            if (property != null)
+////                                property.SetValue(vm, match.Groups[group].Value);
+////                        }
+////
+//                        return vm as IBaseViewModel;
                     }
                 }
             }

@@ -4,22 +4,20 @@ using CodeFramework.Elements;
 using CodeHub.Core.ViewModels.Issues;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
+using CodeHub.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class BaseIssuesView<TViewModel> : ViewModelCollectionViewController<TViewModel> where TViewModel : class, IBaseViewModel, IBaseIssuesViewModel
+    public abstract class BaseIssuesView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : class, IBaseViewModel, IBaseIssuesViewModel
     {
         protected BaseIssuesView()
-            : base(unevenRows: true)
         {
-            Title = "Issues";
-
-            this.WhenActivated(d =>
-            {
-                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
-            });
+//            this.WhenActivated(d =>
+//            {
+//                d(SearchTextChanging.Subscribe(x => ViewModel.SearchKeyword = x));
+//            });
         }
 
         protected Element CreateElement(IssueItemViewModel x)

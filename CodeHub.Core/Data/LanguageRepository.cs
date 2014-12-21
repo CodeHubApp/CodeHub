@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Akavache;
 using Newtonsoft.Json;
 using System.Text;
-using CodeHub.Core.Utilities;
 using System.Reactive.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace CodeHub.Core.Data
 {
@@ -17,7 +17,7 @@ namespace CodeHub.Core.Data
         public async Task<List<Language>> GetLanguages()
         {
             var trendingData = await BlobCache.LocalMachine.DownloadUrl(LanguagesUrl, absoluteExpiration: DateTimeOffset.Now.AddDays(1));
-            return JsonConvert.DeserializeObject<List<Language>>(Encoding.UTF8.GetString(trendingData), new JsonSerializerSettings {
+            return JsonConvert.DeserializeObject<List<Language>>(Encoding.UTF8.GetString(trendingData, 0, trendingData.Length), new JsonSerializerSettings {
                 ContractResolver = new UnderscoreContractResolver()
             });
         }

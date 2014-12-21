@@ -52,10 +52,6 @@
 	<false/>
 	<key>UIPrerenderedIcon</key>
 	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -69,5 +65,9 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>2.3.2</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

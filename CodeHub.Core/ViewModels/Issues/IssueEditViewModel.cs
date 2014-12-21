@@ -5,7 +5,7 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -31,31 +31,34 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
-	    public IssueEditViewModel(IApplicationService applicationService)
+        public IssueEditViewModel(IApplicationService applicationService, IStatusIndicatorService statusIndicatorService)
+            : base(statusIndicatorService)
 	    {
 	        _applicationService = applicationService;
+
+            Title = "Edit Issue";
 
             GoToDescriptionCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
 //	        GoToDescriptionCommand.Subscribe(_ =>
 //	        {
-//	            var vm = CreateViewModel<ComposerViewModel>();
+//	            var vm = this.CreateViewModel<ComposerViewModel>();
 //	            vm.Text = Issue.Body;
 //	            vm.SaveCommand.Subscribe(__ =>
 //	            {
 //	                Issue.Body = vm.Text;
 //                    vm.DismissCommand.ExecuteIfCan();
 //	            });
-//	            ShowViewModel(vm);
+//	            NavigateTo(vm);
 //	        });
 
 	        this.WhenAnyValue(x => x.Issue).Where(x => x != null).Subscribe(x =>
 	        {
-                Title = x.Title;
-                AssignedTo = x.Assignee;
-                Milestone = x.Milestone;
-                Labels = x.Labels.ToArray();
-                Content = x.Body;
-                IsOpen = string.Equals(x.State, "open");
+//                Title = x.Title;
+//                AssignedTo = x.Assignee;
+//                Milestone = x.Milestone;
+//                Labels = x.Labels.ToArray();
+//                Content = x.Body;
+//                IsOpen = string.Equals(x.State, "open");
 	        });
 	    }
 
@@ -92,8 +95,6 @@ namespace CodeHub.Core.ViewModels.Issues
 					retried = true;
 					goto tryagain;
 				}
-
-				DismissCommand.ExecuteIfCan();
 			}
 			catch (Exception e)
 			{

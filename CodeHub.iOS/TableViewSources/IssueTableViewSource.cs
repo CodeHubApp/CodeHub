@@ -13,7 +13,7 @@ namespace CodeHub.iOS.TableViewSources
         }
 
         public IssueTableViewSource(MonoTouch.UIKit.UITableView tableView) 
-            : base(tableView)
+            : base(tableView, 69.0f)
         {
             tableView.RegisterNibForCellReuse(IssueCellView.Nib, IssueCellView.Key);
         }

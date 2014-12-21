@@ -1,8 +1,9 @@
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -14,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReadOnlyReactiveList<BranchItemViewModel> Branches { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -31,13 +32,13 @@ namespace CodeHub.Core.ViewModels.Source
             Branches = branches.CreateDerivedCollection(
                 x => new BranchItemViewModel(x.Name, () =>
                 {
-                    var vm = CreateViewModel<ChangesetsViewModel>();
+                    var vm = this.CreateViewModel<CommitsViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     vm.Branch = x.Name;
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 }),
-                x => x.Name.ContainsKeyword(SearchKeyword),
+                filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>

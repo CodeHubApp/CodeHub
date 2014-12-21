@@ -1,94 +1,46 @@
-using System.Drawing;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using Xamarin.Utilities.DialogElements;
 using System;
+using CodeHub.iOS.Cells;
+using SDWebImage;
+using MonoTouch.Foundation;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
-    public class MenuElement : StyledStringElement
+    public class MenuElement : Element
     {
+        private readonly UIImage _staticImage;
+        private readonly string _imageUri;
+        private readonly Action _tapped;
+        private readonly string _title;
+
         public int NotificationNumber { get; set; }
 
-        public MenuElement(string title, Action tapped, UIImage image)
-            : base(title, tapped)
+        public MenuElement(string title, Action tapped, UIImage image = null, string imageUri = null)
         {
-            BackgroundColor = UIColor.Clear;
-            TextColor = UIColor.FromRGB(213, 213, 213);
-            DetailColor = UIColor.White;
-            Image = image;
+            _title = title;
+            _tapped = tapped;
+            _staticImage = image;
+            _imageUri = imageUri;
         }
 
-        //We want everything to be the same size as far as images go.
-        //So, during layout, we'll resize the imageview and pin it to a specific size!
-        private class Cell : UITableViewCell
+        public override void Selected(UITableView tableView, NSIndexPath path)
         {
-            private const float ImageSize = 16f;
-            private readonly UILabel _numberView;
-
-            public int NotificationNumber { get; set; }
-
-            public Cell(UITableViewCellStyle style, string key)
-                : base(style, key)
-            {
-                //                    var v = new UIView(new RectangleF(0, 0, Frame.Width, 1)) { 
-                //                        BackgroundColor = UIColor.FromRGB(44, 44, 44)
-                //                    };
-                //
-                //                    AddSubview(v);
-                //                    TextLabel.ShadowColor = UIColor.Black;
-                //                    TextLabel.ShadowOffset = new SizeF(0, -1); 
-                SelectedBackgroundView = new UIView { BackgroundColor = UIColor.FromRGB(25, 25, 25) };
-
-                _numberView = new UILabel { BackgroundColor = UIColor.FromRGB(54, 54, 54) };
-                _numberView.Layer.MasksToBounds = true;
-                _numberView.Layer.CornerRadius = 5f;
-                _numberView.TextAlignment = UITextAlignment.Center;
-                _numberView.TextColor = UIColor.White;
-                _numberView.Font = UIFont.SystemFontOfSize(12f);
-            }
-
-            public override void LayoutSubviews()
-            {
-                base.LayoutSubviews();
-                if (ImageView != null)
-                {
-                    var center = ImageView.Center;
-                    ImageView.Frame = new RectangleF(0, 0, ImageSize, ImageSize);
-                    ImageView.Center = new PointF(ImageSize, center.Y);
-
-                    if (TextLabel != null)
-                    {
-                        var frame = TextLabel.Frame;
-                        frame.X = ImageSize * 2;
-                        frame.Width += (TextLabel.Frame.X - frame.X);
-                        TextLabel.Frame = frame;
-                    }
-                }
-
-                if (NotificationNumber > 0)
-                {
-                    _numberView.Frame = new RectangleF(ContentView.Bounds.Width - 44, 11, 34, 22f);
-                    _numberView.Text = NotificationNumber.ToString();
-                    AddSubview(_numberView);
-                }
-                else
-                {
-                    _numberView.RemoveFromSuperview();
-                }
-            }
+            if (_tapped != null)
+                _tapped();
+            base.Selected(tableView, path);
         }
 
         public override UITableViewCell GetCell(UITableView tv)
         {
-            var cell = base.GetCell(tv) as Cell;
+            var cell = tv.DequeueReusableCell(MenuTableViewCell.Key) as MenuTableViewCell ?? new MenuTableViewCell();
             cell.NotificationNumber = NotificationNumber;
+            cell.TextLabel.Text = _title;
+            if (string.IsNullOrEmpty(_imageUri))
+                cell.ImageView.Image = _staticImage;
+            else
+                cell.ImageView.SetImage(new NSUrl(_imageUri), _staticImage);
             return cell;
-        }
-
-        protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
-        {
-            return new Cell(style, key);
         }
     }
 

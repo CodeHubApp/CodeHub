@@ -2,7 +2,9 @@
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Releases;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.Services;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Releases
 {
@@ -18,7 +20,8 @@ namespace CodeHub.iOS.Views.Releases
 
             this.WhenViewModel(x => x.ContentText).IsNotNull().Subscribe(contentText => 
             {
-                var model = new ReleaseRazorViewModel { Body = contentText, Release = ViewModel.ReleaseModel };
+                var name = string.IsNullOrEmpty(ViewModel.ReleaseModel.Name) ? ViewModel.ReleaseModel.TagName : ViewModel.ReleaseModel.Name;
+                var model = new ReleaseRazorViewModel { Body = contentText, Release = ViewModel.ReleaseModel, Name = name };
                 LoadContent(new ReleaseRazorView { Model = model }.GenerateString());
             });
         }

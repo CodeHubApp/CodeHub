@@ -68,7 +68,7 @@ WriteLiteral("/>\n<style>\n* {\nbox-sizing: border-box;\n}\nbody {\ncolor: #333;
 
 
 #line 117 "ReleaseRazorView.cshtml"
-Write(Model.Release.Name);
+Write(Model.Name);
 
 
 #line default

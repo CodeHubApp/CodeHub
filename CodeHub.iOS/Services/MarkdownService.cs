@@ -1,9 +1,8 @@
 using MonoTouch.Foundation;
 using MonoTouch.JavaScriptCore;
-using CodeHub;
 using CodeHub.Core.Services;
 
-namespace CodeFramework.iOS.Services
+namespace CodeHub.iOS.Services
 {
 	public class MarkdownService : IMarkdownService
     {

@@ -2,16 +2,19 @@ using System;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Linq;
 using System.IO;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using System.Reactive;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class SourceViewModel : FileSourceViewModel, ILoadableViewModel
+    public class SourceViewModel : ContentViewModel, ILoadableViewModel
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
+
         public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
         public string Branch { get; set; }
@@ -36,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Source
         }
 
         private readonly ObservableAsPropertyHelper<bool> _isMarkdown;
-        public bool IsMarkdown
+        public override bool IsMarkdown
         {
             get { return _isMarkdown.Value; }
         }
@@ -48,20 +51,27 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public SourceViewModel(IApplicationService applicationService, IAccountsService accountsService, IFilesystemService filesystemService)
+        public SourceViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory,
+            IAccountsService accountsService, IFilesystemService filesystemService)
             : base(accountsService)
 	    {
-            GoToEditCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch).Select(x => x.Item1 != null && x.Item2));
+            var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch).Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary);
+            GoToEditCommand = ReactiveCommand.Create(canEdit);
 	        GoToEditCommand.Subscribe(_ =>
 	        {
-	            var vm = CreateViewModel<EditSourceViewModel>();
+	            var vm = this.CreateViewModel<EditSourceViewModel>();
                 vm.Path = Path;
                 vm.Branch = Branch;
                 vm.Username = RepositoryOwner;
                 vm.Repository = RepositoryName;
-	            ShowViewModel(vm);
+                vm.SourceChanged.Subscribe(x => 
+                {
+                    GitUrl = x.Content.GitUrl;
+                    LoadCommand.ExecuteIfCan();
+                });
+	            NavigateTo(vm);
             });
 
             this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? string.Empty);
@@ -69,12 +79,23 @@ namespace CodeHub.Core.ViewModels.Source
             _isMarkdown = this.WhenAnyValue(x => x.Path).IsNotNull().Select(x => 
                 MarkdownExtensions.Any(Path.EndsWith)).ToProperty(this, x => x.IsMarkdown);
 
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
+                _ =>
+            {
+                var menu = actionMenuFactory.Create(Title);
+                if (GoToEditCommand.CanExecute(null))
+                    menu.AddButton("Edit", GoToEditCommand);
+                menu.AddButton("Open With", OpenWithCommand);
+                return menu.Show();
+            });
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
 	            string filepath;
                 bool isBinary = false;
 
-                using (var stream = filesystemService.CreateTempFile(out filepath))
+                using (var stream = filesystemService.CreateTempFile(out filepath, Name))
                 {
                     if (MarkdownExtensions.Any(Path.EndsWith))
                     {
@@ -83,9 +104,16 @@ namespace CodeHub.Core.ViewModels.Source
                         {
                             await stringWriter.WriteAsync(renderedContent);
                         }
-                    }
+                    } 
                     else
                     {
+                        if (string.IsNullOrEmpty(GitUrl))
+                        {
+                            var req = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(Path, Branch);
+                            var data = (await applicationService.Client.ExecuteAsync(req)).Data;
+                            GitUrl = data.GitUrl;
+                        }
+
                         var mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
                         isBinary = !(mime ?? string.Empty).Contains("charset");
                     }

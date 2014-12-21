@@ -1,5 +1,5 @@
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

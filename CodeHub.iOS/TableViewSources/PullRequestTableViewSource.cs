@@ -23,7 +23,7 @@ namespace CodeHub.iOS.TableViewSources
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (PullRequestCellView)tableView.DequeueReusableCell(PullRequestCellView.Key);
+                _usedForHeight = PullRequestCellView.Create();
 
             var item = ItemAt(indexPath) as PullRequestItemViewModel;
             if (item != null)

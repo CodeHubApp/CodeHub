@@ -12,9 +12,9 @@ using GitHubSharp;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Utilities;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Events
 {
@@ -23,11 +23,11 @@ namespace CodeHub.Core.ViewModels.Events
         protected readonly IApplicationService ApplicationService;
         private readonly IReactiveCommand<object> _gotoRepositoryCommand;
         private readonly IReactiveCommand<object> _gotoGistCommand;
-        private readonly IReactiveCommand _gotoUrlCommand;
+        private readonly Action<string> _gotoUrlCommand;
 
         public IReadOnlyReactiveList<EventItemViewModel> Events { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; set; }
+        public IReactiveCommand<Unit> LoadCommand { get; set; }
 
         public bool ReportRepository
         {
@@ -40,7 +40,12 @@ namespace CodeHub.Core.ViewModels.Events
             ApplicationService = applicationService;
             Title = "Events";
 
-            _gotoUrlCommand = this.CreateUrlCommand();
+            _gotoUrlCommand = new Action<string>(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
 
             var events = new ReactiveList<EventModel>();
             Events = events.CreateDerivedCollection(CreateEventTextBlocks);
@@ -50,19 +55,19 @@ namespace CodeHub.Core.ViewModels.Events
             _gotoRepositoryCommand.OfType<EventModel.RepoModel>().Subscribe(x =>
             {
                 var repoId = new RepositoryIdentifier(x.Name);
-                var vm = CreateViewModel<RepositoryViewModel>();
+                var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = repoId.Owner;
                 vm.RepositoryName = repoId.Name;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             _gotoGistCommand = ReactiveCommand.Create();
             _gotoGistCommand.OfType<EventModel.GistEvent>().Subscribe(x =>
             {
-                var vm = CreateViewModel<GistViewModel>();
+                var vm = this.CreateViewModel<GistViewModel>();
                 vm.Id = x.Gist.Id;
                 vm.Gist = x.Gist;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
@@ -78,80 +83,80 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {
             var repoId = new RepositoryIdentifier(repoModel.Name);
-            var vm = CreateViewModel<ChangesetsViewModel>();
+            var vm = this.CreateViewModel<CommitsViewModel>();
             vm.RepositoryOwner = repoId.Owner;
             vm.RepositoryName = repoId.Name;
             vm.Branch = branch;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToUser(string username)
         {
             if (string.IsNullOrEmpty(username)) return;
-            var vm = CreateViewModel<UserViewModel>();
+            var vm = this.CreateViewModel<UserViewModel>();
             vm.Username = username;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToBranches(RepositoryIdentifier repoId)
         {
-            var vm = CreateViewModel<BranchesAndTagsViewModel>();
+            var vm = this.CreateViewModel<BranchesAndTagsViewModel>();
             vm.RepositoryOwner = repoId.Owner;
             vm.RepositoryName = repoId.Name;
             vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Branches;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToTags(EventModel.RepoModel eventModel)
         {
             var repoId = new RepositoryIdentifier(eventModel.Name);
-            var vm = CreateViewModel<BranchesAndTagsViewModel>();
+            var vm = this.CreateViewModel<BranchesAndTagsViewModel>();
             vm.RepositoryOwner = repoId.Owner;
             vm.RepositoryName = repoId.Name;
             vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Tags;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToIssue(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            var vm = CreateViewModel<IssueViewModel>();
+            var vm = this.CreateViewModel<IssueViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
-            vm.Id = id;
+            vm.Id = (int)id;
         }
 
         private void GoToPullRequest(RepositoryIdentifier repo, int id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            var vm = CreateViewModel<PullRequestViewModel>();
+            var vm = this.CreateViewModel<PullRequestViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
             vm.Id = id;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToPullRequests(RepositoryIdentifier repo)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            var vm = CreateViewModel<PullRequestsViewModel>();
+            var vm = this.CreateViewModel<PullRequestsViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private void GoToChangeset(RepositoryIdentifier repo, string sha)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            var vm = CreateViewModel<ChangesetViewModel>();
+            var vm = this.CreateViewModel<CommitViewModel>();
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
             vm.Node = sha;
-            ShowViewModel(vm);
+            NavigateTo(vm);
         }
 
         private EventItemViewModel CreateEventTextBlocks(EventModel eventModel)
@@ -327,7 +332,7 @@ namespace CodeHub.Core.ViewModels.Events
 					foreach (var page in gollumEvent.Pages)
 					{
 						var p = page;
-						bodyBlocks.Add(new AnchorBlock(page.PageName, () => _gotoUrlCommand.Execute(p.HtmlUrl)));
+						bodyBlocks.Add(new AnchorBlock(page.PageName, () => _gotoUrlCommand(p.HtmlUrl)));
 						bodyBlocks.Add(new TextBlock(" - " + page.Action + "\n"));
 					}
 				}
@@ -524,7 +529,7 @@ namespace CodeHub.Core.ViewModels.Events
             else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
 			{
                 var releaseEvent = (EventModel.ReleaseEvent)eventModel.PayloadObject;
-				eventAction = () => _gotoUrlCommand.Execute(releaseEvent.Release.HtmlUrl);
+				eventAction = () => _gotoUrlCommand(releaseEvent.Release.HtmlUrl);
 				headerBlocks.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
 			}
 

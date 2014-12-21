@@ -1,29 +1,26 @@
 ﻿using System;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using System.Threading.Tasks;
 using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
+    public abstract class BaseUserCollectionViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
-        protected readonly ReactiveList<BasicUserModel> UsersCollection = new ReactiveList<BasicUserModel>();
-
         public IReadOnlyReactiveList<UserItemViewModel> Users { get; private set; }
 
-        private IReactiveCommand _loadMore;
-        public IReactiveCommand LoadMore
+        private IReactiveCommand<Unit> _loadMoreCommand;
+        public IReactiveCommand<Unit> LoadMoreCommand
         {
-            get { return _loadMore; }
-            protected set { this.RaiseAndSetIfChanged(ref _loadMore, value); }
+            get { return _loadMoreCommand; }
+            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; protected set; }
+        public IReactiveCommand<Unit> LoadCommand { get; protected set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -32,15 +29,10 @@ namespace CodeHub.Core.ViewModels.Users
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected Task Load(GitHubRequest<List<BasicUserModel>> request, bool? forceCacheInvalidation = false)
-        {
-            return UsersCollection.SimpleCollectionLoad(request, forceCacheInvalidation, 
-                x => LoadMore = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
-        }
-
         protected BaseUserCollectionViewModel()
         {
-            Users = UsersCollection.CreateDerivedCollection(
+            var users = new ReactiveList<BasicUserModel>();;
+            Users = users.CreateDerivedCollection(
                 x => 
                 {
                     var isOrg = string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase);
@@ -48,20 +40,27 @@ namespace CodeHub.Core.ViewModels.Users
                     {
                         if (isOrg)
                         {
-                            var vm = CreateViewModel<OrganizationViewModel>();
+                            
+                            var vm = this.CreateViewModel<OrganizationViewModel>();
                             vm.Username = x.Login;
-                            ShowViewModel(vm);
+                            NavigateTo(vm);
                         }
                         else
                         {
-                            var vm = CreateViewModel<UserViewModel>();
+                            var vm = this.CreateViewModel<UserViewModel>();
                             vm.Username = x.Login;
-                            ShowViewModel(vm);
+                            NavigateTo(vm);
                         }
                     });
                 },
                 x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+                users.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
         }
+
+        protected abstract GitHubRequest<List<BasicUserModel>> CreateRequest();
     }
 }

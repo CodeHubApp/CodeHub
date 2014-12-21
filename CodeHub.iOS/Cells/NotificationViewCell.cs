@@ -5,6 +5,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
+using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -19,18 +20,18 @@ namespace CodeHub.iOS.Cells
             TextLabel.Lines = 0;
             TextLabel.LineBreakMode = UILineBreakMode.WordWrap;
             TextLabel.Font = UIFont.BoldSystemFontOfSize(14f);
-            TextLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            TextLabel.TextColor = Theme.MainTitleColor;
 
 
             DetailTextLabel.Font = UIFont.SystemFontOfSize(12f);
-            DetailTextLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+            DetailTextLabel.TextColor = Theme.MainTextColor;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
                     TextLabel.Text = x.Subject.Title;
-                    DetailTextLabel.Text = x.UpdatedAt.ToDaysAgo();
+                    DetailTextLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
 
                     var subject = x.Subject.Type.ToLower();
                     if (subject.Equals("issue"))
@@ -44,6 +45,11 @@ namespace CodeHub.iOS.Cells
                     else
                         ImageView.Image = Images.Notifications;
                 });
+        }
+
+        public static NotificationViewCell Create()
+        {
+            return new NotificationViewCell(UITableViewCellStyle.Default, Key);
         }
 
         public float GetHeight(SizeF bounds)

@@ -2,22 +2,23 @@
 using System.Linq;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.iOS.WebViews;
+using Splat;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.App
 {
     public abstract class MarkdownComposerView<TViewModel> : ComposerViewController<TViewModel> where TViewModel : MarkdownComposerViewModel
     {
-        private readonly IAlertDialogService _alertDialogService;
+        private readonly IAlertDialogFactory _alertDialogService;
         private readonly UISegmentedControl _viewSegment;
         private UIWebView _previewView;
 
-        protected MarkdownComposerView(IAlertDialogService alertDialogService)
+        protected MarkdownComposerView(IAlertDialogFactory alertDialogService)
         {
             _alertDialogService = alertDialogService;
             _viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
@@ -79,21 +80,21 @@ namespace CodeHub.iOS.Views.App
        
         private async void UploadImage(UIImage img)
         {
-            if (!ViewModel.PostToImgurCommand.CanExecute(null))
-                return;
-
-            try
-            {
-                var data = img.AsJPEG();
-                var dataBytes = new byte[data.Length];
-                System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
-                var imgurModel = await ViewModel.PostToImgurCommand.ExecuteAsync(dataBytes);
-                TextView.InsertText("![Image](" + imgurModel.Data.Link + ")");
-            }
-            catch
-            {
-                // Uh, that was weird...
-            }
+//            if (!ViewModel.PostToImgurCommand.CanExecute(null))
+//                return;
+//
+//            try
+//            {
+//                var data = img.AsJPEG();
+//                var dataBytes = new byte[data.Length];
+//                System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
+//                var imgurModel = await ViewModel.PostToImgurCommand.ExecuteAsync(dataBytes);
+//                TextView.InsertText("![Image](" + imgurModel.Data.Link + ")");
+//            }
+//            catch
+//            {
+//                // Uh, that was weird...
+//            }
         }
 
         private class RotatableUIImagePickerController : UIImagePickerController
@@ -189,7 +190,7 @@ namespace CodeHub.iOS.Views.App
                 TextView.RemoveFromSuperview();
                 Add(_previewView);
 
-                var markdownService = IoC.Resolve<IMarkdownService>();
+                var markdownService = Locator.Current.GetService<IMarkdownService>();
                 var markdownView = new MarkdownView() { Model = markdownService.Convert(TextView.Text) };
                 _previewView.LoadHtmlString(markdownView.GenerateString(), null);
             }

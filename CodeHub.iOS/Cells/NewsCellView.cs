@@ -17,7 +17,7 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("NewsCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("NewsCellView");
         public static readonly UIEdgeInsets EdgeInsets = new UIEdgeInsets(0, 48f, 0, 0);
-        public static UIColor LinkColor = Theme.CurrentTheme.MainTitleColor;
+        public static UIColor LinkColor = Theme.MainTitleColor;
         public static UIFont LinkFont = UIFont.BoldSystemFontOfSize(13f);
 
         public static UIFont TimeFont
@@ -182,7 +182,7 @@ namespace CodeHub.iOS.Cells
 
             foreach (var b in blocks)
             {
-                var color = Theme.CurrentTheme.MainTextColor;
+                var color = Theme.MainTextColor;
                 var font = NewsCellView.BodyFont;
                 var anchorBlock = b as BaseEventsViewModel.AnchorBlock;
 

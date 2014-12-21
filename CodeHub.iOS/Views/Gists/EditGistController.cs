@@ -5,10 +5,11 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using Xamarin.Utilities.Delegates;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class EditGistController : ViewModelDialogViewController<GistEditViewModel>
+    public class EditGistController : ReactiveDialogViewController<GistEditViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -89,11 +90,6 @@ namespace CodeHub.iOS.Views.Gists
 //            Root = root;
 //        }
 
-		public override Source CreateSizingSource(bool unevenRows)
-        {
-            return new EditSource(this);
-        }
-
         private void Delete(Element element, Section section)
         {
             var fileEl = element as FileElement;
@@ -125,11 +121,11 @@ namespace CodeHub.iOS.Views.Gists
             }
         }
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
         {
             private readonly EditGistController _parent;
             public EditSource(EditGistController dvc) 
-                : base (dvc)
+                : base (dvc.TableView)
             {
                 _parent = dvc;
             }

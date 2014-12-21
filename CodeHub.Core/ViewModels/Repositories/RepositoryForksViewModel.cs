@@ -1,11 +1,11 @@
-﻿using System;
-using CodeHub.Core.Services;
-using ReactiveUI;
+﻿using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryForksViewModel : BaseRepositoriesViewModel
     {
+        private readonly IApplicationService _applicationService;
+
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
@@ -13,13 +13,13 @@ namespace CodeHub.Core.ViewModels.Repositories
         public RepositoryForksViewModel(IApplicationService applicationService)
             : base(applicationService)
         {
+            _applicationService = applicationService;
             Title = "Forks";
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                var forks = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetForks();
-                return RepositoryCollection.SimpleCollectionLoad(forks, t as bool?);
-            });
+        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.RepositoryModel>> CreateRequest()
+        {
+            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetForks();
         }
     }
 }

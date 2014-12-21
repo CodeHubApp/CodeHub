@@ -1,5 +1,4 @@
 ﻿using System;
-using ReactiveUI;
 using System.Reactive.Linq;
 using MonoTouch.Foundation;
 using CodeHub.Core.ViewModels.Source;
@@ -13,12 +12,7 @@ namespace CodeHub.iOS.Cells
         public BranchCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TextLabel.Text = x.Name;
-                });
+            this.WhenViewModel(x => x.Name).Subscribe(x => TextLabel.Text = x);
         }
     }
 }

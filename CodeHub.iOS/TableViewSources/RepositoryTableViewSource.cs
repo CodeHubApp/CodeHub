@@ -9,13 +9,13 @@ namespace CodeHub.iOS.TableViewSources
         private RepositoryCellView _usedForHeight;
 
         public RepositoryTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<RepositoryItemViewModel> collection) 
-            : base(tableView, collection,  RepositoryCellView.Key, 60.0f)
+            : base(tableView, collection,  RepositoryCellView.Key, 64.0f)
         {
             tableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
         }
 
         public RepositoryTableViewSource(MonoTouch.UIKit.UITableView tableView) 
-            : base(tableView)
+            : base(tableView, 64f)
         {
             tableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
         }
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.TableViewSources
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (RepositoryCellView)tableView.DequeueReusableCell(RepositoryCellView.Key);
+                _usedForHeight = RepositoryCellView.Create();
 
             var item = ItemAt(indexPath) as RepositoryItemViewModel;
             if (item != null)

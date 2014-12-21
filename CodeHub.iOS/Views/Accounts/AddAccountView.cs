@@ -7,17 +7,18 @@ using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class AddAccountView : ViewModelViewController<AddAccountViewModel>
+    public partial class AddAccountView : ReactiveViewController<AddAccountViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
-        private readonly IAlertDialogService _alertDialogService;
+        private readonly IAlertDialogFactory _alertDialogService;
 
-        public AddAccountView(IStatusIndicatorService statusIndicatorService, IAlertDialogService alertDialogService)
+        public AddAccountView(IStatusIndicatorService statusIndicatorService, IAlertDialogFactory alertDialogService)
             : base("AddAccountView", null)
         {
             _statusIndicatorService = statusIndicatorService;
@@ -26,9 +27,6 @@ namespace CodeHub.iOS.Views.Accounts
 
         public override void ViewDidLoad()
         {
-            Title = "Login";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.DismissCommand.ExecuteIfCan());
-
             base.ViewDidLoad();
 
             ViewModel.LoginCommand.IsExecuting.Skip(1).Subscribe(x =>

@@ -1,11 +1,12 @@
 ﻿using System;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using GitHubSharp.Models;
-using Xamarin.Utilities.Core.Services;
 using System.Reactive.Linq;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
@@ -27,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Releases
             set { this.RaiseAndSetIfChanged(ref _releaseModel, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToGitHubCommand { get; private set; }
 
@@ -38,27 +39,38 @@ namespace CodeHub.Core.ViewModels.Releases
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
         public ReleaseViewModel(IApplicationService applicationService, IShareService shareService, 
-            IUrlRouterService urlRouterService, IActionMenuService actionMenuService)
+            IUrlRouterService urlRouterService, IActionMenuFactory actionMenuService)
         {
             this.WhenAnyValue(x => x.ReleaseModel)
-                .Select(x => x == null ? "Release" : x.Name).Subscribe(x => Title = x);
+                .Select(x => 
+                {
+                    if (x == null) return "Release";
+                    var name = string.IsNullOrEmpty(x.Name) ? x.TagName : x.Name;
+                    return name ?? "Release";
+                })
+                .Subscribe(x => Title = x);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(ReleaseModel.HtmlUrl));
+            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(ReleaseModel.HtmlUrl)));
 
-            var gotoUrlCommand = this.CreateUrlCommand();
+            var gotoUrlCommand = new Action<string>(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
 
             GoToGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            GoToGitHubCommand.Select(_ => ReleaseModel.HtmlUrl).Subscribe(gotoUrlCommand.ExecuteIfCan);
+            GoToGitHubCommand.Select(_ => ReleaseModel.HtmlUrl).Subscribe(gotoUrlCommand);
 
             GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(x =>
             {
                 var handledViewModel = urlRouterService.Handle(x);
-                if (handledViewModel != null && applicationService.Account.OpenUrlsInApp)
-                    ShowViewModel(handledViewModel);
+                if (handledViewModel != null)
+                    NavigateTo(handledViewModel);
                 else
-                    gotoUrlCommand.ExecuteIfCan(x);
+                    gotoUrlCommand(x);
             });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(

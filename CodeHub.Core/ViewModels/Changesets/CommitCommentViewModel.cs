@@ -1,6 +1,5 @@
 ﻿using System;
 using CodeHub.Core.ViewModels.App;
-using Xamarin.Utilities.Core.Services;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System.Reactive.Subjects;
@@ -20,8 +19,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IObservable<CommentModel> CommentAdded { get { return _commendAdded; } }
 
-        public CommitCommentViewModel(IStatusIndicatorService status, IAlertDialogService alert, IJsonHttpClientService jsonClient, IApplicationService applicationService) 
-            : base(status, alert, jsonClient)
+        public CommitCommentViewModel(IApplicationService applicationService) 
         {
             _applicationService = applicationService;
         }

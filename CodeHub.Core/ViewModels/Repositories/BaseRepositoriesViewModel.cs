@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using CodeHub.Core.Utilities;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
+using GitHubSharp;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class BaseRepositoriesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
+    public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
-        protected readonly ReactiveList<RepositoryModel> RepositoryCollection = new ReactiveList<RepositoryModel>();
         protected readonly IApplicationService ApplicationService;
         private RepositoriesFilterModel _filter;
 
@@ -33,7 +31,14 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool ShowRepositoryOwner { get; protected set; }
 
-        public IReactiveCommand LoadCommand { get; protected set; }
+        public IReactiveCommand<Unit> LoadCommand { get; protected set; }
+
+        private IReactiveCommand<Unit> _loadMoreCommand;
+        public IReactiveCommand<Unit> LoadMoreCommand
+        {
+            get { return _loadMoreCommand; }
+            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
+        }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -42,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected BaseRepositoriesViewModel(IApplicationService applicationService, string filterKey = "RepositoryController")
+        protected BaseRepositoriesViewModel(IApplicationService applicationService)
         {
             ApplicationService = applicationService;
             ShowRepositoryOwner = true;
@@ -50,13 +55,14 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
-                var vm = CreateViewModel<RepositoryViewModel>();
+                var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
-            Repositories = RepositoryCollection.CreateDerivedCollection(
+            var repositories = new ReactiveList<RepositoryModel>();
+            Repositories = repositories.CreateDerivedCollection(
                 x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
                     ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
                     ShowRepositoryOwner, gotoRepository), 
@@ -67,45 +73,51 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+                repositories.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
+
 //			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
 //            _repositories.GroupingFunction = CreateGroupedItems;
         }
 
-        private IEnumerable<IGrouping<string, RepositoryModel>> CreateGroupedItems(IEnumerable<RepositoryModel> model)
-        {
-            var order = Filter.OrderBy;
-            if (order == RepositoriesFilterModel.Order.Forks)
-            {
-                var a = model.OrderBy(x => x.Forks).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Forks));
-                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Forks");
-            }
-            if (order == RepositoriesFilterModel.Order.LastUpdated)
-            {
-                var a = model.OrderByDescending(x => x.UpdatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
-                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Updated");
-            }
-            if (order == RepositoriesFilterModel.Order.CreatedOn)
-            {
-                var a = model.OrderByDescending(x => x.CreatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
-                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
-            }
-            if (order == RepositoriesFilterModel.Order.Followers)
-            {
-                var a = model.OrderBy(x => x.Watchers).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Watchers));
-                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return FilterGroup.CreateNumberedGroup(a, "Followers");
-            }
-            if (order == RepositoriesFilterModel.Order.Owner)
-            {
-                var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner.Login);
-                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-                return a.ToList();
-            }
+        protected abstract GitHubRequest<List<RepositoryModel>> CreateRequest();
 
-            return null;
-        }
+//        private IEnumerable<IGrouping<string, RepositoryModel>> CreateGroupedItems(IEnumerable<RepositoryModel> model)
+//        {
+//            var order = Filter.OrderBy;
+//            if (order == RepositoriesFilterModel.Order.Forks)
+//            {
+//                var a = model.OrderBy(x => x.Forks).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Forks));
+//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+//                return FilterGroup.CreateNumberedGroup(a, "Forks");
+//            }
+//            if (order == RepositoriesFilterModel.Order.LastUpdated)
+//            {
+//                var a = model.OrderByDescending(x => x.UpdatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
+//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+//                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Updated");
+//            }
+//            if (order == RepositoriesFilterModel.Order.CreatedOn)
+//            {
+//                var a = model.OrderByDescending(x => x.CreatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
+//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+//                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
+//            }
+//            if (order == RepositoriesFilterModel.Order.Followers)
+//            {
+//                var a = model.OrderBy(x => x.Watchers).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Watchers));
+//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+//                return FilterGroup.CreateNumberedGroup(a, "Followers");
+//            }
+//            if (order == RepositoriesFilterModel.Order.Owner)
+//            {
+//                var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner.Login);
+//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
+//                return a.ToList();
+//            }
+//
+//            return null;
+//        }
     }
 }

@@ -3,9 +3,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Data;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -49,6 +49,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public AddAccountViewModel(ILoginService loginFactory, IAccountsService accountsService)
         {
+            Title = "Login";
+
             _loginFactory = loginFactory;
 
             this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>

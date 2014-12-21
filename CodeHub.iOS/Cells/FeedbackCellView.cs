@@ -20,6 +20,11 @@ namespace CodeHub.iOS.Cells
         {
         }
 
+        public static FeedbackCellView Create()
+        {
+            return Nib.Instantiate(null, null).GetValue(0) as FeedbackCellView;
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();
@@ -27,7 +32,7 @@ namespace CodeHub.iOS.Cells
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            TitleLabel.TextColor = Theme.MainTitleColor;
             DetailsLabel.TextColor = UIColor.Gray;
             DefaultContentConstraintSize = DetailsConstraint.Constant;
 

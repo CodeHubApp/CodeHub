@@ -2,9 +2,9 @@ using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using Xamarin.Utilities.Core.Services;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -31,10 +31,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
-                var vm = CreateViewModel<RepositoryViewModel>();
+                var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             var repositories = new ReactiveList<Octokit.Repository>();

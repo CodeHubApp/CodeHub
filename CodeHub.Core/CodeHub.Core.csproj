@@ -39,10 +39,6 @@
     <Compile Include="Data\ShowcaseRepository.cs" />
     <Compile Include="Data\TrendingRepository.cs" />
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="Extensions\ObservableExtensions.cs" />
-    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
-    <Compile Include="Extensions\StatusIndicatorExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
@@ -54,28 +50,21 @@
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
-    <Compile Include="Services\IActionMenuService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="Services\IGraphicService.cs" />
     <Compile Include="Services\IImgurService.cs" />
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
-    <Compile Include="Services\IMediaPickerService.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
-    <Compile Include="Services\IUrlRouterService.cs" />
     <Compile Include="Services\ImgurService.cs" />
     <Compile Include="Services\LoginService.cs" />
     <Compile Include="Services\UrlRouterService.cs" />
     <Compile Include="Utilities\DefaultStartupViewCommand.cs" />
-    <Compile Include="Utilities\ExceptionExtensions.cs" />
     <Compile Include="Utilities\FilterGroup.cs" />
     <Compile Include="Utilities\GitHubSharpModelExtensions.cs" />
-    <Compile Include="Utilities\GroupedCollection.cs" />
     <Compile Include="Utilities\RepositoryIdentifier.cs" />
-    <Compile Include="Utilities\UnderscoreContractResolver.cs" />
     <Compile Include="ViewModels\ICanGoToUrl.cs" />
-    <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
@@ -83,22 +72,16 @@
     <Compile Include="ViewModels\App\AccountsViewModel.cs" />
     <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="ViewModels\App\CommentViewModel.cs" />
-    <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackItemViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackViewModel.cs" />
     <Compile Include="ViewModels\App\MarkdownComposerViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
-    <Compile Include="ViewModels\App\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\App\SupportViewModel.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
-    <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
-    <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitCommentViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
-    <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
     <Compile Include="ViewModels\Events\NewsViewModel.cs" />
@@ -159,10 +142,7 @@
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
-    <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
-    <Compile Include="ViewModels\Source\FileSourceViewModel.cs" />
-    <Compile Include="ViewModels\Source\SourceFilterViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceItemViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
@@ -180,6 +160,19 @@
     <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
+    <Compile Include="ViewModels\Issues\MilestoneItemViewModel.cs" />
+    <Compile Include="ViewModels\Source\CommitedFileItemViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelExtensions.cs" />
+    <Compile Include="Utilities\DiagnosticLogger.cs" />
+    <Compile Include="ViewModels\IPaginatableViewModel.cs" />
+    <Compile Include="ViewModels\Source\ContentViewModel.cs" />
+    <Compile Include="ViewModels\Settings\DefaultStartupViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SyntaxHighlighterSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\BaseCommitsViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
+    <Compile Include="ViewModels\Changesets\CommitViewModel.cs" />
+    <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -196,12 +189,6 @@
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.5.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.31.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -217,20 +204,38 @@
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.6.1\lib\portable-net45+netcore45+wp8+MonoAndroid10+MonoTouch10\SQLitePCL.raw.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.5.1\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.1.0\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache.Portable">
-      <HintPath>..\packages\akavache.portable.3.1.2\lib\portable-net45+win8+wp8\Akavache.Portable.dll</HintPath>
     </Reference>
     <Reference Include="GitHubSharp">
       <HintPath>..\lib\Portable\GitHubSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Forms.Labs.Cryptography">
+      <HintPath>..\packages\Xamarin.Forms.Labs.Cryptography.1.2.0\lib\portable-net45+netcore45+wp8+MonoAndroid1+MonoTouch1\Xamarin.Forms.Labs.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.2.1.1\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.0.4\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Utilities">
+      <HintPath>..\packages\DB.Xamarin.Utilities.1.0.4\lib\portable-net45+win+wp80+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10\Xamarin.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.6.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.8.2.105\lib\portable-win+net40+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\portable-net45+netcore45+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.32.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Settings\" />
   </ItemGroup>
 </Project>

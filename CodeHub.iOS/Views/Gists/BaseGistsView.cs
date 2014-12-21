@@ -1,10 +1,10 @@
 using CodeHub.Core.ViewModels.Gists;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public abstract class BaseGistsView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseGistsViewModel
+    public abstract class BaseGistsView<TViewModel> : NewReactiveTableViewController<TViewModel> where TViewModel : BaseGistsViewModel
     {
         public override void ViewDidLoad()
         {

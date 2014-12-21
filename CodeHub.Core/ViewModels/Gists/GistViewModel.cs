@@ -6,13 +6,14 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
+    public class GistViewModel : BaseViewModel, ILoadableViewModel
     {
         public string Id { get; set; }
 
@@ -32,7 +33,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
 		public ReactiveList<GistCommentModel> Comments { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToUserCommand { get; private set; }
 
@@ -40,11 +41,9 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
-        public IReactiveCommand GoToUrlCommand { get; private set; }
+        public IReactiveCommand<Unit> ForkCommand { get; private set; }
 
-        public IReactiveCommand ForkCommand { get; private set; }
-
-        public IReactiveCommand ToggleStarCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleStarCommand { get; private set; }
 
         public IReactiveCommand AddCommentCommand { get; private set; }
 
@@ -54,21 +53,21 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand GoToEditCommand { get; private set; }
 
+        public IReactiveCommand<object> GoToUrlCommand { get; private set; }
+
         public GistViewModel(IApplicationService applicationService, IShareService shareService, 
-            IActionMenuService actionMenuService, IStatusIndicatorService statusIndicatorService) 
+            IActionMenuFactory actionMenuService, IStatusIndicatorService statusIndicatorService) 
         {
             Comments = new ReactiveList<GistCommentModel>();
 
             Title = "Gist";
-
-            GoToUrlCommand = this.CreateUrlCommand();
 
             this.WhenAnyValue(x => x.Gist).Where(x => x != null && x.Files != null && x.Files.Count > 0)
                 .Select(x => x.Files.First().Key).Subscribe(x => 
                     Title = x);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(Gist.HtmlUrl));
+            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(Gist.HtmlUrl)));
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue),
@@ -91,10 +90,10 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var data = await applicationService.Client.ExecuteAsync(applicationService.Client.Gists[Id].ForkGist());
                 var forkedGist = data.Data;
-                var vm = CreateViewModel<GistViewModel>();
+                var vm = this.CreateViewModel<GistViewModel>();
                 vm.Id = forkedGist.Id;
                 vm.Gist = forkedGist;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             ForkCommand.IsExecuting.Subscribe(x =>
@@ -108,32 +107,37 @@ namespace CodeHub.Core.ViewModels.Gists
             GoToEditCommand = ReactiveCommand.Create();
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
-            GoToHtmlUrlCommand.Select(_ => Gist.HtmlUrl).Subscribe(this.ShowWebBrowser);
+            GoToHtmlUrlCommand.Select(_ => Gist.HtmlUrl).Subscribe(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
 
             GoToFileSourceCommand = ReactiveCommand.Create();
             GoToFileSourceCommand.OfType<GistFileModel>().Subscribe(x =>
             {
-                var vm = CreateViewModel<GistFileViewModel>();
+                var vm = this.CreateViewModel<GistFileViewModel>();
                 vm.Id = Id;
                 vm.GistFile = x;
                 vm.Filename = x.Filename;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && x.Owner != null));
             GoToUserCommand.Subscribe(x =>
             {
-                var vm = CreateViewModel<UserViewModel>();
+                var vm = this.CreateViewModel<UserViewModel>();
                 vm.Username = Gist.Owner.Login;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<GistCommentViewModel>();
+                var vm = this.CreateViewModel<GistCommentViewModel>();
                 vm.Id = Id;
                 vm.CommentAdded.Subscribe(Comments.Add);
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
@@ -154,8 +158,8 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var forceCacheInvalidation = t as bool?;
                 var t1 = this.RequestModel(applicationService.Client.Gists[Id].Get(), forceCacheInvalidation, response => Gist = response.Data);
-			    this.RequestModel(applicationService.Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
-			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments(), forceCacheInvalidation).FireAndForget();
+			    this.RequestModel(applicationService.Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data);
+			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments(), forceCacheInvalidation);
                 return t1;
             });
         }

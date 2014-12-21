@@ -22,12 +22,17 @@ namespace CodeHub.iOS.Cells
             SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
+        public static RepositoryCellView Create()
+        {
+            return Nib.Instantiate(null, null).GetValue(0) as RepositoryCellView;
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();
 
-            CaptionLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
-            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+            CaptionLabel.TextColor = Theme.MainTitleColor;
+            ContentLabel.TextColor = Theme.MainTextColor;
 
             FollowersImageVIew.Image = Theme.CurrentTheme.RepositoryCellFollowers;
             ForksImageView.Image = Theme.CurrentTheme.RepositoryCellForks;

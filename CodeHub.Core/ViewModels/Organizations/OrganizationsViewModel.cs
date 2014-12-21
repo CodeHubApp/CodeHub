@@ -1,8 +1,9 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.ViewModels.Users;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -12,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public string Username { get; set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -29,11 +30,11 @@ namespace CodeHub.Core.ViewModels.Organizations
             Organizations = organizations.CreateDerivedCollection(
                 x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () =>
                 {
-                    var vm = CreateViewModel<OrganizationViewModel>();
+                    var vm = this.CreateViewModel<OrganizationViewModel>();
                     vm.Username = x.Name;
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 }),
-                x => x.Login.ContainsKeyword(SearchKeyword),
+                filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>

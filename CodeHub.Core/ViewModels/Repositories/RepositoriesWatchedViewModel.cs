@@ -1,15 +1,21 @@
 using CodeHub.Core.Services;
-using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesWatchedViewModel : BaseRepositoriesViewModel
     {
-        public RepositoriesWatchedViewModel(IApplicationService applicationService) : base(applicationService)
+        private readonly IApplicationService _applicationService;
+
+        public RepositoriesWatchedViewModel(IApplicationService applicationService) 
+            : base(applicationService)
         {
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                RepositoryCollection.SimpleCollectionLoad(
-                    applicationService.Client.AuthenticatedUser.Repositories.GetWatching(), t as bool?));
+            _applicationService = applicationService;
+            Title = "Watched";
+        }
+
+        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.RepositoryModel>> CreateRequest()
+        {
+            return _applicationService.Client.AuthenticatedUser.Repositories.GetWatching();
         }
     }
 }

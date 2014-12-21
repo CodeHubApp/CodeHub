@@ -5,6 +5,7 @@ using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
+using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -19,6 +20,11 @@ namespace CodeHub.iOS.Cells
         {
         }
 
+        public static GistCellView Create()
+        {
+            return Nib.Instantiate(null, null).GetValue(0) as GistCellView;
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();
@@ -26,9 +32,9 @@ namespace CodeHub.iOS.Cells
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
-            TimeLabel.TextColor = Theme.CurrentTheme.MainSubtitleColor;
-            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+            TitleLabel.TextColor = Theme.MainTitleColor;
+            TimeLabel.TextColor = Theme.MainSubtitleColor;
+            ContentLabel.TextColor = Theme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)
@@ -41,7 +47,7 @@ namespace CodeHub.iOS.Cells
                         MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
                     TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
-                    TimeLabel.Text = x.UpdatedAt.ToDaysAgo();
+                    TimeLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
                 });
         }

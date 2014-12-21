@@ -1,6 +1,6 @@
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {

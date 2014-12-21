@@ -31,7 +31,7 @@ namespace CodeHub.iOS
                         files.Add("gistfile" + (++fileCounter) + ".txt", new GitHubSharp.Models.GistCreateModel.File { Content = param.Value });
                 }
 
-                var vm = IoC.Resolve<Core.ViewModels.Gists.GistCreateViewModel>();
+//                var vm = IoC.Resolve<Core.ViewModels.Gists.GistCreateViewModel>();
 //                vm.Files
 //
 //                txService.Add(new GitHubSharp.Models.GistCreateModel { Description = description, Public = isPublic, Files = files });

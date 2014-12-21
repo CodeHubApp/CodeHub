@@ -2,7 +2,6 @@
 using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
 using System.Reactive.Subjects;
-using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -19,8 +18,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IObservable<Octokit.IssueComment> CommentAdded { get { return _commendAdded; } }
 
-        public IssueCommentViewModel(IStatusIndicatorService status, IAlertDialogService alert, IJsonHttpClientService jsonClient, IApplicationService applicationService) 
-            : base(status, alert, jsonClient)
+        public IssueCommentViewModel(IApplicationService applicationService) 
         {
             _applicationService = applicationService;
         }

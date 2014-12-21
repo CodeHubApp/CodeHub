@@ -2,7 +2,7 @@
 using System.Drawing;
 using MonoTouch.UIKit;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Views.App
 {

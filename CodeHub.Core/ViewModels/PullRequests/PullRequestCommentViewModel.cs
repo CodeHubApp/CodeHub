@@ -2,7 +2,6 @@
 using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
 using System.Reactive.Subjects;
-using Xamarin.Utilities.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -19,8 +18,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IObservable<Octokit.PullRequestReviewComment> CommentAdded { get { return _commendAdded; } }
 
-        public PullRequestCommentViewModel(IStatusIndicatorService status, IAlertDialogService alert, IJsonHttpClientService jsonClient, IApplicationService applicationService) 
-            : base(status, alert, jsonClient)
+        public PullRequestCommentViewModel(IApplicationService applicationService) 
         {
             _applicationService = applicationService;
         }

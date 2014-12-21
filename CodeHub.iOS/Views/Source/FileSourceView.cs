@@ -4,17 +4,43 @@ using System.Reactive.Linq;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.WebViews;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.Services;
+using MonoTouch.Foundation;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public abstract class FileSourceView<TViewModel> : ReactiveWebViewController<TViewModel> where TViewModel : FileSourceViewModel
+    public abstract class FileSourceView<TViewModel> : ReactiveWebViewController<TViewModel> where TViewModel : ContentViewModel
     {
+        private readonly IAlertDialogFactory _alertDialogFactory;
         private bool _fullScreen;
 
-        protected FileSourceView(INetworkActivityService networkActivityService)
+        protected FileSourceView(INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogFactory)
             : base(networkActivityService)
         {
+            _alertDialogFactory = alertDialogFactory;
+
+            this.WhenViewModel(x => x.ShowMenuCommand).IsNotNull().Subscribe(x =>
+                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+
+            this.WhenViewModel(x => x.OpenWithCommand)
+                .Switch()
+                .Subscribe(_ =>
+                {
+                    UIDocumentInteractionController ctrl = UIDocumentInteractionController.FromUrl(new NSUrl(ViewModel.SourceItem.FileUri.AbsoluteUri));
+                    ctrl.Delegate = new UIDocumentInteractionControllerDelegate();
+                    ctrl.PresentOpenInMenu(this.View.Frame, this.View, true);
+                });
+        }
+
+        protected override void OnLoadError(object sender, UIWebErrorArgs e)
+        {
+            base.OnLoadError(sender, e);
+            if (e.Error.Code == 102)
+            {
+                _alertDialogFactory.Alert("Oh no!", "Looks like CodeHub cannot display this type of file. Sorry about that :(");
+            }
         }
 
         public override void ViewDidLoad()
@@ -29,11 +55,11 @@ namespace CodeHub.iOS.Views.Source
 
             ViewModel.WhenAnyValue(x => x.SourceItem)
                 .Where(x => x != null)
-                .Subscribe(x =>
+                .SubscribeSafe(x =>
                 {
                     if (x.IsBinary)
                     {
-                        LoadFile(x.FileUri.AbsoluteUri);
+                        GoUrl(new NSUrl(x.FileUri.AbsoluteUri));
                     }
                     else
                     {
@@ -59,17 +85,34 @@ namespace CodeHub.iOS.Views.Source
 
         protected virtual void LoadSource(Uri fileUri)
         {
-            var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
-            var razorView = new SyntaxHighlighterView 
-            { 
-                Model = new SourceBrowserModel
-                {
-                    Content = content,
-                    Theme = ViewModel.Theme ?? "idea"
-                }
-            };
+            if (ViewModel.IsMarkdown)
+            {
+                var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
+                var htmlContent = new MarkdownView { Model = content };
+                LoadContent(htmlContent.GenerateString());
+            }
+            else
+            {
+                var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
+                var razorView = new SyntaxHighlighterView
+                { 
+                    Model = new SourceBrowserModel
+                    {
+                        Content = content,
+                        Theme = ViewModel.Theme ?? "idea"
+                    }
+                };
 
-            LoadContent(razorView.GenerateString());
+                LoadContent(razorView.GenerateString());
+            }
+        }
+
+        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+        {
+            if (request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
+                return base.ShouldStartLoad(request, navigationType);
+            ViewModel.GoToUrlCommand.ExecuteIfCan(request.Url.AbsoluteString);
+            return false;
         }
     }
 }

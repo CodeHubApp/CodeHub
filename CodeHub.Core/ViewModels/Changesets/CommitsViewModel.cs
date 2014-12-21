@@ -1,69 +1,25 @@
-using System;
-using System.Reactive.Linq;
-using GitHubSharp.Models;
+using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
-using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using Xamarin.Utilities.Core;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public abstract class CommitsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
+	public class CommitsViewModel : BaseCommitsViewModel
 	{
-		public string RepositoryOwner { get; set; }
+        private readonly IApplicationService _applicationService;
 
-		public string RepositoryName { get; set; }
+	    public string Branch { get; set; }
 
-        public IReactiveCommand<object> GoToChangesetCommand { get; private set; }
-
-        public IReadOnlyReactiveList<CommitItemViewModel> Commits { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; private set; }
-
-        private string _searchKeyword;
-        public string SearchKeyword
+        public CommitsViewModel(IApplicationService applicationService)
         {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
+            _applicationService = applicationService;
         }
 
-	    protected CommitsViewModel()
-	    {
-            Title = "Commits";
-
-            var commits = new ReactiveList<CommitModel>();
-            Commits = commits.CreateDerivedCollection(
-                x => new CommitItemViewModel(x, GoToChangesetCommand.ExecuteIfCan), 
-                ContainsSearchKeyword, 
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            GoToChangesetCommand = ReactiveCommand.Create();
-            GoToChangesetCommand.OfType<CommitItemViewModel>().Subscribe(x =>
-	        {
-	            var vm = CreateViewModel<ChangesetViewModel>();
-	            vm.RepositoryOwner = RepositoryOwner;
-	            vm.RepositoryName = RepositoryName;
-                vm.Node = x.Commit.Sha;
-                ShowViewModel(vm);
-	        });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => commits.SimpleCollectionLoad(GetRequest(), x as bool?));
-	    }
-
-        protected abstract GitHubRequest<List<CommitModel>> GetRequest();
-
-        private bool ContainsSearchKeyword(CommitModel x)
+		protected override GitHubRequest<List<CommitModel>> CreateRequest()
         {
-            try
-            {
-                return x.Commit.Message.ContainsKeyword(SearchKeyword) || x.GenerateCommiterName().ContainsKeyword(SearchKeyword);
-            }
-            catch
-            {
-                return false;
-            }
+            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits.GetAll(Branch ?? "master");
         }
-	}
+    }
 }
 

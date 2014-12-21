@@ -3,9 +3,9 @@ using CodeHub.Core.ViewModels.Users;
 using MonoTouch.Foundation;
 using System.Drawing;
 using MonoTouch.UIKit;
-using ReactiveUI;
 using System.Reactive.Linq;
 using SDWebImage;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Cells
 {
@@ -25,7 +25,7 @@ namespace CodeHub.iOS.Cells
             ContentView.Opaque = true;
 
             this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
+                .IsNotNull()
                 .Subscribe(x =>
                 {
                     TextLabel.Text = x.Name;

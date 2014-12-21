@@ -2,7 +2,7 @@
 using MonoTouch.UIKit;
 using System.Drawing;
 using System.Collections.Generic;
-using Xamarin.Utilities.Views;
+using Xamarin.Utilities.ViewComponents;
 
 namespace CodeHub.iOS.ViewComponents
 {

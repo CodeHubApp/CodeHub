@@ -5,6 +5,7 @@ using CodeHub.iOS.TableViewSources;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Notifications
 {

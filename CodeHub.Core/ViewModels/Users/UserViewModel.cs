@@ -7,9 +7,10 @@ using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -47,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Users
 			get { return string.Equals(Username, _applicationService.Account.Username); }
 		}
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToFollowersCommand { get; private set; }
 
@@ -75,7 +76,7 @@ namespace CodeHub.Core.ViewModels.Users
 			IsFollowing = !IsFollowing.Value;
 		}
 
-        public UserViewModel(IApplicationService applicationService, IActionMenuService actionMenuService)
+        public UserViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuService)
         {
             _applicationService = applicationService;
 
@@ -85,63 +86,63 @@ namespace CodeHub.Core.ViewModels.Users
             GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserGistsViewModel>();
+                var vm = this.CreateViewModel<UserGistsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToRepositoriesCommand = ReactiveCommand.Create();
             GoToRepositoriesCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserRepositoriesViewModel>();
+                var vm = this.CreateViewModel<UserRepositoriesViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToOrganizationsCommand = ReactiveCommand.Create();
             GoToOrganizationsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<OrganizationsViewModel>();
+                var vm = this.CreateViewModel<OrganizationsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToEventsCommand = ReactiveCommand.Create();
             GoToEventsCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserEventsViewModel>();
+                var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToFollowingCommand = ReactiveCommand.Create();
             GoToFollowingCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserFollowingsViewModel>();
+                var vm = this.CreateViewModel<UserFollowingsViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToFollowersCommand = ReactiveCommand.Create();
             GoToFollowersCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<UserFollowersViewModel>();
+                var vm = this.CreateViewModel<UserFollowersViewModel>();
                 vm.Username = Username;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue),
                 _ =>
                 {
-                var menu = actionMenuService.Create(Title);
+                    var menu = actionMenuService.Create(Title);
                     menu.AddButton(IsFollowing.Value ? "Unfollow" : "Follow", ToggleFollowingCommand);
                     return menu.Show();
                 });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
-                this.RequestModel(applicationService.Client.AuthenticatedUser.IsFollowing(Username), t as bool?, x => IsFollowing = x.Data).FireAndForget();
+                this.RequestModel(applicationService.Client.AuthenticatedUser.IsFollowing(Username), t as bool?, x => IsFollowing = x.Data);
                 return this.RequestModel(applicationService.Client.Users[Username].Get(), t as bool?, response => User = response.Data);
             });
         }

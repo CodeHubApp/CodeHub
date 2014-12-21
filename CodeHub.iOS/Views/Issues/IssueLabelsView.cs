@@ -3,16 +3,12 @@ using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueLabelsView : ReactiveTableViewController<IssueLabelsViewModel>
     {
-        public IssueLabelsView()
-        {
-            Title = "Labels";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

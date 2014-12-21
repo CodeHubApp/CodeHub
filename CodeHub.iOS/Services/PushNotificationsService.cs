@@ -4,21 +4,19 @@ using MonoTouch.UIKit;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Services
 {
 	public class PushNotificationsService : IPushNotificationsService
     {
 	    private readonly IApplicationService _applicationService;
-	    private readonly IHttpClientService _httpClientService;
 	    private const string RegisterUri = "http://162.243.15.10/register";
         private const string DeregisterUri = "http://162.243.15.10/unregister";
 
-	    public PushNotificationsService(IApplicationService applicationService, IHttpClientService httpClientService)
+	    public PushNotificationsService(IApplicationService applicationService)
 	    {
 	        _applicationService = applicationService;
-	        _httpClientService = httpClientService;
 	    }
 
 	    public async Task Register()
@@ -32,7 +30,7 @@ namespace CodeHub.iOS.Services
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = _httpClientService.Create();
+            var client = new HttpClient();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),
@@ -59,7 +57,7 @@ namespace CodeHub.iOS.Services
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = _httpClientService.Create();
+            var client = new HttpClient();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),

@@ -25,7 +25,7 @@ namespace CodeHub.iOS.TableViewSources
         public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (NotificationViewCell)tableView.DequeueReusableCell(NotificationViewCell.Key);
+                _usedForHeight = NotificationViewCell.Create();
 
             var item = ItemAt(indexPath) as NotificationModel;
             if (item == null) 

@@ -23,7 +23,7 @@ namespace CodeHub.iOS.TableViewSources
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (GistCellView)tableView.DequeueReusableCell(GistCellView.Key);
+                _usedForHeight = GistCellView.Create();
 
             var item = ItemAt(indexPath) as GistItemViewModel;
             if (item != null)

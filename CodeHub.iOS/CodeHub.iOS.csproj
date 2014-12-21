@@ -26,6 +26,8 @@
     </MtouchI18n>
     <MtouchArch>i386</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -115,7 +117,6 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Elements\MilestoneElement.cs" />
     <Compile Include="Images\Images.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="TableViewSources\NotificationTableViewSource.cs" />
@@ -132,7 +133,6 @@
       <DependentUpon>AddAccountView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\App\MenuView.cs" />
-    <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\NewsView.cs" />
     <Compile Include="Views\Events\OrganizationEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
@@ -156,7 +156,6 @@
     <Compile Include="Views\Notifications\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Organizations\OrganizationsView.cs" />
@@ -172,7 +171,6 @@
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
-    <Compile Include="Views\Source\ChangesetsView.cs" />
     <Compile Include="Views\Events\RepositoryEventsView.cs" />
     <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
@@ -183,7 +181,6 @@
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Views\Accounts\LoginView.cs" />
-    <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
@@ -199,7 +196,6 @@
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="Views\App\MarkdownComposerView.cs" />
-    <Compile Include="Views\App\SidebarOrderView.cs" />
     <Compile Include="Views\App\EnablePushNotificationsViewController.cs" />
     <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
@@ -236,10 +232,8 @@
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <Compile Include="Cells\RepositoryCellView.designer.cs" />
     <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\CommentElement.cs" />
     <Compile Include="Elements\IssueElement.cs" />
     <Compile Include="Elements\MenuElement.cs" />
-    <Compile Include="Elements\UserElement.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
     <Compile Include="ViewComponents\MenuSectionView.cs" />
@@ -248,20 +242,12 @@
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\App\AccountsView.cs" />
     <Compile Include="Views\App\StartupView.cs" />
-    <Compile Include="Views\App\DefaultStartupView.cs" />
-    <Compile Include="ViewControllers\FilterViewController.cs" />
-    <Compile Include="ViewControllers\MenuBaseViewController.cs" />
-    <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <None Include="packages.config" />
     <Compile Include="Cells\GistCellView.cs" />
     <Compile Include="Cells\GistCellView.designer.cs" />
     <InterfaceDefinition Include="Cells\GistCellView.xib" />
-    <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
-    <Compile Include="Views\ReactiveTableViewController.cs" />
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
-    <Compile Include="Delegates\ObservableSearchDelegate.cs" />
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
-    <Compile Include="Extensions\ReactiveTableViewControllerExtensions.cs" />
     <Compile Include="Views\Repositories\LanguagesView.cs" />
     <Compile Include="Transitions\SlideDownTransition.cs" />
     <Compile Include="TableViewSources\LanguageTableViewSource.cs" />
@@ -289,7 +275,6 @@
     <Compile Include="Cells\PullRequestCellView.designer.cs" />
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
     <Compile Include="ViewComponents\TrendingTitleButton.cs" />
-    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="ViewComponents\MenuProfileView.cs" />
     <Compile Include="Cells\IssueLabelCellView.cs" />
     <Compile Include="Services\GraphicService.cs" />
@@ -334,10 +319,6 @@
     <Compile Include="TableViewSources\SourceContentTableViewSource.cs" />
     <Compile Include="Cells\SourceContentCellView.cs" />
     <Compile Include="ViewControllers\ThemedNavigationController.cs" />
-    <Compile Include="Themes\ITheme.cs" />
-    <Compile Include="Services\IThemeService.cs" />
-    <Compile Include="Services\ThemeService.cs" />
-    <Compile Include="Themes\DefaultTheme.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
     <Compile Include="Views\Gists\GistCommentView.cs" />
     <Compile Include="TableViewSources\FeedbackTableViewSource.cs" />
@@ -346,17 +327,12 @@
       <DependentUpon>FeedbackCellView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
-    <Compile Include="Views\ReactiveViewController.cs" />
-    <Compile Include="Views\ReactiveWebViewController.cs" />
-    <Compile Include="Services\ActionMenuService.cs" />
     <Compile Include="Views\App\SupportView.cs" />
     <Compile Include="Views\App\FeedbackView.cs" />
     <Compile Include="Views\App\FeedbackComposerView.cs" />
     <Compile Include="ViewComponents\ButtonAccessoryView.cs" />
     <Compile Include="ViewComponents\MarkdownAccessoryView.cs" />
     <Compile Include="Views\ReactiveDialogViewController.cs" />
-    <Compile Include="Services\MediaPickerService.cs" />
-    <Compile Include="Extensions\UIWindowExtensions.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <None Include="WebViews\DescriptionView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
@@ -366,6 +342,22 @@
       <DependentUpon>DescriptionView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Elements\HtmlElement.cs" />
+    <Compile Include="Cells\MilestoneTableViewCell.cs" />
+    <Compile Include="Cells\MenuTableViewCell.cs" />
+    <Compile Include="Cells\CommitedFileTableViewCell.cs" />
+    <Compile Include="TableViewSources\CommitedFilesTableViewSource.cs" />
+    <Compile Include="Services\Registrations.cs" />
+    <Compile Include="Themes\Theme.cs" />
+    <Compile Include="ViewControllers\ReactiveTableViewController.cs" />
+    <Compile Include="TableViewSources\ReactiveTableViewSource.cs" />
+    <Compile Include="Views\Settings\SettingsView.cs" />
+    <Compile Include="Views\Settings\DefaultStartupView.cs" />
+    <Compile Include="Views\Settings\SyntaxHighlighterSettingsView.cs" />
+    <Compile Include="Views\Source\CommitView.cs" />
+    <Compile Include="Views\Source\BaseCommitsView.cs" />
+    <Compile Include="Views\Source\CommitsView.cs" />
+    <Compile Include="ViewControllers\MessageComposerViewController.cs" />
+    <Compile Include="Views\Source\CommitMesasgeView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -380,12 +372,6 @@
     </Reference>
     <Reference Include="MonoTouch.TTTAttributedLabel">
       <HintPath>..\lib\MonoTouch\MonoTouch.TTTAttributedLabel.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Utilities.Core">
-      <HintPath>..\lib\MonoTouch\Xamarin.Utilities.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Utilities">
-      <HintPath>..\lib\MonoTouch\Xamarin.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
@@ -408,12 +394,6 @@
     <Reference Include="SDWebImage">
       <HintPath>..\lib\MonoTouch\SDWebImage.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.6.1\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.1.0\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.5.1\lib\monotouch\Splat.dll</HintPath>
     </Reference>
@@ -421,9 +401,6 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Services" />
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.31.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.0.4\lib\MonoTouch\Akavache.dll</HintPath>
     </Reference>
@@ -436,8 +413,20 @@
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.2.1.1\lib\Monotouch\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Utilities">
+      <HintPath>..\packages\DB.Xamarin.Utilities.1.0.4\lib\MonoTouch10\Xamarin.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.5.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+      <HintPath>..\packages\Octokit.0.6.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.32.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -659,8 +648,6 @@
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
-    <Content Include="WebCell\body.html" />
-    <Content Include="WebCell\comments.html" />
     <BundleResource Include="Images\Buttons\check.png" />
     <BundleResource Include="Images\Buttons\check%402x.png">
       <DependentUpon>check.png</DependentUpon>
@@ -762,8 +749,11 @@
     <Content Include="Diff\diffview.js" />
     <Content Include="Diff\jquery.min.js" />
     <Content Include="WebResources\marked.js" />
+    <BundleResource Include="Themes\Default.json" />
+    <BundleResource Include="Themes\InvertedDefault.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
@@ -773,5 +763,15 @@
   <ItemGroup>
     <Folder Include="Views\Releases\" />
     <Folder Include="Themes\" />
+    <Folder Include="Views\Settings\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
+      <Project>{91E8096D-0CDC-44D4-85B9-D44D9990A847}</Project>
+      <Name>CodeHub.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\Settings\SyntaxHighlightExample" />
   </ItemGroup>
 </Project>

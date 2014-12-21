@@ -31,6 +31,10 @@ namespace CodeHub.iOS.Views.App
             this.WhenViewModel(x => x.LastCommit).Where(x => x.HasValue).SubscribeSafe(x =>
                 lastCommit.Text = x.Value.UtcDateTime.Humanize());
 
+            this.WhenAnyValue(x => x.ViewModel)
+                .IsNotNull().Take(1)
+                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
+
             HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
             HeaderView.Image = UIImage.FromFile("Icon@2x.png");
         }
@@ -38,7 +42,7 @@ namespace CodeHub.iOS.Views.App
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            Root.Reset(new Section(HeaderView) { _split }, new Section { _addFeatureButton, _addBugButton }, new Section { _featuresButton });
+            Root.Reset(new Section { _split }, new Section { _addFeatureButton, _addBugButton }, new Section { _featuresButton });
         }
 
         private class ButtonElement : StyledStringElement, IElementSizing

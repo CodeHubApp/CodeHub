@@ -3,11 +3,12 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
 using CodeHub.Core.Messages;
-using Xamarin.Utilities.Core.Services;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -58,16 +59,16 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public LoginViewModel(ILoginService loginFactory, 
                               IAccountsService accountsService,
-                              IActionMenuService actionMenuService,
+                              IActionMenuFactory actionMenuService,
                               IStatusIndicatorService statusIndicatorService,
-                              IAlertDialogService alertDialogService)
+                              IAlertDialogFactory alertDialogService)
         {
             _loginFactory = loginFactory;
 
             Title = "Login";
 
-            GoToOldLoginWaysCommand = ReactiveCommand.Create();
-            GoToOldLoginWaysCommand.Subscribe(_ => ShowViewModel(CreateViewModel<AddAccountViewModel>()));
+            GoToOldLoginWaysCommand = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<AddAccountViewModel>()));
 
             var loginCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x)), _ => Login(Code));
@@ -113,7 +114,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 }
             });
 
-            LoadCommand.ThrownExceptions.Take(1).Subscribe(x => DismissCommand.ExecuteIfCan());
+            LoadCommand.ThrownExceptions.Take(1).Subscribe(x => Dismiss());
         }
 
         private async Task<GitHubAccount> Login(string code)

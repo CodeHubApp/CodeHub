@@ -4,8 +4,8 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Subjects;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
                 var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
                 _createdGistSubject.OnNext((await _applicationService.Client.ExecuteAsync(request)).Data);
-                DismissCommand.ExecuteIfCan();
+                Dismiss();
             });
         }
     }

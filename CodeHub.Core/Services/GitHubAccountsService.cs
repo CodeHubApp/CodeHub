@@ -1,5 +1,4 @@
 using CodeHub.Core.Data;
-using Xamarin.Utilities.Core.Services;
 using System.Reactive.Subjects;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using Akavache;
 using System.Reactive.Linq;
 using System.Collections;
 using System.Linq;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.Services
 {

@@ -1,11 +1,10 @@
 using System;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -13,9 +12,9 @@ namespace CodeHub.Core.ViewModels.Issues
     {
         public IReadOnlyReactiveList<IssueLabelItemViewModel> Labels { get; private set; }
 
-	    public ReactiveList<LabelModel> SelectedLabels { get; private set; }
+        public ReactiveList<Octokit.Label> SelectedLabels { get; private set; }
 
-        public ICollection<LabelModel> OriginalLabels { get; set; } 
+        public ICollection<Octokit.Label> OriginalLabels { get; set; } 
 
         public string RepositoryOwner { get; set; }
 
@@ -27,12 +26,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand SelectLabelsCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IssueLabelsViewModel(IApplicationService applicationService, IGraphicService graphicService)
 	    {
-            var labels = new ReactiveList<LabelModel>();
-            SelectedLabels = new ReactiveList<LabelModel>();
+            Title = "Labels";
+
+            var labels = new ReactiveList<Octokit.Label>();
+            SelectedLabels = new ReactiveList<Octokit.Label>();
 
             Labels = labels.CreateDerivedCollection(x => 
             {
@@ -56,15 +57,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
             SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
-	            var selectedLabels = t as IEnumerable<LabelModel>;
-                if (selectedLabels != null)
-	                SelectedLabels.Reset(selectedLabels);
-
 	            //If nothing has changed, dont do anything...
                 if (OriginalLabels != null && OriginalLabels.Count() == SelectedLabels.Count() &&
                     OriginalLabels.Intersect(SelectedLabels).Count() == SelectedLabels.Count())
 	            {
-	                DismissCommand.ExecuteIfCan();
+                    Dismiss();
 	                return;
 	            }
 
@@ -85,11 +82,11 @@ namespace CodeHub.Core.ViewModels.Issues
 //	                }
 	            }
 
-                DismissCommand.ExecuteIfCan();
+                Dismiss();
 	        });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                labels.LoadAll(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Labels.GetAll()));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
+                labels.Reset(await applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName)));
 	    }
     }
 }

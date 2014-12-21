@@ -6,7 +6,8 @@ namespace CodeHub.Core.ViewModels.Events
 {
     public class NewsViewModel : BaseEventsViewModel
     {
-        public NewsViewModel(IApplicationService applicationService) : base(applicationService)
+        public NewsViewModel(IApplicationService applicationService) 
+            : base(applicationService)
         {
             Title = "News";
         }

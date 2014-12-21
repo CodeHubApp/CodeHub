@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Text;
 using Akavache;
 using System.Reactive.Linq;
-using CodeHub.Core.Utilities;
+using Newtonsoft.Json.Serialization;
 
 namespace CodeHub.Core.Data
 {
@@ -19,7 +19,7 @@ namespace CodeHub.Core.Data
             if (!string.IsNullOrEmpty(language))
                 query += string.Format("&language={0}", language);
             var data = await BlobCache.LocalMachine.DownloadUrl(TrendingUrl + query, absoluteExpiration: DateTimeOffset.Now.AddHours(1));
-            return JsonConvert.DeserializeObject<List<Octokit.Repository>>(Encoding.UTF8.GetString(data), new JsonSerializerSettings {
+            return JsonConvert.DeserializeObject<List<Octokit.Repository>>(Encoding.UTF8.GetString(data, 0, data.Length), new JsonSerializerSettings {
                 ContractResolver = new UnderscoreContractResolver()
             });
         }

@@ -2,8 +2,9 @@ using System;
 using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Core.Services;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Views.Repositories
 {

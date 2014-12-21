@@ -1,59 +1,50 @@
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAssignedToViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IApplicationService _applicationService;
-
-        private BasicUserModel _selectedUser;
-        public BasicUserModel SelectedUser
+        private Octokit.User _selectedUser;
+        public Octokit.User SelectedUser
         {
             get { return _selectedUser; }
             set { this.RaiseAndSetIfChanged(ref _selectedUser, value); }
         }
 
-        public ReactiveList<BasicUserModel> Users { get; private set; }
+        public IReadOnlyReactiveList<Octokit.User> Users { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-        public long IssueId { get; set; }
+        public int IssueId { get; set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public bool SaveOnSelect { get; set; }
-
-        public IReactiveCommand SelectUserCommand { get; private set; }
+        public IReactiveCommand SaveCommand { get; private set; }
 
         public IssueAssignedToViewModel(IApplicationService applicationService)
         {
-            _applicationService = applicationService;
-            Users = new ReactiveList<BasicUserModel>();
+            Title = "Assignees";
 
-            SelectUserCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            var users = new ReactiveList<Octokit.User>();
+            Users = users.CreateDerivedCollection(x => x);
+
+            SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var selectedUser = t as BasicUserModel;
-                if (selectedUser != null)
-                    SelectedUser = selectedUser;
+                await applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, IssueId, new Octokit.IssueUpdate {
+                    Assignee = SelectedUser != null ? SelectedUser.Login : null
+                });
 
-                if (SaveOnSelect)
-                {
-                    var assignee = SelectedUser != null ? SelectedUser.Login : null;
-                    var updateReq = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId].UpdateAssignee(assignee);
-                    await _applicationService.Client.ExecuteAsync(updateReq);
-                }
-
-                DismissCommand.ExecuteIfCan();
+                Dismiss();
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
-                Users.SimpleCollectionLoad(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetAssignees(), t as bool?));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => 
+                users.Reset(await applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName)));
         }
     }
 }

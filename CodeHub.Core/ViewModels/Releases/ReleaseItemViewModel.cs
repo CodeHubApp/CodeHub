@@ -7,7 +7,7 @@ namespace CodeHub.Core.ViewModels.Releases
     {
         public string Name { get; private set; }
 
-        public string Created { get; private set; }
+        public DateTime Created { get; private set; }
 
         public long Id { get; private set; }
 
@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.Releases
         {
             Id = id;
             Name = name;
-            Created = createdAt.LocalDateTime.ToString("d");
+            Created = createdAt.LocalDateTime;
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
         }
     }

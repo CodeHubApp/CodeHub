@@ -3,26 +3,22 @@ using System.Linq;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.Core.Services;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Delegates;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueAddView : ViewModelDialogViewController<IssueAddViewModel>
+    public class IssueAddView : ReactiveTableViewController<IssueAddViewModel>
 	{
-	    private readonly IStatusIndicatorService _statusIndicatorService;
-
-	    public IssueAddView(IStatusIndicatorService statusIndicatorService)
-	    {
-	        _statusIndicatorService = statusIndicatorService;
-	    }
-
 	    public override void ViewDidLoad()
 		{
-			Title = "New Issue";
-
 			base.ViewDidLoad();
+
+            var source = new DialogTableViewSource(TableView, true);
+            TableView.Source = source;
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 				View.EndEditing(true);
@@ -30,7 +26,7 @@ namespace CodeHub.iOS.Views.Issues
 			});
 
 			var title = new InputElement("Title", string.Empty, string.Empty);
-			title.Changed += (sender, e) => ViewModel.Title = title.Value;
+            title.Changed += (sender, e) => ViewModel.Subject = title.Value;
 
 			var assignedTo = new StyledStringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
 			assignedTo.Accessory = UITableViewCellAccessory.DisclosureIndicator;
@@ -52,28 +48,20 @@ namespace CodeHub.iOS.Views.Issues
             ViewModel.WhenAnyValue(x => x.AssignedTo).Subscribe(x =>
             {
 				assignedTo.Value = x == null ? "Unassigned" : x.Login;
-				Root.Reload(assignedTo, UITableViewRowAnimation.None);
+                source.Root.Reload(assignedTo, UITableViewRowAnimation.None);
 			});
             ViewModel.WhenAnyValue(x => x.Milestone).Subscribe(x =>
             {
 				milestone.Value = x == null ? "None" : x.Title;
-				Root.Reload(milestone, UITableViewRowAnimation.None);
+                source.Root.Reload(milestone, UITableViewRowAnimation.None);
 			});
 			ViewModel.WhenAnyValue(x => x.Labels).Subscribe(x => {
 				labels.Value = (ViewModel.Labels == null || ViewModel.Labels.Length == 0) ? 
                                 "None" : string.Join(", ", ViewModel.Labels.Select(i => i.Name));
-				Root.Reload(labels, UITableViewRowAnimation.None);
+                source.Root.Reload(labels, UITableViewRowAnimation.None);
 			});
 
-			ViewModel.SaveCommand.IsExecuting.Subscribe(x =>
-			{
-				if (x)
-					_statusIndicatorService.Show("Saving...");
-				else
-                    _statusIndicatorService.Hide();
-			});
-
-            Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { content });
+            source.Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { content });
 		}
     }
 }

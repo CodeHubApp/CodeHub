@@ -7,18 +7,17 @@ using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Drawing;
 using CodeHub.iOS.ViewComponents;
-using System.Threading.Tasks;
 using ReactiveUI;
+using Xamarin.Utilities.Delegates;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class FeedbackComposerView : ViewModelDialogViewController<FeedbackComposerViewModel>
+    public class FeedbackComposerView : ReactiveTableViewController<FeedbackComposerViewModel>
     {
         private readonly InputElement _titleElement = new CustomTextElement("Title");
         private readonly CustomInputElement _descriptionElement;
 
         public FeedbackComposerView()
-            : base(true, UITableViewStyle.Plain)
         {
             _descriptionElement = new CustomInputElement(() => ViewModel.PostToImgurCommand, "Description");
 
@@ -38,13 +37,15 @@ namespace CodeHub.iOS.Views.App
 
                 x.CanExecuteObservable.Subscribe(y => NavigationItem.RightBarButtonItem.Enabled = y);
             });
-
-            Root.Add(new Section { _titleElement, _descriptionElement });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            var source = new DialogTableViewSource(TableView, true);
+            source.Root.Add(new Section { _titleElement, _descriptionElement });
+            TableView.Source = source;
             TableView.TableFooterView = new UIView();
         }
 

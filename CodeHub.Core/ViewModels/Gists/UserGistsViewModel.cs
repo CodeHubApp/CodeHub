@@ -1,11 +1,10 @@
 ﻿using System;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class UserGistsViewModel : BaseGistsViewModel, ILoadableViewModel
+    public class UserGistsViewModel : BaseGistsViewModel
     {
         private readonly IApplicationService _applicationService;
 
@@ -23,8 +22,6 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToCreateGistCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
-
         public UserGistsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
@@ -33,8 +30,8 @@ namespace CodeHub.Core.ViewModels.Gists
             GoToCreateGistCommand = ReactiveCommand.Create();
             GoToCreateGistCommand.Subscribe(_ =>
             {
-                var vm = CreateViewModel<GistCreateViewModel>();
-                ShowViewModel(vm);
+                var vm = this.CreateViewModel<GistCreateViewModel>();
+                NavigateTo(vm);
             });
 
             this.WhenAnyValue(x => x.Username).Subscribe(x =>
@@ -48,9 +45,11 @@ namespace CodeHub.Core.ViewModels.Gists
                 else
                     Title = x + "'s Gists";
             });
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
-                GistsCollection.SimpleCollectionLoad(applicationService.Client.Users[Username].Gists.GetGists(), t as bool?));
+        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.GistModel>> CreateRequest()
+        {
+            return _applicationService.Client.Users[Username].Gists.GetGists();
         }
     }
 }

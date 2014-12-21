@@ -3,7 +3,8 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -37,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public MyIssuesViewModel(IApplicationService applicationService)
         {

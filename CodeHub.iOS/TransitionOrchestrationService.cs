@@ -1,54 +1,57 @@
 using System;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.iOS.Views.Accounts;
 using CodeHub.iOS.Views.App;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.Views.Repositories;
 using RepositoryStumble.Transitions;
 using CodeHub.iOS.ViewControllers;
-using Xamarin.Utilities.ViewControllers;
 using CodeHub.iOS.Views.Gists;
 using CodeHub.iOS.Views.Source;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Views;
+using MonoTouch.Foundation;
+using Splat;
 
 namespace CodeHub.iOS
 {
-    class TransitionOrchestrationService : ITransitionOrchestrationService
+    class TransitionOrchestrationService : ITransitionOrchestrationService, IEnableLogger
     {
-        public void Transition(IViewFor fromView, IViewFor toView)
-        {
-            var fromViewController = (UIViewController)fromView;
-            var fromViewModel = (IBaseViewModel)fromView.ViewModel;
-            var toViewController = (UIViewController)toView;
-            var toViewModel = (IBaseViewModel)toView.ViewModel;
+        private static NSObject NSObject = new NSObject();
+        private readonly IViewModelViewService _viewModelViewService;
+        private readonly IServiceConstructor _serviceConstructor;
 
-            fromViewController.BeginInvokeOnMainThread(() => DoTransition(fromViewController, fromViewModel, toViewController, toViewModel));
+        public TransitionOrchestrationService(IViewModelViewService viewModelViewService, IServiceConstructor serviceConstructor)
+        {
+            _viewModelViewService = viewModelViewService;
+            _serviceConstructor = serviceConstructor;
         }
 
-        private void DoTransition(UIViewController fromViewController, IBaseViewModel fromViewModel, UIViewController toViewController, IBaseViewModel toViewModel)
+        public void Transition(IViewFor fromView, IViewFor toView)
         {
-            var toViewDismissCommand = toViewModel.DismissCommand;
+            NSObject.BeginInvokeOnMainThread(() => DoTransition(fromView, toView));
+        }
 
-//            if (toViewController is SettingsViewController)
-//            {
-//                toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(CodeFramework.iOS.Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
-//                toViewDismissCommand.Subscribe(__ => toViewController.DismissViewController(true, null));
-//                fromViewController.PresentViewController(new UINavigationController(toViewController), true, null);
-//            }
-            if (toViewController is AccountsView || toViewController is WebBrowserViewController || toViewController is GistCommentView || 
+        private void DoTransition(IViewFor fromView, IViewFor toView)
+        {
+            var toViewController = (UIViewController)toView;
+            var toViewModel = (IBaseViewModel)toView.ViewModel;
+            var fromViewController = (UIViewController)fromView;
+            var routableToViewModel = toViewModel as Xamarin.Utilities.ViewModels.IRoutableViewModel;
+            IReactiveCommand<object> toViewDismissCommand = null;
+
+
+            if (toViewController is AccountsView || toViewController is WebBrowserView || toViewController is GistCommentView ||
                 toViewController is CommitCommentView || toViewController is GistCreateView || toViewController is FeedbackComposerView)
             {
                 var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
+                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => rootNav.DismissViewController(true, null));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
-                toViewDismissCommand.Subscribe(_ => rootNav.DismissViewController(true, null));
-                rootNav.PresentViewController(new ThemedNavigationController(toViewController), true, null);
+                var navController = new ThemedNavigationController(toViewController);
+                rootNav.PresentViewController(navController, true, null);
             }
-//            else if (fromViewController is RepositoriesViewController)
-//            {
-//                fromViewController.NavigationController.PresentViewController(toViewController, true, null);
-//            }
             else if (toViewController is MenuView)
             {
                 var nav = ((UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController);
@@ -59,7 +62,7 @@ namespace CodeHub.iOS
             }
             else if (toViewController is NewAccountView && fromViewController is StartupView)
             {
-                toViewDismissCommand.Subscribe(_ => toViewController.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => toViewController.DismissViewController(true, null));
                 fromViewController.PresentViewController(new ThemedNavigationController(toViewController), true, null);
             }
             else if (fromViewController is MenuView)
@@ -68,17 +71,40 @@ namespace CodeHub.iOS
             }
             else if (toViewController is LanguagesView && fromViewController is RepositoriesTrendingView)
             {
-                toViewDismissCommand.Subscribe(_ => fromViewController.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => fromViewController.DismissViewController(true, null));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 var ctrlToPresent = new ThemedNavigationController(toViewController);
                 ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
                 fromViewController.PresentViewController(ctrlToPresent, true, null);
             }
+            else if (toViewController is EditSourceView)
+            {
+                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => fromViewController.DismissViewController(true, null));
+                toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
+                fromViewController.PresentViewController(new ThemedNavigationController(toViewController), true, null);
+            }
             else
             {
-                toViewDismissCommand.Subscribe(_ => toViewController.NavigationController.PopToViewController(fromViewController, true));
+                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => toViewController.NavigationController.PopToViewController(fromViewController, true));
                 fromViewController.NavigationController.PushViewController(toViewController, true);
             }
+
+            if (toViewDismissCommand != null)
+            {
+                routableToViewModel.RequestDismiss.Subscribe(_ => 
+                {
+                    this.Log().Info("{0} is requesting dismissal", routableToViewModel.GetType().Name);
+                    toViewDismissCommand.ExecuteIfCan();
+                });
+            }
+
+            toViewModel.RequestNavigation.Subscribe(x =>
+            {
+                var viewType = _viewModelViewService.GetViewFor(x.GetType());
+                var view = (IViewFor)_serviceConstructor.Construct(viewType);
+                view.ViewModel = x;
+                Transition(toView, view);
+            });
         }
     }
 }

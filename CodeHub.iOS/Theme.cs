@@ -1,9 +1,10 @@
 ﻿using MonoTouch.UIKit;
-using Xamarin.Utilities.Core.Services;
 using Xamarin.Utilities.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.SlideoutNavigation;
 using System.Linq;
+using Splat;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS
 {
@@ -16,7 +17,7 @@ namespace CodeHub.iOS
             var theme = new Theme();
             CurrentTheme = theme;
 
-            var defaultValues = IoC.Resolve<IDefaultValueService>();
+            var defaultValues = Locator.Current.GetService<IDefaultValueService>();
 
             bool largeFonts;
             if (!defaultValues.TryGet("large_fonts", out largeFonts))
@@ -29,7 +30,6 @@ namespace CodeHub.iOS
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
 
-            NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
             //Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
@@ -37,10 +37,10 @@ namespace CodeHub.iOS
             var navBarContainers = new [] { typeof(MenuNavigationController), typeof(ThemedNavigationController), typeof(MainNavigationController) };
             foreach (var navbarAppearance in navBarContainers.Select(x => UINavigationBar.AppearanceWhenContainedIn(x)))
             {
-                navbarAppearance.TintColor = UIColor.White;
-                navbarAppearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
-                navbarAppearance.BackgroundColor = UIColor.FromRGB(50, 50, 50);
-                navbarAppearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+                navbarAppearance.TintColor = PrimaryNavigationBarTextColor;
+                navbarAppearance.BarTintColor = PrimaryNavigationBarColor;
+                navbarAppearance.BackgroundColor = PrimaryNavigationBarColor;
+                navbarAppearance.SetTitleTextAttributes(new UITextAttributes { TextColor = PrimaryNavigationBarTextColor, Font = UIFont.SystemFontOfSize(18f) });
                 navbarAppearance.SetBackgroundImage(img, UIBarPosition.Any, UIBarMetrics.Default);
                 //CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
                 navbarAppearance.BackIndicatorImage = Images.BackButton;
@@ -58,7 +58,7 @@ namespace CodeHub.iOS
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;
 
             // Composer Input Accessory Buttons
-            UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = UIColor.FromRGB(50, 50, 50);
+            UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = PrimaryNavigationBarColor;
 
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
@@ -71,6 +71,31 @@ namespace CodeHub.iOS
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
 //            CodeFramework.Elements.NewsFeedElement.NameColor = theme.MainTitleColor;
+        }
+
+        public static UIColor PrimaryNavigationBarColor
+        {
+            get { return UIColor.FromRGB(50, 50, 50); }
+        }
+
+        public static UIColor PrimaryNavigationBarTextColor
+        {
+            get { return UIColor.White; }
+        }
+
+        public static UIColor MainTextColor 
+        { 
+            get { return UIColor.FromRGB(41, 41, 41); } 
+        }
+
+        public static UIColor MainTitleColor 
+        { 
+            get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } 
+        }
+
+        public static UIColor MainSubtitleColor 
+        { 
+            get { return UIColor.FromRGB(81, 81, 81); } 
         }
 
         public UITextAttributes SegmentedControlText
@@ -141,10 +166,6 @@ namespace CodeHub.iOS
         }
 
         public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
-
-        public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
-        public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
-        public UIColor MainTextColor { get { return UIColor.FromRGB(41, 41, 41); } }
 
         public UIColor IssueTitleColor { get { return MainTitleColor; } }
         public UIColor RepositoryTitleColor { get { return MainTitleColor; } }

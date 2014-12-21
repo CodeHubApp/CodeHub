@@ -5,15 +5,17 @@ using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using System.Text;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.ViewControllers;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public class LoginView : ReactiveWebViewController<LoginViewModel>
     {
-        private readonly IAlertDialogService _alertDialogService;
+        private readonly IAlertDialogFactory _alertDialogService;
 
-        public LoginView(IAlertDialogService alertDialogService, INetworkActivityService networkActivityService)
+        public LoginView(IAlertDialogFactory alertDialogService, INetworkActivityService networkActivityService)
             : base(networkActivityService)
         {
             _alertDialogService = alertDialogService;

@@ -8,31 +8,31 @@ using CodeHub.iOS.Cells;
 using CodeHub.iOS.TableViewSources;
 using System.Drawing;
 using CodeHub.iOS.ViewComponents;
-using CodeHub.iOS.Services;
 using System.Collections.Generic;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesTrendingView : ReactiveTableViewController<RepositoriesTrendingViewModel>
     {
-        private readonly IThemeService _themeService;
+        private readonly TrendingTitleButton _titleButton;
 
-        public RepositoriesTrendingView(IThemeService themeService)
+        public RepositoriesTrendingView()
         {
-            _themeService = themeService;
+            NavigationItem.TitleView = _titleButton = new TrendingTitleButton
+            {
+                Frame = new RectangleF(0, 0, 200f, 32f),
+                TintColor = Theme.PrimaryNavigationBarTextColor
+            };
+            _titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
+
+            this.WhenViewModel(x => x.SelectedLanguage)
+                .Subscribe(x => _titleButton.Text = x.Name);
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            var titleButton = new TrendingTitleButton
-            {
-                Frame = new RectangleF(0, 0, 200f, 32f),
-                TintColor = _themeService.CurrentTheme.NavigationBarTextColor
-            };
-            titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
-            NavigationItem.TitleView = titleButton;
 
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
@@ -51,9 +51,6 @@ namespace CodeHub.iOS.Views.Repositories
                         }).ToList();
                     }
                 });
-
-            this.WhenViewModel(x => x.SelectedLanguage)
-                .Subscribe(x => titleButton.Text = x.Name);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -68,14 +65,16 @@ namespace CodeHub.iOS.Views.Repositories
             NavigationController.NavigationBar.ShadowImage = null;
         }
 
-        private UILabel CreateHeaderView(string name)
+        private static UILabel CreateHeaderView(string name)
         {
-            var v = new UILabel(new RectangleF(0, 0, 320f, 26f)) { BackgroundColor = _themeService.CurrentTheme.NavigationBarColor };
-            v.Text = name;
-            v.Font = UIFont.BoldSystemFontOfSize(14f);
-            v.TextColor = _themeService.CurrentTheme.NavigationBarTextColor;
-            v.TextAlignment = UITextAlignment.Center;
-            return v;
+            return new UILabel(new RectangleF(0, 0, 320f, 26f)) 
+            {
+                BackgroundColor = Theme.PrimaryNavigationBarColor,
+                Text = name,
+                Font = UIFont.BoldSystemFontOfSize(14f),
+                TextColor = Theme.PrimaryNavigationBarTextColor,
+                TextAlignment = UITextAlignment.Center
+            };
         }
     }
 }

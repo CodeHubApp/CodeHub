@@ -5,6 +5,7 @@ using MonoTouch.UIKit;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -47,12 +48,12 @@ namespace CodeHub.iOS.Views.Accounts
                 ViewModel.GoToEnterpriseLoginCommand.Execute(null);
             else
             {
-                var ctrl = IoC.Resolve<EnableEnterpriseViewController>();
-                ctrl.Dismissed += (sender, e) => {
-                    if (_featuresService.IsEnterpriseSupportActivated)
-                        ViewModel.GoToEnterpriseLoginCommand.Execute(null);
-                };
-                PresentViewController(ctrl, true, null);
+//                var ctrl = IoC.Resolve<EnableEnterpriseViewController>();
+//                ctrl.Dismissed += (sender, e) => {
+//                    if (_featuresService.IsEnterpriseSupportActivated)
+//                        ViewModel.GoToEnterpriseLoginCommand.Execute(null);
+//                };
+//                PresentViewController(ctrl, true, null);
             }
         }
     }

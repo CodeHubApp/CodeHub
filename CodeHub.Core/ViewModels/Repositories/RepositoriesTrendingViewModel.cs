@@ -4,9 +4,10 @@ using System.Reactive.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Data;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -37,11 +38,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand GoToLanguages { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public RepositoriesTrendingViewModel(IApplicationService applicationService, TrendingRepository trendingRepository)
+        public RepositoriesTrendingViewModel(IApplicationService applicationService)
         {
             ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
+            var trendingRepository = new TrendingRepository();
 
             Title = "Trending";
 
@@ -50,22 +52,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             GoToLanguages = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<LanguagesViewModel>();
+                var vm = this.CreateViewModel<LanguagesViewModel>();
                 vm.SelectedLanguage = SelectedLanguage;
-                vm.WhenAnyValue(x => x.SelectedLanguage).Skip(1).Subscribe(x => 
-                {
-                    SelectedLanguage = x;
-                    vm.DismissCommand.ExecuteIfCan();
-                });
-                ShowViewModel(vm);
+                vm.WhenAnyValue(x => x.SelectedLanguage).Skip(1)
+                    .Subscribe(x => SelectedLanguage = x);
+                NavigateTo(vm);
             });
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x =>
             {
-                var vm = CreateViewModel<RepositoryViewModel>();
+                var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>

@@ -10,6 +10,12 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
+			<string>Application Settings</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
 			<string>Analytics</string>
 			<key>FooterText</key>
 			<string>Enabling analytics allows us to collect anonymous data about the use of this app which helps us improve the app. See our Privacy Policy for more details.</string>
@@ -37,6 +43,16 @@
 			<string>Acknowledgements</string>
 			<key>File</key>
 			<string>Acknowledgements</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Open URLs in App</string>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>OpenURLsInApp</string>
 		</dict>
 	</array>
 </dict>

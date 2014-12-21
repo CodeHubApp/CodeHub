@@ -141,7 +141,7 @@ WriteLiteral("\t\t\t\t\t");
 
 
 #line 192 "CommentsView.cshtml"
-Write(comment.Body);
+                WriteLiteral(comment.Body);
 
 
 #line default

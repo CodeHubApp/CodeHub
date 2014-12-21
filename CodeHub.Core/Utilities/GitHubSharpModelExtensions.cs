@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Security.Cryptography;
+using Xamarin.Forms.Labs.Cryptography;
 
 namespace GitHubSharp.Models
 {
@@ -25,7 +25,7 @@ namespace GitHubSharp.Models
 
             try
             {
-                var inputBytes = Encoding.ASCII.GetBytes(x.Commit.Author.Email.Trim().ToLower());
+                var inputBytes = Encoding.UTF8.GetBytes(x.Commit.Author.Email.Trim().ToLower());
                 var hash = MD5.Create().ComputeHash(inputBytes);
                 var sb = new StringBuilder();
                 for (int i = 0; i < hash.Length; i++)

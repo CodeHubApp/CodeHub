@@ -2,6 +2,7 @@ using System;
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists
 {

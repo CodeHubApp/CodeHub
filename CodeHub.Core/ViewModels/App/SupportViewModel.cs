@@ -1,15 +1,16 @@
 ﻿using System;
-using Xamarin.Utilities.Core.ViewModels;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using System.Threading.Tasks;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
+using System.Threading.Tasks;
+using System.Threading;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class SupportViewModel : BaseViewModel, ILoadableViewModel
+    public class SupportViewModel : BaseViewModel
     {
         private const string CodeHubOwner = "thedillonb";
         private const string CodeHubName = "codehub";
@@ -27,14 +28,14 @@ namespace CodeHub.Core.ViewModels.App
             get { return _lastCommit.Value; }
         }
 
-        private RepositoryModel _repository;
-        public RepositoryModel Repository
+        private Octokit.Repository _repository;
+        public Octokit.Repository Repository
         {
             get { return _repository; }
             private set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand GoToFeedbackCommand { get; private set; }
 
@@ -50,42 +51,40 @@ namespace CodeHub.Core.ViewModels.App
                 .Select(x => x.PushedAt).ToProperty(this, x => x.LastCommit);
 
             GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ =>
-                CreateAndShowViewModel<FeedbackViewModel>());
+                NavigateTo(this.CreateViewModel<FeedbackViewModel>()));
 
-            var gotoIssue = new Action<IssueModel>(x =>
+            var gotoIssue = new Action<Octokit.Issue>(x =>
             {
-                var vm = CreateViewModel<IssueViewModel>();
+                var vm = this.CreateViewModel<IssueViewModel>();
                 vm.Issue = x;
                 vm.RepositoryName = CodeHubName;
                 vm.RepositoryOwner = CodeHubOwner;
                 vm.Id = x.Number;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToSuggestFeatureCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<FeedbackComposerViewModel>();
+                var vm = this.CreateViewModel<FeedbackComposerViewModel>();
                 vm.IsFeature = true;
                 vm.CreatedIssueObservable.Subscribe(gotoIssue);
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
             GoToReportBugCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = CreateViewModel<FeedbackComposerViewModel>();
+                var vm = this.CreateViewModel<FeedbackComposerViewModel>();
                 vm.IsFeature = false;
                 vm.CreatedIssueObservable.Subscribe(gotoIssue);
-                ShowViewModel(vm);
+                NavigateTo(vm);
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var repoRequest = applicationService.Client.Users[CodeHubOwner].Repositories[CodeHubName];
-
-                this.RequestModel(repoRequest.GetContributors(), true, 
-                    response => Contributors = response.Data.Count).FireAndForget();
-
-                return this.RequestModel(repoRequest.Get(), true, response => Repository = response.Data);
+                applicationService.GitHubClient.Repository.GetAllContributors(CodeHubOwner, CodeHubName)
+                    .ContinueWith(x => Contributors = x.Result.Count, new CancellationToken(),
+                        TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext());
+                Repository = await applicationService.GitHubClient.Repository.Get(CodeHubOwner, CodeHubName);
             });
         }
 

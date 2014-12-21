@@ -3,11 +3,10 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Organizations;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationView : ViewModelPrettyDialogViewController<OrganizationViewModel>
+    public class OrganizationView : ReactiveDialogViewController<OrganizationViewModel>
     {
         public override void ViewDidLoad()
         {
@@ -23,14 +22,14 @@ namespace CodeHub.iOS.Views.Organizations
             var events = new StyledStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Event);
             var repos = new StyledStringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Images.Repo);
             var gists = new StyledStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Script);
-            Root.Reset(new Section(HeaderView) { split }, new Section { members, teams }, new Section { events }, new Section { repos, gists });
+            Root.Reset(new Section { split }, new Section { members, teams }, new Section { events }, new Section { repos, gists });
 
             ViewModel.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
             {
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
                 HeaderView.ImageUri = x.AvatarUrl;
-                ReloadData();
+                TableView.ReloadData();
             });
         }
     }

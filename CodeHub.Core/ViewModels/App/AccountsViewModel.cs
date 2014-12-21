@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Reactive.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.Core.Services;
 using System.Linq;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -25,8 +25,6 @@ namespace CodeHub.Core.ViewModels.App
             }
         }
 
-        public new IReactiveCommand DismissCommand { get; private set; }
-
         public IReadOnlyReactiveList<AccountItemViewModel> Accounts { get; private set; }
 
         public IReactiveCommand<object> LoginCommand { get; private set; }
@@ -34,6 +32,8 @@ namespace CodeHub.Core.ViewModels.App
         public IReactiveCommand<object> GoToAddAccountCommand { get; private set; }
 
         public IReactiveCommand<object> DeleteAccountCommand { get; private set; }
+
+        public IReactiveCommand<object> DismissCommand { get; private set; }
 
         public AccountsViewModel(IAccountsService accountsService)
         {
@@ -64,21 +64,20 @@ namespace CodeHub.Core.ViewModels.App
             LoginCommand = ReactiveCommand.Create();
             LoginCommand.OfType<GitHubAccount>().Subscribe(x =>
             {
-                if (Equals(accountsService.ActiveAccount, x))
-                    DismissCommand.ExecuteIfCan();
-                else
+                if (!Equals(accountsService.ActiveAccount, x))
                 {
                     ActiveAccount = x;
                     MessageBus.Current.SendMessage(new LogoutMessage());
-                    DismissCommand.ExecuteIfCan();
                 }
+
+                Dismiss();
             });
 
-            DismissCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ActiveAccount).Select(x => x != null))
-                                            .WithSubscription(x => base.DismissCommand.ExecuteIfCan(x));
+            DismissCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ActiveAccount)
+                .Select(x => x != null)).WithSubscription(x => Dismiss());
 
             GoToAddAccountCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => ShowViewModel(CreateViewModel<NewAccountViewModel>()));
+                .WithSubscription(_ => NavigateTo(this.CreateViewModel<NewAccountViewModel>()));
 
         }
 

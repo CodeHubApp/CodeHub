@@ -3,10 +3,11 @@ using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Teams
 {
-    public class TeamsView : ReactiveTableViewController<TeamsViewModel>
+    public class TeamsView : NewReactiveTableViewController<TeamsViewModel>
     {
         public override void ViewDidLoad()
         {

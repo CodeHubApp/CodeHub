@@ -4,10 +4,10 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.Utilities;
 using CodeHub.Core.Data;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {

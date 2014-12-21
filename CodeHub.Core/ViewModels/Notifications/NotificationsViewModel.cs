@@ -12,9 +12,8 @@ using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Utilities;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
@@ -43,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Notifications
             private set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand ReadRepositoriesCommand { get; private set; }
 
@@ -57,37 +56,37 @@ namespace CodeHub.Core.ViewModels.Notifications
             if (subject.Equals("issue"))
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                var vm = CreateViewModel<IssueViewModel>();
+                var vm = this.CreateViewModel<IssueViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
-                vm.Id = long.Parse(node);
-                ShowViewModel(vm);
+                vm.Id = int.Parse(node);
+                NavigateTo(vm);
             }
             else if (subject.Equals("pullrequest"))
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                var vm = CreateViewModel<PullRequestViewModel>();
+                var vm = this.CreateViewModel<PullRequestViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
                 vm.Id = int.Parse(node);
-                ShowViewModel(vm);
+                NavigateTo(vm);
             }
             else if (subject.Equals("commit"))
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                var vm = CreateViewModel<ChangesetViewModel>();
+                var vm = this.CreateViewModel<CommitViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
                 vm.Node = node;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             }
             else if (subject.Equals("release"))
             {
-                var vm = CreateViewModel<BranchesAndTagsViewModel>();
+                var vm = this.CreateViewModel<BranchesAndTagsViewModel>();
                 vm.RepositoryOwner = x.Repository.Owner.Login;
                 vm.RepositoryName = x.Repository.Name;
                 vm.SelectedFilter = BranchesAndTagsViewModel.ShowIndex.Tags;
-                ShowViewModel(vm);
+                NavigateTo(vm);
             }
 
             ReadNotification(x);
@@ -96,7 +95,6 @@ namespace CodeHub.Core.ViewModels.Notifications
         public NotificationsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
-
             Title = "Notifications";
 
             var whenNotificationsChange =

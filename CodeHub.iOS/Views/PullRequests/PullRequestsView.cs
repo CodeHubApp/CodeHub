@@ -4,6 +4,7 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.PullRequests
 {

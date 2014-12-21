@@ -2,9 +2,9 @@ using System;
 using GitHubSharp.Models;
 using System.Reactive.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.Utilities;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-	    protected BaseIssuesViewModel()
+        protected BaseIssuesViewModel()
 	    {
             Issues = IssuesCollection.CreateDerivedCollection(x => CreateItemViewModel(x), 
                 x => x.Title.ContainsKeyword(SearchKeyword), 
@@ -32,20 +32,20 @@ namespace CodeHub.Core.ViewModels.Issues
             var gotoIssueCommand = ReactiveCommand.Create();
             gotoIssueCommand.OfType<IssueItemViewModel>().Where(x => x.IsPullRequest).Subscribe(x =>
             {
-                var vm = CreateViewModel<PullRequestViewModel>();
+                var vm = this.CreateViewModel<PullRequestViewModel>();
                 vm.RepositoryOwner = x.RepositoryOwner;
                 vm.RepositoryName = x.RepositoryName;
                 vm.Id = (int)x.Issue.Number;
-                ShowViewModel(vm);
+                NavigateTo(vm);
 
             });
             gotoIssueCommand.OfType<IssueItemViewModel>().Where(x => !x.IsPullRequest).Subscribe(x =>
             {
-                var vm = CreateViewModel<IssueViewModel>();
+                var vm = this.CreateViewModel<IssueViewModel>();
                 vm.RepositoryOwner = x.RepositoryOwner;
                 vm.RepositoryName = x.RepositoryName;
-                vm.Id = x.Issue.Number;
-                ShowViewModel(vm);
+                vm.Id = (int)x.Issue.Number;
+                NavigateTo(vm);
             });
             GoToIssueCommand = gotoIssueCommand;
 	    }

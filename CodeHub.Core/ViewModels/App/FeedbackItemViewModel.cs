@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public DateTimeOffset Created { get; private set; }
 
-        internal FeedbackItemViewModel(IssueModel issue, Action gotoAction)
+        internal FeedbackItemViewModel(Octokit.Issue issue, Action gotoAction)
         {
             Title = issue.Title;
             ImageUrl = issue.User.AvatarUrl;

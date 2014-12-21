@@ -26,7 +26,6 @@ namespace CodeHub.Core.Services
         {
             _accountsService = accountsService;
 
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             accountsService.WhenAnyObservable(x => x.ActiveAccountChanged).StartWith(accountsService.ActiveAccount).Subscribe(account =>
             {

@@ -1,10 +1,10 @@
 ﻿using CodeHub.Core.ViewModels.Releases;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Releases
 {
-    public class ReleasesView : ReactiveTableViewController<ReleasesViewModel> 
+    public class ReleasesView : NewReactiveTableViewController<ReleasesViewModel> 
     {
         public override void ViewDidLoad()
         {

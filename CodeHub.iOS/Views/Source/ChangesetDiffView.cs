@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using Xamarin.Utilities.Core.Services;
+using CodeHub.Core.Services;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -13,8 +15,8 @@ namespace CodeHub.iOS.Views.Source
 		private List<string> _toBeExecuted = new List<string>();
 	    private UIActionSheet _actionSheet;
 
-        public ChangesetDiffView(INetworkActivityService networkActivityService)
-            : base(networkActivityService)
+        public ChangesetDiffView(INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogFactory)
+            : base(networkActivityService, alertDialogFactory)
         {
         }
 

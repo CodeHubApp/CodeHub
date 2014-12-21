@@ -33,7 +33,7 @@ namespace CodeHub.iOS.Views.Issues
             _segmentBarButton = new UIBarButtonItem(_viewSegment) {Width = View.Frame.Width - 10f};
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             
-            this.BindList(ViewModel.Issues, CreateElement);
+//            this.BindList(ViewModel.Issues, CreateElement);
         }
 
         public override void ViewWillAppear(bool animated)

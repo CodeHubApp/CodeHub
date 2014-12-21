@@ -1,8 +1,10 @@
-﻿using Xamarin.Utilities.Core.Services;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System.Reactive;
 using System;
 using Splat;
+using Xamarin.Utilities.Services;
+using CodeHub.Core.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core
 {
@@ -14,22 +16,16 @@ namespace CodeHub.Core
         public static void Init()
         {
             RxApp.DefaultExceptionHandler = Observer.Create((Exception e) => 
-                IoC.Resolve<IAlertDialogService>().Alert("Error", e.Message));
+                Locator.Current.GetService<IAlertDialogFactory>().Alert("Error", e.Message));
 
-            //Locator.CurrentMutable.RegisterConstant(new ConsoleLogger(), typeof(ILogger));
+            var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
+            var accountService = new GitHubAccountsService(defaultValueService);
+            var applicationService = new ApplicationService(accountService);
+            var loginService = new LoginService(accountService);
 
-            var httpService = IoC.Resolve<IHttpClientService>();
-			GitHubSharp.Client.ClientConstructor = httpService.Create;
-        }
-
-        private class ConsoleLogger : ILogger
-        {
-            public void Write(string message, LogLevel logLevel)
-            {
-                Console.WriteLine("[{0}] - {1}", logLevel, message);
-            }
-
-            public LogLevel Level { get; set; }
+            Locator.CurrentMutable.RegisterLazySingleton(() => accountService, typeof(IAccountsService));
+            Locator.CurrentMutable.RegisterLazySingleton(() => applicationService, typeof(IApplicationService));
+            Locator.CurrentMutable.RegisterLazySingleton(() => loginService, typeof(ILoginService));
         }
     }
 }

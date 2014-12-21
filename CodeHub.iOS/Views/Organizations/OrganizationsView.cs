@@ -1,6 +1,6 @@
 using CodeHub.Core.ViewModels.Organizations;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Organizations
 {

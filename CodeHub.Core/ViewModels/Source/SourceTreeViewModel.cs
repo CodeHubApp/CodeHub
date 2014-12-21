@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
-using System.Reactive.Linq;
-using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Utilities;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -18,19 +16,22 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string RepositoryOwner { get; set; }
 
-		public string Path { get; set; }
+        private string _path;
+		public string Path
+        {
+            get { return _path; }
+            set { this.RaiseAndSetIfChanged(ref _path, value); }
+        }
 
 		public string Branch { get; set; }
 
 		public bool TrueBranch { get; set; }
 
-		public string RepositoryName { get; set; }
-
-        private SourceFilterModel _filter;
-        public SourceFilterModel Filter
+        private string _repositoryName;
+		public string RepositoryName 
         {
-            get { return _filter; }
-            set { this.RaiseAndSetIfChanged(ref _filter, value); }
+            get { return _repositoryName; }
+            set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
         }
 
         private string _searchKeyword;
@@ -42,57 +43,44 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public SourceTreeViewModel(IApplicationService applicationService)
         {
-            //Filter = applicationService.Account.Filters.GetFilter<SourceFilterModel>("SourceViewModel");
             var content = new ReactiveList<ContentModel>();
             Content = content.CreateDerivedCollection(
                 x => CreateSourceItemViewModel(x),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            this.WhenActivated(d =>
-            {
-                if (string.IsNullOrEmpty(Path))
-                    Title = RepositoryName;
-                else
+
+            this.WhenAnyValue(x => x.Path, y => y.RepositoryName, (x, y) => new { Path = x, Repo = y })
+                .Subscribe(x =>
                 {
-                    var path = Path.TrimEnd('/');
-                    Title = path.Substring(path.LastIndexOf('/') + 1);
-                } 
-            });
+                    if (string.IsNullOrEmpty(x.Path))
+                    {
+                        Title = string.IsNullOrEmpty(x.Repo) ? "Source" : x.Repo;
+                    }
+                    else
+                    {
+                        var split = x.Path.TrimEnd('/').Split('/');
+                        Title = split[split.Length - 1];
+                    }
+                });
 
-            this.WhenAnyValue(x => x.Filter).Subscribe(filter =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-//                if (filter == null)
-//                {
-//                    Content.OrderFunc = null;
-//                }
-//                else
-//                {
-//                    Content.OrderFunc = x =>
-//                    {
-//                        switch (filter.OrderBy)
-//                        {
-//                            case SourceFilterModel.Order.FoldersThenFiles:
-//                                x = x.OrderBy(y => y.Type).ThenBy(y => y.Name);
-//                                break;
-//                            default:
-//                                x = x.OrderBy(y => y.Name);
-//                                break;
-//                        }
-//
-//                        return filter.Ascending ? x : x.Reverse();
-//                    };
-//                }
+                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContent(Path ?? string.Empty, Branch ?? "master");
+                var data = new List<ContentModel>();
+                var response = await applicationService.Client.ExecuteAsync(request);
+                data.AddRange(response.Data);
+                while (response.More != null)
+                {
+                    response = await applicationService.Client.ExecuteAsync(response.More);
+                    data.AddRange(response.Data);
+                }
+                content.Reset(data.OrderBy(y => y.Type).ThenBy(y => y.Name));
             });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                content.SimpleCollectionLoad(
-                    applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContent(
-                        Path ?? string.Empty, Branch ?? "master"), t as bool?));
         }
 
         private SourceItemViewModel CreateSourceItemViewModel(ContentModel content)
@@ -103,7 +91,7 @@ namespace CodeHub.Core.ViewModels.Source
                 {
                     case SourceItemType.File:
                     {
-                        var vm = CreateViewModel<SourceViewModel>();
+                        var vm = this.CreateViewModel<SourceViewModel>();
                         vm.Branch = Branch;
                         vm.RepositoryOwner = RepositoryOwner;
                         vm.RepositoryName = RepositoryName;
@@ -111,30 +99,29 @@ namespace CodeHub.Core.ViewModels.Source
                         vm.Name = content.Name;
                         vm.HtmlUrl = content.HtmlUrl;
                         vm.Path = content.Path;
-                        vm.GitUrl = content.GitUrl;
-                        ShowViewModel(vm);
+                        NavigateTo(vm);
                         break;
                     }
                     case SourceItemType.Directory:
                     {
-                        var vm = CreateViewModel<SourceTreeViewModel>();
+                        var vm = this.CreateViewModel<SourceTreeViewModel>();
                         vm.RepositoryOwner = RepositoryOwner;
                         vm.Branch = Branch;
                         vm.RepositoryName = RepositoryName;
                         vm.TrueBranch = TrueBranch;
                         vm.Path = content.Path;
-                        ShowViewModel(vm);
+                        NavigateTo(vm);
                         break;
                     }
                     case SourceItemType.Submodule:
                     {
                         var nameAndSlug = content.GitUrl.Substring(content.GitUrl.IndexOf("/repos/", StringComparison.OrdinalIgnoreCase) + 7);
                         var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.OrdinalIgnoreCase)));
-                        var vm = CreateViewModel<SourceTreeViewModel>();
+                        var vm = this.CreateViewModel<SourceTreeViewModel>();
                         vm.RepositoryOwner = repoId.Owner;
                         vm.RepositoryName = repoId.Name;
                         vm.Branch = content.Sha;
-                        ShowViewModel(vm);
+                        NavigateTo(vm);
                         break;
                     }
                 }

@@ -24,7 +24,7 @@ namespace CodeHub.iOS.TableViewSources
         }
 
         public FeedbackTableViewSource(MonoTouch.UIKit.UITableView tableView) 
-            : base(tableView)
+            : base(tableView, 69.0f)
         {
             tableView.RegisterNibForCellReuse(FeedbackCellView.Nib, FeedbackCellView.Key);
         }
@@ -37,7 +37,7 @@ namespace CodeHub.iOS.TableViewSources
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (FeedbackCellView)tableView.DequeueReusableCell(FeedbackCellView.Key);
+                _usedForHeight = FeedbackCellView.Create();
 
             var item = ItemAt(indexPath) as FeedbackItemViewModel;
             if (item != null)

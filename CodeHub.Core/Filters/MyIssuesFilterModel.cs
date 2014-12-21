@@ -61,13 +61,13 @@ namespace CodeHub.Core.Filters
         
 		public enum Filter
 		{
-            [EnumDescription("Assigned To You")]
+            //[EnumDescription("Assigned To You")]
 			Assigned,
-            [EnumDescription("Created By You")]
+            //[EnumDescription("Created By You")]
 			Created,
-            [EnumDescription("Mentioning You")]
+            //[EnumDescription("Mentioning You")]
 			Mentioned,
-            [EnumDescription("Issues Subscribed To")]
+            //[EnumDescription("Issues Subscribed To")]
 			Subscribed,
 			All
 		}

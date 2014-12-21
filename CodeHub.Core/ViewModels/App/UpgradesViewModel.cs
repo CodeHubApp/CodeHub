@@ -1,7 +1,8 @@
 using CodeHub.Core.Services;
 using System.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -15,10 +16,12 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _keys, value); }
         }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public UpgradesViewModel(IFeaturesService featuresService)
         {
+            Title = "Upgrades";
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 Keys = (await featuresService.GetAvailableFeatureIds()).ToArray();

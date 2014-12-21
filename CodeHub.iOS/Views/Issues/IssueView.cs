@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : ViewModelPrettyDialogViewController<IssueViewModel>
+    public class IssueView : ReactiveDialogViewController<IssueViewModel>
     {
         protected WebElement _descriptionElement;
         protected WebElement _commentsElement;
@@ -56,7 +57,12 @@ namespace CodeHub.iOS.Views.Issues
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
                 HeaderView.Text = x.Title;
-                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+
+                if (x.UpdatedAt.HasValue)
+                    HeaderView.SubText = "Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize();
+                else
+                    HeaderView.SubText = "Created " + x.CreatedAt.UtcDateTime.Humanize();
+
                 HeaderView.ImageUri = x.User.AvatarUrl;
                 Render();
             });
@@ -187,7 +193,7 @@ namespace CodeHub.iOS.Views.Issues
 
             _actionSheet = new UIActionSheet(Title);
             var editButton = _actionSheet.AddButton("Edit");
-            var openButton = _actionSheet.AddButton(ViewModel.Issue.State == "open" ? "Close" : "Open");
+            var openButton = _actionSheet.AddButton(ViewModel.Issue.State == Octokit.ItemState.Open ? "Close" : "Open");
             var commentButton = _actionSheet.AddButton("Comment");
             var shareButton = _actionSheet.AddButton("Share");
             var showButton = _actionSheet.AddButton("Show in GitHub");

@@ -3,9 +3,10 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -29,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 	        private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
 	    }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToGitHubCommand { get; private set; }
 
@@ -39,20 +40,28 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ReadmeViewModel(IApplicationService applicationService, IShareService shareService, IActionMenuService actionMenuService)
+        public ReadmeViewModel(IApplicationService applicationService, 
+            IShareService shareService, IActionMenuFactory actionMenuService)
         {
             Title = "Readme";
 
             var nonNullContentModel = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(nonNullContentModel);
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(ContentModel.HtmlUrl));
+            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(ContentModel.HtmlUrl)));
+
+            var showWebBrowser = new Action<string>(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
 
             GoToGitHubCommand = ReactiveCommand.Create(nonNullContentModel);
-            GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(this.ShowWebBrowser);
+            GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(showWebBrowser);
 
             GoToLinkCommand = ReactiveCommand.Create();
-            GoToLinkCommand.OfType<string>().Subscribe(this.ShowWebBrowser);
+            GoToLinkCommand.OfType<string>().Subscribe(showWebBrowser);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, _ =>
             {

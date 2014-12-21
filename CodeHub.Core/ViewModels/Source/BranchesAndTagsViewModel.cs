@@ -2,8 +2,8 @@ using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
-using Xamarin.Utilities.Core;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -24,7 +24,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReadOnlyReactiveList<TagItemViewModel> Tags { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -39,27 +39,27 @@ namespace CodeHub.Core.ViewModels.Source
             Branches = branches.CreateDerivedCollection(
                 x => new BranchItemViewModel(x.Name, () =>
                 {
-                    var vm = CreateViewModel<SourceTreeViewModel>();
+                    var vm = this.CreateViewModel<SourceTreeViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     vm.Branch = x.Name;
                     vm.TrueBranch = true;
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 }), 
-                x => x.Name.ContainsKeyword(SearchKeyword), 
+                filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             var tags = new ReactiveList<Octokit.RepositoryTag>();
             Tags = tags.CreateDerivedCollection(
                 x => new TagItemViewModel(x.Name, () =>
                 {
-                    var vm = CreateViewModel<SourceTreeViewModel>();
+                    var vm = this.CreateViewModel<SourceTreeViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     vm.Branch = x.Commit.Sha;
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 }), 
-                x => x.Name.ContainsKeyword(SearchKeyword), 
+                filter: x => x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>

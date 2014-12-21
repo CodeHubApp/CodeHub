@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -13,15 +14,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IAccountsService _accountsService;
         private readonly ILoginService _loginService;
 
-        public IReactiveCommand<object> GoToAccountsCommand { get; private set; }
-
-        public IReactiveCommand<object> GoToNewUserCommand { get; private set; }
-
-        public IReactiveCommand<object> GoToMainCommand { get; private set; }
-
-        public IReactiveCommand BecomeActiveWindowCommand { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
@@ -49,20 +42,15 @@ namespace CodeHub.Core.ViewModels.App
             _accountsService = accountsService;
             _loginService = loginService;
 
-            GoToMainCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<MenuViewModel>()));
-            GoToAccountsCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<AccountsViewModel>()));
-            GoToNewUserCommand = ReactiveCommand.Create().WithSubscription(_ => ShowViewModel(CreateViewModel<NewAccountViewModel>()));
-            BecomeActiveWindowCommand = ReactiveCommand.Create();
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
 
         private void GoToAccountsOrNewUser()
         {
             if (_accountsService.Any())
-                GoToAccountsCommand.ExecuteIfCan();
+                NavigateTo(this.CreateViewModel<AccountsViewModel>());
             else
-                GoToNewUserCommand.ExecuteIfCan();
+                NavigateTo(this.CreateViewModel<NewAccountViewModel>());
         }
 
         private async Task Load()
@@ -87,11 +75,11 @@ namespace CodeHub.Core.ViewModels.App
                     IsLoggingIn = true;
                     await _loginService.LoginAccount(account);
                     _accountsService.ActiveAccount = account;
-                    GoToMainCommand.ExecuteIfCan();
+                    NavigateTo(this.CreateViewModel<MenuViewModel>());
                 }
                 catch
                 {
-                    GoToAccountsCommand.ExecuteIfCan();
+                    NavigateTo(this.CreateViewModel<AccountsViewModel>());
                 }
                 finally
                 {

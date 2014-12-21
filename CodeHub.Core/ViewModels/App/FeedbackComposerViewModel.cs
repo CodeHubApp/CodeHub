@@ -1,17 +1,15 @@
 ﻿using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive;
 using CodeHub.Core.Services;
 using System.Reactive.Subjects;
-using GitHubSharp.Models;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.IO;
-using Xamarin.Utilities.Core.Services;
-using CodeHub.Core.Extensions;
-using Splat;
 using System.Threading.Tasks;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -19,9 +17,9 @@ namespace CodeHub.Core.ViewModels.App
     {
         private const string CodeHubOwner = "thedillonb";
         private const string CodeHubName = "TestTestTest";
-        private readonly ISubject<IssueModel> _createdIssueSubject = new Subject<IssueModel>();
+        private readonly ISubject<Octokit.Issue> _createdIssueSubject = new Subject<Octokit.Issue>();
 
-        public IObservable<IssueModel> CreatedIssueObservable
+        public IObservable<Octokit.Issue> CreatedIssueObservable
         {
             get { return _createdIssueSubject; }
         }
@@ -51,8 +49,9 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand<string> PostToImgurCommand { get; private set; }
 
-        public FeedbackComposerViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerService mediaPicker, IStatusIndicatorService statusIndicatorService, IAlertDialogService alertDialogService)
+        public FeedbackComposerViewModel(
+            IApplicationService applicationService, IImgurService imgurService, 
+            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService, IAlertDialogFactory alertDialogService)
         {
             this.WhenAnyValue(x => x.IsFeature).Subscribe(x => Title = x ? "New Feature" : "Bug Report");
 
@@ -62,12 +61,17 @@ namespace CodeHub.Core.ViewModels.App
             {
                 if (string.IsNullOrEmpty(Subject))
                     throw new ArgumentException(string.Format("You must provide a title for this {0}!", IsFeature ? "feature" : "bug"));
-                var labels = await applicationService.Client.ExecuteAsync(applicationService.Client.Users[CodeHubOwner].Repositories[CodeHubName].Labels.GetAll());
-                var createLabels = labels.Data.Where(x => string.Equals(x.Name, IsFeature ? "feature request" : "bug", StringComparison.OrdinalIgnoreCase)).Select(x => x.Name).Distinct();
-                var request = applicationService.Client.Users[CodeHubOwner].Repositories[CodeHubName].Issues.Create(Subject, Description, null, null, createLabels.ToArray());
-                var createdIssue = await applicationService.Client.ExecuteAsync(request);
-                _createdIssueSubject.OnNext(createdIssue.Data);
-                DismissCommand.ExecuteIfCan();
+
+                var labels = await applicationService.GitHubClient.Issue.Labels.GetForRepository(CodeHubOwner, CodeHubName);
+                var createLabels = labels.Where(x => string.Equals(x.Name, IsFeature ? "feature request" : "bug", StringComparison.OrdinalIgnoreCase)).Select(x => x.Name).Distinct();
+
+                var createIssueRequest = new Octokit.NewIssue(Subject) { Body = Description };
+                foreach (var label in createLabels)
+                    createIssueRequest.Labels.Add(label);
+                var createdIssue = await applicationService.GitHubClient.Issue.Create(CodeHubOwner, CodeHubName, createIssueRequest);
+
+                _createdIssueSubject.OnNext(createdIssue);
+                Dismiss();
             });
 
             PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>

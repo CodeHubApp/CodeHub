@@ -1,9 +1,7 @@
 ﻿using System;
 using ReactiveUI;
 using System.Drawing;
-using GitHubSharp.Models;
 using CodeHub.Core.Services;
-using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -12,8 +10,6 @@ namespace CodeHub.Core.ViewModels.Issues
         public string Name { get; private set; }
 
         public Color Color { get; private set; }
-
-        public LabelModel Label { get; private set; }
 
         public object Image { get; private set; }
 
@@ -26,9 +22,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> SelectCommand { get; private set; }
 
-        internal IssueLabelItemViewModel(IGraphicService graphicService, LabelModel label)
+        internal IssueLabelItemViewModel(IGraphicService graphicService, Octokit.Label label)
         {
-            Label = label;
             Name = label.Name;
 
             var color = label.Color;

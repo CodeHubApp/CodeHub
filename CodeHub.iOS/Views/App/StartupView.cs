@@ -5,21 +5,18 @@ using Xamarin.Utilities.Images;
 using Xamarin.Utilities.ViewControllers;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
+using SDWebImage;
+using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class StartupView : ViewModelViewController<StartupViewModel>, IImageUpdated
+    public class StartupView : ReactiveViewController<StartupViewModel>
     {
         const float ImageSize = 128f;
 
         private UIImageView _imgView;
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
-
-        public StartupView()
-        {
-            ManualLoad = true;
-        }
 
         public override void ViewWillLayoutSubviews()
         {
@@ -48,6 +45,7 @@ namespace CodeHub.iOS.Views.App
             _imgView.Layer.CornerRadius = ImageSize / 2;
             _imgView.Layer.MasksToBounds = true;
             _imgView.Alpha = 0;
+            _imgView.Image = Images.LoginUserUnknown;
             Add(_imgView);
 
             Add(_statusLabel = new UILabel
@@ -65,7 +63,7 @@ namespace CodeHub.iOS.Views.App
                 Alpha = 0
             });
 
-            ViewModel.WhenAnyValue(x => x.IsLoggingIn).Skip(1).Subscribe(x =>
+            this.WhenViewModel(x => x.IsLoggingIn).Subscribe(x =>
             {
                 if (x)
                 {
@@ -81,35 +79,21 @@ namespace CodeHub.iOS.Views.App
                 }
             });
 
-            ViewModel.WhenAnyValue(x => x.ImageUrl).Subscribe(UpdatedImage);
+            ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().Subscribe(UpdatedImage);
             ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x);
         }
 
         public void UpdatedImage(Uri uri)
         {
-            if (uri == null)
+            try
             {
-                AssignUnknownUserImage();
+                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type) =>
+                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null));
             }
-            else
+            catch
             {
-                var img = ImageLoader.DefaultRequestImage(uri, this);
-                if (img == null)
-                {
-                    AssignUnknownUserImage();
-                }
-                else
-                {
-                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
-                }
+                // Ah crap...
             }
-        }
-
-        private void AssignUnknownUserImage()
-        {
-            var img = Images.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            _imgView.Image = img;
-            _imgView.TintColor = UIColor.FromWhiteAlpha(0.34f, 1f);
         }
 
 

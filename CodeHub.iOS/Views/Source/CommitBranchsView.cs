@@ -3,10 +3,11 @@ using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class CommitBranchsView : ReactiveTableViewController<CommitBranchesViewModel>
+    public class CommitBranchsView : NewReactiveTableViewController<CommitBranchesViewModel>
     {
         public override void ViewDidLoad()
         {

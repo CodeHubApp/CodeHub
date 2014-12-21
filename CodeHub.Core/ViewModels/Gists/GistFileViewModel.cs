@@ -3,15 +3,16 @@ using System.Linq;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
-using Xamarin.Utilities.Core.Services;
 using CodeHub.Core.ViewModels.Source;
-using Xamarin.Utilities.Core.ViewModels;
 using System.Reactive.Linq;
 using System.Reactive;
+using Xamarin.Utilities.ViewModels;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistFileViewModel : FileSourceViewModel, ILoadableViewModel
+    public class GistFileViewModel : ContentViewModel, ILoadableViewModel
     {
         public const string MarkdownLanguage = "Markdown";
 
@@ -37,59 +38,26 @@ namespace CodeHub.Core.ViewModels.Gists
 	    }
 
         private readonly ObservableAsPropertyHelper<bool> _isMarkdown;
-        public bool IsMarkdown
+        public override bool IsMarkdown
         {
             get { return _isMarkdown.Value; }
         }
 
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
-        public IReactiveCommand<object> OpenWithCommand { get; private set; }
-
-        public IReactiveCommand GoToUrlCommand { get; private set; }
-
-        public IReactiveCommand LoadCommand { get; private set; }
-
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
-
-        public IReactiveCommand<Unit> ShowThemePickerCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public GistFileViewModel(IAccountsService accounts, IApplicationService applicationService, 
-            IFilesystemService filesystemService, IShareService shareService, IActionMenuService actionMenuService)
+            IFilesystemService filesystemService, IActionMenuFactory actionMenuService)
             : base(accounts)
 	    {
 	        this.WhenAnyValue(x => x.Filename).Subscribe(x =>
 	        {
                 Title = x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1);
 	        });
-
-            GoToUrlCommand = this.CreateUrlCommand();
-
-            OpenWithCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
-
+                
             _isMarkdown = this.WhenAnyValue(x => x.GistFile).IsNotNull().Select(x => 
                 string.Equals(x.Language, MarkdownLanguage, StringComparison.OrdinalIgnoreCase)).ToProperty(this, x => x.IsMarkdown);
-
-            ShowThemePickerCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                var path = System.IO.Path.Combine("WebResources", "styles");
-                if (!System.IO.Directory.Exists(path))
-                    return;
-
-                var themes = System.IO.Directory.GetFiles(path)
-                    .Where(x => x.EndsWith(".css", StringComparison.Ordinal))
-                    .Select(x => System.IO.Path.GetFileNameWithoutExtension(x))
-                    .ToList();
-
-                var picker = actionMenuService.CreatePicker();
-                themes.ForEach(picker.Options.Add);
-                picker.SelectedOption = themes.IndexOf(Theme ?? "idea");
-
-                var selected = await picker.Show();
-
-                if (selected >= 0 && selected <= themes.Count)
-                    Theme = themes[selected];
-            });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
@@ -97,8 +65,6 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var menu = actionMenuService.Create(Title);
                 menu.AddButton("Open With", OpenWithCommand);
-                if (!IsMarkdown) 
-                    menu.AddButton("Change Theme", ShowThemePickerCommand);
                 return menu.Show();
             });
 

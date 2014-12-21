@@ -1,10 +1,10 @@
 using CodeHub.Core.ViewModels.Repositories;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public abstract class BaseRepositoriesView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseRepositoriesViewModel
+    public abstract class BaseRepositoriesView<TViewModel> : NewReactiveTableViewController<TViewModel> where TViewModel : BaseRepositoriesViewModel
     {
         public override void ViewDidLoad()
         {

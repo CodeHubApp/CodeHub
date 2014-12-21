@@ -18,6 +18,11 @@ namespace CodeHub.iOS.Cells
         {
         }
 
+        public static PullRequestCellView Create()
+        {
+            return Nib.Instantiate(null, null).GetValue(0) as PullRequestCellView;
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();
@@ -27,8 +32,8 @@ namespace CodeHub.iOS.Cells
             ContentView.Opaque = true;
 
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
-            TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
-            TimeLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+            TitleLabel.TextColor = Theme.MainTitleColor;
+            TimeLabel.TextColor = Theme.MainTextColor;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)

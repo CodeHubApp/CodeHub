@@ -3,12 +3,11 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Users;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public class UserView : ViewModelPrettyDialogViewController<UserViewModel>
+    public class UserView : ReactiveDialogViewController<UserViewModel>
     {
         public UserView()
         {
@@ -28,7 +27,7 @@ namespace CodeHub.iOS.Views.Users
 			var organizations = new StyledStringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group);
 			var repos = new StyledStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Images.Repo);
 			var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Script);
-            Root.Reset(new [] { new Section(HeaderView) { split }, new Section { events, organizations, repos, gists } });
+            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
             ViewModel.WhenAnyValue(x => x.User).Where(x => x != null).Subscribe(x =>
             {
@@ -36,7 +35,7 @@ namespace CodeHub.iOS.Views.Users
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
-                ReloadData();
+                TableView.ReloadData();
             });
         }
     }

@@ -6,12 +6,12 @@ using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using System.Linq;
-using Xamarin.Utilities.ViewControllers;
 using CodeHub.iOS.WebViews;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ViewModelPrettyDialogViewController<GistViewModel>
+    public class GistView : ReactiveDialogViewController<GistViewModel>
     {
         public GistView()
         {
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
 
-            var headerSection = new Section(HeaderView);
+            var headerSection = new Section();
             var filesSection = new Section("Files");
 
             var split = new SplitButtonElement();
@@ -106,7 +106,7 @@ namespace CodeHub.iOS.Views.Gists
                     HeaderView.ImageUri = x.Owner.AvatarUrl;
                 else
                     HeaderView.Image = Images.LoginUserUnknown;
-                ReloadData();
+                TableView.ReloadData();
             });
 
             updatedGistObservable.Select(x => x.Files == null ? 0 : x.Files.Count()).SubscribeSafe(x => files.Text = x.ToString());
@@ -135,7 +135,7 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.Comments.Changed.Subscribe(_ =>
             {
                 var commentModels = ViewModel.Comments
-                    .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.ToDaysAgo()))
+                    .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.UtcDateTime.Humanize()))
                     .ToList();
 
                 if (commentModels.Count > 0)

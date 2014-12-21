@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.App;
 using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive.Subjects;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -21,21 +21,24 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
-        public IssueAddViewModel(IApplicationService applicationService)
+        public IssueAddViewModel(IApplicationService applicationService, IStatusIndicatorService statusIndicatorService)
+            : base(statusIndicatorService)
         {
             _applicationService = applicationService;
+
+            Title = "New Issue";
 
             GoToDescriptionCommand = ReactiveCommand.Create();
 //            GoToDescriptionCommand.Subscribe(_ =>
 //            {
-//                var vm = CreateViewModel<MarkdownComposerViewModel>();
+//                var vm = this.CreateViewModel<MarkdownComposerViewModel>();
 //                vm.Text = Content;
 //                vm.SaveCommand.Subscribe(__ =>
 //                {
 //                    Content = vm.Text;
 //                    vm.DismissCommand.ExecuteIfCan();
 //                });
-//                ShowViewModel(vm);
+//                NavigateTo(vm);
 //            });
         }
 
@@ -53,9 +56,8 @@ namespace CodeHub.Core.ViewModels.Issues
 				var labels = Labels.Select(x => x.Name).ToArray();
 				var content = Content ?? string.Empty;
 
-                var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Title, content, assignedTo, milestone, labels));
+                var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Subject, content, assignedTo, milestone, labels));
                 _createdIssueSubject.OnNext(data.Data);
-                DismissCommand.ExecuteIfCan();
 			}
 			catch (Exception e)
 			{

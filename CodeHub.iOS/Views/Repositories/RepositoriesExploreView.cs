@@ -2,9 +2,9 @@ using System;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
-using CodeHub.iOS.Delegates;
 using MonoTouch.UIKit;
 using System.Drawing;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {

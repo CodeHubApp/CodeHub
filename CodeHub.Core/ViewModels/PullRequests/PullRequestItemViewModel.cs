@@ -1,6 +1,7 @@
 ﻿using System;
 using ReactiveUI;
 using GitHubSharp.Models;
+using Humanizer;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -18,7 +19,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             Title = pullRequest.Title ?? "No Title";
             ImageUrl = pullRequest.User.AvatarUrl;
-            Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.ToDaysAgo(), pullRequest.User.Login);
+            Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.UtcDateTime.Humanize(), pullRequest.User.Login);
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction());
         }
     }

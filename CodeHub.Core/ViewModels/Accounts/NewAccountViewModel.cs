@@ -1,6 +1,6 @@
 ﻿using System;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -15,14 +15,15 @@ namespace CodeHub.Core.ViewModels.Accounts
             Title = "Account";
 
             GoToDotComLoginCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => CreateAndShowViewModel<LoginViewModel>());
+                .WithSubscription(_ =>
+                    NavigateTo(this.CreateViewModel<LoginViewModel>()));
 
             GoToEnterpriseLoginCommand = ReactiveCommand.Create()
                 .WithSubscription(_ =>
                 {
-                    var vm = CreateViewModel<AddAccountViewModel>();
+                    var vm = this.CreateViewModel<AddAccountViewModel>();
                     vm.IsEnterprise = true;
-                    ShowViewModel(vm);
+                    NavigateTo(vm);
                 });
         }
     }

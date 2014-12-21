@@ -5,14 +5,20 @@ using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
+using Xamarin.Utilities.Delegates;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ViewModelDialogViewController<GistCreateViewModel>
+    public class GistCreateView : ReactiveTableViewController<GistCreateViewModel>
     {
+        private EditSource _source;
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            _source = new EditSource(this);
+
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);
 
@@ -105,7 +111,7 @@ namespace CodeHub.iOS.Views.Gists
 
             fileSection.Add(new StyledStringElement("Add New File", AddFile));
 
-            Root.Reset(section, fileSection);
+            _source.Root.Reset(section, fileSection);
         }
 
         private void ChangeDescription()
@@ -117,33 +123,28 @@ namespace CodeHub.iOS.Views.Gists
 //            });
         }
 
-		public override Source CreateSizingSource(bool unevenRows)
-        {
-            return new EditSource(this);
-        }
-
         private void Delete(Element element)
         {
             ViewModel.Files.Remove(element.Caption);
         }
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
         {
             private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 
-                : base (dvc)
+                : base (dvc.TableView)
             {
                 _parent = dvc;
             }
 
             public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
             {
-                return (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1));
+                return (indexPath.Section == 1 && indexPath.Row != (Root[1].Count - 1));
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
             {
-                if (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1))
+                if (indexPath.Section == 1 && indexPath.Row != (Root[1].Count - 1))
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }
@@ -153,7 +154,7 @@ namespace CodeHub.iOS.Views.Gists
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = _parent.Root[indexPath.Section];
+                        var section = Root[indexPath.Section];
                         var element = section[indexPath.Row];
                         _parent.Delete(element);
                         section.Remove(element);

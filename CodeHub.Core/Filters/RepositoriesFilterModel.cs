@@ -23,11 +23,11 @@ namespace CodeHub.Core.Filters
         { 
             Name, 
             Owner,
-            [EnumDescription("Last Updated")]
+            //[EnumDescription("Last Updated")]
             LastUpdated,
             Followers,
             Forks,
-            [EnumDescription("Created Date")]
+            //[EnumDescription("Created Date")]
             CreatedOn, 
         };
     }

@@ -8,6 +8,7 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.iOS.Cells;
 using ReactiveUI;
 using System.Reactive.Linq;
+using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -25,8 +26,8 @@ namespace CodeHub.iOS.Cells
         {
             base.AwakeFromNib();
 
-            Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
-            Number.TextColor = Theme.CurrentTheme.MainTitleColor;
+            Caption.TextColor = Theme.MainTitleColor;
+            Number.TextColor = Theme.MainTitleColor;
             AddSubview(new SeperatorIssues {Frame = new RectangleF(65f, 5f, 1f, Frame.Height - 10f)});
             Image1.Image = Theme.CurrentTheme.IssueCellImage1;
             Image2.Image = Theme.CurrentTheme.IssueCellImage2;
@@ -51,7 +52,7 @@ namespace CodeHub.iOS.Cells
                     Label1.Text = x.Issue.State;
                     Label2.Text = x.Issue.Comments == 1 ? "1 comment" : x.Issue.Comments + " comments";
                     Label3.Text = x.Issue.Assignee != null ? x.Issue.Assignee.Login : "Unassigned";
-                    Label4.Text = x.Issue.UpdatedAt.ToDaysAgo();
+                    Label4.Text = x.Issue.UpdatedAt.UtcDateTime.Humanize();
                     Number.Text = "#" + x.Issue.Number;
                     IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
                 });

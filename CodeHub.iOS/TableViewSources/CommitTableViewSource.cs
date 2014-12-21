@@ -9,21 +9,15 @@ namespace CodeHub.iOS.TableViewSources
         private CommitCellView _usedForHeight;
 
         public CommitTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<CommitItemViewModel> collection) 
-            : base(tableView, collection,  CommitCellView.Key, 60.0f)
+            : base(tableView, collection,  CommitCellView.Key, 64.0f)
         {
             tableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);
-        }
-
-        public CommitTableViewSource(MonoTouch.UIKit.UITableView tableView) 
-            : base(tableView)
-        {
-            tableView.RegisterNibForCellReuse(GistCellView.Nib, GistCellView.Key);
         }
 
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
-                _usedForHeight = (CommitCellView)tableView.DequeueReusableCell(CommitCellView.Key);
+                _usedForHeight = CommitCellView.Create();
 
             var item = ItemAt(indexPath) as CommitItemViewModel;
             if (item != null)

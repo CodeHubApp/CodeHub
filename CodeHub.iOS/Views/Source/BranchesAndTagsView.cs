@@ -4,10 +4,11 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class BranchesAndTagsView : ReactiveTableViewController<BranchesAndTagsViewModel>
+    public class BranchesAndTagsView : NewReactiveTableViewController<BranchesAndTagsViewModel>
 	{
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 

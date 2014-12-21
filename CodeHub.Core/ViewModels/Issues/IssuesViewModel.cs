@@ -3,7 +3,8 @@ using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.Core.ViewModels;
+using Xamarin.Utilities.ViewModels;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -21,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToCustomFilterCommand { get; private set; }
 
-        public IReactiveCommand LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         private IssuesFilterModel _filter;
         private IssuesFilterModel Filter
@@ -49,6 +50,8 @@ namespace CodeHub.Core.ViewModels.Issues
 	    {
             _mineFilter = IssuesFilterModel.CreateMineFilter(applicationService.Account.Username);
 
+            Title = "Issues";
+
             _filterSelection = this.WhenAnyValue(x => x.Filter)
                 .Select(x =>
                 {
@@ -65,11 +68,11 @@ namespace CodeHub.Core.ViewModels.Issues
             GoToNewIssueCommand = ReactiveCommand.Create();
 	        GoToNewIssueCommand.Subscribe(_ =>
 	        {
-	            var vm = CreateViewModel<IssueAddViewModel>();
+	            var vm = this.CreateViewModel<IssueAddViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
                 vm.CreatedIssue.IsNotNull().Subscribe(IssuesCollection.Add);
-                ShowViewModel(vm);
+                NavigateTo(vm);
 	        });
 
             GoToCustomFilterCommand = ReactiveCommand.Create();

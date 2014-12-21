@@ -1,7 +1,7 @@
 using System.Drawing;
 using MonoTouch.UIKit;
 
-namespace CodeFramework.iOS.ViewComponents
+namespace CodeHub.iOS.ViewComponents
 {
     public class MenuSectionView : UIView
     {
