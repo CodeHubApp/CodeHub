@@ -516,22 +516,6 @@
       <DependentUpon>fork.png</DependentUpon>
     </Content>
     <Content Include="Images\fork.png" />
-    <Content Include="Images\Gist\share%402x.png">
-      <DependentUpon>share.png</DependentUpon>
-    </Content>
-    <Content Include="Images\Gist\share.png" />
-    <Content Include="Images\Gist\star%402x.png">
-      <DependentUpon>star.png</DependentUpon>
-    </Content>
-    <Content Include="Images\Gist\star.png" />
-    <Content Include="Images\Gist\star_highlighted%402x.png">
-      <DependentUpon>star_highlighted.png</DependentUpon>
-    </Content>
-    <Content Include="Images\Gist\star_highlighted.png" />
-    <Content Include="Images\Gist\user%402x.png">
-      <DependentUpon>user.png</DependentUpon>
-    </Content>
-    <Content Include="Images\Gist\user.png" />
     <Content Include="Images\group%402x.png">
       <DependentUpon>group.png</DependentUpon>
     </Content>

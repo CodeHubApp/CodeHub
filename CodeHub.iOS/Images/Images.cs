@@ -74,14 +74,6 @@ namespace CodeHub.iOS
             public static UIImage GreyButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/grey_button"); } }
         }
 
-        public static class Gist
-        {
-            public static UIImage Share { get { return UIImageHelper.FromFileAuto("Images/Gist/share"); } }
-            public static UIImage Star { get { return UIImageHelper.FromFileAuto("Images/Gist/star"); } }
-            public static UIImage StarHighlighted { get { return UIImageHelper.FromFileAuto("Images/Gist/star_highlighted"); } }
-            public static UIImage User { get { return UIImageHelper.FromFileAuto("Images/Gist/user"); } }
-        }
-
         public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown"); } }
         public static UIImage Cancel { get { return UIImage.FromBundle("Images/Navigation/cancel"); } }
         public static UIImage BackButton { get { return UIImage.FromBundle("Images/Navigation/back"); } }
