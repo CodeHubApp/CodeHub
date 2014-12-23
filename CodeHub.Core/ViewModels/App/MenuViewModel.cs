@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using GitHubSharp.Models;
+using ReactiveUI;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
+using CodeHub.Core.ViewModels.Notifications;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.Core.ViewModels.Users;
-using CodeHub.Core.ViewModels.Notifications;
-using ReactiveUI;
-using System.Threading.Tasks;
-using GitHubSharp.Models;
-using Xamarin.Utilities.ViewModels;
-using System.Reactive;
 using CodeHub.Core.ViewModels.Settings;
+using CodeHub.Core.ViewModels.Users;
+using System.Threading;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -25,7 +25,6 @@ namespace CodeHub.Core.ViewModels.App
     {
         private readonly IApplicationService _applicationService;
 		private int _notifications;
-        private List<BasicUserModel> _organizations;
 
 		public int Notifications
         {
@@ -33,7 +32,8 @@ namespace CodeHub.Core.ViewModels.App
             set { this.RaiseAndSetIfChanged(ref _notifications, value); }
         }
 
-        public List<BasicUserModel> Organizations
+        private IReadOnlyList<Octokit.Organization> _organizations;
+        public IReadOnlyList<Octokit.Organization> Organizations
         {
             get { return _organizations; }
             set { this.RaiseAndSetIfChanged(ref _organizations, value); }
@@ -163,17 +163,13 @@ namespace CodeHub.Core.ViewModels.App
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
-                var notificationRequest = applicationService.Client.Notifications.GetAll();
-                notificationRequest.RequestFromCache = false;
-                notificationRequest.CheckIfModified = false;
+                var notifications = Observable.FromAsync(applicationService.GitHubClient.Notification.GetAllForCurrent);
+                notifications.ObserveOn(SynchronizationContext.Current).Subscribe(x => Notifications = x.Count);
 
-                var task2 = applicationService.Client.ExecuteAsync(notificationRequest)
-                    .ContinueWith(t => Notifications = t.Result.Data.Count, TaskScheduler.FromCurrentSynchronizationContext());
+                var organizations = Observable.FromAsync(applicationService.GitHubClient.Organization.GetAllForCurrent);
+                organizations.ObserveOn(SynchronizationContext.Current).Subscribe(x => Organizations = x);
 
-                var task3 = applicationService.Client.ExecuteAsync(applicationService.Client.AuthenticatedUser.GetOrganizations())
-                    .ContinueWith(t => Organizations = t.Result.Data, TaskScheduler.FromCurrentSynchronizationContext());
-
-                return Task.WhenAll(task2, task3);
+                return notifications.Select(x => Unit.Default).Merge(organizations.Select(x => Unit.Default)).ToTask();
             });
         }
 

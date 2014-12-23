@@ -8,7 +8,7 @@ using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestsViewModel : BaseViewModel, IPaginatableViewModel
     {
         public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; private set; }
 
@@ -24,6 +24,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
+
+        public IReactiveCommand<Unit> LoadMoreCommand { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -61,10 +63,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
             {
                 var state = SelectedFilter == 0 ? "open" : "closed";
 			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);
-                return pullRequests.SimpleCollectionLoad(request, t as bool?);
+                return pullRequests.SimpleCollectionLoad(request, t as bool?, 
+                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
 
-            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => 
+            {
+                pullRequests.Clear();
+                LoadCommand.ExecuteIfCan();
+            });
 		}
     }
 }

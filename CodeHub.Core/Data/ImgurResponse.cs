@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace CodeHub.Core.Models
+﻿namespace CodeHub.Core.Data
 {
-    public class ImgurModel
+    public class ImgurResponse
     {
         public ImgurDataModel Data { get; set; }
 

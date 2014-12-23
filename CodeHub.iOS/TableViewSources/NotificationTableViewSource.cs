@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CodeHub.Core.ViewModels.Notifications;
-using CodeHub.iOS.Cells;
-using CodeHub.iOS.ViewComponents;
-using GitHubSharp.Models;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using CodeHub.iOS.Cells;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.TableViewSources
 {
-    public class NotificationTableViewSource : ReactiveTableViewSource<NotificationModel>
+    public class NotificationTableViewSource : ReactiveTableViewSource<NotificationItemViewModel>
     {
         private NotificationViewCell _usedForHeight;
 
@@ -27,7 +24,7 @@ namespace CodeHub.iOS.TableViewSources
             if (_usedForHeight == null)
                 _usedForHeight = NotificationViewCell.Create();
 
-            var item = ItemAt(indexPath) as NotificationModel;
+            var item = ItemAt(indexPath) as NotificationItemViewModel;
             if (item == null) 
                 return base.GetHeightForRow(tableView, indexPath);
 
@@ -40,13 +37,21 @@ namespace CodeHub.iOS.TableViewSources
             Data = collections.Select(x =>
             {
                 var headerView = new NotificationHeaderView(x);
-                return new TableSectionInformation<NotificationModel, NotificationViewCell>(x.Notifications,
+                return new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications,
                     NotificationViewCell.Key, 44f)
                 {
                     Header = new TableSectionHeader(() => headerView, 30f)
                 };
 
             }).ToList();
+        }
+
+        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        {
+            base.RowSelected(tableView, indexPath);
+            var item = ItemAt(indexPath) as NotificationItemViewModel;
+            if (item != null)
+                item.GoToCommand.ExecuteIfCan();
         }
     }
 }

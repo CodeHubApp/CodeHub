@@ -1,14 +1,10 @@
-using ReactiveUI;
 using Xamarin.Utilities.ViewModels;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public interface IBaseIssuesViewModel : IBaseViewModel
+    public interface IBaseIssuesViewModel : IBaseViewModel, IProvidesSearchKeyword
     {
-        IReadOnlyReactiveList<IssueItemViewModel> Issues { get; }
-
-        IReactiveCommand GoToIssueCommand { get; }
-
-        string SearchKeyword { get; set; }
+        IList<IssueGroupViewModel> GroupedIssues { get; }
     }
 }

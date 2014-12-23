@@ -18,13 +18,13 @@ using System.Text;
 
 
 [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorTemplatePreprocessor", "2.6.0.0")]
-public partial class DescriptionView : DescriptionViewBase
+public partial class CommitDiffRazorView : CommitDiffRazorViewBase
 {
 
 #line hidden
 
-#line 1 "DescriptionView.cshtml"
-public String Model { get; set; }
+#line 1 "CommitDiffRazorView.cshtml"
+public String[] Model { get; set; }
 
 #line default
 #line hidden
@@ -32,50 +32,325 @@ public String Model { get; set; }
 
 public override void Execute()
 {
-WriteLiteral("<html><head>\n<meta");
+WriteLiteral("<!DOCTYPE html>\n<html");
 
-WriteLiteral(" name=\"viewport\"");
+WriteLiteral(" lang=\"en\"");
 
-WriteLiteral(" content=\"width=device-width,minimum-scale=1.0, maximum-scale=1.0\"");
+WriteLiteral(">\n<head>\n    <title>Diff</title>\n    <link");
 
-WriteLiteral(" />\n<script");
+WriteLiteral(" href=\"Diff/diffview.css\"");
 
-WriteLiteral(" type=\"text/javascript\"");
+WriteLiteral(" type=\"text/css\"");
 
-WriteLiteral(">\nfunction size() { return document.getElementById(\'main\').scrollHeight; }\nfuncti" +
-"on rs() { document.location.href = \'app://resize\'; }; window.onsize = rs;\nvar h " +
-"= 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100);\n</" +
-"script>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\nfont" +
-"-family: Helvetica;\nfont-size: 13px;\n}\n\nhtml {\n-webkit-text-size-adjust: none;\n}" +
-"\n\nbody{\nfont-family: Helvetica;\nfont-size: 13px;\nmargin: 0 1em;\n}\n\nh1, h2, h3, h" +
-"4, h5, h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-height: 1.7;" +
-"\ncursor: text;\nposition: relative;\n}\nh1 {\nfont-size: 1.8em;\nborder-bottom: 1px s" +
-"olid #ddd;\n}\np, blockquote, ul, ol, dl, table, pre {\nmargin: 15px 0;\n}\nh2 {\nfont" +
-"-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\nul, ol {\npadding-left: 30px;\n}\na " +
-"{\ncolor: #4183c4;\ntext-decoration: none;\ntext-decoration: none;\n}\n.highlight pre" +
-", pre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd;\nfont-size: 13px;\nline" +
-"-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3px;\n}\npre {\nwo" +
-"rd-wrap: normal;\n}\ndl {\npadding: 0;\n}\ndl dt {\nfont-size: 14px;\nfont-weight: bold" +
-";\nfont-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\ndl dd {\nmargin-bottom: 15p" +
-"x;\npadding: 0 15px;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndisplay: block;\n}\ntab" +
-"le tr {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\ntable tr:nth-child" +
-"(2n) {\nbackground-color: #f8f8f8;\n}\ntable th, table td {\nborder: 1px solid #ddd;" +
-"\npadding: 6px 13px;\n}\ntable th {\nfont-weight: bold;\n}\nimg {\nmax-width: 100%;\n-mo" +
-"z-box-sizing: border-box;\nbox-sizing: border-box;\n}\n</style>\n<title>Readme</titl" +
-"e></head>\n<body><div");
+WriteLiteral(" rel=\"stylesheet\"");
 
-WriteLiteral(" id=\"main\"");
+WriteLiteral(" />\n</head>\n<body>\n    <table");
 
-WriteLiteral("><div>");
+WriteLiteral(" class=\"diff inlinediff\"");
+
+WriteLiteral(">\n");
 
 
-#line 106 "DescriptionView.cshtml"
-                     WriteLiteral(Model);
+#line 10 "CommitDiffRazorView.cshtml"
+    	
+
+#line default
+#line hidden
+
+#line 10 "CommitDiffRazorView.cshtml"
+       
+    		int baseLine = 0;
+    		int newLine = 0;
+    	
+
+#line default
+#line hidden
+WriteLiteral("\n");
+
+
+#line 14 "CommitDiffRazorView.cshtml"
+		
+
+#line default
+#line hidden
+
+#line 14 "CommitDiffRazorView.cshtml"
+   for (var i = 0; i < Model.Length; i++)
+		{
+			var line = Model[i];
+			if (line.StartsWith("@@"))
+			{
+				var s = line.Split(' ');
+				baseLine = Math.Abs(int.Parse(s[1].Split(',')[0]));
+				newLine = int.Parse(s[2].Split(',')[0]);
 
 
 #line default
 #line hidden
-WriteLiteral("</div></div></body>\n</html>");
+WriteLiteral("\t\t\t\t<tr");
+
+WriteLiteral(" data-to=\"");
+
+
+#line 22 "CommitDiffRazorView.cshtml"
+             Write(i);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-x=\"\"");
+
+WriteLiteral(" data-y=\"\"");
+
+WriteLiteral("><th>...</th><th>...</th><td");
+
+WriteLiteral(" class=\"skip\"");
+
+WriteLiteral(">");
+
+
+#line 22 "CommitDiffRazorView.cshtml"
+                                                                               Write(line);
+
+
+#line default
+#line hidden
+WriteLiteral("</td></tr>\n");
+
+
+#line 23 "CommitDiffRazorView.cshtml"
+			}
+			else if (line.StartsWith("+"))
+			{
+
+
+#line default
+#line hidden
+WriteLiteral("\t\t\t\t<tr");
+
+WriteLiteral(" data-to=\"");
+
+
+#line 26 "CommitDiffRazorView.cshtml"
+             Write(i);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-x=\"\"");
+
+WriteLiteral(" data-y=\"");
+
+
+#line 26 "CommitDiffRazorView.cshtml"
+                                     Write(newLine);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral("><th></th><th>");
+
+
+#line 26 "CommitDiffRazorView.cshtml"
+                                                             Write(newLine);
+
+
+#line default
+#line hidden
+WriteLiteral("</th><td");
+
+WriteLiteral(" class=\"insert\"");
+
+WriteLiteral(">");
+
+
+#line 26 "CommitDiffRazorView.cshtml"
+                                                                                             Write(line);
+
+
+#line default
+#line hidden
+WriteLiteral("</td></tr>\n");
+
+
+#line 27 "CommitDiffRazorView.cshtml"
+				newLine++;
+			}
+			else if (line.StartsWith("-"))
+			{
+
+
+#line default
+#line hidden
+WriteLiteral("\t\t\t\t<tr");
+
+WriteLiteral(" data-to=\"");
+
+
+#line 31 "CommitDiffRazorView.cshtml"
+             Write(i);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-x=\"");
+
+
+#line 31 "CommitDiffRazorView.cshtml"
+                           Write(baseLine);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-y=\"\"");
+
+WriteLiteral("><th>");
+
+
+#line 31 "CommitDiffRazorView.cshtml"
+                                                     Write(baseLine);
+
+
+#line default
+#line hidden
+WriteLiteral("</th><th></th><td");
+
+WriteLiteral(" class=\"delete\"");
+
+WriteLiteral(">");
+
+
+#line 31 "CommitDiffRazorView.cshtml"
+                                                                                               Write(line);
+
+
+#line default
+#line hidden
+WriteLiteral("</td></tr>\n");
+
+
+#line 32 "CommitDiffRazorView.cshtml"
+				baseLine++;
+			}
+			else
+			{
+
+
+#line default
+#line hidden
+WriteLiteral("\t\t\t\t<tr");
+
+WriteLiteral(" data-to=\"");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+             Write(i);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-x=\"");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+                           Write(baseLine);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral(" data-y=\"");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+                                                Write(newLine);
+
+
+#line default
+#line hidden
+WriteLiteral("\"");
+
+WriteLiteral("><th>");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+                                                               Write(baseLine);
+
+
+#line default
+#line hidden
+WriteLiteral("</th><th>");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+                                                                                 Write(newLine);
+
+
+#line default
+#line hidden
+WriteLiteral("</th><td");
+
+WriteLiteral(" class=\"equal\"");
+
+WriteLiteral(">");
+
+
+#line 36 "CommitDiffRazorView.cshtml"
+                                                                                                                Write(line);
+
+
+#line default
+#line hidden
+WriteLiteral("</td></tr>\n");
+
+
+#line 37 "CommitDiffRazorView.cshtml"
+				newLine++;
+				baseLine++;
+			}
+		}
+
+
+#line default
+#line hidden
+WriteLiteral("    </table>\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"https://code.jquery.com/jquery-2.1.3.min.js\"");
+
+WriteLiteral("></script>\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"Diff/difflib.js\"");
+
+WriteLiteral("></script>\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"Diff/diffview.js\"");
+
+WriteLiteral("></script>\n    <script");
+
+WriteLiteral(" type=\"text/javascript\"");
+
+WriteLiteral(" src=\"Diff/app.js\"");
+
+WriteLiteral("></script>\n</body>\n</html>");
 
 }
 }
@@ -83,7 +358,7 @@ WriteLiteral("</div></div></body>\n</html>");
 // NOTE: this is the default generated helper class. You may choose to extract it to a separate file 
 // in order to customize it or share it between multiple templates, and specify the template's base 
 // class via the @inherits directive.
-public abstract class DescriptionViewBase
+public abstract class CommitDiffRazorViewBase
 {
 
 		// This field is OPTIONAL, but used by the default implementation of Generate, Write, WriteAttribute and WriteLiteral

@@ -1,17 +1,18 @@
 using System;
-using CodeHub.Core.ViewModels.App;
-using MonoTouch.UIKit;
-using System.Linq;
-using ReactiveUI;
-using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reactive.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
+using CodeHub.Core.ViewModels.App;
+using MonoTouch.UIKit;
+using ReactiveUI;
 using Xamarin.Utilities.Delegates;
-using System.Drawing;
-using CodeHub.iOS.ViewComponents;
+using Xamarin.Utilities.DialogElements;
 using Xamarin.Utilities.ViewControllers;
 using CodeHub.iOS.Elements;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -34,6 +35,29 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewWillAppear(animated);
             CreateMenuRoot();
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            //Add some nice looking colors and effects
+            TableView.TableFooterView = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
+            TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
+            TableView.ScrollsToTop = false;
+            TableView.SeparatorInset = UIEdgeInsets.Zero;
+            TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
+            TableView.Source = _dialogSource = new MenuTableViewSource(this);
+
+            ViewModel.WhenAnyValue(x => x.Notifications).Where(_ => _notifications != null).Subscribe(x =>
+            {
+                _notifications.NotificationNumber = x;
+                _dialogSource.Root.Reload(_notifications);
+            });
+
+            ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
+
+            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
 	    private void CreateMenuRoot()
@@ -110,33 +134,6 @@ namespace CodeHub.iOS.Views.App
 
             _dialogSource.Root.Reset(sections);
 		}
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            _dialogSource = new MenuTableViewSource(this);
-
-            //Add some nice looking colors and effects
-            TableView.TableFooterView = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
-            TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
-            TableView.ScrollsToTop = false;
-			TableView.SeparatorInset = UIEdgeInsets.Zero;
-			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
-            TableView.Source = _dialogSource;
-
-            ViewModel.WhenAnyValue(x => x.Notifications).Subscribe(x =>
-            {
-                if (_notifications == null)
-                    return;
-                _notifications.NotificationNumber = x;
-                //_dialogSource.Root.Reload(_notifications);
-            });
-
-            ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
-
-            ViewModel.LoadCommand.ExecuteIfCan();
-        }
 
 		private class PinnedRepoElement : MenuElement
 		{

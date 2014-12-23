@@ -1,8 +1,8 @@
 ﻿using System;
-using CodeHub.Core.Models;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
@@ -11,7 +11,7 @@ namespace CodeHub.Core.Services
         private const string AuthorizationClientId = "4d2779fd2cc56cb";
         private const string ImgurPostUrl = "https://api.imgur.com/3/image";
 
-        public async Task<ImgurModel> SendImage(byte[] data)
+        public async Task<ImgurResponse> SendImage(byte[] data)
         {
             var client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 30);
@@ -22,7 +22,7 @@ namespace CodeHub.Core.Services
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException("Unable to post to Imgur! " + response.ReasonPhrase);
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<ImgurModel>(responseBody);
+            return JsonConvert.DeserializeObject<ImgurResponse>(responseBody);
         }
     }
 }

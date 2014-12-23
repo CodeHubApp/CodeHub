@@ -3,32 +3,34 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
-using GitHubSharp.Models;
 using System;
 using ReactiveUI;
 using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Services;
 using System.Reactive;
+using System.Threading;
+using Xamarin.Utilities.Factories;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private readonly IMarkdownService _markdownService;
-
-        public int Id { get; set; }
+        private int _id;
+        public int Id 
+        {
+            get { return _id; }
+            set { this.RaiseAndSetIfChanged(ref _id, value); }
+        }
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
+        private readonly ObservableAsPropertyHelper<string> _markdownDescription;
 		public string MarkdownDescription
 		{
-			get
-			{
-                return Issue == null ? string.Empty : (_markdownService.Convert(Issue.Body));
-			}
+            get { return _markdownDescription.Value; }
 		}
 
         private Octokit.Issue _issueModel;
@@ -54,36 +56,41 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> AddCommentCommand { get; private set; }
 
-        public ReactiveList<IssueCommentModel> Comments { get; private set; }
-
-        public ReactiveList<IssueEventModel> Events { get; private set; }
+        public IReadOnlyReactiveList<IIssueEventItemViewModel> Events { get; private set; }
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
-        public IssueViewModel(IApplicationService applicationService, 
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+
+        public IssueViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory,
             IShareService shareService, IMarkdownService markdownService)
         {
-            _applicationService = applicationService;
-            _markdownService = markdownService;
+            this.WhenAnyValue(x => x.Id).Subscribe(x => Title = "Issue #" + x);
 
-            Comments = new ReactiveList<IssueCommentModel>();
-            Events = new ReactiveList<IssueEventModel>();
+            _markdownDescription = this.WhenAnyValue(x => x.Issue).Select(x =>
+            {
+                return ((x == null || string.IsNullOrEmpty(x.Body)) ? null : markdownService.Convert(x.Body));
+            }).ToProperty(this, x => x.MarkdownDescription);
+
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
             ShareCommand.Subscribe(_ => shareService.ShareUrl(Issue.HtmlUrl));
 
+            var events = new ReactiveList<IIssueEventItemViewModel>();
+            Events = events.CreateDerivedCollection(x => x);
+
             AddCommentCommand = ReactiveCommand.Create();
             AddCommentCommand.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<CommentViewModel>();
-                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
-                {
-                    var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
-                    var comment = await _applicationService.Client.ExecuteAsync(issue.CreateComment(vm.Comment));
-                    Comments.Add(comment.Data);
-                    Dismiss();
-                });
+//                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
+//                {
+//                    var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
+//                    var comment = await _applicationService.Client.ExecuteAsync(issue.CreateComment(vm.Comment));
+//                    Comments.Add(comment.Data);
+//                    Dismiss();
+//                });
                 NavigateTo(vm);
             });
 
@@ -167,11 +174,33 @@ namespace CodeHub.Core.ViewModels.Issues
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var forceCacheInvalidation = t as bool?;
-                var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
-                Comments.SimpleCollectionLoad(issue.GetComments(), forceCacheInvalidation);
-                Events.SimpleCollectionLoad(issue.GetEvents(), forceCacheInvalidation);
-                Issue = await applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id);
+                var issueRequest = applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id)
+                    .ContinueWith(x => Issue = x.Result, new CancellationToken(), TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext());
+                var eventsRequest = applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
+                var commentsRequest = applicationService.GitHubClient.Issue.Comment.GetForIssue(RepositoryOwner, RepositoryName, Id);
+                await Task.WhenAll(issueRequest, eventsRequest, commentsRequest);
+
+                var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Count);
+                tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
+                tempList.AddRange(commentsRequest.Result.Select(x => new IssueCommentItemViewModel(x)));
+                events.Reset(tempList.OrderBy(x => x.CreatedAt));
+            });
+
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Issue).Select(x => x != null),
+                _ =>
+            {
+                var menu = actionMenuFactory.Create(Title);
+                menu.AddButton(Issue.State == Octokit.ItemState.Open ? "Close" : "Open", ToggleStateCommand);
+//
+//
+//                var editButton = _actionSheet.AddButton("Edit");
+//                var commentButton = _actionSheet.AddButton("Comment");
+//                var shareButton = _actionSheet.AddButton("Share");
+//                var showButton = _actionSheet.AddButton("Show in GitHub");
+
+                return menu.Show();
             });
         }
     }

@@ -1,0 +1,47 @@
+﻿@model String[]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Diff</title>
+    <link href="Diff/diffview.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+    <table class="diff inlinediff">
+    	@{
+    		int baseLine = 0;
+    		int newLine = 0;
+    	}
+		@for (var i = 0; i < Model.Length; i++)
+		{
+			var line = Model[i];
+			if (line.StartsWith("@@"))
+			{
+				var s = line.Split(' ');
+				baseLine = Math.Abs(int.Parse(s[1].Split(',')[0]));
+				newLine = int.Parse(s[2].Split(',')[0]);
+				<tr data-to="@(i)" data-x="" data-y=""><th>...</th><th>...</th><td class="skip">@line</td></tr>
+			}
+			else if (line.StartsWith("+"))
+			{
+				<tr data-to="@(i)" data-x="" data-y="@(newLine)"><th></th><th>@newLine</th><td class="insert">@line</td></tr>
+				newLine++;
+			}
+			else if (line.StartsWith("-"))
+			{
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y=""><th>@baseLine</th><th></th><td class="delete">@line</td></tr>
+				baseLine++;
+			}
+			else
+			{
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y="@(newLine)"><th>@baseLine</th><th>@newLine</th><td class="equal">@line</td></tr>
+				newLine++;
+				baseLine++;
+			}
+		}
+    </table>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="Diff/difflib.js"></script>
+    <script type="text/javascript" src="Diff/diffview.js"></script>
+    <script type="text/javascript" src="Diff/app.js"></script>
+</body>
+</html>

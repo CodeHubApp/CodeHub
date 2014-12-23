@@ -41,14 +41,17 @@ namespace CodeHub.iOS.Views.Repositories
             _splitElements[2].Button1 = new SplitElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
             _splitElements[2].Button2 = new SplitElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
 
+            ViewModel.WhenAnyValue(x => x.Stargazers).Subscribe(x =>
+                stargazers.Text = x.HasValue ? x.ToString() : "-");
+
+            ViewModel.WhenAnyValue(x => x.Watchers).Subscribe(x =>
+                watchers.Text = x.HasValue ? x.ToString() : "-");
+
             ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
             {
                 HeaderView.ImageUri = x.Owner.AvatarUrl;
                 HeaderView.SubText = x.Description;
-                stargazers.Text = x.StargazersCount.ToString();
-                watchers.Text = x.SubscribersCount.ToString();
                 forks.Text = x.ForksCount.ToString();
-
                 _splitElements[0].Button1.Image = x.Private ? Images.Locked : Images.Unlocked;
                 _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
                 _splitElements[0].Button2.Text = x.Language ?? "N/A";

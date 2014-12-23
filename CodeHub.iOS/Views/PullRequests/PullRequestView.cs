@@ -77,10 +77,6 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             base.ViewDidLoad();
 
-            var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-            var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-
-
 
             ViewModel.WhenAnyValue(x => x.PullRequest).IsNotNull().Subscribe(x =>
             {

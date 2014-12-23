@@ -48,12 +48,12 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    Caption.Text = x.Issue.Title;
-                    Label1.Text = x.Issue.State;
-                    Label2.Text = x.Issue.Comments == 1 ? "1 comment" : x.Issue.Comments + " comments";
-                    Label3.Text = x.Issue.Assignee != null ? x.Issue.Assignee.Login : "Unassigned";
-                    Label4.Text = x.Issue.UpdatedAt.UtcDateTime.Humanize();
-                    Number.Text = "#" + x.Issue.Number;
+                    Caption.Text = x.Title;
+                    Label1.Text = x.State;
+                    Label2.Text = x.Comments == 1 ? "1 comment" : x.Comments + " comments";
+                    Label3.Text = x.Assignee;
+                    Label4.Text = x.UpdatedAt.LocalDateTime.Humanize();
+                    Number.Text = "#" + x.Number;
                     IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
                 });
         }

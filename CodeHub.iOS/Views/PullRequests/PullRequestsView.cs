@@ -1,20 +1,20 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.UIKit;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
 using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestsView : ReactiveTableViewController<PullRequestsViewModel>
+    public class PullRequestsView : NewReactiveTableViewController<PullRequestsViewModel>
     {
-        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
+        private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButtonItem;
 
         public PullRequestsView()
         {
+            _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
             _segmentBarButtonItem = new UIBarButtonItem(_viewSegment);
             ToolbarItems = new[] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButtonItem, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 

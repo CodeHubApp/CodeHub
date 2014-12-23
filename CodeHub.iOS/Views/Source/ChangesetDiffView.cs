@@ -6,23 +6,39 @@ using MonoTouch.UIKit;
 using CodeHub.Core.Services;
 using Xamarin.Utilities.Services;
 using Xamarin.Utilities.Factories;
+using Xamarin.Utilities.ViewControllers;
+using ReactiveUI;
+using CodeHub.iOS.WebViews;
+using System.IO;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class ChangesetDiffView : FileSourceView<ChangesetDiffViewModel>
+    public class ChangesetDiffView : ReactiveWebViewController<ChangesetDiffViewModel>
     {
-		private bool _domLoaded = false;
-		private List<string> _toBeExecuted = new List<string>();
-	    private UIActionSheet _actionSheet;
-
-        public ChangesetDiffView(INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogFactory)
-            : base(networkActivityService, alertDialogFactory)
+        public ChangesetDiffView(INetworkActivityService networkActivityService)
+            : base(networkActivityService)
         {
         }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.ViewModel.Patch).Subscribe(x =>
+            {
+                if (x == null)
+                    LoadContent(string.Empty);
+                else
+                {
+                    var razorView = new CommitDiffRazorView
+                    { 
+                        Model = x.Split('\n')
+                    };
+
+                    string contentDirectoryPath = Path.Combine (NSBundle.MainBundle.BundlePath, "WebViews");
+                    LoadContent(razorView.GenerateString(), contentDirectoryPath);
+                }
+            });
 //
 //
 //			ViewModel.Bind(x => x.FilePath, x =>
@@ -45,19 +61,7 @@ namespace CodeHub.iOS.Views.Source
 //			});
 		}
 
-		private bool _isLoaded;
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
 
-			if (!_isLoaded)
-			{
-				var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
-				var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-				Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
-				_isLoaded = true;
-			}
-		}
 
         private class JavascriptCommentModel
         {
@@ -71,13 +75,7 @@ namespace CodeHub.iOS.Views.Source
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
 
-				if (func.Equals("ready"))
-				{
-					_domLoaded = true;
-					foreach (var e in _toBeExecuted)
-						Web.EvaluateJavascript(e);
-				}
-				else if(func.Equals("comment")) 
+				if(func.Equals("comment")) 
 				{
 					//var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
 					//PromptForComment(commentModel);
@@ -89,32 +87,6 @@ namespace CodeHub.iOS.Views.Source
             return base.ShouldStartLoad(request, navigationType);
         }
 
-		private void ExecuteJavascript(string data)
-		{
-			if (_domLoaded)
-				InvokeOnMainThread(() => Web.EvaluateJavascript(data));
-			else
-				_toBeExecuted.Add(data);
-		}
-
-        private void PromptForComment(JavascriptCommentModel model)
-        {
-            string title = string.Empty;
-            title = "Line " + model.FileLine;
-
-            var sheet = _actionSheet = new UIActionSheet(title);
-            var addButton = sheet.AddButton("Add Comment");
-            var cancelButton = sheet.AddButton("Cancel");
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (sender, e) => {
-                if (e.ButtonIndex == addButton)
-                    ShowCommentComposer(model.PatchLine);
-                _actionSheet = null;
-            };
-
-            sheet.ShowInView(this.View);
-        }
 
         private void ShowCommentComposer(int line)
         {

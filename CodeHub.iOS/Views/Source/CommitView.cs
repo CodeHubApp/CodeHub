@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Source
 
         public CommitView()
         {
-            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x => 
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand).Subscribe(x => 
                 NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Action) : null);
         }
 
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.Source
                 var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
                 HeaderView.Text = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 
-                HeaderView.SubText = "Commited " + (x.Commit.Committer.Date.UtcDateTime).Humanize();
+                HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
 
                 additions.Text = x.Stats.Additions.ToString();
                 deletions.Text = x.Stats.Deletions.ToString();
@@ -57,72 +57,70 @@ namespace CodeHub.iOS.Views.Source
                 TableView.ReloadData();
             });
 
-            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(Render);
-
             ViewModel.Comments.Changed.Select(_ => new Unit()).StartWith(new Unit()).Subscribe(x =>
             {
-                    var commentModels = ViewModel.Comments.Select(c => 
-                        new Comment(c.User.AvatarUrl, c.User.Login, c.BodyHtml, c.CreatedAt.UtcDateTime.Humanize()));
-                    var razorView = new CommentsView { Model = commentModels };
-                    var html = razorView.GenerateString();
-                    commentsElement.Value = html;
+                var commentModels = ViewModel.Comments.Select(c => 
+                new Comment(c.User.AvatarUrl, c.User.Login, c.Body, c.CreatedAt.UtcDateTime.Humanize()));
+                var razorView = new CommentsView { Model = commentModels };
+                var html = razorView.GenerateString();
+                commentsElement.Value = html;
 
-                    if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
-                        _commentSection.Add(commentsElement);
-            });
-        }
-
-        public void Render(CommitModel commitModel)
-        {
-            var headerSection = new Section() { _split };
-            var detailSection = new Section();
-            Root.Reset(headerSection, detailSection);
-
-            var user = commitModel.GenerateCommiterName();
-            detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)
-            {
-                CaptionColor = Theme.MainTextColor,
-                ValueColor = Theme.MainTextColor,
-                BackgroundColor = UIColor.White
+                if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
+                    _commentSection.Add(commentsElement);
+                TableView.ReloadData();
             });
 
-            if (ViewModel.ShowRepository)
+            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(commitModel =>
             {
-                var repo = new StyledStringElement(ViewModel.RepositoryName) { 
-                    Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
-                    Lines = 1, 
-                    Font = StyledStringElement.DefaultDetailFont, 
-                    TextColor = StyledStringElement.DefaultDetailColor,
-                    Image = Images.Repo
-                };
-                repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
-                detailSection.Add(repo);
-            }
+                var detailSection = new Section();
+                Root.Reset(headerSection, detailSection);
 
-			var paths = commitModel.Files.GroupBy(y => {
-				var filename = "/" + y.Filename;
-				return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-			}).OrderBy(y => y.Key);
+                var user = commitModel.GenerateCommiterName();
+                detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)
+                {
+                    CaptionColor = Theme.MainTextColor,
+                    ValueColor = Theme.MainTextColor,
+                    BackgroundColor = UIColor.White
+                });
 
-			foreach (var p in paths)
-			{
-				var fileSection = new Section(p.Key);
-				foreach (var x in p)
-				{
-					var y = x;
-					var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-					var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-					sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
-					fileSection.Add(sse);
-				}
-				Root.Add(fileSection);
-			}
+                if (ViewModel.ShowRepository)
+                {
+                    var repo = new StyledStringElement(ViewModel.RepositoryName) { 
+                        Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
+                        Lines = 1, 
+                        Font = StyledStringElement.DefaultDetailFont, 
+                        TextColor = StyledStringElement.DefaultDetailColor,
+                        Image = Images.Repo
+                    };
+                    repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
+                    detailSection.Add(repo);
+                }
 
-            Root.Add(_commentSection);
+                var paths = commitModel.Files.GroupBy(y => {
+                    var filename = "/" + y.Filename;
+                    return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+                }).OrderBy(y => y.Key);
 
-            var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-            addComment.Tapped += () => ViewModel.GoToCommentCommand.ExecuteIfCan();
-            Root.Add(new Section { addComment });
+                foreach (var p in paths)
+                {
+                    var fileSection = new Section(p.Key);
+                    foreach (var x in p)
+                    {
+                        var y = x;
+                        var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+                        var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+                        sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
+                        fileSection.Add(sse);
+                    }
+                    Root.Add(fileSection);
+                }
+
+                Root.Add(_commentSection);
+
+                var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+                addComment.Tapped += () => ViewModel.GoToCommentCommand.ExecuteIfCan();
+                Root.Add(new Section { addComment });
+            });
         }
     }
 }

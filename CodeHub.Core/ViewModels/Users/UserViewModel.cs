@@ -5,7 +5,6 @@ using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
@@ -29,8 +28,8 @@ namespace CodeHub.Core.ViewModels.Users
             }
         }
 
-        private UserModel _userModel;
-        public UserModel User
+        private Octokit.User _userModel;
+        public Octokit.User User
         {
             get { return _userModel; }
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
@@ -69,10 +68,10 @@ namespace CodeHub.Core.ViewModels.Users
 		private async Task ToggleFollowing()
 		{
 		    if (!IsFollowing.HasValue) return;
-			if (IsFollowing.Value)
-				await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Unfollow(Username));
+            if (IsFollowing.Value)
+                await _applicationService.GitHubClient.User.Followers.Unfollow(Username);
 			else
-				await _applicationService.Client.ExecuteAsync(_applicationService.Client.AuthenticatedUser.Follow(Username));
+                await _applicationService.GitHubClient.User.Followers.Follow(Username);
 			IsFollowing = !IsFollowing.Value;
 		}
 
@@ -83,48 +82,42 @@ namespace CodeHub.Core.ViewModels.Users
             ToggleFollowingCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue), t => ToggleFollowing());
 
-            GoToGistsCommand = ReactiveCommand.Create();
-            GoToGistsCommand.Subscribe(_ =>
+            GoToGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserGistsViewModel>();
                 vm.Username = Username;
                 NavigateTo(vm);
             });
 
-            GoToRepositoriesCommand = ReactiveCommand.Create();
-            GoToRepositoriesCommand.Subscribe(_ =>
+            GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserRepositoriesViewModel>();
                 vm.Username = Username;
                 NavigateTo(vm);
             });
 
-            GoToOrganizationsCommand = ReactiveCommand.Create();
-            GoToOrganizationsCommand.Subscribe(_ =>
+            GoToOrganizationsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<OrganizationsViewModel>();
                 vm.Username = Username;
                 NavigateTo(vm);
             });
 
-            GoToEventsCommand = ReactiveCommand.Create();
-            GoToEventsCommand.Subscribe(_ =>
+            GoToEventsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Username;
                 NavigateTo(vm);
             });
 
-            GoToFollowingCommand = ReactiveCommand.Create();
-            GoToFollowingCommand.Subscribe(_ =>
+            GoToFollowingCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserFollowingsViewModel>();
                 vm.Username = Username;
                 NavigateTo(vm);
             });
 
-            GoToFollowersCommand = ReactiveCommand.Create();
-            GoToFollowersCommand.Subscribe(_ =>
+            GoToFollowersCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserFollowersViewModel>();
                 vm.Username = Username;
@@ -140,10 +133,11 @@ namespace CodeHub.Core.ViewModels.Users
                     return menu.Show();
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                this.RequestModel(applicationService.Client.AuthenticatedUser.IsFollowing(Username), t as bool?, x => IsFollowing = x.Data);
-                return this.RequestModel(applicationService.Client.Users[Username].Get(), t as bool?, response => User = response.Data);
+                Observable.FromAsync(() => applicationService.GitHubClient.User.Followers.IsFollowingForCurrent(Username))
+                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => IsFollowing = x);
+                User = await applicationService.GitHubClient.User.Get(Username);
             });
         }
     }

@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Users
     {
         public UserView()
         {
-            this.WhenViewModel(x => x.IsLoggedInUser)
+            this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.Users
 			var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Script);
             Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
-            ViewModel.WhenAnyValue(x => x.User).Where(x => x != null).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.User).IsNotNull().Subscribe(x =>
             {
                 HeaderView.ImageUri = x.AvatarUrl;
                 followers.Text = x.Followers.ToString();

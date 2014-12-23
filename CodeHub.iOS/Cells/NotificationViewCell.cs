@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Drawing;
-using GitHubSharp.Models;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Humanizer;
+using CodeHub.Core.ViewModels.Notifications;
 
 namespace CodeHub.iOS.Cells
 {
-    public class NotificationViewCell : ReactiveTableViewCell<NotificationModel>
+    public class NotificationViewCell : ReactiveTableViewCell<NotificationItemViewModel>
     {
         public static NSString Key = new NSString("NotificationTableViewCell");
 
@@ -22,7 +21,6 @@ namespace CodeHub.iOS.Cells
             TextLabel.Font = UIFont.BoldSystemFontOfSize(14f);
             TextLabel.TextColor = Theme.MainTitleColor;
 
-
             DetailTextLabel.Font = UIFont.SystemFontOfSize(12f);
             DetailTextLabel.TextColor = Theme.MainTextColor;
 
@@ -30,20 +28,27 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    TextLabel.Text = x.Subject.Title;
-                    DetailTextLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
+                    TextLabel.Text = x.Title;
+                    DetailTextLabel.Text = x.UpdatedAt;
 
-                    var subject = x.Subject.Type.ToLower();
-                    if (subject.Equals("issue"))
-                        ImageView.Image = Images.Flag;
-                    else if (subject.Equals("pullrequest"))
-                        ImageView.Image = Images.Hand;
-                    else if (subject.Equals("commit"))
-                        ImageView.Image = Images.Commit;
-                    else if (subject.Equals("release"))
-                        ImageView.Image = Images.Tag;
-                    else
-                        ImageView.Image = Images.Notifications;
+                    switch (x.Type)
+                    {
+                        case NotificationItemViewModel.NotificationType.Issue:
+                            ImageView.Image = Images.Flag;
+                            break;
+                        case NotificationItemViewModel.NotificationType.PullRequest:
+                            ImageView.Image = Images.Hand;
+                            break;
+                        case NotificationItemViewModel.NotificationType.Commit:
+                            ImageView.Image = Images.Commit;
+                            break;
+                        case NotificationItemViewModel.NotificationType.Release:
+                            ImageView.Image = Images.Tag;
+                            break;
+                        default:
+                            ImageView.Image = Images.Notifications;
+                            break;
+                    }
                 });
         }
 

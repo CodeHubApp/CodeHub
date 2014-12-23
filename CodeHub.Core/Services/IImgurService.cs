@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using CodeHub.Core.Models;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
     public interface IImgurService
     {
-        Task<ImgurModel> SendImage(byte[] data);
+        Task<ImgurResponse> SendImage(byte[] data);
     }
 }
 

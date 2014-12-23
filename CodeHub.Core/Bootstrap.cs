@@ -8,9 +8,6 @@ using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core
 {
-    /// <summary>
-    /// Define the App type.
-    /// </summary>
     public static class Bootstrap
     {
         public static void Init()

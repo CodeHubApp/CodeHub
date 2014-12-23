@@ -7,7 +7,6 @@ using Xamarin.Utilities.ViewModels;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS;
-using System.Threading.Tasks;
 
 namespace Xamarin.Utilities.ViewControllers
 {
@@ -34,23 +33,22 @@ namespace Xamarin.Utilities.ViewControllers
         protected NewReactiveTableViewController(UITableViewStyle style)
             : base(style)
         {
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+
             this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IProvidesTitle>()
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
-        }
-
-        public override void LoadView()
-        {
-            base.LoadView();
-
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
 
             this.WhenActivated(d =>
             {
                 // Always keep this around since it calls the VM WhenActivated
             });
+        }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
             CreateSearchBar();
             LoadViewModel();
         }
@@ -66,22 +64,56 @@ namespace Xamarin.Utilities.ViewControllers
                     Frame = new RectangleF(0, 0, 320f, 88f),
                     Color = Theme.PrimaryNavigationBarColor,
                 };
-                activityView.StartAnimating();
-                TableView.TableFooterView = activityView;
 
-                iLoadableViewModel.LoadCommand.IsExecuting.Where(x => !x).Skip(1).Take(1).Subscribe(_ =>
+                var refreshControl = new UIRefreshControl();
+                refreshControl.ValueChanged += async (sender, e) => {
+                    if (iLoadableViewModel.LoadCommand.CanExecute(null))
+                    {
+                        await iLoadableViewModel.LoadCommand.ExecuteAsync();
+                        refreshControl.EndRefreshing();
+                    }
+                };
+
+                iLoadableViewModel.LoadCommand.IsExecuting
+                    .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
+                    {
+                        var rows = 0;
+                        if (TableView.Source != null)
+                        {
+                            for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
+                                rows += TableView.Source.RowsInSection(TableView, i);
+                        }
+
+                        if (rows == 0)
+                        {
+                            activityView.StartAnimating();
+                            TableView.TableFooterView = activityView;
+                            RefreshControl = null;
+                        }
+                    });
+
+                iLoadableViewModel.LoadCommand.IsExecuting
+                    .Where(x => !x).Subscribe(_ =>
+                    {
+                        activityView.StopAnimating();
+                        if (TableView.TableFooterView != null)
+                        {
+                            TableView.TableFooterView = null;
+                            TableView.ReloadData();
+                        }
+
+                        if (RefreshControl == null)
+                        {
+                            RefreshControl = refreshControl;
+                        }
+                    });
+
+                this.WhenActivated(d =>
                 {
-                    TableView.TableFooterView = null;
-                    TableView.ReloadData();
-                    activityView.StopAnimating();
-
-                    CreateRefreshControl();
-
                     var iSourceInformsEnd = TableView.Source as IInformsEnd;
-
                     if (iPaginatableViewModel != null && iSourceInformsEnd != null)
                     {
-                        iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x =>
+                        d(iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x =>
                         {
                             activityView.StartAnimating();
                             TableView.TableFooterView = activityView;
@@ -90,18 +122,12 @@ namespace Xamarin.Utilities.ViewControllers
 
                             TableView.TableFooterView = null;
                             activityView.StopAnimating();
-                        });
+                        }));
                     }
                 });
+
                 iLoadableViewModel.LoadCommand.ExecuteIfCan();
             }
-        }
-
-        protected virtual void CreateRefreshControl()
-        {
-            var iLoadableViewModel = ViewModel as ILoadableViewModel;
-            if (iLoadableViewModel != null)
-                RefreshControl = ((ILoadableViewModel)ViewModel).LoadCommand.ToRefreshControl();
         }
 
         protected virtual void CreateSearchBar()

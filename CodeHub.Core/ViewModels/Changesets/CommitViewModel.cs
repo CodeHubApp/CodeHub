@@ -2,8 +2,6 @@ using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Repositories;
-using GitHubSharp.Models;
-using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Reactive;
@@ -14,8 +12,6 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public class CommitViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
     {
-        private readonly IApplicationService _applicationService;
-
 		public string Node { get; set; }
 
 		public string RepositoryOwner { get; set; }
@@ -24,8 +20,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public bool ShowRepository { get; set; }
 
-        private CommitModel _commitModel;
-        public CommitModel Commit
+        private Octokit.GitHubCommit _commitModel;
+        public Octokit.GitHubCommit Commit
         {
             get { return _commitModel; }
             private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
@@ -41,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand GoToCommentCommand { get; private set; }
 
-        public ReactiveList<CommentModel> Comments { get; private set; }
+        public IReadOnlyReactiveList<Octokit.CommitComment> Comments { get; private set; }
 
         public IReactiveCommand GoToUrlCommand { get; private set; }
 
@@ -49,11 +45,10 @@ namespace CodeHub.Core.ViewModels.Changesets
         
         public CommitViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuService)
         {
-            _applicationService = applicationService;
-
             Title = "Commit";
 
-            Comments = new ReactiveList<CommentModel>();
+            var comments = new ReactiveList<Octokit.CommitComment>();
+            Comments = comments.CreateDerivedCollection(x => x);
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
             GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(x => 
@@ -78,12 +73,12 @@ namespace CodeHub.Core.ViewModels.Changesets
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.Node = Node;
-                vm.CommentAdded.Subscribe(Comments.Add);
+                vm.CommentAdded.Subscribe(comments.Add);
                 NavigateTo(vm);
             });
 
             GoToFileCommand = ReactiveCommand.Create();
-            GoToFileCommand.OfType<CommitModel.CommitFileModel>().Subscribe(x =>
+            GoToFileCommand.OfType<Octokit.GitHubCommitFile>().Subscribe(x =>
             {
                 if (x.Patch == null)
                 {
@@ -91,18 +86,6 @@ namespace CodeHub.Core.ViewModels.Changesets
                     vm.Branch = Commit.Sha;
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
-//                    vm.Items = new [] 
-//                    { 
-//                        new SourceViewModel.SourceItemModel 
-//                        {
-//                            ForceBinary = true,
-//                            GitUrl = x.BlobUrl,
-//                            Name = x.Filename,
-//                            Path = x.Filename,
-//                            HtmlUrl = x.BlobUrl
-//                        }
-//                    };
-//                    vm.CurrentItemIndex = 0;
                     NavigateTo(vm);
                 }
                 else
@@ -116,28 +99,40 @@ namespace CodeHub.Core.ViewModels.Changesets
                 }
             });
 
-            var copyShaCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null))
+            var validCommitObservable = this.WhenAnyValue(x => x.Commit).Select(x => x != null);
+
+            var copyShaCommand = ReactiveCommand.Create(validCommitObservable)
                 .WithSubscription(x => actionMenuService.SendToPasteBoard(this.Commit.Sha));
 
-            var shareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null))
+            var shareCommand = ReactiveCommand.Create(validCommitObservable)
                 .WithSubscription(x => actionMenuService.ShareUrl(this.Commit.HtmlUrl));
+
+            var browseCodeCommand = ReactiveCommand.Create(validCommitObservable)
+                .WithSubscription(x => 
+                {
+                    var vm = this.CreateViewModel<SourceTreeViewModel>();
+                    vm.RepositoryName = RepositoryName;
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.Branch = this.Commit.Sha;
+                    NavigateTo(vm);
+                });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
                 var menu = actionMenuService.Create(Title);
                 menu.AddButton("Add Comment", GoToCommentCommand);
                 menu.AddButton("Copy SHA", copyShaCommand);
+                menu.AddButton("Browse Code", browseCodeCommand);
                 menu.AddButton("Share", shareCommand);
                 menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
                 return menu.Show();
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var forceCacheInvalidation = t as bool?;
-                var t1 = this.RequestModel(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Get(), forceCacheInvalidation, response => Commit = response.Data);
-                Comments.SimpleCollectionLoad(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.GetAll(), forceCacheInvalidation);
-                return t1;
+                Observable.FromAsync(() => applicationService.GitHubClient.Repository.RepositoryComments.GetForCommit(RepositoryOwner, RepositoryName, Node))
+                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => comments.Reset(x));
+                Commit = await applicationService.GitHubClient.Repository.Commits.Get(RepositoryOwner, RepositoryName, Node);
             });
         }
     }

@@ -92,6 +92,20 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _releases, value); }
         }
 
+        private int? _stargazers;
+        public int? Stargazers
+        {
+            get { return _stargazers; }
+            private set { this.RaiseAndSetIfChanged(ref _stargazers, value); }
+        }
+
+        private int? _watchers;
+        public int? Watchers
+        {
+            get { return _watchers; }
+            private set { this.RaiseAndSetIfChanged(ref _watchers, value); }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
@@ -149,6 +163,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             _accountsService = accountsService;
 
             this.WhenAnyValue(x => x.RepositoryName).Subscribe(x => Title = x);
+
+            this.WhenAnyValue(x => x.Repository).Subscribe(x => 
+            {
+                Stargazers = x != null ? (int?)x.StargazersCount : null;
+                Watchers = x != null ? (int?)x.SubscribersCount : null;
+            });
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue), t => ToggleStar());
@@ -388,7 +408,10 @@ namespace CodeHub.Core.ViewModels.Repositories
 				await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].StopWatching());
 	        else
 				await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Watch());
-			IsWatched = !IsWatched.Value;
+
+            if (Watchers.HasValue)
+                Watchers += (IsWatched.Value ? -1 : 1);
+            IsWatched = !IsWatched.Value;
         }
 
 		private async Task ToggleStar()
@@ -398,9 +421,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             if (IsStarred.Value)
                 await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Unstar());
-	        else
+            else
                 await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Star());
-	        IsStarred = !IsStarred.Value;
+
+            if (Stargazers.HasValue)
+                Stargazers += (IsStarred.Value ? -1 : 1);
+            IsStarred = !IsStarred.Value;
         }
     }
 }

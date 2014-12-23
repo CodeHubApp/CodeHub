@@ -59,7 +59,7 @@ namespace CodeHub.Core.ViewModels
             });
         }
 
-        public static Task SimpleCollectionLoad<T>(this ReactiveList<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh, Action<Func<Task>> assignMore = null) where T : new()
+        public static Task SimpleCollectionLoad<T>(this IReactiveList<T> viewModel, GitHubRequest<List<T>> request, bool? forceDataRefresh, Action<Func<Task>> assignMore = null) where T : new()
         {
             if (assignMore == null)
                 assignMore = (x) => {};

@@ -46,7 +46,6 @@
     <Compile Include="Filters\RepositoriesFilterModel.cs" />
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
-    <Compile Include="Models\ImgurModel.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
@@ -173,6 +172,10 @@
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
+    <Compile Include="ViewModels\Notifications\NotificationItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueGroupViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueEventItemViewModel.cs" />
+    <Compile Include="Data\ImgurResponse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

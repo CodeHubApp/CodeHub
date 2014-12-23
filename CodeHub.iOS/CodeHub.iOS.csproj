@@ -232,7 +232,6 @@
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <Compile Include="Cells\RepositoryCellView.designer.cs" />
     <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\IssueElement.cs" />
     <Compile Include="Elements\MenuElement.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
@@ -358,6 +357,13 @@
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
     <Compile Include="Views\Source\CommitMesasgeView.cs" />
+    <None Include="WebViews\CommitDiffRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommitDiffRazorView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\CommitDiffRazorView.cs">
+      <DependentUpon>CommitDiffRazorView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -742,15 +748,13 @@
     <Content Include="WebResources\styles\vs.css" />
     <Content Include="WebResources\styles\xcode.css" />
     <Content Include="WebResources\styles\zenburn.css" />
-    <Content Include="Diff\app.js" />
-    <Content Include="Diff\diffindex.html" />
-    <Content Include="Diff\difflib.js" />
-    <Content Include="Diff\diffview.css" />
-    <Content Include="Diff\diffview.js" />
-    <Content Include="Diff\jquery.min.js" />
     <Content Include="WebResources\marked.js" />
     <BundleResource Include="Themes\Default.json" />
     <BundleResource Include="Themes\InvertedDefault.json" />
+    <Content Include="WebViews\Diff\app.js" />
+    <Content Include="WebViews\Diff\difflib.js" />
+    <Content Include="WebViews\Diff\diffview.css" />
+    <Content Include="WebViews\Diff\diffview.js" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
