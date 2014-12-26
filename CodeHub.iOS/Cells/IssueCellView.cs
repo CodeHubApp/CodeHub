@@ -29,20 +29,29 @@ namespace CodeHub.iOS.Cells
             Caption.TextColor = Theme.MainTitleColor;
             Number.TextColor = Theme.MainTitleColor;
             AddSubview(new SeperatorIssues {Frame = new RectangleF(65f, 5f, 1f, Frame.Height - 10f)});
-            Image1.Image = Theme.CurrentTheme.IssueCellImage1;
-            Image2.Image = Theme.CurrentTheme.IssueCellImage2;
-            Image3.Image = Theme.CurrentTheme.IssueCellImage3;
-            Image4.Image = Theme.CurrentTheme.IssueCellImage4;
+
+            Image1.Image = Images.Gear.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image1.TintColor = Label1.TextColor;
+
+            Image2.Image = Images.Comment.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image2.TintColor = Label2.TextColor;
+
+            Image3.Image = Images.Person.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image3.TintColor = Label3.TextColor;
+
+            Image4.Image = Images.Pencil.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image4.TintColor = Label4.TextColor;
+
             SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
 
-            Caption.Font = Caption.Font.WithSize(Caption.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            Number.Font = Number.Font.WithSize(Number.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            Label1.Font = Label1.Font.WithSize(Label1.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            Label2.Font = Label2.Font.WithSize(Label2.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            Label3.Font = Label3.Font.WithSize(Label3.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            Label4.Font = Label4.Font.WithSize(Label4.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-            IssueType.Font = IssueType.Font.WithSize(IssueType.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
-
+            const float fontRatio = 1.0f;
+            Caption.Font = Caption.Font.WithSize(Caption.Font.PointSize * fontRatio);
+            Number.Font = Number.Font.WithSize(Number.Font.PointSize * fontRatio);
+            Label1.Font = Label1.Font.WithSize(Label1.Font.PointSize * fontRatio);
+            Label2.Font = Label2.Font.WithSize(Label2.Font.PointSize * fontRatio);
+            Label3.Font = Label3.Font.WithSize(Label3.Font.PointSize * fontRatio);
+            Label4.Font = Label4.Font.WithSize(Label4.Font.PointSize * fontRatio);
+            IssueType.Font = IssueType.Font.WithSize(IssueType.Font.PointSize * fontRatio);
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)

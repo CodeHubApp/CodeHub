@@ -43,10 +43,10 @@ namespace CodeHub.iOS.Views.App
 
             //Add some nice looking colors and effects
             TableView.TableFooterView = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
-            TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
+            TableView.BackgroundColor = Themes.Theme.Current.MenuBackgroundColor;
             TableView.ScrollsToTop = false;
             TableView.SeparatorInset = UIEdgeInsets.Zero;
-            TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
+            TableView.SeparatorColor = Themes.Theme.Current.PrimaryNavigationBarColor;
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
 
             ViewModel.WhenAnyValue(x => x.Notifications).Where(_ => _notifications != null).Subscribe(x =>
@@ -72,26 +72,26 @@ namespace CodeHub.iOS.Views.App
             sections.Add(new Section
             {
                 new MenuElement("Profile", () => ViewModel.GoToProfileCommand.ExecuteIfCan(), Images.Person),
-                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsCommand.ExecuteIfCan(), Images.News),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Images.Flag)
+                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Inbox) { NotificationNumber = ViewModel.Notifications }),
+                new MenuElement("News", () => ViewModel.GoToNewsCommand.ExecuteIfCan(), Images.RadioTower),
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Images.IssueOpened)
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Event, ViewModel.Account.AvatarUrl));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Rss, ViewModel.Account.AvatarUrl) { TintImage = false });
             if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
             {
                 eventsSection.Add(ViewModel.Organizations.Select(x =>
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event, x.AvatarUrl)));
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Rss, x.AvatarUrl) { TintImage = false }));
             }
             sections.Add(eventsSection);
 
             var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
 			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Images.Repo));
-			//repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
             repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Images.Star));
-            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Chart));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Explore));
+            repoSection.Add(new MenuElement("Watching", () => ViewModel.GoToWatchedRepositoriesCommand.ExecuteIfCan(), Images.Eye));
+            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Pulse));
+            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Telescope));
             sections.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
@@ -110,27 +110,27 @@ namespace CodeHub.iOS.Views.App
             if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
             {
                 orgSection.Add(ViewModel.Organizations.Select(x => 
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Team, x.AvatarUrl)));
+                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Organization, x.AvatarUrl) { TintImage = false }));
             }
             else
-				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Group));
+                orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Organization));
 
             //There should be atleast 1 thing...
             if (orgSection.Count > 0)
                 sections.Add(orgSection);
 
             var gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Script));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star2));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Public));
+            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Gist));
+            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star));
+            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Globe));
             sections.Add(gistsSection);
 //
             var infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
             sections.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Cog));
-            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Unlocked));
-            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Flag));
-            infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Images.User));
+            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Gear));
+            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Lock));
+            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Question));
+            infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Images.Person));
 
             _dialogSource.Root.Reset(sections);
 		}
@@ -162,6 +162,7 @@ namespace CodeHub.iOS.Views.App
                     GetActualImage(pinnedRepo))
 			{
 				PinnedRepo = pinnedRepo;
+                TintImage = false;
 			}
 		}
 

@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Notifications
 
             this.WhenViewModel(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
             this.WhenViewModel(x => x.ReadAllCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CheckButton }.WithCommand(x));
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.CheckButton }.WithCommand(x));
         }
 
         public override void ViewDidLoad()

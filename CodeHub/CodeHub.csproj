@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{A15D4EEA-D5AD-4402-BE88-EB4916C95323}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CodeHub</RootNamespace>
+    <AssemblyName>CodeHub</AssemblyName>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebViews\Comment.cs" />
+    <Compile Include="WebViews\CommentsView.cs">
+      <DependentUpon>..\..\CodeHub.iOS\WebViews\CommentsView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\CommitDiffRazorView.cs">
+      <DependentUpon>..\..\CodeHub.iOS\WebViews\CommitDiffRazorView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\DescriptionView.cs">
+      <DependentUpon>..\..\CodeHub.iOS\WebViews\DescriptionView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\MarkdownView.cs">
+      <DependentUpon>..\..\CodeHub.iOS\WebViews\MarkdownView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\SourceBrowserModel.cs" />
+    <Compile Include="WebViews\SyntaxHighlighterView.cs">
+      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Releases\ReleaseRazorView.cs">
+      <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <None Include="WebViews\CommentsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\CommitDiffRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommitDiffRazorView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\DescriptionView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>DescriptionView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\MarkdownView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\SyntaxHighlighterView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
+    </None>
+    <None Include="Views\Releases\ReleaseRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WebViews\Diff\app.js" />
+    <Content Include="WebViews\Diff\difflib.js" />
+    <Content Include="WebViews\Diff\diffview.css" />
+    <Content Include="WebViews\Diff\diffview.js" />
+    <Content Include="WebResources\highlight.pack.js" />
+    <Content Include="WebResources\marked.js" />
+    <Content Include="WebResources\styles\arta.css" />
+    <Content Include="WebResources\styles\ascetic.css" />
+    <Content Include="WebResources\styles\atelier-dune.dark.css" />
+    <Content Include="WebResources\styles\atelier-dune.light.css" />
+    <Content Include="WebResources\styles\atelier-forest.dark.css" />
+    <Content Include="WebResources\styles\atelier-forest.light.css" />
+    <Content Include="WebResources\styles\atelier-heath.dark.css" />
+    <Content Include="WebResources\styles\atelier-heath.light.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
+    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
+    <Content Include="WebResources\styles\atelier-seaside.light.css" />
+    <Content Include="WebResources\styles\brown_paper.css" />
+    <Content Include="WebResources\styles\brown_papersq.png" />
+    <Content Include="WebResources\styles\dark.css" />
+    <Content Include="WebResources\styles\default.css" />
+    <Content Include="WebResources\styles\docco.css" />
+    <Content Include="WebResources\styles\far.css" />
+    <Content Include="WebResources\styles\foundation.css" />
+    <Content Include="WebResources\styles\github.css" />
+    <Content Include="WebResources\styles\googlecode.css" />
+    <Content Include="WebResources\styles\idea.css" />
+    <Content Include="WebResources\styles\ir_black.css" />
+    <Content Include="WebResources\styles\magula.css" />
+    <Content Include="WebResources\styles\mono-blue.css" />
+    <Content Include="WebResources\styles\monokai.css" />
+    <Content Include="WebResources\styles\monokai_sublime.css" />
+    <Content Include="WebResources\styles\obsidian.css" />
+    <Content Include="WebResources\styles\paraiso.dark.css" />
+    <Content Include="WebResources\styles\paraiso.light.css" />
+    <Content Include="WebResources\styles\pojoaque.css" />
+    <Content Include="WebResources\styles\pojoaque.jpg" />
+    <Content Include="WebResources\styles\railscasts.css" />
+    <Content Include="WebResources\styles\rainbow.css" />
+    <Content Include="WebResources\styles\school_book.css" />
+    <Content Include="WebResources\styles\school_book.png" />
+    <Content Include="WebResources\styles\solarized_dark.css" />
+    <Content Include="WebResources\styles\solarized_light.css" />
+    <Content Include="WebResources\styles\sunburst.css" />
+    <Content Include="WebResources\styles\tomorrow.css" />
+    <Content Include="WebResources\styles\tomorrow-night.css" />
+    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
+    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
+    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <Content Include="WebResources\styles\vs.css" />
+    <Content Include="WebResources\styles\xcode.css" />
+    <Content Include="WebResources\styles\zenburn.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
+    <Folder Include="Views\Releases\" />
+  </ItemGroup>
+</Project>

@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Organizations;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Organizations
 {
@@ -15,13 +16,13 @@ namespace CodeHub.iOS.Views.Organizations
             HeaderView.SubText = "Organization";
 
             var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
-            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
-            var members = new StyledStringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Images.Following);
-            var teams = new StyledStringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Images.Team);
-            var events = new StyledStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Event);
-            var repos = new StyledStringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Images.Repo);
-            var gists = new StyledStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Script);
+            var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);
+            var following = split.AddButton("Following", "-", ViewModel.GoToFollowingCommand.ExecuteIfCan);
+            var members = new DialogStringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Images.Following);
+            var teams = new DialogStringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Images.Organization);
+            var events = new DialogStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Rss);
+            var repos = new DialogStringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Images.Repo);
+            var gists = new DialogStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Gist);
             Root.Reset(new Section { split }, new Section { members, teams }, new Section { events }, new Section { repos, gists });
 
             ViewModel.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>

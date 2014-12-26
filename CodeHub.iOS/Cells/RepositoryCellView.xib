@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -22,7 +22,7 @@
                         <size key="shadowOffset" width="1" height="1"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="7">
-                        <rect key="frame" x="52" y="70" width="12" height="12"/>
+                        <rect key="frame" x="52" y="72" width="12" height="12"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="12" id="EiR-ir-NOq"/>
@@ -42,7 +42,7 @@
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="116" y="70" width="12" height="12"/>
+                        <rect key="frame" x="116" y="72" width="12" height="12"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="8gb-oI-Pch"/>
@@ -83,8 +83,8 @@
                             <constraint firstAttribute="height" constant="36" id="lY0-6B-c8f"/>
                         </constraints>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="46">
-                        <rect key="frame" x="180" y="70" width="12" height="12"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="46">
+                        <rect key="frame" x="180" y="72" width="12" height="12"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="NWq-wc-KPH"/>
@@ -98,7 +98,7 @@
                     <constraint firstItem="40" firstAttribute="leading" secondItem="46" secondAttribute="trailing" constant="8" id="7j1-8R-6Mx"/>
                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="43" secondAttribute="bottom" constant="8" id="7qR-xu-Fdb"/>
                     <constraint firstItem="31" firstAttribute="top" secondItem="8" secondAttribute="top" id="8GT-fN-5yx"/>
-                    <constraint firstItem="8" firstAttribute="top" secondItem="7" secondAttribute="top" id="8dT-wR-bof"/>
+                    <constraint firstItem="8" firstAttribute="top" secondItem="7" secondAttribute="top" constant="-2" id="8dT-wR-bof"/>
                     <constraint firstItem="31" firstAttribute="centerY" secondItem="40" secondAttribute="centerY" id="9e6-nA-gl0"/>
                     <constraint firstItem="46" firstAttribute="leading" secondItem="31" secondAttribute="trailing" constant="8" id="FHk-eS-wAZ"/>
                     <constraint firstItem="43" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="I34-Eb-v1I"/>
@@ -106,9 +106,9 @@
                     <constraint firstItem="6" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="NCm-z4-JYf"/>
                     <constraint firstItem="46" firstAttribute="top" secondItem="30" secondAttribute="top" id="ROE-oI-gG4"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" id="UEK-at-WWu"/>
-                    <constraint firstItem="46" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="6" id="W0a-gq-cHX"/>
+                    <constraint firstItem="46" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="8" id="W0a-gq-cHX"/>
                     <constraint firstAttribute="trailing" secondItem="6" secondAttribute="trailing" constant="8" id="XiP-59-wz3"/>
-                    <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" constant="8" id="fMe-fN-8a4"/>
+                    <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" constant="6" id="fMe-fN-8a4"/>
                     <constraint firstItem="6" firstAttribute="leading" secondItem="43" secondAttribute="trailing" constant="8" id="gvt-73-dnh"/>
                     <constraint firstItem="31" firstAttribute="leading" secondItem="30" secondAttribute="trailing" constant="8" id="jNa-V5-yZD"/>
                     <constraint firstItem="8" firstAttribute="leading" secondItem="7" secondAttribute="trailing" constant="8" id="l0Q-w9-IRZ"/>

@@ -1,5 +1,4 @@
 using CodeHub.Core.ViewModels.Events;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using Xamarin.Utilities.ViewControllers;
 

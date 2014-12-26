@@ -5,6 +5,8 @@ using System.Reactive.Linq;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.Services;
 using ReactiveUI;
+using CodeHub.Views.Releases;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Releases
 {
@@ -15,13 +17,15 @@ namespace CodeHub.iOS.Views.Releases
         {
             Web.ScalesPageToFit = true;
 
-            this.WhenViewModel(x => x.ShowMenuCommand)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x == null ? null : x.ToBarButtonItem(UIBarButtonSystemItem.Action));
 
-            this.WhenViewModel(x => x.ContentText).IsNotNull().Subscribe(contentText => 
+            this.WhenAnyValue(x => x.ViewModel.ContentText).IsNotNull().Subscribe(contentText => 
             {
-                var name = string.IsNullOrEmpty(ViewModel.ReleaseModel.Name) ? ViewModel.ReleaseModel.TagName : ViewModel.ReleaseModel.Name;
-                var model = new ReleaseRazorViewModel { Body = contentText, Release = ViewModel.ReleaseModel, Name = name };
+                var release = ViewModel.ReleaseModel;
+                var name = string.IsNullOrEmpty(release.Name) ? release.TagName : release.Name;
+                var releaseTime = release.PublishedAt.HasValue ? release.PublishedAt.Value.UtcDateTime.Humanize() : release.CreatedAt.UtcDateTime.Humanize();
+                var model = new ReleaseRazorViewModel { Body = contentText, Author = release.Author.Login, Name = name, AuthorAvatarUrl = release.Author.AvatarUrl, ReleaseTime = releaseTime };
                 LoadContent(new ReleaseRazorView { Model = model }.GenerateString());
             });
         }

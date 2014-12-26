@@ -46,8 +46,10 @@ namespace CodeHub.iOS.Views
         {
             NavigationItem.TitleView = SlideUpTitle = new SlideUpTitleView(44f)
             {
-                Offset = 100f
+                Offset = 100f,
             };
+
+
 
             HeaderView = new ImageAndTitleHeaderView();
         }
@@ -62,6 +64,7 @@ namespace CodeHub.iOS.Views
             HeaderView.BackgroundColor = NavigationController.NavigationBar.BackgroundColor;
             HeaderView.TextColor = NavigationController.NavigationBar.TintColor;
             HeaderView.SubTextColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f);
+            (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
         }
 
         public override void ViewWillDisappear(bool animated)

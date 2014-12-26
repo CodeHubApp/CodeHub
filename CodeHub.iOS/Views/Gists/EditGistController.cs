@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Gists
                     ViewModel.DismissCommand.ExecuteIfCan());
             NavigationItem.LeftBarButtonItem.EnableIfExecutable(ViewModel.DismissCommand.CanExecuteObservable);
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton,
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton,
                 UIBarButtonItemStyle.Plain, (s, e) =>
                     ViewModel.SaveCommand.ExecuteIfCan());
             NavigationItem.LeftBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);

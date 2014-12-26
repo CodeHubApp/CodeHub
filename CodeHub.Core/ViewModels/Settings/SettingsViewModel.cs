@@ -13,7 +13,6 @@ namespace CodeHub.Core.ViewModels.Settings
     {
         private readonly IApplicationService _applicationService;
         private readonly IFeaturesService _featuresService;
-        private readonly IDefaultValueService _defaultValueService;
         private readonly IAccountsService _accountsService;
         private readonly IEnvironmentalService _environmentService;
         private readonly IPushNotificationsService _pushNotificationsService;
@@ -30,7 +29,14 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public string SyntaxHighlighter
         {
-            get { return _applicationService.Account.CodeEditTheme.Humanize(LetterCasing.Title) ?? "Default"; }
+            get 
+            { 
+                const string @default = "Default";
+                if (_applicationService.Account.CodeEditTheme != null)
+                    return _applicationService.Account.CodeEditTheme.Humanize(LetterCasing.Title) ?? @default;
+                else
+                    return @default;
+            }
             private set { this.RaisePropertyChanged(); }
         }
 
@@ -84,14 +90,13 @@ namespace CodeHub.Core.ViewModels.Settings
         public IReactiveCommand GoToSyntaxHighlighterCommand { get; private set; }
 
         public SettingsViewModel(IApplicationService applicationService, IFeaturesService featuresService, 
-            IDefaultValueService defaultValueService, IAccountsService accountsService,
-            IEnvironmentalService environmentalService, IPushNotificationsService pushNotificationsService)
+            IAccountsService accountsService, IEnvironmentalService environmentalService, 
+            IPushNotificationsService pushNotificationsService)
         {
             Title = "Account Settings";
 
             _applicationService = applicationService;
             _featuresService = featuresService;
-            _defaultValueService = defaultValueService;
             _accountsService = accountsService;
             _environmentService = environmentalService;
             _pushNotificationsService = pushNotificationsService;

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
 using Humanizer;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues

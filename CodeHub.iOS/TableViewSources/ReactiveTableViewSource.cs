@@ -42,6 +42,12 @@ namespace CodeHub.iOS.TableViewSources
         {
             return _estimatedHeight;
         }
+
+        public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        {
+            base.RowSelected(tableView, indexPath);
+            tableView.DeselectRow(indexPath, true);
+        }
     }
 
     public interface IInformsEnd

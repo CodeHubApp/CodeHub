@@ -51,6 +51,11 @@ namespace CodeHub.Core.Data
         public string CodeEditTheme { get; set; }
 
         /// <summary>
+        /// Gets or sets the code hub theme.
+        /// </summary>
+        public string CodeHubTheme { get; set; }
+
+        /// <summary>
         /// Gets or sets the name of the user
         /// </summary>
         /// <value>The name.</value>
@@ -85,6 +90,7 @@ namespace CodeHub.Core.Data
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
             DefaultStartupView = "News";
+            CodeHubTheme = "Default";
         }
 
         public string Key

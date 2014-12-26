@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Gists
 
             _source = new EditSource(this);
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
             NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);
 
             ViewModel.WhenAnyValue(x => x.Description, x => x.Files, x => x.IsPublic, (x, x1, x2) => Unit.Default)

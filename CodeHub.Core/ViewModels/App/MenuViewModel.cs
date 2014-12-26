@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using GitHubSharp.Models;
 using ReactiveUI;
 using CodeHub.Core.Data;
@@ -138,6 +137,9 @@ namespace CodeHub.Core.ViewModels.App
             GoToStarredRepositoriesCommand = ReactiveCommand.Create().WithSubscription(
                 _ => NavigateTo(this.CreateViewModel<RepositoriesStarredViewModel>()));
 
+            GoToWatchedRepositoriesCommand = ReactiveCommand.Create().WithSubscription(
+                _ => NavigateTo(this.CreateViewModel<RepositoriesWatchedViewModel>()));
+
             GoToPublicGistsCommand = ReactiveCommand.Create().WithSubscription(
                 _ => NavigateTo(this.CreateViewModel<PublicGistsViewModel>()));
 
@@ -198,6 +200,9 @@ namespace CodeHub.Core.ViewModels.App
 
 		[PotentialStartupViewAttribute("Starred Repositories")]
         public IReactiveCommand<object> GoToStarredRepositoriesCommand { get; private set; }
+
+        [PotentialStartupViewAttribute("Watched Repositories")]
+        public IReactiveCommand<object> GoToWatchedRepositoriesCommand { get; private set; }
 
 		[PotentialStartupViewAttribute("Owned Repositories")]
 		public IReactiveCommand<object> GoToOwnedRepositoriesCommand { get; private set; }

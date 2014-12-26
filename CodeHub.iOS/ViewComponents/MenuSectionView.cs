@@ -11,7 +11,7 @@ namespace CodeHub.iOS.ViewComponents
 			//var background = new UIImageView(Theme.CurrentTheme.MenuSectionBackground);
 			//background.Frame = this.Frame; 
 
-			this.BackgroundColor = UIColor.FromRGB(50, 50, 50);
+            this.BackgroundColor = Themes.Theme.Current.PrimaryNavigationBarColor;
 
             var label = new UILabel(); 
 			label.BackgroundColor = UIColor.Clear;

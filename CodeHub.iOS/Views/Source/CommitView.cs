@@ -9,7 +9,7 @@ using GitHubSharp.Models;
 using Xamarin.Utilities.DialogElements;
 using System.Reactive;
 using System.Collections.Generic;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using Humanizer;
 
 namespace CodeHub.iOS.Views.Source

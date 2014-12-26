@@ -184,9 +184,7 @@
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\MyIssuesFilterViewController.cs" />
     <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
-    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
@@ -284,37 +282,6 @@
     <Compile Include="TableViewSources\ReleasesTableViewSource.cs" />
     <Compile Include="Cells\ReleaseTableViewCell.cs" />
     <Compile Include="Views\Releases\ReleaseView.cs" />
-    <None Include="Views\Releases\ReleaseRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
-    </None>
-    <Compile Include="Views\Releases\ReleaseRazorView.cs">
-      <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
-    <Compile Include="WebViews\MarkdownView.cs">
-      <DependentUpon>MarkdownView.cshtml</DependentUpon>
-    </Compile>
-    <None Include="WebViews\MarkdownView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>MarkdownView.cs</LastGenOutput>
-    </None>
-    <None Include="WebViews\SyntaxHighlighterView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\SyntaxHighlighterView.cs">
-      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
-    </Compile>
-    <Compile Include="WebViews\SourceBrowserModel.cs" />
-    <Compile Include="WebViews\Comment.cs" />
-    <None Include="WebViews\CommentsView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommentsView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\CommentsView.cs">
-      <DependentUpon>CommentsView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="TableViewSources\SourceContentTableViewSource.cs" />
     <Compile Include="Cells\SourceContentCellView.cs" />
     <Compile Include="ViewControllers\ThemedNavigationController.cs" />
@@ -333,13 +300,6 @@
     <Compile Include="ViewComponents\MarkdownAccessoryView.cs" />
     <Compile Include="Views\ReactiveDialogViewController.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
-    <None Include="WebViews\DescriptionView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>DescriptionView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\DescriptionView.cs">
-      <DependentUpon>DescriptionView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="Elements\HtmlElement.cs" />
     <Compile Include="Cells\MilestoneTableViewCell.cs" />
     <Compile Include="Cells\MenuTableViewCell.cs" />
@@ -357,13 +317,10 @@
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
     <Compile Include="Views\Source\CommitMesasgeView.cs" />
-    <None Include="WebViews\CommitDiffRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommitDiffRazorView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\CommitDiffRazorView.cs">
-      <DependentUpon>CommitDiffRazorView.cshtml</DependentUpon>
-    </Compile>
+    <Compile Include="Views\Repositories\RepositoriesWatchedView.cs" />
+    <Compile Include="Elements\SplitViewElement.cs" />
+    <Compile Include="Elements\DialogStringElement.cs" />
+    <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -403,9 +360,6 @@
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.5.1\lib\monotouch\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Services" />
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.0.4\lib\MonoTouch\Akavache.dll</HintPath>
@@ -434,28 +388,15 @@
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\anonymous%402x.png">
-      <DependentUpon>anonymous.png</DependentUpon>
-    </Content>
-    <Content Include="Images\anonymous.png" />
-    <Content Include="Images\bin_closed%402x.png">
-      <DependentUpon>bin_closed.png</DependentUpon>
-    </Content>
-    <Content Include="Images\bin_closed.png" />
-    <Content Include="Images\branch%402x.png">
-      <DependentUpon>branch.png</DependentUpon>
-    </Content>
-    <Content Include="Images\branch.png" />
     <Content Include="Images\Buttons\black_button%402x.png">
       <DependentUpon>black_button.png</DependentUpon>
     </Content>
     <Content Include="Images\Buttons\black_button.png" />
-    <Content Include="Images\Buttons\fork%402x.png">
-      <DependentUpon>fork.png</DependentUpon>
-    </Content>
-    <Content Include="Images\Buttons\fork.png" />
     <Content Include="Images\Buttons\grey_button%402x.png">
       <DependentUpon>grey_button.png</DependentUpon>
     </Content>
@@ -468,115 +409,11 @@
       <DependentUpon>view.png</DependentUpon>
     </Content>
     <Content Include="Images\Buttons\view.png" />
-    <Content Include="Images\cog%402x.png">
-      <DependentUpon>cog.png</DependentUpon>
-    </Content>
-    <Content Include="Images\cog.png" />
-    <Content Include="Images\comments%402x.png">
-      <DependentUpon>comments.png</DependentUpon>
-    </Content>
-    <Content Include="Images\comments.png" />
-    <Content Include="Images\commit%402x.png">
-      <DependentUpon>commit.png</DependentUpon>
-    </Content>
-    <Content Include="Images\commit.png" />
-    <Content Include="Images\create%402x.png">
-      <DependentUpon>create.png</DependentUpon>
-    </Content>
-    <Content Include="Images\create.png" />
-    <Content Include="Images\events%402x.png">
-      <DependentUpon>events.png</DependentUpon>
-    </Content>
-    <Content Include="Images\events.png" />
-    <Content Include="Images\explore%402x.png">
-      <DependentUpon>explore.png</DependentUpon>
-    </Content>
-    <Content Include="Images\explore.png" />
-    <Content Include="Images\eye%402x.png">
-      <DependentUpon>eye.png</DependentUpon>
-    </Content>
-    <Content Include="Images\eye.png" />
-    <Content Include="Images\file%402x.png">
-      <DependentUpon>file.png</DependentUpon>
-    </Content>
-    <Content Include="Images\file.png" />
-    <Content Include="Images\flag%402x.png">
-      <DependentUpon>flag.png</DependentUpon>
-    </Content>
-    <Content Include="Images\flag.png" />
-    <Content Include="Images\folder%402x.png">
-      <DependentUpon>folder.png</DependentUpon>
-    </Content>
-    <Content Include="Images\folder.png" />
     <Content Include="Images\following%402x.png">
       <DependentUpon>following.png</DependentUpon>
     </Content>
     <Content Include="Images\following.png" />
-    <Content Include="Images\fork%402x.png">
-      <DependentUpon>fork.png</DependentUpon>
-    </Content>
-    <Content Include="Images\fork.png" />
-    <Content Include="Images\group%402x.png">
-      <DependentUpon>group.png</DependentUpon>
-    </Content>
-    <Content Include="Images\group.png" />
-    <Content Include="Images\hand%402x.png">
-      <DependentUpon>hand.png</DependentUpon>
-    </Content>
-    <Content Include="Images\hand.png" />
-    <Content Include="Images\heart%402x.png">
-      <DependentUpon>heart.png</DependentUpon>
-    </Content>
-    <Content Include="Images\heart.png" />
-    <Content Include="Images\info%402x.png">
-      <DependentUpon>info.png</DependentUpon>
-    </Content>
-    <Content Include="Images\info.png" />
-    <Content Include="Images\language%402x.png">
-      <DependentUpon>language.png</DependentUpon>
-    </Content>
-    <Content Include="Images\language.png" />
-    <Content Include="Images\locked%402x.png">
-      <DependentUpon>locked.png</DependentUpon>
-    </Content>
-    <Content Include="Images\locked.png" />
     <Content Include="Images\Logos\github.png" />
-    <Content Include="Images\merge%402x.png">
-      <DependentUpon>merge.png</DependentUpon>
-    </Content>
-    <Content Include="Images\merge.png" />
-    <Content Include="Images\milestone%402x.png">
-      <DependentUpon>milestone.png</DependentUpon>
-    </Content>
-    <Content Include="Images\milestone.png" />
-    <Content Include="Images\news%402x.png">
-      <DependentUpon>news.png</DependentUpon>
-    </Content>
-    <Content Include="Images\news.png" />
-    <Content Include="Images\notifications%402x.png">
-      <DependentUpon>notifications.png</DependentUpon>
-    </Content>
-    <Content Include="Images\notifications.png" />
-    <Content Include="Images\pencil%402x.png">
-      <DependentUpon>pencil.png</DependentUpon>
-    </Content>
-    <Content Include="Images\pencil.png" />
-    <Content Include="Images\person%402x.png">
-      <DependentUpon>person.png</DependentUpon>
-    </Content>
-    <Content Include="Images\person.png" />
-    <Content Include="Images\priority%402x.png">
-      <DependentUpon>priority.png</DependentUpon>
-    </Content>
-    <Content Include="Images\priority.png" />
-    <Content Include="Images\public%402x.png">
-      <DependentUpon>public.png</DependentUpon>
-    </Content>
-    <Content Include="Images\public.png" />
-    <Content Include="Images\repo%402x.png">
-      <DependentUpon>repo.png</DependentUpon>
-    </Content>
-    <Content Include="Images\repo.png" />
     <BundleResource Include="Images\repository%402x.png">
       <DependentUpon>repository.png</DependentUpon>
     </BundleResource>
@@ -585,42 +422,6 @@
       <DependentUpon>repository_fork.png</DependentUpon>
     </BundleResource>
     <Content Include="Images\repository_fork.png" />
-    <Content Include="Images\script%402x.png">
-      <DependentUpon>script.png</DependentUpon>
-    </Content>
-    <Content Include="Images\script.png" />
-    <Content Include="Images\size%402x.png">
-      <DependentUpon>size.png</DependentUpon>
-    </Content>
-    <Content Include="Images\size.png" />
-    <Content Include="Images\star%402x.png">
-      <DependentUpon>star.png</DependentUpon>
-    </Content>
-    <Content Include="Images\star.png" />
-    <Content Include="Images\star2%402x.png">
-      <DependentUpon>star2.png</DependentUpon>
-    </Content>
-    <Content Include="Images\star2.png" />
-    <Content Include="Images\tag%402x.png">
-      <DependentUpon>tag.png</DependentUpon>
-    </Content>
-    <Content Include="Images\tag.png" />
-    <Content Include="Images\team%402x.png">
-      <DependentUpon>team.png</DependentUpon>
-    </Content>
-    <Content Include="Images\team.png" />
-    <Content Include="Images\unlocked%402x.png">
-      <DependentUpon>unlocked.png</DependentUpon>
-    </Content>
-    <Content Include="Images\unlocked.png" />
-    <Content Include="Images\user%402x.png">
-      <DependentUpon>user.png</DependentUpon>
-    </Content>
-    <Content Include="Images\user.png" />
-    <Content Include="Images\webpage%402x.png">
-      <DependentUpon>webpage.png</DependentUpon>
-    </Content>
-    <Content Include="Images\webpage.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
@@ -651,10 +452,6 @@
     <BundleResource Include="Resources\Icon-76%402x.png" />
     <BundleResource Include="Resources\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
-    <BundleResource Include="Images\chart%402x.png">
-      <DependentUpon>chart.png</DependentUpon>
-    </BundleResource>
-    <BundleResource Include="Images\chart.png" />
     <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
     <BundleResource Include="Images\MarkdownComposer\link.png" />
     <BundleResource Include="Images\MarkdownComposer\photo%402x.png" />
@@ -680,65 +477,88 @@
     </BundleResource>
     <BundleResource Include="Settings.bundle\Root.plist" />
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
-    <BundleResource Include="Images\update%402x.png">
-      <DependentUpon>update.png</DependentUpon>
-    </BundleResource>
-    <BundleResource Include="Images\update.png" />
-    <Content Include="WebResources\highlight.pack.js" />
-    <Content Include="WebResources\styles\arta.css" />
-    <Content Include="WebResources\styles\ascetic.css" />
-    <Content Include="WebResources\styles\atelier-dune.dark.css" />
-    <Content Include="WebResources\styles\atelier-dune.light.css" />
-    <Content Include="WebResources\styles\atelier-forest.dark.css" />
-    <Content Include="WebResources\styles\atelier-forest.light.css" />
-    <Content Include="WebResources\styles\atelier-heath.dark.css" />
-    <Content Include="WebResources\styles\atelier-heath.light.css" />
-    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
-    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
-    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
-    <Content Include="WebResources\styles\atelier-seaside.light.css" />
-    <Content Include="WebResources\styles\brown_paper.css" />
-    <Content Include="WebResources\styles\brown_papersq.png" />
-    <Content Include="WebResources\styles\dark.css" />
-    <Content Include="WebResources\styles\default.css" />
-    <Content Include="WebResources\styles\docco.css" />
-    <Content Include="WebResources\styles\far.css" />
-    <Content Include="WebResources\styles\foundation.css" />
-    <Content Include="WebResources\styles\github.css" />
-    <Content Include="WebResources\styles\googlecode.css" />
-    <Content Include="WebResources\styles\idea.css" />
-    <Content Include="WebResources\styles\ir_black.css" />
-    <Content Include="WebResources\styles\magula.css" />
-    <Content Include="WebResources\styles\mono-blue.css" />
-    <Content Include="WebResources\styles\monokai.css" />
-    <Content Include="WebResources\styles\monokai_sublime.css" />
-    <Content Include="WebResources\styles\obsidian.css" />
-    <Content Include="WebResources\styles\paraiso.dark.css" />
-    <Content Include="WebResources\styles\paraiso.light.css" />
-    <Content Include="WebResources\styles\pojoaque.css" />
-    <Content Include="WebResources\styles\pojoaque.jpg" />
-    <Content Include="WebResources\styles\railscasts.css" />
-    <Content Include="WebResources\styles\rainbow.css" />
-    <Content Include="WebResources\styles\school_book.css" />
-    <Content Include="WebResources\styles\school_book.png" />
-    <Content Include="WebResources\styles\solarized_dark.css" />
-    <Content Include="WebResources\styles\solarized_light.css" />
-    <Content Include="WebResources\styles\sunburst.css" />
-    <Content Include="WebResources\styles\tomorrow.css" />
-    <Content Include="WebResources\styles\tomorrow-night.css" />
-    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
-    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
-    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
-    <Content Include="WebResources\styles\vs.css" />
-    <Content Include="WebResources\styles\xcode.css" />
-    <Content Include="WebResources\styles\zenburn.css" />
-    <Content Include="WebResources\marked.js" />
     <BundleResource Include="Themes\Default.json" />
     <BundleResource Include="Themes\InvertedDefault.json" />
-    <Content Include="WebViews\Diff\app.js" />
-    <Content Include="WebViews\Diff\difflib.js" />
-    <Content Include="WebViews\Diff\diffview.css" />
-    <Content Include="WebViews\Diff\diffview.js" />
+    <BundleResource Include="Images\gist%402x.png" />
+    <BundleResource Include="Images\inbox%402x.png" />
+    <BundleResource Include="Images\issue-opened%402x.png" />
+    <BundleResource Include="Images\megaphone%402x.png" />
+    <BundleResource Include="Images\organization%402x.png" />
+    <BundleResource Include="Images\radio-tower%402x.png" />
+    <BundleResource Include="Images\rss%402x.png" />
+    <BundleResource Include="Images\tag.png" />
+    <BundleResource Include="Images\tag%402x.png" />
+    <BundleResource Include="Images\star.png" />
+    <BundleResource Include="Images\star%402x.png" />
+    <BundleResource Include="Images\rss.png" />
+    <BundleResource Include="Images\repo.png" />
+    <BundleResource Include="Images\repo%402x.png" />
+    <BundleResource Include="Images\radio-tower.png" />
+    <BundleResource Include="Images\person.png" />
+    <BundleResource Include="Images\person%402x.png" />
+    <BundleResource Include="Images\organization.png" />
+    <BundleResource Include="Images\megaphone.png" />
+    <BundleResource Include="Images\lock.png" />
+    <BundleResource Include="Images\lock%402x.png" />
+    <BundleResource Include="Images\git-pull-request.png" />
+    <BundleResource Include="Images\git-pull-request%402x.png" />
+    <BundleResource Include="Images\git-commit.png" />
+    <BundleResource Include="Images\git-commit%402x.png" />
+    <BundleResource Include="Images\git-branch.png" />
+    <BundleResource Include="Images\git-branch%402x.png" />
+    <BundleResource Include="Images\gist.png" />
+    <BundleResource Include="Images\gear.png" />
+    <BundleResource Include="Images\gear%402x.png" />
+    <BundleResource Include="Images\file-code.png" />
+    <BundleResource Include="Images\file-code%402x.png" />
+    <BundleResource Include="Images\file-directory.png" />
+    <BundleResource Include="Images\file-directory%402x.png" />
+    <BundleResource Include="Images\file-submodule.png" />
+    <BundleResource Include="Images\file-submodule%402x.png" />
+    <BundleResource Include="Images\repo-forked.png" />
+    <BundleResource Include="Images\repo-forked%402x.png" />
+    <BundleResource Include="Images\pencil.png" />
+    <BundleResource Include="Images\pencil%402x.png" />
+    <BundleResource Include="Images\question.png" />
+    <BundleResource Include="Images\question%402x.png" />
+    <BundleResource Include="Images\comment.png" />
+    <BundleResource Include="Images\comment%402x.png" />
+    <BundleResource Include="Images\globe.png" />
+    <BundleResource Include="Images\globe%402x.png" />
+    <BundleResource Include="Images\git-merge.png" />
+    <BundleResource Include="Images\git-merge%402x.png" />
+    <BundleResource Include="Images\issue-opened.png" />
+    <BundleResource Include="Images\inbox.png" />
+    <BundleResource Include="Images\code.png" />
+    <BundleResource Include="Images\code%402x.png" />
+    <BundleResource Include="Images\book.png" />
+    <BundleResource Include="Images\book%402x.png" />
+    <BundleResource Include="Images\heart.png" />
+    <BundleResource Include="Images\heart%402x.png" />
+    <BundleResource Include="Images\info.png" />
+    <BundleResource Include="Images\info%402x.png" />
+    <BundleResource Include="Images\eye.png" />
+    <BundleResource Include="Images\eye%402x.png" />
+    <BundleResource Include="Images\alert.png" />
+    <BundleResource Include="Images\alert%402x.png" />
+    <BundleResource Include="Images\package.png" />
+    <BundleResource Include="Images\package%402x.png" />
+    <BundleResource Include="Images\trashcan.png" />
+    <BundleResource Include="Images\trashcan%402x.png" />
+    <BundleResource Include="Images\calendar.png" />
+    <BundleResource Include="Images\calendar%402x.png" />
+    <BundleResource Include="Images\milestone.png" />
+    <BundleResource Include="Images\milestone%402x.png" />
+    <BundleResource Include="Images\light-bulb.png" />
+    <BundleResource Include="Images\light-bulb%402x.png" />
+    <BundleResource Include="Images\bug.png" />
+    <BundleResource Include="Images\bug%402x.png" />
+    <BundleResource Include="Images\telescope.png" />
+    <BundleResource Include="Images\telescope%402x.png" />
+    <BundleResource Include="Images\pulse.png" />
+    <BundleResource Include="Images\pulse%402x.png" />
+    <BundleResource Include="Images\clippy.png" />
+    <BundleResource Include="Images\clippy%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -757,6 +577,10 @@
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
       <Project>{91E8096D-0CDC-44D4-85B9-D44D9990A847}</Project>
       <Name>CodeHub.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeHub\CodeHub.csproj">
+      <Project>{A15D4EEA-D5AD-4402-BE88-EB4916C95323}</Project>
+      <Name>CodeHub</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -16,12 +16,16 @@ namespace CodeHub.iOS.Elements
 
         public int NotificationNumber { get; set; }
 
+        public bool TintImage { get; set; }
+
         public MenuElement(string title, Action tapped, UIImage image = null, string imageUri = null)
         {
             _title = title;
             _tapped = tapped;
             _staticImage = image;
             _imageUri = imageUri;
+
+            TintImage = true;
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)
@@ -36,10 +40,30 @@ namespace CodeHub.iOS.Elements
             var cell = tv.DequeueReusableCell(MenuTableViewCell.Key) as MenuTableViewCell ?? new MenuTableViewCell();
             cell.NotificationNumber = NotificationNumber;
             cell.TextLabel.Text = _title;
-            if (string.IsNullOrEmpty(_imageUri))
-                cell.ImageView.Image = _staticImage;
+
+            if (TintImage && Themes.Theme.Current.MenuIconColor != null)
+                cell.ImageView.TintColor = Themes.Theme.Current.MenuIconColor;
             else
-                cell.ImageView.SetImage(new NSUrl(_imageUri), _staticImage);
+                cell.ImageView.TintColor = null;
+
+            cell.RoundedImage = false;
+
+            if (string.IsNullOrEmpty(_imageUri))
+            {
+                if (TintImage)
+                    cell.ImageView.Image = _staticImage.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+                else
+                    cell.ImageView.Image = _staticImage;
+            }
+            else
+            {
+                cell.RoundedImage = true;
+                cell.ImageView.SetImage(new NSUrl(_imageUri), _staticImage, (image, error, cacheType) =>
+                {
+                    if (TintImage)
+                        cell.ImageView.Image = image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+                });
+            }
             return cell;
         }
     }

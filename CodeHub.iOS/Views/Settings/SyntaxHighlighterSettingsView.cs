@@ -3,13 +3,12 @@ using ReactiveUI;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Settings;
 using Xamarin.Utilities.ViewControllers;
-using System.Reactive.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
 using Xamarin.Utilities.Services;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using System.Reflection;
 using System.IO;
 using Xamarin.Utilities.Factories;
@@ -48,12 +47,11 @@ namespace CodeHub.iOS.Views.Settings
             this.WhenActivated(d =>
             {
                 d(model.SelectedObservable.Subscribe(x => ViewModel.SelectedTheme = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SelectedTheme).Subscribe(LoadContent));
             });
-
-            ViewModel.WhenAnyValue(x => x.SelectedTheme).Subscribe(x => LoadContent());
         }
 
-        private void LoadContent()
+        private new void LoadContent(string theme)
         {
             try
             {
@@ -66,11 +64,11 @@ namespace CodeHub.iOS.Views.Settings
                         Model = new SourceBrowserModel
                         {
                             Content = reader.ReadToEnd(),
-                            Theme = ViewModel.SelectedTheme ?? "idea"
+                            Theme = theme ?? "idea"
                         }
                     };
 
-                    LoadContent(razorView.GenerateString());
+                    base.LoadContent(razorView.GenerateString());
                 }
             }
             catch (Exception e)

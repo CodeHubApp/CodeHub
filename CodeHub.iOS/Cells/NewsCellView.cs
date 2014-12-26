@@ -71,37 +71,39 @@ namespace CodeHub.iOS.Cells
             Header.Lines = 2;
             Header.LineBreakMode = UILineBreakMode.TailTruncation;
 
+            ActionImage.TintColor = Time.TextColor;
+
             // Special for large fonts
-            if (Theme.CurrentTheme.FontSizeRatio > 1.0f)
-            {
-                Header.Font = HeaderFont;
-                Body.Font = BodyFont;
-                Time.Font = TimeFont;
-
-                var timeSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
-                var timeFrame = Time.Frame;
-                timeFrame.Height = timeSectionheight;
-                Time.Frame = timeFrame;
-
-                var imageFrame = ActionImage.Frame;
-                imageFrame.Y += (timeFrame.Height - imageFrame.Height) / 2f;
-                ActionImage.Frame = imageFrame;
-
-                var headerSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
-                var headerFrame = Header.Frame;
-                headerFrame.Height = headerSectionheight * 2f + (float)Math.Ceiling(3f * Theme.CurrentTheme.FontSizeRatio);
-                headerFrame.Y = 6 + timeFrame.Height + 5f;
-                Header.Frame = headerFrame;
-
-                var picFrame = Image.Frame;
-                picFrame.Y = 6 + timeFrame.Height + 5f;
-                picFrame.Y += (headerFrame.Height - picFrame.Height) / 2f;
-                Image.Frame = picFrame;
-
-                var bodyFrame = Body.Frame;
-                bodyFrame.Y = headerFrame.Y + headerFrame.Height + 4f;
-                Body.Frame = bodyFrame;
-            }
+//            if (Theme.CurrentTheme.FontSizeRatio > 1.0f)
+//            {
+//                Header.Font = HeaderFont;
+//                Body.Font = BodyFont;
+//                Time.Font = TimeFont;
+//
+//                var timeSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
+//                var timeFrame = Time.Frame;
+//                timeFrame.Height = timeSectionheight;
+//                Time.Frame = timeFrame;
+//
+//                var imageFrame = ActionImage.Frame;
+//                imageFrame.Y += (timeFrame.Height - imageFrame.Height) / 2f;
+//                ActionImage.Frame = imageFrame;
+//
+//                var headerSectionheight = (float)Math.Ceiling(TimeFont.LineHeight);
+//                var headerFrame = Header.Frame;
+//                headerFrame.Height = headerSectionheight * 2f + (float)Math.Ceiling(3f * Theme.CurrentTheme.FontSizeRatio);
+//                headerFrame.Y = 6 + timeFrame.Height + 5f;
+//                Header.Frame = headerFrame;
+//
+//                var picFrame = Image.Frame;
+//                picFrame.Y = 6 + timeFrame.Height + 5f;
+//                picFrame.Y += (headerFrame.Height - picFrame.Height) / 2f;
+//                Image.Frame = picFrame;
+//
+//                var bodyFrame = Body.Frame;
+//                bodyFrame.Y = headerFrame.Y + headerFrame.Height + 4f;
+//                Body.Frame = bodyFrame;
+//            }
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
@@ -113,7 +115,7 @@ namespace CodeHub.iOS.Cells
                     else
                         Image.Image = null;
 
-                    ActionImage.Image = ChooseImage(x.Event);
+                    ActionImage.Image = ChooseImage(x.Event).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
                     Time.Text = x.Event.CreatedAt.UtcDateTime.Humanize();
 
                     List<NewsCellView.Link> headerLinks;
@@ -189,7 +191,7 @@ namespace CodeHub.iOS.Cells
                 if (anchorBlock != null)
                 {
                     color = LinkColor;
-                    font = LinkFont.WithSize(LinkFont.PointSize * Theme.CurrentTheme.FontSizeRatio);
+                    //font = LinkFont.WithSize(LinkFont.PointSize);
                 }
 
                 var ctFont = new MonoTouch.CoreText.CTFont(font.Name, font.PointSize);
@@ -212,7 +214,7 @@ namespace CodeHub.iOS.Cells
         private static UIImage ChooseImage(EventModel eventModel)
         {
             if (eventModel.PayloadObject is EventModel.CommitCommentEvent)
-                return Images.Comments;
+                return Images.Comment;
 
             var createEvent = eventModel.PayloadObject as EventModel.CreateEvent;
             if (createEvent != null)
@@ -226,7 +228,7 @@ namespace CodeHub.iOS.Cells
                     return Images.Tag;
             }
             else if (eventModel.PayloadObject is EventModel.DeleteEvent)
-                return Images.BinClosed;
+                return Images.Trashcan;
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
                 return Images.Following;
             else if (eventModel.PayloadObject is EventModel.ForkEvent)
@@ -234,30 +236,30 @@ namespace CodeHub.iOS.Cells
             else if (eventModel.PayloadObject is EventModel.ForkApplyEvent)
                 return Images.Fork;
             else if (eventModel.PayloadObject is EventModel.GistEvent)
-                return Images.Script;
+                return Images.Gist;
             else if (eventModel.PayloadObject is EventModel.GollumEvent)
-                return Images.Webpage;
+                return Images.Globe;
             else if (eventModel.PayloadObject is EventModel.IssueCommentEvent)
-                return Images.Comments;
+                return Images.Comment;
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
-                return Images.Flag;
+                return Images.IssueOpened;
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
-                return Images.Group;
+                return Images.Organization;
             else if (eventModel.PayloadObject is EventModel.PublicEvent)
                 return Images.Heart;
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
-                return Images.Hand;
+                return Images.PullRequest;
             else if (eventModel.PayloadObject is EventModel.PullRequestReviewCommentEvent)
-                return Images.Comments;
+                return Images.Comment;
             else if (eventModel.PayloadObject is EventModel.PushEvent)
                 return Images.Commit;
             else if (eventModel.PayloadObject is EventModel.TeamAddEvent)
-                return Images.Team;
+                return Images.Organization;
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
                 return Images.Star;
             else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
-                return Images.Public;
-            return Images.Priority;
+                return Images.Tag;
+            return Images.Alert;
         }
     }
 }

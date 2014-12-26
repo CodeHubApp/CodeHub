@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
 using Humanizer;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.PullRequests
@@ -43,18 +43,18 @@ namespace CodeHub.iOS.Views.PullRequests
 
             _split1 = new SplitElement
             {
-                Button1 = new SplitElement.SplitButton(Images.Cog, string.Empty),
-                Button2 = new SplitElement.SplitButton(Images.Cog, string.Empty)
+                Button1 = new SplitElement.SplitButton(Images.Gear, string.Empty),
+                Button2 = new SplitElement.SplitButton(Images.Gear, string.Empty)
             };
 
             _split2 = new SplitElement
             {
-                Button1 = new SplitElement.SplitButton(Images.Cog, string.Empty),
-                Button2 = new SplitElement.SplitButton(Images.Cog, string.Empty)
+                Button1 = new SplitElement.SplitButton(Images.Gear, string.Empty),
+                Button2 = new SplitElement.SplitButton(Images.Gear, string.Empty)
             };
 
             _commitsElement = new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit);
-            _filesElement = new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.ExecuteIfCan(), Images.File);
+            _filesElement = new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.ExecuteIfCan(), Images.Code);
 
             this.WhenViewModel(x => x.GoToUrlCommand).Subscribe(x =>
             {

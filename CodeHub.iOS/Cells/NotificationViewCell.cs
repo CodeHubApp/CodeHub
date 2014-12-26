@@ -22,7 +22,14 @@ namespace CodeHub.iOS.Cells
             TextLabel.TextColor = Theme.MainTitleColor;
 
             DetailTextLabel.Font = UIFont.SystemFontOfSize(12f);
-            DetailTextLabel.TextColor = Theme.MainTextColor;
+            DetailTextLabel.TextColor = Theme.MainSubtitleColor;
+            ImageView.TintColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+
+            var issueOpened = Images.IssueOpened.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var pullRequest = Images.PullRequest.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var commit = Images.Commit.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var tag = Images.Tag.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var inbox = Images.Inbox.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
@@ -34,19 +41,19 @@ namespace CodeHub.iOS.Cells
                     switch (x.Type)
                     {
                         case NotificationItemViewModel.NotificationType.Issue:
-                            ImageView.Image = Images.Flag;
+                            ImageView.Image = issueOpened;
                             break;
                         case NotificationItemViewModel.NotificationType.PullRequest:
-                            ImageView.Image = Images.Hand;
+                            ImageView.Image = pullRequest;
                             break;
                         case NotificationItemViewModel.NotificationType.Commit:
-                            ImageView.Image = Images.Commit;
+                            ImageView.Image = commit;
                             break;
                         case NotificationItemViewModel.NotificationType.Release:
-                            ImageView.Image = Images.Tag;
+                            ImageView.Image = tag;
                             break;
                         default:
-                            ImageView.Image = Images.Notifications;
+                            ImageView.Image = inbox;
                             break;
                     }
                 });

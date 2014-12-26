@@ -44,7 +44,6 @@ namespace CodeHub.iOS.TableViewSources
                     Console.WriteLine("Cant execute!");
                 item.GoToCommand.ExecuteIfCan();
             }
-            tableView.DeselectRow(indexPath, true);
         }
     }
 }

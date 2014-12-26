@@ -3,7 +3,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.Services;
 using MonoTouch.Foundation;

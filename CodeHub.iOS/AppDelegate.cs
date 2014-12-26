@@ -70,13 +70,25 @@ namespace CodeHub.iOS
             CodeHub.Core.Bootstrap.Init();
             Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
-            Theme.Setup();
             SetupPushNotifications();
             HandleNotificationOptions(options);
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
             viewModelViews.RegisterViewModels(typeof(WebBrowserView).Assembly);
+
+            var accountsService = Locator.Current.GetService<IAccountsService>();
+            accountsService.ActiveAccountChanged.Subscribe(x =>
+            {
+                try
+                {
+                    Themes.Theme.Load("Default");
+                }
+                catch
+                {
+                    Console.WriteLine("Crap!");
+                }
+            });
 
             var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();

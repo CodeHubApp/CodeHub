@@ -12,12 +12,6 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RegisterClassForCellReuse(typeof(LanguageTableViewCell), LanguageTableViewCell.Key);
         }
-
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            tableView.DeselectRow(indexPath, true);
-        }
     }
 }
 

@@ -8,7 +8,7 @@ using Xamarin.Utilities.Services;
 using Xamarin.Utilities.Factories;
 using Xamarin.Utilities.ViewControllers;
 using ReactiveUI;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using System.IO;
 
 namespace CodeHub.iOS.Views.Source

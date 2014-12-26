@@ -6,7 +6,7 @@ using Xamarin.Utilities.ViewControllers;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using Splat;
 using Xamarin.Utilities.Factories;
 

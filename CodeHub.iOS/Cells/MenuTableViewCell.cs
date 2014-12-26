@@ -9,19 +9,21 @@ namespace CodeHub.iOS.Cells
     public class MenuTableViewCell : ReactiveTableViewCell
     {
         public static NSString Key = new NSString("menucell");
-        private const float ImageSize = 16f;
+        private const float ImageSize = 24f;
         private readonly UILabel _numberView;
 
         public int NotificationNumber { get; set; }
+
+        public bool RoundedImage { get; set; }
 
         public MenuTableViewCell()
             : base(UITableViewCellStyle.Default, Key)
         {
             BackgroundColor = UIColor.Clear;
-            TextLabel.TextColor = UIColor.FromRGB(213, 213, 213);
-            SelectedBackgroundView = new UIView { BackgroundColor = UIColor.FromRGB(25, 25, 25) };
+            TextLabel.TextColor = Themes.Theme.Current.MenuTextColor;
+            SelectedBackgroundView = new UIView { BackgroundColor = Themes.Theme.Current.MenuSelectedBackgroundColor };
 
-            _numberView = new UILabel { BackgroundColor = UIColor.FromRGB(54, 54, 54) };
+            _numberView = new UILabel { BackgroundColor = Themes.Theme.Current.PrimaryNavigationBarColor };
             _numberView.Layer.MasksToBounds = true;
             _numberView.Layer.CornerRadius = 5f;
             _numberView.TextAlignment = UITextAlignment.Center;
@@ -37,6 +39,17 @@ namespace CodeHub.iOS.Cells
                 var center = ImageView.Center;
                 ImageView.Frame = new RectangleF(0, 0, ImageSize, ImageSize);
                 ImageView.Center = new PointF(ImageSize, center.Y);
+
+                if (RoundedImage)
+                {
+                    ImageView.Layer.MasksToBounds = true;
+                    ImageView.Layer.CornerRadius = ImageSize / 2f;
+                }
+                else
+                {
+                    ImageView.Layer.MasksToBounds = false;
+                    ImageView.Layer.CornerRadius = 0;
+                }
 
                 if (TextLabel != null)
                 {

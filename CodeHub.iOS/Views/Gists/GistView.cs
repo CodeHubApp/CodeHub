@@ -6,7 +6,7 @@ using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using System.Linq;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using Humanizer;
 
 namespace CodeHub.iOS.Views.Gists
@@ -39,13 +39,13 @@ namespace CodeHub.iOS.Views.Gists
 
             var detailsSection = new Section();
             var splitElement1 = new SplitElement();
-            splitElement1.Button1 = new SplitElement.SplitButton(Images.Locked, string.Empty);
-            splitElement1.Button2 = new SplitElement.SplitButton(Images.Language, string.Empty);
+            splitElement1.Button1 = new SplitElement.SplitButton(Images.Lock, string.Empty);
+            splitElement1.Button2 = new SplitElement.SplitButton(Images.Package, string.Empty);
             detailsSection.Add(splitElement1);
 
             var splitElement2 = new SplitElement();
-            splitElement2.Button1 = new SplitElement.SplitButton(Images.Update, string.Empty);
-            splitElement2.Button2 = new SplitElement.SplitButton(Images.Star2, string.Empty, ViewModel.ToggleStarCommand.ExecuteIfCan);
+            splitElement2.Button1 = new SplitElement.SplitButton(Images.Calendar, string.Empty);
+            splitElement2.Button2 = new SplitElement.SplitButton(Images.Star, string.Empty, ViewModel.ToggleStarCommand.ExecuteIfCan);
             detailsSection.Add(splitElement2);
 
             var owner = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
@@ -72,7 +72,7 @@ namespace CodeHub.iOS.Views.Gists
                 var revisionCount = x.History == null ? 0 : x.History.Count;
 
                 splitElement1.Button1.Text = publicGist ? "Public" : "Private";
-                splitElement1.Button1.Image = publicGist ? Images.Unlocked : Images.Locked;
+                splitElement1.Button1.Image = publicGist ? Images.Lock : Images.Lock;
                 splitElement1.Button2.Text = revisionCount + " Revisions";
                 splitElement2.Button1.Text = x.UpdatedAt.ToLocalTime().ToString("MM/dd/yy");
             });
@@ -96,7 +96,7 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.WhenAnyValue(x => x.IsStarred).Where(x => x.HasValue).Subscribe(x =>
             {
                 splitElement2.Button2.Text = x.Value ? "Starred!" : "Unstarred";
-                splitElement2.Button2.Image = x.Value ? Images.Star : Images.Star2;
+                splitElement2.Button2.Image = x.Value ? Images.Star : Images.Star;
             });
 
             updatedGistObservable.SubscribeSafe(x =>

@@ -5,13 +5,14 @@ using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryView : ReactiveDialogViewController<RepositoryViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
-        private readonly SplitElement[] _splitElements = new SplitElement[3];
+        private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
 
         public override void ViewDidLoad()
         {
@@ -29,17 +30,17 @@ namespace CodeHub.iOS.Views.Repositories
             ViewModel.WhenAnyValue(x => x.Readme).IsNotNull()
                 .Select(_ => ViewModel.Repository).IsNotNull().Subscribe(_ => Render());
 
-            _splitElements[0] = new SplitElement();
-            _splitElements[0].Button1 = new SplitElement.SplitButton(Images.Locked, string.Empty);
-            _splitElements[0].Button2 = new SplitElement.SplitButton(Images.Language, string.Empty);
+            _splitElements[0] = new SplitViewElement();
+            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
+            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
 
-            _splitElements[1] = new SplitElement();
-            _splitElements[1].Button1 = new SplitElement.SplitButton(Images.Flag, string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
-            _splitElements[1].Button2 = new SplitElement.SplitButton(Images.Team, string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
+            _splitElements[1] = new SplitViewElement();
+            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Images.IssueOpened, string.Empty, ViewModel.GoToIssuesCommand.ExecuteIfCan);
+            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Images.Organization, string.Empty, ViewModel.GoToContributors.ExecuteIfCan);
 
-            _splitElements[2] = new SplitElement();
-            _splitElements[2].Button1 = new SplitElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
-            _splitElements[2].Button2 = new SplitElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
+            _splitElements[2] = new SplitViewElement();
+            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Images.Tag, string.Empty, ViewModel.GoToReleasesCommand.ExecuteIfCan);
+            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Images.Branch, string.Empty, ViewModel.GoToBranchesCommand.ExecuteIfCan);
 
             ViewModel.WhenAnyValue(x => x.Stargazers).Subscribe(x =>
                 stargazers.Text = x.HasValue ? x.ToString() : "-");
@@ -52,7 +53,7 @@ namespace CodeHub.iOS.Views.Repositories
                 HeaderView.ImageUri = x.Owner.AvatarUrl;
                 HeaderView.SubText = x.Description;
                 forks.Text = x.ForksCount.ToString();
-                _splitElements[0].Button1.Image = x.Private ? Images.Locked : Images.Unlocked;
+                _splitElements[0].Button1.Image = x.Private ? Images.Lock : Images.Lock;
                 _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
                 _splitElements[0].Button2.Text = x.Language ?? "N/A";
                 _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
@@ -78,7 +79,7 @@ namespace CodeHub.iOS.Views.Repositories
             var sec1 = new Section();
             sec1.Add(_splitElements);
 
-            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.User,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
             owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
             sec1.Add(owner);
 
@@ -89,30 +90,31 @@ namespace CodeHub.iOS.Views.Repositories
                 sec1.Add(parent);
             }
 
-            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Images.Event);
+            var events = new DialogStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Rss);
             var sec2 = new Section { events };
 
             if (model.HasIssues)
             {
-                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.ExecuteIfCan(), Images.Flag));
+                sec2.Add(new DialogStringElement("Issues", ViewModel.GoToIssuesCommand.ExecuteIfCan, Images.IssueOpened));
             }
 
             if (ViewModel.Readme != null)
-                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.ExecuteIfCan(), Images.File));
+                sec2.Add(new DialogStringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Images.Book));
 
             var sec3 = new Section
             {
-                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit),
-                new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Images.Hand),
-                new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Script),
+                new DialogStringElement("Commits", ViewModel.GoToCommitsCommand.ExecuteIfCan, Images.Commit),
+                new DialogStringElement("Pull Requests", ViewModel.GoToPullRequestsCommand.ExecuteIfCan, Images.PullRequest),
+                new DialogStringElement("Source", ViewModel.GoToSourceCommand.ExecuteIfCan, Images.Code),
             };
 
             Root.Reset(new Section { _split }, sec1, sec2, sec3);
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {
-                var web = new StyledStringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Images.Webpage);
-                Root.Add(new Section { web });
+                Root.Add(new Section { 
+                    new DialogStringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Images.Globe)
+                });
             }
         }
     }

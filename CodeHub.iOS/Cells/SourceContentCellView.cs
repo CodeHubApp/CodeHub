@@ -19,11 +19,11 @@ namespace CodeHub.iOS.Cells
                 .Subscribe(x =>
                 {
                     if (x == SourceItemType.Directory)
-                        ImageView.Image = Images.Folder;
+                        ImageView.Image = Images.Directory;
                     else if (x == SourceItemType.Submodule)
-                        ImageView.Image = Images.Repo;
+                        ImageView.Image = Images.Submodule;
                     else
-                        ImageView.Image = Images.File;
+                        ImageView.Image = Images.FileCode;
                 });
         }
     }

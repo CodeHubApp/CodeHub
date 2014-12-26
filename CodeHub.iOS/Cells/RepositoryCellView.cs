@@ -16,6 +16,10 @@ namespace CodeHub.iOS.Cells
         public static bool RoundImages = true;
         private static float DefaultConstraintSize = 0.0f;
 
+        static RepositoryCellView()
+        {
+        }
+
         public RepositoryCellView(IntPtr handle)
             : base(handle)
         {
@@ -34,9 +38,13 @@ namespace CodeHub.iOS.Cells
             CaptionLabel.TextColor = Theme.MainTitleColor;
             ContentLabel.TextColor = Theme.MainTextColor;
 
-            FollowersImageVIew.Image = Theme.CurrentTheme.RepositoryCellFollowers;
-            ForksImageView.Image = Theme.CurrentTheme.RepositoryCellForks;
-            UserImageView.Image = Theme.CurrentTheme.RepositoryCellUser;
+            FollowersImageVIew.TintColor = FollowersLabel.TextColor;
+            ForksImageView.TintColor = ForksLabel.TextColor;
+            UserImageView.TintColor = UserLabel.TextColor;
+
+            FollowersImageVIew.Image = new UIImage(Images.Star.CGImage, 1.3f, UIImageOrientation.Up).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            ForksImageView.Image = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            UserImageView.Image = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
 
             OwnerImageView.Layer.MasksToBounds = true;
             OwnerImageView.Layer.CornerRadius = OwnerImageView.Bounds.Height / 2f;
