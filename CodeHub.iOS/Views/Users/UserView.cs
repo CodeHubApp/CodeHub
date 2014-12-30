@@ -21,6 +21,8 @@ namespace CodeHub.iOS.Views.Users
         {
             base.ViewDidLoad();
 
+            HeaderView.Image = Images.LoginUserUnknown;
+
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
             var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());

@@ -26,7 +26,7 @@ namespace CodeHub.iOS.Views.Repositories
             };
             _titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
 
-            this.WhenViewModel(x => x.SelectedLanguage)
+            this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
                 .Subscribe(x => _titleButton.Text = x.Name);
         }
 

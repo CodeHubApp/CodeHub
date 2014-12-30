@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Factories;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Users
 {

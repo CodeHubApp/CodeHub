@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using System;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -9,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public string Owner { get; private set; }
 
-        public string ImageUrl { get; private set; }
+        public GitHubAvatar Avatar { get; private set; }
 
         public string Description { get; private set; }
 
@@ -23,12 +24,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         internal RepositoryItemViewModel(string name, string owner, string imageUrl,
                                          string description, int stars, int forks,
-                                         bool showOwner,
-                                         Action<RepositoryItemViewModel> gotoCommand)
+                                         bool showOwner, Action<RepositoryItemViewModel> gotoCommand)
         {
             Name = name;
             Owner = owner;
-            ImageUrl = imageUrl;
+            Avatar = new GitHubAvatar(imageUrl);
             Description = description;
             Stars = stars;
             Forks = forks;

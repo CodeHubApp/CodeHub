@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using System;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -7,16 +8,16 @@ namespace CodeHub.Core.ViewModels.Users
     {
         public string Name { get; private set; }
 
-        public string Url { get; private set; }
+        public GitHubAvatar Avatar { get; private set; }
 
         public bool IsOrganization { get; private set; }
 
         public IReactiveCommand GoToCommand { get; private set; }
 
-        internal UserItemViewModel(string name, string url, bool organization, Action gotoAction)
+        internal UserItemViewModel(string name, string avatarUrl, bool organization, Action gotoAction)
         {
             Name = name;
-            Url = url;
+            Avatar = new GitHubAvatar(avatarUrl);
             IsOrganization = organization;
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction());
         }

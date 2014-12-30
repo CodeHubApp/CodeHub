@@ -1,59 +1,36 @@
 using System;
 using System.Drawing;
-using CodeHub.iOS;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using Xamarin.Utilities.ViewControllers;
+using CodeHub.Core.ViewModels.Gists;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public partial class ModifyGistFileController : UIViewController
+    public partial class ModifyGistFileController : ReactiveViewController<ModifyGistViewModel>
     {
-        public Action<string, string> Save;
         const float offsetSize = 44f + 8f + 1f;
-        string _name;
-        string _content;
 
-        public ModifyGistFileController(string name = null, string content = null) 
+        public ModifyGistFileController() 
             : base ("ModifyGistFileController", null)
         {
-            _name = name;
-            _content = content;
-
-            Title = "New File";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
-
-                var newName = Name.Text;
-                var newContent = Text.Text;
-
-                if (String.IsNullOrEmpty(newContent))
-                {
-                    //MonoTouch.Utilities.ShowAlert("No Content", "You cannot save a file without content!");
-                    return;
-                }
-
-                try
-                {
-                    if (Save != null)
-                        Save(newName, newContent);
-                    NavigationController.PopViewControllerAnimated(true);
-                }
-				catch (Exception ex)
-                {
-					//MonoTouch.Utilities.ShowAlert("Error", ex.Message);
-                    return;
-                }
-            });
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x =>
+                NavigationItem.RightBarButtonItem = (x == null ? null : x.ToBarButtonItem(UIBarButtonSystemItem.Save)));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            if (!string.IsNullOrEmpty(_name))
-                Name.Text = _name;
-            if (!string.IsNullOrEmpty(_content))
-                Text.Text = _content;
+            Name.EditingChanged += (sender, e) => 
+                ViewModel.Filename = Name.Text;
+            this.WhenAnyValue(x => x.ViewModel.Filename).Subscribe(x => Name.Text = x);
+
+            Text.Changed += (sender, e) => 
+                ViewModel.Description = Text.Text;
+            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => Text.Text = x);
 
             Text.Changed += HandleChanged;
             UpdateScrollContentSize();
@@ -61,9 +38,7 @@ namespace CodeHub.iOS.Views.Gists
             var v = NameView as TappableView;
             if (v != null)
             {
-                v.Tapped = () => {
-                    Name.BecomeFirstResponder();
-                };
+                v.Tapped = () => Name.BecomeFirstResponder();
             }
         }
 

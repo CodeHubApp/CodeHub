@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
 namespace CodeHub.iOS
@@ -101,16 +98,6 @@ namespace CodeHub.iOS
         public static UIImage Cancel { get { return UIImage.FromBundle("Images/Navigation/cancel"); } }
 
         public static UIImage BackButton { get { return UIImage.FromBundle("Images/Navigation/back"); } }
-
-        public static Uri GitHubRepoUrl
-        {
-            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository@2x.png")); }
-        }
-
-        public static Uri GitHubRepoForkUrl
-        {
-            get { return new Uri(Path.Combine(NSBundle.MainBundle.ResourcePath, "Images/repository_fork@2x.png")); }
-        }
 
         public static class Logos
         {

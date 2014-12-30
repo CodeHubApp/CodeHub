@@ -14,12 +14,6 @@ namespace CodeHub.iOS.TableViewSources
             tableView.RegisterNibForCellReuse(GistCellView.Nib, GistCellView.Key);
         }
 
-        public GistTableViewSource(MonoTouch.UIKit.UITableView tableView) 
-            : base(tableView)
-        {
-            tableView.RegisterNibForCellReuse(GistCellView.Nib, GistCellView.Key);
-        }
-
         public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)

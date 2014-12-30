@@ -67,6 +67,8 @@ namespace CodeHub.iOS.Themes
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;
 
+            UISwitch.Appearance.OnTintColor = UIColor.FromRGB(0x41, 0x83, 0xc4);
+
             // Composer Input Accessory Buttons
             UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = theme.PrimaryNavigationBarColor;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using ReactiveUI;
 using GitHubSharp.Models;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -8,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Changesets
     {
         public string Name { get; private set; }
 
-        public string ImageUrl { get; private set; }
+        public GitHubAvatar Avatar { get; private set; }
 
         public string Description { get; private set; }
 
@@ -29,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 Time = commit.Commit.Committer.Date;
 
             Name = commit.GenerateCommiterName();
-            ImageUrl = commit.GenerateGravatarUrl();
+            Avatar = new GitHubAvatar(commit.GenerateGravatarUrl());
             Commit = commit;
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => action(this));
         }

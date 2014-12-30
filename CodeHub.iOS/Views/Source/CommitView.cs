@@ -29,6 +29,8 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
+            HeaderView.Image = Images.LoginUserUnknown;
+
             var additions = _split.AddButton("Additions", "-");
             var deletions = _split.AddButton("Deletions", "-");
             var parents = _split.AddButton("Parents", "-");

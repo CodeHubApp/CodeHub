@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using GitHubSharp.Models;
 using ReactiveUI;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
@@ -41,13 +40,6 @@ namespace CodeHub.Core.ViewModels.App
         public GitHubAccount Account
         {
             get { return _applicationService.Account; }
-        }
-
-        private UserAuthenticatedModel _user;
-        public UserAuthenticatedModel User
-        {
-            get { return _user; }
-            private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
@@ -111,7 +103,7 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<RepositoriesExploreViewModel>()));
 
             GoToOrganizationEventsCommand = ReactiveCommand.Create();
-            GoToOrganizationEventsCommand.OfType<BasicUserModel>().Subscribe(x =>
+            GoToOrganizationEventsCommand.OfType<Octokit.Organization>().Subscribe(x =>
             {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = x.Login;
@@ -119,7 +111,7 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             GoToOrganizationCommand = ReactiveCommand.Create();
-            GoToOrganizationCommand.OfType<BasicUserModel>().Subscribe(x =>
+            GoToOrganizationCommand.OfType<Octokit.Organization>().Subscribe(x =>
             {
                 var vm = this.CreateViewModel<OrganizationViewModel>();
                 vm.Username = x.Login;

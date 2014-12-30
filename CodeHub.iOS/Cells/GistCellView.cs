@@ -4,7 +4,6 @@ using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using System.Reactive.Linq;
-using SDWebImage;
 using Humanizer;
 
 namespace CodeHub.iOS.Cells
@@ -41,10 +40,7 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    if (x.ImageUrl == null)
-                        MainImageView.Image = Images.LoginUserUnknown;
-                    else
-                        MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+                    MainImageView.SetAvatar(x.Avatar);
                     TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
                     TimeLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reactive.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.App;
@@ -13,15 +12,20 @@ using Xamarin.Utilities.DialogElements;
 using Xamarin.Utilities.ViewControllers;
 using CodeHub.iOS.Elements;
 using CodeHub.iOS.ViewComponents;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
     public class MenuView : ReactiveTableViewController<MenuViewModel>
     {
-        private MenuElement _notifications;
+        private readonly MenuElement _notifications;
 		private Section _favoriteRepoSection;
         private DialogTableViewSource _dialogSource;
         private readonly MenuProfileView _profileButton;
+        private readonly Section _gistsSection;
+        private readonly Section _infoSection;
+        private readonly Section _repoSection;
+        private readonly Section _topSection;
 
         public MenuView()
         {
@@ -29,6 +33,52 @@ namespace CodeHub.iOS.Views.App
             _profileButton.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             _profileButton.TouchUpInside += (sender, e) => ViewModel.GoToAccountsCommand.ExecuteIfCan();
             NavigationItem.TitleView = _profileButton;
+
+            _topSection = new Section
+            {
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.ExecuteIfCan(), Images.Person),
+                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Inbox)),
+                new MenuElement("News", () => ViewModel.GoToNewsCommand.ExecuteIfCan(), Images.RadioTower),
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Images.IssueOpened)
+            };
+
+            _repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
+            _repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Images.Repo));
+            _repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Images.Star));
+            _repoSection.Add(new MenuElement("Watching", () => ViewModel.GoToWatchedRepositoriesCommand.ExecuteIfCan(), Images.Eye));
+            _repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Pulse));
+            _repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Telescope));
+
+            _gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };
+            _gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Gist));
+            _gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star));
+            _gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Globe));
+
+            _infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
+            _infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Gear));
+            _infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Lock));
+            _infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Question));
+            _infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Images.Person));
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .IsNotNull()
+                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel.Account)
+                .IsNotNull()
+                .Subscribe(x =>
+            {
+                _profileButton.Name = string.IsNullOrEmpty(x.Name) ? x.Username : x.Name;
+                _profileButton.Username = x.Email;
+                _profileButton.ImageUri = x.AvatarUrl;
+            });
+
+            this.WhenAnyValue(x => x.ViewModel.Notifications).DistinctUntilChanged().Subscribe(x =>
+            {
+                _notifications.NotificationNumber = x;
+                if (_dialogSource != null)
+                    _dialogSource.Root.Reload(_notifications);
+            });
         }
 
         public override void ViewWillAppear(bool animated)
@@ -49,50 +99,26 @@ namespace CodeHub.iOS.Views.App
             TableView.SeparatorColor = Themes.Theme.Current.PrimaryNavigationBarColor;
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
 
-            ViewModel.WhenAnyValue(x => x.Notifications).Where(_ => _notifications != null).Subscribe(x =>
-            {
-                _notifications.NotificationNumber = x;
-                _dialogSource.Root.Reload(_notifications);
-            });
-
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
-
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
 	    private void CreateMenuRoot()
 		{
-            var username = ViewModel.Account.Username;
-            _profileButton.Name = string.IsNullOrEmpty(ViewModel.Account.Name) ? ViewModel.Account.Username : ViewModel.Account.Name;
-            _profileButton.Username = ViewModel.Account.Email;
-            _profileButton.ImageUri = ViewModel.Account.AvatarUrl;
-
             var sections = new List<Section>();
-
-            sections.Add(new Section
-            {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.ExecuteIfCan(), Images.Person),
-                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.ExecuteIfCan(), Images.Inbox) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsCommand.ExecuteIfCan(), Images.RadioTower),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Images.IssueOpened)
-            });
+            sections.Add(_topSection);
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Rss, ViewModel.Account.AvatarUrl) { TintImage = false });
+            eventsSection.Add(new MenuElement(ViewModel.Account.Username, () => ViewModel.GoToMyEvents.ExecuteIfCan(), Images.Rss, ViewModel.Account.AvatarUrl) { TintImage = false });
             if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
             {
                 eventsSection.Add(ViewModel.Organizations.Select(x =>
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Rss, x.AvatarUrl) { TintImage = false }));
+                {
+                    var avatarUri = new GitHubAvatar(x.AvatarUrl).ToUri(64).AbsoluteUri;
+                    return new MenuElement(x.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Rss, avatarUri) { TintImage = false };
+                }));
             }
             sections.Add(eventsSection);
-
-            var repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
-			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Images.Repo));
-            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Images.Star));
-            repoSection.Add(new MenuElement("Watching", () => ViewModel.GoToWatchedRepositoriesCommand.ExecuteIfCan(), Images.Eye));
-            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Images.Pulse));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Images.Telescope));
-            sections.Add(repoSection);
+            sections.Add(_repoSection);
             
 			if (ViewModel.PinnedRepositories.Any())
 			{
@@ -109,8 +135,11 @@ namespace CodeHub.iOS.Views.App
             var orgSection = new Section { HeaderView = new MenuSectionView("Organizations") };
             if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
             {
-                orgSection.Add(ViewModel.Organizations.Select(x => 
-                    new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Organization, x.AvatarUrl) { TintImage = false }));
+                orgSection.Add(ViewModel.Organizations.Select(x =>
+                {
+                    var avatarUri = new GitHubAvatar(x.AvatarUrl).ToUri(64).AbsoluteUri;
+                    return new MenuElement(x.Login, () => ViewModel.GoToOrganizationCommand.ExecuteIfCan(x), Images.Organization, avatarUri) { TintImage = false };
+                }));
             }
             else
                 orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Organization));
@@ -119,19 +148,8 @@ namespace CodeHub.iOS.Views.App
             if (orgSection.Count > 0)
                 sections.Add(orgSection);
 
-            var gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.ExecuteIfCan(), Images.Gist));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.ExecuteIfCan(), Images.Star));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.ExecuteIfCan(), Images.Globe));
-            sections.Add(gistsSection);
-//
-            var infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
-            sections.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Images.Gear));
-            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Images.Lock));
-            infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Question));
-            infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Images.Person));
-
+            sections.Add(_gistsSection);
+            sections.Add(_infoSection);
             _dialogSource.Root.Reset(sections);
 		}
 
@@ -139,26 +157,16 @@ namespace CodeHub.iOS.Views.App
 		{
             public PinnedRepository PinnedRepo { get; private set; }
 
-            private static UIImage GetStaticImage(PinnedRepository pinnedRepository)
-            {
-                if (pinnedRepository.ImageUri.EndsWith("repository.png", StringComparison.Ordinal))
-                    return UIImage.FromFile("Images/repository.png");
-                if (pinnedRepository.ImageUri.EndsWith("repository_fork.png", StringComparison.Ordinal))
-                    return UIImage.FromFile("Images/repository_fork.png");
-                return Images.Repo;
-            }
-
             private static string GetActualImage(PinnedRepository pinnedRepository)
             {
-                if (pinnedRepository.ImageUri.StartsWith("http", StringComparison.Ordinal))
-                    return pinnedRepository.ImageUri;
-                return null;
+                return !pinnedRepository.ImageUri.StartsWith("http", StringComparison.Ordinal) 
+                    ? null : new GitHubAvatar(pinnedRepository.ImageUri).ToUri(64).AbsoluteUri;
             }
 
 			public PinnedRepoElement(PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
                 : base(pinnedRepo.Name, 
                     () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), 
-                    GetStaticImage(pinnedRepo),
+                    Images.Repo,
                     GetActualImage(pinnedRepo))
 			{
 				PinnedRepo = pinnedRepo;

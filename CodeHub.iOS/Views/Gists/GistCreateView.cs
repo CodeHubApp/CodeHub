@@ -3,124 +3,89 @@ using System.Reactive;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.DialogElements;
 using Xamarin.Utilities.Delegates;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.ViewComponents;
+using System.Reactive.Linq;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ReactiveTableViewController<GistCreateViewModel>
+    public class GistCreateView : ReactiveDialogViewController<GistCreateViewModel>
     {
-        private EditSource _source;
+        private readonly BooleanElement _publicElement;
+        private readonly Section _fileSection;
+        private readonly MultilinedElement _descriptionElement;
+
+        public GistCreateView()
+        {
+            HeaderView.Image = Images.LoginUserUnknown;
+
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x => 
+                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Save) : null);
+
+            this.WhenAnyValue(x => x.ViewModel.CurrentAccount).Subscribe(x =>
+            {
+                HeaderView.SubText = x.Username;
+                HeaderView.ImageUri = x.AvatarUrl;
+            });
+
+            _publicElement = new BooleanElement("Public", false, (e) => ViewModel.IsPublic = e.Value);
+            this.WhenAnyValue(x => x.ViewModel.IsPublic).Subscribe(x => _publicElement.Value = x);
+
+            _descriptionElement = new MultilinedElement("Description");
+            _descriptionElement.Tapped += ChangeDescription;
+            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
+
+            _fileSection = new Section(null, new TableFooterButton("Add File", () => ViewModel.AddGistFileCommand.ExecuteIfCan()));
+            this.WhenAnyValue(x => x.ViewModel.Files).Subscribe(x =>
+            {
+                if (x == null)
+                {
+                    _fileSection.Clear();
+                    return;
+                }
+
+                var elements = new List<Element>();
+                foreach (var file in x.Keys)
+                {
+                    var key = file;
+                    if (string.IsNullOrEmpty(ViewModel.Files[file]))
+                        continue;
+
+                    var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
+                    var el = new StyledStringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { 
+                        Accessory = UITableViewCellAccessory.DisclosureIndicator,
+                        Image = Images.FileCode
+                    };
+
+                    el.Tapped += () => ViewModel.ModifyGistFileCommand.ExecuteIfCan(key);
+                    elements.Add(el);
+                }
+
+                _fileSection.Reset(elements);
+            });
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            _source = new EditSource(this);
-
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(ViewModel.SaveCommand.CanExecuteObservable);
-
-            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, x => x.IsPublic, (x, x1, x2) => Unit.Default)
-                .Subscribe(x => UpdateView());
-
-            ViewModel.SaveCommand.IsExecuting.Subscribe( x =>
-            {
-//                if (x)
-//                    _hud.Show("Saving...");
-//                else
-//                    _hud.Hide();
-            });
-        }
-
-        int _gistFileCounter = 0;
-        private void AddFile()
-        {
-            var createController = new ModifyGistFileController();
-            createController.Save = (name, content) => {
-                if (string.IsNullOrEmpty(name))
-                {
-                    //Keep trying until we get a valid filename
-                    while (true)
-                    {
-                        name = "gistfile" + (++_gistFileCounter) + ".txt";
-                        if (ViewModel.Files.ContainsKey(name))
-                            continue;
-                        break;
-                    }
-                }
-
-                if (ViewModel.Files.ContainsKey(name))
-                    throw new InvalidOperationException("A filename by that type already exists");
-                ViewModel.Files.Add(name, content);
-                ViewModel.Files = ViewModel.Files;
-            };
-
-            NavigationController.PushViewController(createController, true);
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            UpdateView();
-        }
-
-        protected void UpdateView()
-        {
-            var section = new Section();
-            var fileSection = new Section();
-
-            var desc = new MultilinedElement("Description") { Value = ViewModel.Description };
-            desc.Tapped += ChangeDescription;
-            section.Add(desc);
-
-            var pub = new BooleanElement("Public", ViewModel.IsPublic, (e) => ViewModel.IsPublic = e.Value); 
-            section.Add(pub);
-
-            foreach (var file in ViewModel.Files.Keys)
-            {
-                var key = file;
-                if (string.IsNullOrEmpty(ViewModel.Files[file]))
-                    continue;
-
-                var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
-                var el = new StyledStringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-                el.Tapped += () => {
-                    if (!ViewModel.Files.ContainsKey(key))
-                        return;
-                    var createController = new ModifyGistFileController(key, ViewModel.Files[key]);
-                    createController.Save = (name, content) => {
-
-                        if (string.IsNullOrEmpty(name))
-                            throw new InvalidOperationException("Please enter a name for the file");
-
-                        //If different name & exists somewhere else
-                        if (!name.Equals(key) && ViewModel.Files.ContainsKey(name))
-                            throw new InvalidOperationException("A filename by that type already exists");
-
-                        ViewModel.Files.Remove(key);
-                        ViewModel.Files[name] = content;
-                        ViewModel.Files = ViewModel.Files; // Trigger refresh
-                    };
-
-                    NavigationController.PushViewController(createController, true);
-                };
-                fileSection.Add(el);
-            }
-
-            fileSection.Add(new StyledStringElement("Add New File", AddFile));
-
-            _source.Root.Reset(section, fileSection);
+            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, (x, x1) => Unit.Default)
+                .Subscribe(x => Root.Reset(new Section(), new Section { _descriptionElement, _publicElement }, _fileSection));
         }
 
         private void ChangeDescription()
         {
-//            var composer = new Composer { Title = "Description", Text = ViewModel.Description };
-//            composer.NewComment(this, (text) => {
-//                ViewModel.Description = text;
-//                composer.CloseComposer();
-//            });
+            var composer = new ComposerViewController() { Title = "Description", Text = ViewModel.Description };
+            composer.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => composer.DismissViewController(true, null));
+            composer.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => 
+            {
+                ViewModel.Description = composer.Text;
+                composer.DismissViewController(true, null);
+            });
+
+            NavigationController.PresentViewController(new ThemedNavigationController(composer), true, null);
         }
 
         private void Delete(Element element)
@@ -128,11 +93,16 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.Files.Remove(element.Caption);
         }
 
+        protected override DialogTableViewSource CreateTableViewSource()
+        {
+            return new EditSource(this);
+        }
+
         private class EditSource : DialogTableViewSource
         {
             private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 
-                : base (dvc.TableView)
+                : base (dvc.TableView, true)
             {
                 _parent = dvc;
             }
@@ -161,6 +131,10 @@ namespace CodeHub.iOS.Views.Gists
                         break;
                 }
             }
+        }
+
+        public class ComposerViewController : MessageComposerViewController<object>
+        {
         }
     }
 }

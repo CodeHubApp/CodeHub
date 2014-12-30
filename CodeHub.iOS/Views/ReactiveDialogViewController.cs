@@ -81,11 +81,16 @@ namespace CodeHub.iOS.Views
             TableView.ReloadData();
         }
 
+        protected virtual DialogTableViewSource CreateTableViewSource()
+        {
+            return new DialogTableViewSource(TableView, true);
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            _dialogSource = new DialogTableViewSource(TableView, true);
+            _dialogSource = CreateTableViewSource();
 
             _dialogSource.ScrolledObservable.Where(x => x.Y > 0)
                 .Where(_ => NavigationController != null)

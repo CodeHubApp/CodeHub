@@ -13,10 +13,23 @@ namespace CodeHub.iOS.Views.Repositories
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
+        private readonly Section _sourceSection;
+
+        public RepositoryView()
+        {
+            _sourceSection = new Section
+            {
+                new DialogStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit),
+                new DialogStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Images.PullRequest),
+                new DialogStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Code),
+            };
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            HeaderView.Image = Images.LoginUserUnknown;
 
             NavigationItem.RightBarButtonItem = ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action);
 
@@ -101,14 +114,7 @@ namespace CodeHub.iOS.Views.Repositories
             if (ViewModel.Readme != null)
                 sec2.Add(new DialogStringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Images.Book));
 
-            var sec3 = new Section
-            {
-                new DialogStringElement("Commits", ViewModel.GoToCommitsCommand.ExecuteIfCan, Images.Commit),
-                new DialogStringElement("Pull Requests", ViewModel.GoToPullRequestsCommand.ExecuteIfCan, Images.PullRequest),
-                new DialogStringElement("Source", ViewModel.GoToSourceCommand.ExecuteIfCan, Images.Code),
-            };
-
-            Root.Reset(new Section { _split }, sec1, sec2, sec3);
+            Root.Reset(new Section { _split }, sec1, sec2, _sourceSection);
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {

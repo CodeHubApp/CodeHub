@@ -25,7 +25,8 @@ namespace Xamarin.Utilities.ViewComponents
                     _imageView.Image = null;
                 else
                 {
-                    _imageView.SetImage(new NSUrl(value));
+                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType) =>
+                        UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null));
                 }
             }
         }

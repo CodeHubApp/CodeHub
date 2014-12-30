@@ -4,7 +4,6 @@ using MonoTouch.Foundation;
 using System.Drawing;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
-using SDWebImage;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Cells
@@ -29,7 +28,7 @@ namespace CodeHub.iOS.Cells
                 .Subscribe(x =>
                 {
                     TextLabel.Text = x.Name;
-                    ImageView.SetImage(url: new NSUrl(x.Url), placeholder: Images.LoginUserUnknown);
+                    ImageView.SetAvatar(x.Avatar);
                 });
         }
 

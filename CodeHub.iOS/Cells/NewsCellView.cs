@@ -6,9 +6,9 @@ using CodeHub.iOS;
 using CodeHub.Core.ViewModels.Events;
 using ReactiveUI;
 using System.Reactive.Linq;
-using SDWebImage;
 using GitHubSharp.Models;
 using Humanizer;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Cells
 {
@@ -109,12 +109,9 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    var avatar = x.Event.Actor != null ? x.Event.Actor.AvatarUrl : null;
-                    if (avatar != null)
-                        Image.SetImage(new NSUrl(x.Event.Actor.AvatarUrl), Images.LoginUserUnknown);
-                    else
-                        Image.Image = null;
+                    var avatarUrl = x.Event.Actor != null ? x.Event.Actor.AvatarUrl : null;
 
+                    Image.SetAvatar(new GitHubAvatar(avatarUrl));
                     ActionImage.Image = ChooseImage(x.Event).ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
                     Time.Text = x.Event.CreatedAt.UtcDateTime.Humanize();
 

@@ -52,6 +52,9 @@
       <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
+    <Compile Include="Views\Content\ReadmeRazorView.cs">
+      <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -78,6 +81,10 @@
     <None Include="Views\Releases\ReleaseRazorView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
+    </None>
+    <None Include="Views\Content\ReadmeRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -138,5 +145,6 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Views\Releases\" />
+    <Folder Include="Views\Content\" />
   </ItemGroup>
 </Project>

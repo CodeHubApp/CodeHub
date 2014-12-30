@@ -28,9 +28,5 @@ namespace CodeHub.iOS
         { 
             get { return UIColor.FromRGB(81, 81, 81); } 
         }
-
-        public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
-
-        public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
     }
 }

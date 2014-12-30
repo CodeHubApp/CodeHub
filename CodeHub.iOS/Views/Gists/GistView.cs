@@ -23,6 +23,8 @@ namespace CodeHub.iOS.Views.Gists
         {
             base.ViewDidLoad();
 
+            HeaderView.Image = Images.LoginUserUnknown;
+
             var headerSection = new Section();
             var filesSection = new Section("Files");
 

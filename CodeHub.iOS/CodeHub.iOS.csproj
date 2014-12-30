@@ -205,13 +205,6 @@
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
-    <None Include="Views\Repositories\ReadmeRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
-    </None>
-    <Compile Include="Views\Repositories\ReadmeRazorView.cs">
-      <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\OrganizationMembersView.cs" />
     <Compile Include="Views\Users\BaseUserCollectionView.cs" />
     <Compile Include="Views\Users\UserFollowersView.cs" />
@@ -321,6 +314,9 @@
     <Compile Include="Elements\SplitViewElement.cs" />
     <Compile Include="Elements\DialogStringElement.cs" />
     <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="Extensions\UIImageViewExtensions.cs" />
+    <Compile Include="ViewComponents\TableFooterButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -414,14 +410,6 @@
     </Content>
     <Content Include="Images\following.png" />
     <Content Include="Images\Logos\github.png" />
-    <BundleResource Include="Images\repository%402x.png">
-      <DependentUpon>repository.png</DependentUpon>
-    </BundleResource>
-    <Content Include="Images\repository.png" />
-    <BundleResource Include="Images\repository_fork%402x.png">
-      <DependentUpon>repository_fork.png</DependentUpon>
-    </BundleResource>
-    <Content Include="Images\repository_fork.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Resources\Default-Landscape.png" />
     <BundleResource Include="Resources\Default-Landscape%402x.png" />
@@ -572,6 +560,7 @@
     <Folder Include="Views\Releases\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\Settings\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

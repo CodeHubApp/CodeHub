@@ -5,7 +5,6 @@ using CodeHub.iOS;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
 using System.Reactive.Linq;
-using SDWebImage;
 
 namespace CodeHub.iOS.Cells
 {
@@ -58,7 +57,7 @@ namespace CodeHub.iOS.Cells
                     CaptionLabel.Text = x.Name;
                     FollowersLabel.Text = x.Stars.ToString();
                     ForksLabel.Text = x.Forks.ToString();
-                    OwnerImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+                    OwnerImageView.SetAvatar(x.Avatar);
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
                     UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);

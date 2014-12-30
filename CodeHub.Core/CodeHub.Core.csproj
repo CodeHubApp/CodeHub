@@ -176,6 +176,8 @@
     <Compile Include="ViewModels\Issues\IssueGroupViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEventItemViewModel.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
+    <Compile Include="Utilities\GitHubAvatar.cs" />
+    <Compile Include="ViewModels\Gists\ModifyGistViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

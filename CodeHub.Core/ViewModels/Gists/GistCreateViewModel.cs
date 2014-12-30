@@ -6,6 +6,11 @@ using System.Linq;
 using ReactiveUI;
 using System.Reactive.Subjects;
 using Xamarin.Utilities.ViewModels;
+using CodeHub.Core.Data;
+using System.Reactive;
+using Xamarin.Utilities.Factories;
+using System.Reactive.Linq;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -13,8 +18,6 @@ namespace CodeHub.Core.ViewModels.Gists
     {
         private readonly IApplicationService _applicationService;
         private readonly Subject<GistModel> _createdGistSubject = new Subject<GistModel>();
-        private string _description;
-        private bool _isPublic;
         private IDictionary<string, string> _files;
 
         public IObservable<GistModel> CreatedGist 
@@ -22,12 +25,14 @@ namespace CodeHub.Core.ViewModels.Gists
             get { return _createdGistSubject; } 
         }
 
+        private string _description;
         public string Description
         {
             get { return _description; }
             set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
+        private bool _isPublic;
         public bool IsPublic
         {
             get { return _isPublic; }
@@ -40,20 +45,28 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _files, value); }
         }
 
-        public IReactiveCommand SaveCommand { get; private set; }
+        public GitHubAccount CurrentAccount { get; private set; }
 
-        public GistCreateViewModel(IApplicationService applicationService)
+        public IReactiveCommand<Unit> SaveCommand { get; private set; }
+
+        public IReactiveCommand<object> ModifyGistFileCommand { get; private set; }
+
+        public IReactiveCommand<object> AddGistFileCommand { get; private set; }
+
+        public GistCreateViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory, 
+            IStatusIndicatorService statusIndicatorService)
         {
             _applicationService = applicationService;
+            CurrentAccount = applicationService.Account;
 
             Title = "Create Gist";
             Files = new Dictionary<string, string>();
+            IsPublic = true;
 
-            SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            SaveCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Files).Select(x => x.Count > 0),
+                async t =>
             {
-                if (_files == null || _files.Count == 0)
-                    throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");
-
                 var createGist = new GistCreateModel
                 {
                     Description = Description,
@@ -62,8 +75,46 @@ namespace CodeHub.Core.ViewModels.Gists
                 };
 
                 var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
-                _createdGistSubject.OnNext((await _applicationService.Client.ExecuteAsync(request)).Data);
+                using (statusIndicatorService.Activate("Creating Gist..."))
+                    _createdGistSubject.OnNext((await _applicationService.Client.ExecuteAsync(request)).Data);
                 Dismiss();
+            });
+
+            AddGistFileCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = this.CreateViewModel<ModifyGistViewModel>();
+                vm.Title = "New File";
+                vm.SaveCommand.Subscribe(__ =>
+                {
+                    if (Files.ContainsKey(vm.Filename))
+                        alertDialogFactory.Alert("File already exists!", "Gist already contains a file with that name!");
+                    else
+                    {
+                        Files.Add(vm.Filename, vm.Description);
+                        Files = new Dictionary<string, string>(Files);
+                        vm.Dismiss();
+                    }
+                });
+                NavigateTo(vm);
+            });
+
+            ModifyGistFileCommand = ReactiveCommand.Create();
+
+            // Analysis disable once ConvertClosureToMethodGroup
+            // Don't remove the lambda below. It doesn't actually seem to work correctly
+            ModifyGistFileCommand.OfType<string>().Where(x => Files.ContainsKey(x)).Subscribe(x =>
+            {
+                var vm = this.CreateViewModel<ModifyGistViewModel>();
+                vm.Title = vm.Filename = x;
+                vm.Description = Files[x];
+                vm.SaveCommand.Subscribe(__ =>
+                {
+                    Files.Remove(x);
+                    Files[vm.Filename] = vm.Description;
+                    Files = new Dictionary<string, string>(Files);
+                    vm.Dismiss();
+                });
+                NavigateTo(vm);
             });
         }
     }

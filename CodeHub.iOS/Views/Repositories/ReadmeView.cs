@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.Services;
+using CodeHub.Views.Content;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -15,10 +16,10 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Web.ScalesPageToFit = true;
 
-            this.WhenViewModel(x => x.ContentText).IsNotNull().Subscribe(x =>
+            this.WhenAnyValue(x => x.ViewModel.ContentText).IsNotNull().Subscribe(x =>
                 LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
-            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand).IsNotNull().Subscribe(x =>
                 NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
 

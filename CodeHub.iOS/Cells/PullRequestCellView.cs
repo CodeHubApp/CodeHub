@@ -3,7 +3,6 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
-using SDWebImage;
 using CodeHub.Core.ViewModels.PullRequests;
 
 namespace CodeHub.iOS.Cells
@@ -39,7 +38,7 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+                    MainImageView.SetAvatar(x.Avatar);
                     TitleLabel.Text = x.Title;
                     TimeLabel.Text = x.Details;
                 });
