@@ -14,6 +14,7 @@ using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Views;
 using MonoTouch.Foundation;
 using Splat;
+using CodeHub.iOS.Views.Contents;
 
 namespace CodeHub.iOS
 {
@@ -77,7 +78,7 @@ namespace CodeHub.iOS
                 ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
                 fromViewController.PresentViewController(ctrlToPresent, true, null);
             }
-            else if (toViewController is EditSourceView)
+            else if (toViewController is EditFileView || toViewController is CreateFileView)
             {
                 toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => fromViewController.DismissViewController(true, null));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());

@@ -8,6 +8,7 @@ using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Services;
 using System.Reactive;
 using Xamarin.Utilities.Factories;
+using CodeHub.Core.ViewModels.Contents;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -61,11 +62,11 @@ namespace CodeHub.Core.ViewModels.Source
             GoToEditCommand = ReactiveCommand.Create(canEdit);
 	        GoToEditCommand.Subscribe(_ =>
 	        {
-	            var vm = this.CreateViewModel<EditSourceViewModel>();
+	            var vm = this.CreateViewModel<EditFileViewModel>();
                 vm.Path = Path;
                 vm.Branch = Branch;
-                vm.Username = RepositoryOwner;
-                vm.Repository = RepositoryName;
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
                 vm.SourceChanged.Subscribe(x => 
                 {
                     GitUrl = x.Content.GitUrl;

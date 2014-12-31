@@ -1,13 +1,13 @@
 using System;
-using CodeHub.Core.ViewModels.Repositories;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Xamarin.Utilities.ViewControllers;
 using Xamarin.Utilities.Services;
-using CodeHub.Views.Content;
+using CodeHub.Views.Contents;
+using CodeHub.Core.ViewModels.Contents;
 
-namespace CodeHub.iOS.Views.Repositories
+namespace CodeHub.iOS.Views.Contents
 {
     public class ReadmeView : ReactiveWebViewController<ReadmeViewModel>
     {

@@ -8,7 +8,7 @@ using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Services;
 using Xamarin.Utilities.Factories;
 
-namespace CodeHub.Core.ViewModels.Repositories
+namespace CodeHub.Core.ViewModels.Contents
 {
     public class ReadmeViewModel : BaseViewModel, ILoadableViewModel
     {

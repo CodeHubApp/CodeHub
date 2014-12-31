@@ -52,7 +52,7 @@
       <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
-    <Compile Include="Views\Content\ReadmeRazorView.cs">
+    <Compile Include="Views\Contents\ReadmeRazorView.cs">
       <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -82,7 +82,7 @@
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
     </None>
-    <None Include="Views\Content\ReadmeRazorView.cshtml">
+    <None Include="Views\Contents\ReadmeRazorView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
     </None>
@@ -145,6 +145,6 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Views\Releases\" />
-    <Folder Include="Views\Content\" />
+    <Folder Include="Views\Contents\" />
   </ItemGroup>
 </Project>

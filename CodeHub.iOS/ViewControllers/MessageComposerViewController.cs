@@ -2,17 +2,44 @@
 using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using Xamarin.Utilities.ViewControllers;
+using ReactiveUI;
+using System.Reactive.Linq;
+using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class MessageComposerViewController<TViewModel> : ReactiveViewController<TViewModel> where TViewModel : class
+
+    public abstract class MessageComposerViewController<TViewModel> : MessageComposerViewController, IViewFor<TViewModel> where TViewModel : class
+    {
+        private TViewModel _viewModel;
+        public TViewModel ViewModel
+        {
+            get { return _viewModel; }
+            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
+        }
+
+        object IViewFor.ViewModel
+        {
+            get { return _viewModel; }
+            set { ViewModel = (TViewModel)value; }
+        }
+
+        protected MessageComposerViewController()
+        {
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+            this.WhenAnyValue(x => x.ViewModel).OfType<ILoadableViewModel>().Subscribe(x => x.LoadCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.ViewModel).OfType<IProvidesTitle>().Select(x => x.WhenAnyValue(y => y.Title)).Switch().Subscribe(x => Title = x);
+            this.WhenActivated(d => { });
+        }
+    }
+
+    public class MessageComposerViewController : ReactiveViewController
     {
         private RectangleF _keyboardBounds = RectangleF.Empty;
 
         public UITextView TextView { get; private set; }
 
-        protected MessageComposerViewController()
+        public MessageComposerViewController()
         {
             EdgesForExtendedLayout = UIRectEdge.None;
             TextView = new UITextView(RectangleF.Empty);

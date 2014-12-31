@@ -7,6 +7,8 @@ using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Contents;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -25,7 +27,12 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string Branch { get; set; }
 
-		public bool TrueBranch { get; set; }
+        private bool _trueBranch;
+        public bool TrueBranch
+        {
+            get { return _trueBranch; }
+            set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
+        }
 
         private string _repositoryName;
 		public string RepositoryName 
@@ -41,18 +48,29 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
+        private bool? _pushAccess;
+        public bool? PushAccess
+        {
+            get { return _pushAccess; }
+            set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
+        }
+
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
+        public IReactiveCommand<object> GoToAddFileCommand { get; private set; }
+
         public SourceTreeViewModel(IApplicationService applicationService)
         {
+            Branch = "master";
+            Path = string.Empty;
+
             var content = new ReactiveList<ContentModel>();
             Content = content.CreateDerivedCollection(
                 x => CreateSourceItemViewModel(x),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
 
             this.WhenAnyValue(x => x.Path, y => y.RepositoryName, (x, y) => new { Path = x, Repo = y })
                 .Subscribe(x =>
@@ -68,9 +86,33 @@ namespace CodeHub.Core.ViewModels.Source
                     }
                 });
 
+            GoToAddFileCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.PushAccess, x => x.TrueBranch)
+                .Select(x => x.Item1.HasValue && x.Item1.Value && x.Item2))
+                .WithSubscription(_ =>
+                {
+                    var vm = this.CreateViewModel<CreateFileViewModel>();
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
+                    vm.Branch = Branch;
+                    vm.Path = Path;
+                    vm.SaveCommand.Subscribe(z => LoadCommand.ExecuteIfCan());
+                    NavigateTo(vm);
+                });
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContent(Path ?? string.Empty, Branch ?? "master");
+                if (!PushAccess.HasValue)
+                {
+                    Observable.FromAsync(() => applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName))
+                        .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => PushAccess = x.Permissions.Push);
+                }
+
+                var path = Path;
+                if (string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
+                    path = string.Empty;
+
+                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContent(Path, Branch);
                 var data = new List<ContentModel>();
                 var response = await applicationService.Client.ExecuteAsync(request);
                 data.AddRange(response.Data);
@@ -110,6 +152,7 @@ namespace CodeHub.Core.ViewModels.Source
                         vm.RepositoryName = RepositoryName;
                         vm.TrueBranch = TrueBranch;
                         vm.Path = content.Path;
+                        vm.PushAccess = PushAccess;
                         NavigateTo(vm);
                         break;
                     }

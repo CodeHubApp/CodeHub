@@ -160,7 +160,6 @@
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Organizations\OrganizationsView.cs" />
     <Compile Include="Views\Organizations\OrganizationView.cs" />
-    <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
@@ -186,7 +185,6 @@
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
     <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
-    <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="Views\App\UpgradesView.cs" />
     <Compile Include="XCallbackProvider.cs" />
@@ -229,7 +227,6 @@
     <Compile Include="ViewComponents\MenuSectionView.cs" />
     <Compile Include="ViewComponents\TableViewSectionView.cs" />
     <Compile Include="ViewComponents\ToolbarButton.cs" />
-    <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\App\AccountsView.cs" />
     <Compile Include="Views\App\StartupView.cs" />
     <None Include="packages.config" />
@@ -309,7 +306,6 @@
     <Compile Include="Views\Source\BaseCommitsView.cs" />
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
-    <Compile Include="Views\Source\CommitMesasgeView.cs" />
     <Compile Include="Views\Repositories\RepositoriesWatchedView.cs" />
     <Compile Include="Elements\SplitViewElement.cs" />
     <Compile Include="Elements\DialogStringElement.cs" />
@@ -317,6 +313,13 @@
     <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="Extensions\UIImageViewExtensions.cs" />
     <Compile Include="ViewComponents\TableFooterButton.cs" />
+    <Compile Include="Views\Contents\ReadmeView.cs" />
+    <Compile Include="Views\Source\FileSourceView.cs" />
+    <Compile Include="Views\Contents\EditFileView.cs" />
+    <Compile Include="Views\Contents\CreateFileView.cs" />
+    <Compile Include="Views\BaseViewController.cs" />
+    <Compile Include="Elements\DummyInputElement.cs" />
+    <Compile Include="Elements\ExpandingInputElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -561,6 +564,7 @@
     <Folder Include="Themes\" />
     <Folder Include="Views\Settings\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Views\Contents\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

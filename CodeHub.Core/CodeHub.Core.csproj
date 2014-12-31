@@ -128,7 +128,6 @@
     <Compile Include="ViewModels\Repositories\LangaugeItemViewModel.cs" />
     <Compile Include="ViewModels\Repositories\LanguagesViewModel.cs" />
     <Compile Include="ViewModels\Repositories\OrganizationRepositoriesViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesExploreViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesStarredViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
@@ -141,7 +140,6 @@
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitBranchesViewModel.cs" />
-    <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceItemViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
@@ -171,13 +169,15 @@
     <Compile Include="ViewModels\Changesets\BaseCommitsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitViewModel.cs" />
-    <Compile Include="ViewModels\Source\CommitMessageViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NotificationItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueGroupViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEventItemViewModel.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
     <Compile Include="Utilities\GitHubAvatar.cs" />
     <Compile Include="ViewModels\Gists\ModifyGistViewModel.cs" />
+    <Compile Include="ViewModels\Contents\CreateFileViewModel.cs" />
+    <Compile Include="ViewModels\Contents\EditFileViewModel.cs" />
+    <Compile Include="ViewModels\Contents\ReadmeViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -242,5 +242,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Settings\" />
+    <Folder Include="ViewModels\Contents\" />
   </ItemGroup>
 </Project>
