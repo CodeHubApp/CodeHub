@@ -73,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.Node = Node;
-                vm.CommentAdded.Subscribe(comments.Add);
+                vm.SaveCommand.Subscribe(comments.Add);
                 NavigateTo(vm);
             });
 

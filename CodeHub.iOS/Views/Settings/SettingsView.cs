@@ -8,7 +8,7 @@ using CodeHub.Core.ViewModels.Settings;
 
 namespace CodeHub.iOS.Views.Settings
 {
-    public class SettingsView : ReactiveDialogViewController<SettingsViewModel>
+    public class SettingsView : BaseDialogViewController<SettingsViewModel>
 	{
         public override void ViewDidLoad()
         {

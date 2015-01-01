@@ -233,7 +233,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.Id = Id;
-                vm.CommentAdded.Subscribe(Comments.Add);
+                vm.SaveCommand.Subscribe(Comments.Add);
                 NavigateTo(vm);
             });
 

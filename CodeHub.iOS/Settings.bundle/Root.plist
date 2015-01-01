@@ -14,6 +14,16 @@
 		</dict>
 		<dict>
 			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Open URLs in App</string>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>OpenURLsInApp</string>
+		</dict>
+		<dict>
+			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
 			<string>Analytics</string>
@@ -43,16 +53,6 @@
 			<string>Acknowledgements</string>
 			<key>File</key>
 			<string>Acknowledgements</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Open URLs in App</string>
-			<key>DefaultValue</key>
-			<true/>
-			<key>Key</key>
-			<string>OpenURLsInApp</string>
 		</dict>
 	</array>
 </dict>

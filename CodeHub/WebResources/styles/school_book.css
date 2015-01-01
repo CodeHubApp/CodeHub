@@ -5,9 +5,12 @@ School Book style from goldblog.com.ua (c) Zaripov Yura <yur4ik7@ukr.net>
 */
 
 .hljs {
-  display: block; padding: 15px 0.5em 0.5em 30px;
+  display: block;
+  overflow-x: auto;
+  padding: 15px 0.5em 0.5em 30px;
   font-size: 11px !important;
   line-height:16px !important;
+  -webkit-text-size-adjust: none;
 }
 
 pre{
@@ -21,8 +24,6 @@ pre{
 .hljs-change,
 .hljs-winutils,
 .hljs-flow,
-.lisp .hljs-title,
-.clojure .hljs-built_in,
 .nginx .hljs-title,
 .tex .hljs-special {
   color:#005599;
@@ -32,12 +33,12 @@ pre{
 .hljs,
 .hljs-subst,
 .hljs-tag .hljs-keyword {
-  color: #3E5915;
+  color: #3e5915;
 }
 
 .hljs-string,
 .hljs-title,
-.haskell .hljs-type,
+.hljs-type,
 .hljs-tag .hljs-value,
 .css .hljs-rules .hljs-value,
 .hljs-preprocessor,
@@ -46,7 +47,6 @@ pre{
 .ruby .hljs-symbol .hljs-string,
 .ruby .hljs-class .hljs-parent,
 .hljs-built_in,
-.sql .hljs-aggregate,
 .django .hljs-template_tag,
 .django .hljs-variable,
 .smalltalk .hljs-class,
@@ -65,29 +65,28 @@ pre{
 .nginx .hljs-built_in,
 .tex .hljs-command,
 .coffeescript .hljs-attribute {
-  color: #2C009F;
+  color: #2c009f;
 }
 
 .hljs-comment,
-.java .hljs-annotation,
-.python .hljs-decorator,
-.hljs-template_comment,
+.hljs-annotation,
+.hljs-decorator,
 .hljs-pi,
 .hljs-doctype,
 .hljs-deletion,
 .hljs-shebang,
 .apache .hljs-sqbracket {
-  color: #E60415;
+  color: #e60415;
 }
 
 .hljs-keyword,
 .hljs-literal,
 .css .hljs-id,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .hljs-title,
-.haskell .hljs-type,
+.hljs-type,
 .vbscript .hljs-built_in,
-.sql .hljs-aggregate,
 .rsl .hljs-built_in,
 .smalltalk .hljs-class,
 .xml .hljs-tag .hljs-title,

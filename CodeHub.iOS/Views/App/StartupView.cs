@@ -10,14 +10,38 @@ using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class StartupView : ReactiveViewController<StartupViewModel>
+    public class StartupView : BaseViewController<StartupViewModel>
     {
         const float ImageSize = 128f;
 
-        private UIImageView _imgView;
-        private UILabel _statusLabel;
-        private UIActivityIndicatorView _activityView;
+        private readonly UIImageView _imgView = new UIImageView() {
+            Alpha = 0,
+            Image = Images.LoginUserUnknown,
+        };
 
+        private readonly UILabel _statusLabel = new UILabel {
+            TextAlignment = UITextAlignment.Center,
+            Font = UIFont.FromName("HelveticaNeue", 13f),
+            TextColor = UIColor.FromWhiteAlpha(0.34f, 1f),
+            Alpha = 0,
+        };
+
+        private readonly UIActivityIndicatorView _activityView = new UIActivityIndicatorView {
+            HidesWhenStopped = true,
+            Color = UIColor.FromRGB(0.33f, 0.33f, 0.33f),
+            Alpha = 0,
+        };
+
+        public StartupView()
+        {
+            Appeared.Subscribe(_ => ViewModel.LoadCommand.ExecuteIfCan());
+            Appearing.Subscribe(_ => UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade));
+            Disappearing.Subscribe(_ => {
+                UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
+                UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
+            });
+        }
+ 
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
@@ -41,27 +65,12 @@ namespace CodeHub.iOS.Views.App
             base.ViewDidLoad();
             View.AutosizesSubviews = true;
 
-            _imgView = new UIImageView();
             _imgView.Layer.CornerRadius = ImageSize / 2;
             _imgView.Layer.MasksToBounds = true;
-            _imgView.Alpha = 0;
-            _imgView.Image = Images.LoginUserUnknown;
             Add(_imgView);
 
-            Add(_statusLabel = new UILabel
-            {
-                TextAlignment = UITextAlignment.Center,
-                Font = UIFont.FromName("HelveticaNeue", 13f),
-                TextColor = UIColor.FromWhiteAlpha(0.34f, 1f),
-                Alpha = 0
-            });
-
-            Add(_activityView = new UIActivityIndicatorView
-            {
-                HidesWhenStopped = true,
-                Color = UIColor.FromRGB(0.33f, 0.33f, 0.33f),
-                Alpha = 0
-            });
+            Add(_statusLabel);
+            Add(_activityView);
 
             this.WhenViewModel(x => x.IsLoggingIn).Subscribe(x =>
             {
@@ -79,41 +88,19 @@ namespace CodeHub.iOS.Views.App
                 }
             });
 
-            ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().Subscribe(UpdatedImage);
             ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x);
-        }
+            ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().Subscribe(x => {
+                try
+                {
+                    _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type) =>
+                        UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null));
+                }
+                catch
+                {
+                    // Ah crap...
+                }
+            });
 
-        public void UpdatedImage(Uri uri)
-        {
-            try
-            {
-                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type) =>
-                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null));
-            }
-            catch
-            {
-                // Ah crap...
-            }
-        }
-
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
-            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
-        }
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
         public override bool ShouldAutorotate()

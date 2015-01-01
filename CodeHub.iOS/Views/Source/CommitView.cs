@@ -14,7 +14,7 @@ using Humanizer;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class CommitView : ReactiveDialogViewController<CommitViewModel>
+    public class CommitView : BaseDialogViewController<CommitViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly Section _commentSection = new Section();

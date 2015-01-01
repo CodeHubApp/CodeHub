@@ -16,7 +16,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class MenuView : ReactiveTableViewController<MenuViewModel>
+    public class MenuView : BaseTableViewController<MenuViewModel>
     {
         private readonly MenuElement _notifications;
 		private Section _favoriteRepoSection;
@@ -79,12 +79,13 @@ namespace CodeHub.iOS.Views.App
                 if (_dialogSource != null)
                     _dialogSource.Root.Reload(_notifications);
             });
-        }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            CreateMenuRoot();
+            Appearing.Subscribe(_ => CreateMenuRoot());
+            Appearing.Subscribe(_ =>
+            {
+                var frame = NavigationController.NavigationBar.Frame;
+                _profileButton.Frame = new RectangleF(0, 0, frame.Width, frame.Height);
+            });
         }
 
         public override void ViewDidLoad()

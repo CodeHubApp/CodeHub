@@ -83,14 +83,11 @@ namespace CodeHub.Core.ViewModels.Issues
             AddCommentCommand = ReactiveCommand.Create();
             AddCommentCommand.Subscribe(_ =>
             {
-                var vm = this.CreateViewModel<CommentViewModel>();
-//                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
-//                {
-//                    var issue = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id];
-//                    var comment = await _applicationService.Client.ExecuteAsync(issue.CreateComment(vm.Comment));
-//                    Comments.Add(comment.Data);
-//                    Dismiss();
-//                });
+                var vm = this.CreateViewModel<IssueCommentViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                vm.Id = Id;
+                vm.SaveCommand.Subscribe(x => events.Add(new IssueCommentItemViewModel(x)));
                 NavigateTo(vm);
             });
 

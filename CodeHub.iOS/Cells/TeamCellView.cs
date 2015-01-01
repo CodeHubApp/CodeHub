@@ -2,7 +2,7 @@
 using ReactiveUI;
 using System.Reactive.Linq;
 using MonoTouch.Foundation;
-using CodeHub.Core.ViewModels.Teams;
+using CodeHub.Core.ViewModels.Organizations;
 
 namespace CodeHub.iOS.Cells
 {
@@ -13,12 +13,8 @@ namespace CodeHub.iOS.Cells
         public TeamCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TextLabel.Text = x.Name;
-                });
+            this.WhenAnyValue(x => x.ViewModel.Name)
+                .IsNotNull().Subscribe(x => TextLabel.Text = x);
         }
     }
 }

@@ -1,10 +1,9 @@
 using CodeHub.Core.ViewModels.Users;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public abstract class BaseUserCollectionView<TViewModel> : NewReactiveTableViewController<TViewModel> where TViewModel : BaseUserCollectionViewModel
+    public abstract class BaseUserCollectionView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseUserCollectionViewModel
     {
         public override void ViewDidLoad()
         {

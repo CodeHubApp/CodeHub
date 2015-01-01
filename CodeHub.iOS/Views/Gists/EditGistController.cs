@@ -9,7 +9,7 @@ using Xamarin.Utilities.Delegates;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class EditGistController : ReactiveDialogViewController<GistEditViewModel>
+    public class EditGistController : BaseDialogViewController<GistEditViewModel>
     {
         public override void ViewDidLoad()
         {

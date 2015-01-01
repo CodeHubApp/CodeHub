@@ -94,16 +94,16 @@ namespace CodeHub.iOS.Views.Source
             else
             {
                 var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
-                var razorView = new SyntaxHighlighterView
+                var contentStr = new SyntaxHighlighterView
                 { 
                     Model = new SourceBrowserModel
                     {
                         Content = content,
                         Theme = ViewModel.Theme ?? "idea"
                     }
-                };
+                }.GenerateString();
 
-                LoadContent(razorView.GenerateString());
+                LoadContent(contentStr);
             }
         }
 

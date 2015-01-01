@@ -5,7 +5,7 @@ using Xamarin.Utilities.ViewModels;
 using System;
 using System.Reactive;
 
-namespace CodeHub.Core.ViewModels.Teams
+namespace CodeHub.Core.ViewModels.Organizations
 {
     public class TeamsViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {

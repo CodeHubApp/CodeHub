@@ -1,39 +1,42 @@
 using System;
-using CodeHub.Core.Filters;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
+using CodeHub.iOS.TableViewSources;
+using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssuesView : BaseIssuesView<IssuesViewModel>
+    public class IssuesView : BaseTableViewController<IssuesViewModel>
     {
-        private readonly IssuesFilterModel _openFilter = IssuesFilterModel.CreateOpenFilter();
-        private readonly IssuesFilterModel _closedFilter = IssuesFilterModel.CreateClosedFilter();
-        private readonly IssuesFilterModel _mineFilter;
+        private readonly UISegmentedControl _viewSegment;
+        private readonly UIBarButtonItem _segmentBarButton;
 
-        private readonly IApplicationService _applicationService;
-        private UISegmentedControl _viewSegment;
-        private UIBarButtonItem _segmentBarButton;
-
-        public IssuesView(IApplicationService applicationService)
+        public IssuesView()
         {
-            _applicationService = applicationService;
-            _mineFilter = IssuesFilterModel.CreateMineFilter(_applicationService.Account.Username);
+            _viewSegment = new CustomUISegmentedControl(new [] { "Open", "Closed", "Mine", "Custom" }, 3);
+            _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            ToolbarItems = new [] { 
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), 
+                _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) 
+            };
+
+            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand).Subscribe(x => 
+                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Add) : null);
         }
 
         public override void ViewDidLoad()
         {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add).WithCommand(ViewModel.GoToNewIssueCommand);
-
             base.ViewDidLoad();
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
+            _segmentBarButton.Width = View.Frame.Width - 10f;
+        }
 
-            _viewSegment = new CustomUISegmentedControl(new [] { "Open", "Closed", "Mine", "Custom" }, 3);
-            _segmentBarButton = new UIBarButtonItem(_viewSegment) {Width = View.Frame.Width - 10f};
-            ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-            
-//            this.BindList(ViewModel.Issues, CreateElement);
+        public override void ViewWillLayoutSubviews()
+        {
+            base.ViewWillLayoutSubviews();
+            _segmentBarButton.Width = View.Frame.Width - 10f;
         }
 
         public override void ViewWillAppear(bool animated)

@@ -8,7 +8,6 @@ using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers
 {
-
     public abstract class MessageComposerViewController<TViewModel> : MessageComposerViewController, IViewFor<TViewModel> where TViewModel : class
     {
         private TViewModel _viewModel;
@@ -26,9 +25,15 @@ namespace CodeHub.iOS.ViewControllers
 
         protected MessageComposerViewController()
         {
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
-            this.WhenAnyValue(x => x.ViewModel).OfType<ILoadableViewModel>().Subscribe(x => x.LoadCommand.ExecuteIfCan());
-            this.WhenAnyValue(x => x.ViewModel).OfType<IProvidesTitle>().Select(x => x.WhenAnyValue(y => y.Title)).Switch().Subscribe(x => Title = x);
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<ILoadableViewModel>()
+                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IProvidesTitle>()
+                .Select(x => x.WhenAnyValue(y => y.Title))
+                .Switch().Subscribe(x => Title = x ?? string.Empty);
+
             this.WhenActivated(d => { });
         }
     }
@@ -48,6 +53,8 @@ namespace CodeHub.iOS.ViewControllers
             // Work around an Apple bug in the UITextView that crashes
             if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
                 TextView.AutocorrectionType = UITextAutocorrectionType.No;
+
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
         }
 
         public string Text
@@ -111,6 +118,30 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewWillDisappear(animated);
             NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+        }
+
+        private static float CalculateHeight(UIInterfaceOrientation orientation)
+        {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+                return 44;
+            if (orientation == UIInterfaceOrientation.Portrait || orientation == UIInterfaceOrientation.PortraitUpsideDown)
+                return 64;
+            return 88f;
+        }
+
+        public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+        {
+            base.WillRotate(toInterfaceOrientation, duration);
+
+            if (TextView.InputAccessoryView != null)
+            {
+                UIView.Animate(duration, 0, UIViewAnimationOptions.BeginFromCurrentState, () =>
+                {
+                    var frame = TextView.InputAccessoryView.Frame;
+                    frame.Height = CalculateHeight(toInterfaceOrientation);
+                    TextView.InputAccessoryView.Frame = frame;
+                }, null);
+            }
         }
     }
 }

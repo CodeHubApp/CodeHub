@@ -5,8 +5,12 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 */
 
 .hljs {
-  display: block; padding: 0.5em;
-  background: white; color: black;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: white;
+  color: black;
+  -webkit-text-size-adjust: none;
 }
 
 .hljs-string,
@@ -22,21 +26,19 @@ Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiac
 }
 
 .hljs-comment,
-.hljs-template_comment,
 .hljs-shebang,
 .hljs-doctype,
 .hljs-pi,
 .hljs-javadoc,
 .hljs-deletion,
 .apache .hljs-sqbracket {
-  color: #CCC;
+  color: #ccc;
 }
 
 .hljs-keyword,
 .hljs-tag .hljs-title,
 .ini .hljs-title,
 .lisp .hljs-title,
-.clojure .hljs-title,
 .http .hljs-title,
 .nginx .hljs-title,
 .css .hljs-tag,

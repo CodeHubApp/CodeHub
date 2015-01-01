@@ -1,33 +1,36 @@
 ﻿using System;
-using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
-using System.Reactive.Subjects;
+using ReactiveUI;
+using System.Reactive.Linq;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommentViewModel : MarkdownComposerViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private readonly Subject<Octokit.PullRequestReviewComment> _commendAdded = new Subject<Octokit.PullRequestReviewComment>();
-
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
         public int Id { get; set; }
 
-        public IObservable<Octokit.PullRequestReviewComment> CommentAdded { get { return _commendAdded; } }
+        public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; protected set; }
 
-        public PullRequestCommentViewModel(IApplicationService applicationService) 
+        public PullRequestCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
+            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
+            : base(imgurService, mediaPicker, statusIndicatorService)
         {
-            _applicationService = applicationService;
-        }
+            Title = "Add Comment";
+            SaveCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
+                t => 
+                {
+                    var req = new Octokit.PullRequestReviewCommentCreate(Text, null, null, 0);
+                    return applicationService.GitHubClient.PullRequest.Comment.Create(RepositoryOwner, RepositoryName, Id, req);
+                });
 
-        protected override async System.Threading.Tasks.Task Save()
-        {
-            var req = new Octokit.PullRequestReviewCommentCreate(Text, null, null, 0);
-            var comment = await _applicationService.GitHubClient.PullRequest.Comment.Create(RepositoryOwner, RepositoryName, Id, req);
-            _commendAdded.OnNext(comment);
+            SaveCommand.Subscribe(x => Dismiss());
         }
     }
 }

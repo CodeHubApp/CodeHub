@@ -8,14 +8,15 @@ Music: Aphex Twin / Xtal
 */
 
 .hljs {
-  display: block; padding: 0.5em;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
   background-color: #f4f4f4;
+  -webkit-text-size-adjust: none;
 }
 
 .hljs,
-.hljs-subst,
-.lisp .hljs-title,
-.clojure .hljs-built_in {
+.hljs-subst {
   color: black;
 }
 
@@ -24,12 +25,10 @@ Music: Aphex Twin / Xtal
 .hljs-parent,
 .hljs-tag .hljs-value,
 .hljs-rules .hljs-value,
-.hljs-rules .hljs-value .hljs-number,
 .hljs-preprocessor,
 .hljs-pragma,
 .ruby .hljs-symbol,
 .ruby .hljs-symbol .hljs-string,
-.hljs-aggregate,
 .hljs-template_tag,
 .django .hljs-variable,
 .smalltalk .hljs-class,
@@ -44,7 +43,6 @@ Music: Aphex Twin / Xtal
 
 .hljs-comment,
 .hljs-annotation,
-.hljs-template_comment,
 .diff .hljs-header,
 .hljs-chunk {
   color: #777;
@@ -86,9 +84,9 @@ Music: Aphex Twin / Xtal
 .hljs-keyword,
 .hljs-id,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .hljs-title,
 .hljs-built_in,
-.hljs-aggregate,
 .smalltalk .hljs-class,
 .hljs-winutils,
 .bash .hljs-variable,

@@ -4,11 +4,10 @@ using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class MyIssuesView : NewReactiveTableViewController<MyIssuesViewModel>
+    public class MyIssuesView : BaseTableViewController<MyIssuesViewModel>
     {
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed", "Custom" });
 		private readonly UIBarButtonItem _segmentBarButton;

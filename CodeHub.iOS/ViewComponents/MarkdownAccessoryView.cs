@@ -1,6 +1,5 @@
 ﻿using MonoTouch.UIKit;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
 using System;
 using ReactiveUI;
@@ -34,7 +33,8 @@ namespace CodeHub.iOS.ViewComponents
 
                 CreateAccessoryButton(photoImage, () => 
                     postImage.ExecuteAsync().Catch(Observable.Empty<string>())
-                        .Subscribe(x => controller.InsertText("![Image](" + x + ")"))),
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(x => controller.InsertText("![Image](" + x + ")"))),
 
                 CreateAccessoryButton(linkImage, () => {
                     var range = controller.SelectedRange;

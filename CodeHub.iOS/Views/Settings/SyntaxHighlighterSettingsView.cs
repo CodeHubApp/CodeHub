@@ -16,7 +16,7 @@ using Splat;
 
 namespace CodeHub.iOS.Views.Settings
 {
-    public class SyntaxHighlighterSettingsView : ReactiveWebViewController<SyntaxHighlighterSettingsViewModel>, IEnableLogger
+    public class SyntaxHighlighterSettingsView : ReactiveWebViewController<SyntaxHighlighterSettingsViewModel>
     {
         const string _resourceName = "CodeHub.iOS.Views.Settings.SyntaxHighlightExample";
         private readonly UIPickerView _pickerView = new UIPickerView();

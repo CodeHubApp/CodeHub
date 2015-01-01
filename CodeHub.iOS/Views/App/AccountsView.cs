@@ -2,11 +2,10 @@ using MonoTouch.UIKit;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class AccountsView : ReactiveTableViewController<AccountsViewModel>
+    public class AccountsView : BaseTableViewController<AccountsViewModel>
 	{
         public override void ViewDidLoad()
         {

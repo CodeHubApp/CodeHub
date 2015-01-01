@@ -20,6 +20,8 @@ namespace CodeHub.iOS.Elements
             var txt = base.CreateTextField(frame);
             txt.AllEditingEvents += (sender, e) => FetchValue();
             txt.AutocorrectionType = SpellChecking ? UITextAutocorrectionType.Default : UITextAutocorrectionType.No;
+            txt.SpellCheckingType = SpellChecking ? UITextSpellCheckingType.Default : UITextSpellCheckingType.No;
+            txt.AutocapitalizationType = SpellChecking ? txt.AutocapitalizationType : UITextAutocapitalizationType.None;
             return txt;
         }
     }

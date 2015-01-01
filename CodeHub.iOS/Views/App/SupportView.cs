@@ -9,16 +9,15 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class SupportView : ReactiveDialogViewController<SupportViewModel>
+    public class SupportView : BaseDialogViewController<SupportViewModel>
     {
-        private readonly SplitButtonElement _split;
+        private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly StyledStringElement _addFeatureButton;
         private readonly StyledStringElement _addBugButton;
         private readonly StyledStringElement _featuresButton;
 
         public SupportView()
         {
-            _split = new SplitButtonElement();
             var contributors = _split.AddButton("Contributors", "-");
             var lastCommit = _split.AddButton("Last Commit", "-");
 
@@ -35,6 +34,9 @@ namespace CodeHub.iOS.Views.App
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull().Take(1)
                 .Subscribe(x => x.LoadCommand.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel).Subscribe(x => 
+                HeaderView.ImageButtonAction = x != null ? new Action(x.GoToRepositoryCommand.ExecuteIfCan) : null);
 
             HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
             HeaderView.Image = UIImage.FromFile("Icon@2x.png");

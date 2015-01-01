@@ -5,27 +5,29 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 */
 
 .hljs {
-  display: block; padding: 0.5em;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
   background: #000080;
+  -webkit-text-size-adjust: none;
 }
 
 .hljs,
 .hljs-subst {
-  color: #0FF;
+  color: #0ff;
 }
 
 .hljs-string,
 .ruby .hljs-string,
 .haskell .hljs-type,
 .hljs-tag .hljs-value,
-.css .hljs-rules .hljs-value,
-.css .hljs-rules .hljs-value .hljs-number,
+.hljs-rules .hljs-value,
+.hljs-rules .hljs-value .hljs-number,
 .hljs-preprocessor,
 .hljs-pragma,
 .ruby .hljs-symbol,
 .ruby .hljs-symbol .hljs-string,
 .hljs-built_in,
-.sql .hljs-aggregate,
 .django .hljs-template_tag,
 .django .hljs-variable,
 .smalltalk .hljs-class,
@@ -33,17 +35,15 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 .apache .hljs-tag,
 .apache .hljs-cbracket,
 .tex .hljs-command,
-.clojure .hljs-title,
 .coffeescript .hljs-attribute {
-  color: #FF0;
+  color: #ff0;
 }
 
 .hljs-keyword,
 .css .hljs-id,
 .hljs-title,
-.haskell .hljs-type,
+.hljs-type,
 .vbscript .hljs-built_in,
-.sql .hljs-aggregate,
 .rsl .hljs-built_in,
 .smalltalk .hljs-class,
 .xml .hljs-tag .hljs-title,
@@ -52,16 +52,15 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 .hljs-change,
 .hljs-envvar,
 .bash .hljs-variable,
-.tex .hljs-special,
-.clojure .hljs-built_in {
-  color: #FFF;
+.tex .hljs-special {
+  color: #fff;
 }
 
 .hljs-comment,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .hljs-javadoc,
-.java .hljs-annotation,
-.hljs-template_comment,
+.hljs-annotation,
 .hljs-deletion,
 .apache .hljs-sqbracket,
 .tex .hljs-formula {
@@ -75,10 +74,10 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 .smalltalk .hljs-symbol,
 .smalltalk .hljs-char,
 .clojure .hljs-attribute {
-  color: #0F0;
+  color: #0f0;
 }
 
-.python .hljs-decorator,
+.hljs-decorator,
 .django .hljs-filter .hljs-argument,
 .smalltalk .hljs-localvars,
 .smalltalk .hljs-array,
@@ -96,9 +95,8 @@ FAR Style (c) MajestiC <majestic2k@gmail.com>
 .hljs-keyword,
 .css .hljs-id,
 .hljs-title,
-.haskell .hljs-type,
+.hljs-type,
 .vbscript .hljs-built_in,
-.sql .hljs-aggregate,
 .rsl .hljs-built_in,
 .smalltalk .hljs-class,
 .hljs-winutils,

@@ -8,15 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeHub.WebViews;
 using Humanizer;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ReactiveDialogViewController<GistViewModel>
+    public class GistView : BaseDialogViewController<GistViewModel>
     {
         public GistView()
         {
             this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
                 NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
+            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
+                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
+
+            Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
+                this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue).Subscribe(x => 
+                    HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
         }
 
         public override void ViewDidLoad()
@@ -34,7 +43,7 @@ namespace CodeHub.iOS.Views.Gists
             var forks = split.AddButton("Forks", "-");
             headerSection.Add(split);
 
-            var commentsSection = new Section("Comments");
+            var commentsSection = new Section("Comments") { FooterView = new TableFooterButton("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan) };
             var commentsElement = new WebElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
@@ -51,10 +60,7 @@ namespace CodeHub.iOS.Views.Gists
             detailsSection.Add(splitElement2);
 
             var owner = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
-            owner.Tapped += () => ViewModel.GoToUserCommand.ExecuteIfCan();
-
-            var addComment = new StyledStringElement("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan, Images.Pencil);
-            commentsSection.Add(addComment);
+            owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
 
             Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 

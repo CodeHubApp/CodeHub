@@ -1,5 +1,4 @@
 ﻿using System;
-using Xamarin.Utilities.ViewControllers;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
 using Xamarin.Utilities.ViewModels;
@@ -15,7 +14,7 @@ namespace CodeHub.iOS.Views
         public static UIColor RefreshIndicatorColor = UIColor.Gray;
     }
 
-    public abstract class ReactiveDialogViewController<TViewModel> : NewReactiveTableViewController<TViewModel> where TViewModel : class, IBaseViewModel
+    public abstract class BaseDialogViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class, IBaseViewModel
     {
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
@@ -41,15 +40,13 @@ namespace CodeHub.iOS.Views
             }
         }
 
-        protected ReactiveDialogViewController()
+        protected BaseDialogViewController()
             : base(UITableViewStyle.Grouped)
         {
             NavigationItem.TitleView = SlideUpTitle = new SlideUpTitleView(44f)
             {
                 Offset = 100f,
             };
-
-
 
             HeaderView = new ImageAndTitleHeaderView();
         }

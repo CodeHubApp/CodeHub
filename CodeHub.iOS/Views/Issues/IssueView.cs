@@ -9,10 +9,11 @@ using Xamarin.Utilities.DialogElements;
 using Humanizer;
 using CodeHub.WebViews;
 using CodeHub.iOS.Elements;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : ReactiveDialogViewController<IssueViewModel>
+    public class IssueView : BaseDialogViewController<IssueViewModel>
     {
         public IssueView()
         {
@@ -25,7 +26,7 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
             var secDetails = new Section();
-            var commentsSection = new Section();
+            var commentsSection = new Section(null, new TableFooterButton("Add Comment", () => ViewModel.AddCommentCommand.ExecuteIfCan()));
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
@@ -112,7 +113,7 @@ namespace CodeHub.iOS.Views.Issues
                 }
             });
 
-            Root.Reset(new Section(), secDetails, commentsSection, new Section { addCommentElement });
+            Root.Reset(new Section(), secDetails, commentsSection);
         }
 
         private static string CreateEventBody(Octokit.EventInfo eventInfo, string commitId)

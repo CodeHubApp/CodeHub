@@ -86,14 +86,15 @@
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
     </None>
+    <None Include="WebResources\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="WebViews\Diff\app.js" />
     <Content Include="WebViews\Diff\difflib.js" />
     <Content Include="WebViews\Diff\diffview.css" />
     <Content Include="WebViews\Diff\diffview.js" />
-    <Content Include="WebResources\highlight.pack.js" />
     <Content Include="WebResources\marked.js" />
+    <Content Include="WebResources\highlight.pack.js" />
     <Content Include="WebResources\styles\arta.css" />
     <Content Include="WebResources\styles\ascetic.css" />
     <Content Include="WebResources\styles\atelier-dune.dark.css" />
@@ -108,6 +109,8 @@
     <Content Include="WebResources\styles\atelier-seaside.light.css" />
     <Content Include="WebResources\styles\brown_paper.css" />
     <Content Include="WebResources\styles\brown_papersq.png" />
+    <Content Include="WebResources\styles\codepen-embed.css" />
+    <Content Include="WebResources\styles\color-brewer.css" />
     <Content Include="WebResources\styles\dark.css" />
     <Content Include="WebResources\styles\default.css" />
     <Content Include="WebResources\styles\docco.css" />
@@ -115,12 +118,15 @@
     <Content Include="WebResources\styles\foundation.css" />
     <Content Include="WebResources\styles\github.css" />
     <Content Include="WebResources\styles\googlecode.css" />
+    <Content Include="WebResources\styles\hybrid.css" />
     <Content Include="WebResources\styles\idea.css" />
     <Content Include="WebResources\styles\ir_black.css" />
+    <Content Include="WebResources\styles\kimbie.dark.css" />
+    <Content Include="WebResources\styles\kimbie.light.css" />
     <Content Include="WebResources\styles\magula.css" />
     <Content Include="WebResources\styles\mono-blue.css" />
-    <Content Include="WebResources\styles\monokai.css" />
     <Content Include="WebResources\styles\monokai_sublime.css" />
+    <Content Include="WebResources\styles\monokai.css" />
     <Content Include="WebResources\styles\obsidian.css" />
     <Content Include="WebResources\styles\paraiso.dark.css" />
     <Content Include="WebResources\styles\paraiso.light.css" />
@@ -133,11 +139,11 @@
     <Content Include="WebResources\styles\solarized_dark.css" />
     <Content Include="WebResources\styles\solarized_light.css" />
     <Content Include="WebResources\styles\sunburst.css" />
-    <Content Include="WebResources\styles\tomorrow.css" />
-    <Content Include="WebResources\styles\tomorrow-night.css" />
     <Content Include="WebResources\styles\tomorrow-night-blue.css" />
     <Content Include="WebResources\styles\tomorrow-night-bright.css" />
     <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <Content Include="WebResources\styles\tomorrow-night.css" />
+    <Content Include="WebResources\styles\tomorrow.css" />
     <Content Include="WebResources\styles\vs.css" />
     <Content Include="WebResources\styles\xcode.css" />
     <Content Include="WebResources\styles\zenburn.css" />
@@ -146,5 +152,6 @@
     <Folder Include="Views\" />
     <Folder Include="Views\Releases\" />
     <Folder Include="Views\Contents\" />
+    <Folder Include="WebResources\styles\" />
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ReactiveDialogViewController<GistCreateViewModel>
+    public class GistCreateView : BaseDialogViewController<GistCreateViewModel>
     {
         private readonly BooleanElement _publicElement;
         private readonly Section _fileSection;

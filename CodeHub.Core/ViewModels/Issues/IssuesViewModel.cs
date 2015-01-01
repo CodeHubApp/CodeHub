@@ -3,8 +3,6 @@ using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
-using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -50,6 +48,7 @@ namespace CodeHub.Core.ViewModels.Issues
             _applicationService = applicationService;
             _mineFilter = IssuesFilterModel.CreateMineFilter(applicationService.Account.Username);
 
+            Filter = _openFilter;
             Title = "Issues";
 
             _filterSelection = this.WhenAnyValue(x => x.Filter)
@@ -74,6 +73,12 @@ namespace CodeHub.Core.ViewModels.Issues
                 //vm.CreatedIssue.IsNotNull().Subscribe(IssuesCollection.Add);
                 NavigateTo(vm);
 	        });
+
+            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ => 
+            {
+                IssuesBacking.Clear();
+                LoadCommand.ExecuteIfCan();
+            });
 
             GoToCustomFilterCommand = ReactiveCommand.Create();
 	    }

@@ -70,23 +70,15 @@
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
     <Compile Include="ViewModels\App\AccountsViewModel.cs" />
     <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
-    <Compile Include="ViewModels\App\CommentViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackItemViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackViewModel.cs" />
-    <Compile Include="ViewModels\App\MarkdownComposerViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\App\SupportViewModel.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitCommentViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
-    <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
-    <Compile Include="ViewModels\Events\EventItemViewModel.cs" />
-    <Compile Include="ViewModels\Events\NewsViewModel.cs" />
-    <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
-    <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
-    <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
     <Compile Include="ViewModels\Gists\BaseGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCommentViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
@@ -111,8 +103,6 @@
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
-    <Compile Include="ViewModels\Notifications\NotificationGroupViewModel.cs" />
-    <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestCommentViewModel.cs" />
@@ -144,8 +134,6 @@
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\Source\TagItemViewModel.cs" />
-    <Compile Include="ViewModels\Teams\TeamItemViewModel.cs" />
-    <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
@@ -169,7 +157,6 @@
     <Compile Include="ViewModels\Changesets\BaseCommitsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitViewModel.cs" />
-    <Compile Include="ViewModels\Notifications\NotificationItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueGroupViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEventItemViewModel.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
@@ -178,6 +165,18 @@
     <Compile Include="ViewModels\Contents\CreateFileViewModel.cs" />
     <Compile Include="ViewModels\Contents\EditFileViewModel.cs" />
     <Compile Include="ViewModels\Contents\ReadmeViewModel.cs" />
+    <Compile Include="ViewModels\Activity\BaseEventsViewModel.cs" />
+    <Compile Include="ViewModels\Activity\EventItemViewModel.cs" />
+    <Compile Include="ViewModels\Activity\NewsViewModel.cs" />
+    <Compile Include="ViewModels\Activity\OrganizationEventsViewModel.cs" />
+    <Compile Include="ViewModels\Activity\RepositoryEventsViewModel.cs" />
+    <Compile Include="ViewModels\Activity\UserEventsViewModel.cs" />
+    <Compile Include="ViewModels\Activity\NotificationGroupViewModel.cs" />
+    <Compile Include="ViewModels\Activity\NotificationItemViewModel.cs" />
+    <Compile Include="ViewModels\Activity\NotificationsViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\TeamItemViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
+    <Compile Include="ViewModels\MarkdownComposerViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

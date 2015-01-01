@@ -2,7 +2,7 @@ using CodeHub.Core.ViewModels.Events;
 using CodeHub.iOS.TableViewSources;
 using Xamarin.Utilities.ViewControllers;
 
-namespace CodeHub.iOS.Views.Events
+namespace CodeHub.iOS.Views.Activity
 {
     public abstract class BaseEventsView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseEventsViewModel
     {

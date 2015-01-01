@@ -12,7 +12,7 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestView : ReactiveDialogViewController<PullRequestViewModel>
+    public class PullRequestView : BaseDialogViewController<PullRequestViewModel>
     {
         private readonly SplitElement _split1, _split2;
         private readonly HtmlElement _descriptionElement;

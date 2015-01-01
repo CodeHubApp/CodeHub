@@ -4,7 +4,6 @@ using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
-using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
 using System.Reactive.Linq;
 using Xamarin.Utilities.ViewModels;

@@ -1,10 +1,9 @@
 ﻿using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class FeedbackView : ReactiveTableViewController<FeedbackViewModel> 
+    public class FeedbackView : BaseTableViewController<FeedbackViewModel> 
     {
         public override void ViewDidLoad()
         {

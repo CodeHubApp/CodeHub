@@ -1,30 +1,27 @@
 ﻿using System;
-using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
-using System.Reactive.Subjects;
-using GitHubSharp.Models;
+using ReactiveUI;
+using System.Reactive.Linq;
+using Xamarin.Utilities.Services;
+using Xamarin.Utilities.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistCommentViewModel : MarkdownComposerViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private readonly Subject<GistCommentModel> _commendAdded = new Subject<GistCommentModel>();
+        public int Id { get; set; }
 
-        public string Id { get; set; }
+        public IReactiveCommand<Octokit.GistComment> SaveCommand { get; protected set; }
 
-        public IObservable<GistCommentModel> CommentAdded { get { return _commendAdded; } }
-
-        public GistCommentViewModel(IApplicationService applicationService) 
+        public GistCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
+            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
+            : base(imgurService, mediaPicker, statusIndicatorService)
         {
-            _applicationService = applicationService;
-        }
-
-        protected override async System.Threading.Tasks.Task Save()
-        {
-            var comment = await _applicationService.Client.ExecuteAsync(
-                _applicationService.Client.Gists[Id].CreateGistComment(Text));
-            _commendAdded.OnNext(comment.Data);
+            Title = "Add Comment";
+            SaveCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
+                t => applicationService.GitHubClient.Gist.Comment.Create(Id, Text));
+            SaveCommand.Subscribe(x => Dismiss());
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using System;
 
-namespace CodeHub.Core.ViewModels.Teams
+namespace CodeHub.Core.ViewModels.Organizations
 {
     public class TeamItemViewModel : ReactiveObject
     {

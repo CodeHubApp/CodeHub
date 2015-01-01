@@ -1,13 +1,12 @@
 using System;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 using ReactiveUI;
 using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class SourceTreeView : NewReactiveTableViewController<SourceTreeViewModel>
+    public class SourceTreeView : BaseTableViewController<SourceTreeViewModel>
     {
         public SourceTreeView()
         {

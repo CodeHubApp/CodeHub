@@ -7,13 +7,15 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 */
 
 .hljs {
-  display: block; padding: 0.5em;
-  color: #DCCF8F;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #dccf8f;
   background: url(./pojoaque.jpg) repeat scroll left top #181914;
+  -webkit-text-size-adjust: none;
 }
 
 .hljs-comment,
-.hljs-template_comment,
 .diff .hljs-header,
 .hljs-doctype,
 .lisp .hljs-string,
@@ -29,9 +31,9 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 .method,
 .hljs-addition,
 .css .hljs-tag,
-.clojure .hljs-title,
+.hljs-list .hljs-keyword,
 .nginx .hljs-title {
-  color: #B64926;
+  color: #b64926;
 }
 
 .hljs-number,
@@ -39,6 +41,7 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 .hljs-string,
 .hljs-tag .hljs-value,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .tex .hljs-formula,
 .hljs-regexp,
 .hljs-hexcolor {
@@ -51,11 +54,9 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 .hljs-chunk,
 .hljs-decorator,
 .hljs-built_in,
-.lisp .hljs-title,
-.clojure .hljs-built_in,
 .hljs-identifier,
 .hljs-id {
-  color: #FFB03B;
+  color: #ffb03b;
 }
 
 .hljs-attribute,
@@ -65,7 +66,7 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 .hljs-constant,
 .hljs-class .hljs-title,
 .hljs-parent,
-.haskell .hljs-type {
+.hljs-type {
   color: #b58900;
 }
 
@@ -75,7 +76,7 @@ Based on Solarized Style from http://ethanschoonover.com/solarized
 
 .css .hljs-number,
 .css .hljs-hexcolor {
-  color: #DCCF8F;
+  color: #dccf8f;
 }
 
 .css .hljs-class {

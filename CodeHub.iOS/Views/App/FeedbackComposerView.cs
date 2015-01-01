@@ -1,5 +1,4 @@
 ﻿using System;
-using Xamarin.Utilities.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 using Xamarin.Utilities.DialogElements;
 using System.Reactive.Linq;
@@ -12,7 +11,7 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class FeedbackComposerView : ReactiveTableViewController<FeedbackComposerViewModel>
+    public class FeedbackComposerView : BaseTableViewController<FeedbackComposerViewModel>
     {
         private readonly InputElement _titleElement = new DummyInputElement("Title");
         private readonly ExpandingInputElement _descriptionElement;

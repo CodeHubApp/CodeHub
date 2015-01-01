@@ -7,7 +7,7 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Organizations
 {
-    public class OrganizationView : ReactiveDialogViewController<OrganizationViewModel>
+    public class OrganizationView : BaseDialogViewController<OrganizationViewModel>
     {
         public override void ViewDidLoad()
         {

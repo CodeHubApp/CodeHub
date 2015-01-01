@@ -3,12 +3,11 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Notifications;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 using CodeHub.iOS.TableViewSources;
 
-namespace CodeHub.iOS.Views.Notifications
+namespace CodeHub.iOS.Views.Activity
 {
-    public class NotificationsView : NewReactiveTableViewController<NotificationsViewModel>
+    public class NotificationsView : BaseTableViewController<NotificationsViewModel>
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;

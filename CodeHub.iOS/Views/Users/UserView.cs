@@ -8,13 +8,15 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public class UserView : ReactiveDialogViewController<UserViewModel>
+    public class UserView : BaseDialogViewController<UserViewModel>
     {
         public UserView()
         {
             this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
+
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
         }
 
         public override void ViewDidLoad()
@@ -40,6 +42,20 @@ namespace CodeHub.iOS.Views.Users
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
                 TableView.ReloadData();
             });
+        }
+
+        private bool _appearedOnce;
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            if (!_appearedOnce)
+            {
+                _appearedOnce = true;
+                Observable.Timer(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
+                    this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue).Subscribe(x => 
+                        HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ namespace CodeHub.Core
             Locator.CurrentMutable.RegisterLazySingleton(() => accountService, typeof(IAccountsService));
             Locator.CurrentMutable.RegisterLazySingleton(() => applicationService, typeof(IApplicationService));
             Locator.CurrentMutable.RegisterLazySingleton(() => loginService, typeof(ILoginService));
+            Locator.CurrentMutable.RegisterLazySingleton(() => new ImgurService(), typeof(IImgurService));
         }
     }
 }

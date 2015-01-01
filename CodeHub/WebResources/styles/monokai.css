@@ -3,8 +3,11 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 */
 
 .hljs {
-  display: block; padding: 0.5em;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
   background: #272822;
+  -webkit-text-size-adjust: none;
 }
 
 .hljs-tag,
@@ -15,20 +18,19 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 .hljs-change,
 .hljs-winutils,
 .hljs-flow,
-.lisp .hljs-title,
-.clojure .hljs-built_in,
 .nginx .hljs-title,
 .tex .hljs-special {
-  color: #F92672;
+  color: #f92672;
 }
 
 .hljs {
-  color: #DDD;
+  color: #ddd;
 }
 
 .hljs .hljs-constant,
-.asciidoc .hljs-code {
-	color: #66D9EF;
+.asciidoc .hljs-code,
+.markdown .hljs-code {
+	color: #66d9ef;
 }
 
 .hljs-code,
@@ -43,7 +45,7 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 .hljs-symbol .hljs-string,
 .hljs-value,
 .hljs-regexp {
-	color: #BF79DB;
+	color: #bf79db;
 }
 
 .hljs-link_url,
@@ -53,12 +55,11 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 .hljs-subst,
 .hljs-title,
 .hljs-emphasis,
-.haskell .hljs-type,
+.hljs-type,
 .hljs-preprocessor,
 .hljs-pragma,
 .ruby .hljs-class .hljs-parent,
 .hljs-built_in,
-.sql .hljs-aggregate,
 .django .hljs-template_tag,
 .django .hljs-variable,
 .smalltalk .hljs-class,
@@ -75,34 +76,33 @@ Monokai style - ported by Luigi Maselli - http://grigio.org
 .apache .hljs-cbracket,
 .tex .hljs-command,
 .hljs-prompt {
-  color: #A6E22E;
+  color: #a6e22e;
 }
 
 .hljs-comment,
-.java .hljs-annotation,
+.hljs-annotation,
 .smartquote,
 .hljs-blockquote,
 .hljs-horizontal_rule,
-.python .hljs-decorator,
-.hljs-template_comment,
+.hljs-decorator,
 .hljs-pi,
 .hljs-doctype,
 .hljs-deletion,
 .hljs-shebang,
 .apache .hljs-sqbracket,
 .tex .hljs-formula {
-  color: #75715E;
+  color: #75715e;
 }
 
 .hljs-keyword,
 .hljs-literal,
 .css .hljs-id,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .hljs-title,
 .hljs-header,
-.haskell .hljs-type,
+.hljs-type,
 .vbscript .hljs-built_in,
-.sql .hljs-aggregate,
 .rsl .hljs-built_in,
 .smalltalk .hljs-class,
 .diff .hljs-header,

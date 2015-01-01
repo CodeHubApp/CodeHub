@@ -1,13 +1,12 @@
 using System;
-using CodeHub.Core.ViewModels.Teams;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewControllers;
+using CodeHub.Core.ViewModels.Organizations;
 
-namespace CodeHub.iOS.Views.Teams
+namespace CodeHub.iOS.Views.Organizations
 {
-    public class TeamsView : NewReactiveTableViewController<TeamsViewModel>
+    public class TeamsView : BaseTableViewController<TeamsViewModel>
     {
         public override void ViewDidLoad()
         {

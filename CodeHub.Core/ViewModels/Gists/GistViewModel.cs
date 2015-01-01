@@ -35,7 +35,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IReactiveCommand<object> GoToUserCommand { get; private set; }
+        public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
 
         public IReactiveCommand<object> GoToFileSourceCommand { get; private set; }
 
@@ -124,8 +124,8 @@ namespace CodeHub.Core.ViewModels.Gists
                 NavigateTo(vm);
             });
 
-            GoToUserCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && x.Owner != null));
-            GoToUserCommand.Subscribe(x =>
+            GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && x.Owner != null));
+            GoToOwnerCommand.Subscribe(x =>
             {
                 var vm = this.CreateViewModel<UserViewModel>();
                 vm.Username = Gist.Owner.Login;
@@ -135,8 +135,8 @@ namespace CodeHub.Core.ViewModels.Gists
             AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<GistCommentViewModel>();
-                vm.Id = Id;
-                vm.CommentAdded.Subscribe(Comments.Add);
+                vm.Id = int.Parse(Id);
+                vm.SaveCommand.Subscribe(x => LoadCommand.ExecuteIfCan());
                 NavigateTo(vm);
             });
 

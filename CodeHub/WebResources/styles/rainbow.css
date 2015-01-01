@@ -5,18 +5,21 @@ Style with support for rainbow parens
 */
 
 .hljs {
-  display: block; padding: 0.5em;
-  background: #474949; color: #D1D9E1;
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #474949;
+  color: #d1d9e1;
+  -webkit-text-size-adjust: none;
 }
 
 
 .hljs-body,
 .hljs-collection {
-   color: #D1D9E1;
+   color: #d1d9e1;
 }
 
 .hljs-comment,
-.hljs-template_comment,
 .diff .hljs-header,
 .hljs-doctype,
 .lisp .hljs-string,
@@ -40,6 +43,7 @@ Style with support for rainbow parens
 .hljs-string,
 .hljs-tag .hljs-value,
 .hljs-phpdoc,
+.hljs-dartdoc,
 .tex .hljs-formula,
 .hljs-regexp,
 .hljs-hexcolor {
@@ -52,39 +56,31 @@ Style with support for rainbow parens
 .hljs-chunk,
 .hljs-decorator,
 .hljs-built_in,
-.lisp .hljs-title,
-.hljs-identifier
-{
+.hljs-identifier {
   color: #b5bd68;
 }
 
-.hljs-class .hljs-keyword
-{
+.hljs-class .hljs-keyword {
   color: #f2777a;
 }
 
 .hljs-variable,
-.lisp .hljs-body,
 .smalltalk .hljs-number,
 .hljs-constant,
 .hljs-class .hljs-title,
 .hljs-parent,
 .haskell .hljs-label,
-.hljs-id,
-.lisp .hljs-title,
-.clojure .hljs-title .hljs-built_in {
+.hljs-id {
    color: #ffcc66;
 }
 
 .hljs-tag .hljs-title,
 .hljs-rules .hljs-property,
-.django .hljs-tag .hljs-keyword,
-.clojure .hljs-title .hljs-built_in {
+.django .hljs-tag .hljs-keyword {
   font-weight: bold;
 }
 
-.hljs-attribute,
-.clojure .hljs-title {
+.hljs-attribute {
   color: #81a2be;
 }
 

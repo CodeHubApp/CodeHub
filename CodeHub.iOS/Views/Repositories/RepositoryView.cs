@@ -9,7 +9,7 @@ using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoryView : ReactiveDialogViewController<RepositoryViewModel>
+    public class RepositoryView : BaseDialogViewController<RepositoryViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
@@ -23,6 +23,10 @@ namespace CodeHub.iOS.Views.Repositories
                 new DialogStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Images.PullRequest),
                 new DialogStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Code),
             };
+
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
+            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
+                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
         }
 
         public override void ViewDidLoad()
@@ -84,6 +88,20 @@ namespace CodeHub.iOS.Views.Repositories
                 _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"));
 
             ViewModel.WhenAnyValue(x => x.RepositoryName).Subscribe(x => HeaderView.Text = x);
+        }
+
+        private bool _appearedOnce;
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            if (!_appearedOnce)
+            {
+                _appearedOnce = true;
+                Observable.Timer(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
+                        this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue).Subscribe(x => 
+                        HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
+            }
         }
 
         private void Render()

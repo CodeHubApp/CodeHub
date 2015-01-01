@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Xamarin.Utilities.ViewModels;
 using System.Reactive;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -43,6 +44,8 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand GoToReportBugCommand { get; private set; }
 
+        public IReactiveCommand GoToRepositoryCommand { get; private set; }
+
         public SupportViewModel(IApplicationService applicationService)
         {
             Title = "Feedback & Support";
@@ -76,6 +79,14 @@ namespace CodeHub.Core.ViewModels.App
                 var vm = this.CreateViewModel<FeedbackComposerViewModel>();
                 vm.IsFeature = false;
                 vm.CreatedIssueObservable.Subscribe(gotoIssue);
+                NavigateTo(vm);
+            });
+
+            GoToRepositoryCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            {
+                var vm = this.CreateViewModel<RepositoryViewModel>();
+                vm.RepositoryOwner = CodeHubOwner;
+                vm.RepositoryName = CodeHubName;
                 NavigateTo(vm);
             });
 

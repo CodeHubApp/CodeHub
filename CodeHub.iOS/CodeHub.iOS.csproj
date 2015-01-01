@@ -133,19 +133,11 @@
       <DependentUpon>AddAccountView.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\App\MenuView.cs" />
-    <Compile Include="Views\Events\NewsView.cs" />
-    <Compile Include="Views\Events\OrganizationEventsView.cs" />
-    <Compile Include="Views\Events\UserEventsView.cs" />
     <Compile Include="Views\Gists\PublicGistsView.cs" />
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
-    <Compile Include="Views\Gists\ModifyGistFileController.cs" />
-    <Compile Include="Views\Gists\ModifyGistFileController.designer.cs">
-      <DependentUpon>ModifyGistFileController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\Issues\IssueMilestonesView.cs" />
@@ -153,7 +145,6 @@
     <Compile Include="Views\Issues\IssueView.cs" />
     <Compile Include="ViewComponents\MilestoneView.cs" />
     <Compile Include="Views\Issues\MyIssuesView.cs" />
-    <Compile Include="Views\Notifications\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
@@ -167,11 +158,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
-    <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
-    <Compile Include="Views\Events\RepositoryEventsView.cs" />
-    <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
     <Compile Include="Views\Gists\GistFileView.cs" />
     <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
@@ -183,7 +171,6 @@
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="Views\App\UpgradesView.cs" />
@@ -197,7 +184,6 @@
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
-    <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
@@ -288,7 +274,6 @@
     <Compile Include="Views\App\FeedbackComposerView.cs" />
     <Compile Include="ViewComponents\ButtonAccessoryView.cs" />
     <Compile Include="ViewComponents\MarkdownAccessoryView.cs" />
-    <Compile Include="Views\ReactiveDialogViewController.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Elements\HtmlElement.cs" />
     <Compile Include="Cells\MilestoneTableViewCell.cs" />
@@ -297,7 +282,6 @@
     <Compile Include="TableViewSources\CommitedFilesTableViewSource.cs" />
     <Compile Include="Services\Registrations.cs" />
     <Compile Include="Themes\Theme.cs" />
-    <Compile Include="ViewControllers\ReactiveTableViewController.cs" />
     <Compile Include="TableViewSources\ReactiveTableViewSource.cs" />
     <Compile Include="Views\Settings\SettingsView.cs" />
     <Compile Include="Views\Settings\DefaultStartupView.cs" />
@@ -320,6 +304,16 @@
     <Compile Include="Views\BaseViewController.cs" />
     <Compile Include="Elements\DummyInputElement.cs" />
     <Compile Include="Elements\ExpandingInputElement.cs" />
+    <Compile Include="Views\Activity\NewsView.cs" />
+    <Compile Include="Views\Activity\OrganizationEventsView.cs" />
+    <Compile Include="Views\Activity\UserEventsView.cs" />
+    <Compile Include="Views\Activity\RepositoryEventsView.cs" />
+    <Compile Include="Views\Activity\BaseEventsView.cs" />
+    <Compile Include="Views\Activity\NotificationsView.cs" />
+    <Compile Include="Views\BaseTableViewController.cs" />
+    <Compile Include="Views\BaseDialogViewController.cs" />
+    <Compile Include="Views\Organizations\TeamsView.cs" />
+    <Compile Include="Views\Issues\IssueCommentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

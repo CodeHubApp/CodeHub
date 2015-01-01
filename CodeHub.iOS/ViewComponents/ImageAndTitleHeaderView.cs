@@ -3,6 +3,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using SDWebImage;
 using MonoTouch.Foundation;
+using MonoTouch.CoreGraphics;
 
 namespace Xamarin.Utilities.ViewComponents
 {
@@ -12,8 +13,17 @@ namespace Xamarin.Utilities.ViewComponents
         private readonly UILabel _label;
         private readonly UILabel _label2;
         private readonly UIView _seperatorView;
+        private readonly UIView _subView;
+        private readonly UIImageView _subImageView;
+
+        private const float SubImageAppearTime = 0.25f;
 
         public UIButton ImageButton { get; private set; }
+
+        public UIImageView SubImageView
+        {
+            get { return _subImageView; }
+        }
 
         public Action ImageButtonAction { get; set; }
 
@@ -161,8 +171,46 @@ namespace Xamarin.Utilities.ViewComponents
             _seperatorView.BackgroundColor = UIColor.FromWhiteAlpha(214.0f / 255.0f, 1.0f);
             Add(_seperatorView);
 
+            _subView = new UIView();
+            _subView.Frame = new RectangleF(56, 56, 22, 22);
+            _subView.Layer.CornerRadius = 10f;
+            _subView.Layer.MasksToBounds = true;
+            _subView.BackgroundColor = UIColor.White;
+            _subView.Hidden = true;
+            ImageButton.Add(_subView);
+
+            _subImageView = new UIImageView(new RectangleF(0, 0, _subView.Frame.Width - 4f, _subView.Frame.Height - 4f));
+            _subImageView.Center = new PointF(11f, 11f);
+            _subView.Add(_subImageView);
+
             EnableSeperator = false;
             RoundedImage = true;
+        }
+
+        public void SetSubImage(UIImage image)
+        {
+            if (image == null && _subImageView.Image != null)
+            {
+                UIView.Animate(SubImageAppearTime, 0, UIViewAnimationOptions.CurveEaseIn, () => 
+                    _subView.Transform = CGAffineTransform.MakeScale(0.01f, 0.01f), () =>
+                {
+                    _subView.Hidden = true;
+                    _subImageView.Image = null;
+                });
+            }
+            else if (image != null && _subImageView.Image != null)
+            {
+                UIView.Animate(SubImageAppearTime, 0, UIViewAnimationOptions.TransitionCrossDissolve, () => 
+                    _subImageView.Image = image, null);
+            }
+            else if (image != null && _subImageView.Image == null)
+            {
+                _subView.Transform = CGAffineTransform.MakeScale(0.01f, 0.01f);
+                _subView.Hidden = false;
+                _subImageView.Image = image;
+                UIView.Animate(SubImageAppearTime, 0, UIViewAnimationOptions.CurveEaseIn, () => 
+                    _subView.Transform = CGAffineTransform.MakeIdentity(), null);
+            }
         }
 
         public override void LayoutSubviews()

@@ -1,32 +1,31 @@
 ﻿using System;
-using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Services;
-using System.Reactive.Subjects;
+using ReactiveUI;
+using System.Reactive.Linq;
+using Xamarin.Utilities.Factories;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueCommentViewModel : MarkdownComposerViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private readonly Subject<Octokit.IssueComment> _commendAdded = new Subject<Octokit.IssueComment>();
-
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
         public int Id { get; set; }
 
-        public IObservable<Octokit.IssueComment> CommentAdded { get { return _commendAdded; } }
+        public IReactiveCommand<Octokit.IssueComment> SaveCommand { get; private set; }
 
-        public IssueCommentViewModel(IApplicationService applicationService) 
+        public IssueCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
+            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
+            : base(imgurService, mediaPicker, statusIndicatorService)
         {
-            _applicationService = applicationService;
-        }
-
-        protected override async System.Threading.Tasks.Task Save()
-        {
-            var comment = await _applicationService.GitHubClient.Issue.Comment.Create(RepositoryOwner, RepositoryName, Id, Text);
-            _commendAdded.OnNext(comment);
+            Title = "Add Comment";
+            SaveCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
+                t => applicationService.GitHubClient.Issue.Comment.Create(RepositoryOwner, RepositoryName, Id, Text));
+            SaveCommand.Subscribe(x => Dismiss());
         }
     }
 }
