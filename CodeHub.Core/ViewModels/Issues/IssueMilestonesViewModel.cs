@@ -1,7 +1,6 @@
 using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues

@@ -1,7 +1,6 @@
 ﻿using System;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Releases

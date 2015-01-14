@@ -2,15 +2,12 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.App;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
 using System.Reactive;
 using System.Threading;
-using Xamarin.Utilities.Factories;
 using System.Collections.Generic;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

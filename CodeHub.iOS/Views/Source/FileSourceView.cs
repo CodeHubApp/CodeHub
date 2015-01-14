@@ -4,14 +4,13 @@ using System.Reactive.Linq;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.WebViews;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.Services;
 using MonoTouch.Foundation;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public abstract class FileSourceView<TViewModel> : ReactiveWebViewController<TViewModel> where TViewModel : ContentViewModel
+    public abstract class FileSourceView<TViewModel> : BaseWebView<TViewModel> where TViewModel : ContentViewModel
     {
         private readonly IAlertDialogFactory _alertDialogFactory;
         private bool _fullScreen;

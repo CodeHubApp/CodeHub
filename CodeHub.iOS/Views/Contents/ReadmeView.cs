@@ -2,14 +2,13 @@ using System;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.Services;
 using CodeHub.Views.Contents;
 using CodeHub.Core.ViewModels.Contents;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Contents
 {
-    public class ReadmeView : ReactiveWebViewController<ReadmeViewModel>
+    public class ReadmeView : BaseWebView<ReadmeViewModel>
     {
         public ReadmeView(INetworkActivityService networkActivityService)
             : base(networkActivityService)

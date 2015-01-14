@@ -3,15 +3,12 @@ using System.Linq;
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
-using CodeHub.Core.Services;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Delegates;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAddView : ReactiveTableViewController<IssueAddViewModel>
+    public class IssueAddView : BaseTableViewController<IssueAddViewModel>
 	{
 	    public override void ViewDidLoad()
 		{

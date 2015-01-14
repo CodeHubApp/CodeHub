@@ -1,10 +1,9 @@
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Activity
 {
-    public abstract class BaseEventsView<TViewModel> : ReactiveTableViewController<TViewModel> where TViewModel : BaseEventsViewModel
+    public abstract class BaseEventsView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseEventsViewModel
     {
         public override void ViewDidLoad()
         {

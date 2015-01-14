@@ -5,7 +5,6 @@ using CodeHub.Core.Data;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
-using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {

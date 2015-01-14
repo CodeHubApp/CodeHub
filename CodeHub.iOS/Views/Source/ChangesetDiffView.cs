@@ -4,16 +4,13 @@ using CodeHub.Core.ViewModels.Source;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
-using Xamarin.Utilities.ViewControllers;
 using ReactiveUI;
 using CodeHub.WebViews;
 using System.IO;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetDiffView : ReactiveWebViewController<ChangesetDiffViewModel>
+    public class ChangesetDiffView : BaseWebView<ChangesetDiffViewModel>
     {
         public ChangesetDiffView(INetworkActivityService networkActivityService)
             : base(networkActivityService)

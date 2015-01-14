@@ -4,57 +4,57 @@ namespace CodeHub.iOS
 {
     public static class Images
     {
-        public static UIImage Merge { get { return CreateTemplateFromBundle("/Images/git-merge"); } }
+        public static UIImage Merge { get { return CreateTemplateFromBundle("Images/git-merge"); } }
 
-        public static UIImage Globe { get { return CreateTemplateFromBundle("/Images/globe"); } }
+        public static UIImage Globe { get { return CreateTemplateFromBundle("Images/globe"); } }
 
-        public static UIImage Repo { get { return CreateTemplateFromBundle("/Images/repo"); } }
+        public static UIImage Repo { get { return CreateTemplateFromBundle("Images/repo"); } }
 
         public static UIImage Organization { get { return CreateTemplateFromBundle("Images/organization"); } }
 
-        public static UIImage Heart { get { return CreateTemplateFromBundle("/Images/heart"); } }
+        public static UIImage Heart { get { return CreateTemplateFromBundle("Images/heart"); } }
 
-        public static UIImage Fork { get { return CreateTemplateFromBundle("/Images/repo-forked"); } }
+        public static UIImage Fork { get { return CreateTemplateFromBundle("Images/repo-forked"); } }
 
-        public static UIImage Pencil { get { return CreateTemplateFromBundle("/Images/pencil"); } }
+        public static UIImage Pencil { get { return CreateTemplateFromBundle("Images/pencil"); } }
 
-        public static UIImage Tag { get { return CreateTemplateFromBundle("/Images/tag"); } }
+        public static UIImage Tag { get { return CreateTemplateFromBundle("Images/tag"); } }
 
-        public static UIImage Comment { get { return CreateTemplateFromBundle("/Images/comment"); } }
+        public static UIImage Comment { get { return CreateTemplateFromBundle("Images/comment"); } }
 
-        public static UIImage Trashcan { get { return CreateTemplateFromBundle("/Images/trashcan"); } }
+        public static UIImage Trashcan { get { return CreateTemplateFromBundle("Images/trashcan"); } }
 
-        public static UIImage Calendar { get { return CreateTemplateFromBundle("/Images/calendar"); } }
+        public static UIImage Calendar { get { return CreateTemplateFromBundle("Images/calendar"); } }
 
-        public static UIImage FileCode { get { return CreateTemplateFromBundle("/Images/file-code"); } }
+        public static UIImage FileCode { get { return CreateTemplateFromBundle("Images/file-code"); } }
 
-        public static UIImage Commit { get { return CreateTemplateFromBundle("/Images/git-commit"); } }
+        public static UIImage Commit { get { return CreateTemplateFromBundle("Images/git-commit"); } }
 
-        public static UIImage Following { get { return CreateTemplateFromBundle("/Images/following"); } }
+        public static UIImage Following { get { return CreateTemplateFromBundle("Images/following"); } }
 
         public static UIImage Eye { get { return CreateTemplateFromBundle("Images/eye"); } }
 
         public static UIImage PullRequest { get { return CreateTemplateFromBundle("Images/git-pull-request"); } }
 
-        public static UIImage Directory { get { return CreateTemplateFromBundle("/Images/file-directory"); } }
+        public static UIImage Directory { get { return CreateTemplateFromBundle("Images/file-directory"); } }
 
-        public static UIImage Submodule { get { return CreateTemplateFromBundle("/Images/file-submodule"); } }
+        public static UIImage Submodule { get { return CreateTemplateFromBundle("Images/file-submodule"); } }
 
-        public static UIImage Branch { get { return CreateTemplateFromBundle("/Images/git-branch"); } }
+        public static UIImage Branch { get { return CreateTemplateFromBundle("Images/git-branch"); } }
 
-        public static UIImage Question { get { return CreateTemplateFromBundle("/Images/question"); } }
+        public static UIImage Question { get { return CreateTemplateFromBundle("Images/question"); } }
 
-        public static UIImage Rss { get { return CreateTemplateFromBundle("/Images/rss"); } }
+        public static UIImage Rss { get { return CreateTemplateFromBundle("Images/rss"); } }
 
-        public static UIImage Person { get { return CreateTemplateFromBundle("/Images/person"); } }
+        public static UIImage Person { get { return CreateTemplateFromBundle("Images/person"); } }
 
-        public static UIImage Gear { get { return CreateTemplateFromBundle("/Images/gear"); } }
+        public static UIImage Gear { get { return CreateTemplateFromBundle("Images/gear"); } }
 
-        public static UIImage Star { get { return CreateTemplateFromBundle("/Images/star"); } }
+        public static UIImage Star { get { return CreateTemplateFromBundle("Images/star"); } }
 
-        public static UIImage Alert { get { return CreateTemplateFromBundle("/Images/alert"); } }
+        public static UIImage Alert { get { return CreateTemplateFromBundle("Images/alert"); } }
 
-        public static UIImage IssueOpened { get { return CreateTemplateFromBundle("/Images/issue-opened"); } }
+        public static UIImage IssueOpened { get { return CreateTemplateFromBundle("Images/issue-opened"); } }
 
         public static UIImage News { get { return CreateTemplateFromAuto("Images/news"); } }
 
@@ -98,6 +98,10 @@ namespace CodeHub.iOS
         public static UIImage Cancel { get { return UIImage.FromBundle("Images/Navigation/cancel"); } }
 
         public static UIImage BackButton { get { return UIImage.FromBundle("Images/Navigation/back"); } }
+
+        public static UIImage BackChevron { get { return UIImageHelper.FromFileAuto("Images/back-chevron"); } }
+
+        public static UIImage ForwardChevron { get { return UIImageHelper.FromFileAuto("Images/forward-chevron"); } }
 
         public static class Logos
         {

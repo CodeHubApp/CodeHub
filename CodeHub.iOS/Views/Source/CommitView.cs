@@ -1,16 +1,15 @@
 using System;
-using CodeFramework.Elements;
 using MonoTouch.UIKit;
 using System.Linq;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using System.Reactive.Linq;
 using GitHubSharp.Models;
-using Xamarin.Utilities.DialogElements;
 using System.Reactive;
 using System.Collections.Generic;
 using CodeHub.WebViews;
 using Humanizer;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Source
 {

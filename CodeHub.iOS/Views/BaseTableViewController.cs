@@ -2,7 +2,6 @@
 using ReactiveUI;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewModels;
 using CodeHub.Core.ViewModels;
 using System.Drawing;
 using System.Reactive.Subjects;

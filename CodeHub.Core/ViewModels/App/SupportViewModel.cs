@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
 using System.Threading.Tasks;
 using System.Threading;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 using CodeHub.Core.ViewModels.Repositories;
 

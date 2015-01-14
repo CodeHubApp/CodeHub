@@ -1,11 +1,11 @@
 ﻿using System;
 using MonoTouch.UIKit;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.ViewComponents;
-using Xamarin.Utilities.Delegates;
-using Xamarin.Utilities.DialogElements;
 using System.Drawing;
+using CodeHub.Core.ViewModels;
+using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views
 {

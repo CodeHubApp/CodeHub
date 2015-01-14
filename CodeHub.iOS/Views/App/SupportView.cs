@@ -1,11 +1,10 @@
 ﻿using System;
-using CodeHub.Core.ViewModels.App;
-using Xamarin.Utilities.DialogElements;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.App;
 using Humanizer;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.App
 {

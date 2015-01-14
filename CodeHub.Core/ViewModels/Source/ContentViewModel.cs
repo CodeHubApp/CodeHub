@@ -2,7 +2,6 @@ using System;
 using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source

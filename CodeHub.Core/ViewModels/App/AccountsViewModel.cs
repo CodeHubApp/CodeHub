@@ -6,7 +6,6 @@ using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.Core.Services;
 using System.Linq;
-using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {

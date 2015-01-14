@@ -1,8 +1,7 @@
 ﻿using System;
-using Xamarin.Utilities.DialogElements;
 using MonoTouch.UIKit;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class DialogStringElement : StyledStringElement
     {

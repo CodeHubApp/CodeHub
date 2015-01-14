@@ -1,7 +1,6 @@
 using CodeFramework.iOS.ViewComponents;
-using Xamarin.Utilities.DialogElements;
 
-namespace CodeFramework.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class ChangesetElement : StyledStringElement
     {

@@ -1,6 +1,6 @@
 using CodeHub.Core.ViewModels.Source;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Source
 {

@@ -2,7 +2,6 @@ using System;
 using GitHubSharp.Models;
 using ReactiveUI;
 using System.Linq;
-using Xamarin.Utilities.ViewModels;
 using GitHubSharp;
 using System.Collections.Generic;
 using System.Reactive;

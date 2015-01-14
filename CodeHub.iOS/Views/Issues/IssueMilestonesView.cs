@@ -1,10 +1,9 @@
 using CodeHub.Core.ViewModels.Issues;
 using MonoTouch.UIKit;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueMilestonesView : ReactiveTableViewController<IssueMilestonesViewModel>
+    public class IssueMilestonesView : BaseTableViewController<IssueMilestonesViewModel>
     {
         public override void ViewDidLoad()
         {

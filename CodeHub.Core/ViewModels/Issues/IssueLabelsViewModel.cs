@@ -3,7 +3,6 @@ using CodeHub.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues

@@ -1,9 +1,8 @@
-﻿using System;
-using Xamarin.Utilities.DialogElements;
-using MonoTouch.UIKit;
+﻿using MonoTouch.UIKit;
 using System.Drawing;
+using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     class DummyInputElement : InputElement
     {

@@ -2,8 +2,7 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Factories;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

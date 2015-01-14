@@ -1,17 +1,16 @@
 ﻿using System;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.UIKit;
-using Xamarin.Utilities.ViewControllers;
 using CodeHub.Core.ViewModels.Contents;
 using ReactiveUI;
-using Xamarin.Utilities.Delegates;
-using CodeHub.iOS.Elements;
 using System.Reactive.Linq;
-using Xamarin.Utilities.DialogElements;
+using CodeHub.iOS.Views;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Contents
 {
-    public class CreateFileView : ReactiveTableViewController<CreateFileViewModel>
+    public class CreateFileView : BaseTableViewController<CreateFileViewModel>
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Name");
         private readonly ExpandingInputElement _descriptionElement;

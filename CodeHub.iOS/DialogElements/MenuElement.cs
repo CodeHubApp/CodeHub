@@ -1,11 +1,10 @@
 using MonoTouch.UIKit;
-using Xamarin.Utilities.DialogElements;
 using System;
 using CodeHub.iOS.Cells;
 using SDWebImage;
 using MonoTouch.Foundation;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class MenuElement : Element
     {
@@ -18,8 +17,15 @@ namespace CodeHub.iOS.Elements
 
         public bool TintImage { get; set; }
 
-        public MenuElement(string title, Action tapped, UIImage image = null, string imageUri = null)
+        public MenuElement(string title, Action tapped, UIImage image, string imageUri = null)
         {
+            if (title == null)
+                throw new ArgumentNullException("title");
+            if (tapped == null)
+                throw new ArgumentNullException("tapped");
+            if (image == null)
+                throw new ArgumentNullException("image");
+
             _title = title;
             _tapped = tapped;
             _staticImage = image;

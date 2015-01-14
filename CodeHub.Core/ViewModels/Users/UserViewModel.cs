@@ -8,9 +8,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Factories;
-using CodeHub.Core.Utilities;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -136,8 +134,12 @@ namespace CodeHub.Core.ViewModels.Users
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                Observable.FromAsync(() => applicationService.GitHubClient.User.Followers.IsFollowingForCurrent(Username))
-                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => IsFollowing = x);
+                if (!IsLoggedInUser)
+                {
+                    Observable.FromAsync(() => applicationService.GitHubClient.User.Followers.IsFollowingForCurrent(Username))
+                        .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => IsFollowing = x);
+                }
+
                 User = await applicationService.GitHubClient.User.Get(Username);
             });
         }

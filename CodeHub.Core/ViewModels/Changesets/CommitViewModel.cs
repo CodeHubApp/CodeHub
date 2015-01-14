@@ -5,8 +5,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {

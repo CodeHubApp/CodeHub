@@ -1,5 +1,4 @@
 ﻿using System;
-using Xamarin.Utilities.ViewModels;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Services;

@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories

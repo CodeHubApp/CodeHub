@@ -5,11 +5,10 @@ using MonoTouch.UIKit;
 using System.Linq;
 using System.Collections.Generic;
 using ReactiveUI;
-using Xamarin.Utilities.DialogElements;
 using Humanizer;
 using CodeHub.WebViews;
-using CodeHub.iOS.Elements;
 using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 using Octokit;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Source
 {

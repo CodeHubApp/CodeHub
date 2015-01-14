@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using System.Linq;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.PullRequests;
-using Xamarin.Utilities.ViewModels;
 using System.Collections.Generic;
 using System.Reactive;
 using GitHubSharp;

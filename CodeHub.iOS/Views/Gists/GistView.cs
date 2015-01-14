@@ -3,12 +3,12 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Gists;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.DialogElements;
 using System.Collections.Generic;
 using System.Linq;
 using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Gists
 {

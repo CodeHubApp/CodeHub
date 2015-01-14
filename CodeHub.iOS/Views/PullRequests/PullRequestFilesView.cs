@@ -3,11 +3,10 @@ using CodeHub.Core.ViewModels.PullRequests;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestFilesView : ReactiveTableViewController<PullRequestFilesViewModel>
+    public class PullRequestFilesView : BaseTableViewController<PullRequestFilesViewModel>
     {
         public override void ViewDidLoad()
         {

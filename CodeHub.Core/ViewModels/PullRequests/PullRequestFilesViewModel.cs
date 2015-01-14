@@ -2,7 +2,6 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using GitHubSharp.Models;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.PullRequests

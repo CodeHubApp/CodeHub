@@ -2,8 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.ViewModels;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.Services
 {

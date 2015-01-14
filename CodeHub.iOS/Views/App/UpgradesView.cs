@@ -1,19 +1,18 @@
-using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Linq;
-using CodeHub.Core.Services;
 using System;
-using CodeHub.Core.ViewModels.App;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CodeHub.Core.Factories;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.App;
 using ReactiveUI;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.ViewControllers;
 using Splat;
-using Xamarin.Utilities.Factories;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class UpgradesView : ReactiveTableViewController<UpgradesViewModel>
+    public class UpgradesView : BaseTableViewController<UpgradesViewModel>
     {
         private readonly IFeaturesService _featuresService;
         private readonly INetworkActivityService _networkActivityService;

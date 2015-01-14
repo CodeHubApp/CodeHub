@@ -1,11 +1,9 @@
 ﻿using System;
-using Xamarin.Utilities.DialogElements;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using System.Drawing;
-using ReactiveUI;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class SplitViewElement : Element, IElementSizing
     {
@@ -18,7 +16,7 @@ namespace CodeHub.iOS.Elements
 
         public float GetHeight(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
         {
-            return 40f;
+            return 44f;
         }
 
         public override UITableViewCell GetCell(UITableView tv)
@@ -43,8 +41,15 @@ namespace CodeHub.iOS.Elements
 
         private class SplitCell : UITableViewCell
         {
+            private readonly static float SeperatorWidth = 1.0f;
             private UIButton[] _buttons;
             private UIView[] _seperatorViews;
+
+            static SplitCell()
+            {
+                if (UIScreen.MainScreen.Scale > 1.0f)
+                    SeperatorWidth = 0.5f;
+            }
 
             public SplitCell()
                 : base(UITableViewCellStyle.Default, "splitelement")
@@ -98,7 +103,7 @@ namespace CodeHub.iOS.Elements
                 if (_buttons != null)
                 {
                     var width = this.Bounds.Width;
-                    var space = width / (float)_buttons.Length;
+                    var space = width / _buttons.Length;
 
                     for (var i = 0; i < _buttons.Length; i++)
                     {
@@ -106,7 +111,7 @@ namespace CodeHub.iOS.Elements
                         _buttons[i].LayoutSubviews();
 
                         if (i != _buttons.Length - 1)
-                            _seperatorViews[i].Frame = new RectangleF(_buttons[i].Frame.Right, 0, 0.5f, Bounds.Height);
+                            _seperatorViews[i].Frame = new RectangleF(_buttons[i].Frame.Right, 0, SeperatorWidth, Bounds.Height);
                     }
                 }
             }
@@ -173,6 +178,8 @@ namespace CodeHub.iOS.Elements
                 _text.TextColor = DefaulTextColor;
                 _text.Font = TextFont;
                 _text.Text = text;
+                _text.AdjustsFontSizeToFitWidth = true;
+                _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);
 
                 if (touched != null)
@@ -196,7 +203,7 @@ namespace CodeHub.iOS.Elements
 
                 var textHeight = (int)Math.Ceiling(TextFont.LineHeight) + 1;
                 var textY = (this.Bounds.Height / 2) - (textHeight / 2);
-                _text.Frame = new RectangleF(_image.Frame.Right + 5f, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + 5 + _image.Frame.Left), textHeight);
+                _text.Frame = new RectangleF(_image.Frame.Right + 5f, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + 5f + _image.Frame.Left), textHeight);
             }
         }
     }

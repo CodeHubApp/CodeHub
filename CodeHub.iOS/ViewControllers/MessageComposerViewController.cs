@@ -4,7 +4,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewModels;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers
 {

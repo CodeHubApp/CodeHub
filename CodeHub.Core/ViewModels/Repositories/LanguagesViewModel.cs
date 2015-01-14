@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.Data;
-using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

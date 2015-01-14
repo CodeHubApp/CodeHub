@@ -4,11 +4,9 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using System.Linq;
 using System.IO;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
 using System.Reactive;
-using Xamarin.Utilities.Factories;
 using CodeHub.Core.ViewModels.Contents;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Source
 {

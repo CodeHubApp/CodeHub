@@ -4,17 +4,16 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class StartupViewModel : BaseViewModel, ILoadableViewModel
+    public class StartupViewModel : BaseViewModel
     {
         private readonly IAccountsService _accountsService;
         private readonly ILoginService _loginService;
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> StartupCommand { get; private set; }
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
@@ -42,7 +41,7 @@ namespace CodeHub.Core.ViewModels.App
             _accountsService = accountsService;
             _loginService = loginService;
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => Load());
+            StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
 
         private void GoToAccountsOrNewUser()

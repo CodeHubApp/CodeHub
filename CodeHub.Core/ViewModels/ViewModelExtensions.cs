@@ -4,11 +4,8 @@ using CodeHub.Core.Services;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-using System.Linq;
-using System.Reactive.Linq;
 using Splat;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -36,8 +33,8 @@ namespace CodeHub.Core.ViewModels
             if (result.WasCached)
             {
                 request.RequestFromCache = false;
-                var uncachedTask = application.Client.ExecuteAsync(request);
-                uncachedTask.ContinueInBackground(update);
+                Observable.FromAsync(() => application.Client.ExecuteAsync(request))
+                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(update);
             }
         }
 

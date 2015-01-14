@@ -7,13 +7,11 @@ using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class AddAccountView : ReactiveViewController<AddAccountViewModel>
+    public partial class AddAccountView : BaseViewController<AddAccountViewModel>
     {
         private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly IAlertDialogFactory _alertDialogService;

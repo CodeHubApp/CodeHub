@@ -16,10 +16,8 @@ using CodeHub.Core.Data;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Releases;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
 using CodeHub.Core.ViewModels.Contents;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

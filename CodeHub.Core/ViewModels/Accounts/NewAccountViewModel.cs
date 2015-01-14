@@ -1,6 +1,5 @@
 ﻿using System;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {

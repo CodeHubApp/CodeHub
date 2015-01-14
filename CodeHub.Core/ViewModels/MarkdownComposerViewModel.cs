@@ -1,10 +1,8 @@
 ﻿using System;
-using Xamarin.Utilities.ViewModels;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.Factories;
 using System.IO;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels
 {

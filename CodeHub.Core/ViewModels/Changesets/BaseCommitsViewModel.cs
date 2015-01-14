@@ -4,7 +4,6 @@ using GitHubSharp.Models;
 using GitHubSharp;
 using System.Collections.Generic;
 using ReactiveUI;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Changesets

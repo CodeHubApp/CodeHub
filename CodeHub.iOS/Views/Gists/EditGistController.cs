@@ -3,9 +3,8 @@ using CodeHub.Core.ViewModels.Gists;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.Delegates;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.Gists
 {

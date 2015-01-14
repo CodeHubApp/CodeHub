@@ -1,4 +1,3 @@
-using Xamarin.Utilities.ViewModels;
 using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.Issues

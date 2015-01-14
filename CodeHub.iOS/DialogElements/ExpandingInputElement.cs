@@ -1,11 +1,10 @@
 ﻿using System;
-using Xamarin.Utilities.DialogElements;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Drawing;
 using System.Reactive.Linq;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class ExpandingInputElement : Element, IElementSizing
     {

@@ -2,7 +2,6 @@
 using System;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.Repositories;
-using Xamarin.Utilities.ViewModels;
 using Xamarin.Utilities.Services;
 using System.Reactive.Linq;
 using Humanizer;

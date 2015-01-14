@@ -2,14 +2,13 @@ using System;
 using System.Linq;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.Delegates;
 using CodeHub.Core.ViewModels.Settings;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Settings
 {
-    public class DefaultStartupView : ReactiveTableViewController<DefaultStartupViewModel>
+    public class DefaultStartupView : BaseTableViewController<DefaultStartupViewModel>
 	{
 		public override void ViewDidLoad()
 		{

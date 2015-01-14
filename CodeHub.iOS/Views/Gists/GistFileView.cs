@@ -1,8 +1,8 @@
 using System;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Views.Source;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Gists
 {

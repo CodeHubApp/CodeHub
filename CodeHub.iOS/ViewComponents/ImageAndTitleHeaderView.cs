@@ -5,7 +5,7 @@ using SDWebImage;
 using MonoTouch.Foundation;
 using MonoTouch.CoreGraphics;
 
-namespace Xamarin.Utilities.ViewComponents
+namespace CodeHub.iOS.ViewComponents
 {
     public class ImageAndTitleHeaderView : UIView
     {

@@ -3,12 +3,11 @@ using System;
 using System.Reactive.Linq;
 using System.Linq;
 using CodeHub.iOS.TableViewSources;
-using Xamarin.Utilities.ViewControllers;
 using MonoTouch.Foundation;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class LanguagesView : ReactiveTableViewController<LanguagesViewModel>
+    public class LanguagesView : BaseTableViewController<LanguagesViewModel>
     {
         public override void ViewDidLoad()
         {

@@ -4,9 +4,7 @@ using ReactiveUI;
 using GitHubSharp.Models;
 using System.Reactive.Linq;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Releases
 {

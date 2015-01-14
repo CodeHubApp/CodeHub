@@ -4,11 +4,10 @@ using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using MonoTouch.UIKit;
 using System.Drawing;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesExploreView : ReactiveTableViewController<RepositoriesExploreViewModel>
+    public class RepositoriesExploreView : BaseTableViewController<RepositoriesExploreViewModel>
     {
         public override void ViewDidLoad()
         {

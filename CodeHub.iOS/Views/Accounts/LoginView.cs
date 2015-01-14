@@ -5,13 +5,12 @@ using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using System.Text;
 using ReactiveUI;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public class LoginView : ReactiveWebViewController<LoginViewModel>
+    public class LoginView : BaseWebView<LoginViewModel>
     {
         private readonly IAlertDialogFactory _alertDialogService;
 
@@ -20,11 +19,17 @@ namespace CodeHub.iOS.Views.Accounts
         {
             _alertDialogService = alertDialogService;
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => 
-                ViewModel.ShowLoginOptionsCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand).Subscribe(x =>
+                NavigationItem.RightBarButtonItem = x == null ? null : x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenAnyValue(x => x.ViewModel.LoginUrl).IsNotNull().Subscribe(LoadRequest);
+        }
 
-            this.WhenViewModel(x => x.Title).IsNotNull().Subscribe(x => Title = x);
-            this.WhenViewModel(x => x.LoginUrl).IsNotNull().Subscribe(LoadRequest);
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            ViewModel.ShowLoginOptionsCommand.CanExecuteObservable.Subscribe(x =>
+                Console.WriteLine("Can execute: " + x));
         }
 
 		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)

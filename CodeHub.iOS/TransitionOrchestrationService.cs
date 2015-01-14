@@ -10,11 +10,12 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views.Gists;
 using CodeHub.iOS.Views.Source;
 using Xamarin.Utilities.Services;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Views;
 using MonoTouch.Foundation;
 using Splat;
 using CodeHub.iOS.Views.Contents;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS
 {
@@ -40,7 +41,7 @@ namespace CodeHub.iOS
             var toViewController = (UIViewController)toView;
             var toViewModel = (IBaseViewModel)toView.ViewModel;
             var fromViewController = (UIViewController)fromView;
-            var routableToViewModel = toViewModel as Xamarin.Utilities.ViewModels.IRoutableViewModel;
+            var routableToViewModel = toViewModel as IRoutingViewModel;
             IReactiveCommand<object> toViewDismissCommand = null;
 
 

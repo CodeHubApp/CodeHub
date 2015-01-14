@@ -12,7 +12,6 @@ using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
-using Xamarin.Utilities.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {

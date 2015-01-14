@@ -8,14 +8,12 @@ using CodeHub.iOS.Views.App;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.App;
 using Splat;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities;
-using Xamarin.Utilities.Factories;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Views;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
 using CodeHub.iOS.Views.Settings;
+using CodeHub.Core.ViewModels;
+using CodeHub.iOS.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS
 {
@@ -57,16 +55,13 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.Register(() => new DiagnosticLogger(), typeof(ILogger));
             #endif 
 
-			var iRate = MTiRate.iRate.SharedInstance;
-			iRate.AppStoreID = 707173885;
-
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            Locator.CurrentMutable.InitializeXamarinUtilities();
-            Locator.CurrentMutable.InitializeLocal();
+            Locator.CurrentMutable.InitializeFactories();
+            Locator.CurrentMutable.InitializeServices();
             CodeHub.Core.Bootstrap.Init();
             Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
@@ -75,26 +70,14 @@ namespace CodeHub.iOS
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
-            viewModelViews.RegisterViewModels(typeof(WebBrowserView).Assembly);
 
-            var accountsService = Locator.Current.GetService<IAccountsService>();
-            accountsService.ActiveAccountChanged.Subscribe(x =>
-            {
-                try
-                {
-                    Themes.Theme.Load("Default");
-                }
-                catch
-                {
-                    Console.WriteLine("Crap!");
-                }
-            });
+            Themes.Theme.Load("Default");
 
             var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
             var vm = serviceConstructor.Construct<StartupViewModel>();
             var startupViewController = new StartupView { ViewModel = vm };
-            ((Xamarin.Utilities.ViewModels.IRoutableViewModel)vm).RequestNavigation.Subscribe(x =>
+            ((IRoutingViewModel)vm).RequestNavigation.Subscribe(x =>
             {
                 var toViewType = viewModelViews.GetViewFor(x.GetType());
                 var toView = serviceConstructor.Construct(toViewType) as IViewFor;

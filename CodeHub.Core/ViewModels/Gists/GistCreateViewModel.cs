@@ -5,12 +5,10 @@ using GitHubSharp.Models;
 using System.Linq;
 using ReactiveUI;
 using System.Reactive.Subjects;
-using Xamarin.Utilities.ViewModels;
 using CodeHub.Core.Data;
 using System.Reactive;
-using Xamarin.Utilities.Factories;
 using System.Reactive.Linq;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

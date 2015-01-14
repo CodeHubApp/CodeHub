@@ -2,9 +2,8 @@
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using System.Drawing;
-using Xamarin.Utilities.DialogElements;
 
-namespace CodeHub.iOS.Elements
+namespace CodeHub.iOS.DialogElements
 {
     public class HtmlElement : Element, IElementSizing, IDisposable
     {

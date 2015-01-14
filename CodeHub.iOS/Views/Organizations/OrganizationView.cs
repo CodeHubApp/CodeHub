@@ -2,8 +2,7 @@ using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Organizations;
 using ReactiveUI;
-using Xamarin.Utilities.DialogElements;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Organizations
 {

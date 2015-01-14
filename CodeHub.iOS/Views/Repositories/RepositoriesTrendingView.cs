@@ -9,11 +9,10 @@ using CodeHub.iOS.TableViewSources;
 using System.Drawing;
 using CodeHub.iOS.ViewComponents;
 using System.Collections.Generic;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesTrendingView : ReactiveTableViewController<RepositoriesTrendingViewModel>
+    public class RepositoriesTrendingView : BaseTableViewController<RepositoriesTrendingViewModel>
     {
         private readonly TrendingTitleButton _titleButton;
 

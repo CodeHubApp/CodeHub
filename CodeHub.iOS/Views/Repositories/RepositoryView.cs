@@ -4,8 +4,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.DialogElements;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Repositories
 {

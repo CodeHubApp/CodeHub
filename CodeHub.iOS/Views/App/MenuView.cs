@@ -7,12 +7,10 @@ using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Delegates;
-using Xamarin.Utilities.DialogElements;
-using Xamarin.Utilities.ViewControllers;
-using CodeHub.iOS.Elements;
 using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.App
 {

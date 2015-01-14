@@ -1,10 +1,10 @@
 using System;
-using Xamarin.Utilities.DialogElements;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Settings;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Settings
 {

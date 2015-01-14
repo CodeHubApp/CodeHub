@@ -13,7 +13,6 @@ using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Events

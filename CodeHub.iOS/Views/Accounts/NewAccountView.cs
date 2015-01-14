@@ -1,15 +1,12 @@
-using System;
 using System.Drawing;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch.UIKit;
 using CodeHub.Core.Services;
-using CodeHub.iOS.Views.App;
 using ReactiveUI;
-using Xamarin.Utilities.ViewControllers;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class NewAccountView : ReactiveViewController<NewAccountViewModel>
+    public partial class NewAccountView : BaseViewController<NewAccountViewModel>
     {
         private readonly IFeaturesService _featuresService;
 

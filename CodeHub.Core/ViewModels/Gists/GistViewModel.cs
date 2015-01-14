@@ -7,9 +7,7 @@ using CodeHub.Core.ViewModels.Users;
 using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive;
-using Xamarin.Utilities.ViewModels;
-using Xamarin.Utilities.Services;
-using Xamarin.Utilities.Factories;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

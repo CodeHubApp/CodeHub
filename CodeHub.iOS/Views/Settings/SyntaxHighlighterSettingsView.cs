@@ -2,21 +2,20 @@
 using ReactiveUI;
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Settings;
-using Xamarin.Utilities.ViewControllers;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
-using Xamarin.Utilities.Services;
 using CodeHub.WebViews;
 using System.Reflection;
 using System.IO;
-using Xamarin.Utilities.Factories;
 using Splat;
+using CodeHub.Core.Factories;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Settings
 {
-    public class SyntaxHighlighterSettingsView : ReactiveWebViewController<SyntaxHighlighterSettingsViewModel>
+    public class SyntaxHighlighterSettingsView : BaseWebView<SyntaxHighlighterSettingsViewModel>
     {
         const string _resourceName = "CodeHub.iOS.Views.Settings.SyntaxHighlightExample";
         private readonly UIPickerView _pickerView = new UIPickerView();

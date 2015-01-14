@@ -1,5 +1,6 @@
 using System;
 using MonoTouch.UIKit;
+using CodeHub.iOS.Utilities;
 
 namespace CodeFramework.iOS.ViewComponents
 {
@@ -31,11 +32,11 @@ namespace CodeFramework.iOS.ViewComponents
             var context = UIGraphics.GetCurrentContext();
             context.SaveState();
             context.SetFillColor(UIColor.FromRGB(204, 255, 204).CGColor);
-            context.AddPath(Xamarin.Utilities.Graphics.GraphicsUtils.MakeRoundedRectPath(addedRect, 5));
+            context.AddPath(Graphics.MakeRoundedRectPath(addedRect, 5));
             context.FillPath();
 
             context.SetFillColor(UIColor.FromRGB(255, 221, 221).CGColor);
-            context.AddPath(Xamarin.Utilities.Graphics.GraphicsUtils.MakeRoundedRectPath(removedRect, 5));
+            context.AddPath(Graphics.MakeRoundedRectPath(removedRect, 5));
             context.FillPath();
 
             context.RestoreState();

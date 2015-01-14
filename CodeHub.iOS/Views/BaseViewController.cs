@@ -1,9 +1,10 @@
 ﻿using System;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewModels;
 using MonoTouch.UIKit;
 using System.Reactive.Subjects;
+using MonoTouch.Foundation;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.Views
 {
@@ -23,6 +24,17 @@ namespace CodeHub.iOS.Views
         }
 
         protected BaseViewController()
+        {
+            SetupRx();
+        }
+
+        protected BaseViewController(string nib, NSBundle bundle)
+            : base(nib, bundle)
+        {
+            SetupRx();
+        }
+
+        private void SetupRx()
         {
             this.WhenAnyValue(x => x.ViewModel)
                 .OfType<ILoadableViewModel>()
@@ -65,6 +77,12 @@ namespace CodeHub.iOS.Views
         }
 
         protected BaseViewController()
+        {
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+        }
+
+        protected BaseViewController(string nib, NSBundle bundle)
+            : base(nib, bundle)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
         }

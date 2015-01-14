@@ -174,7 +174,6 @@
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="Views\App\UpgradesView.cs" />
-    <Compile Include="XCallbackProvider.cs" />
     <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
@@ -206,8 +205,6 @@
     <Compile Include="Cells\IssueCellView.designer.cs" />
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <Compile Include="Cells\RepositoryCellView.designer.cs" />
-    <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\MenuElement.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
     <Compile Include="ViewComponents\MenuSectionView.cs" />
@@ -274,8 +271,6 @@
     <Compile Include="Views\App\FeedbackComposerView.cs" />
     <Compile Include="ViewComponents\ButtonAccessoryView.cs" />
     <Compile Include="ViewComponents\MarkdownAccessoryView.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
-    <Compile Include="Elements\HtmlElement.cs" />
     <Compile Include="Cells\MilestoneTableViewCell.cs" />
     <Compile Include="Cells\MenuTableViewCell.cs" />
     <Compile Include="Cells\CommitedFileTableViewCell.cs" />
@@ -291,9 +286,6 @@
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
     <Compile Include="Views\Repositories\RepositoriesWatchedView.cs" />
-    <Compile Include="Elements\SplitViewElement.cs" />
-    <Compile Include="Elements\DialogStringElement.cs" />
-    <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="Extensions\UIImageViewExtensions.cs" />
     <Compile Include="ViewComponents\TableFooterButton.cs" />
@@ -302,8 +294,6 @@
     <Compile Include="Views\Contents\EditFileView.cs" />
     <Compile Include="Views\Contents\CreateFileView.cs" />
     <Compile Include="Views\BaseViewController.cs" />
-    <Compile Include="Elements\DummyInputElement.cs" />
-    <Compile Include="Elements\ExpandingInputElement.cs" />
     <Compile Include="Views\Activity\NewsView.cs" />
     <Compile Include="Views\Activity\OrganizationEventsView.cs" />
     <Compile Include="Views\Activity\UserEventsView.cs" />
@@ -314,6 +304,67 @@
     <Compile Include="Views\BaseDialogViewController.cs" />
     <Compile Include="Views\Organizations\TeamsView.cs" />
     <Compile Include="Views\Issues\IssueCommentView.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
+    <Compile Include="ViewComponents\PickerAlertView.cs" />
+    <Compile Include="ViewComponents\ScrollingToolbarView.cs" />
+    <Compile Include="ViewComponents\SlideUpTitleView.cs" />
+    <Compile Include="Extensions\MonoTouchStringExtensions.cs" />
+    <Compile Include="Extensions\ReactiveCommandRefreshExtensions.cs" />
+    <Compile Include="Extensions\UIApplicationDelegateExtensions.cs" />
+    <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
+    <Compile Include="Extensions\UIImageExtensions.cs" />
+    <Compile Include="Extensions\UITableViewControllerExtensions.cs" />
+    <Compile Include="Extensions\UITextViewExtensions.cs" />
+    <Compile Include="Extensions\UIWindowExtensions.cs" />
+    <Compile Include="Factories\ActionMenuFactory.cs" />
+    <Compile Include="Factories\AlertDialogFactory.cs" />
+    <Compile Include="Factories\MediaPickerFactory.cs" />
+    <Compile Include="Factories\Registrations.cs" />
+    <Compile Include="XCallback\XCallbackQuery.cs" />
+    <Compile Include="XCallback\XCallbackProvider.cs" />
+    <Compile Include="Images\BackgroundHelper.cs" />
+    <Compile Include="Images\UIImageHelper.cs" />
+    <Compile Include="Views\WebBrowserView.cs" />
+    <Compile Include="Services\DefaultValueService.cs" />
+    <Compile Include="Services\EnvironmentalService.cs" />
+    <Compile Include="Services\FilesystemService.cs" />
+    <Compile Include="Services\InAppPurchaseService.cs" />
+    <Compile Include="Services\JavascriptService.cs" />
+    <Compile Include="Services\NetworkActivityService.cs" />
+    <Compile Include="Services\ServiceConstructor.cs" />
+    <Compile Include="Services\ShareService.cs" />
+    <Compile Include="Services\StatusIndicatorService.cs" />
+    <Compile Include="DialogElements\CustomElement.cs" />
+    <Compile Include="DialogElements\Element.cs" />
+    <Compile Include="DialogElements\EntryElement.cs" />
+    <Compile Include="DialogElements\IElementSizing.cs" />
+    <Compile Include="DialogElements\InputElement.cs" />
+    <Compile Include="DialogElements\MultilinedElement.cs" />
+    <Compile Include="DialogElements\MultilinedInputElement.cs" />
+    <Compile Include="DialogElements\OwnerDrawnElement.cs" />
+    <Compile Include="DialogElements\RootElement.cs" />
+    <Compile Include="DialogElements\Section.cs" />
+    <Compile Include="DialogElements\SpacingElement.cs" />
+    <Compile Include="DialogElements\SplitButtonElement.cs" />
+    <Compile Include="DialogElements\SplitElement.cs" />
+    <Compile Include="DialogElements\StringElement.cs" />
+    <Compile Include="DialogElements\TrueFalseElement.cs" />
+    <Compile Include="DialogElements\WebElement.cs" />
+    <Compile Include="TableViewSources\DialogTableViewSource.cs" />
+    <Compile Include="Utilities\ObservableSearchDelegate.cs" />
+    <Compile Include="ViewControllers\ComposerViewController.cs" />
+    <Compile Include="ViewControllers\LiteComposerViewController.cs" />
+    <Compile Include="ViewControllers\ReactiveTableViewControllerExtensions.cs" />
+    <Compile Include="Views\BaseWebView.cs" />
+    <Compile Include="DialogElements\ChangesetElement.cs" />
+    <Compile Include="DialogElements\DialogStringElement.cs" />
+    <Compile Include="DialogElements\DummyInputElement.cs" />
+    <Compile Include="DialogElements\ExpandingInputElement.cs" />
+    <Compile Include="DialogElements\HtmlElement.cs" />
+    <Compile Include="DialogElements\MenuElement.cs" />
+    <Compile Include="DialogElements\SplitViewElement.cs" />
+    <Compile Include="Utilities\Graphics.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -344,36 +395,15 @@
     <Reference Include="BTProgressHUD">
       <HintPath>..\lib\MonoTouch\BTProgressHUD.dll</HintPath>
     </Reference>
-    <Reference Include="MTiRate">
-      <HintPath>..\lib\MonoTouch\MTiRate.dll</HintPath>
-    </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\lib\MonoTouch\SDWebImage.dll</HintPath>
     </Reference>
-    <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.5.1\lib\monotouch\Splat.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Services" />
-    <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.0.4\lib\MonoTouch\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.0.4\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.2.1.1\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Utilities">
-      <HintPath>..\packages\DB.Xamarin.Utilities.1.0.4\lib\MonoTouch10\Xamarin.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.6.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.32.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
@@ -381,8 +411,23 @@
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
     </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.6.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.0\lib\monotouch\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.0\lib\MonoTouch\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.3.1\lib\Monotouch\ReactiveUI.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -544,6 +589,10 @@
     <BundleResource Include="Images\pulse%402x.png" />
     <BundleResource Include="Images\clippy.png" />
     <BundleResource Include="Images\clippy%402x.png" />
+    <BundleResource Include="Images\forward-chevron.png" />
+    <BundleResource Include="Images\forward-chevron%402x.png" />
+    <BundleResource Include="Images\back-chevron.png" />
+    <BundleResource Include="Images\back-chevron%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -559,6 +608,10 @@
     <Folder Include="Views\Settings\" />
     <Folder Include="Extensions\" />
     <Folder Include="Views\Contents\" />
+    <Folder Include="Factories\" />
+    <Folder Include="XCallback\" />
+    <Folder Include="DialogElements\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

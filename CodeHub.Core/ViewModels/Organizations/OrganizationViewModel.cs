@@ -6,7 +6,6 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Organizations

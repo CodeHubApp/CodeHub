@@ -2,7 +2,6 @@ using System;
 using MonoTouch.UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Images;
-using Xamarin.Utilities.ViewControllers;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using SDWebImage;
@@ -34,8 +33,8 @@ namespace CodeHub.iOS.Views.App
 
         public StartupView()
         {
-            Appeared.Subscribe(_ => ViewModel.LoadCommand.ExecuteIfCan());
             Appearing.Subscribe(_ => UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade));
+            Appearing.Where(_ => ViewModel != null).Subscribe(_ => ViewModel.StartupCommand.ExecuteIfCan());
             Disappearing.Subscribe(_ => {
                 UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
                 UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);

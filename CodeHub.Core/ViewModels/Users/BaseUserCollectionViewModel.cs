@@ -4,7 +4,6 @@ using ReactiveUI;
 using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Users

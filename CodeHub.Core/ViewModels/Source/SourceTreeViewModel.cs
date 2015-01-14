@@ -3,7 +3,6 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
-using Xamarin.Utilities.ViewModels;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;

@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Reactive.Linq;
 using CodeHub.Core.Utilities;
 using System.Linq;
-using Xamarin.Utilities.ViewModels;
 using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.Core.ViewModels.Settings

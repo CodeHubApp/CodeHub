@@ -2,15 +2,14 @@
 using MonoTouch.UIKit;
 using CodeHub.Core.ViewModels.Releases;
 using System.Reactive.Linq;
-using Xamarin.Utilities.ViewControllers;
-using Xamarin.Utilities.Services;
 using ReactiveUI;
 using CodeHub.Views.Releases;
 using Humanizer;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Releases
 {
-    public class ReleaseView : ReactiveWebViewController<ReleaseViewModel>
+    public class ReleaseView : BaseWebView<ReleaseViewModel>
     {
         public ReleaseView(INetworkActivityService networkActivityService)
             : base(networkActivityService)
