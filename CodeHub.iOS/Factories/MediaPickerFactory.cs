@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Splat;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
 using CodeHub.Core.Factories;
 
@@ -43,7 +43,7 @@ namespace CodeHub.iOS.Factories
                     imagePicker.DismissViewController(true, null);
                     UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
-                    tcs.SetResult(originalImage.FromNative());
+                    //tcs.SetResult(originalImage.FromNative());
                 }
                 catch (Exception ex)
                 {

@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using System;
+using UIKit;
+using CoreGraphics;
 using System.Collections.Generic;
 
 namespace CodeHub.iOS.ViewComponents
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.ViewComponents
                 button.SetBackgroundImage(pressedButtonImage, UIControlState.Highlighted);
             }
 
-            _scrollingToolBar = new ScrollingToolbarView(new RectangleF(0, 0, Bounds.Width, Bounds.Height), buttons);
+            _scrollingToolBar = new ScrollingToolbarView(new CGRect(0, 0, Bounds.Width, Bounds.Height), buttons);
             _scrollingToolBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             _scrollingToolBar.BackgroundColor = UIColor.FromWhiteAlpha(0.84f, 1.0f);
             Add(_scrollingToolBar);
@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewComponents
         {
             var fontSize = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 22 : 28f;
             var btn = new UIButton(UIButtonType.System);
-            btn.Frame = new RectangleF(0, 0, 26, 32);
+            btn.Frame = new CGRect(0, 0, 26, 32);
             btn.SetTitle(title, UIControlState.Normal);
             btn.BackgroundColor = UIColor.White;
             btn.Font = UIFont.BoldSystemFontOfSize(fontSize);
@@ -53,10 +53,10 @@ namespace CodeHub.iOS.ViewComponents
 
         private static UIImage ImageFromColor(UIColor color)
         {
-            UIGraphics.BeginImageContext(new SizeF(1, 1));
+            UIGraphics.BeginImageContext(new CGSize(1, 1));
             var context = UIGraphics.GetCurrentContext();
             context.SetFillColor(color.CGColor);
-            context.FillRect(new RectangleF(0, 0, 1, 1));
+            context.FillRect(new CGRect(0, 0, 1, 1));
             var image = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return image;

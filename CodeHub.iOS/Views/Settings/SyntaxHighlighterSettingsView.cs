@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using ReactiveUI;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.Core.ViewModels.Settings;
-using System.Drawing;
+using CoreGraphics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
@@ -86,8 +86,8 @@ namespace CodeHub.iOS.Views.Settings
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
-            Web.Frame = new RectangleF(0, 0, View.Bounds.Width, View.Bounds.Height - _pickerView.Frame.Height);
-            _pickerView.Frame = new RectangleF(0, View.Bounds.Height - _pickerView.Frame.Height, View.Bounds.Width, _pickerView.Frame.Height);
+            Web.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height - _pickerView.Frame.Height);
+            _pickerView.Frame = new CGRect(0, View.Bounds.Height - _pickerView.Frame.Height, View.Bounds.Width, _pickerView.Frame.Height);
         }
 
         private class PickerModel : UIPickerViewModel
@@ -105,22 +105,22 @@ namespace CodeHub.iOS.Views.Settings
                 _values = values.ToArray();
             }
 
-            public override int GetComponentCount(UIPickerView picker)
+            public override nint GetComponentCount(UIPickerView picker)
             {
                 return 1;
             }
 
-            public override void Selected(UIPickerView picker, int row, int component)
+            public override void Selected(UIPickerView picker, nint row, nint component)
             {
                 _selectedSubject.OnNext(_values[row]);
             }
 
-            public override int GetRowsInComponent(UIPickerView picker, int component)
+            public override nint GetRowsInComponent(UIPickerView picker, nint component)
             {
                 return _values.Length;
             }
 
-            public override string GetTitle(UIPickerView picker, int row, int component)
+            public override string GetTitle(UIPickerView picker, nint row, nint component)
             {
 
                 return _values[row];

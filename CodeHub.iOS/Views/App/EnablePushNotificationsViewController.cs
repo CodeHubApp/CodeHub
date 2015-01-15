@@ -1,6 +1,6 @@
-﻿using System;
-using System.Drawing;
-using MonoTouch.UIKit;
+using System;
+using CoreGraphics;
+using UIKit;
 using CodeHub.Core.Services;
 using Xamarin.Utilities.Services;
 
@@ -40,14 +40,14 @@ namespace CodeHub.iOS.Views.App
             CancelButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             CancelButton.TintColor = UIColor.Black;
             CancelButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            CancelButton.Layer.ShadowOffset = new SizeF(0, 1);
+            CancelButton.Layer.ShadowOffset = new CGSize(0, 1);
             CancelButton.Layer.ShadowOpacity = 0.3f;
             CancelButton.TouchUpInside += (sender, e) => DismissViewController(true, OnDismissed);
 
             EnableButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             EnableButton.TintColor = UIColor.White;
             EnableButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            EnableButton.Layer.ShadowOffset = new SizeF(0, 1);
+            EnableButton.Layer.ShadowOffset = new CGSize(0, 1);
             EnableButton.Layer.ShadowOpacity = 0.3f;
             EnableButton.TouchUpInside += EnablePushNotifications;
 
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewWillLayoutSubviews();
 
-            ContainerView.Frame = new RectangleF(View.Bounds.Width / 2 - ContainerView.Frame.Width / 2, 
+            ContainerView.Frame = new CGRect(View.Bounds.Width / 2 - ContainerView.Frame.Width / 2, 
                                                  View.Bounds.Height / 2 - ContainerView.Frame.Height / 2, 
                                                  ContainerView.Frame.Width, ContainerView.Frame.Height);
         }

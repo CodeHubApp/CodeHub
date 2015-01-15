@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.Foundation;
+using System.Collections.Generic;
+using UIKit;
+using CoreGraphics;
+using Foundation;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -16,7 +16,7 @@ namespace CodeHub.iOS.DialogElements
         }
 
         // X corresponds to the alignment, Y to the height of the password
-        public SizeF EntryAlignment;
+        public CGSize EntryAlignment;
 
         public Section()
         {

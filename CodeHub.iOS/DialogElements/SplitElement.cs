@@ -1,5 +1,5 @@
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 using System;
 using System.Collections.Generic;
 using ReactiveUI;
@@ -15,7 +15,7 @@ namespace CodeHub.iOS.DialogElements
 
         public SplitButton Button2 { get; set; }
 
-        public float GetHeight(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             return 36f;
         }
@@ -97,11 +97,11 @@ namespace CodeHub.iOS.DialogElements
 
                     for (var i = 0; i < _buttons.Length; i++)
                     {
-                        _buttons[i].Frame = new RectangleF(i * space, 0, space - 1f, Bounds.Height);
+                        _buttons[i].Frame = new CGRect(i * space, 0, space - 1f, Bounds.Height);
                         _buttons[i].LayoutSubviews();
 
                         if (i != _buttons.Length - 1)
-                            _seperatorViews[i].Frame = new RectangleF(_buttons[i].Frame.Right, 0, 0.5f, Bounds.Height);
+                            _seperatorViews[i].Frame = new CGRect(_buttons[i].Frame.Right, 0, 0.5f, Bounds.Height);
                     }
                 }
             }
@@ -182,11 +182,11 @@ namespace CodeHub.iOS.DialogElements
                 base.LayoutSubviews();
 
                 var height = (this.Bounds.Height - 20f);
-                _image.Frame = new RectangleF(15, 10, height, height);
+                _image.Frame = new CGRect(15, 10, height, height);
 
                 var textHeight = (int)Math.Ceiling(TextFont.LineHeight) + 1;
                 var textY = (this.Bounds.Height / 2) - (textHeight / 2);
-                _text.Frame = new RectangleF(_image.Frame.Right + 5f, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + 5 + _image.Frame.Left), textHeight);
+                _text.Frame = new CGRect(_image.Frame.Right + 5f, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + 5 + _image.Frame.Left), textHeight);
             }
         }
     }

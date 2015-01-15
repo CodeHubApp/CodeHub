@@ -1,9 +1,9 @@
-﻿using CodeHub.Core.ViewModels.Repositories;
+using CodeHub.Core.ViewModels.Repositories;
 using System;
 using System.Reactive.Linq;
 using System.Linq;
 using CodeHub.iOS.TableViewSources;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.Repositories
                 if (selectedLanguage >= 0)
                 {
                     var indexPath = NSIndexPath.FromRowSection(selectedLanguage, 0);
-                    TableView.ScrollToRow(indexPath, MonoTouch.UIKit.UITableViewScrollPosition.Top, false);
+                    TableView.ScrollToRow(indexPath, UIKit.UITableViewScrollPosition.Top, false);
                 }
             });
         }

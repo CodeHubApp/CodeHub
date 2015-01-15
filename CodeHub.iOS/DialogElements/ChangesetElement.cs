@@ -1,4 +1,4 @@
-using CodeFramework.iOS.ViewComponents;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -8,10 +8,10 @@ namespace CodeHub.iOS.DialogElements
         private readonly int? _removed;
 
         public ChangesetElement(string title, string subtitle, int? added, int? removed)
-            : base(title, subtitle, MonoTouch.UIKit.UITableViewCellStyle.Subtitle)
+            : base(title, subtitle, UIKit.UITableViewCellStyle.Subtitle)
         {
-            Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
-            LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;
+            Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator;
+            LineBreakMode = UIKit.UILineBreakMode.TailTruncation;
             Lines = 1;
             _added = added;
             _removed = removed;
@@ -22,12 +22,12 @@ namespace CodeHub.iOS.DialogElements
             return "changeset";
         }
 
-        protected override MonoTouch.UIKit.UITableViewCell CreateTableViewCell(MonoTouch.UIKit.UITableViewCellStyle style, string key)
+        protected override UIKit.UITableViewCell CreateTableViewCell(UIKit.UITableViewCellStyle style, string key)
         {
             return new ChangesetCell(key);
         }
 
-        public override MonoTouch.UIKit.UITableViewCell GetCell(MonoTouch.UIKit.UITableView tv)
+        public override UIKit.UITableViewCell GetCell(UIKit.UITableView tv)
         {
             var cell = base.GetCell(tv);
             var addRemove = ((ChangesetCell)cell).AddRemoveView;
@@ -38,23 +38,23 @@ namespace CodeHub.iOS.DialogElements
         }
 
         /// Bastardized version. I'll redo this code later...
-        private class ChangesetCell : MonoTouch.UIKit.UITableViewCell
+        private class ChangesetCell : UIKit.UITableViewCell
         {
             public AddRemoveView AddRemoveView { get; private set; }
 
             public ChangesetCell(string key)
-                : base(MonoTouch.UIKit.UITableViewCellStyle.Subtitle, key)
+                : base(UIKit.UITableViewCellStyle.Subtitle, key)
             {
                 AddRemoveView = new AddRemoveView();
                 this.ContentView.AddSubview(AddRemoveView);
-                TextLabel.LineBreakMode = MonoTouch.UIKit.UILineBreakMode.TailTruncation;
+                TextLabel.LineBreakMode = UIKit.UILineBreakMode.TailTruncation;
             }
 
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
                 var addRemoveX = ContentView.Frame.Width - 90f;
-                AddRemoveView.Frame = new System.Drawing.RectangleF(addRemoveX, 12, 80f, 18f);
+                AddRemoveView.Frame = new CoreGraphics.CGRect(addRemoveX, 12, 80f, 18f);
 
                 var textFrame = TextLabel.Frame;
                 textFrame.Width = addRemoveX - textFrame.X - 5f;

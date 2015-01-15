@@ -1,5 +1,5 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 using System.Reactive.Subjects;
 
 namespace CodeHub.iOS.Utilities

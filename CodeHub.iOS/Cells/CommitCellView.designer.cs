@@ -4,7 +4,7 @@
 // actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-using MonoTouch.Foundation;
+using Foundation;
 using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Cells
@@ -13,19 +13,19 @@ namespace CodeHub.iOS.Cells
     partial class CommitCellView
 	{
 		[Outlet]
-		MonoTouch.UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel ContentLabel { get; set; }
+		UIKit.UILabel ContentLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView MainImageView { get; set; }
+		UIKit.UIImageView MainImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel TimeLabel { get; set; }
+		UIKit.UILabel TimeLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel TitleLabel { get; set; }
+		UIKit.UILabel TitleLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

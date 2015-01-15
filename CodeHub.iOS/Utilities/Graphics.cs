@@ -1,5 +1,4 @@
-﻿using MonoTouch.CoreGraphics;
-using System.Drawing;
+using CoreGraphics;
 
 namespace CodeHub.iOS.Utilities
 {
@@ -17,14 +16,14 @@ namespace CodeHub.iOS.Utilities
         /// <returns>
         /// A <see cref="CGPath"/> that can be used to stroke the rounded rectangle
         /// </returns>
-        public static CGPath MakeRoundedRectPath (RectangleF rect, float radius)
+        public static CGPath MakeRoundedRectPath (CGRect rect, float radius)
         {
-            float minx = rect.Left;
-            float midx = rect.Left + (rect.Width)/2;
-            float maxx = rect.Right;
-            float miny = rect.Top;
-            float midy = rect.Y+rect.Size.Height/2;
-            float maxy = rect.Bottom;
+            var minx = rect.Left;
+            var midx = rect.Left + (rect.Width)/2;
+            var maxx = rect.Right;
+            var miny = rect.Top;
+            var midy = rect.Y+rect.Size.Height/2;
+            var maxy = rect.Bottom;
 
             var path = new CGPath ();
             path.MoveToPoint (minx, midy);
@@ -37,7 +36,7 @@ namespace CodeHub.iOS.Utilities
             return path;
         }
 
-        public static void FillRoundedRect (CGContext ctx, RectangleF rect, float radius)
+        public static void FillRoundedRect (CGContext ctx, CGRect rect, float radius)
         {
             var p = MakeRoundedRectPath (rect, radius);
             ctx.AddPath (p);

@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using System;
+using UIKit;
+using CoreGraphics;
 using CodeHub.iOS.Utilities;
 
 // Analysis disable once CheckNamespace
@@ -10,7 +10,7 @@ namespace ReactiveUI
     {
         public static ObservableSearchDelegate AddSearchBar(this ReactiveTableViewController @this)
         {
-            var searchBar = new UISearchBar(new RectangleF(0f, 0f, 320f, 44f));
+            var searchBar = new UISearchBar(new CGRect(0f, 0f, 320f, 44f));
             searchBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 
             var searchDelegate = new ObservableSearchDelegate();

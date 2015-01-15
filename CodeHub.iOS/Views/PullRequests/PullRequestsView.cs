@@ -1,6 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
 
@@ -18,7 +18,7 @@ namespace CodeHub.iOS.Views.PullRequests
             ToolbarItems = new[] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButtonItem, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
             this.WhenViewModel(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
-            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = _viewSegment.SelectedSegment;
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment;
         }
 
         public override void ViewDidLoad()

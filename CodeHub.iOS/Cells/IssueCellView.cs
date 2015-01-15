@@ -1,8 +1,7 @@
 using System;
-using System.Drawing;
-using MonoTouch.CoreGraphics;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 using CodeHub.iOS;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.iOS.Cells;
@@ -28,7 +27,7 @@ namespace CodeHub.iOS.Cells
 
             Caption.TextColor = Theme.MainTitleColor;
             Number.TextColor = Theme.MainTitleColor;
-            AddSubview(new SeperatorIssues {Frame = new RectangleF(65f, 5f, 1f, Frame.Height - 10f)});
+            AddSubview(new SeperatorIssues {Frame = new CGRect(65f, 5f, 1f, Frame.Height - 10f)});
 
             Image1.Image = Images.Gear.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
             Image1.TintColor = Label1.TextColor;
@@ -108,7 +107,7 @@ namespace CodeHub.iOS.Cells
             {
             }
 
-            public override void Draw(RectangleF rect)
+            public override void Draw(CGRect rect)
             {
                 base.Draw(rect);
 
@@ -117,11 +116,11 @@ namespace CodeHub.iOS.Cells
                 //context.ClipToRect(new RectangleF(63f, 0f, 3f, rect.Height));
                 using (var cs = CGColorSpace.CreateDeviceRGB ())
                 {
-                    using (var gradient = new CGGradient (cs, new [] { 1f, 1f, 1f, 1.0f, 
+                    using (var gradient = new CGGradient (cs, new nfloat[] { 1f, 1f, 1f, 1.0f, 
                         0.7f, 0.7f, 0.7f, 1f, 
-                        1f, 1f, 1.0f, 1.0f }, new [] {0, 0.5f, 1f}))
+                        1f, 1f, 1.0f, 1.0f }, new nfloat[] {0, 0.5f, 1f}))
                     {
-                        context.DrawLinearGradient(gradient, new PointF(0, 0), new PointF(0, rect.Height), 0);
+                        context.DrawLinearGradient(gradient, new CGPoint(0, 0), new CGPoint(0, rect.Height), 0);
                     }
                 }
             }

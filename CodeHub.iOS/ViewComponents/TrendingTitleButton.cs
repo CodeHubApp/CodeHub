@@ -1,4 +1,4 @@
-﻿using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -17,13 +17,17 @@ namespace CodeHub.iOS.ViewComponents
             }
         }
 
-        public UIColor TintColor
+        public override UIColor TintColor
         {
-            get { return _label.TextColor; }
-            set 
-            { 
+            get
+            {
+                return base.TintColor;
+            }
+            set
+            {
                 _label.TextColor = value; 
                 _imageView.TintColor = value;
+                base.TintColor = value;
             }
         }
 
@@ -34,7 +38,7 @@ namespace CodeHub.iOS.ViewComponents
             Add(_label);
 
             _imageView = new UIImageView();
-            _imageView.Frame = new System.Drawing.RectangleF(0, 0, 12, 12);
+            _imageView.Frame = new CoreGraphics.CGRect(0, 0, 12, 12);
             _imageView.Image = Images.DownChevron.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
             Add(_imageView);
         }
@@ -44,8 +48,8 @@ namespace CodeHub.iOS.ViewComponents
             base.LayoutSubviews();
 
             _label.SizeToFit();
-            _label.Center = new System.Drawing.PointF(Frame.Width / 2f, Frame.Height / 2f);
-            _imageView.Center = new System.Drawing.PointF(_label.Frame.Right + 12f, Frame.Height / 2f);
+            _label.Center = new CoreGraphics.CGPoint(Frame.Width / 2f, Frame.Height / 2f);
+            _imageView.Center = new CoreGraphics.CGPoint(_label.Frame.Right + 12f, Frame.Height / 2f);
         }
     }
 }

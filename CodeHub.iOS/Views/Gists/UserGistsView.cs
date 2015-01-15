@@ -1,6 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.Gists;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists

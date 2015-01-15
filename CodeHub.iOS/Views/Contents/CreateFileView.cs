@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.Core.ViewModels.Contents;
 using ReactiveUI;
 using System.Reactive.Linq;

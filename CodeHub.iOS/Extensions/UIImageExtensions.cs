@@ -1,15 +1,15 @@
 using System;
-using System.Drawing;
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
+using UIKit;
 
 // Analysis disable once CheckNamespace
-namespace MonoTouch.UIKit
+namespace UIKit
 {
     public static class UIImageExtensions
     {
         public static UIImage ConvertToGrayScale(this UIImage @this)
         {
-            var imageRect = new RectangleF(PointF.Empty, @this.Size);
+            var imageRect = new CGRect(CGPoint.Empty, @this.Size);
             using (var colorSpace = CGColorSpace.CreateDeviceGray())
             using (var context = new CGBitmapContext(IntPtr.Zero, (int)imageRect.Width, (int)imageRect.Height, 8, 0, colorSpace, CGImageAlphaInfo.None))
             {

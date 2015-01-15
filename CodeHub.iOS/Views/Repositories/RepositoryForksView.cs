@@ -1,4 +1,4 @@
-﻿using CodeHub.Core.ViewModels.Repositories;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.iOS.Views.Repositories
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using ReactiveUI;
@@ -120,7 +120,7 @@ namespace CodeHub.iOS
 #endif
 
             // Notifications don't work on teh simulator so don't bother
-            if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
             {
                 const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
                 UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);

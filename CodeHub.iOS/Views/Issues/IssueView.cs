@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
 using System.Collections.Generic;
 using ReactiveUI;
@@ -148,7 +148,7 @@ namespace CodeHub.iOS.Views.Issues
         {
             get
             {
-                var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
+                var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
         }

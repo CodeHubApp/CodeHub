@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using System;
+using Foundation;
+using UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("GistCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("GistCellView");
-        private static float DefaultContentConstraintSize = 0.0f;
+        private static nfloat DefaultContentConstraintSize = 0.0f;
 
         public GistCellView(IntPtr handle) 
             : base(handle)

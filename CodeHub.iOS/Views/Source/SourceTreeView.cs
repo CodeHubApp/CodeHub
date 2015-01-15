@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Views.Source
                 .Subscribe(x =>
                 {
                     if (x.Item1 && x.Item2.HasValue && x.Item2.Value && x.Item3 != null)
-                        NavigationItem.RightBarButtonItem = x.Item3.ToBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Add);
+                        NavigationItem.RightBarButtonItem = x.Item3.ToBarButtonItem(UIKit.UIBarButtonSystemItem.Add);
                     else
                         NavigationItem.RightBarButtonItem = null;
                 });

@@ -1,6 +1,7 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 using CodeHub.iOS.Cells;
 using CodeHub.Core.ViewModels.Changesets;
+using System;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -8,13 +9,13 @@ namespace CodeHub.iOS.TableViewSources
     {
         private CommitCellView _usedForHeight;
 
-        public CommitTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<CommitItemViewModel> collection) 
+        public CommitTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<CommitItemViewModel> collection) 
             : base(tableView, collection,  CommitCellView.Key, 64.0f)
         {
             tableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);
         }
 
-        public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override nfloat GetHeightForRow(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
                 _usedForHeight = CommitCellView.Create();
@@ -25,16 +26,16 @@ namespace CodeHub.iOS.TableViewSources
                 _usedForHeight.ViewModel = item;
                 _usedForHeight.SetNeedsUpdateConstraints();
                 _usedForHeight.UpdateConstraintsIfNeeded();
-                _usedForHeight.Bounds = new System.Drawing.RectangleF(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
+                _usedForHeight.Bounds = new CoreGraphics.CGRect(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
                 _usedForHeight.SetNeedsLayout();
                 _usedForHeight.LayoutIfNeeded();
-                return _usedForHeight.ContentView.SystemLayoutSizeFittingSize(MonoTouch.UIKit.UIView.UILayoutFittingCompressedSize).Height + 1;
+                return _usedForHeight.ContentView.SystemLayoutSizeFittingSize(UIKit.UIView.UILayoutFittingCompressedSize).Height + 1;
             }
 
             return base.GetHeightForRow(tableView, indexPath);
         }
 
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as CommitItemViewModel;

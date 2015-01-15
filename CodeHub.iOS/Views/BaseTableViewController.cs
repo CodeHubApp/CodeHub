@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using ReactiveUI;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
-using System.Drawing;
+using CoreGraphics;
 using System.Reactive.Subjects;
 using CodeHub.iOS.TableViewSources;
 
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.Views
             if (iLoadableViewModel != null)
             {
                 var activityView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White) { 
-                    Frame = new RectangleF(0, 0, 320f, 88f),
+                    Frame = new CGRect(0, 0, 320f, 88f),
                     Color = Theme.PrimaryNavigationBarColor,
                 };
 
@@ -75,7 +75,7 @@ namespace CodeHub.iOS.Views
                 iLoadableViewModel.LoadCommand.IsExecuting
                     .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
                     {
-                        var rows = 0;
+                        nint rows = 0;
                         if (TableView.Source != null)
                         {
                             for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)

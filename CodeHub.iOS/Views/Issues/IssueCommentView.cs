@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Issues

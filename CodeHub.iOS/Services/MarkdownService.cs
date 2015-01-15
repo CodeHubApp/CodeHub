@@ -1,5 +1,5 @@
-using MonoTouch.Foundation;
-using MonoTouch.JavaScriptCore;
+using Foundation;
+using JavaScriptCore;
 using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Services

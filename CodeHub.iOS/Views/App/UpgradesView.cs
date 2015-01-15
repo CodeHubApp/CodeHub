@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
+            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem("Restore", UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
             ViewModel.WhenAnyValue(x => x.Keys).Where(x => x != null && x.Length > 0).Subscribe(x => LoadProducts(x));
         }
 

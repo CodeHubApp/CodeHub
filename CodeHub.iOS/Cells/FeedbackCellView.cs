@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using System;
+using Foundation;
+using UIKit;
 using CodeHub.Core.ViewModels.App;
 using ReactiveUI;
 using SDWebImage;
@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("FeedbackCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("FeedbackCellView");
-        private static float DefaultContentConstraintSize = 0.0f;
+        private static nfloat DefaultContentConstraintSize = 0.0f;
 
         public FeedbackCellView(IntPtr handle) 
             : base(handle)

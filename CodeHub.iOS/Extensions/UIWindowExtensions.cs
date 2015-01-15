@@ -1,5 +1,5 @@
-﻿// Analysis disable once CheckNamespace
-namespace MonoTouch.UIKit
+// Analysis disable once CheckNamespace
+namespace UIKit
 {
     public static class UIWindowExtensions
     {

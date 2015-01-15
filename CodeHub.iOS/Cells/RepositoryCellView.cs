@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeHub.iOS;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
         public static bool RoundImages = true;
-        private static float DefaultConstraintSize = 0.0f;
+        private static nfloat DefaultConstraintSize = 0.0f;
 
         static RepositoryCellView()
         {

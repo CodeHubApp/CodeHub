@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using CodeHub.Core.ViewModels.Notifications;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using CodeHub.iOS.ViewComponents;
+using System;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -19,7 +20,7 @@ namespace CodeHub.iOS.TableViewSources
             tableView.RegisterClassForCellReuse(typeof(NotificationViewCell), NotificationViewCell.Key);
         }
 
-        public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+        public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
                 _usedForHeight = NotificationViewCell.Create();
@@ -46,7 +47,7 @@ namespace CodeHub.iOS.TableViewSources
             }).ToList();
         }
 
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as NotificationItemViewModel;

@@ -1,12 +1,13 @@
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-using System.Drawing;
+using System;
+using Foundation;
+using UIKit;
+using CoreGraphics;
 
 namespace System
 {
 	public static class MonoTouchStringExtensions
 	{
-		public static float MonoStringLength(this string s, UIFont font)
+        public static nfloat MonoStringLength(this string s, UIFont font)
 		{
 			if (string.IsNullOrEmpty(s))
 				return 0f;
@@ -17,14 +18,14 @@ namespace System
 			}
 		}
 		
-		public static float MonoStringHeight(this string s, UIFont font, float maxWidth)
+        public static nfloat MonoStringHeight(this string s, UIFont font, nfloat maxWidth)
 		{
 			if (string.IsNullOrEmpty(s))
 				return 0f;
 			
 			using (var str = new NSString (s))
 			{
-				return str.StringSize(font, new SizeF(maxWidth, 1000), UILineBreakMode.WordWrap).Height;
+				return str.StringSize(font, new CGSize(maxWidth, 1000), UILineBreakMode.WordWrap).Height;
 			}
 		}
 	}

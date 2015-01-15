@@ -1,8 +1,8 @@
-﻿using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using System;
+using UIKit;
+using CoreGraphics;
 using SDWebImage;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -35,7 +35,7 @@ namespace CodeHub.iOS.ViewComponents
             set { _usernameLabel.Text = value; }
         }
 
-        public MenuProfileView(RectangleF rect)
+        public MenuProfileView(CGRect rect)
             : base(rect)
         {
             _imageView = new UIImageView();
@@ -58,22 +58,22 @@ namespace CodeHub.iOS.ViewComponents
             base.LayoutSubviews();
 
             var imageSize = Bounds.Height - 8f;
-            _imageView.Frame = new RectangleF(new PointF(0, 4f), new SizeF(imageSize, imageSize));
+            _imageView.Frame = new CGRect(new CGPoint(0, 4f), new CGSize(imageSize, imageSize));
             _imageView.Layer.CornerRadius = _imageView.Frame.Height / 2f;
 
             if (Bounds.Height < 40f)
             {
                 var labelX = _imageView.Frame.Right + 8f;
-                _nameLabel.Frame = new RectangleF(labelX, 1f, Bounds.Width - labelX, Bounds.Height - 2f);
+                _nameLabel.Frame = new CGRect(labelX, 1f, Bounds.Width - labelX, Bounds.Height - 2f);
                 _usernameLabel.Hidden = true;
-                _usernameLabel.Frame = RectangleF.Empty;
+                _usernameLabel.Frame = CGRect.Empty;
             }
             else
             {
                 var labelX = _imageView.Frame.Right + 8f;
-                _nameLabel.Frame = new RectangleF(labelX, Bounds.Height / 2f - 16f, Bounds.Width - labelX, 16f);
+                _nameLabel.Frame = new CGRect(labelX, Bounds.Height / 2f - 16f, Bounds.Width - labelX, 16f);
                 _usernameLabel.Hidden = false;
-                _usernameLabel.Frame = new RectangleF(_nameLabel.Frame.X, _nameLabel.Frame.Bottom + 1f, _nameLabel.Frame.Width, 15f);
+                _usernameLabel.Frame = new CGRect(_nameLabel.Frame.X, _nameLabel.Frame.Bottom + 1f, _nameLabel.Frame.Width, 15f);
             }
         }
     }

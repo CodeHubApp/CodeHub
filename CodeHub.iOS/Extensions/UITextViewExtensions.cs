@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using CoreGraphics;
 using CodeHub.iOS.ViewComponents;
 
 // Analysis disable once CheckNamespace
-namespace MonoTouch.UIKit
+namespace UIKit
 {
     public static class UITextViewExtensions
     {
@@ -20,17 +20,17 @@ namespace MonoTouch.UIKit
             }
 
             var height = CalculateHeight(UIApplication.SharedApplication.StatusBarOrientation);
-            var s = new ScrollingToolbarView(new RectangleF(0, 0, @this.Bounds.Width, height), buttons);
+            var s = new ScrollingToolbarView(new CGRect(0, 0, @this.Bounds.Width, height), buttons);
             s.BackgroundColor = UIColor.FromRGB(212, 214, 219);
             @this.InputAccessoryView = s;
         }
 
         private static UIImage ImageFromColor(UIColor color)
         {
-            UIGraphics.BeginImageContext(new SizeF(1, 1));
+            UIGraphics.BeginImageContext(new CGSize(1, 1));
             var context = UIGraphics.GetCurrentContext();
             context.SetFillColor(color.CGColor);
-            context.FillRect(new RectangleF(0, 0, 1, 1));
+            context.FillRect(new CGRect(0, 0, 1, 1));
             var image = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return image;
@@ -49,7 +49,7 @@ namespace MonoTouch.UIKit
         {
             var fontSize = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 22 : 28f;
             var btn = new UIButton(UIButtonType.System);
-            btn.Frame = new RectangleF(0, 0, 32, 32);
+            btn.Frame = new CGRect(0, 0, 32, 32);
             btn.SetTitle(title, UIControlState.Normal);
             btn.BackgroundColor = UIColor.White;
             btn.Font = UIFont.SystemFontOfSize(fontSize);

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using System;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Notifications;
@@ -64,22 +64,22 @@ namespace CodeHub.iOS.Cells
             return new NotificationViewCell(UITableViewCellStyle.Default, Key);
         }
 
-        public float GetHeight(SizeF bounds)
+        public nfloat GetHeight(CGSize bounds)
         {
-            Bounds = new RectangleF(new PointF(0, 0), bounds);
+            Bounds = new CGRect(new CGPoint(0, 0), bounds);
             SetNeedsLayout();
             LayoutIfNeeded();
 
             var textHeight = GetLabelHeight(TextLabel);
             var detailHeight = GetLabelHeight(DetailTextLabel);
             var total = textHeight + detailHeight + 20f;
-            return Math.Max(total, 44f);
+            return (nfloat)Math.Max(total, 44f);
         }
 
-        private static float GetLabelHeight(UILabel label)
+        private static nfloat GetLabelHeight(UILabel label)
         {
             var textString = new NSString(label.Text);
-            return textString.StringSize(label.Font, new SizeF(label.Bounds.Width, float.MaxValue), label.LineBreakMode).Height;
+            return textString.StringSize(label.Font, new CGSize(label.Bounds.Width, float.MaxValue), label.LineBreakMode).Height;
         }
     }
 }

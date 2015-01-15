@@ -1,6 +1,6 @@
-using System.Drawing;
-using MonoTouch.CoreGraphics;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
+using System;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -23,17 +23,17 @@ namespace CodeHub.iOS.ViewComponents
         }
 
         public ProgressBarView()
-            : base(new RectangleF(0, 0, 320, 20))
+            : base(new CGRect(0, 0, 320, 20))
         {
             AutosizesSubviews = true;
 
             _indicator = new ProgressBarIndicator();
-            _indicator.Frame = new RectangleF(0, 0, 0, Frame.Height);
+            _indicator.Frame = new CGRect(0, 0, 0, Frame.Height);
             _indicator.BackgroundColor = UIColor.FromRGB(0x65, 0xBD, 0x10);
             Add(_indicator);
 
             _label = new UILabel();
-            _label.Frame = new RectangleF(10f, 1f, Frame.Width - 20f, Frame.Height - 2f);
+            _label.Frame = new CGRect(10f, 1f, Frame.Width - 20f, Frame.Height - 2f);
             _label.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             _label.BackgroundColor = UIColor.Clear;
             _label.UserInteractionEnabled = false;
@@ -45,7 +45,7 @@ namespace CodeHub.iOS.ViewComponents
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
-            _indicator.Frame = new RectangleF(0, 0, Bounds.Width * (Percentage / 100f), Bounds.Height);
+            _indicator.Frame = new CGRect(0, 0, Bounds.Width * (Percentage / 100f), Bounds.Height);
         }
 
         private class ProgressBarIndicator : UIView
@@ -56,13 +56,13 @@ namespace CodeHub.iOS.ViewComponents
                 BackgroundColor = UIColor.FromRGB(0x65, 0xBD, 0x10);
             }
 
-            public override void Draw(RectangleF rect)
+            public override void Draw(CGRect rect)
             {
                 base.Draw(rect);
 
                 var context = UIGraphics.GetCurrentContext();
                 var colorSpace = CGColorSpace.CreateDeviceRGB();
-                float[] locations = { 0, 1 };
+                nfloat[] locations = { 0, 1 };
 
                 CGColor[] colors =
                 {
@@ -71,7 +71,7 @@ namespace CodeHub.iOS.ViewComponents
                 };
 
                 var gradiend = new CGGradient(colorSpace, colors, locations);
-                context.DrawLinearGradient(gradiend, new PointF(0, 0), new PointF(0, rect.Size.Height), CGGradientDrawingOptions.DrawsBeforeStartLocation);
+                context.DrawLinearGradient(gradiend, new CGPoint(0, 0), new CGPoint(0, rect.Size.Height), CGGradientDrawingOptions.DrawsBeforeStartLocation);
                 gradiend.Dispose();
                 colorSpace.Dispose();
             }

@@ -1,8 +1,8 @@
-﻿using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 using System;
 using System.Reactive.Subjects;
-using System.Drawing;
+using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.TableViewSources
@@ -11,9 +11,9 @@ namespace CodeHub.iOS.TableViewSources
     {
         private readonly RootElement _root;
         private readonly bool _unevenRows;
-        private readonly Subject<PointF> _scrolledSubject = new Subject<PointF>();
+        private readonly Subject<CGPoint> _scrolledSubject = new Subject<CGPoint>();
 
-        public IObservable<PointF> ScrolledObservable { get { return _scrolledSubject; } }
+        public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject; } }
 
         public RootElement Root
         {
@@ -34,24 +34,24 @@ namespace CodeHub.iOS.TableViewSources
                 element.AccessoryTap();
         }
 
-        public override int RowsInSection(UITableView tableview, int section)
+        public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return Root[section].Count;
+            return Root[(int)section].Count;
         }
 
-        public override int NumberOfSections(UITableView tableView)
+        public override nint NumberOfSections(UITableView tableView)
         {
             return Root.Count;
         }
 
-        public override string TitleForHeader(UITableView tableView, int section)
+        public override string TitleForHeader(UITableView tableView, nint section)
         {
-            return Root[section].Header;
+            return Root[(int)section].Header;
         }
 
-        public override string TitleForFooter(UITableView tableView, int section)
+        public override string TitleForFooter(UITableView tableView, nint section)
         {
-            return Root[section].Footer;
+            return Root[(int)section].Footer;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -86,27 +86,27 @@ namespace CodeHub.iOS.TableViewSources
             element.Selected(tableView, indexPath);
         }
 
-        public override UIView GetViewForHeader(UITableView tableView, int sectionIdx)
+        public override UIView GetViewForHeader(UITableView tableView, nint sectionIdx)
         {
-            var section = Root[sectionIdx];
+            var section = Root[(int)sectionIdx];
             return section.HeaderView;
         }
 
-        public override float GetHeightForHeader(UITableView tableView, int sectionIdx)
+        public override nfloat GetHeightForHeader(UITableView tableView, nint sectionIdx)
         {
-            var section = Root[sectionIdx];
+            var section = Root[(int)sectionIdx];
             return section.HeaderView == null ? -1 : section.HeaderView.Frame.Height;
         }
 
-        public override UIView GetViewForFooter(UITableView tableView, int sectionIdx)
+        public override UIView GetViewForFooter(UITableView tableView, nint sectionIdx)
         {
-            var section = Root[sectionIdx];
+            var section = Root[(int)sectionIdx];
             return section.FooterView;
         }
 
-        public override float GetHeightForFooter(UITableView tableView, int sectionIdx)
+        public override nfloat GetHeightForFooter(UITableView tableView, nint sectionIdx)
         {
-            var section = Root[sectionIdx];
+            var section = Root[(int)sectionIdx];
             return section.FooterView == null ? -1 : section.FooterView.Frame.Height;
         }
 
@@ -115,7 +115,7 @@ namespace CodeHub.iOS.TableViewSources
             _scrolledSubject.OnNext(Root.TableView.ContentOffset);
         }
 
-        public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+        public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             if (_unevenRows)
             {
@@ -128,10 +128,10 @@ namespace CodeHub.iOS.TableViewSources
             return tableView.RowHeight;
         }
 
-        public override float EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
+        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
         {
             return _unevenRows ? UITableView.AutomaticDimension : -1;
         }
     }
 }
-
+   

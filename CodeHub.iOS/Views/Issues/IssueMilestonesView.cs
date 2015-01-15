@@ -1,5 +1,5 @@
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Issues
 {

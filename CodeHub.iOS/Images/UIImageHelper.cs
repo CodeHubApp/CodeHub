@@ -1,8 +1,7 @@
 using System;
-using System.Drawing;
-using MonoTouch.CoreGraphics;
+using CoreGraphics;
 
-namespace MonoTouch.UIKit
+namespace UIKit
 {
     public static class UIImageHelper
     {
@@ -45,7 +44,7 @@ namespace MonoTouch.UIKit
 
         public static UIImage ConvertToGrayScale (UIImage image)
         {
-            var imageRect = new RectangleF (PointF.Empty, image.Size);
+            var imageRect = new CGRect (CGPoint.Empty, image.Size);
             using (var colorSpace = CGColorSpace.CreateDeviceGray ())
             using (var context = new CGBitmapContext (IntPtr.Zero, (int) imageRect.Width, (int) imageRect.Height, 8, 0, colorSpace, CGImageAlphaInfo.None)) {
                 context.DrawImage (imageRect, image.CGImage);

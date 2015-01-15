@@ -1,4 +1,4 @@
-﻿using MonoTouch.UIKit;
+using UIKit;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System;
@@ -28,7 +28,7 @@ namespace CodeHub.iOS.ViewComponents
                 CreateAccessoryButton(pictureImage, () => {
                     var range = controller.SelectedRange;
                     controller.InsertText("![]()");
-                    controller.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 4, 0);
+                    controller.SelectedRange = new Foundation.NSRange(range.Location + 4, 0);
                 }),
 
                 CreateAccessoryButton(photoImage, () => 
@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewComponents
                 CreateAccessoryButton(linkImage, () => {
                     var range = controller.SelectedRange;
                     controller.InsertText("[]()");
-                    controller.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 1, 0);
+                    controller.SelectedRange = new Foundation.NSRange(range.Location + 1, 0);
                 }),
                 CreateAccessoryButton("~", () => controller.InsertText("~")),
                 CreateAccessoryButton("=", () => controller.InsertText("=")),

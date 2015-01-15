@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
-using MonoTouch.Foundation;
+using Foundation;
 using ReactiveUI;
 using System.Reactive.Linq;
 
@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Cells
                 .Switch()
                 .Subscribe(x =>
                 {
-                    Accessory = x ? MonoTouch.UIKit.UITableViewCellAccessory.Checkmark : MonoTouch.UIKit.UITableViewCellAccessory.None;
+                    Accessory = x ? UIKit.UITableViewCellAccessory.Checkmark : UIKit.UITableViewCellAccessory.None;
                     SetNeedsDisplay();
                 });
         }

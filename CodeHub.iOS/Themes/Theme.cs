@@ -1,8 +1,8 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 using Newtonsoft.Json;
 using System.IO;
-using MonoTouch.Foundation;
+using Foundation;
 using System.Linq;
 using System.Collections.Generic;
 using MonoTouch.SlideoutNavigation;
@@ -44,9 +44,9 @@ namespace CodeHub.iOS.Themes
 
         public static void Setup(Theme theme)
         {
-            UIGraphics.BeginImageContext(new System.Drawing.SizeF(1, 64f));
+            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 64f));
             theme.PrimaryNavigationBarColor.SetFill();
-            UIGraphics.RectFill(new System.Drawing.RectangleF(0, 0, 1, 64));
+            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 64));
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
 

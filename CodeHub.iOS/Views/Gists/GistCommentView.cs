@@ -1,7 +1,7 @@
-﻿using CodeHub.Core.ViewModels.Gists;
+using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
-using MonoTouch.UIKit;
+using UIKit;
 using System;
 using CodeHub.Core.Services;
 

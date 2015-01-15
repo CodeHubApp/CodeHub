@@ -1,6 +1,6 @@
-﻿using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.MapKit;
+using UIKit;
+using CoreGraphics;
+using MapKit;
 using System;
 
 namespace CodeHub.iOS.ViewComponents
@@ -22,7 +22,7 @@ namespace CodeHub.iOS.ViewComponents
             }
         }
 
-        public float Offset
+        public nfloat Offset
         {
             get { return _label.Frame.Y; }
             set
@@ -35,14 +35,14 @@ namespace CodeHub.iOS.ViewComponents
             }
         }
 
-        public override SizeF SizeThatFits(SizeF size)
+        public override CGSize SizeThatFits(CGSize size)
         {
             var h = _label.SizeThatFits(size);
-            return new SizeF(h.Width, base.SizeThatFits(size).Height);
+            return new CGSize(h.Width, base.SizeThatFits(size).Height);
         }
 
         public SlideUpTitleView(float height)
-            : base(new RectangleF(0, 0, 10, height))
+            : base(new CGRect(0, 0, 10, height))
         {
             AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
 

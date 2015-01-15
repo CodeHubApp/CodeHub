@@ -1,6 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Collections.Generic;
@@ -206,7 +206,7 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             get
             {
-                var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
+                var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
         }

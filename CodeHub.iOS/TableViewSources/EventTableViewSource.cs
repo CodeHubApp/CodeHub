@@ -1,9 +1,9 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 using CodeHub.iOS.Cells;
 using CodeHub.Core.ViewModels.Events;
 using System;
-using System.Drawing;
-using MonoTouch.Foundation;
+using CoreGraphics;
+using Foundation;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -11,19 +11,19 @@ namespace CodeHub.iOS.TableViewSources
     {
         private NewsCellView _usedForHeight;
 
-        public EventTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
+        public EventTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
             : base(tableView, collection,  NewsCellView.Key, 60.0f)
         {
             tableView.SeparatorInset = NewsCellView.EdgeInsets;
             tableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
         }
 
-        private static float CharacterHeight 
+        private static nfloat CharacterHeight 
         {
             get { return "A".MonoStringHeight(NewsCellView.BodyFont, 1000); }
         }
 
-        public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override nfloat GetHeightForRow(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
                 _usedForHeight = (NewsCellView)tableView.DequeueReusableCell(NewsCellView.Key);
@@ -37,7 +37,7 @@ namespace CodeHub.iOS.TableViewSources
                 if (_usedForHeight.BodyString.Length == 0)
                     return s;
 
-                var rec = _usedForHeight.BodyString.GetBoundingRect(new SizeF(tableView.Bounds.Width - 56, 10000), NSStringDrawingOptions.UsesLineFragmentOrigin | NSStringDrawingOptions.UsesFontLeading, null);
+                var rec = _usedForHeight.BodyString.GetBoundingRect(new CGSize(tableView.Bounds.Width - 56, 10000), NSStringDrawingOptions.UsesLineFragmentOrigin | NSStringDrawingOptions.UsesFontLeading, null);
                 var height = rec.Height;
 
                 if (item.BodyBlocks.Count == 1 && height > (CharacterHeight * 4))
@@ -51,7 +51,7 @@ namespace CodeHub.iOS.TableViewSources
             return base.GetHeightForRow(tableView, indexPath);
         }
 
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, NSIndexPath indexPath)
+        public override void RowSelected(UIKit.UITableView tableView, NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as EventItemViewModel;

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using ReactiveUI;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.iOS.Cells;
 using CodeHub.Core.ViewModels.Source;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace CodeHub.iOS.TableViewSources
             }).ToList();
         }
 
-        public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as CommitedFileItemViewModel;

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.Core.ViewModels.App;
 using System.Reactive.Linq;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 using CodeHub.iOS.ViewComponents;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;
@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.App
         {
             _descriptionElement = new ExpandingInputElement("Description");
             _descriptionElement.AccessoryView = x =>
-                new MarkdownAccessoryView(x, ViewModel.PostToImgurCommand) { Frame = new RectangleF(0, 0, 320f, 44f) };
+                new MarkdownAccessoryView(x, ViewModel.PostToImgurCommand) { Frame = new CGRect(0, 0, 320f, 44f) };
 
             this.WhenViewModel(x => x.Subject).Subscribe(x => _titleElement.Value = x);
             _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;

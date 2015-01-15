@@ -4,12 +4,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProjectGuid>{B061316A-F386-4FE2-93B7-555584234FF8}</ProjectGuid>
-    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>CodeHub.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>CodeHubiOS</AssemblyName>
     <TargetFrameworkProfile />
+    <TargetFrameworkIdentifier>Xamarin.iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +30,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchProfiling>true</MtouchProfiling>
     <MtouchUseSGen>true</MtouchUseSGen>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -74,7 +77,7 @@
     <MtouchUseThumb>true</MtouchUseThumb>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IpaPackageName>
     </IpaPackageName>
@@ -92,7 +95,7 @@
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <MtouchUseThumb>true</MtouchUseThumb>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -112,7 +115,7 @@
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <BuildIpa>true</BuildIpa>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
@@ -156,8 +159,6 @@
     <Compile Include="Views\Repositories\RepositoryView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
-    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
@@ -182,12 +183,10 @@
     <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
-    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
-    <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
     <Compile Include="Views\Users\OrganizationMembersView.cs" />
     <Compile Include="Views\Users\BaseUserCollectionView.cs" />
     <Compile Include="Views\Users\UserFollowersView.cs" />
@@ -197,13 +196,10 @@
     <Compile Include="Views\Users\RepositoryWatchersView.cs" />
     <Compile Include="Views\Users\TeamMembersView.cs" />
     <Compile Include="Cells\RepositoryCellView.cs" />
-    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\NewsCellView.cs" />
     <Compile Include="Cells\NewsCellView.designer.cs" />
-    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
     <Compile Include="Cells\IssueCellView.designer.cs" />
-    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
     <Compile Include="Cells\RepositoryCellView.designer.cs" />
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="ViewComponents\AddRemoveView.cs" />
@@ -215,7 +211,6 @@
     <None Include="packages.config" />
     <Compile Include="Cells\GistCellView.cs" />
     <Compile Include="Cells\GistCellView.designer.cs" />
-    <InterfaceDefinition Include="Cells\GistCellView.xib" />
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
     <Compile Include="Views\Repositories\LanguagesView.cs" />
@@ -237,11 +232,9 @@
     <Compile Include="Views\Repositories\RepositoryForksView.cs" />
     <Compile Include="Views\Source\CommitBranchsView.cs" />
     <Compile Include="Cells\CommitCellView.cs" />
-    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
     <Compile Include="Cells\CommitCellView.designer.cs" />
     <Compile Include="TableViewSources\CommitTableViewSource.cs" />
     <Compile Include="Cells\PullRequestCellView.cs" />
-    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
     <Compile Include="Cells\PullRequestCellView.designer.cs" />
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
     <Compile Include="ViewComponents\TrendingTitleButton.cs" />
@@ -265,7 +258,6 @@
     <Compile Include="Cells\FeedbackCellView.designer.cs">
       <DependentUpon>FeedbackCellView.cs</DependentUpon>
     </Compile>
-    <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
     <Compile Include="Views\App\SupportView.cs" />
     <Compile Include="Views\App\FeedbackView.cs" />
     <Compile Include="Views\App\FeedbackComposerView.cs" />
@@ -304,7 +296,6 @@
     <Compile Include="Views\BaseDialogViewController.cs" />
     <Compile Include="Views\Organizations\TeamsView.cs" />
     <Compile Include="Views\Issues\IssueCommentView.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
     <Compile Include="ViewComponents\PickerAlertView.cs" />
     <Compile Include="ViewComponents\ScrollingToolbarView.cs" />
@@ -341,11 +332,9 @@
     <Compile Include="DialogElements\IElementSizing.cs" />
     <Compile Include="DialogElements\InputElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
-    <Compile Include="DialogElements\MultilinedInputElement.cs" />
     <Compile Include="DialogElements\OwnerDrawnElement.cs" />
     <Compile Include="DialogElements\RootElement.cs" />
     <Compile Include="DialogElements\Section.cs" />
-    <Compile Include="DialogElements\SpacingElement.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
     <Compile Include="DialogElements\SplitElement.cs" />
     <Compile Include="DialogElements\StringElement.cs" />
@@ -365,20 +354,25 @@
     <Compile Include="DialogElements\MenuElement.cs" />
     <Compile Include="DialogElements\SplitViewElement.cs" />
     <Compile Include="Utilities\Graphics.cs" />
+    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
+    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
+    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
+    <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
+    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
+    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
+    <InterfaceDefinition Include="Cells\GistCellView.xib" />
+    <InterfaceDefinition Include="Cells\CommitCellView.xib" />
+    <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
+    <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="monotouch" />
     <Reference Include="System.Net.Http" />
     <Reference Include="GitHubSharp">
       <HintPath>..\lib\Portable\GitHubSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\lib\MonoTouch\MonoTouch.Slideout.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.TTTAttributedLabel">
-      <HintPath>..\lib\MonoTouch\MonoTouch.TTTAttributedLabel.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
@@ -392,12 +386,6 @@
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
-    <Reference Include="BTProgressHUD">
-      <HintPath>..\lib\MonoTouch\BTProgressHUD.dll</HintPath>
-    </Reference>
-    <Reference Include="SDWebImage">
-      <HintPath>..\lib\MonoTouch\SDWebImage.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.28\lib\monotouch\System.Net.Http.Primitives.dll</HintPath>
@@ -408,26 +396,36 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.32.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\MonoTouch\SQLitePCL.raw.dll</HintPath>
-    </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.6.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="SDWebImage">
+      <HintPath>lib\SDWebImage.dll</HintPath>
+    </Reference>
+    <Reference Include="BTProgressHUD">
+      <HintPath>lib\BTProgressHUD.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
     <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.6.0\lib\monotouch\Splat.dll</HintPath>
+      <HintPath>..\packages\Splat.1.6.0\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
     <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.1.0\lib\MonoTouch\Akavache.dll</HintPath>
+      <HintPath>..\packages\akavache.core.4.1.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.3.1\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
     </Reference>
     <Reference Include="Akavache.Sqlite3">
       <HintPath>..\packages\akavache.sqlite3.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.3.1\lib\Monotouch\ReactiveUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -507,7 +505,6 @@
     </BundleResource>
     <BundleResource Include="Settings.bundle\Root.plist" />
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
-    <BundleResource Include="Themes\Default.json" />
     <BundleResource Include="Themes\InvertedDefault.json" />
     <BundleResource Include="Images\gist%402x.png" />
     <BundleResource Include="Images\inbox%402x.png" />
@@ -570,7 +567,6 @@
     <BundleResource Include="Images\eye.png" />
     <BundleResource Include="Images\eye%402x.png" />
     <BundleResource Include="Images\alert.png" />
-    <BundleResource Include="Images\alert%402x.png" />
     <BundleResource Include="Images\package.png" />
     <BundleResource Include="Images\package%402x.png" />
     <BundleResource Include="Images\trashcan.png" />
@@ -593,9 +589,11 @@
     <BundleResource Include="Images\forward-chevron%402x.png" />
     <BundleResource Include="Images\back-chevron.png" />
     <BundleResource Include="Images\back-chevron%402x.png" />
+    <BundleResource Include="Themes\Default.json" />
+    <BundleResource Include="Images\alert%402x.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />

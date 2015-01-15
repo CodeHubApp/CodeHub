@@ -1,8 +1,8 @@
-using MonoTouch.UIKit;
+using UIKit;
 using System;
 using CodeHub.iOS.Cells;
 using SDWebImage;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -64,7 +64,7 @@ namespace CodeHub.iOS.DialogElements
             else
             {
                 cell.RoundedImage = true;
-                cell.ImageView.SetImage(new NSUrl(_imageUri), _staticImage, (image, error, cacheType) =>
+                cell.ImageView.SetImage(new NSUrl(_imageUri), _staticImage, (image, error, cacheType, imageUrl) =>
                 {
                     if (TintImage)
                         cell.ImageView.Image = image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);

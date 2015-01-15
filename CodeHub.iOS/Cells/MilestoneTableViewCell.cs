@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using ReactiveUI;
 using CodeHub.iOS.ViewComponents;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Cells
 {
@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Cells
         public MilestoneTableViewCell()
             : base(UITableViewCellStyle.Default, Key)
         {
-            var frame = Frame = new RectangleF(0, 0, 320f, 80);
+            var frame = Frame = new CGRect(0, 0, 320f, 80);
             AutosizesSubviews = true;
             ContentView.AutosizesSubviews = true;
             SeparatorInset = UIEdgeInsets.Zero;

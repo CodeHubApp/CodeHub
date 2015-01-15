@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using MonoTouch.UIKit;
+using System.Collections.Generic;
+using CoreGraphics;
+using UIKit;
+using System;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -17,12 +18,12 @@ namespace CodeHub.iOS.ViewComponents
             XOFFSET = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 5 : 10;
         }
 
-        public ScrollingToolbarView(RectangleF rect, IEnumerable<UIButton> buttons)
+        public ScrollingToolbarView(CGRect rect, IEnumerable<UIButton> buttons)
             : base(rect)
         {
             _buttons = buttons;
             this.AutosizesSubviews = true;
-            _scrollView = new UIScrollView(new RectangleF(0, 0, this.Frame.Width, this.Frame.Height));
+            _scrollView = new UIScrollView(new CGRect(0, 0, this.Frame.Width, this.Frame.Height));
             _scrollView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             _scrollView.UserInteractionEnabled = true;
             _scrollView.ExclusiveTouch = true;
@@ -31,7 +32,7 @@ namespace CodeHub.iOS.ViewComponents
             _scrollView.ShowsHorizontalScrollIndicator = false;
             _scrollView.ShowsVerticalScrollIndicator = false;
 
-            var line = new UIView(new RectangleF(0, 0, rect.Width, 0.5f));
+            var line = new UIView(new CGRect(0, 0, rect.Width, 0.5f));
             line.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleBottomMargin;
             line.BackgroundColor = UIColor.DarkGray;
             Add(line);
@@ -49,7 +50,7 @@ namespace CodeHub.iOS.ViewComponents
             foreach (var button in _buttons)
                 button.SizeToFit();
 
-            float left = -6f;
+            nfloat left = -6f;
             foreach (var button in _buttons)
             {
                 var frame = button.Frame;
@@ -73,7 +74,7 @@ namespace CodeHub.iOS.ViewComponents
                 left = button.Frame.Right;
             }
 
-            _scrollView.ContentSize = new SizeF(left + XPADDING, this.Frame.Height);
+            _scrollView.ContentSize = new CGSize(left + XPADDING, this.Frame.Height);
         }
     }
 }

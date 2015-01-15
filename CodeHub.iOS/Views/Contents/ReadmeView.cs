@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Views.Contents;
@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Contents
                 NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
 
-		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
 		{
 		    if (request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
 		        return base.ShouldStartLoad(request, navigationType);

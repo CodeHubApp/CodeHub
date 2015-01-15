@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.Foundation;
+using Foundation;
 using ReactiveUI;
 using System.Reactive.Linq;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Cells
 {

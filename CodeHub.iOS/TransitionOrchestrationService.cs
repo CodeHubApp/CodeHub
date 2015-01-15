@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Views.Accounts;
 using CodeHub.iOS.Views.App;
@@ -10,7 +10,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views.Gists;
 using CodeHub.iOS.Views.Source;
 using Xamarin.Utilities.Services;
-using MonoTouch.Foundation;
+using Foundation;
 using Splat;
 using CodeHub.iOS.Views.Contents;
 using CodeHub.Core.Services;
@@ -48,7 +48,8 @@ namespace CodeHub.iOS
             if (toViewController is AccountsView || toViewController is WebBrowserView || toViewController is GistCommentView ||
                 toViewController is CommitCommentView || toViewController is GistCreateView || toViewController is FeedbackComposerView)
             {
-                var rootNav = (UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController;
+                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+                var rootNav = (UINavigationController)appDelegate.Window.RootViewController;
                 toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => rootNav.DismissViewController(true, null));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 var navController = new ThemedNavigationController(toViewController);
@@ -56,7 +57,8 @@ namespace CodeHub.iOS
             }
             else if (toViewController is MenuView)
             {
-                var nav = ((UINavigationController)UIApplication.SharedApplication.Delegate.Window.RootViewController);
+                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+                var nav = ((UINavigationController)appDelegate.Window.RootViewController);
                 var slideout = new SlideoutNavigationController();
                 slideout.MenuViewController = new MenuNavigationController(toViewController, slideout);
                 UIView.Transition(nav.View, 0.1, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,

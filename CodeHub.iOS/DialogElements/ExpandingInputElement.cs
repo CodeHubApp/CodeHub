@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Drawing;
+using System;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 using System.Reactive.Linq;
 
 namespace CodeHub.iOS.DialogElements
@@ -95,7 +95,7 @@ namespace CodeHub.iOS.DialogElements
             {
                 TextView = new CustomTextView(placeholder)
                 { 
-                    Frame = new RectangleF(12, 0, ContentView.Frame.Width - 24f, ContentView.Frame.Height),
+                    Frame = new CGRect(12, 0, ContentView.Frame.Width - 24f, ContentView.Frame.Height),
                     ScrollEnabled = false,
                 };
                 TextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
@@ -132,7 +132,7 @@ namespace CodeHub.iOS.DialogElements
                 {
                     _placeholderView.Text = placeholder;
                     _placeholderView.TextColor = UIColor.FromWhiteAlpha(0.702f, 1.0f);
-                    _placeholderView.Frame = new RectangleF(5, 8, 100f, 16f);
+                    _placeholderView.Frame = new CGRect(5, 8, 100f, 16f);
                     _placeholderView.UserInteractionEnabled = false;
                     this.Add(_placeholderView);
 
@@ -142,10 +142,10 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
-        public float GetHeight(UITableView tableView, NSIndexPath indexPath)
+        public nfloat GetHeight(UITableView tableView, NSIndexPath indexPath)
         {
             var str = new NSString(Value ?? string.Empty);
-            var height = (int)str.StringSize(CustomInputCell.InputFont, new SizeF(tableView.Bounds.Width - 24f, 10000), UILineBreakMode.WordWrap).Height + 60f;
+            var height = (int)str.StringSize(CustomInputCell.InputFont, new CGSize(tableView.Bounds.Width - 24f, 10000), UILineBreakMode.WordWrap).Height + 60f;
             return height > 60 ? height : 60;
         }
     }

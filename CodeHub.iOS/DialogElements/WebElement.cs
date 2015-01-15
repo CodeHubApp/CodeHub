@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Drawing;
+using System;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -114,7 +114,7 @@ namespace CodeHub.iOS.DialogElements
             };
         }
 
-        public float GetHeight (UITableView tableView, NSIndexPath indexPath)
+        public nfloat GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
             return HasValue ? _height : 0f;
         }
@@ -127,7 +127,7 @@ namespace CodeHub.iOS.DialogElements
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
             }  
 
-            WebView.Frame = new RectangleF(0, 0, cell.ContentView.Frame.Width, cell.ContentView.Frame.Height);
+            WebView.Frame = new CGRect(0, 0, cell.ContentView.Frame.Width, cell.ContentView.Frame.Height);
             WebView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             WebView.RemoveFromSuperview();
             cell.ContentView.AddSubview (WebView);

@@ -1,11 +1,11 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using CodeHub.Core.Factories;
 
@@ -90,7 +90,7 @@ namespace CodeHub.iOS.Views.Accounts
 
             //Set some generic shadowing
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            LoginButton.Layer.ShadowOffset = new SizeF(0, 1);
+            LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
             LoginButton.Layer.ShadowOpacity = 0.3f;
 
             Domain.ShouldReturn = delegate {
@@ -109,7 +109,7 @@ namespace CodeHub.iOS.Views.Accounts
             };
 
 
-            ScrollView.ContentSize = new SizeF(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
+            ScrollView.ContentSize = new CGSize(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
         NSObject _hideNotification, _showNotification;
@@ -166,7 +166,7 @@ namespace CodeHub.iOS.Views.Accounts
         /// <param name='keyboardHeight'>
         /// Calculated height of the keyboard (width not generally needed here)
         /// </param>
-        protected virtual void OnKeyboardChanged (bool visible, float keyboardHeight)
+        protected virtual void OnKeyboardChanged (bool visible, nfloat keyboardHeight)
         {
             if (visible)
             {

@@ -1,7 +1,7 @@
 using System;
-using System.Drawing;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -22,16 +22,16 @@ namespace CodeHub.iOS.ViewControllers
         {
             internal readonly UITextView TextView;
 
-            public ComposerView(RectangleF bounds)
+            public ComposerView(CGRect bounds)
                 : base(bounds)
             {
-                TextView = new UITextView(RectangleF.Empty)
+                TextView = new UITextView(CGRect.Empty)
                 {
                     Font = UIFont.SystemFontOfSize(18),
                 };
 
                 // Work around an Apple bug in the UITextView that crashes
-                if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+                if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
                     TextView.AutocorrectionType = UITextAutocorrectionType.No;
 
                 AddSubview(TextView);
@@ -48,9 +48,9 @@ namespace CodeHub.iOS.ViewControllers
                 Resize(Bounds);
             }
 
-            void Resize(RectangleF bounds)
+            void Resize(CGRect bounds)
             {
-                TextView.Frame = new RectangleF(0, 0, bounds.Width, bounds.Height);
+                TextView.Frame = new CGRect(0, 0, bounds.Width, bounds.Height);
             }
 
             public string Text
@@ -73,7 +73,7 @@ namespace CodeHub.iOS.ViewControllers
             EdgesForExtendedLayout = UIRectEdge.None;
 
             // Composer
-            _composerView = new ComposerView(ComputeComposerSize(RectangleF.Empty));
+            _composerView = new ComposerView(ComputeComposerSize(CGRect.Empty));
 
             View.AddSubview(_composerView);
         }
@@ -93,7 +93,7 @@ namespace CodeHub.iOS.ViewControllers
         public void CloseComposer()
         {
             SendItem.Enabled = true;
-            NavigationController.PopViewControllerAnimated(true);
+            NavigationController.PopViewController(true);
         }
 
         public void Save()
@@ -112,10 +112,10 @@ namespace CodeHub.iOS.ViewControllers
             _composerView.Frame = ComputeComposerSize(kbdBounds);
         }
 
-        RectangleF ComputeComposerSize(RectangleF kbdBounds)
+        CGRect ComputeComposerSize(CGRect kbdBounds)
         {
             var view = View.Bounds;
-            return new RectangleF(0, 0, view.Width, view.Height - kbdBounds.Height);
+            return new CGRect(0, 0, view.Width, view.Height - kbdBounds.Height);
         }
 
         [Obsolete]

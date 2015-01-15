@@ -4,7 +4,7 @@
 // actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-using MonoTouch.Foundation;
+using Foundation;
 using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Cells
@@ -13,19 +13,19 @@ namespace CodeHub.iOS.Cells
 	partial class NewsCellView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIImageView ActionImage { get; set; }
+		UIKit.UIImageView ActionImage { get; set; }
 
 		[Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
+        UIKit.UILabel Body { get; set; }
 
 		[Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
+        UIKit.UILabel Header { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image { get; set; }
+		UIKit.UIImageView Image { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Time { get; set; }
+		UIKit.UILabel Time { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

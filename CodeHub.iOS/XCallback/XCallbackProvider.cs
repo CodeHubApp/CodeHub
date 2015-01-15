@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 using Xamarin.Utilities.XCallback;
 
 namespace CodeHub.iOS

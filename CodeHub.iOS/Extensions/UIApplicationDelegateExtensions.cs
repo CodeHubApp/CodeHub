@@ -1,9 +1,10 @@
-﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.Security;
-using MonoTouch.Foundation;
+using System;
+using UIKit;
+using Security;
+using Foundation;
 
-namespace MonoTouch.UIKit
+// Analysis disable once CheckNamespace
+namespace UIKit
 {
     public static class UIApplicationDelegateExtensions
     {

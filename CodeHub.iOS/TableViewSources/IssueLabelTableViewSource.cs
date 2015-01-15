@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.Core.ViewModels.Issues;
 
 namespace CodeHub.iOS.TableViewSources
@@ -14,7 +14,7 @@ namespace CodeHub.iOS.TableViewSources
             tableView.RegisterClassForCellReuse(typeof(IssueLabelCellView), IssueLabelCellView.Key);
         }
 
-        public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as IssueLabelItemViewModel;

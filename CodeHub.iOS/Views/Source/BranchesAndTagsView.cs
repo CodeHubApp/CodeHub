@@ -1,6 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.Source;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
@@ -15,7 +15,7 @@ namespace CodeHub.iOS.Views.Source
 		{
 			base.ViewDidLoad();
 
-            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) _viewSegment.SelectedSegment;
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) (int)_viewSegment.SelectedSegment;
             ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (int)x);
             NavigationItem.TitleView = _viewSegment;
 

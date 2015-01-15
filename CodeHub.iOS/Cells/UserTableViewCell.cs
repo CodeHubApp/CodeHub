@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.Core.ViewModels.Users;
-using MonoTouch.Foundation;
-using System.Drawing;
-using MonoTouch.UIKit;
+using Foundation;
+using CoreGraphics;
+using UIKit;
 using System.Reactive.Linq;
 using ReactiveUI;
 
@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
     {
         public static NSString Key = new NSString("usercell");
         private const float ImageSpacing = 10f;
-        private static RectangleF ImageFrame = new RectangleF(ImageSpacing, 6f, 32, 32);
+        private static CGRect ImageFrame = new CGRect(ImageSpacing, 6f, 32, 32);
 
         public UserTableViewCell(IntPtr handle)
             : base(handle)
@@ -36,7 +36,7 @@ namespace CodeHub.iOS.Cells
         {
             base.LayoutSubviews();
             ImageView.Frame = ImageFrame;
-            TextLabel.Frame = new RectangleF(ImageFrame.Right + ImageSpacing, TextLabel.Frame.Y, TextLabel.Frame.Width, TextLabel.Frame.Height);
+            TextLabel.Frame = new CGRect(ImageFrame.Right + ImageSpacing, TextLabel.Frame.Y, TextLabel.Frame.Width, TextLabel.Frame.Height);
         }
     }
 }

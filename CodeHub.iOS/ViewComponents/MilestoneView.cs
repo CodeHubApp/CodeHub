@@ -1,6 +1,6 @@
 using System;
-using System.Drawing;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -34,24 +34,24 @@ namespace CodeHub.iOS.ViewComponents
         }
 
         public MilestoneView()
-            : base(new RectangleF(0, 0, 320f, 80))
+            : base(new CGRect(0, 0, 320f, 80))
         {
             AutosizesSubviews = true;
 
             _titleLabel = new UILabel();
-            _titleLabel.Frame = new RectangleF(10f, 10, Frame.Width - 20f, 18f);
+            _titleLabel.Frame = new CGRect(10f, 10, Frame.Width - 20f, 18f);
             _titleLabel.Font = UIFont.BoldSystemFontOfSize(16f);
             _titleLabel.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             Add(_titleLabel);
 
             _openClosedLabel = new UILabel();
-            _openClosedLabel.Frame = new RectangleF(10f, _titleLabel.Frame.Bottom + 1f, 150f, 12f);
+            _openClosedLabel.Frame = new CGRect(10f, _titleLabel.Frame.Bottom + 1f, 150f, 12f);
             _openClosedLabel.AutoresizingMask = UIViewAutoresizing.FlexibleRightMargin;
             _openClosedLabel.Font = UIFont.SystemFontOfSize(11f);
             Add(_openClosedLabel);
 
             _dueLabel = new UILabel();
-            _dueLabel.Frame = new RectangleF(Frame.Width - 150f, _titleLabel.Frame.Bottom + 1f, 150f - 10f, 12f);
+            _dueLabel.Frame = new CGRect(Frame.Width - 150f, _titleLabel.Frame.Bottom + 1f, 150f - 10f, 12f);
             _dueLabel.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin;
             _dueLabel.TextAlignment = UITextAlignment.Right;
             _dueLabel.TextColor = UIColor.DarkGray;
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.ViewComponents
             Add(_dueLabel);
 
             _progressView = new ProgressBarView();
-            _progressView.Frame = new RectangleF(10f, _openClosedLabel.Frame.Bottom + 9f, Frame.Width - 20f, 20f);
+            _progressView.Frame = new CGRect(10f, _openClosedLabel.Frame.Bottom + 9f, Frame.Width - 20f, 20f);
             _progressView.Layer.MasksToBounds = true;
             _progressView.Layer.CornerRadius = 4f;
             _progressView.BackgroundColor = UIColor.Gray;

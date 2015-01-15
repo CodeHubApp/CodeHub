@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using ReactiveUI;
 using System.Reactive.Linq;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Reactive.Subjects;
-using MonoTouch.Foundation;
+using Foundation;
 using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.Views

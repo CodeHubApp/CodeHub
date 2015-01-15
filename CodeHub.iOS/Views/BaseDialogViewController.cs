@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 using System.Reactive.Linq;
-using System.Drawing;
+using CoreGraphics;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.TableViewSources;

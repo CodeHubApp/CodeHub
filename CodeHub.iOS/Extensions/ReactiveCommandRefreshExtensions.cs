@@ -1,5 +1,5 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 
 // Analysis disable once CheckNamespace
 namespace ReactiveUI

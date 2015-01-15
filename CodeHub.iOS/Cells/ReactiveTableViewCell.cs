@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Cells
@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Cells
         {
         }
 
-        protected ReactiveTableViewCell(MonoTouch.UIKit.UITableViewCellStyle style, MonoTouch.Foundation.NSString reuseIdentifier) 
+        protected ReactiveTableViewCell(UIKit.UITableViewCellStyle style, Foundation.NSString reuseIdentifier) 
             : base(style, reuseIdentifier)
         {
         }

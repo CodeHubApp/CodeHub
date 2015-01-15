@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using Humanizer;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 
@@ -54,7 +54,7 @@ namespace CodeHub.iOS.Views.App
             {
             }
 
-            public float GetHeight(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
                 return 64f;
             }

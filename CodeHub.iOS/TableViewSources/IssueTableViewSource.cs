@@ -1,4 +1,4 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.iOS.Cells;
 using System.Collections.Generic;
@@ -11,13 +11,13 @@ namespace CodeHub.iOS.TableViewSources
     {
         private const float HintSize = 69.0f;
 
-        public IssueTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<IssueItemViewModel> collection) 
+        public IssueTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<IssueItemViewModel> collection) 
             : base(tableView, collection, IssueCellView.Key, HintSize)
         {
             tableView.RegisterNibForCellReuse(IssueCellView.Nib, IssueCellView.Key);
         }
 
-        public IssueTableViewSource(MonoTouch.UIKit.UITableView tableView) 
+        public IssueTableViewSource(UIKit.UITableView tableView) 
             : base(tableView, HintSize)
         {
             tableView.RegisterNibForCellReuse(IssueCellView.Nib, IssueCellView.Key);
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.TableViewSources
             }).ToList();
         }
 
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as IssueItemViewModel;

@@ -1,5 +1,5 @@
 using CodeHub.Core.ViewModels.Notifications;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using System;
 
@@ -10,7 +10,7 @@ namespace CodeHub.iOS.ViewComponents
         readonly UIButton _button;
 
         public NotificationHeaderView(NotificationGroupViewModel viewModel)
-            : base(new System.Drawing.RectangleF(0, 0, 320, 30f))
+            : base(new CoreGraphics.CGRect(0, 0, 320, 30f))
         {
             TextLabel.Text = viewModel.Name;
 
@@ -31,7 +31,7 @@ namespace CodeHub.iOS.ViewComponents
 
             if (_button != null)
             {
-                _button.Frame = new System.Drawing.RectangleF(Frame.Width - 42f, 1, 26, 26);
+                _button.Frame = new CoreGraphics.CGRect(Frame.Width - 42f, 1, 26, 26);
             }
         }
     }

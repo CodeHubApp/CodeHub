@@ -1,5 +1,5 @@
-﻿using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.DialogElements
@@ -14,7 +14,7 @@ namespace CodeHub.iOS.DialogElements
             SpellChecking = true;
         }
 
-        protected override UITextField CreateTextField(RectangleF frame)
+        protected override UITextField CreateTextField(CGRect frame)
         {
             var txt = base.CreateTextField(frame);
             txt.AllEditingEvents += (sender, e) => FetchValue();

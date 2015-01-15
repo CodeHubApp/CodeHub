@@ -5,7 +5,7 @@
 // Manual changes to this file may not be handled correctly.
 //
 
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Cells
 {
@@ -13,37 +13,37 @@ namespace CodeHub.iOS.Cells
 	partial class IssueCellView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UILabel Caption { get; set; }
+		UIKit.UILabel Caption { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label1 { get; set; }
+		UIKit.UILabel Label1 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image1 { get; set; }
+		UIKit.UIImageView Image1 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image2 { get; set; }
+		UIKit.UIImageView Image2 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label2 { get; set; }
+		UIKit.UILabel Label2 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image3 { get; set; }
+		UIKit.UIImageView Image3 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label3 { get; set; }
+		UIKit.UILabel Label3 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView Image4 { get; set; }
+		UIKit.UIImageView Image4 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Label4 { get; set; }
+		UIKit.UILabel Label4 { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel Number { get; set; }
+		UIKit.UILabel Number { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel IssueType { get; set; }
+		UIKit.UILabel IssueType { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

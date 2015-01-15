@@ -1,5 +1,5 @@
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
@@ -87,7 +87,7 @@ namespace CodeHub.iOS.Views.Source
                 if (ViewModel.ShowRepository)
                 {
                     var repo = new StyledStringElement(ViewModel.RepositoryName) { 
-                        Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator, 
+                        Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                         Lines = 1, 
                         Font = StyledStringElement.DefaultDetailFont, 
                         TextColor = StyledStringElement.DefaultDetailColor,

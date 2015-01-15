@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.DialogElements;

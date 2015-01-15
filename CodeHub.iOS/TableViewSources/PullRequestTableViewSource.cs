@@ -1,6 +1,7 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 using CodeHub.iOS.Cells;
 using CodeHub.Core.ViewModels.PullRequests;
+using System;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -8,19 +9,19 @@ namespace CodeHub.iOS.TableViewSources
     {
         private PullRequestCellView _usedForHeight;
 
-        public PullRequestTableViewSource(MonoTouch.UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<PullRequestItemViewModel> collection) 
+        public PullRequestTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<PullRequestItemViewModel> collection) 
             : base(tableView, collection,  PullRequestCellView.Key, 60.0f)
         {
             tableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
         }
 
-        public PullRequestTableViewSource(MonoTouch.UIKit.UITableView tableView) 
+        public PullRequestTableViewSource(UIKit.UITableView tableView) 
             : base(tableView)
         {
             tableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
         }
 
-        public override float GetHeightForRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override nfloat GetHeightForRow(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             if (_usedForHeight == null)
                 _usedForHeight = PullRequestCellView.Create();
@@ -31,16 +32,16 @@ namespace CodeHub.iOS.TableViewSources
                 _usedForHeight.ViewModel = item;
                 _usedForHeight.SetNeedsUpdateConstraints();
                 _usedForHeight.UpdateConstraintsIfNeeded();
-                _usedForHeight.Bounds = new System.Drawing.RectangleF(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
+                _usedForHeight.Bounds = new CoreGraphics.CGRect(0, 0, tableView.Bounds.Width, tableView.Bounds.Height);
                 _usedForHeight.SetNeedsLayout();
                 _usedForHeight.LayoutIfNeeded();
-                return _usedForHeight.ContentView.SystemLayoutSizeFittingSize(MonoTouch.UIKit.UIView.UILayoutFittingCompressedSize).Height + 1;
+                return _usedForHeight.ContentView.SystemLayoutSizeFittingSize(UIKit.UIView.UILayoutFittingCompressedSize).Height + 1;
             }
 
             return base.GetHeightForRow(tableView, indexPath);
         }
 
-        public override void RowSelected(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as PullRequestItemViewModel;

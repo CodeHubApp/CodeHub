@@ -1,9 +1,8 @@
-﻿using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using System;
+using UIKit;
+using CoreGraphics;
 using SDWebImage;
-using MonoTouch.Foundation;
-using MonoTouch.CoreGraphics;
+using Foundation;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -35,7 +34,7 @@ namespace CodeHub.iOS.ViewComponents
                     _imageView.Image = null;
                 else
                 {
-                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType) =>
+                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType, imageUrl) =>
                         UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null));
                 }
             }
@@ -138,10 +137,10 @@ namespace CodeHub.iOS.ViewComponents
         }
 
         public ImageAndTitleHeaderView()
-            : base(new RectangleF(0, 0, 320f, 100f))
+            : base(new CGRect(0, 0, 320f, 100f))
         {
             ImageButton = new UIButton(UIButtonType.Custom);
-            ImageButton.Frame = new RectangleF(0, 0, 80, 80);
+            ImageButton.Frame = new CGRect(0, 0, 80, 80);
             ImageButton.TouchUpInside += (sender, e) => {
                 if (ImageButtonAction != null)
                     ImageButtonAction();
@@ -149,7 +148,7 @@ namespace CodeHub.iOS.ViewComponents
             Add(ImageButton);
 
             _imageView = new UIImageView();
-            _imageView.Frame = new RectangleF(0, 0, 80, 80);
+            _imageView.Frame = new CGRect(0, 0, 80, 80);
             _imageView.BackgroundColor = UIColor.White;
             _imageView.Layer.BorderWidth = 2f;
             _imageView.Layer.BorderColor = UIColor.White.CGColor;
@@ -172,15 +171,15 @@ namespace CodeHub.iOS.ViewComponents
             Add(_seperatorView);
 
             _subView = new UIView();
-            _subView.Frame = new RectangleF(56, 56, 22, 22);
+            _subView.Frame = new CGRect(56, 56, 22, 22);
             _subView.Layer.CornerRadius = 10f;
             _subView.Layer.MasksToBounds = true;
             _subView.BackgroundColor = UIColor.White;
             _subView.Hidden = true;
             ImageButton.Add(_subView);
 
-            _subImageView = new UIImageView(new RectangleF(0, 0, _subView.Frame.Width - 4f, _subView.Frame.Height - 4f));
-            _subImageView.Center = new PointF(11f, 11f);
+            _subImageView = new UIImageView(new CGRect(0, 0, _subView.Frame.Width - 4f, _subView.Frame.Height - 4f));
+            _subImageView.Center = new CGPoint(11f, 11f);
             _subView.Add(_subImageView);
 
             EnableSeperator = false;
@@ -217,22 +216,22 @@ namespace CodeHub.iOS.ViewComponents
         {
             base.LayoutSubviews();
 
-            ImageButton.Center = new PointF(Bounds.Width / 2, 15 + ImageButton.Frame.Height / 2);
+            ImageButton.Center = new CGPoint(Bounds.Width / 2, 15 + ImageButton.Frame.Height / 2);
 
-            _label.Frame = new RectangleF(20, ImageButton.Frame.Bottom + 10f, Bounds.Width - 40, Bounds.Height - (ImageButton.Frame.Bottom + 5f));
+            _label.Frame = new CGRect(20, ImageButton.Frame.Bottom + 10f, Bounds.Width - 40, Bounds.Height - (ImageButton.Frame.Bottom + 5f));
             _label.SizeToFit();
-            _label.Frame = new RectangleF(20, ImageButton.Frame.Bottom + 10f, Bounds.Width - 40, _label.Frame.Height);
+            _label.Frame = new CGRect(20, ImageButton.Frame.Bottom + 10f, Bounds.Width - 40, _label.Frame.Height);
 
-            _label2.Frame = new RectangleF(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, 16f);
+            _label2.Frame = new CGRect(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, 16f);
             _label2.SizeToFit();
-            _label2.Frame = new RectangleF(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, _label2.Frame.Height);
+            _label2.Frame = new CGRect(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, _label2.Frame.Height);
 
             var bottom = _label2.Hidden == false? _label2.Frame.Bottom : _label.Frame.Bottom;
             var f = Frame;
             f.Height = bottom + 15f;
             Frame = f;
 
-            _seperatorView.Frame = new RectangleF(0, Frame.Height - 0.5f, Frame.Width, 0.5f);
+            _seperatorView.Frame = new CGRect(0, Frame.Height - 0.5f, Frame.Width, 0.5f);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Drawing;
-using MonoTouch.UIKit;
+using System;
+using CoreGraphics;
+using UIKit;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -8,13 +8,13 @@ namespace CodeHub.iOS.ViewComponents
     {
         private readonly string[] _values;
         private readonly int _currentSelected;
-        private readonly Action<int> _selected;
+        private readonly Action<nint> _selected;
         private readonly UIPickerView _pickerView;
         private readonly UIToolbar _toolbar;
         private readonly UIView _innerView;
 
-        public PickerAlertView(string[] values, int currentSelected, Action<int> selected)
-            : base(new RectangleF(0, 0, 320f, 480f))
+        public PickerAlertView(string[] values, int currentSelected, Action<nint> selected)
+            : base(new CGRect(0, 0, 320f, 480f))
         {
             AutosizesSubviews = true;
             this.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
@@ -42,21 +42,21 @@ namespace CodeHub.iOS.ViewComponents
                 })
             };
 
-            _innerView = new UIView(new RectangleF(0, Frame.Height, Frame.Width, 44f + _pickerView.Frame.Height));
+            _innerView = new UIView(new CGRect(0, Frame.Height, Frame.Width, 44f + _pickerView.Frame.Height));
             _innerView.AutosizesSubviews = true;
             _innerView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
 
-            _toolbar.Frame = new RectangleF(0, 0, Frame.Width, 44f);
+            _toolbar.Frame = new CGRect(0, 0, Frame.Width, 44f);
             _innerView.Add(_toolbar);
 
-            _pickerView.Frame = new RectangleF(0, 44f, Frame.Width, _pickerView.Frame.Height);
+            _pickerView.Frame = new CGRect(0, 44f, Frame.Width, _pickerView.Frame.Height);
             _innerView.Add(_pickerView);
 
             Add(_innerView);
 
         }
 
-        public override void TouchesBegan(MonoTouch.Foundation.NSSet touches, UIEvent evt)
+        public override void TouchesBegan(Foundation.NSSet touches, UIEvent evt)
         {
             base.TouchesBegan(touches, evt);
             var touch = touches.AnyObject as UITouch;
@@ -77,19 +77,20 @@ namespace CodeHub.iOS.ViewComponents
         private void Dismiss()
         {
             UIView.Animate(0.25, 0, UIViewAnimationOptions.CurveEaseIn, () =>
-                _innerView.Frame = new RectangleF(0, Frame.Height, _innerView.Frame.Width, _innerView.Frame.Height), RemoveFromSuperview);
+                _innerView.Frame = new CGRect(0, Frame.Height, _innerView.Frame.Width, _innerView.Frame.Height), RemoveFromSuperview);
         }
 
         private void Present()
         {
             UIView.Animate(0.25, 0, UIViewAnimationOptions.CurveEaseIn, () =>
-                _innerView.Frame = new RectangleF(0, Frame.Height - _innerView.Frame.Height, _innerView.Frame.Width, _innerView.Frame.Height), null);
+                _innerView.Frame = new CGRect(0, Frame.Height - _innerView.Frame.Height, _innerView.Frame.Width, _innerView.Frame.Height), null);
         }
 
 
         public void Show()
         {
-            var window = UIApplication.SharedApplication.Delegate.Window.RootViewController.View;
+            var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+            var window = appDelegate.Window.RootViewController.View;
             Frame = window.Bounds;
             window.AddSubview(this);
             Present();
@@ -103,17 +104,17 @@ namespace CodeHub.iOS.ViewComponents
                 _values = values;
             }
 
-            public override int GetComponentCount(UIPickerView picker)
+            public override nint GetComponentCount(UIPickerView picker)
             {
                 return 1;
             }
 
-            public override int GetRowsInComponent(UIPickerView picker, int component)
+            public override nint GetRowsInComponent(UIPickerView picker, nint component)
             {
                 return _values.Length;
             }
 
-            public override string GetTitle(UIPickerView picker, int row, int component)
+            public override string GetTitle(UIPickerView picker, nint row, nint component)
             {
 
                 return _values[row];

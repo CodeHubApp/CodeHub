@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -58,27 +58,27 @@ namespace CodeHub.iOS.DialogElements
 			return cell;
 		}
 
-        public override void Draw(RectangleF bounds, MonoTouch.CoreGraphics.CGContext context, UIView view)
+        public override void Draw(CGRect bounds, CoreGraphics.CGContext context, UIView view)
         {
 			view.BackgroundColor = UIColor.White;
             CaptionColor.SetColor();
             var width = bounds.Width - PaddingX * 2;
             var textHeight = Caption.MonoStringHeight(CaptionFont, width);
-            view.DrawString(Caption, new RectangleF(PaddingX, PaddingY, width, bounds.Height - PaddingY * 2), CaptionFont, UILineBreakMode.WordWrap);
+            Caption.DrawString(new CGRect(PaddingX, PaddingY, width, bounds.Height - PaddingY * 2), CaptionFont, UILineBreakMode.WordWrap);
 
             if (Value != null)
             {
                 ValueColor.SetColor();
-                var valueOrigin = new PointF(PaddingX, PaddingY + textHeight + 8f);
-                var valueSize = new SizeF(width, bounds.Height - valueOrigin.Y);
-                view.DrawString(Value, new RectangleF(valueOrigin, valueSize), ValueFont, UILineBreakMode.WordWrap);
+                var valueOrigin = new CGPoint(PaddingX, PaddingY + textHeight + 8f);
+                var valueSize = new CGSize(width, bounds.Height - valueOrigin.Y);
+                Value.DrawString(new CGRect(valueOrigin, valueSize), ValueFont, UILineBreakMode.WordWrap);
             }
         }
 
-        public override float Height(UITableView tableView, RectangleF bounds)
+        public override float Height(UITableView tableView, CGRect bounds)
         {
             var cell = GetCell(tableView);
-            cell.Bounds = new RectangleF(0, 0, bounds.Width, 44f);
+            cell.Bounds = new CGRect(0, 0, bounds.Width, 44f);
             cell.SetNeedsLayout();
             cell.LayoutIfNeeded();
 

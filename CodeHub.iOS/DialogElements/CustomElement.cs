@@ -1,8 +1,7 @@
 using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Drawing;
-using MonoTouch.CoreGraphics;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -26,15 +25,15 @@ namespace CodeHub.iOS.DialogElements
             Style = style;
         }
 
-        public float GetHeight (UITableView tableView, NSIndexPath indexPath)
+        public nfloat GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
             try
             {
                 if (tableView.Style == UITableViewStyle.Grouped)
                 {
 					//float margin = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 20f : 110f;
-					SizeF size = new SizeF (tableView.Bounds.Width /* - margin */, float.MaxValue);
-                    return Height(tableView, new RectangleF(tableView.Bounds.Location, size));
+					CGSize size = new CGSize (tableView.Bounds.Width /* - margin */, float.MaxValue);
+                    return Height(tableView, new CGRect(tableView.Bounds.Location, size));
                 }
                 return Height(tableView, tableView.Bounds);
             }
@@ -46,7 +45,7 @@ namespace CodeHub.iOS.DialogElements
         }
 
         
-        public event NSAction Tapped;
+        public event Action Tapped;
 
         public bool IsTappedAssigned { get { return Tapped != null; } }
 
@@ -91,9 +90,9 @@ namespace CodeHub.iOS.DialogElements
             tableView.DeselectRow (path, true);
         }
 
-        public abstract void Draw(RectangleF bounds, CGContext context, UIView view);
+        public abstract void Draw(CGRect bounds, CGContext context, UIView view);
 
-        public abstract float Height(UITableView tableView, RectangleF bounds);
+        public abstract float Height(UITableView tableView, CGRect bounds);
 
         class OwnerDrawnCell : UITableViewCell
         {
@@ -164,7 +163,7 @@ namespace CodeHub.iOS.DialogElements
 
             }
 
-            public override void Draw (RectangleF rect)
+            public override void Draw (CGRect rect)
             {
                 base.Draw(rect);
                 try

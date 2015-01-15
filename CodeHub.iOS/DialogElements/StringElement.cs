@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Drawing;
+using System;
+using UIKit;
+using Foundation;
+using CoreGraphics;
 using SDWebImage;
 using ReactiveUI;
 
@@ -110,7 +110,7 @@ namespace CodeHub.iOS.DialogElements
         }
 
         protected UITableViewCellStyle style;
-        public event NSAction AccessoryTapped;
+        public event Action AccessoryTapped;
         public UIFont Font;
         public UIFont SubtitleFont;
         public UIColor TextColor;
@@ -283,71 +283,9 @@ namespace CodeHub.iOS.DialogElements
 
         internal void AccessoryTap ()
         {
-            NSAction tapped = AccessoryTapped;
+            var tapped = AccessoryTapped;
             if (tapped != null)
                 tapped ();
-        }
-    }
-
-
-
-    public class StyledMultilineElement : StyledStringElement, IElementSizing 
-    {
-        public StyledMultilineElement (string caption) : base (caption) {}
-        public StyledMultilineElement (string caption, string value) : base (caption, value) {}
-        public StyledMultilineElement (string caption, Action tapped) : base (caption, tapped) {}
-        public StyledMultilineElement (string caption, string value, UITableViewCellStyle style) : base (caption, value) 
-        { 
-            this.style = style;
-        }
-
-        public override UITableViewCell GetCell (UITableView tv)
-        {
-            var cell = base.GetCell (tv);
-            cell.SeparatorInset = UIEdgeInsets.Zero;
-            var tl = cell.TextLabel;
-            tl.LineBreakMode = UILineBreakMode.WordWrap;
-            tl.Lines = 0;
-
-            var sl = cell.DetailTextLabel;
-            if (sl != null) {
-                sl.LineBreakMode = UILineBreakMode.WordWrap;
-                sl.Lines = 0;
-            }
-
-            cell.SeparatorInset = UIEdgeInsets.Zero;
-            return cell;
-        }
-
-        public virtual float GetHeight (UITableView tableView, NSIndexPath indexPath)
-        {
-            const float margin = 30f;
-            SizeF maxSize = new SizeF (tableView.Bounds.Width - margin, float.MaxValue);
-
-            if (this.Accessory != UITableViewCellAccessory.None)
-                maxSize.Width -= 20;
-
-            string c = Caption;
-            string v = Value;
-            // ensure the (multi-line) Value will be rendered inside the cell when no Caption is present
-            if (String.IsNullOrEmpty (c) && !String.IsNullOrEmpty (v))
-                c = " ";
-
-            var captionFont = Font ?? UIFont.BoldSystemFontOfSize (17);
-            float height = tableView.StringSize (c, captionFont, maxSize, LineBreakMode).Height;
-
-            if (!String.IsNullOrEmpty (v)) {
-                var subtitleFont = SubtitleFont ?? UIFont.SystemFontOfSize (14);
-                if (this.style == UITableViewCellStyle.Subtitle) {
-                    height += tableView.StringSize (v, subtitleFont, maxSize, LineBreakMode).Height;
-                } else {
-                    float vheight = tableView.StringSize (v, subtitleFont, maxSize, LineBreakMode).Height;
-                    if (vheight > height)
-                        height = vheight;
-                }
-            }
-
-            return height + 10;
         }
     }
 }

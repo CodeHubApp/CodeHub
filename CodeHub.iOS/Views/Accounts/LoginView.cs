@@ -2,7 +2,7 @@ using System;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Text;
 using ReactiveUI;
 using CodeHub.Core.Factories;
@@ -32,7 +32,7 @@ namespace CodeHub.iOS.Views.Accounts
                 Console.WriteLine("Can execute: " + x));
         }
 
-		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
             //We're being redirected to our redirect URL so we must have been successful
             if (request.Url.Host == "dillonbuchanan.com")
@@ -101,10 +101,10 @@ namespace CodeHub.iOS.Views.Accounts
             try
             {
                 //Remove all cookies & cache
-                foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                    MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-                MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-    			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(loginUrl)));
+                foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
+                    Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
+                Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
+    			Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(loginUrl)));
             }
             catch (Exception e)
             {

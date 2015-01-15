@@ -1,6 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 
@@ -85,7 +85,7 @@ namespace CodeHub.iOS.Views.Issues
                 this._multipleTouchIndex = multipleTouchIndex;
             }
 
-            public override void TouchesEnded(MonoTouch.Foundation.NSSet touches, UIEvent evt)
+            public override void TouchesEnded(Foundation.NSSet touches, UIEvent evt)
             {
                 var previousSelected = SelectedSegment;
                 base.TouchesEnded(touches, evt);

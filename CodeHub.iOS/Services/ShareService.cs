@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Services
@@ -13,7 +13,9 @@ namespace CodeHub.iOS.Services
 			var activityItems = new NSObject[] { item };
 			UIActivity[] applicationActivities = null;
 			var activityController = new UIActivityViewController (activityItems, applicationActivities);
-            UIApplication.SharedApplication.Delegate.Window.RootViewController.PresentViewController(activityController, true, null);
+
+            var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+            appDelegate.Window.RootViewController.PresentViewController(activityController, true, null);
 		}
     }
 }

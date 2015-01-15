@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using ReactiveUI;
 using System.Reactive.Linq;
-using MonoTouch.Foundation;
+using Foundation;
 using CodeHub.Core.ViewModels.Organizations;
 
 namespace CodeHub.iOS.Cells

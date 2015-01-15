@@ -4,7 +4,7 @@
 // actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-using MonoTouch.Foundation;
+using Foundation;
 using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Cells
@@ -13,34 +13,34 @@ namespace CodeHub.iOS.Cells
 	partial class RepositoryCellView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UILabel CaptionLabel { get; set; }
+		UIKit.UILabel CaptionLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel ContentLabel { get; set; }
+		UIKit.UILabel ContentLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView FollowersImageVIew { get; set; }
+		UIKit.UIImageView FollowersImageVIew { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel FollowersLabel { get; set; }
+		UIKit.UILabel FollowersLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView ForksImageView { get; set; }
+		UIKit.UIImageView ForksImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel ForksLabel { get; set; }
+		UIKit.UILabel ForksLabel { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView OwnerImageView { get; set; }
+		UIKit.UIImageView OwnerImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView UserImageView { get; set; }
+		UIKit.UIImageView UserImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel UserLabel { get; set; }
+		UIKit.UILabel UserLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

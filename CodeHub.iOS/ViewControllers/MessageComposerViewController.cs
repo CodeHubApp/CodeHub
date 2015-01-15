@@ -1,7 +1,7 @@
-﻿using System;
-using System.Drawing;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using System;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
@@ -40,18 +40,18 @@ namespace CodeHub.iOS.ViewControllers
 
     public class MessageComposerViewController : ReactiveViewController
     {
-        private RectangleF _keyboardBounds = RectangleF.Empty;
+        private CGRect _keyboardBounds = CGRect.Empty;
 
         public UITextView TextView { get; private set; }
 
         public MessageComposerViewController()
         {
             EdgesForExtendedLayout = UIRectEdge.None;
-            TextView = new UITextView(RectangleF.Empty);
+            TextView = new UITextView(CGRect.Empty);
             TextView.Font = UIFont.FromName("Courier", 16f);
 
             // Work around an Apple bug in the UITextView that crashes
-            if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+            if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
                 TextView.AutocorrectionType = UITextAutocorrectionType.No;
 
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
@@ -90,13 +90,13 @@ namespace CodeHub.iOS.ViewControllers
 
         void KeyboardWillHide (NSNotification notification)
         {
-            _keyboardBounds = RectangleF.Empty;
+            _keyboardBounds = CGRect.Empty;
             UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, ResizeTextView, null);
         }
 
         private void ResizeTextView()
         {
-            TextView.Frame = new RectangleF(0, 0, View.Bounds.Width, View.Bounds.Height - _keyboardBounds.Height);
+            TextView.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height - _keyboardBounds.Height);
         }
 
         [Obsolete]

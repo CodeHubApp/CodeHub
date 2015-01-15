@@ -2,8 +2,8 @@ using System;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -18,7 +18,7 @@ namespace CodeHub.iOS.Views.Repositories
             var searchDelegate = this.AddSearchBar();
 
             var activityView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White) { 
-                Frame = new RectangleF(0, 0, 320f, 88f),
+                Frame = new CGRect(0, 0, 320f, 88f),
                 Color = NavigationController.NavigationBar.BackgroundColor,
             };
 

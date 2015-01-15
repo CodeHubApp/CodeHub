@@ -1,4 +1,4 @@
-﻿using CodeHub.Core.ViewModels.App;
+using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.App

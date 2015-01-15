@@ -1,5 +1,5 @@
-﻿using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 using System;
 using System.Collections.Generic;
 using ReactiveUI;
@@ -93,7 +93,7 @@ namespace CodeHub.iOS.DialogElements
 
                     for (var i = 0; i < _buttons.Length; i++)
                     {
-                        _buttons[i].Frame = new RectangleF(i * space, 0, space - SeperatorWidth, Bounds.Height);
+                        _buttons[i].Frame = new CGRect(i * space, 0, space - SeperatorWidth, Bounds.Height);
                         _buttons[i].LayoutSubviews();
                     }
                 }
@@ -144,8 +144,8 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
 
-                _text.Frame = new RectangleF(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
-                _caption.Frame = new RectangleF(12, _text.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
+                _text.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
+                _caption.Frame = new CGRect(12, _text.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
             }
         }
 

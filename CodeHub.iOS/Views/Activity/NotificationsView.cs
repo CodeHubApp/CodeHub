@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Notifications;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.Views.Activity
             ViewModel.WhenAnyValue(x => x.GroupedNotifications).Where(x => x != null).Subscribe(notificationSource.SetData);
             TableView.Source = notificationSource;
 
-            _viewSegment.ValueChanged += (sender, args) => ViewModel.ShownIndex = _viewSegment.SelectedSegment;
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.ShownIndex = (int)_viewSegment.SelectedSegment;
         }
 
         public override void ViewWillAppear(bool animated)

@@ -1,7 +1,7 @@
 using System;
 using ReactiveUI;
 
-namespace MonoTouch.UIKit
+namespace UIKit
 {
     public static class UIBarButtonItemExtensions
     {

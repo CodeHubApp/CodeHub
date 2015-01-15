@@ -1,5 +1,5 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 using CodeHub.Core.ViewModels.Releases;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.Releases
             });
         }
 
-        protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
             if (request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
                 return base.ShouldStartLoad(request, navigationType);

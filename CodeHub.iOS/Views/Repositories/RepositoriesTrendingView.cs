@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Repositories;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
 using CodeHub.iOS.TableViewSources;
-using System.Drawing;
+using CoreGraphics;
 using CodeHub.iOS.ViewComponents;
 using System.Collections.Generic;
 
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Repositories
         {
             NavigationItem.TitleView = _titleButton = new TrendingTitleButton
             {
-                Frame = new RectangleF(0, 0, 200f, 32f),
+                Frame = new CGRect(0, 0, 200f, 32f),
                 TintColor = Theme.PrimaryNavigationBarTextColor
             };
             _titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
@@ -66,7 +66,7 @@ namespace CodeHub.iOS.Views.Repositories
 
         private static UILabel CreateHeaderView(string name)
         {
-            return new UILabel(new RectangleF(0, 0, 320f, 26f)) 
+            return new UILabel(new CGRect(0, 0, 320f, 26f)) 
             {
                 BackgroundColor = Theme.PrimaryNavigationBarColor,
                 Text = name,

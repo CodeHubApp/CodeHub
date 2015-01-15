@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Users;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 

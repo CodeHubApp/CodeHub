@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using System;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Changesets;
@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("CommitCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("CommitCellView");
-        private static float DefaultContentConstraintSize = 0.0f;
+        private static nfloat DefaultContentConstraintSize = 0.0f;
 
         public CommitCellView(IntPtr handle) 
             : base(handle)

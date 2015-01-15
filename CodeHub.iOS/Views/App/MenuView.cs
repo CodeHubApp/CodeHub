@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using CoreGraphics;
 using System.Linq;
 using CodeHub.Core.Data;
 using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.App;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.App
 
         public MenuView()
         {
-            _profileButton = new MenuProfileView(new RectangleF(0, 0, 320f, 44f));
+            _profileButton = new MenuProfileView(new CGRect(0, 0, 320f, 44f));
             _profileButton.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             _profileButton.TouchUpInside += (sender, e) => ViewModel.GoToAccountsCommand.ExecuteIfCan();
             NavigationItem.TitleView = _profileButton;
@@ -82,7 +82,7 @@ namespace CodeHub.iOS.Views.App
             Appearing.Subscribe(_ =>
             {
                 var frame = NavigationController.NavigationBar.Frame;
-                _profileButton.Frame = new RectangleF(0, 0, frame.Width, frame.Height);
+                _profileButton.Frame = new CGRect(0, 0, frame.Width, frame.Height);
             });
         }
 
@@ -91,7 +91,7 @@ namespace CodeHub.iOS.Views.App
             base.ViewDidLoad();
 
             //Add some nice looking colors and effects
-            TableView.TableFooterView = new UIView(new RectangleF(0, 0, View.Bounds.Width, 0));
+            TableView.TableFooterView = new UIView(new CGRect(0, 0, View.Bounds.Width, 0));
             TableView.BackgroundColor = Themes.Theme.Current.MenuBackgroundColor;
             TableView.ScrollsToTop = false;
             TableView.SeparatorInset = UIEdgeInsets.Zero;
@@ -198,7 +198,7 @@ namespace CodeHub.iOS.Views.App
 				_parent = dvc;
 			}
 
-			public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection == null)
 					return false;
@@ -207,14 +207,14 @@ namespace CodeHub.iOS.Views.App
 				return false;
 			}
 
-			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection != null && Root[indexPath.Section] == _parent._favoriteRepoSection)
 					return UITableViewCellEditingStyle.Delete;
 				return UITableViewCellEditingStyle.None;
 			}
 
-			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
 			{
 				switch (editingStyle)
 				{

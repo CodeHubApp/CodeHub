@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.Foundation;
+using System;
+using UIKit;
+using CoreGraphics;
+using Foundation;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Cells
@@ -37,8 +37,8 @@ namespace CodeHub.iOS.Cells
             if (ImageView != null)
             {
                 var center = ImageView.Center;
-                ImageView.Frame = new RectangleF(0, 0, ImageSize, ImageSize);
-                ImageView.Center = new PointF(ImageSize, center.Y);
+                ImageView.Frame = new CGRect(0, 0, ImageSize, ImageSize);
+                ImageView.Center = new CGPoint(ImageSize, center.Y);
 
                 if (RoundedImage)
                 {
@@ -62,7 +62,7 @@ namespace CodeHub.iOS.Cells
 
             if (NotificationNumber > 0)
             {
-                _numberView.Frame = new RectangleF(ContentView.Bounds.Width - 44, 11, 34, 22f);
+                _numberView.Frame = new CGRect(ContentView.Bounds.Width - 44, 11, 34, 22f);
                 _numberView.Text = NotificationNumber.ToString();
                 AddSubview(_numberView);
             }

@@ -1,4 +1,4 @@
-﻿using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.Core.Services;
 using CodeHub.WebViews;
 using CodeHub.iOS.ViewComponents;

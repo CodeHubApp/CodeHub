@@ -1,10 +1,10 @@
-﻿using System;
-using MonoTouch.UIKit;
+using System;
+using UIKit;
 using System.Collections.Generic;
 using ReactiveUI;
 using System.Threading.Tasks;
 using System.Linq;
-using MonoTouch.Foundation;
+using Foundation;
 using CodeHub.Core.Factories;
 using CodeHub.iOS.ViewComponents;
 
@@ -57,7 +57,7 @@ namespace CodeHub.iOS.Factories
             public Task Show()
             {
                 var a = new TaskCompletionSource<object>();
-                var buttonMap = new Dictionary<int, IReactiveCommand>();
+                var buttonMap = new Dictionary<nint, IReactiveCommand>();
 
                 var actionSheet = new UIActionSheet(_title);
                 foreach (var b in _buttonActions)
@@ -97,7 +97,7 @@ namespace CodeHub.iOS.Factories
                 new PickerAlertView(_options.ToArray(), SelectedOption, x =>
                 {
                     if (x < _options.Count)
-                        a.SetResult(x);
+                        a.SetResult((int)x);
                 }).Show();
 
                 return a.Task;

@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Gists;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;

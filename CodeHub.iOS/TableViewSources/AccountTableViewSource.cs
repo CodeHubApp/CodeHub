@@ -1,6 +1,6 @@
-﻿using ReactiveUI;
+using ReactiveUI;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.TableViewSources
@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
             tableView.RegisterClassForCellReuse(typeof(AccountCellView), AccountCellView.Key);
         }
 
-        public override void RowSelected(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             tableView.DeselectRow(indexPath, true);
@@ -25,17 +25,17 @@ namespace CodeHub.iOS.TableViewSources
                 item.SelectCommand.ExecuteIfCan();
         }
 
-        public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             return true;
         }
 
-        public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             return UITableViewCellEditingStyle.Delete;
         }
 
-        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
         {
             var vm = ItemAt(indexPath) as AccountItemViewModel;
             if (vm != null)

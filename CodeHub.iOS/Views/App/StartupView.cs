@@ -1,11 +1,11 @@
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using Xamarin.Utilities.Images;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using SDWebImage;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -45,9 +45,9 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewWillLayoutSubviews();
 
-            _imgView.Frame = new System.Drawing.RectangleF(View.Bounds.Width / 2 - ImageSize / 2, View.Bounds.Height / 2 - ImageSize / 2 - 30f, ImageSize, ImageSize);
-            _statusLabel.Frame = new System.Drawing.RectangleF(0, _imgView.Frame.Bottom + 10f, View.Bounds.Width, 15f);
-            _activityView.Center = new System.Drawing.PointF(View.Bounds.Width / 2, _statusLabel.Frame.Bottom + 16f + 16F);
+            _imgView.Frame = new CoreGraphics.CGRect(View.Bounds.Width / 2 - ImageSize / 2, View.Bounds.Height / 2 - ImageSize / 2 - 30f, ImageSize, ImageSize);
+            _statusLabel.Frame = new CoreGraphics.CGRect(0, _imgView.Frame.Bottom + 10f, View.Bounds.Width, 15f);
+            _activityView.Center = new CoreGraphics.CGPoint(View.Bounds.Width / 2, _statusLabel.Frame.Bottom + 16f + 16F);
 
             try
             {
@@ -91,7 +91,7 @@ namespace CodeHub.iOS.Views.App
             ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().Subscribe(x => {
                 try
                 {
-                    _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type) =>
+                    _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) =>
                         UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null));
                 }
                 catch

@@ -1,8 +1,8 @@
 
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.Foundation;
+using UIKit;
+using CoreGraphics;
+using Foundation;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -149,31 +149,31 @@ namespace CodeHub.iOS.DialogElements
 		// 
 		// Computes the X position for the entry by aligning all the entries in the Section
 		//
-		SizeF ComputeEntryPosition (UITableView tv, UITableViewCell cell)
+		CGSize ComputeEntryPosition (UITableView tv, UITableViewCell cell)
 		{
 			if (Section.EntryAlignment.Width != 0)
                 return Section.EntryAlignment;
 			
 			// If all EntryElements have a null Caption, align UITextField with the Caption
 			// offset of normal cells (at 10px).
-			var max = new SizeF (-15, tv.StringSize ("M", TitleFont).Height);
+            var max = new CGSize (-15, UIStringDrawing.StringSize ("M", TitleFont).Height);
             foreach (var e in Section){
 				var ee = e as EntryElement;
 				if (ee == null)
 					continue;
 				
 				if (ee.Caption != null) {
-					var size = tv.StringSize (ee.Caption, TitleFont);
+                    var size = UIStringDrawing.StringSize (ee.Caption, TitleFont);
 					if (size.Width > max.Width)
 						max = size;
 				}
 			}
 
-            Section.EntryAlignment = new SizeF (25 + Math.Min (max.Width, 160), max.Height);
+            Section.EntryAlignment = new CGSize (25f + (nfloat)Math.Min (max.Width, 160), max.Height);
             return Section.EntryAlignment;
 		}
 
-		protected virtual UITextField CreateTextField (RectangleF frame)
+		protected virtual UITextField CreateTextField (CGRect frame)
 		{
 			return new UITextField (frame) {
 				AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleLeftMargin,
@@ -200,15 +200,15 @@ namespace CodeHub.iOS.DialogElements
 			cell.TextLabel.Text = Caption;
 
 			var offset = (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone) ? 20 : 90;
-			cell.Frame = new RectangleF(cell.Frame.X, cell.Frame.Y, tv.Frame.Width-offset, cell.Frame.Height);
-			SizeF size = ComputeEntryPosition (tv, cell);
-			float yOffset = (cell.ContentView.Bounds.Height - size.Height) / 2 - 1;
-			float width = cell.ContentView.Bounds.Width - size.Width;
+			cell.Frame = new CGRect(cell.Frame.X, cell.Frame.Y, tv.Frame.Width-offset, cell.Frame.Height);
+			CGSize size = ComputeEntryPosition (tv, cell);
+			var yOffset = (cell.ContentView.Bounds.Height - size.Height) / 2 - 1;
+			var width = cell.ContentView.Bounds.Width - size.Width;
 			if (textalignment == UITextAlignment.Right) {
 				// Add padding if right aligned
 				width -= 10;
 			}
-            var entryFrame = new RectangleF (size.Width, yOffset + 2f, width, size.Height);
+            var entryFrame = new CGRect (size.Width, yOffset + 2f, width, size.Height);
 
 			if (entry == null) {
 				entry = CreateTextField (entryFrame);

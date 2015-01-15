@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
-using System.Drawing;
+using Foundation;
+using UIKit;
+using CoreGraphics;
 using System.Reactive.Linq;
 using SDWebImage;
 
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Cells
         {
             ImageView = new UIImageView();
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
-            ImageView.Layer.MinificationFilter = MonoTouch.CoreAnimation.CALayer.FilterTrilinear;
+            ImageView.Layer.MinificationFilter = CoreAnimation.CALayer.FilterTrilinear;
             ImageView.Layer.MasksToBounds = true;
 
             TitleLabel = new UILabel();
@@ -48,11 +48,11 @@ namespace CodeHub.iOS.Cells
 
             var imageSize = this.Bounds.Height - 30f;
             ImageView.Layer.CornerRadius = imageSize / 2;
-            ImageView.Frame = new RectangleF(15, 15, imageSize, imageSize);
+            ImageView.Frame = new CGRect(15, 15, imageSize, imageSize);
 
-            var titlePoint = new PointF(ImageView.Frame.Right + 15f, 19f);
-            TitleLabel.Frame = new RectangleF(titlePoint.X, titlePoint.Y, this.ContentView.Bounds.Width - titlePoint.X - 10f, TitleLabel.Font.LineHeight);
-            SubtitleLabel.Frame = new RectangleF(titlePoint.X, TitleLabel.Frame.Bottom, this.ContentView.Bounds.Width - titlePoint.X - 10f, SubtitleLabel.Font.LineHeight + 1);
+            var titlePoint = new CGPoint(ImageView.Frame.Right + 15f, 19f);
+            TitleLabel.Frame = new CGRect(titlePoint.X, titlePoint.Y, this.ContentView.Bounds.Width - titlePoint.X - 10f, TitleLabel.Font.LineHeight);
+            SubtitleLabel.Frame = new CGRect(titlePoint.X, TitleLabel.Frame.Bottom, this.ContentView.Bounds.Width - titlePoint.X - 10f, SubtitleLabel.Font.LineHeight + 1);
         }
     }
 }

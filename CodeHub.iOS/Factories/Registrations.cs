@@ -1,4 +1,4 @@
-﻿using Splat;
+using Splat;
 using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Factories

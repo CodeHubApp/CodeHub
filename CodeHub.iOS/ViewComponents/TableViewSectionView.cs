@@ -1,5 +1,6 @@
-using System.Drawing;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
+using System;
 
 namespace CodeHub.iOS.ViewComponents
 {
@@ -7,28 +8,28 @@ namespace CodeHub.iOS.ViewComponents
     {
         readonly UILabel _lbl;
 
-        public static MonoTouch.CoreGraphics.CGGradient BottomGradient;
-        public static MonoTouch.CoreGraphics.CGGradient TopGradient;
+        public static CGGradient BottomGradient;
+        public static CGGradient TopGradient;
         
         static TableViewSectionView ()
         {
-            using (var rgb = MonoTouch.CoreGraphics.CGColorSpace.CreateDeviceRGB()){
-                float [] colorsBottom = {
+            using (var rgb = CGColorSpace.CreateDeviceRGB()){
+                var colorsBottom = new nfloat[] {
                     1, 1, 1, 0f,
                     0.4f, 0.4f, 0.4f, .6f
                 };
-                BottomGradient = new MonoTouch.CoreGraphics.CGGradient (rgb, colorsBottom, null);
-                float [] colorsTop = {
+                BottomGradient = new CoreGraphics.CGGradient (rgb, colorsBottom, null);
+                var colorsTop = new nfloat[] {
                     0.8f, 0.8f, 0.8f, .4f,
                     1, 1, 1, 0f
                 };
-                TopGradient = new MonoTouch.CoreGraphics.CGGradient (rgb, colorsTop, null);
+                TopGradient = new CoreGraphics.CGGradient (rgb, colorsTop, null);
             }
         }
 
         public TableViewSectionView(string text)
         {
-            Frame = new RectangleF(0, 0, 320, 24);
+            Frame = new CGRect(0, 0, 320, 24);
 			//BackgroundColor = UIColor.FromPatternImage(Theme.CurrentTheme.TableViewSectionBackground).ColorWithAlpha(0.9f);
             
             _lbl = new UILabel();
@@ -37,7 +38,7 @@ namespace CodeHub.iOS.ViewComponents
             _lbl.Font = UIFont.BoldSystemFontOfSize(14f);
             _lbl.BackgroundColor = UIColor.Clear;
             _lbl.ShadowColor = UIColor.FromRGBA(255, 255, 255, 225);
-            _lbl.ShadowOffset = new SizeF(0, 1);
+            _lbl.ShadowOffset = new CGSize(0, 1);
             _lbl.LineBreakMode = UILineBreakMode.TailTruncation;
             AddSubview(_lbl);
         }
@@ -45,10 +46,10 @@ namespace CodeHub.iOS.ViewComponents
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
-            _lbl.Frame = new RectangleF(10, 2, Bounds.Width - 20f, Bounds.Height - 4f);
+            _lbl.Frame = new CGRect(10, 2, Bounds.Width - 20f, Bounds.Height - 4f);
         }
 
-        public override void Draw(RectangleF rect)
+        public override void Draw(CGRect rect)
         {
             var context = UIGraphics.GetCurrentContext();
             var bounds = Bounds;
@@ -56,8 +57,8 @@ namespace CodeHub.iOS.ViewComponents
             
             base.Draw(rect);
             
-            context.DrawLinearGradient (BottomGradient, new PointF (midx, bounds.Height-2), new PointF (midx, bounds.Height), 0);
-            context.DrawLinearGradient (TopGradient, new PointF (midx, 0), new PointF (midx, 2), 0);
+            context.DrawLinearGradient (BottomGradient, new CGPoint (midx, bounds.Height-2), new CGPoint (midx, bounds.Height), 0);
+            context.DrawLinearGradient (TopGradient, new CGPoint (midx, 0), new CGPoint (midx, 2), 0);
         }
     }
 }

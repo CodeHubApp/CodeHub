@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using Foundation;
+using UIKit;
 using ReactiveUI;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewComponents;
@@ -51,7 +51,7 @@ namespace CodeHub.iOS.ViewControllers
             };
 
             // Work around an Apple bug in the UITextView that crashes
-            if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+            if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
                 TextView.AutocorrectionType = UITextAutocorrectionType.No;
 
             _normalButtonImage = ImageFromColor(UIColor.White);
@@ -62,16 +62,16 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidLoad();
 
-            TextView.Frame = ComputeComposerSize(RectangleF.Empty);
+            TextView.Frame = ComputeComposerSize(CGRect.Empty);
             View.AddSubview(TextView);
         }
 
         private UIImage ImageFromColor(UIColor color)
         {
-            UIGraphics.BeginImageContext(new SizeF(1, 1));
+            UIGraphics.BeginImageContext(new CGSize(1, 1));
             var context = UIGraphics.GetCurrentContext();
             context.SetFillColor(color.CGColor);
-            context.FillRect(new RectangleF(0, 0, 1, 1));
+            context.FillRect(new CGRect(0, 0, 1, 1));
             var image = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return image;
@@ -97,7 +97,7 @@ namespace CodeHub.iOS.ViewControllers
             var fontSize = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone ? 22 : 28f;
 
             var btn = new UIButton(UIButtonType.System);
-            btn.Frame = new RectangleF(0, 0, 32, 32);
+            btn.Frame = new CGRect(0, 0, 32, 32);
             btn.SetTitle(title, UIControlState.Normal);
             btn.BackgroundColor = UIColor.White;
             btn.Font = UIFont.SystemFontOfSize(fontSize);
@@ -141,7 +141,7 @@ namespace CodeHub.iOS.ViewControllers
             }
 
             var height = CalculateHeight(UIApplication.SharedApplication.StatusBarOrientation);
-            ScrollingToolbarView = new ScrollingToolbarView(new RectangleF(0, 0, View.Bounds.Width, height), buttons);
+            ScrollingToolbarView = new ScrollingToolbarView(new CGRect(0, 0, View.Bounds.Width, height), buttons);
             ScrollingToolbarView.BackgroundColor = UIColor.FromWhiteAlpha(0.7f, 1.0f);
             TextView.InputAccessoryView = ScrollingToolbarView;
         }
@@ -156,13 +156,13 @@ namespace CodeHub.iOS.ViewControllers
 
         void KeyboardWillHide(NSNotification notification)
         {
-            TextView.Frame = ComputeComposerSize(new RectangleF(0, 0, 0, 0));
+            TextView.Frame = ComputeComposerSize(new CGRect(0, 0, 0, 0));
         }
 
-        RectangleF ComputeComposerSize(RectangleF kbdBounds)
+        CGRect ComputeComposerSize(CGRect kbdBounds)
         {
             var view = View.Bounds;
-            return new RectangleF(0, 0, view.Width, view.Height - kbdBounds.Height);
+            return new CGRect(0, 0, view.Width, view.Height - kbdBounds.Height);
         }
 
         [Obsolete]

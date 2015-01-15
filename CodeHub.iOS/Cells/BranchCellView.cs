@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Reactive.Linq;
-using MonoTouch.Foundation;
+using Foundation;
 using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Cells

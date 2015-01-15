@@ -1,4 +1,4 @@
-﻿using MonoTouch.Foundation;
+using Foundation;
 
 // Analysis disable once CheckNamespace
 namespace System

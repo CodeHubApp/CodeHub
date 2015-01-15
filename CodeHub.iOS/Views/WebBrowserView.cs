@@ -1,6 +1,6 @@
-﻿using System;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using System;
+using UIKit;
+using Foundation;
 using ReactiveUI;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Services;

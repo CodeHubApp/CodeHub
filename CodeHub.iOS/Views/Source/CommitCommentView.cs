@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using CodeHub.Core.ViewModels.Changesets;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Views.App;
 using CodeHub.Core.Services;

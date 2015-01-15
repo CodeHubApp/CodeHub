@@ -1,7 +1,7 @@
-using System.Drawing;
-using MonoTouch.UIKit;
-using MonoTouch.CoreGraphics;
-using MonoTouch.Foundation;
+using CoreGraphics;
+using UIKit;
+using Foundation;
+using System;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.DialogElements
             _key = key;
 		}
 		
-		public float GetHeight (UITableView tableView, NSIndexPath indexPath)
+		public nfloat GetHeight (UITableView tableView, NSIndexPath indexPath)
 		{
 			return Height(tableView.Bounds);
 		}
@@ -48,9 +48,9 @@ namespace CodeHub.iOS.DialogElements
         {
         }
 
-		public abstract void Draw(RectangleF bounds, CGContext context, UIView view);
+		public abstract void Draw(CGRect bounds, CGContext context, UIView view);
 		
-		public abstract float Height(RectangleF bounds);
+		public abstract float Height(CGRect bounds);
 		
 		class OwnerDrawnCell : UITableViewCell
 		{
@@ -122,7 +122,7 @@ namespace CodeHub.iOS.DialogElements
 			
 			}
 			
-			public override void Draw (RectangleF rect)
+			public override void Draw (CGRect rect)
 			{
 				CGContext context = UIGraphics.GetCurrentContext();
 				element.Draw(rect, context, this);

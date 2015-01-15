@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using CodeHub.Core.Utilities;
 using SDWebImage;
 using CodeHub.iOS;
 
 // Analysis disable once CheckNamespace
-namespace MonoTouch.UIKit
+namespace UIKit
 {
     public static class UIImageViewExtensions
     {

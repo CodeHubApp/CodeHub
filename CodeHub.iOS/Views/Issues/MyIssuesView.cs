@@ -1,7 +1,7 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 
@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Issues
             {
                 var valueChanged = Observable.FromEventPattern(x => _viewSegment.ValueChanged += x, x => _viewSegment.ValueChanged -= x);
                 d(this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x));
-                d(valueChanged.Subscribe(_ => ViewModel.SelectedFilter = _viewSegment.SelectedSegment));
+                d(valueChanged.Subscribe(_ => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment));
                 d(this.WhenAnyValue(x => x.ViewModel.GroupedIssues).IsNotNull().Subscribe(x =>
                 {
                     var source = TableView.Source as IssueTableViewSource;

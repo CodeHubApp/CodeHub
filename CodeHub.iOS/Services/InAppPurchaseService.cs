@@ -1,7 +1,7 @@
-﻿using System;
-using MonoTouch.StoreKit;
+using System;
+using StoreKit;
 using System.Threading.Tasks;
-using MonoTouch.Foundation;
+using Foundation;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 
