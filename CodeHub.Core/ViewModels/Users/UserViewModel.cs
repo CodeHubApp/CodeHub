@@ -136,8 +136,8 @@ namespace CodeHub.Core.ViewModels.Users
             {
                 if (!IsLoggedInUser)
                 {
-                    Observable.FromAsync(() => applicationService.GitHubClient.User.Followers.IsFollowingForCurrent(Username))
-                        .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => IsFollowing = x);
+                    applicationService.GitHubClient.User.Followers.IsFollowingForCurrent(Username)
+                        .ToBackground(x => IsFollowing = x);
                 }
 
                 User = await applicationService.GitHubClient.User.Get(Username);

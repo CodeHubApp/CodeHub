@@ -91,8 +91,8 @@ namespace CodeHub.Core.ViewModels.Source
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
-                Observable.FromAsync(() => applicationService.GitHubClient.Repository.RepositoryComments.GetForCommit(Username, Repository, Branch))
-                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => comments.Reset(x));
+                applicationService.GitHubClient.Repository.RepositoryComments.GetForCommit(Username, Repository, Branch)
+                    .ToBackground(x => comments.Reset(x));
                 var commits = await applicationService.GitHubClient.Repository.Commits.Get(Username, Repository, Branch);
                 CommitFile = commits.Files.FirstOrDefault(x => string.Equals(x.Filename, Filename, StringComparison.Ordinal));
 	        });

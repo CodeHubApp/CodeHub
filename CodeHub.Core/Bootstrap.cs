@@ -4,6 +4,7 @@ using System;
 using Splat;
 using CodeHub.Core.Services;
 using CodeHub.Core.Factories;
+using System.Diagnostics;
 
 namespace CodeHub.Core
 {
@@ -11,10 +12,8 @@ namespace CodeHub.Core
     {
         public static void Init()
         {
-            RxApp.DefaultExceptionHandler = Observer.Create((Exception e) => {
-
-                Locator.Current.GetService<IAlertDialogFactory>().Alert("Error", e.Message);
-            });
+            RxApp.DefaultExceptionHandler = Observer.Create((Exception e) => 
+                Locator.Current.GetService<IAlertDialogFactory>().Alert("Error", e.Message));
 
             var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
             var accountService = new GitHubAccountsService(defaultValueService);

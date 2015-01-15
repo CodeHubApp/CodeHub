@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Contents;
+using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -103,8 +104,8 @@ namespace CodeHub.Core.ViewModels.Source
             {
                 if (!PushAccess.HasValue)
                 {
-                    Observable.FromAsync(() => applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName))
-                        .ObserveOn(RxApp.MainThreadScheduler).Subscribe(x => PushAccess = x.Permissions.Push);
+                    applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
+                        .ToBackground(x => PushAccess = x.Permissions.Push);
                 }
 
                 var path = Path;

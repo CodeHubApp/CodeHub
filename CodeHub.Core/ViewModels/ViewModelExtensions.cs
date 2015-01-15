@@ -33,8 +33,7 @@ namespace CodeHub.Core.ViewModels
             if (result.WasCached)
             {
                 request.RequestFromCache = false;
-                Observable.FromAsync(() => application.Client.ExecuteAsync(request))
-                    .ObserveOn(RxApp.MainThreadScheduler).Subscribe(update);
+                application.Client.ExecuteAsync(request).ToBackground(update);
             }
         }
 

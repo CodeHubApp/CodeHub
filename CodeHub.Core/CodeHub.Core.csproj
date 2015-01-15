@@ -215,6 +215,7 @@
     <Compile Include="Services\StatusIndicatorServiceExtensions.cs" />
     <Compile Include="Services\ViewModelViewService.cs" />
     <Compile Include="ViewModels\IRoutingViewModel.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
