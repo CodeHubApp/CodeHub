@@ -1,6 +1,6 @@
 using System;
 using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.Notifications;
+using CodeHub.Core.ViewModels.Activity;
 using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Activity
 
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
-            this.WhenViewModel(x => x.ShownIndex).Subscribe(x => _viewSegment.SelectedSegment = x);
+            this.WhenViewModel(x => x.ActiveFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
             this.WhenViewModel(x => x.ReadAllCommand).Subscribe(x =>
                 NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.CheckButton }.WithCommand(x));
         }
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.Views.Activity
             ViewModel.WhenAnyValue(x => x.GroupedNotifications).Where(x => x != null).Subscribe(notificationSource.SetData);
             TableView.Source = notificationSource;
 
-            _viewSegment.ValueChanged += (sender, args) => ViewModel.ShownIndex = (int)_viewSegment.SelectedSegment;
+            _viewSegment.ValueChanged += (sender, args) => ViewModel.ActiveFilter = (int)_viewSegment.SelectedSegment;
         }
 
         public override void ViewWillAppear(bool animated)

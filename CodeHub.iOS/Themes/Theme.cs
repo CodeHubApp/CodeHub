@@ -73,8 +73,7 @@ namespace CodeHub.iOS.Themes
             UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = theme.PrimaryNavigationBarColor;
 
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
-            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = theme.PrimaryNavigationBarColor;
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 

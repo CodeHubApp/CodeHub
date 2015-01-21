@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AccountItemViewModel : ReactiveObject
+    public class AccountItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         private GitHubAccount _account;
         public GitHubAccount Account
@@ -40,12 +40,12 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public IReactiveCommand<object> DeleteCommand { get; private set; }
 
-        public IReactiveCommand<object> SelectCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal AccountItemViewModel()
         {
             DeleteCommand = ReactiveCommand.Create();
-            SelectCommand = ReactiveCommand.Create();
+            GoToCommand = ReactiveCommand.Create();
 
             var accountObservable = this.WhenAnyValue(x => x.Account).IsNotNull();
 

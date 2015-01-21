@@ -4,13 +4,13 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class CommitedFileItemViewModel
+    public class CommitedFileItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
         public string RootPath { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal CommitedFileItemViewModel(CommitModel.CommitFileModel file, Action<CommitedFileItemViewModel> gotoAction)
         {

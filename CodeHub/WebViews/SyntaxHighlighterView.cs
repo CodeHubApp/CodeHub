@@ -53,37 +53,7 @@ WriteAttribute ("href", " href=\"", "\""
 , false)
 , Tuple.Create<string,object,bool> ("", ".css", true)
 );
-WriteLiteral(" />\n<script");
-
-WriteLiteral(" src=\"http://code.jquery.com/jquery-2.1.3.min.js\"");
-
-WriteLiteral("></script>\n<script");
-
-WriteLiteral(" src=\"WebResources/highlight.pack.js\"");
-
-WriteLiteral(@"></script>
-<script>
-window.onload = function() {
-	hljs.configure({
-	  tabReplace: '    '
-	});
-
-	hljs.initHighlighting();
-	document.getElementById(""code"").style.display = 'block';
-
-    $('#code').each(function(){
-        var lines = $(this).text().split('\n').length - 1;
-        var $numbering = $('<div/>').addClass('pre-numbering');
-        $(this)
-            .addClass('has-numbering')
-            .parent()
-            .prepend($numbering);
-        for(i=1;i<=lines + 1;i++){
-            $numbering.append(document.createTextNode(i + '\n'));
-        }
-    });
-};
-</script>
+WriteLiteral(@" />
 <style>
 html { height: 100%; width: 100%; }
 body { 
@@ -97,14 +67,15 @@ body {
 }
 
 body > pre { margin: 0em; min-width: 100%; min-height: 100%; }
-.hljs { display: inline-block !important; min-width: 100%; min-height: 100%; box-sizing: border-box; padding: 1em !important; }
-
-pre {
-    position: relative;
+.hljs { display: inline-block !important; min-width: 100%; min-height: 100%; box-sizing: border-box; padding-top: 1em !important; 
+	overflow: scroll;
+	-webkit-overflow-scrolling: touch;
 }
 
 code {
   display: block;
+  width: 100%;
+  min-width: 100%;
 }
 
 .pre-numbering > pre {
@@ -112,7 +83,7 @@ code {
 }
 
 .pre-numbering {
-    padding: 12px 2px 12px 2px;
+    padding: 1em 2px 1em 2px;
     border-right: 1px solid #C3CCD0;
     text-align: right;
     color: #AAA;
@@ -125,8 +96,8 @@ code {
 </style>
 </head>
 <body>
-<pre>
-<code");
+	<pre>
+		<code");
 
 WriteLiteral(" id=\"code\"");
 
@@ -135,13 +106,45 @@ WriteLiteral(" style=\"display: none;\"");
 WriteLiteral(">");
 
 
-#line 72 "SyntaxHighlighterView.cshtml"
-                                  Write(Model.Content);
+#line 49 "SyntaxHighlighterView.cshtml"
+                                    Write(Model.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</code>\n</pre>\n</body>\n</html> ");
+WriteLiteral("</code>\n\t</pre>\n\t<script");
+
+WriteLiteral(" src=\"http://code.jquery.com/jquery-2.1.3.min.js\"");
+
+WriteLiteral("></script>\n\t<script");
+
+WriteLiteral(" src=\"WebResources/highlight.pack.js\"");
+
+WriteLiteral(@"></script>
+	<script>
+	window.onload = function() {
+		hljs.configure({
+		  tabReplace: '    '
+		});
+
+		hljs.initHighlighting();
+		document.getElementById(""code"").style.display = 'inline-block';
+
+	    $('#code').each(function(){
+	        var lines = $(this).text().split('\n').length - 1;
+	        var $numbering = $('<div/>').addClass('pre-numbering');
+	        $(this)
+	            .addClass('has-numbering')
+	            .parent()
+	            .prepend($numbering);
+	        for(i=1;i<=lines + 1;i++){
+	            $numbering.append(document.createTextNode(i + '\n'));
+	        }
+	    });
+	};
+	</script>
+</body>
+</html> ");
 
 }
 }

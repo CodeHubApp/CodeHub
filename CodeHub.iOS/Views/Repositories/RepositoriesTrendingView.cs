@@ -36,7 +36,7 @@ namespace CodeHub.iOS.Views.Repositories
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
 
-            this.WhenViewModel(x => x.Repositories)
+            this.WhenAnyValue(x => x.ViewModel.Repositories)
                 .Subscribe(x =>
                 {
                     if (x == null)

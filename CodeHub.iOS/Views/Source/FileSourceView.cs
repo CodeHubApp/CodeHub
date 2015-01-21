@@ -29,7 +29,11 @@ namespace CodeHub.iOS.Views.Source
                 {
                     UIDocumentInteractionController ctrl = UIDocumentInteractionController.FromUrl(new NSUrl(ViewModel.SourceItem.FileUri.AbsoluteUri));
                     ctrl.Delegate = new UIDocumentInteractionControllerDelegate();
-                    ctrl.PresentOpenInMenu(this.View.Frame, this.View, true);
+                    var couldOpen = ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+                    if (!couldOpen)
+                    {
+                        alertDialogFactory.ShowError("Nothing to open with");
+                    }
                 });
         }
 

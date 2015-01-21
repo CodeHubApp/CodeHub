@@ -10,19 +10,8 @@ namespace CodeHub.iOS.TableViewSources
         public AccountTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<AccountItemViewModel> collection) 
             : base(tableView, collection,  AccountCellView.Key, 74f)
         {
-            tableView.RowHeight = 74f;
             tableView.SeparatorInset = new UIEdgeInsets(0, tableView.RowHeight, 0, 0);
             tableView.RegisterClassForCellReuse(typeof(AccountCellView), AccountCellView.Key);
-        }
-
-        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            tableView.DeselectRow(indexPath, true);
-
-            var item = ItemAt(indexPath) as AccountItemViewModel;
-            if (item != null)
-                item.SelectCommand.ExecuteIfCan();
         }
 
         public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)

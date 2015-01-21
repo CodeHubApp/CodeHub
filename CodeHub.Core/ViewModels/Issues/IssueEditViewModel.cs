@@ -5,7 +5,7 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System;
 using ReactiveUI;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -31,8 +31,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
-        public IssueEditViewModel(IApplicationService applicationService, IStatusIndicatorService statusIndicatorService)
-            : base(statusIndicatorService)
+        public IssueEditViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory)
+            : base(alertDialogFactory)
 	    {
 	        _applicationService = applicationService;
 

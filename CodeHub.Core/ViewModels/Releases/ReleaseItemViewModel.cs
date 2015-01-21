@@ -3,7 +3,7 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
-    public class ReleaseItemViewModel : ReactiveObject
+    public class ReleaseItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public long Id { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal ReleaseItemViewModel(long id, string name, DateTimeOffset createdAt,
             Action<ReleaseItemViewModel> gotoCommand)

@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public FeedbackComposerViewModel(
             IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService, IAlertDialogFactory alertDialogService)
+            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogService)
         {
             this.WhenAnyValue(x => x.IsFeature).Subscribe(x => Title = x ? "New Feature" : "Bug Report");
 
@@ -77,7 +77,7 @@ namespace CodeHub.Core.ViewModels.App
                 var photo = await mediaPicker.PickPhoto();
                 var memoryStream = new MemoryStream();
                 await photo.Save(Splat.CompressedBitmapFormat.Jpeg, 0.8f, memoryStream);
-                using (statusIndicatorService.Activate("Uploading..."))
+                using (alertDialogService.Activate("Uploading..."))
                 {
                     var model = await imgurService.SendImage(memoryStream.ToArray());
                     if (model == null || model.Data == null || model.Data.Link == null)

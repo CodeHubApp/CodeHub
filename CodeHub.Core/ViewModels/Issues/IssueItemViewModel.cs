@@ -5,7 +5,7 @@ using System;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueItemViewModel : ReactiveObject
+    public class IssueItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public int Number { get; private set; }
 
@@ -27,7 +27,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public DateTimeOffset UpdatedAt { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal IssueItemViewModel(IssueModel issue, IReactiveCommand gotoCommand)
         {

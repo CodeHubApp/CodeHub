@@ -1,4 +1,4 @@
-using CodeHub.Core.ViewModels.Notifications;
+using CodeHub.Core.ViewModels.Activity;
 using UIKit;
 using ReactiveUI;
 using System;

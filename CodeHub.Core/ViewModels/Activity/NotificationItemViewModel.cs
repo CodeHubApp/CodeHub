@@ -3,9 +3,9 @@ using ReactiveUI;
 using Humanizer;
 using Octokit;
 
-namespace CodeHub.Core.ViewModels.Notifications
+namespace CodeHub.Core.ViewModels.Activity
 {
-    public class NotificationItemViewModel : ReactiveObject
+    public class NotificationItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Title { get; private set; }
 

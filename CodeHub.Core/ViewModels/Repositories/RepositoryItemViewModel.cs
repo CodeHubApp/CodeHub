@@ -4,7 +4,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoryItemViewModel : ReactiveObject
+    public class RepositoryItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool ShowOwner { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal RepositoryItemViewModel(string name, string owner, string imageUrl,
                                          string description, int stars, int forks,

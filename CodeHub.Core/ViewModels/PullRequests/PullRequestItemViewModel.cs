@@ -6,13 +6,13 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestItemViewModel : ReactiveObject
+    public class PullRequestItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Title { get; private set; }
 
         public GitHubAvatar Avatar { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         public string Details { get; private set; }
 

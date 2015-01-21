@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using CodeHub.Core.ViewModels.Notifications;
+using CodeHub.Core.ViewModels.Activity;
 using Foundation;
 using UIKit;
 using ReactiveUI;
@@ -45,14 +45,6 @@ namespace CodeHub.iOS.TableViewSources
                 };
 
             }).ToList();
-        }
-
-        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as NotificationItemViewModel;
-            if (item != null)
-                item.GoToCommand.ExecuteIfCan();
         }
     }
 }

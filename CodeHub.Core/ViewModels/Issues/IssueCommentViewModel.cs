@@ -17,8 +17,8 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<Octokit.IssueComment> SaveCommand { get; private set; }
 
         public IssueCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
-            : base(imgurService, mediaPicker, statusIndicatorService)
+            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
+            : base(imgurService, mediaPicker, alertDialogFactory)
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

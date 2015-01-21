@@ -58,7 +58,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         public LoginViewModel(ILoginService loginFactory, 
                               IAccountsService accountsService,
                               IActionMenuFactory actionMenuService,
-                              IStatusIndicatorService statusIndicatorService,
                               IAlertDialogFactory alertDialogService)
         {
             _loginFactory = loginFactory;
@@ -84,9 +83,9 @@ namespace CodeHub.Core.ViewModels.Accounts
             LoginCommand.IsExecuting.Skip(1).Subscribe(x => 
             {
                 if (x)
-                    statusIndicatorService.Show("Logging in...");
+                    alertDialogService.Show("Logging in...");
                 else
-                    statusIndicatorService.Hide();
+                    alertDialogService.Hide();
             });
 
             _loginUrl = this.WhenAnyValue(x => x.WebDomain)

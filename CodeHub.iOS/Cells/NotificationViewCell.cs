@@ -4,7 +4,7 @@ using Foundation;
 using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.Notifications;
+using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.iOS.Cells
 {

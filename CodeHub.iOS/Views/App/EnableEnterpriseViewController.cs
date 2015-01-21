@@ -2,19 +2,19 @@ using System;
 using CoreGraphics;
 using UIKit;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.App
 {
     public partial class EnableEnterpriseViewController : UIViewController
     {
-        private readonly IStatusIndicatorService _statusIndicatorService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
         private readonly IFeaturesService _featuresService;
 
-        public EnableEnterpriseViewController(IStatusIndicatorService statusIndicatorService, IFeaturesService featuresService) 
+        public EnableEnterpriseViewController(IAlertDialogFactory alertDialogFactory, IFeaturesService featuresService) 
             : base("EnableEnterpriseViewController", null)
         {
-            _statusIndicatorService = statusIndicatorService;
+            _alertDialogFactory = alertDialogFactory;
             _featuresService = featuresService;
         }
 
@@ -63,12 +63,12 @@ namespace CodeHub.iOS.Views.App
 
         void HandlePurchaseError (object sender, Exception e)
         {
-            _statusIndicatorService.Hide();
+            _alertDialogFactory.Hide();
         }
 
         void HandlePurchaseSuccess (object sender, string e)
         {
-            _statusIndicatorService.Hide();
+            _alertDialogFactory.Hide();
             DismissViewController(true, OnDismissed);
         }
 
@@ -88,7 +88,7 @@ namespace CodeHub.iOS.Views.App
 
         private void EnablePushNotifications(object sender, EventArgs e)
         {
-            _statusIndicatorService.Show("Enabling...");
+            _alertDialogFactory.Show("Enabling...");
             _featuresService.Activate(FeatureIds.EnterpriseSupport);
         }
     }

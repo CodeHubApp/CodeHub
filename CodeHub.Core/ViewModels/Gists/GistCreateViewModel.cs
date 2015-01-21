@@ -51,8 +51,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> AddGistFileCommand { get; private set; }
 
-        public GistCreateViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory, 
-            IStatusIndicatorService statusIndicatorService)
+        public GistCreateViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory)
         {
             _applicationService = applicationService;
             CurrentAccount = applicationService.Account;
@@ -73,7 +72,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 };
 
                 var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
-                using (statusIndicatorService.Activate("Creating Gist..."))
+                using (alertDialogFactory.Activate("Creating Gist..."))
                     _createdGistSubject.OnNext((await _applicationService.Client.ExecuteAsync(request)).Data);
                 Dismiss();
             });

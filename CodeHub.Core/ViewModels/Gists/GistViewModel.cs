@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
         public GistViewModel(IApplicationService applicationService, IShareService shareService, 
-            IActionMenuFactory actionMenuService, IStatusIndicatorService statusIndicatorService) 
+            IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory) 
         {
             Comments = new ReactiveList<GistCommentModel>();
 
@@ -97,9 +97,9 @@ namespace CodeHub.Core.ViewModels.Gists
             ForkCommand.IsExecuting.Subscribe(x =>
             {
                 if (x)
-                    statusIndicatorService.Show("Forking...");
+                    alertDialogFactory.Show("Forking...");
                 else
-                    statusIndicatorService.Hide();
+                    alertDialogFactory.Hide();
             });
 
             GoToEditCommand = ReactiveCommand.Create();
@@ -133,7 +133,7 @@ namespace CodeHub.Core.ViewModels.Gists
             AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<GistCommentViewModel>();
-                vm.Id = int.Parse(Id);
+                vm.Id = Id;
                 vm.SaveCommand.Subscribe(x => LoadCommand.ExecuteIfCan());
                 NavigateTo(vm);
             });

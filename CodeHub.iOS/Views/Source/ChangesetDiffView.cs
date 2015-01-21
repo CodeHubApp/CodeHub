@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
 using Foundation;
 using UIKit;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using CodeHub.WebViews;
-using System.IO;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -32,8 +30,7 @@ namespace CodeHub.iOS.Views.Source
                         Model = x.Split('\n')
                     };
 
-                    string contentDirectoryPath = Path.Combine (NSBundle.MainBundle.BundlePath, "WebViews");
-                    LoadContent(razorView.GenerateString(), contentDirectoryPath);
+                    LoadContent(razorView.GenerateString(), NSBundle.MainBundle.BundlePath);
                 }
             });
 //

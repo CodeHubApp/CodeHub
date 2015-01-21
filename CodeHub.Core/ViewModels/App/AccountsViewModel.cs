@@ -86,7 +86,7 @@ namespace CodeHub.Core.ViewModels.App
             viewModel.Account = githubAccount;
             viewModel.Selected = Equals(githubAccount, ActiveAccount);
             viewModel.DeleteCommand.Subscribe(_ => DeleteAccountCommand.ExecuteIfCan(githubAccount));
-            viewModel.SelectCommand.Subscribe(_ => LoginCommand.ExecuteIfCan(githubAccount));
+            viewModel.GoToCommand.Subscribe(_ => LoginCommand.ExecuteIfCan(githubAccount));
             return viewModel;
         }
     }

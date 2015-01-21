@@ -38,7 +38,7 @@ WriteLiteral(" lang=\"en\"");
 
 WriteLiteral(">\n<head>\n    <title>Diff</title>\n    <link");
 
-WriteLiteral(" href=\"Diff/diffview.css\"");
+WriteLiteral(" href=\"WebResources/Diff/diffview.css\"");
 
 WriteLiteral(" type=\"text/css\"");
 
@@ -336,19 +336,19 @@ WriteLiteral("></script>\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
-WriteLiteral(" src=\"Diff/difflib.js\"");
+WriteLiteral(" src=\"WebResources/Diff/difflib.js\"");
 
 WriteLiteral("></script>\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
-WriteLiteral(" src=\"Diff/diffview.js\"");
+WriteLiteral(" src=\"WebResources/Diff/diffview.js\"");
 
 WriteLiteral("></script>\n    <script");
 
 WriteLiteral(" type=\"text/javascript\"");
 
-WriteLiteral(" src=\"Diff/app.js\"");
+WriteLiteral(" src=\"WebResources/Diff/app.js\"");
 
 WriteLiteral("></script>\n</body>\n</html>");
 

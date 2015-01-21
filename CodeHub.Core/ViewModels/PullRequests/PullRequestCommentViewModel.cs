@@ -17,8 +17,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; protected set; }
 
         public PullRequestCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
-            : base(imgurService, mediaPicker, statusIndicatorService)
+            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
+            : base(imgurService, mediaPicker, alertDialogFactory)
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

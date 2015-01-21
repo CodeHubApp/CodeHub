@@ -4,7 +4,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public class UserItemViewModel : ReactiveObject
+    public class UserItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.Users
 
         public bool IsOrganization { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal UserItemViewModel(string name, string avatarUrl, bool organization, Action gotoAction)
         {

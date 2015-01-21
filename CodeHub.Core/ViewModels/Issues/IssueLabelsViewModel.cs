@@ -37,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Labels = labels.CreateDerivedCollection(x => 
             {
                 var vm = new IssueLabelItemViewModel(graphicService, x);
-                vm.SelectCommand.Subscribe(_ =>
+                vm.GoToCommand.Subscribe(_ =>
                 {
                     var selected = SelectedLabels.FirstOrDefault(y => string.Equals(y.Name, x.Name));
                     if (selected != null)

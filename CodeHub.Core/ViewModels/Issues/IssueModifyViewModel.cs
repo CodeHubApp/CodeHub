@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -56,10 +57,10 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        protected IssueModifyViewModel(IStatusIndicatorService statusIndicatorService)
+        protected IssueModifyViewModel(IAlertDialogFactory alertDialogFactory)
 	    {
             SaveCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                using (statusIndicatorService.Activate("Saving..."))
+                using (alertDialogFactory.Activate("Saving..."))
                     await Save();
                 Dismiss();
             });

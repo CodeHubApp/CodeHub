@@ -325,7 +325,6 @@
     <Compile Include="Services\NetworkActivityService.cs" />
     <Compile Include="Services\ServiceConstructor.cs" />
     <Compile Include="Services\ShareService.cs" />
-    <Compile Include="Services\StatusIndicatorService.cs" />
     <Compile Include="DialogElements\CustomElement.cs" />
     <Compile Include="DialogElements\Element.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
@@ -421,11 +420,11 @@
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.6.3.1\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
-    </Reference>
     <Reference Include="Akavache.Sqlite3">
       <HintPath>..\packages\akavache.sqlite3.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.1\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -591,8 +590,181 @@
     <BundleResource Include="Images\back-chevron%402x.png" />
     <BundleResource Include="Themes\Default.json" />
     <BundleResource Include="Images\alert%402x.png" />
+    <BundleResource Include="..\CodeHub\WebResources\styles\brown_papersq.png">
+      <Link>WebResources\styles\brown_papersq.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\pojoaque.jpg">
+      <Link>WebResources\styles\pojoaque.jpg</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\school_book.png">
+      <Link>WebResources\styles\school_book.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\highlight.pack.js">
+      <Link>WebResources\highlight.pack.js</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\marked.js">
+      <Link>WebResources\marked.js</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\arta.css">
+      <Link>WebResources\styles\arta.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\ascetic.css">
+      <Link>WebResources\styles\ascetic.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-dune.dark.css">
+      <Link>WebResources\styles\atelier-dune.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-dune.light.css">
+      <Link>WebResources\styles\atelier-dune.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-forest.dark.css">
+      <Link>WebResources\styles\atelier-forest.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-forest.light.css">
+      <Link>WebResources\styles\atelier-forest.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-heath.dark.css">
+      <Link>WebResources\styles\atelier-heath.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-heath.light.css">
+      <Link>WebResources\styles\atelier-heath.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-lakeside.dark.css">
+      <Link>WebResources\styles\atelier-lakeside.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-lakeside.light.css">
+      <Link>WebResources\styles\atelier-lakeside.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-seaside.dark.css">
+      <Link>WebResources\styles\atelier-seaside.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\atelier-seaside.light.css">
+      <Link>WebResources\styles\atelier-seaside.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\brown_paper.css">
+      <Link>WebResources\styles\brown_paper.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\codepen-embed.css">
+      <Link>WebResources\styles\codepen-embed.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\color-brewer.css">
+      <Link>WebResources\styles\color-brewer.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\dark.css">
+      <Link>WebResources\styles\dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\default.css">
+      <Link>WebResources\styles\default.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\docco.css">
+      <Link>WebResources\styles\docco.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\far.css">
+      <Link>WebResources\styles\far.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\foundation.css">
+      <Link>WebResources\styles\foundation.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\github.css">
+      <Link>WebResources\styles\github.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\googlecode.css">
+      <Link>WebResources\styles\googlecode.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\hybrid.css">
+      <Link>WebResources\styles\hybrid.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\idea.css">
+      <Link>WebResources\styles\idea.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\ir_black.css">
+      <Link>WebResources\styles\ir_black.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\kimbie.dark.css">
+      <Link>WebResources\styles\kimbie.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\kimbie.light.css">
+      <Link>WebResources\styles\kimbie.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\magula.css">
+      <Link>WebResources\styles\magula.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\mono-blue.css">
+      <Link>WebResources\styles\mono-blue.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\monokai.css">
+      <Link>WebResources\styles\monokai.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\monokai_sublime.css">
+      <Link>WebResources\styles\monokai_sublime.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\obsidian.css">
+      <Link>WebResources\styles\obsidian.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\paraiso.dark.css">
+      <Link>WebResources\styles\paraiso.dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\paraiso.light.css">
+      <Link>WebResources\styles\paraiso.light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\pojoaque.css">
+      <Link>WebResources\styles\pojoaque.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\railscasts.css">
+      <Link>WebResources\styles\railscasts.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\rainbow.css">
+      <Link>WebResources\styles\rainbow.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\school_book.css">
+      <Link>WebResources\styles\school_book.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\solarized_dark.css">
+      <Link>WebResources\styles\solarized_dark.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\solarized_light.css">
+      <Link>WebResources\styles\solarized_light.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\sunburst.css">
+      <Link>WebResources\styles\sunburst.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\tomorrow-night-blue.css">
+      <Link>WebResources\styles\tomorrow-night-blue.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\tomorrow-night-bright.css">
+      <Link>WebResources\styles\tomorrow-night-bright.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\tomorrow-night-eighties.css">
+      <Link>WebResources\styles\tomorrow-night-eighties.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\tomorrow-night.css">
+      <Link>WebResources\styles\tomorrow-night.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\tomorrow.css">
+      <Link>WebResources\styles\tomorrow.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\vs.css">
+      <Link>WebResources\styles\vs.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\xcode.css">
+      <Link>WebResources\styles\xcode.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\styles\zenburn.css">
+      <Link>WebResources\styles\zenburn.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\Diff\app.js">
+      <Link>WebResources\Diff\app.js</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\Diff\difflib.js">
+      <Link>WebResources\Diff\difflib.js</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\Diff\diffview.css">
+      <Link>WebResources\Diff\diffview.css</Link>
+    </BundleResource>
+    <BundleResource Include="..\CodeHub\WebResources\Diff\diffview.js">
+      <Link>WebResources\Diff\diffview.js</Link>
+    </BundleResource>
   </ItemGroup>
-  
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -610,6 +782,7 @@
     <Folder Include="XCallback\" />
     <Folder Include="DialogElements\" />
     <Folder Include="Utilities\" />
+    <Folder Include="WebResources\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

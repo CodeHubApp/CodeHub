@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Issues
             internal set { this.RaiseAndSetIfChanged(ref _selected, value); }
         }
 
-        public IReactiveCommand<object> SelectCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal IssueLabelItemViewModel(IGraphicService graphicService, Octokit.Label label)
         {
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Color = Color.FromArgb(byte.MaxValue, redB, greenB, blueB);
             Image = graphicService.CreateLabelImage(Color);
 
-            SelectCommand = ReactiveCommand.Create();
+            GoToCommand = ReactiveCommand.Create();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Splat;
 using CodeHub.Core.Services;
+using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Services
 {
@@ -14,9 +15,9 @@ namespace CodeHub.iOS.Services
             resolverToUse.RegisterLazySingleton(() => new ErrorService(), typeof(IErrorService));
             resolverToUse.RegisterLazySingleton(() => new ServiceConstructor(), typeof(IServiceConstructor));
             resolverToUse.RegisterLazySingleton(() => new NetworkActivityService(), typeof(INetworkActivityService));
-            resolverToUse.RegisterLazySingleton(() => new StatusIndicatorService(), typeof(IStatusIndicatorService));
             resolverToUse.RegisterLazySingleton(() => new ShareService(), typeof(IShareService));
             resolverToUse.RegisterLazySingleton(() => new FilesystemService(), typeof(IFilesystemService));
+            resolverToUse.RegisterLazySingleton(() => new EnvironmentalService(), typeof(IEnvironmentalService));
 
             resolverToUse.RegisterLazySingleton(() => new TransitionOrchestrationService(resolverToUse.GetService<IViewModelViewService>(), 
                 resolverToUse.GetService<IServiceConstructor>()), typeof(ITransitionOrchestrationService));

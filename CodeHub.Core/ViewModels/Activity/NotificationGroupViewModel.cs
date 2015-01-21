@@ -2,7 +2,7 @@ using System;
 using ReactiveUI;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels.Notifications
+namespace CodeHub.Core.ViewModels.Activity
 {
     public class NotificationGroupViewModel : ReactiveObject
     {

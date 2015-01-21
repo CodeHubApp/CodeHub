@@ -9,6 +9,14 @@ namespace CodeHub.Core.Factories
         Task Alert(string title, string message);
 
         Task<string> PromptTextBox(string title, string message, string defaultValue, string okTitle);
+
+        void Show(string text);
+
+        void ShowSuccess(string text);
+
+        void ShowError(string text);
+
+        void Hide();
     }
 }
 

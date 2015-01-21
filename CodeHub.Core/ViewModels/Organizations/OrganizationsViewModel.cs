@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () =>
                 {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
-                    vm.Username = x.Name;
+                    vm.Username = x.Login;
                     NavigateTo(vm);
                 }),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),

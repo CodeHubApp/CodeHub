@@ -29,14 +29,6 @@ namespace CodeHub.iOS.TableViewSources
                 };
             }).ToList();
         }
-
-        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as CommitedFileItemViewModel;
-            if (item != null)
-                item.GoToCommand.ExecuteIfCan();
-        }
     }
 }
 

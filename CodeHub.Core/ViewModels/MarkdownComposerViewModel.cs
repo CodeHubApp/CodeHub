@@ -17,14 +17,14 @@ namespace CodeHub.Core.ViewModels
 
         public IReactiveCommand<string> PostToImgurCommand { get; private set; }
 
-        protected MarkdownComposerViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService)
+        protected MarkdownComposerViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
         {
             PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 var photo = await mediaPicker.PickPhoto();
                 var memoryStream = new MemoryStream();
                 await photo.Save(Splat.CompressedBitmapFormat.Jpeg, 0.8f, memoryStream);
-                using (statusIndicatorService.Activate("Uploading..."))
+                using (alertDialogFactory.Activate("Uploading..."))
                 {
                     var model = await imgurService.SendImage(memoryStream.ToArray());
                     if (model == null || model.Data == null || model.Data.Link == null)

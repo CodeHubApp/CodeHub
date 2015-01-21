@@ -17,8 +17,8 @@ namespace CodeHub.Core.ViewModels.Changesets
         public IReactiveCommand<Octokit.CommitComment> SaveCommand { get; protected set; }
 
         public CommitCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IStatusIndicatorService statusIndicatorService) 
-            : base(imgurService, mediaPicker, statusIndicatorService)
+            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
+            : base(imgurService, mediaPicker, alertDialogFactory)
         {
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),

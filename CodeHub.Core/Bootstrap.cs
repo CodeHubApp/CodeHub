@@ -4,7 +4,6 @@ using System;
 using Splat;
 using CodeHub.Core.Services;
 using CodeHub.Core.Factories;
-using System.Diagnostics;
 
 namespace CodeHub.Core
 {

@@ -13,13 +13,11 @@ namespace CodeHub.iOS.Views.Accounts
 {
     public partial class AddAccountView : BaseViewController<AddAccountViewModel>
     {
-        private readonly IStatusIndicatorService _statusIndicatorService;
         private readonly IAlertDialogFactory _alertDialogService;
 
-        public AddAccountView(IStatusIndicatorService statusIndicatorService, IAlertDialogFactory alertDialogService)
+        public AddAccountView(IAlertDialogFactory alertDialogService)
             : base("AddAccountView", null)
         {
-            _statusIndicatorService = statusIndicatorService;
             _alertDialogService = alertDialogService;
         }
 
@@ -30,9 +28,9 @@ namespace CodeHub.iOS.Views.Accounts
             ViewModel.LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
 			{
 				if (x)
-                    _statusIndicatorService.Show("Logging in...");
+                    _alertDialogService.Show("Logging in...");
 				else
-                    _statusIndicatorService.Hide();
+                    _alertDialogService.Hide();
 			});
             
 		    ViewModel.LoginCommand.ThrownExceptions.Subscribe(x =>

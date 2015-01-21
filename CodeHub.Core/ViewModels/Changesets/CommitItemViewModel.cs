@@ -5,7 +5,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public class CommitItemViewModel : ReactiveObject
+    public class CommitItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public DateTimeOffset Time { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         internal CommitModel Commit { get; private set; }
 

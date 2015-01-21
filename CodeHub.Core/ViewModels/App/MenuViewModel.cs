@@ -9,7 +9,7 @@ using CodeHub.Core.Utilities;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
-using CodeHub.Core.ViewModels.Notifications;
+using CodeHub.Core.ViewModels.Activity;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Settings;

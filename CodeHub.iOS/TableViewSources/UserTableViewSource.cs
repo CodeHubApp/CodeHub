@@ -11,14 +11,6 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RegisterClassForCellReuse(typeof(UserTableViewCell), UserTableViewCell.Key);
         }
-
-        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as UserItemViewModel;
-            if (item != null)
-                item.GoToCommand.ExecuteIfCan();
-        }
     }
 }
 

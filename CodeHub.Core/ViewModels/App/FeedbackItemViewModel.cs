@@ -1,16 +1,15 @@
 ﻿using System;
 using ReactiveUI;
-using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class FeedbackItemViewModel : ReactiveObject
+    public class FeedbackItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Title { get; private set; }
 
         public string ImageUrl { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         public DateTimeOffset Created { get; private set; }
 

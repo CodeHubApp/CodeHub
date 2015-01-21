@@ -5,7 +5,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using GitHubSharp.Models;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Contents
 {
@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public EditFileViewModel(IApplicationService applicationService, IStatusIndicatorService statusIndicator)
+        public EditFileViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory)
 	    {
             Title = "Edit";
 
@@ -81,7 +81,7 @@ namespace CodeHub.Core.ViewModels.Contents
                 var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName]
                     .UpdateContentFile(path, CommitMessage, Text, BlobSha, Branch);
 
-                using (statusIndicator.Activate("Commiting..."))
+                using (alertDialogFactory.Activate("Commiting..."))
                 {
                     var response = await applicationService.Client.ExecuteAsync(request);
                     _sourceChangedSubject.OnNext(response.Data);

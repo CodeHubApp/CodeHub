@@ -42,9 +42,6 @@
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
-    <Compile Include="Filters\NotificationsFilterModel.cs" />
-    <Compile Include="Filters\RepositoriesFilterModel.cs" />
-    <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\GitHubAccountsService.cs" />
@@ -206,16 +203,16 @@
     <Compile Include="Services\INetworkActivityService.cs" />
     <Compile Include="Services\IServiceConstructor.cs" />
     <Compile Include="Services\IShareService.cs" />
-    <Compile Include="Services\IStatusIndicatorService.cs" />
     <Compile Include="Services\ITransitionOrchestrationService.cs" />
     <Compile Include="Services\IUrlRouterService.cs" />
     <Compile Include="Services\IViewModelViewService.cs" />
     <Compile Include="Services\NetworkActivityServiceExtensions.cs" />
     <Compile Include="Services\ServiceConstructorExtensions.cs" />
-    <Compile Include="Services\StatusIndicatorServiceExtensions.cs" />
     <Compile Include="Services\ViewModelViewService.cs" />
     <Compile Include="ViewModels\IRoutingViewModel.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="ViewModels\ICanGoToViewModel.cs" />
+    <Compile Include="Factories\AlertDialogExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

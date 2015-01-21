@@ -36,7 +36,7 @@
       <DependentUpon>..\..\CodeHub.iOS\WebViews\CommentsView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\CommitDiffRazorView.cs">
-      <DependentUpon>..\..\CodeHub.iOS\WebViews\CommitDiffRazorView.cshtml</DependentUpon>
+      <DependentUpon>CommitDiffRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\DescriptionView.cs">
       <DependentUpon>..\..\CodeHub.iOS\WebViews\DescriptionView.cshtml</DependentUpon>
@@ -87,66 +87,64 @@
       <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
     </None>
     <None Include="WebResources\LICENSE" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="WebViews\Diff\app.js" />
-    <Content Include="WebViews\Diff\difflib.js" />
-    <Content Include="WebViews\Diff\diffview.css" />
-    <Content Include="WebViews\Diff\diffview.js" />
-    <Content Include="WebResources\marked.js" />
-    <Content Include="WebResources\highlight.pack.js" />
-    <Content Include="WebResources\styles\arta.css" />
-    <Content Include="WebResources\styles\ascetic.css" />
-    <Content Include="WebResources\styles\atelier-dune.dark.css" />
-    <Content Include="WebResources\styles\atelier-dune.light.css" />
-    <Content Include="WebResources\styles\atelier-forest.dark.css" />
-    <Content Include="WebResources\styles\atelier-forest.light.css" />
-    <Content Include="WebResources\styles\atelier-heath.dark.css" />
-    <Content Include="WebResources\styles\atelier-heath.light.css" />
-    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
-    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
-    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
-    <Content Include="WebResources\styles\atelier-seaside.light.css" />
-    <Content Include="WebResources\styles\brown_paper.css" />
-    <Content Include="WebResources\styles\brown_papersq.png" />
-    <Content Include="WebResources\styles\codepen-embed.css" />
-    <Content Include="WebResources\styles\color-brewer.css" />
-    <Content Include="WebResources\styles\dark.css" />
-    <Content Include="WebResources\styles\default.css" />
-    <Content Include="WebResources\styles\docco.css" />
-    <Content Include="WebResources\styles\far.css" />
-    <Content Include="WebResources\styles\foundation.css" />
-    <Content Include="WebResources\styles\github.css" />
-    <Content Include="WebResources\styles\googlecode.css" />
-    <Content Include="WebResources\styles\hybrid.css" />
-    <Content Include="WebResources\styles\idea.css" />
-    <Content Include="WebResources\styles\ir_black.css" />
-    <Content Include="WebResources\styles\kimbie.dark.css" />
-    <Content Include="WebResources\styles\kimbie.light.css" />
-    <Content Include="WebResources\styles\magula.css" />
-    <Content Include="WebResources\styles\mono-blue.css" />
-    <Content Include="WebResources\styles\monokai_sublime.css" />
-    <Content Include="WebResources\styles\monokai.css" />
-    <Content Include="WebResources\styles\obsidian.css" />
-    <Content Include="WebResources\styles\paraiso.dark.css" />
-    <Content Include="WebResources\styles\paraiso.light.css" />
-    <Content Include="WebResources\styles\pojoaque.css" />
-    <Content Include="WebResources\styles\pojoaque.jpg" />
-    <Content Include="WebResources\styles\railscasts.css" />
-    <Content Include="WebResources\styles\rainbow.css" />
-    <Content Include="WebResources\styles\school_book.css" />
-    <Content Include="WebResources\styles\school_book.png" />
-    <Content Include="WebResources\styles\solarized_dark.css" />
-    <Content Include="WebResources\styles\solarized_light.css" />
-    <Content Include="WebResources\styles\sunburst.css" />
-    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
-    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
-    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
-    <Content Include="WebResources\styles\tomorrow-night.css" />
-    <Content Include="WebResources\styles\tomorrow.css" />
-    <Content Include="WebResources\styles\vs.css" />
-    <Content Include="WebResources\styles\xcode.css" />
-    <Content Include="WebResources\styles\zenburn.css" />
+    <None Include="WebResources\Diff\app.js" />
+    <None Include="WebResources\Diff\difflib.js" />
+    <None Include="WebResources\Diff\diffview.css" />
+    <None Include="WebResources\Diff\diffview.js" />
+    <None Include="WebResources\styles\arta.css" />
+    <None Include="WebResources\styles\ascetic.css" />
+    <None Include="WebResources\styles\atelier-dune.dark.css" />
+    <None Include="WebResources\styles\atelier-dune.light.css" />
+    <None Include="WebResources\styles\atelier-forest.dark.css" />
+    <None Include="WebResources\styles\atelier-forest.light.css" />
+    <None Include="WebResources\styles\atelier-heath.dark.css" />
+    <None Include="WebResources\styles\atelier-heath.light.css" />
+    <None Include="WebResources\styles\atelier-lakeside.dark.css" />
+    <None Include="WebResources\styles\atelier-lakeside.light.css" />
+    <None Include="WebResources\styles\atelier-seaside.dark.css" />
+    <None Include="WebResources\styles\atelier-seaside.light.css" />
+    <None Include="WebResources\styles\brown_paper.css" />
+    <None Include="WebResources\styles\brown_papersq.png" />
+    <None Include="WebResources\styles\codepen-embed.css" />
+    <None Include="WebResources\styles\color-brewer.css" />
+    <None Include="WebResources\styles\dark.css" />
+    <None Include="WebResources\styles\default.css" />
+    <None Include="WebResources\styles\docco.css" />
+    <None Include="WebResources\styles\far.css" />
+    <None Include="WebResources\styles\foundation.css" />
+    <None Include="WebResources\styles\github.css" />
+    <None Include="WebResources\styles\googlecode.css" />
+    <None Include="WebResources\styles\hybrid.css" />
+    <None Include="WebResources\styles\idea.css" />
+    <None Include="WebResources\styles\ir_black.css" />
+    <None Include="WebResources\styles\kimbie.dark.css" />
+    <None Include="WebResources\styles\kimbie.light.css" />
+    <None Include="WebResources\styles\magula.css" />
+    <None Include="WebResources\styles\mono-blue.css" />
+    <None Include="WebResources\styles\monokai_sublime.css" />
+    <None Include="WebResources\styles\monokai.css" />
+    <None Include="WebResources\styles\obsidian.css" />
+    <None Include="WebResources\styles\paraiso.dark.css" />
+    <None Include="WebResources\styles\paraiso.light.css" />
+    <None Include="WebResources\styles\pojoaque.css" />
+    <None Include="WebResources\styles\pojoaque.jpg" />
+    <None Include="WebResources\styles\railscasts.css" />
+    <None Include="WebResources\styles\rainbow.css" />
+    <None Include="WebResources\styles\school_book.css" />
+    <None Include="WebResources\styles\school_book.png" />
+    <None Include="WebResources\styles\solarized_dark.css" />
+    <None Include="WebResources\styles\solarized_light.css" />
+    <None Include="WebResources\styles\sunburst.css" />
+    <None Include="WebResources\styles\tomorrow-night-blue.css" />
+    <None Include="WebResources\styles\tomorrow-night-bright.css" />
+    <None Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <None Include="WebResources\styles\tomorrow-night.css" />
+    <None Include="WebResources\styles\tomorrow.css" />
+    <None Include="WebResources\styles\vs.css" />
+    <None Include="WebResources\styles\xcode.css" />
+    <None Include="WebResources\styles\zenburn.css" />
+    <None Include="WebResources\marked.js" />
+    <None Include="WebResources\highlight.pack.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

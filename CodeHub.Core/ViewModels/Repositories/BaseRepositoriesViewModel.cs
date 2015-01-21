@@ -13,13 +13,6 @@ namespace CodeHub.Core.ViewModels.Repositories
     public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
         protected readonly IApplicationService ApplicationService;
-        private RepositoriesFilterModel _filter;
-
-        public RepositoriesFilterModel Filter
-        {
-            get { return _filter; }
-            private set { this.RaiseAndSetIfChanged(ref _filter, value); }
-        }
 
         public bool ShowRepositoryDescription
         {
@@ -69,8 +62,6 @@ namespace CodeHub.Core.ViewModels.Repositories
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
-
-            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 repositories.SimpleCollectionLoad(CreateRequest(), t as bool?, 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -13,10 +12,14 @@ using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
 
-namespace CodeHub.Core.ViewModels.Notifications
+namespace CodeHub.Core.ViewModels.Activity
 {
     public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
+        private const int UnreadFilter = 0;
+        private const int ParticipatingFilter = 1;
+        private const int AllFilter = 2;
+
         private readonly ReactiveList<Octokit.Notification> _notifications = new ReactiveList<Octokit.Notification>(); 
         private readonly IApplicationService _applicationService;
 
@@ -27,20 +30,13 @@ namespace CodeHub.Core.ViewModels.Notifications
             private set { this.RaiseAndSetIfChanged(ref _groupedNotifications, value); }
         }
 
-        private int _shownIndex;
-		public int ShownIndex
+        private int _activeFilter;
+        public int ActiveFilter
 		{
-			get { return _shownIndex; }
-			set { this.RaiseAndSetIfChanged(ref _shownIndex, value); }
+			get { return _activeFilter; }
+			set { this.RaiseAndSetIfChanged(ref _activeFilter, value); }
 		}
-
-        private NotificationsFilterModel _filter;
-        public NotificationsFilterModel Filter
-        {
-            get { return _filter; }
-            private set { this.RaiseAndSetIfChanged(ref _filter, value); }
-        }
-
+            
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand ReadRepositoriesCommand { get; private set; }
@@ -53,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Notifications
             Title = "Notifications";
 
             var canReadAll = _notifications.CountChanged.Select(x => x > 0).CombineLatest(
-                this.WhenAnyValue(x => x.ShownIndex).Select(x => x != 2), (x, y) => x & y);
+                this.WhenAnyValue(x => x.ActiveFilter).Select(x => x != AllFilter), (x, y) => x & y);
 
             ReadAllCommand = ReactiveCommand.CreateAsyncTask(canReadAll, async t =>
             {
@@ -84,28 +80,15 @@ namespace CodeHub.Core.ViewModels.Notifications
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var req = new Octokit.NotificationsRequest { All = Filter.All, Participating = Filter.Participating, Since = DateTimeOffset.MinValue };
+                var all = ActiveFilter == AllFilter;
+                var participating = ActiveFilter == ParticipatingFilter;
+                var req = new Octokit.NotificationsRequest { All = all, Participating = participating, Since = DateTimeOffset.MinValue };
                 var notifictions = await applicationService.GitHubClient.Notification.GetAllForCurrent(req);
                 _notifications.Reset(notifictions);
             });
 
-            this.WhenAnyValue(x => x.ShownIndex).Subscribe(x =>
+            this.WhenAnyValue(x => x.ActiveFilter).Subscribe(x =>
             {
-                switch (x)
-                {
-                    case 0:
-                        Filter = NotificationsFilterModel.CreateUnreadFilter();
-                        break;
-                    case 1:
-                        Filter = NotificationsFilterModel.CreateParticipatingFilter();
-                        break;
-                    default:
-                        Filter = NotificationsFilterModel.CreateAllFilter();
-                        break;
-                }
-            });
-
-            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(x => {
                 _notifications.Clear();
                 LoadCommand.ExecuteIfCan();
             });

@@ -4,7 +4,7 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistItemViewModel : ReactiveObject
+    public class GistItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public GitHubAvatar Avatar { get; private set; }
 
@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public DateTimeOffset UpdatedAt { get; private set; }
 
-        public IReactiveCommand GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; private set; }
 
         public GistItemViewModel(string title, string avatarUrl, string description, DateTimeOffset updatedAt, Action<GistItemViewModel> gotoAction)
         {

@@ -49,7 +49,7 @@ namespace CodeHub.iOS.DialogElements
                 cell = new CustomInputCell(_description);
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
                 cell.TextView.Font = Font;
-                cell.TextView.InputAccessoryView = AccessoryView != null ? AccessoryView(cell.TextView) : null;
+                cell.TextView.InputAccessoryView = AccessoryView != null ? AccessoryView(cell.TextView) : new UIView();
                 cell.TextView.AutocorrectionType = SpellChecking ? UITextAutocorrectionType.Default : UITextAutocorrectionType.No;
                 cell.TextView.SpellCheckingType = SpellChecking ? UITextSpellCheckingType.Default : UITextSpellCheckingType.No;
                 cell.TextView.AutocapitalizationType = SpellChecking ? UITextAutocapitalizationType.Sentences : UITextAutocapitalizationType.None;

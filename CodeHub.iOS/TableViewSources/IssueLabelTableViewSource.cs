@@ -13,14 +13,6 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RegisterClassForCellReuse(typeof(IssueLabelCellView), IssueLabelCellView.Key);
         }
-
-        public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            base.RowSelected(tableView, indexPath);
-            var item = ItemAt(indexPath) as IssueLabelItemViewModel;
-            if (item != null)
-                item.SelectCommand.ExecuteIfCan();
-        }
     }
 }
 
