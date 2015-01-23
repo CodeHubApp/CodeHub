@@ -155,7 +155,6 @@ Global
 		{B061316A-F386-4FE2-93B7-555584234FF8}.Release|Mixed Platforms.Build.0 = Debug|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = CodeHub.iOS\CodeHub.iOS.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
@@ -165,6 +164,19 @@ Global
 		$2.TabsToSpaces = False
 		$2.inheritsSet = VisualStudio
 		$2.inheritsScope = text/plain
+		$0.TextStylePolicy = $3
+		$3.inheritsSet = null
+		$3.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $4
+		$4.AfterDelegateDeclarationParameterComma = True
+		$4.inheritsSet = Mono
+		$4.inheritsScope = text/x-csharp
+		$4.scope = text/x-csharp
+		$0.TextStylePolicy = $5
+		$5.FileWidth = 120
+		$5.inheritsSet = VisualStudio
+		$5.inheritsScope = text/plain
+		$5.scope = text/plain
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

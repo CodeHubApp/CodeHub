@@ -67,37 +67,36 @@ body {
 }
 
 body > pre { margin: 0em; min-width: 100%; min-height: 100%; }
-.hljs { display: inline-block !important; min-width: 100%; min-height: 100%; box-sizing: border-box; padding-top: 1em !important; 
+.hljs { 
+    min-width: 100%; min-height: 100%; 
+    box-sizing: border-box; 
 	overflow: scroll;
 	-webkit-overflow-scrolling: touch;
+	padding: 0;
 }
 
 code {
   display: block;
   width: 100%;
   min-width: 100%;
-}
-
-.pre-numbering > pre {
-	margin: 0;
+  padding: 0;
 }
 
 .pre-numbering {
-    padding: 1em 2px 1em 2px;
-    border-right: 1px solid #C3CCD0;
-    text-align: right;
-    color: #AAA;
-    background-color: #EEE;
-    display: inline-block;
+	padding: 0 2px 0 2px;
+	border-right: 1px solid #C3CCD0;
+	text-align: right;
+	color: #AAA;
+	background-color: #EEE;
+	display: inline-block;
 	float: left;
 	margin-top: 0;
-	padding-top: 1em;
+	margin-right: 15px;
 }
 </style>
 </head>
 <body>
-	<pre>
-		<code");
+	<pre><code");
 
 WriteLiteral(" id=\"code\"");
 
@@ -106,13 +105,13 @@ WriteLiteral(" style=\"display: none;\"");
 WriteLiteral(">");
 
 
-#line 49 "SyntaxHighlighterView.cshtml"
-                                    Write(Model.Content);
+#line 48 "SyntaxHighlighterView.cshtml"
+                                        Write(Model.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</code>\n\t</pre>\n\t<script");
+WriteLiteral("</code></pre>\n\t<script");
 
 WriteLiteral(" src=\"http://code.jquery.com/jquery-2.1.3.min.js\"");
 
@@ -122,26 +121,25 @@ WriteLiteral(" src=\"WebResources/highlight.pack.js\"");
 
 WriteLiteral(@"></script>
 	<script>
-	window.onload = function() {
-		hljs.configure({
-		  tabReplace: '    '
+		$(function() {
+			hljs.configure({
+			  tabReplace: '    '
+			});
+
+			hljs.initHighlighting();
+			document.getElementById(""code"").style.display = 'block';
+
+		    $('#code').each(function(){
+		        var lines = $(this).text().split('\n').length - 1;
+		        var $numbering = $('<div/>').addClass('pre-numbering');
+		        $(this)
+		            .addClass('has-numbering')
+		            .prepend($numbering);
+		        for(i=1;i<=lines + 1;i++){
+		            $numbering.append(document.createTextNode(i + '\n'));
+		        }
+		    });
 		});
-
-		hljs.initHighlighting();
-		document.getElementById(""code"").style.display = 'inline-block';
-
-	    $('#code').each(function(){
-	        var lines = $(this).text().split('\n').length - 1;
-	        var $numbering = $('<div/>').addClass('pre-numbering');
-	        $(this)
-	            .addClass('has-numbering')
-	            .parent()
-	            .prepend($numbering);
-	        for(i=1;i<=lines + 1;i++){
-	            $numbering.append(document.createTextNode(i + '\n'));
-	        }
-	    });
-	};
 	</script>
 </body>
 </html> ");
