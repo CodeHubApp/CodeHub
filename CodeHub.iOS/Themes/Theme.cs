@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers;
 using System.Reflection;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Themes
 {
@@ -72,8 +73,14 @@ namespace CodeHub.iOS.Themes
             // Composer Input Accessory Buttons
             UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = theme.PrimaryNavigationBarColor;
 
-            UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = theme.PrimaryNavigationBarColor;
+            //UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
+            var headerFooterContainers = new [] { typeof(UITableViewHeaderFooterView), typeof(NotificationHeaderView) };
+            foreach (var navbarAppearance in headerFooterContainers)
+            {
+                UILabel.AppearanceWhenContainedIn(navbarAppearance).TextColor = UIColor.FromRGB(110, 110, 117);
+                UILabel.AppearanceWhenContainedIn(navbarAppearance).Font = UIFont.SystemFontOfSize(14f);
+            }
+
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 

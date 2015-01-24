@@ -9,7 +9,7 @@ using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public class CommitViewModel : BaseViewModel, ILoadableViewModel, ICanGoToUrl
+    public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
 		public string Node { get; set; }
 
@@ -83,8 +83,11 @@ namespace CodeHub.Core.ViewModels.Changesets
                 {
                     var vm = this.CreateViewModel<SourceViewModel>();
                     vm.Branch = Commit.Sha;
+                    vm.Path = x.Filename;
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
+                    vm.Name = System.IO.Path.GetFileName(x.Filename);
+                    vm.ForceBinary = true;
                     NavigateTo(vm);
                 }
                 else

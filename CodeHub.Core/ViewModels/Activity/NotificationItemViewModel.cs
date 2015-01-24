@@ -5,7 +5,7 @@ using Octokit;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
-    public class NotificationItemViewModel : ReactiveObject, ICanGoToViewModel
+    public class NotificationItemViewModel : ReactiveObject
     {
         public string Title { get; private set; }
 
@@ -17,11 +17,22 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public string Id { get; private set; }
 
-        internal NotificationItemViewModel(Notification notification, Action<Notification> gotoAction)
+        private bool _isSelected;
+        public bool IsSelected
         {
+            get { return _isSelected; }
+            set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
+        }
+
+        internal Notification Notification { get; private set; }
+
+        internal NotificationItemViewModel(Notification notification, Action<NotificationItemViewModel> gotoAction)
+        {
+            Notification = notification;
             Title = notification.Subject.Title;
             Id = notification.Id;
-            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction(notification));
+
+            GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction(this));
 
             var subject = notification.Subject.Type.ToLower();
             if (subject.Equals("issue"))

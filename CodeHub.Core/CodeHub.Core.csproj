@@ -60,13 +60,11 @@
     <Compile Include="Utilities\FilterGroup.cs" />
     <Compile Include="Utilities\GitHubSharpModelExtensions.cs" />
     <Compile Include="Utilities\RepositoryIdentifier.cs" />
-    <Compile Include="ViewModels\ICanGoToUrl.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
     <Compile Include="ViewModels\App\AccountsViewModel.cs" />
-    <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackItemViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackViewModel.cs" />

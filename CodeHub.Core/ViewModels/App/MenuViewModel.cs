@@ -14,14 +14,15 @@ using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Settings;
 using CodeHub.Core.ViewModels.Users;
-using System.Threading;
-using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseViewModel
     {
         private readonly IApplicationService _applicationService;
+        private readonly IAccountsService _accountsService;
 		private int _notifications;
 
 		public int Notifications
@@ -43,11 +44,18 @@ namespace CodeHub.Core.ViewModels.App
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
+
+        public IReactiveCommand<object> DeletePinnedRepositoryCommand { get; private set; }
+
+        public IReadOnlyList<PinnedRepository> PinnedRepositories 
+        {
+            get { return new ReadOnlyCollection<PinnedRepository>(_accountsService.ActiveAccount.PinnnedRepositories); }
+        }
 		
         public MenuViewModel(IApplicationService applicationService, IAccountsService accountsService)
-            : base(accountsService)
         {
             _applicationService = applicationService;
+            _accountsService = accountsService;
 
             GoToNotificationsCommand = ReactiveCommand.Create();
             GoToNotificationsCommand.Subscribe(_ =>
@@ -155,17 +163,60 @@ namespace CodeHub.Core.ViewModels.App
             GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ => 
                 NavigateTo(this.CreateViewModel<SupportViewModel>()));
 
+            DeletePinnedRepositoryCommand = ReactiveCommand.Create();
+
+            DeletePinnedRepositoryCommand.OfType<PinnedRepository>()
+                .Subscribe(x =>
+                    {
+                        accountsService.ActiveAccount.PinnnedRepositories.Remove(x);
+                        accountsService.Update(accountsService.ActiveAccount);
+                    });
+
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
-                var notifications = Observable.FromAsync(applicationService.GitHubClient.Notification.GetAllForCurrent);
-                notifications.ObserveOn(SynchronizationContext.Current).Subscribe(x => Notifications = x.Count);
+                {
+                    var notifications = applicationService.GitHubClient.Notification.GetAllForCurrent();
+                    notifications.ToBackground(x => Notifications = x.Count);
 
-                var organizations = Observable.FromAsync(applicationService.GitHubClient.Organization.GetAllForCurrent);
-                organizations.ObserveOn(SynchronizationContext.Current).Subscribe(x => Organizations = x);
+                    var organizations = applicationService.GitHubClient.Organization.GetAllForCurrent();
+                    organizations.ToBackground(x => Organizations = x);
 
-                return notifications.Select(x => Unit.Default).Merge(organizations.Select(x => Unit.Default)).ToTask();
-            });
+                    return Task.WhenAll(notifications, organizations);
+                });
         }
+
+//        public ICommand GoToDefaultTopView
+//        {
+//            get
+//            {
+//                var startupViewName = AccountsService.ActiveAccount.DefaultStartupView;
+//                if (!string.IsNullOrEmpty(startupViewName))
+//                {
+//                    var props = from p in GetType().GetRuntimeProperties()
+//                        let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true).ToList()
+//                            where attr.Count == 1
+//                        select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute};
+//
+//                    foreach (var p in props)
+//                    {
+//                        if (string.Equals(startupViewName, p.Attribute.Name))
+//                            return p.Property.GetValue(this) as ICommand;
+//                    }
+//                }
+//
+//                //Oh no... Look for the last resort DefaultStartupViewAttribute
+//                var deprop = (from p in GetType().GetRuntimeProperties()
+//                    let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true).ToList()
+//                    where attr.Count == 1
+//                    select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
+//
+//                //That shouldn't happen...
+//                if (deprop == null)
+//                    return null;
+//                var val = deprop.Property.GetValue(this);
+//                return val as ICommand;
+//            }
+//        }
+//
 
         public IReactiveCommand<object> GoToAccountsCommand { get; private set; }
 

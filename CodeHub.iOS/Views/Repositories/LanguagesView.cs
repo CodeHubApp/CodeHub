@@ -29,7 +29,8 @@ namespace CodeHub.iOS.Views.Repositories
                 if (selectedLanguage >= 0)
                 {
                     var indexPath = NSIndexPath.FromRowSection(selectedLanguage, 0);
-                    TableView.ScrollToRow(indexPath, UIKit.UITableViewScrollPosition.Top, false);
+                    BeginInvokeOnMainThread(() =>
+                        TableView.ScrollToRow(indexPath, UIKit.UITableViewScrollPosition.Middle, true));
                 }
             });
         }

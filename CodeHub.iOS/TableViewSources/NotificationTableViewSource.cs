@@ -5,7 +5,6 @@ using Foundation;
 using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Cells;
-using CodeHub.iOS.ViewComponents;
 using System;
 
 namespace CodeHub.iOS.TableViewSources
@@ -35,16 +34,40 @@ namespace CodeHub.iOS.TableViewSources
 
         public void SetData(IEnumerable<NotificationGroupViewModel> collections)
         {
-            Data = collections.Select(x =>
-            {
-                var headerView = new NotificationHeaderView(x);
-                return new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications,
-                    NotificationViewCell.Key, 44f)
+            Data = collections.Select(x => 
+                new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications, NotificationViewCell.Key, 44f)
                 {
-                    Header = new TableSectionHeader(() => headerView, 30f)
-                };
+                    Header = new TableSectionHeader(x.Name)
+                }).ToList();
+        }
 
-            }).ToList();
+
+        public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
+        {
+            var item = ItemAt(indexPath) as NotificationItemViewModel;
+            if (item == null || !tableView.Editing)
+                return;
+            item.IsSelected = false;
+        }
+
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            var item = ItemAt(indexPath) as NotificationItemViewModel;
+            if (item == null)
+                return;
+
+            if (tableView.Editing)
+                item.IsSelected = true;
+            else
+            {
+                item.GoToCommand.ExecuteIfCan();
+                //tableView.DeselectRow(indexPath, true);
+            }
+        }
+
+        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return true;
         }
     }
 }

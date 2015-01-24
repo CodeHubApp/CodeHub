@@ -36,6 +36,8 @@ namespace CodeHub.iOS.DialogElements
             cell.SetButtons(tv, buttons);
 
             cell.SeparatorInset = UIEdgeInsets.Zero;
+            cell.PreservesSuperviewLayoutMargins = false;
+            cell.LayoutMargins = UIEdgeInsets.Zero;
             return cell;
         }
 

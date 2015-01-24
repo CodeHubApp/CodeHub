@@ -197,7 +197,7 @@ namespace CodeHub.iOS.DialogElements
             Insert (index, UITableViewRowAnimation.None, newElements);
         }
 
-        public void Remove (Element e, UITableViewRowAnimation animation = UITableViewRowAnimation.Fade)
+        public void Remove (Element e, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
         {
             if (e == null)
                 return;
@@ -245,13 +245,13 @@ namespace CodeHub.iOS.DialogElements
 
             if (Root != null && Root.TableView != null)
             {
-//                int sidx = Root.IndexOf(this);
-//                var paths = new NSIndexPath [count];
-//                for (int i = 0; i < count; i++)
-//                    paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
-//                Root.TableView.DeleteRows(paths, anim);
+                int sidx = Root.IndexOf(this);
+                var paths = new NSIndexPath [count];
+                for (int i = 0; i < count; i++)
+                    paths[i] = NSIndexPath.FromRowSection(start + i, sidx);
+                Root.TableView.DeleteRows(paths, anim);
 
-                Root.TableView.ReloadData();
+                //Root.TableView.ReloadData();
             }
         }
 

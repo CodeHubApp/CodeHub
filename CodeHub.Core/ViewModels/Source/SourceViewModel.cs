@@ -14,7 +14,6 @@ namespace CodeHub.Core.ViewModels.Source
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-        public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
         public string Branch { get; set; }
 
@@ -29,6 +28,13 @@ namespace CodeHub.Core.ViewModels.Source
         public string GitUrl { get; set; }
 
         public string HtmlUrl { get; set; }
+
+        private bool? _pushAccess;
+        public bool? PushAccess
+        {
+            get { return _pushAccess; }
+            set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
+        }
 
         private string _name;
         public string Name
@@ -50,13 +56,18 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
         }
 
+        public IReactiveCommand<object> GoToEditCommand { get; private set; }
+
+        public IReactiveCommand<object> OpenInGitHubCommand { get; private set; }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public SourceViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory,
             IAccountsService accountsService, IFilesystemService filesystemService)
             : base(accountsService)
 	    {
-            var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch).Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary);
+            var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch, x => x.PushAccess)
+                .Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary && x.Item3.HasValue && x.Item3.Value);
             GoToEditCommand = ReactiveCommand.Create(canEdit);
 	        GoToEditCommand.Subscribe(_ =>
 	        {
@@ -78,6 +89,14 @@ namespace CodeHub.Core.ViewModels.Source
             _isMarkdown = this.WhenAnyValue(x => x.Path).IsNotNull().Select(x => 
                 MarkdownExtensions.Any(Path.EndsWith)).ToProperty(this, x => x.IsMarkdown);
 
+            OpenInGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.HtmlUrl).Select(x => !string.IsNullOrEmpty(x)));
+            OpenInGitHubCommand.Select(x => this.HtmlUrl).Subscribe(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
+
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
                 _ =>
@@ -86,6 +105,8 @@ namespace CodeHub.Core.ViewModels.Source
                 if (GoToEditCommand.CanExecute(null))
                     menu.AddButton("Edit", GoToEditCommand);
                 menu.AddButton("Open With", OpenWithCommand);
+                if (OpenInGitHubCommand.CanExecute(null))
+                    menu.AddButton("Open in GitHub", OpenInGitHubCommand);
                 return menu.Show();
             });
 
@@ -93,6 +114,12 @@ namespace CodeHub.Core.ViewModels.Source
 	        {
 	            string filepath;
                 bool isBinary = false;
+
+                if (!PushAccess.HasValue)
+                {
+                    applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
+                        .ToBackground(x => PushAccess = x.Permissions.Push);
+                }
 
                 using (var stream = filesystemService.CreateTempFile(out filepath, Name))
                 {
@@ -106,11 +133,12 @@ namespace CodeHub.Core.ViewModels.Source
                     } 
                     else
                     {
-                        if (string.IsNullOrEmpty(GitUrl))
+                        if (string.IsNullOrEmpty(GitUrl) || string.IsNullOrEmpty(HtmlUrl))
                         {
                             var req = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(Path, Branch);
                             var data = (await applicationService.Client.ExecuteAsync(req)).Data;
                             GitUrl = data.GitUrl;
+                            HtmlUrl = data.HtmlUrl;
                         }
 
                         var mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;

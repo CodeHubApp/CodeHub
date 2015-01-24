@@ -125,7 +125,6 @@
     <Compile Include="TableViewSources\NotificationTableViewSource.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="TransitionOrchestrationService.cs" />
-    <Compile Include="ViewComponents\NotificationHeaderView.cs" />
     <Compile Include="ViewComponents\ProgressBarView.cs" />
     <Compile Include="Views\Accounts\NewAccountView.cs" />
     <Compile Include="Views\Accounts\NewAccountView.designer.cs">
@@ -466,10 +465,6 @@
     <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
-    <BundleResource Include="Images\Buttons\check.png" />
-    <BundleResource Include="Images\Buttons\check%402x.png">
-      <DependentUpon>check.png</DependentUpon>
-    </BundleResource>
     <BundleResource Include="Images\Buttons\sort%402x.png">
       <DependentUpon>sort.png</DependentUpon>
     </BundleResource>

@@ -99,6 +99,7 @@ namespace CodeHub.iOS.Views.App
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
+            ViewModel.WhenAnyValue(x => x.PinnedRepositories).Subscribe(x => CreateMenuRoot());
         }
 
 	    private void CreateMenuRoot()
@@ -184,7 +185,7 @@ namespace CodeHub.iOS.Views.App
 			}
 			else
 			{
-				_favoriteRepoSection.Remove(el);
+                _favoriteRepoSection.Remove(el);
 			}
 		}
 

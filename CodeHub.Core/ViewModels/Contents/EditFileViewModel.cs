@@ -60,18 +60,18 @@ namespace CodeHub.Core.ViewModels.Contents
                 .Subscribe(x => CommitMessage = "Updated " + x.Substring(x.LastIndexOf('/') + 1));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-	        {
-	            var path = Path;
-                if (!path.StartsWith("/", StringComparison.Ordinal))
-                    path = "/" + path;
+    	        {
+    	            var path = Path;
+                    if (!path.StartsWith("/", StringComparison.Ordinal))
+                        path = "/" + path;
 
-	            var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
-			    request.UseCache = false;
-			    var data = await applicationService.Client.ExecuteAsync(request);
-			    BlobSha = data.Data.Sha;
-	            var content = Convert.FromBase64String(data.Data.Content);
-                Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
-	        });
+    	            var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
+    			    request.UseCache = false;
+    			    var data = await applicationService.Client.ExecuteAsync(request);
+    			    BlobSha = data.Data.Sha;
+    	            var content = Convert.FromBase64String(data.Data.Content);
+                    Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
+    	        });
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)),

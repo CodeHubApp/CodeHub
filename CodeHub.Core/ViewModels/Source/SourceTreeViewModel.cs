@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Contents;
-using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -141,6 +140,7 @@ namespace CodeHub.Core.ViewModels.Source
                         vm.Name = content.Name;
                         vm.HtmlUrl = content.HtmlUrl;
                         vm.Path = content.Path;
+                        vm.PushAccess = PushAccess;
                         NavigateTo(vm);
                         break;
                     }

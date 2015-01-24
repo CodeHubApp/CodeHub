@@ -36,25 +36,36 @@ namespace CodeHub.Core.ViewModels.Activity
 			get { return _activeFilter; }
 			set { this.RaiseAndSetIfChanged(ref _activeFilter, value); }
 		}
-            
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IReactiveCommand ReadRepositoriesCommand { get; private set; }
-
-        public IReactiveCommand ReadAllCommand { get; private set; }
+        public IReactiveCommand<object> ReadSelectedCommand { get; private set; }
 
         public NotificationsViewModel(IApplicationService applicationService)
         {
             _applicationService = applicationService;
             Title = "Notifications";
-
-            var canReadAll = _notifications.CountChanged.Select(x => x > 0).CombineLatest(
-                this.WhenAnyValue(x => x.ActiveFilter).Select(x => x != AllFilter), (x, y) => x & y);
-
-            ReadAllCommand = ReactiveCommand.CreateAsyncTask(canReadAll, async t =>
+  
+            ReadSelectedCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                await applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead());
-                _notifications.Clear();
+                if (GroupedNotifications.SelectMany(x => x.Notifications).All(x => !x.IsSelected))
+                {
+                    applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead()).ToBackground();
+                    _notifications.Clear();
+                }
+                else
+                {
+                    var selected = GroupedNotifications.SelectMany(x => x.Notifications)
+                        .Where(x => x.IsSelected && x.Notification.Unread).ToList();
+
+                    var tasks = selected
+                        .Select(t =>  _applicationService.GitHubClient.Notification.MarkAsRead(int.Parse(t.Id)));
+
+                    Task.WhenAll(tasks).ToBackground();
+
+                    foreach (var s in selected)
+                        _notifications.Remove(s.Notification);
+                }
             });
 
             var readRepositories = new Func<string, Task>(async repo =>
@@ -102,8 +113,9 @@ namespace CodeHub.Core.ViewModels.Activity
             _notifications.Remove(notification);
         }
 
-        private void GoToNotification(Octokit.Notification x)
+        private void GoToNotification(NotificationItemViewModel item)
         {
+            var x = item.Notification;
             var subject = x.Subject.Type.ToLower();
             if (subject.Equals("issue"))
             {

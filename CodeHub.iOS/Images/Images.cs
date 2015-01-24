@@ -64,7 +64,6 @@ namespace CodeHub.iOS
 
         public static UIImage Lock { get { return CreateTemplateFromAuto("Images/lock"); } }
 
-
         public static UIImage DownChevron { get { return CreateTemplateFromAuto("Images/down_chevron"); } }
 
         public static UIImage RadioTower { get { return CreateTemplateFromAuto("Images/radio-tower"); } }
@@ -88,8 +87,6 @@ namespace CodeHub.iOS
         public static UIImage Pulse { get { return CreateTemplateFromAuto("Images/pulse"); } }
 
         public static UIImage Clippy { get { return CreateTemplateFromAuto("Images/clippy"); } }
-
-        public static UIImage CheckButton { get { return CreateTemplateFromAuto("Images/Buttons/check"); } }
 
         public static UIImage SaveButton { get { return CreateTemplateFromAuto("Images/Buttons/save"); } }
 
