@@ -11,12 +11,17 @@ namespace CodeHub.iOS.Views
 {
     public abstract class BaseTableViewController<TViewModel> : BaseTableViewController, IViewFor<TViewModel> where TViewModel : class
     {
+        private readonly ISubject<bool> _isLoadedSubject = new BehaviorSubject<bool>(false);
+        private readonly Lazy<UIActivityIndicatorView> _loadingActivityView;
+
         private TViewModel _viewModel;
         public TViewModel ViewModel
         {
             get { return _viewModel; }
             set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
         }
+
+        public Lazy<UIView> EmptyView { get; set; }
 
         object IViewFor.ViewModel
         {
@@ -33,15 +38,24 @@ namespace CodeHub.iOS.Views
             : base(style)
         {
             this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
-
-            this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IProvidesTitle>()
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
 
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<ILoadableViewModel>()
+                .Select(x => x.LoadCommand.ExecuteAsync())
+                .Switch()
+                .Subscribe(_ => _isLoadedSubject.OnNext(true));
+
             this.WhenActivated(d => { });
+
+            _loadingActivityView = new Lazy<UIActivityIndicatorView>(() =>
+                new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White)
+                { 
+                    Frame = new CGRect(0, 0, 320f, 88f),
+                    Color = Theme.PrimaryNavigationBarColor,
+                });
         }
 
         public override void ViewDidLoad()
@@ -56,74 +70,93 @@ namespace CodeHub.iOS.Views
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
             var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
 
-            if (iLoadableViewModel != null)
-            {
-                var activityView = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White) { 
-                    Frame = new CGRect(0, 0, 320f, 88f),
-                    Color = Theme.PrimaryNavigationBarColor,
-                };
+            if (iLoadableViewModel == null)
+                return;
 
-                var refreshControl = new UIRefreshControl();
-                refreshControl.ValueChanged += async (sender, e) => {
-                    if (iLoadableViewModel.LoadCommand.CanExecute(null))
-                    {
-                        await iLoadableViewModel.LoadCommand.ExecuteAsync();
-                        refreshControl.EndRefreshing();
-                    }
-                };
-
-                iLoadableViewModel.LoadCommand.IsExecuting
-                    .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
-                    {
-                        nint rows = 0;
-                        if (TableView.Source != null)
-                        {
-                            for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
-                                rows += TableView.Source.RowsInSection(TableView, i);
-                        }
-
-                        if (rows == 0)
-                        {
-                            activityView.StartAnimating();
-                            TableView.TableFooterView = activityView;
-                            RefreshControl = null;
-                        }
-                    });
-
-                iLoadableViewModel.LoadCommand.IsExecuting
-                    .Where(x => !x).Subscribe(_ =>
-                    {
-                        activityView.StopAnimating();
-                        if (TableView.TableFooterView != null)
-                        {
-                            TableView.TableFooterView = null;
-                            TableView.ReloadData();
-                        }
-
-                        if (RefreshControl == null)
-                        {
-                            RefreshControl = refreshControl;
-                        }
-                    });
-
-                this.WhenActivated(d =>
+            var refreshControl = new UIRefreshControl();
+            refreshControl.ValueChanged += async (sender, e) => {
+                if (iLoadableViewModel.LoadCommand.CanExecute(null))
                 {
-                    var iSourceInformsEnd = TableView.Source as IInformsEnd;
-                    if (iPaginatableViewModel != null && iSourceInformsEnd != null)
+                    await iLoadableViewModel.LoadCommand.ExecuteAsync();
+                    refreshControl.EndRefreshing();
+                }
+            };
+
+            iLoadableViewModel.LoadCommand.IsExecuting
+                .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
+                {
+                    nint rows = 0;
+                    if (TableView.Source != null)
                     {
-                        d(iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x =>
-                        {
-                            activityView.StartAnimating();
-                            TableView.TableFooterView = activityView;
+                        for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
+                            rows += TableView.Source.RowsInSection(TableView, i);
+                    }
 
-                            await x.ExecuteAsync();
-
-                            TableView.TableFooterView = null;
-                            activityView.StopAnimating();
-                        }));
+                    if (rows == 0)
+                    {
+                        _loadingActivityView.Value.StartAnimating();
+                        TableView.TableFooterView = _loadingActivityView.Value;
+                        RefreshControl = null;
                     }
                 });
-            }
+
+
+            iLoadableViewModel.LoadCommand.IsExecuting
+                .Where(x => !x).Subscribe(_ =>
+                {
+                    _loadingActivityView.Value.StopAnimating();
+                    if (TableView.TableFooterView != null)
+                    {
+                        TableView.TableFooterView = null;
+                        TableView.ReloadData();
+                    }
+
+                    if (RefreshControl == null)
+                    {
+                        RefreshControl = refreshControl;
+                    }
+                });
+
+            this.WhenActivated(d =>
+            {
+                var iSourceInformsEnd = TableView.Source as IInformsEnd;
+                if (iPaginatableViewModel != null && iSourceInformsEnd != null)
+                {
+                    d(iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x =>
+                    {
+                        _loadingActivityView.Value.StartAnimating();
+                        TableView.TableFooterView = _loadingActivityView.Value;
+
+                        await x.ExecuteAsync();
+
+                        TableView.TableFooterView = null;
+                        _loadingActivityView.Value.StopAnimating();
+                    }));
+                }
+
+                var iSourceInformsEmpty = TableView.Source as IInformsEmpty;
+                if (iSourceInformsEmpty != null)
+                {
+                    d(iSourceInformsEmpty.IsEmpty.CombineLatest(iLoadableViewModel.LoadCommand.IsExecuting, (x, y) => x && !y)
+                        .Where(_ => EmptyView != null)
+                        .Subscribe(x => 
+                        {
+                            if (x)
+                            {
+                                if (EmptyView.Value.Superview == null)
+                                {
+                                    EmptyView.Value.Alpha = 0f;
+                                    EmptyView.Value.Frame  = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
+                                    TableView.AddSubview(EmptyView.Value);
+                                    UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
+                                        () => EmptyView.Value.Alpha = 1.0f, null);
+                                }
+                            }
+                            else
+                                EmptyView.Value.RemoveFromSuperview();
+                        }));
+                }
+            });
         }
 
         protected virtual void CreateSearchBar()

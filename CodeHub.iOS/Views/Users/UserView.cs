@@ -16,13 +16,20 @@ namespace CodeHub.iOS.Views.Users
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
 
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
+            HeaderView.Image = Images.LoginUserUnknown;
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
+                .Switch()
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.Image = Images.LoginUserUnknown;
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
@@ -41,20 +48,6 @@ namespace CodeHub.iOS.Views.Users
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
                 TableView.ReloadData();
             });
-        }
-
-        private bool _appearedOnce;
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-
-            if (!_appearedOnce)
-            {
-                _appearedOnce = true;
-                Observable.Timer(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
-                    this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue).Subscribe(x => 
-                        HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
-            }
         }
     }
 }

@@ -4,12 +4,14 @@ using System.Reactive.Subjects;
 using System.Reactive;
 using CodeHub.Core.ViewModels;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.TableViewSources
 {
-    public abstract class ReactiveTableViewSource<TViewModel> : ReactiveUI.ReactiveTableViewSource<TViewModel>, IInformsEnd
+    public abstract class ReactiveTableViewSource<TViewModel> : ReactiveUI.ReactiveTableViewSource<TViewModel>, IInformsEnd, IInformsEmpty
     {
         private readonly ISubject<Unit> _requestMoreSubject = new Subject<Unit>();
+        private readonly ISubject<bool> _isEmptySubject = new BehaviorSubject<bool>(true);
         private readonly nfloat _estimatedHeight;
 
         public IObservable<Unit> RequestMore
@@ -17,17 +19,24 @@ namespace CodeHub.iOS.TableViewSources
             get { return _requestMoreSubject; }
         }
 
+        public IObservable<bool> IsEmpty
+        {
+            get { return _isEmptySubject; }
+        }
+
         protected ReactiveTableViewSource(UITableView tableView, nfloat? sizeHint = null)
             : base(tableView)
         {
             _estimatedHeight = sizeHint ?? UITableView.AutomaticDimension;
+            this.WhenAnyValue(x => x.Data).IsNotNull().Select(x => x.Count == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
-        protected ReactiveTableViewSource(UITableView tableView, ReactiveUI.IReactiveNotifyCollectionChanged<TViewModel> collection, 
+        protected ReactiveTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<TViewModel> collection, 
             Foundation.NSString cellKey, nfloat sizeHint, Action<UITableViewCell> initializeCellAction = null) 
             : base(tableView, collection, cellKey, (float)sizeHint, initializeCellAction)
         {
             _estimatedHeight = sizeHint;
+            collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
@@ -88,13 +97,18 @@ namespace CodeHub.iOS.TableViewSources
             if (item != null)
                 item.GoToCommand.ExecuteIfCan();
 
-            tableView.DeselectRow(indexPath, true);
+//            tableView.DeselectRow(indexPath, true);
         }
     }
 
     public interface IInformsEnd
     {
         IObservable<Unit> RequestMore { get; }
+    }
+
+    public interface IInformsEmpty
+    {
+        IObservable<bool> IsEmpty { get; }
     }
 }
 

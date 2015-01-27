@@ -27,6 +27,9 @@ namespace CodeHub.iOS.Views.Repositories
 
             this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
                 .Subscribe(x => _titleButton.Text = x.Name);
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Pulse.ToImage(64f), "There are no trending repositories."));
         }
 
         public override void ViewDidLoad()

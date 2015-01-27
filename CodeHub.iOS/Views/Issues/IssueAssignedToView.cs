@@ -1,41 +1,23 @@
 using CodeHub.Core.ViewModels.Issues;
+using System;
+using UIKit;
+using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueAssignedToView : BaseTableViewController<IssueAssignedToViewModel>
     {
+        public IssueAssignedToView()
+        {
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Person.ToImage(64f), "There are no assignees."));
+        }
 
         public override void ViewDidLoad()
         {
-            //NoItemsText = "No Assignees";
-
-//            base.ViewDidLoad();
-//
-//            this.BindList(ViewModel.Users, x =>
-//			{
-//				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-//				el.Tapped += () => {
-//					if (ViewModel.SelectedUser != null && string.Equals(ViewModel.SelectedUser.Login, x.Login))
-//						ViewModel.SelectedUser = null;
-//					else
-//						ViewModel.SelectedUser = x;
-//				};
-//				if (ViewModel.SelectedUser != null && string.Equals(ViewModel.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
-//					el.Accessory = UITableViewCellAccessory.Checkmark;
-//				else
-//					el.Accessory = UITableViewCellAccessory.None;
-//				return el;
-//			});
-//
-//			ViewModel.WhenAnyValue(x => x.SelectedUser).Where(x => x != null).Subscribe(x =>
-//			{
-//				if (Root.Count == 0)
-//					return;
-//				foreach (var m in Root[0].Cast<UserElement>())
-//					m.Accessory = (x != null && string.Equals(ViewModel.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
-//					          	   UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-//				Root.Reload(Root[0], UITableViewRowAnimation.None);
-//			});
+            base.ViewDidLoad();
+            TableView.Source = new UserTableViewSource(TableView, ViewModel.Users);
         }
     }
 }

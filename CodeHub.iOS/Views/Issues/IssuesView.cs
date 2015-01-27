@@ -3,6 +3,7 @@ using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -23,6 +24,9 @@ namespace CodeHub.iOS.Views.Issues
 
             this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand).Subscribe(x => 
                 NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Add) : null);
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.IssueOpened.ToImage(64f), "There are no issues."));
         }
 
         public override void ViewDidLoad()

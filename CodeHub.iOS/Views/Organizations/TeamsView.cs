@@ -3,11 +3,19 @@ using ReactiveUI;
 using CodeHub.iOS.Cells;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Organizations;
+using CodeHub.iOS.ViewComponents;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Organizations
 {
     public class TeamsView : BaseTableViewController<TeamsViewModel>
     {
+        public TeamsView()
+        {
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Organization.ToImage(64f), "There are no teams."));
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

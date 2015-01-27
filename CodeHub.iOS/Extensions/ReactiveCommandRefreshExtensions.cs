@@ -22,6 +22,8 @@ namespace ReactiveUI
 
         public static UIBarButtonItem ToBarButtonItem(this IReactiveCommand @this, UIBarButtonSystemItem item)
         {
+            if (@this == null)
+                return null;
             var button = new UIBarButtonItem(item, (s, e) => @this.ExecuteIfCan());
             button.EnableIfExecutable(@this);
             return button;

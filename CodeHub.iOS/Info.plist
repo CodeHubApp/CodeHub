@@ -71,5 +71,9 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>octicons.ttf</string>
+	</array>
 </dict>
 </plist>

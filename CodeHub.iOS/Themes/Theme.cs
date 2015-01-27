@@ -74,7 +74,7 @@ namespace CodeHub.iOS.Themes
             UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = theme.PrimaryNavigationBarColor;
 
             //UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-            var headerFooterContainers = new [] { typeof(UITableViewHeaderFooterView), typeof(NotificationHeaderView) };
+            var headerFooterContainers = new [] { typeof(UITableViewHeaderFooterView) };
             foreach (var navbarAppearance in headerFooterContainers)
             {
                 UILabel.AppearanceWhenContainedIn(navbarAppearance).TextColor = UIColor.FromRGB(110, 110, 117);

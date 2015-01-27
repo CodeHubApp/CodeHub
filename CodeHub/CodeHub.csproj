@@ -55,6 +55,7 @@
     <Compile Include="Views\Contents\ReadmeRazorView.cs">
       <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Octicons.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -145,11 +146,13 @@
     <None Include="WebResources\styles\zenburn.css" />
     <None Include="WebResources\marked.js" />
     <None Include="WebResources\highlight.pack.js" />
+    <None Include="Resources\octicons.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Views\Releases\" />
     <Folder Include="Views\Contents\" />
     <Folder Include="WebResources\styles\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 </Project>

@@ -8,11 +8,14 @@ namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationView : BaseDialogViewController<OrganizationViewModel>
     {
+        public OrganizationView()
+        {
+            HeaderView.SubText = "Organization";
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.SubText = "Organization";
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);

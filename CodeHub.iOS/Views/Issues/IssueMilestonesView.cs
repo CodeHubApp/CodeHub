@@ -1,10 +1,18 @@
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
+using System;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueMilestonesView : BaseTableViewController<IssueMilestonesViewModel>
     {
+        public IssueMilestonesView()
+        {
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Milestone.ToImage(64f), "There are no milestones."));
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

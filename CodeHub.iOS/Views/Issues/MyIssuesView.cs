@@ -4,6 +4,7 @@ using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -16,6 +17,9 @@ namespace CodeHub.iOS.Views.Issues
         {
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.IssueOpened.ToImage(64f), "There are no issues."));
 
             this.WhenActivated(d =>
             {
@@ -34,6 +38,12 @@ namespace CodeHub.iOS.Views.Issues
         {
             base.ViewDidLoad();
             TableView.Source = new IssueTableViewSource(TableView);
+        }
+
+        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+        {
+            base.DidRotate(fromInterfaceOrientation);
+            _segmentBarButton.Width = View.Frame.Width - 10f;
         }
 
         public override void ViewWillAppear(bool animated)

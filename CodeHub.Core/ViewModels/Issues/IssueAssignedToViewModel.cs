@@ -2,6 +2,7 @@ using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive;
+using CodeHub.Core.ViewModels.Users;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -14,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _selectedUser, value); }
         }
 
-        public IReadOnlyReactiveList<Octokit.User> Users { get; private set; }
+        public IReadOnlyReactiveList<UserItemViewModel> Users { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -31,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Title = "Assignees";
 
             var users = new ReactiveList<Octokit.User>();
-            Users = users.CreateDerivedCollection(x => x);
+            Users = users.CreateDerivedCollection(x => new UserItemViewModel(x.Name, x.AvatarUrl, false, () => {}));
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

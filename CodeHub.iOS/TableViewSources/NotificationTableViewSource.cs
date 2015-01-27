@@ -41,7 +41,6 @@ namespace CodeHub.iOS.TableViewSources
                 }).ToList();
         }
 
-
         public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
         {
             var item = ItemAt(indexPath) as NotificationItemViewModel;

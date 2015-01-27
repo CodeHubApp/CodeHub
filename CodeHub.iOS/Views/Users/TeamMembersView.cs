@@ -5,5 +5,9 @@ namespace CodeHub.iOS.Views.Users
 {
     public class TeamMembersView : BaseUserCollectionView<TeamMembersViewModel>
     {
+        public TeamMembersView()
+            : base("There are no team members.")
+        {
+        }
     }
 }

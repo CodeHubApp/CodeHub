@@ -5,13 +5,13 @@ using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using System.Linq;
-using CodeHub.Core.Factories;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Activity
 {
     public class NotificationsView : BaseTableViewController<NotificationsViewModel>
     {
-        private readonly UISegmentedControl _viewSegment;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
         private readonly UIBarButtonItem _segmentBarButton;
         private readonly UIBarButtonItem[] _segmentToolbar;
         private readonly UIBarButtonItem[] _markToolbar;
@@ -19,11 +19,12 @@ namespace CodeHub.iOS.Views.Activity
         private readonly UIBarButtonItem _editButton;
         private readonly UIBarButtonItem _cancelButton;
 
-
         public NotificationsView()
         {
-            _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Inbox.ToImage(64f), "No new notifications."));
 
             _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
 
@@ -31,25 +32,8 @@ namespace CodeHub.iOS.Views.Activity
             _markToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _markButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             ToolbarItems = _segmentToolbar;
 
-            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) =>
-            {
-                var allSelected = ViewModel.GroupedNotifications.SelectMany(x => x.Notifications).Any(x => x.IsSelected);
-                _markButton.Title = allSelected ? "Mark Selected as Read" : "Read All as Read";
-
-                NavigationItem.SetRightBarButtonItem(_cancelButton, true);
-                TableView.SetEditing(true, true);
-                SetToolbarItems(_markToolbar, true);
-            });
-
-            _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) =>
-            {
-                NavigationItem.SetRightBarButtonItem(_editButton, true);
-                TableView.SetEditing(false, true);
-                SetToolbarItems(_segmentToolbar, true);
-
-                foreach (var n in ViewModel.GroupedNotifications.SelectMany(x => x.Notifications))
-                    n.IsSelected = false;
-            });
+            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => StartEditing());
+            _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) => StopEditing());
 
             this.WhenActivated(d =>
             {
@@ -65,6 +49,13 @@ namespace CodeHub.iOS.Views.Activity
                         _markButton.Title = x ? "Mark Selected as Read" : "Read All as Read";
                     }));
 
+                d(this.WhenAnyValue(x => x.ViewModel.GroupedNotifications)
+                    .Where(x => x.Count == 0 && TableView.Editing)
+                    .Subscribe(_ => StopEditing()));
+
+                d(this.WhenAnyValue(x => x.ViewModel.GroupedNotifications)
+                    .Subscribe(x => _editButton.Enabled = x.Count > 0));
+
                 d(this.WhenAnyValue(x => x.ViewModel.ActiveFilter)
                     .Subscribe(x => 
                     {
@@ -72,13 +63,39 @@ namespace CodeHub.iOS.Views.Activity
                         NavigationItem.SetRightBarButtonItem((_viewSegment.SelectedSegment != 2) ? _editButton : null, true);
                     }));
             });
+
+            Appearing
+                .Where(_ => NavigationController != null)
+                .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
+
+            Disappearing
+                .Where(_ => NavigationController != null)
+                .Subscribe(x => NavigationController.SetToolbarHidden(true, x));
+        }
+
+        private void StartEditing()
+        {
+            var allSelected = ViewModel.GroupedNotifications.SelectMany(x => x.Notifications).Any(x => x.IsSelected);
+            _markButton.Title = allSelected ? "Mark Selected as Read" : "Read All as Read";
+
+            NavigationItem.SetRightBarButtonItem(_cancelButton, true);
+            TableView.SetEditing(true, true);
+            SetToolbarItems(_markToolbar, true);
+        }
+
+        private void StopEditing()
+        {
+            NavigationItem.SetRightBarButtonItem(_editButton, true);
+            TableView.SetEditing(false, true);
+            SetToolbarItems(_segmentToolbar, true);
+
+            foreach (var n in ViewModel.GroupedNotifications.SelectMany(x => x.Notifications))
+                n.IsSelected = false;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            _segmentBarButton.Width = View.Frame.Width - 10f;
 
             var notificationSource = new NotificationTableViewSource(TableView);
             TableView.AllowsMultipleSelectionDuringEditing = true;
@@ -86,20 +103,6 @@ namespace CodeHub.iOS.Views.Activity
             TableView.Source = notificationSource;
 
             _viewSegment.ValueChanged += (sender, args) => ViewModel.ActiveFilter = (int)_viewSegment.SelectedSegment;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            if (ToolbarItems != null && NavigationController != null)
-                NavigationController.SetToolbarHidden(false, animated);
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null && NavigationController != null)
-                NavigationController.SetToolbarHidden(true, animated);
         }
     }
 }
