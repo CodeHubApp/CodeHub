@@ -87,13 +87,11 @@
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IBaseIssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueAssignedToViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueCommentViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
@@ -140,7 +138,6 @@
     <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
-    <Compile Include="ViewModels\Issues\MilestoneItemViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitedFileItemViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="Utilities\DiagnosticLogger.cs" />
@@ -211,6 +208,11 @@
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
     <Compile Include="Factories\AlertDialogExtensions.cs" />
+    <Compile Include="Utilities\LoadableReactiveList.cs" />
+    <Compile Include="ViewModels\Issues\IssueMilestoneItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAssigneeViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueAssigneeItemViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

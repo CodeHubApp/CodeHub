@@ -4,7 +4,7 @@ using UIKit;
 // Analysis disable once CheckNamespace
 namespace ReactiveUI
 {
-    public static class ReactiveCommandRefreshExtensions
+    public static class ReactiveCommandExtensions
     {
         public static UIRefreshControl ToRefreshControl(this IReactiveCommand @this)
         {
@@ -27,6 +27,13 @@ namespace ReactiveUI
             var button = new UIBarButtonItem(item, (s, e) => @this.ExecuteIfCan());
             button.EnableIfExecutable(@this);
             return button;
+        }
+
+        public static UIBarButtonItem ToBarButtonItem(this IReactiveCommand @this, UIImage image)
+        {
+            if (@this == null)
+                return null;
+            return new UIBarButtonItem { Image = image }.WithCommand(@this);
         }
     }
 }

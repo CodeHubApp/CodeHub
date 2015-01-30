@@ -3,7 +3,7 @@ using System.Reactive;
 
 namespace CodeHub.Core.ViewModels
 {
-    public interface ILoadableViewModel : IBaseViewModel
+    public interface ILoadableViewModel
     {
         IReactiveCommand<Unit> LoadCommand { get; }
     }

@@ -12,6 +12,7 @@ namespace CodeHub.iOS.Views.Repositories
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
+        private readonly StyledStringElement _ownerElement;
         private readonly Section _sourceSection;
 
         public RepositoryView()
@@ -23,9 +24,26 @@ namespace CodeHub.iOS.Views.Repositories
                 new DialogStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Code),
             };
 
+            _ownerElement = new StyledStringElement("Owner", string.Empty) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+            this.WhenAnyValue(x => x.ViewModel.Repository)
+                .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
+
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
             this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
                 HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
+                .Switch()
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
+
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()
@@ -33,8 +51,6 @@ namespace CodeHub.iOS.Views.Repositories
             base.ViewDidLoad();
 
             HeaderView.Image = Images.LoginUserUnknown;
-
-            NavigationItem.RightBarButtonItem = ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action);
 
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
@@ -89,29 +105,12 @@ namespace CodeHub.iOS.Views.Repositories
             ViewModel.WhenAnyValue(x => x.RepositoryName).Subscribe(x => HeaderView.Text = x);
         }
 
-        private bool _appearedOnce;
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-
-            if (!_appearedOnce)
-            {
-                _appearedOnce = true;
-                Observable.Timer(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
-                        this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue).Subscribe(x => 
-                        HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
-            }
-        }
-
         private void Render()
         {
             var model = ViewModel.Repository;
             var sec1 = new Section();
             sec1.Add(_splitElements);
-
-            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
-            sec1.Add(owner);
+            sec1.Add(_ownerElement);
 
             if (model.Parent != null)
             {
@@ -124,9 +123,7 @@ namespace CodeHub.iOS.Views.Repositories
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-            {
                 sec2.Add(new DialogStringElement("Issues", ViewModel.GoToIssuesCommand.ExecuteIfCan, Images.IssueOpened));
-            }
 
             if (ViewModel.Readme != null)
                 sec2.Add(new DialogStringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Images.Book));

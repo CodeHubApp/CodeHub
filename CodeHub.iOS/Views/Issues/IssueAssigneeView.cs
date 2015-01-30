@@ -6,9 +6,9 @@ using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAssignedToView : BaseTableViewController<IssueAssignedToViewModel>
+    public class IssueAssigneeView : BaseTableViewController<IssueAssigneeViewModel>
     {
-        public IssueAssignedToView()
+        public IssueAssigneeView()
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Person.ToImage(64f), "There are no assignees."));
@@ -17,7 +17,7 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new UserTableViewSource(TableView, ViewModel.Users);
+            TableView.Source = new IssueAssigneeTableViewSource(TableView, ViewModel.Assignees);
         }
     }
 }

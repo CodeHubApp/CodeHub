@@ -14,22 +14,29 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesTrendingView : BaseTableViewController<RepositoriesTrendingViewModel>
     {
-        private readonly TrendingTitleButton _titleButton;
-
         public RepositoriesTrendingView()
         {
-            NavigationItem.TitleView = _titleButton = new TrendingTitleButton
+            var titleButton = new TrendingTitleButton
             {
                 Frame = new CGRect(0, 0, 200f, 32f),
                 TintColor = Theme.PrimaryNavigationBarTextColor
             };
-            _titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
+            NavigationItem.TitleView = titleButton;
+            titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
 
             this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
-                .Subscribe(x => _titleButton.Text = x.Name);
+                .Subscribe(x => titleButton.Text = x.Name);
 
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Pulse.ToImage(64f), "There are no trending repositories."));
+
+            Appearing
+                .Where(_ => NavigationController != null)
+                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage());
+
+            Disappearing
+                .Where(_ => NavigationController != null)
+                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null);
         }
 
         public override void ViewDidLoad()
@@ -40,31 +47,11 @@ namespace CodeHub.iOS.Views.Repositories
             TableView.Source = source;
 
             this.WhenAnyValue(x => x.ViewModel.Repositories)
-                .Subscribe(x =>
-                {
-                    if (x == null)
-                    {
-                        source.Data = new List<TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>>();
-                    }
-                    else
-                    {
-                        source.Data = x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
-                            Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
-                        }).ToList();
-                    }
-                });
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.NavigationBar.ShadowImage = null;
+                .Select(x => x ?? new List<GroupedCollection<RepositoryItemViewModel>>())
+                .Select(x => x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
+                    Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
+                }))
+                .Subscribe(x => source.Data = x.ToList());
         }
 
         private static UILabel CreateHeaderView(string name)

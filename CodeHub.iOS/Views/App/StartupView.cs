@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.App
     {
         const float ImageSize = 128f;
 
-        private readonly UIImageView _imgView = new UIImageView() {
+        private readonly UIImageView _imgView = new UIImageView {
             Alpha = 0,
             Image = Images.LoginUserUnknown,
         };

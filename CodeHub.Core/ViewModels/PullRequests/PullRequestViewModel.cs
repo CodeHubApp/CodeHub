@@ -176,54 +176,54 @@ namespace CodeHub.Core.ViewModels.PullRequests
 //                vm.WhenAnyValue(x => x.Issue).Skip(1).Subscribe(x => Issue = x);
                 NavigateTo(vm);
             });
+//
+//            GoToLabelsCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
+//            {
+//                var vm = this.CreateViewModel<IssueLabelsViewModel>();
+//                vm.RepositoryOwner = RepositoryOwner;
+//                vm.RepositoryName = RepositoryName;
+//                vm.Id = Id;
+//                vm.SaveOnSelect = true;
+////                vm.SelectedLabels.Reset(Issue.Labels);
+////                vm.WhenAnyValue(x => x.Labels).Skip(1).Subscribe(x =>
+////                {
+////                    Issue.Labels = x.ToList();
+////                    this.RaisePropertyChanged("Issue");
+////                });
+//                NavigateTo(vm);
+//            });
 
-            GoToLabelsCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<IssueLabelsViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.IssueId = Id;
-                vm.SaveOnSelect = true;
-//                vm.SelectedLabels.Reset(Issue.Labels);
-//                vm.WhenAnyValue(x => x.Labels).Skip(1).Subscribe(x =>
-//                {
-//                    Issue.Labels = x.ToList();
-//                    this.RaisePropertyChanged("Issue");
-//                });
-                NavigateTo(vm);
-            });
-
-            GoToMilestoneCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<IssueMilestonesViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.IssueId = Id;
-                vm.SaveOnSelect = true;
-//                vm.SelectedMilestone = Issue.Milestone;
-//                vm.WhenAnyValue(x => x.SelectedMilestone).Skip(1).Subscribe(x =>
-//                {
-//                    Issue.Milestone = x;
-//                    this.RaisePropertyChanged("Issue");
-//                });
-                NavigateTo(vm);
-            });
-
-            GoToAssigneeCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<IssueAssignedToViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.IssueId = Id;
-                //vm.SaveOnSelect = true;
-//                vm.SelectedUser = Issue.Assignee;
-//                vm.WhenAnyValue(x => x.SelectedUser).Skip(1).Subscribe(x =>
-//                {
-//                    Issue.Assignee = x;
-//                    this.RaisePropertyChanged("Issue");
-//                });
-                NavigateTo(vm);
-            });
+//            GoToMilestoneCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
+//            {
+//                var vm = this.CreateViewModel<IssueMilestonesViewModel>();
+//                vm.RepositoryOwner = RepositoryOwner;
+//                vm.RepositoryName = RepositoryName;
+//                vm.IssueId = Id;
+//                vm.SaveOnSelect = true;
+////                vm.SelectedMilestone = Issue.Milestone;
+////                vm.WhenAnyValue(x => x.SelectedMilestone).Skip(1).Subscribe(x =>
+////                {
+////                    Issue.Milestone = x;
+////                    this.RaisePropertyChanged("Issue");
+////                });
+//                NavigateTo(vm);
+//            });
+//
+//            GoToAssigneeCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null)).WithSubscription(_ =>
+//            {
+//                var vm = this.CreateViewModel<IssueAssignedToViewModel>();
+//                vm.RepositoryOwner = RepositoryOwner;
+//                vm.RepositoryName = RepositoryName;
+//                vm.IssueId = Id;
+//                //vm.SaveOnSelect = true;
+////                vm.SelectedUser = Issue.Assignee;
+////                vm.WhenAnyValue(x => x.SelectedUser).Skip(1).Subscribe(x =>
+////                {
+////                    Issue.Assignee = x;
+////                    this.RaisePropertyChanged("Issue");
+////                });
+//                NavigateTo(vm);
+//            });
 
             GoToAddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {

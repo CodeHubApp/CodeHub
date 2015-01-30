@@ -46,7 +46,9 @@ namespace CodeHub.iOS.Views
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand.ExecuteAsync())
                 .Switch()
-                .Subscribe(_ => _isLoadedSubject.OnNext(true));
+                .Subscribe(
+                    _ => _isLoadedSubject.OnNext(true),
+                    e => Console.WriteLine(e));
 
             this.WhenActivated(d => { });
 
@@ -167,7 +169,7 @@ namespace CodeHub.iOS.Views
         }
     }
 
-    public abstract class BaseTableViewController : ReactiveTableViewController
+    public class BaseTableViewController : ReactiveTableViewController
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _appearedSubject = new Subject<bool>();
@@ -194,7 +196,7 @@ namespace CodeHub.iOS.Views
             get { return _disappearedSubject; }
         }
 
-        protected BaseTableViewController(UITableViewStyle style)
+        public BaseTableViewController(UITableViewStyle style)
             : base(style)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };

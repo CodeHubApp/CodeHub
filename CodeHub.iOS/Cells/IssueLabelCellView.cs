@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull()
-                .Select(x => x.WhenAnyValue(y => y.Selected))
+                .Select(x => x.WhenAnyValue(y => y.IsSelected))
                 .Switch()
                 .Subscribe(x =>
                 {

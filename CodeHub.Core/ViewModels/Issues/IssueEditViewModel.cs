@@ -64,42 +64,42 @@ namespace CodeHub.Core.ViewModels.Issues
 
 	    protected override async Task Save()
 		{
-            if (string.IsNullOrEmpty(Title))
-                throw new Exception("Issue must have a title!");
-
-			try
-			{
-				var assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-				int? milestone = null;
-				if (Milestone != null) 
-					milestone = Milestone.Number;
-				var labels = Labels.Select(x => x.Name).ToArray();
-				var content = Content ?? string.Empty;
-				var state = IsOpen ? "open" : "closed";
-				var retried = false;
-
-				// For some reason github needs to try again during an internal server error
-				tryagain:
-
-				try
-				{
-                    var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels));
-				    Issue = data.Data;
-				}
-				catch (GitHubSharp.InternalServerException)
-				{
-					if (retried)
-						throw;
-
-					//Do nothing. Something is wrong with github's service
-					retried = true;
-					goto tryagain;
-				}
-			}
-			catch (Exception e)
-			{
-                throw new Exception("Unable to save the issue! Please try again", e);
-			}
+//            if (string.IsNullOrEmpty(Title))
+//                throw new Exception("Issue must have a title!");
+//
+//			try
+//			{
+//				var assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+//				int? milestone = null;
+//				if (Milestone != null) 
+//					milestone = Milestone.Number;
+//				var labels = Labels.Select(x => x.Name).ToArray();
+//				var content = Content ?? string.Empty;
+//				var state = IsOpen ? "open" : "closed";
+//				var retried = false;
+//
+//				// For some reason github needs to try again during an internal server error
+//				tryagain:
+//
+//				try
+//				{
+//                    var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels));
+//				    Issue = data.Data;
+//				}
+//				catch (GitHubSharp.InternalServerException)
+//				{
+//					if (retried)
+//						throw;
+//
+//					//Do nothing. Something is wrong with github's service
+//					retried = true;
+//					goto tryagain;
+//				}
+//			}
+//			catch (Exception e)
+//			{
+//                throw new Exception("Unable to save the issue! Please try again", e);
+//			}
 
 //			//There is a wierd bug in GitHub when editing an existing issue and the assignedTo is null
 //			catch (GitHubSharp.InternalServerException)

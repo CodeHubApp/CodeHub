@@ -1,18 +1,28 @@
+using System;
 using UIKit;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
     public class AccountsView : BaseTableViewController<AccountsViewModel>
 	{
+        public AccountsView()
+        {
+            this.WhenAnyValue(x => x.ViewModel.GoToAddAccountCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Add))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            NavigationItem.RightBarButtonItem = ViewModel.GoToAddAccountCommand.ToBarButtonItem(UIBarButtonSystemItem.Add);
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Cancel }.WithCommand(ViewModel.DismissCommand);
             TableView.Source = new AccountTableViewSource(TableView, ViewModel.Accounts);
         }
     }

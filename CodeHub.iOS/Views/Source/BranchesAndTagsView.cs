@@ -11,14 +11,11 @@ namespace CodeHub.iOS.Views.Source
 	{
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 
-        public BranchesAndTagsView()
-        {
-            NavigationItem.TitleView = _viewSegment;
-        }
-
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+            NavigationItem.TitleView = _viewSegment;
 
             _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) (int)_viewSegment.SelectedSegment;
             ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (int)x);

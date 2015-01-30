@@ -2,6 +2,7 @@ using System;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -10,8 +11,8 @@ namespace CodeHub.iOS.Views.Gists
         public UserGistsView()
         {
             this.WhenAnyValue(x => x.ViewModel.IsMine)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
-                    ViewModel.GoToCreateGistCommand.ToBarButtonItem(UIBarButtonSystemItem.Add) : null);
+                .Select(x => x ? ViewModel.GoToCreateGistCommand.ToBarButtonItem(UIBarButtonSystemItem.Add) : null)
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
     }
 }

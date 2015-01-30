@@ -9,7 +9,7 @@ using Foundation;
 
 namespace CodeHub.iOS.Cells
 {
-    public class MilestoneTableViewCell : ReactiveTableViewCell<MilestoneItemViewModel>
+    public class MilestoneTableViewCell : ReactiveTableViewCell<IssueMilestoneItemViewModel>
     {
         public static NSString Key = new NSString("milestonecellview");
         private readonly MilestoneView _milestoneView;
@@ -24,13 +24,12 @@ namespace CodeHub.iOS.Cells
             BackgroundColor = highlighted ? UIColor.FromWhiteAlpha(0.9f, 1.0f) : UIColor.White;
         }
 
-        public MilestoneTableViewCell()
-            : base(UITableViewCellStyle.Default, Key)
+        public MilestoneTableViewCell(IntPtr handle)
+            : base(handle)
         {
             var frame = Frame = new CGRect(0, 0, 320f, 80);
             AutosizesSubviews = true;
             ContentView.AutosizesSubviews = true;
-            SeparatorInset = UIEdgeInsets.Zero;
 
             _milestoneView = new MilestoneView();
             _milestoneView.Frame = frame;

@@ -8,9 +8,9 @@ using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class CommitBranchsView : BaseTableViewController<CommitBranchesViewModel>
+    public class CommitBranchesView : BaseTableViewController<CommitBranchesViewModel>
     {
-        public CommitBranchsView()
+        public CommitBranchesView()
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.GitBranch.ToImage(64f), "There are no branches."));

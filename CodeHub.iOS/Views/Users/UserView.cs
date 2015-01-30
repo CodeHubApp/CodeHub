@@ -9,8 +9,19 @@ namespace CodeHub.iOS.Views.Users
 {
     public class UserView : BaseDialogViewController<UserViewModel>
     {
-        public UserView()
+        public override void ViewDidLoad()
         {
+            base.ViewDidLoad();
+
+            var split = new SplitButtonElement();
+            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
+            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
+            var events = new DialogStringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Images.Rss);
+            var organizations = new DialogStringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Organization);
+            var repos = new DialogStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Images.Repo);
+            var gists = new DialogStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Gist);
+            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
+
             this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
@@ -25,20 +36,6 @@ namespace CodeHub.iOS.Views.Users
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
-            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
-            var events = new DialogStringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Images.Rss);
-            var organizations = new DialogStringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Organization);
-            var repos = new DialogStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Images.Repo);
-            var gists = new DialogStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Gist);
-            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
             this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x =>
             {

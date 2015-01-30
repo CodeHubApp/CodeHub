@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Splat;
 using System.Reactive.Linq;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -14,6 +15,11 @@ namespace CodeHub.Core.ViewModels
         public static T CreateViewModel<T>(this IBaseViewModel @this)
         {
             return Locator.Current.GetService<IServiceConstructor>().Construct<T>();
+        }
+
+        public static Task ShowAlertDialog(this IBaseViewModel @this, string title, string message)
+        {
+            return Locator.Current.GetService<IAlertDialogFactory>().Alert(title, message);
         }
 
         public static async Task RequestModel<TRequest>(this object viewModel, GitHubRequest<TRequest> request, bool? forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()

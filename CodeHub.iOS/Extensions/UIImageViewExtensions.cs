@@ -2,6 +2,7 @@ using System;
 using CodeHub.Core.Utilities;
 using SDWebImage;
 using CodeHub.iOS;
+using Foundation;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -14,7 +15,7 @@ namespace UIKit
             if (avatarUri == null)
                 @this.Image = Images.LoginUserUnknown;
             else
-                @this.SetImage(avatarUri.ToNSUrl(), Images.LoginUserUnknown);
+                @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown);
         }
     }
 }

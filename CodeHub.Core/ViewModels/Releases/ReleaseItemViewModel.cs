@@ -13,13 +13,12 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal ReleaseItemViewModel(long id, string name, DateTimeOffset createdAt,
-            Action<ReleaseItemViewModel> gotoCommand)
+        internal ReleaseItemViewModel(Octokit.Release release)
         {
-            Id = id;
-            Name = name;
-            Created = createdAt.LocalDateTime;
-            GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
+            Id = release.Id;
+            Created = (release.PublishedAt.HasValue ? release.PublishedAt.Value : release.CreatedAt).LocalDateTime;
+            Name = string.IsNullOrEmpty(release.Name) ? release.TagName : release.Name;
+            GoToCommand = ReactiveCommand.Create();
         }
     }
 }

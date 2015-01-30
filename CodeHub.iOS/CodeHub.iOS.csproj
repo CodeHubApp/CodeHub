@@ -142,7 +142,6 @@
     <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
-    <Compile Include="Views\Issues\IssueMilestonesView.cs" />
     <Compile Include="Views\Issues\IssuesView.cs" />
     <Compile Include="Views\Issues\IssueView.cs" />
     <Compile Include="ViewComponents\MilestoneView.cs" />
@@ -166,7 +165,6 @@
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
-    <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Views\Accounts\LoginView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
@@ -229,7 +227,6 @@
     <Compile Include="Cells\TagCellView.cs" />
     <Compile Include="Cells\NotificationViewCell.cs" />
     <Compile Include="Views\Repositories\RepositoryForksView.cs" />
-    <Compile Include="Views\Source\CommitBranchsView.cs" />
     <Compile Include="Cells\CommitCellView.cs" />
     <Compile Include="Cells\CommitCellView.designer.cs" />
     <Compile Include="TableViewSources\CommitTableViewSource.cs" />
@@ -277,7 +274,6 @@
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
     <Compile Include="Views\Repositories\RepositoriesWatchedView.cs" />
-    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="Extensions\UIImageViewExtensions.cs" />
     <Compile Include="ViewComponents\TableFooterButton.cs" />
     <Compile Include="Views\Contents\ReadmeView.cs" />
@@ -300,7 +296,6 @@
     <Compile Include="ViewComponents\ScrollingToolbarView.cs" />
     <Compile Include="ViewComponents\SlideUpTitleView.cs" />
     <Compile Include="Extensions\MonoTouchStringExtensions.cs" />
-    <Compile Include="Extensions\ReactiveCommandRefreshExtensions.cs" />
     <Compile Include="Extensions\UIApplicationDelegateExtensions.cs" />
     <Compile Include="Extensions\UIBarButtonItemExtensions.cs" />
     <Compile Include="Extensions\UIImageExtensions.cs" />
@@ -368,7 +363,15 @@
     <Compile Include="..\CodeHub\Resources\Octicons.cs">
       <Link>Octicons.cs</Link>
     </Compile>
-    <Compile Include="Extensions\OcticonExtensions.cs" />
+    <Compile Include="Views\Issues\IssueMilestonesView.cs" />
+    <Compile Include="TableViewSources\IssueMilestoneTableViewSource.cs" />
+    <Compile Include="Views\Issues\IssueAssigneeView.cs" />
+    <Compile Include="TableViewSources\IssueAssigneeTableViewSource.cs" />
+    <Compile Include="Cells\IssueAssigneeTableViewCell.cs" />
+    <Compile Include="Views\Source\CommitBranchesView.cs" />
+    <Compile Include="Views\Issues\IssueOptionSelectorView.cs" />
+    <Compile Include="OcticonExtensions.cs" />
+    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

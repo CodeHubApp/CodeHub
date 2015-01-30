@@ -4,6 +4,7 @@ using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.Views.App;
 using CodeHub.Core.Services;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -12,8 +13,9 @@ namespace CodeHub.iOS.Views.Source
         public CommitCommentView(IMarkdownService markdownService) 
             : base(markdownService)
         {
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Save) : null);
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
     }
 }

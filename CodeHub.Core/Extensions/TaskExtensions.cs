@@ -6,6 +6,7 @@ using ReactiveUI;
 
 // Analysis disable once CheckNamespace
 using System.Reactive;
+using System.Reactive.Subjects;
 
 
 public static class TaskExtensions
@@ -16,6 +17,13 @@ public static class TaskExtensions
             .Catch(Observable.Empty<T>())
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(action, e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
+    }
+
+    public static IDisposable ToBackground<T>(this Task<T> task, ISubject<T> subject)
+    {
+        return task.ToObservable()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(subject.OnNext, subject.OnError, subject.OnCompleted);
     }
 
     public static IDisposable ToBackground<T>(this Task<T> task)

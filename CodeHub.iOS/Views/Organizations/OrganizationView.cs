@@ -8,14 +8,12 @@ namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationView : BaseDialogViewController<OrganizationViewModel>
     {
-        public OrganizationView()
-        {
-            HeaderView.SubText = "Organization";
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            HeaderView.SubText = "Organization";
+            HeaderView.Image = Images.LoginUserUnknown;
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);
@@ -27,13 +25,15 @@ namespace CodeHub.iOS.Views.Organizations
             var gists = new DialogStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Gist);
             Root.Reset(new Section { split }, new Section { members, teams }, new Section { events }, new Section { repos, gists });
 
-            ViewModel.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
-            {
-                followers.Text = x.Followers.ToString();
-                following.Text = x.Following.ToString();
-                HeaderView.ImageUri = x.AvatarUrl;
-                TableView.ReloadData();
-            });
+            this.WhenAnyValue(x => x.ViewModel.Organization)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    followers.Text = x != null ? x.Followers.ToString() : "-";
+                    following.Text = x != null ? x.Following.ToString() : "-";
+                    HeaderView.ImageUri = x.AvatarUrl;
+                    TableView.ReloadData();
+                });
         }
     }
 }

@@ -8,6 +8,7 @@ using CodeHub.iOS.ViewComponents;
 using System.Collections.Generic;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -21,8 +22,9 @@ namespace CodeHub.iOS.Views.Gists
         {
             HeaderView.Image = Images.LoginUserUnknown;
 
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x => 
-                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Save) : null);
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyValue(x => x.ViewModel.CurrentAccount).Subscribe(x =>
             {

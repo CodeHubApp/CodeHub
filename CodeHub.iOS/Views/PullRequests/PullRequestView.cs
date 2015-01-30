@@ -68,8 +68,9 @@ namespace CodeHub.iOS.Views.PullRequests
                 _descriptionElement.Value = html;
             });
 
-            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenViewModel(x => x.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()

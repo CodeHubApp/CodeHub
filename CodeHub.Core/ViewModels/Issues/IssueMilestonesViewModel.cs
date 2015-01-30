@@ -1,66 +1,45 @@
-using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
 using System.Reactive;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueMilestonesViewModel : BaseViewModel, ILoadableViewModel
+    public class IssueMilestonesViewModel : ReactiveObject, ILoadableViewModel
     {
-        private Octokit.Milestone _selectedMilestone;
-        public Octokit.Milestone SelectedMilestone
-        {
-            get { return _selectedMilestone; }
-            set { this.RaiseAndSetIfChanged(ref _selectedMilestone, value); }
-        }
+        private Milestone _selectedMilestone;
 
-        public IReadOnlyReactiveList<Octokit.Milestone> Milestones { get; private set; }
-
-        public string RepositoryOwner { get; set; }
-
-        public string RepositoryName { get; set; }
-
-        public long IssueId { get; set; }
-
-        public bool SaveOnSelect { get; set; }
-
-        public IReactiveCommand SelectMilestoneCommand { get; private set; }
+        public IReadOnlyReactiveList<IssueMilestoneItemViewModel> Milestones { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IssueMilestonesViewModel(IApplicationService applicationService)
+        public IssueMilestonesViewModel(
+            Func<Task<IReadOnlyList<Milestone>>> loadMilestones,
+            Func<Task<Issue>> loadIssue,
+            Func<IssueUpdate, Task<Issue>> updateIssue
+        )
         {
-            Title = "Milestones";
-
-            var milestones = new ReactiveList<Octokit.Milestone>();
-            Milestones = milestones.CreateDerivedCollection(x => x);
-
-            SelectMilestoneCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            var milestones = new ReactiveList<Milestone>();
+            Milestones = milestones.CreateDerivedCollection(x =>
             {
-                var milestone = t as Octokit.Milestone;
-                if (milestone != null)
-                    SelectedMilestone = milestone;
-
-                if (SaveOnSelect)
+                var vm = new IssueMilestoneItemViewModel(x);
+                if (_selectedMilestone != null)
+                    vm.IsSelected = x.Number == _selectedMilestone.Number;
+                vm.GoToCommand.Subscribe(_ =>
                 {
-                    try
-                    {
-                        int? milestoneNumber = null;
-                        if (SelectedMilestone != null) milestoneNumber = SelectedMilestone.Number;
-                        var updateReq = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId].UpdateMilestone(milestoneNumber);
-                        await applicationService.Client.ExecuteAsync(updateReq);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception("Unable to to save milestone! Please try again.", e);
-                    }
-                }
-
-                Dismiss();
+                    var milestone = vm.IsSelected ? (int?)vm.Number : null;
+                    updateIssue(new IssueUpdate { Milestone = milestone }).ToBackground();
+                });
+                return vm;
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                milestones.Reset(await applicationService.GitHubClient.Issue.Milestone.GetForRepository(RepositoryOwner, RepositoryName)));
+            {
+                _selectedMilestone = (await loadIssue()).Milestone;
+                milestones.Reset(await loadMilestones());
+            });
         }
     }
 }

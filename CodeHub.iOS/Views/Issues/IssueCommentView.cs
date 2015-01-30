@@ -4,6 +4,7 @@ using ReactiveUI;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.Core.Services;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -12,9 +13,9 @@ namespace CodeHub.iOS.Views.Issues
         public IssueCommentView(IMarkdownService markdownService) 
             : base(markdownService)
         {
-            Title = "Add Comment";
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Save) : null);
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
     }
 }

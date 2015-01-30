@@ -1,7 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.ViewComponents;
 
@@ -18,14 +17,6 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Plain,
-			    (s, e) =>
-			    {
-			        if (ViewModel.SaveOnSelect)
-                        ViewModel.SelectLabelsCommand.ExecuteIfCan();
-			    });
-
             TableView.Source = new IssueLabelTableViewSource(TableView, ViewModel.Labels);
         }
     }

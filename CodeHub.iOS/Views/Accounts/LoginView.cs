@@ -19,17 +19,11 @@ namespace CodeHub.iOS.Views.Accounts
         {
             _alertDialogService = alertDialogService;
 
-            this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x == null ? null : x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
             this.WhenAnyValue(x => x.ViewModel.LoginUrl).IsNotNull().Subscribe(LoadRequest);
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            ViewModel.ShowLoginOptionsCommand.CanExecuteObservable.Subscribe(x =>
-                Console.WriteLine("Can execute: " + x));
         }
 
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)

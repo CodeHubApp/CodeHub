@@ -4,6 +4,7 @@ using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.ViewComponents;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -19,11 +20,13 @@ namespace CodeHub.iOS.Views.Issues
 
             ToolbarItems = new [] { 
                 new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), 
-                _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) 
+                _segmentBarButton, 
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) 
             };
 
-            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand).Subscribe(x => 
-                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Add) : null);
+            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Add))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.IssueOpened.ToImage(64f), "There are no issues."));

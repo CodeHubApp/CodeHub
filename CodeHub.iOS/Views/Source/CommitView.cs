@@ -20,8 +20,9 @@ namespace CodeHub.iOS.Views.Source
 
         public CommitView()
         {
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand).Subscribe(x => 
-                NavigationItem.RightBarButtonItem = x != null ? x.ToBarButtonItem(UIBarButtonSystemItem.Action) : null);
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()

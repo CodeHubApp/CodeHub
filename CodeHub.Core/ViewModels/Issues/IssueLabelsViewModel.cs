@@ -1,91 +1,64 @@
 using System;
-using CodeHub.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
-using ReactiveUI;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using Octokit;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueLabelsViewModel : BaseViewModel, ILoadableViewModel
+    public class IssueLabelsViewModel : ReactiveObject, ILoadableViewModel
     {
+        private readonly IList<Label> _selectedLabels = new List<Label>();
+        private Issue _issue;
+
         public IReadOnlyReactiveList<IssueLabelItemViewModel> Labels { get; private set; }
-
-        public ReactiveList<Octokit.Label> SelectedLabels { get; private set; }
-
-        public ICollection<Octokit.Label> OriginalLabels { get; set; } 
-
-        public string RepositoryOwner { get; set; }
-
-		public string RepositoryName { get; set; }
-
-		public long IssueId { get; set; }
-
-		public bool SaveOnSelect { get; set; }
 
         public IReactiveCommand SelectLabelsCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IssueLabelsViewModel(IApplicationService applicationService, IGraphicService graphicService)
+        public IssueLabelsViewModel(
+            Func<Task<IReadOnlyList<Label>>> loadLabels,
+            Func<Task<Issue>> loadIssue,
+            Func<IssueUpdate, Task<Issue>> updateIssue, 
+            IGraphicService graphicService)
 	    {
-            Title = "Labels";
-
-            var labels = new ReactiveList<Octokit.Label>();
-            SelectedLabels = new ReactiveList<Octokit.Label>();
+            var labels = new ReactiveList<Label>();
 
             Labels = labels.CreateDerivedCollection(x => 
             {
                 var vm = new IssueLabelItemViewModel(graphicService, x);
-                vm.GoToCommand.Subscribe(_ =>
-                {
-                    var selected = SelectedLabels.FirstOrDefault(y => string.Equals(y.Name, x.Name));
-                    if (selected != null)
-                    {
-                        SelectedLabels.Remove(selected);
-                        vm.Selected = false;
-                    }
-                    else
-                    {
-                        SelectedLabels.Add(x);
-                        vm.Selected = true;
-                    }
-                });
+                vm.IsSelected = _selectedLabels.Any(y => string.Equals(y.Name, x.Name));
+                vm.GoToCommand
+                    .Select(_ => x)
+                    .Where(y => vm.IsSelected && !_selectedLabels.Contains(y))
+                    .Subscribe(_selectedLabels.Add);
+                vm.GoToCommand
+                    .Select(_ => x)
+                    .Where(y => !vm.IsSelected)
+                    .Subscribe(y => _selectedLabels.Remove(y));
                 return vm;
             });
 
-            SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(t =>
 	        {
-	            //If nothing has changed, dont do anything...
-                if (OriginalLabels != null && OriginalLabels.Count() == SelectedLabels.Count() &&
-                    OriginalLabels.Intersect(SelectedLabels).Count() == SelectedLabels.Count())
-	            {
-                    Dismiss();
-	                return;
-	            }
-
-	            if (SaveOnSelect)
-	            {
-//	                try
-//	                {
-//                        var labels = (SelectedLabels != null && SelectedLabels.Count > 0) 
-//                                    ? SelectedLabels.Select(y => y.Name).ToArray() : null;
-//	                    var updateReq =
-//	                        applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[IssueId]
-//	                            .UpdateLabels(labels);
-//                        await applicationService.Client.ExecuteAsync(updateReq);
-//	                }
-//	                catch (Exception e)
-//	                {
-//	                    throw new Exception("Unable to save labels! Please try again.", e);
-//	                }
-	            }
-
-                Dismiss();
+                if (!_selectedLabels.All(_issue.Labels.Contains))
+                    return updateIssue(new IssueUpdate { Labels = _selectedLabels.Select(x => x.Name).ToList() });
+                return Task.FromResult(0);
 	        });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                labels.Reset(await applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName)));
+            {
+                _issue = await loadIssue();
+                _selectedLabels.Clear();
+                foreach (var l in _issue.Labels)
+                    _selectedLabels.Add(l);
+                labels.Reset(await loadLabels());
+            });
 	    }
     }
 }

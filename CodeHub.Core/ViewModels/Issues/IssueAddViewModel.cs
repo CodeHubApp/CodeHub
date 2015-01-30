@@ -44,25 +44,25 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		protected override async Task Save()
 		{
-            if (string.IsNullOrEmpty(Title))
-                throw new Exception("Unable to save the issue: you must provide a title!");
-
-			try
-			{
-				var assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-				int? milestone = null;
-				if (Milestone != null) 
-					milestone = Milestone.Number;
-				var labels = Labels.Select(x => x.Name).ToArray();
-				var content = Content ?? string.Empty;
-
-                var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Subject, content, assignedTo, milestone, labels));
-                _createdIssueSubject.OnNext(data.Data);
-			}
-			catch (Exception e)
-			{
-                throw new Exception("Unable to save new issue! Please try again.", e);
-			}
+//            if (string.IsNullOrEmpty(Title))
+//                throw new Exception("Unable to save the issue: you must provide a title!");
+//
+//			try
+//			{
+//				var assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+//				int? milestone = null;
+//				if (Milestone != null) 
+//					milestone = Milestone.Number;
+//				var labels = Labels.Select(x => x.Name).ToArray();
+//				var content = Content ?? string.Empty;
+//
+//                var data = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Subject, content, assignedTo, milestone, labels));
+//                _createdIssueSubject.OnNext(data.Data);
+//			}
+//			catch (Exception e)
+//			{
+//                throw new Exception("Unable to save new issue! Please try again.", e);
+//			}
 		}
     }
 }

@@ -35,6 +35,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             ShowOwner = showOwner;
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
         }
+
+        internal RepositoryItemViewModel(Octokit.Repository repository, bool showOwner, Action<RepositoryItemViewModel> gotoCommand)
+            : this(repository.Name, repository.Owner.Login, repository.Owner.AvatarUrl, 
+                repository.Description, repository.StargazersCount, repository.ForksCount, showOwner, gotoCommand)
+        {
+        }
     }
 }
 

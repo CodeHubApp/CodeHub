@@ -18,8 +18,9 @@ namespace CodeHub.iOS.Views.Contents
             this.WhenAnyValue(x => x.ViewModel.ContentText).IsNotNull().Subscribe(x =>
                 LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
 
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand).IsNotNull().Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)

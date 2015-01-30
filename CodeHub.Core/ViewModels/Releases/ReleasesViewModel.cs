@@ -22,15 +22,16 @@ namespace CodeHub.Core.ViewModels.Releases
             var releases = new ReactiveList<Octokit.Release>();
             Releases = releases.CreateDerivedCollection(x => 
             {
-                var published = x.PublishedAt.HasValue ? x.PublishedAt.Value : x.CreatedAt;
-                var name = string.IsNullOrEmpty(x.Name) ? x.TagName : x.Name;
-                return new ReleaseItemViewModel(x.Id, name, published, _ => {
+                var releaseItem = new ReleaseItemViewModel(x);
+                releaseItem.GoToCommand.Subscribe(_ => {
                     var vm = this.CreateViewModel<ReleaseViewModel>();
                     vm.RepositoryName = RepositoryName;
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.ReleaseId = x.Id;
                     NavigateTo(vm);
                 });
+
+                return releaseItem;
             },
             x => !x.Draft);
 

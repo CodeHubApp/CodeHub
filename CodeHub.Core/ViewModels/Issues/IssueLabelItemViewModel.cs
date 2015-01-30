@@ -5,7 +5,7 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueLabelItemViewModel : ReactiveObject
+    public class IssueLabelItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }
 
@@ -13,11 +13,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public object Image { get; private set; }
 
-        private bool _selected;
-        public bool Selected
+        private bool _isSelected;
+        public bool IsSelected
         {
-            get { return _selected; }
-            internal set { this.RaiseAndSetIfChanged(ref _selected, value); }
+            get { return _isSelected; }
+            set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
         }
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
@@ -38,7 +38,8 @@ namespace CodeHub.Core.ViewModels.Issues
             Color = Color.FromArgb(byte.MaxValue, redB, greenB, blueB);
             Image = graphicService.CreateLabelImage(Color);
 
-            GoToCommand = ReactiveCommand.Create();
+            GoToCommand = ReactiveCommand.Create()
+                .WithSubscription(_ => IsSelected = !IsSelected);
         }
     }
 }

@@ -9,15 +9,73 @@ using Humanizer;
 using CodeHub.WebViews;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueView : BaseDialogViewController<IssueViewModel>
     {
+        private readonly StyledStringElement _milestoneElement;
+        private readonly StyledStringElement _assigneeElement;
+        private readonly StyledStringElement _labelsElement;
+
         public IssueView()
         {
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand).IsNotNull().Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.GoToAssigneesCommand)
+                .Switch()
+                .Subscribe(_ => ShowAssigneeSelector());
+
+            this.WhenAnyValue(x => x.ViewModel.GoToMilestonesCommand)
+                .Switch()
+                .Subscribe(_ => ShowMilestonesSelector());
+
+            this.WhenAnyValue(x => x.ViewModel.GoToLabelsCommand)
+                .Switch()
+                .Subscribe(_ => ShowLabelsSelector());
+
+            this.WhenAnyValue(x => x.ViewModel.Issue)
+                .IsNotNull()
+                .Subscribe(x => 
+                {
+                    HeaderView.Text = x.Title;
+                    HeaderView.ImageUri = x.User.AvatarUrl;
+
+                    if (x.UpdatedAt.HasValue)
+                        HeaderView.SubText = "Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize();
+                    else
+                        HeaderView.SubText = "Created " + x.CreatedAt.UtcDateTime.Humanize();
+                });
+
+            _milestoneElement = new StyledStringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _milestoneElement.Tapped += () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
+            this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
+                .Select(x => x == null ? "No Milestone" : x.Title)
+                .Subscribe(x => {
+                    _milestoneElement.Value = x;
+                    Root.Reload(_milestoneElement);
+                });
+
+            _assigneeElement = new StyledStringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Person, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _assigneeElement.Tapped += () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
+            this.WhenAnyValue(x => x.ViewModel.AssignedUser)
+                .Select(x => x == null ? "Unassigned" : x.Login)
+                .Subscribe(x => {
+                    _assigneeElement.Value = x;
+                    Root.Reload(_assigneeElement);
+                });
+
+            _labelsElement = new StyledStringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Tag, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
+            this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
+                .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x))
+                .Subscribe(x => {
+                    _labelsElement.Value = x;
+                    Root.Reload(_labelsElement);
+                });
         }
 
         public override void ViewDidLoad()
@@ -32,33 +90,11 @@ namespace CodeHub.iOS.Views.Issues
             var descriptionElement = new HtmlElement("description");
             descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
-            var milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-            milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
-            secDetails.Add(milestoneElement);
-
-            var assigneeElement = new StyledStringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) {Image = Images.Person, Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
-            secDetails.Add(assigneeElement);
-
-            var labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Images.Tag, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-            labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
-            secDetails.Add(labelsElement);
+            secDetails.Add(_milestoneElement);
+            secDetails.Add(_assigneeElement);
+            secDetails.Add(_labelsElement);
 
             var addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-
-            ViewModel.WhenAnyValue(x => x.Issue).Where(x => x != null).Subscribe(x =>
-            {
-                assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
-                milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
-                labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
-                HeaderView.Text = x.Title;
-                HeaderView.ImageUri = x.User.AvatarUrl;
-
-                if (x.UpdatedAt.HasValue)
-                    HeaderView.SubText = "Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize();
-                else
-                    HeaderView.SubText = "Created " + x.CreatedAt.UtcDateTime.Humanize();
-            });
 
             this.WhenViewModel(x => x.MarkdownDescription).Subscribe(x =>
             {
@@ -115,6 +151,33 @@ namespace CodeHub.iOS.Views.Issues
             Root.Reset(new Section(), secDetails, commentsSection);
         }
 
+        private void ShowAssigneeSelector()
+        {
+            var viewController = new IssueAssigneeView { Title = "Assignees" };
+            viewController.ViewModel = ViewModel.Assignees;
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
+            PresentViewController(new ThemedNavigationController(viewController), true, null);
+        }
+
+        private void ShowLabelsSelector()
+        {
+            var viewController = new IssueLabelsView { Title = "Labels" };
+            viewController.ViewModel = ViewModel.Labels;
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => {
+                ViewModel.Labels.SelectLabelsCommand.ExecuteIfCan();
+                viewController.DismissViewController(true, null);
+            });
+            PresentViewController(new ThemedNavigationController(viewController), true, null);
+        }
+
+        private void ShowMilestonesSelector()
+        {
+            var viewController = new IssueMilestonesView { Title = "Milestones" };
+            viewController.ViewModel = ViewModel.Milestones;
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
+            PresentViewController(new ThemedNavigationController(viewController), true, null);
+        }
+
         private static string CreateEventBody(Octokit.EventInfo eventInfo, string commitId)
         {
             var eventType = eventInfo.Event;
@@ -152,6 +215,7 @@ namespace CodeHub.iOS.Views.Issues
                 return u;
             }
         }
+
     }
 }
 

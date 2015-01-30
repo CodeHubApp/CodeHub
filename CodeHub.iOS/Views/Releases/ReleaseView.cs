@@ -17,7 +17,8 @@ namespace CodeHub.iOS.Views.Releases
             Web.ScalesPageToFit = true;
 
             this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyValue(x => x.ViewModel.ContentText).IsNotNull().Subscribe(contentText => 
             {
