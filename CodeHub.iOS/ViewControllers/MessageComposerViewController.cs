@@ -62,6 +62,9 @@ namespace CodeHub.iOS.ViewControllers
             get { return TextView.Text; }
             set
             {
+                if (string.Equals(Text, value))
+                    return;
+
                 TextView.Text = value;
                 TextView.SelectedRange = new NSRange(0, 0);
             }

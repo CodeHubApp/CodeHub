@@ -329,7 +329,6 @@
     <Compile Include="DialogElements\RootElement.cs" />
     <Compile Include="DialogElements\Section.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
-    <Compile Include="DialogElements\SplitElement.cs" />
     <Compile Include="DialogElements\StringElement.cs" />
     <Compile Include="DialogElements\TrueFalseElement.cs" />
     <Compile Include="DialogElements\WebElement.cs" />
@@ -372,6 +371,7 @@
     <Compile Include="Views\Issues\IssueOptionSelectorView.cs" />
     <Compile Include="OcticonExtensions.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
+    <Compile Include="Utilities\TableViewCellHeightCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -432,6 +432,9 @@
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.33.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.TTTAttributedLabel">
+      <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

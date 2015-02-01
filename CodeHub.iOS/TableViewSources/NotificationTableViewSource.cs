@@ -11,10 +11,11 @@ namespace CodeHub.iOS.TableViewSources
 {
     public class NotificationTableViewSource : ReactiveTableViewSource<NotificationItemViewModel>
     {
+        private static readonly nfloat _hintSize = 64f;
         private NotificationViewCell _usedForHeight;
 
         public NotificationTableViewSource(UITableView tableView)
-            : base(tableView)
+            : base(tableView, _hintSize)
         {
             tableView.RegisterClassForCellReuse(typeof(NotificationViewCell), NotificationViewCell.Key);
         }
@@ -35,7 +36,7 @@ namespace CodeHub.iOS.TableViewSources
         public void SetData(IEnumerable<NotificationGroupViewModel> collections)
         {
             Data = collections.Select(x => 
-                new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications, NotificationViewCell.Key, 44f)
+                new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications, NotificationViewCell.Key, (float)_hintSize)
                 {
                     Header = new TableSectionHeader(x.Name)
                 }).ToList();

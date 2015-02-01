@@ -14,25 +14,68 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class GistView : BaseDialogViewController<GistViewModel>
     {
+        private readonly SplitViewElement _splitRow1;
+        private readonly SplitViewElement _splitRow2;
+        private readonly StyledStringElement _ownerElement;
+
         public GistView()
         {
-            this.WhenViewModel(x => x.ShowMenuCommand).Subscribe(x =>
-                NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Action));
-
+            HeaderView.Image = Images.LoginUserUnknown;
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
-            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
-                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
-            Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
-                this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue).Subscribe(x => 
-                    HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)));
+            this.WhenViewModel(x => x.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand)
+                .Select(x => x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null)
+                .Subscribe(x => HeaderView.ImageButtonAction = x);
+
+            Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
+                .Switch()
+                .Select(x => x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)
+                .Subscribe(HeaderView.SetSubImage);
+
+            _splitRow1 = new SplitViewElement();
+            _splitRow1.Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
+            _splitRow1.Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
+
+            _splitRow2 = new SplitViewElement();
+            _splitRow2.Button1 = new SplitViewElement.SplitButton(Images.Pencil, string.Empty);
+            _splitRow2.Button2 = new SplitViewElement.SplitButton(Images.Star, string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
+
+            _ownerElement = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
+            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+
+            this.WhenAnyValue(x => x.ViewModel.IsStarred)
+                .Where(x => x.HasValue)
+                .Select(x => x.Value ? "Starred!" : "Unstarred")
+                .Subscribe(x => _splitRow2.Button2.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.Gist)
+                .IsNotNull()
+                .SubscribeSafe(x =>
+                {
+                    var publicGist = x.Public.HasValue && x.Public.Value;
+                    var revisionCount = x.History == null ? 0 : x.History.Count;
+
+                    _splitRow1.Button1.Text = publicGist ? "Public" : "Private";
+                    _splitRow1.Button1.Image = publicGist ? Images.Lock : Images.Lock;
+                    _splitRow1.Button2.Text = revisionCount + " Revisions";
+
+                    var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
+                    if (delta.Days <= 0)
+                        _splitRow2.Button1.Text = "Created Today";
+                    else
+                        _splitRow2.Button1.Text = string.Format("{0} Days Old", delta.Days);
+                });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.Image = Images.LoginUserUnknown;
 
             var headerSection = new Section();
             var filesSection = new Section("Files");
@@ -48,63 +91,37 @@ namespace CodeHub.iOS.Views.Gists
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
 
-            var detailsSection = new Section();
-            var splitElement1 = new SplitElement();
-            splitElement1.Button1 = new SplitElement.SplitButton(Images.Lock, string.Empty);
-            splitElement1.Button2 = new SplitElement.SplitButton(Images.Package, string.Empty);
-            detailsSection.Add(splitElement1);
-
-            var splitElement2 = new SplitElement();
-            splitElement2.Button1 = new SplitElement.SplitButton(Images.Calendar, string.Empty);
-            splitElement2.Button2 = new SplitElement.SplitButton(Images.Star, string.Empty, ViewModel.ToggleStarCommand.ExecuteIfCan);
-            detailsSection.Add(splitElement2);
-
-            var owner = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
-            owner.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+            var detailsSection = new Section { _splitRow1, _splitRow2 };
 
             Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
-            ViewModel.WhenAnyValue(x => x.Gist).IsNotNull().Select(x => x.Owner).Subscribe(x =>
-            {
-                if (x == null)
-                    detailsSection.Remove(owner);
-                else if (x != null && !detailsSection.Contains(owner))
-                    detailsSection.Add(owner);
-            });
-
-            updatedGistObservable.SubscribeSafe(x =>
-            {
-                var publicGist = x.Public.HasValue && x.Public.Value;
-                var revisionCount = x.History == null ? 0 : x.History.Count;
-
-                splitElement1.Button1.Text = publicGist ? "Public" : "Private";
-                splitElement1.Button1.Image = publicGist ? Images.Lock : Images.Lock;
-                splitElement1.Button2.Text = revisionCount + " Revisions";
-                splitElement2.Button1.Text = x.UpdatedAt.ToLocalTime().ToString("MM/dd/yy");
-            });
+            ViewModel.WhenAnyValue(x => x.Gist)
+                .IsNotNull()
+                .Select(x => x.Owner)
+                .Subscribe(x =>
+                {
+                    if (x == null)
+                        detailsSection.Remove(_ownerElement);
+                    else if (x != null && !detailsSection.Contains(_ownerElement))
+                        detailsSection.Add(_ownerElement);
+                });
 
             updatedGistObservable.SubscribeSafe(x =>
             {
                 if (x.Owner == null)
                 {
-                    owner.Value = "Anonymous";
-                    owner.Accessory = UITableViewCellAccessory.None;
+                    _ownerElement.Value = "Anonymous";
+                    _ownerElement.Accessory = UITableViewCellAccessory.None;
                 }
                 else
                 {
-                    owner.Value = x.Owner.Login;
-                    owner.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+                    _ownerElement.Value = x.Owner.Login;
+                    _ownerElement.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                 }
 
-                Root.Reload(owner);
-            });
-
-            ViewModel.WhenAnyValue(x => x.IsStarred).Where(x => x.HasValue).Subscribe(x =>
-            {
-                splitElement2.Button2.Text = x.Value ? "Starred!" : "Unstarred";
-                splitElement2.Button2.Image = x.Value ? Images.Star : Images.Star;
+                Root.Reload(_ownerElement);
             });
 
             updatedGistObservable.SubscribeSafe(x =>

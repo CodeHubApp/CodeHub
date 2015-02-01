@@ -11,7 +11,7 @@ namespace CodeHub.iOS.TableViewSources
     public class CommitedFilesTableViewSource : ReactiveTableViewSource<CommitedFileItemViewModel>
     {
         public CommitedFilesTableViewSource(UITableView tableView)
-            : base(tableView)
+            : base(tableView, 44f)
         {
             tableView.RegisterClassForCellReuse(typeof(CommitedFileTableViewCell), CommitedFileTableViewCell.Key);
         }

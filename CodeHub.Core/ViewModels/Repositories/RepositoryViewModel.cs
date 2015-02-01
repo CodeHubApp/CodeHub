@@ -8,7 +8,6 @@ using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Users;
-using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -18,6 +17,7 @@ using CodeHub.Core.ViewModels.Releases;
 using System.Reactive;
 using CodeHub.Core.ViewModels.Contents;
 using CodeHub.Core.Factories;
+using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

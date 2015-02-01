@@ -1,4 +1,4 @@
-using CodeHub.Core.ViewModels.Events;
+using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.iOS.Views.Activity
 {

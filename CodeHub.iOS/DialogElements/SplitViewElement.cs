@@ -129,21 +129,13 @@ namespace CodeHub.iOS.DialogElements
             public string Text
             {
                 get { return _text.Text; }
-                set 
-                { 
-                    _text.Text = value; 
-                    this.SetNeedsDisplay();
-                }
+                set { _text.Text = value; }
             }
 
             public UIImage Image
             {
                 get { return _image.Image; }
-                set
-                {
-                    _image.Image = value;
-                    _image.SetNeedsDisplay();
-                }
+                set { _image.Image = value; }
             }
 
             public UIColor ImageTintColor

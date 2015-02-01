@@ -1,9 +1,12 @@
+using System;
 using UIKit;
 using CodeHub.Core.Services;
 using CodeHub.WebViews;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -15,6 +18,15 @@ namespace CodeHub.iOS.Views.App
         protected MarkdownComposerView(IMarkdownService markdownService)
         {
             TextView.Font = UIFont.SystemFontOfSize(16f);
+            TextView.Changed += (sender, e) => ViewModel.Text = TextView.Text;
+
+            this.WhenAnyValue(x => x.ViewModel.Text)
+                .Subscribe(x => Text = x);
+
+
+            this.WhenAnyValue(x => x.ViewModel.PostToImgurCommand)
+                .Select(x => x == null ? null : new MarkdownAccessoryView(TextView, ViewModel.PostToImgurCommand))
+                .Subscribe(x => TextView.InputAccessoryView = x);
 
             _viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
             _viewSegment.SelectedSegment = 0;
@@ -45,12 +57,6 @@ namespace CodeHub.iOS.Views.App
                     _previewView.LoadHtmlString(markdownView.GenerateString(), null);
                 }
             };
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            TextView.InputAccessoryView = new MarkdownAccessoryView(TextView, ViewModel.PostToImgurCommand);
         }
     }
 }

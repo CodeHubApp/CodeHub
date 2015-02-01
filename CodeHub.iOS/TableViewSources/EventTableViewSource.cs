@@ -1,62 +1,42 @@
 using ReactiveUI;
 using CodeHub.iOS.Cells;
-using CodeHub.Core.ViewModels.Events;
 using System;
-using CoreGraphics;
 using Foundation;
+using CodeHub.Core.ViewModels.Activity;
+using UIKit;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.TableViewSources
 {
     public class EventTableViewSource : ReactiveTableViewSource<EventItemViewModel>
     {
-        private NewsCellView _usedForHeight;
+        private readonly TableViewCellHeightCache<NewsCellView, EventItemViewModel> _cache;
 
-        public EventTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
-            : base(tableView, collection,  NewsCellView.Key, 60.0f)
+        public EventTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
+            : base(tableView, collection,  NewsCellView.Key, 100f)
         {
+            _cache = new TableViewCellHeightCache<NewsCellView, EventItemViewModel>(100f, new Lazy<NewsCellView>(NewsCellView.Create));
             tableView.SeparatorInset = NewsCellView.EdgeInsets;
             tableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
         }
 
-        private static nfloat CharacterHeight 
-        {
-            get { return "A".MonoStringHeight(NewsCellView.BodyFont, 1000); }
-        }
-
-        public override nfloat GetHeightForRow(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            if (_usedForHeight == null)
-                _usedForHeight = (NewsCellView)tableView.DequeueReusableCell(NewsCellView.Key);
-
-            var item = ItemAt(indexPath) as EventItemViewModel;
-            if (item != null)
-            {
-                var s = 6f + NewsCellView.TimeFont.LineHeight + 5f + (NewsCellView.HeaderFont.LineHeight * 2) + 4f + 7f;
-                _usedForHeight.ViewModel = item;
-
-                if (_usedForHeight.BodyString.Length == 0)
-                    return s;
-
-                var rec = _usedForHeight.BodyString.GetBoundingRect(new CGSize(tableView.Bounds.Width - 56, 10000), NSStringDrawingOptions.UsesLineFragmentOrigin | NSStringDrawingOptions.UsesFontLeading, null);
-                var height = rec.Height;
-
-                if (item.BodyBlocks.Count == 1 && height > (CharacterHeight * 4))
-                    height = CharacterHeight * 4;
-
-                var descCalc = s + height;
-                var ret = ((int)Math.Ceiling(descCalc)) + 1f + 8f;
-                return ret;
-            }
-
-            return base.GetHeightForRow(tableView, indexPath);
-        }
-
-        public override void RowSelected(UIKit.UITableView tableView, NSIndexPath indexPath)
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
             base.RowSelected(tableView, indexPath);
             var item = ItemAt(indexPath) as EventItemViewModel;
             if (item != null)
                 item.GoToCommand.ExecuteIfCan();
+        }
+
+        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
+        {
+            return _cache[indexPath];
+        }
+
+        public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            var item = ItemAt(indexPath) as EventItemViewModel;
+            return item != null ? _cache.GenerateHeight(tableView, item, indexPath) : base.GetHeightForRow(tableView, indexPath);
         }
     }
 }

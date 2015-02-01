@@ -1,12 +1,12 @@
 using System;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
+using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {

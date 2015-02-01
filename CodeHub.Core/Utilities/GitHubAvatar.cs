@@ -6,6 +6,11 @@ namespace CodeHub.Core.Utilities
     {
         private readonly string _avatarUrl;
 
+        public static GitHubAvatar Empty
+        {
+            get { return new GitHubAvatar(null); }
+        }
+
         public GitHubAvatar(string avatarUrl)
         {
             _avatarUrl = avatarUrl;

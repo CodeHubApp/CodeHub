@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestView : BaseDialogViewController<PullRequestViewModel>
     {
-        private readonly SplitElement _split1, _split2;
+        private readonly SplitViewElement _split1, _split2;
         private readonly HtmlElement _descriptionElement;
         private readonly HtmlElement _commentsElement;
         private readonly StyledStringElement _milestoneElement;
@@ -40,16 +40,16 @@ namespace CodeHub.iOS.Views.PullRequests
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
             _addCommentElement.Tapped += AddCommentTapped;
 
-            _split1 = new SplitElement
+            _split1 = new SplitViewElement
             {
-                Button1 = new SplitElement.SplitButton(Images.Gear, string.Empty),
-                Button2 = new SplitElement.SplitButton(Images.Gear, string.Empty)
+                Button1 = new SplitViewElement.SplitButton(Images.Gear, string.Empty),
+                Button2 = new SplitViewElement.SplitButton(Images.Gear, string.Empty)
             };
 
-            _split2 = new SplitElement
+            _split2 = new SplitViewElement
             {
-                Button1 = new SplitElement.SplitButton(Images.Gear, string.Empty),
-                Button2 = new SplitElement.SplitButton(Images.Gear, string.Empty)
+                Button1 = new SplitViewElement.SplitButton(Images.Gear, string.Empty),
+                Button2 = new SplitViewElement.SplitButton(Images.Gear, string.Empty)
             };
 
             _commitsElement = new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit);

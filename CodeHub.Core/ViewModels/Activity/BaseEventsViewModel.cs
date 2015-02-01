@@ -14,8 +14,9 @@ using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
 using System.Reactive;
+using System.Linq;
 
-namespace CodeHub.Core.ViewModels.Events
+namespace CodeHub.Core.ViewModels.Activity
 {
     public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel
     {
@@ -186,7 +187,9 @@ namespace CodeHub.Core.ViewModels.Events
                     headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 }
 
-                bodyBlocks.Add(new TextBlock(commitCommentEvent.Comment.Body));
+                var desc = CreateShortMessage(commitCommentEvent.Comment.Body);
+                if (desc != null)
+                    bodyBlocks.Add(new TextBlock(desc));
             }
             /*
              * CREATE EVENT
@@ -315,7 +318,10 @@ namespace CodeHub.Core.ViewModels.Events
 					headerBlocks.Add(new TextBlock(" forked Gist #"));
 
                 headerBlocks.Add(new AnchorBlock(gistEvent.Gist.Id, eventAction));
-                bodyBlocks.Add(new TextBlock(gistEvent.Gist.Description.Replace('\n', ' ').Replace("\r", "").Trim()));
+
+                var desc = CreateShortMessage(gistEvent.Gist.Description);
+                if (desc != null)
+                    bodyBlocks.Add(new TextBlock(desc));
             }
             /*
              * GOLLUM EVENT (WIKI)
@@ -328,11 +334,16 @@ namespace CodeHub.Core.ViewModels.Events
 
 				if (gollumEvent != null && gollumEvent.Pages != null)
 				{
-					foreach (var page in gollumEvent.Pages)
+                    for (var i = 0; i < gollumEvent.Pages.Count; i++)
 					{
-						var p = page;
-						bodyBlocks.Add(new AnchorBlock(page.PageName, () => _gotoUrlCommand(p.HtmlUrl)));
-						bodyBlocks.Add(new TextBlock(" - " + page.Action + "\n"));
+                        var p = gollumEvent.Pages[i];
+						bodyBlocks.Add(new AnchorBlock(p.PageName, () => _gotoUrlCommand(p.HtmlUrl)));
+
+                        var newLine = string.Empty;
+                        if (i != gollumEvent.Pages.Count - 1)
+                            newLine = Environment.NewLine;
+
+                        bodyBlocks.Add(new TextBlock(" - " + p.Action + newLine));
 					}
 				}
             }
@@ -358,7 +369,9 @@ namespace CodeHub.Core.ViewModels.Events
                 headerBlocks.Add(new TextBlock(" in "));
                 headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
 
-                bodyBlocks.Add(new TextBlock(commentEvent.Comment.Body.Replace('\n', ' ').Replace("\r", "").Trim()));
+                var desc = CreateShortMessage(commentEvent.Comment.Body);
+                if (desc != null)
+                    bodyBlocks.Add(new TextBlock(desc));
             }
             /*
              * ISSUES EVENT
@@ -378,7 +391,7 @@ namespace CodeHub.Core.ViewModels.Events
                 headerBlocks.Add(new AnchorBlock("#" + issueEvent.Issue.Number, eventAction));
                 headerBlocks.Add(new TextBlock(" in "));
                 headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
-                bodyBlocks.Add(new TextBlock(issueEvent.Issue.Title.Trim()));
+                bodyBlocks.Add(new TextBlock(issueEvent.Issue.Title));
             }
             /*
              * MEMBER EVENT
@@ -450,7 +463,9 @@ namespace CodeHub.Core.ViewModels.Events
                     headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 }
 
-                bodyBlocks.Add(new TextBlock(commentEvent.Comment.Body.Replace('\n', ' ').Replace("\r", "").Trim()));
+                var desc = CreateShortMessage(commentEvent.Comment.Body);
+                if (desc != null)
+                    bodyBlocks.Add(new TextBlock(desc));
             }
             /*
              * PUSH EVENT
@@ -481,21 +496,24 @@ namespace CodeHub.Core.ViewModels.Events
 
 				if (pushEvent.Commits != null)
 				{
-					foreach (var commit in pushEvent.Commits)
+                    for (var i = 0; i < pushEvent.Commits.Count; i++)
 					{
-						var desc = (commit.Message ?? "");
-						var sha = commit.Sha;
-						var firstNewLine = desc.IndexOf("\n");
-						if (firstNewLine <= 0)
-							firstNewLine = desc.Length;
-
-						desc = desc.Substring(0, firstNewLine);
+                        var commit = pushEvent.Commits[i];
+                        var sha = commit.Sha;
+                        var desc = CreateShortMessage(commit.Message ?? "");
+						
 						var shortSha = commit.Sha;
 						if (shortSha.Length > 6)
 							shortSha = shortSha.Substring(0, 6);
 
+                        var newLine = string.Empty;
+                        if (i != pushEvent.Commits.Count - 1)
+                            newLine = Environment.NewLine;
+
 						bodyBlocks.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, sha)));
-						bodyBlocks.Add(new TextBlock(" - " + desc + "\n"));
+
+                        if (desc != null)
+                            bodyBlocks.Add(new TextBlock(" - " + desc + newLine));
 					}
 				}
             }
@@ -535,6 +553,21 @@ namespace CodeHub.Core.ViewModels.Events
             return new EventItemViewModel(eventModel, headerBlocks, bodyBlocks, eventAction);
         }
 
+        private static string CreateShortMessage(string message)
+        {
+            if (message == null) return null;
+            var firstBreak = 0;
+            var firstNewLine = message.IndexOf("\n", StringComparison.Ordinal);
+            var firstLineReturn = message.IndexOf("\r", StringComparison.Ordinal);
+            if (firstNewLine > 0 && firstLineReturn > 0)
+                firstBreak = Math.Min(firstNewLine, firstLineReturn);
+            else if (firstNewLine > 0 && firstLineReturn <= 0)
+                firstBreak = firstNewLine;
+            else if (firstNewLine <= 0 && firstLineReturn > 0)
+                firstBreak = firstLineReturn;
+            return firstBreak > 0 ? message.Substring(0, firstBreak) : message;
+        }
+
         private TextBlock CreateRepositoryTextBlock(EventModel.RepoModel repoModel)
         {
             //Most likely indicates a deleted repository
@@ -551,42 +584,6 @@ namespace CodeHub.Core.ViewModels.Events
 //            var repoName = repoSplit[1];
 			return new AnchorBlock(repoModel.Name, () => _gotoRepositoryCommand.Execute(repoModel));
         }
-//
-//        private interface IEventTypeHandler
-//        {
-//            Type EventType { get; }
-//
-//            EventItemViewModel Handle(EventModel e);
-//        }
-//
-//        private abstract class EventTypeHandler<T> : IEventTypeHandler
-//        {
-//            public EventItemViewModel Handle(EventModel e)
-//            {
-//                return Handle(e, e.PayloadObject as T);
-//            }
-//
-//            public Type EventType { get { return typeof(T); } }
-//
-//            protected abstract EventItemViewModel Handle(EventModel eventModel, T payload);
-//        }
-//
-//        private class WatchEventTypeHandler : EventTypeHandler<EventModel.WatchEvent>
-//        {
-//            protected override EventItemViewModel Handle(EventModel eventModel, EventModel.WatchEvent payload)
-//            {
-//                Action eventAction = null;
-//                var headerBlocks = new List<TextBlock>();
-//                var bodyBlocks = new List<TextBlock>();
-//                var username = eventModel.Actor != null ? eventModel.Actor.Login : null;
-//
-//                headerBlocks.Add(new AnchorBlock(username, () => GoToUser(username)));
-//                headerBlocks.Add(new TextBlock(payload.Action.Equals("started") ? " starred " : " unstarred "));
-//                headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
-//                return new EventItemViewModel(eventModel, headerBlocks, bodyBlocks);
-//            }
-//        }
-
             
         public class TextBlock
         {

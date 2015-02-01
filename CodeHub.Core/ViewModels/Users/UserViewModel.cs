@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.Core.ViewModels.Repositories;
@@ -9,6 +8,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.Factories;
+using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.Core.ViewModels.Users
 {

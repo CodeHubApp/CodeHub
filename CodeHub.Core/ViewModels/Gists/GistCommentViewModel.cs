@@ -19,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Gists
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
-                t => applicationService.GitHubClient.Gist.Comment.Create(int.Parse(Id), Text));
+                async t => await applicationService.GitHubClient.Gist.Comment.Create(int.Parse(Id), Text));
             SaveCommand.Subscribe(x => Dismiss());
         }
     }

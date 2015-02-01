@@ -6,7 +6,6 @@ using ReactiveUI;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeHub.Core.Utilities;
-using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Activity;

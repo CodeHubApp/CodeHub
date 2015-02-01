@@ -70,6 +70,8 @@ namespace CodeHub.iOS.Cells
             {
                 _numberView.RemoveFromSuperview();
             }
+
+            SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.Left, 0, 0);
         }
     }
 }

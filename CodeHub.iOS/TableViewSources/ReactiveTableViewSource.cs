@@ -24,10 +24,12 @@ namespace CodeHub.iOS.TableViewSources
             get { return _isEmptySubject; }
         }
 
-        protected ReactiveTableViewSource(UITableView tableView, nfloat? sizeHint = null)
+        protected ReactiveTableViewSource(UITableView tableView, nfloat sizeHint)
             : base(tableView)
         {
-            _estimatedHeight = sizeHint ?? UITableView.AutomaticDimension;
+            _estimatedHeight = sizeHint;
+            tableView.RowHeight = _estimatedHeight;
+            tableView.EstimatedRowHeight = _estimatedHeight;
             this.WhenAnyValue(x => x.Data).IsNotNull().Select(x => x.Count == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
@@ -36,6 +38,8 @@ namespace CodeHub.iOS.TableViewSources
             : base(tableView, collection, cellKey, (float)sizeHint, initializeCellAction)
         {
             _estimatedHeight = sizeHint;
+            tableView.RowHeight = _estimatedHeight;
+            tableView.EstimatedRowHeight = _estimatedHeight;
             collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
         }
 

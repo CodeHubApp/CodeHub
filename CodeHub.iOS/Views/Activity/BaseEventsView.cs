@@ -1,8 +1,8 @@
-using CodeHub.Core.ViewModels.Events;
-using CodeHub.iOS.TableViewSources;
-using UIKit;
-using CodeHub.iOS.ViewComponents;
 using System;
+using CodeHub.Core.ViewModels.Activity;
+using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.ViewComponents;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Activity
 {

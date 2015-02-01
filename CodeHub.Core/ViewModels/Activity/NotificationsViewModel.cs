@@ -10,7 +10,6 @@ using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
-using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
@@ -68,14 +67,6 @@ namespace CodeHub.Core.ViewModels.Activity
                 }
             });
 
-            var readRepositories = new Func<string, Task>(async repo =>
-            {
-                if (repo == null) return;
-                var repoId = new RepositoryIdentifier(repo);
-                await applicationService.GitHubClient.Notification.MarkAsReadForRepository(repoId.Owner, repoId.Name);
-                _notifications.RemoveAll(_notifications.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
-            });
-
             _notifications.Changed.Select(_ => Unit.Default)
                 .Merge(_notifications.ItemChanged.Select(_ => Unit.Default))
                 .Subscribe(_ =>
@@ -84,7 +75,7 @@ namespace CodeHub.Core.ViewModels.Activity
                     {
                         var items = x.Select(y => new NotificationItemViewModel(y, GoToNotification));
                         var notifications = new ReactiveList<NotificationItemViewModel>(items);
-                        return new NotificationGroupViewModel(x.Key, notifications, y => readRepositories(y.Name));
+                        return new NotificationGroupViewModel(x.Key, notifications);
                     }).ToList();
                 });
 

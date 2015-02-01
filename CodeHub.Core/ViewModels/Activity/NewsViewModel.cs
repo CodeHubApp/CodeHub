@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels.Events
+namespace CodeHub.Core.ViewModels.Activity
 {
     public class NewsViewModel : BaseEventsViewModel
     {
