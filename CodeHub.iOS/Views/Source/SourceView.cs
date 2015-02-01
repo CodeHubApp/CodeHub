@@ -6,8 +6,8 @@ namespace CodeHub.iOS.Views.Source
 {
 	public class SourceView : FileSourceView<SourceViewModel>
     {
-        public SourceView(INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogFactory)
-            : base(networkActivityService, alertDialogFactory)
+        public SourceView(IAlertDialogFactory alertDialogFactory)
+            : base(alertDialogFactory)
         {
         }
     }

@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         public PullRequestTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<PullRequestItemViewModel> collection) 
             : base(tableView, collection,  PullRequestCellView.Key, 60.0f)
         {
-            _cache = new TableViewCellHeightCache<PullRequestCellView, PullRequestItemViewModel>(60f, new Lazy<PullRequestCellView>(PullRequestCellView.Create));
+            _cache = new TableViewCellHeightCache<PullRequestCellView, PullRequestItemViewModel>(60f, PullRequestCellView.Create);
             tableView.RegisterNibForCellReuse(PullRequestCellView.Nib, PullRequestCellView.Key);
         }
 

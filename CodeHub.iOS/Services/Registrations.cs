@@ -14,8 +14,7 @@ namespace CodeHub.iOS.Services
             resolverToUse.RegisterLazySingleton(() => new MarkdownService(), typeof(IMarkdownService));
             resolverToUse.RegisterLazySingleton(() => new ErrorService(), typeof(IErrorService));
             resolverToUse.RegisterLazySingleton(() => new ServiceConstructor(), typeof(IServiceConstructor));
-            resolverToUse.RegisterLazySingleton(() => new NetworkActivityService(), typeof(INetworkActivityService));
-            resolverToUse.RegisterLazySingleton(() => new ShareService(), typeof(IShareService));
+            resolverToUse.RegisterLazySingleton(() => NetworkActivityService.Instance, typeof(INetworkActivityService));
             resolverToUse.RegisterLazySingleton(() => new FilesystemService(), typeof(IFilesystemService));
             resolverToUse.RegisterLazySingleton(() => new EnvironmentalService(), typeof(IEnvironmentalService));
             resolverToUse.RegisterLazySingleton(() => new UrlRouterService(resolverToUse.GetService<IAccountsService>()), typeof(IUrlRouterService));

@@ -35,7 +35,7 @@ namespace CodeHub.iOS.Views.Source
             var deletions = _split.AddButton("Deletions", "-");
             var parents = _split.AddButton("Parents", "-");
 
-            var commentsElement = new WebElement("comments");
+            var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
             var headerSection = new Section { _split };

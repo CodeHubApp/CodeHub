@@ -197,7 +197,6 @@
     <Compile Include="Services\IJavascriptService.cs" />
     <Compile Include="Services\INetworkActivityService.cs" />
     <Compile Include="Services\IServiceConstructor.cs" />
-    <Compile Include="Services\IShareService.cs" />
     <Compile Include="Services\ITransitionOrchestrationService.cs" />
     <Compile Include="Services\IUrlRouterService.cs" />
     <Compile Include="Services\IViewModelViewService.cs" />

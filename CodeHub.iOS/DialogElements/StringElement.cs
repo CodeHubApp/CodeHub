@@ -1,7 +1,6 @@
 using System;
 using UIKit;
 using Foundation;
-using CoreGraphics;
 using SDWebImage;
 using ReactiveUI;
 
@@ -11,8 +10,20 @@ namespace CodeHub.iOS.DialogElements
     {
         private static NSString Key = new NSString("StringElement");
         public UITextAlignment Alignment = UITextAlignment.Left;
-        public string Value;
+        public string _value;
         public event Action Tapped;
+
+        public string Value
+        {
+            get { return _value; }
+            set
+            {
+                _value = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.DetailTextLabel.Text = value ?? string.Empty;
+            }
+        }
 
         public StringElement (string caption)
             : this(caption, null)

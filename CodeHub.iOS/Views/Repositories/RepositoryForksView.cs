@@ -7,7 +7,7 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryForksView : BaseRepositoriesView<RepositoryForksViewModel>
     {
-        protected RepositoryForksView()
+        public RepositoryForksView()
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.RepoForked.ToImage(64f), "There are no forks."));

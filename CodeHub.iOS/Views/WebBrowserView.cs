@@ -3,13 +3,12 @@ using UIKit;
 using Foundation;
 using ReactiveUI;
 using CodeHub.Core.ViewModels;
-using CodeHub.Core.Services;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views
 {
     public class WebBrowserView : BaseViewController<WebBrowserViewModel>
     {
-        private readonly INetworkActivityService _networkActivityService;
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;
         protected UIBarButtonItem ForwardButton;
@@ -32,10 +31,9 @@ namespace CodeHub.iOS.Views
             Web.GoForward();
         }
 
-        public WebBrowserView(INetworkActivityService networkActivityService)
+        public WebBrowserView()
             : this(true, true)
         {
-            _networkActivityService = networkActivityService;
         }
 
         public WebBrowserView(bool navigationToolbar, bool showPageAsTitle = false)
@@ -82,21 +80,21 @@ namespace CodeHub.iOS.Views
 
         protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
         {
-            _networkActivityService.PopNetworkActive();
+            NetworkActivityService.Instance.PopNetworkActive();
             if (RefreshButton != null)
                 RefreshButton.Enabled = true;
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            _networkActivityService.PushNetworkActive();
+            NetworkActivityService.Instance.PushNetworkActive();
             if (RefreshButton != null)
                 RefreshButton.Enabled = false;
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            _networkActivityService.PopNetworkActive();
+            NetworkActivityService.Instance.PopNetworkActive();
             if (BackButton != null)
             {
                 BackButton.Enabled = Web.CanGoBack;

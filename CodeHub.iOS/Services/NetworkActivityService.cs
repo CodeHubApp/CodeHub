@@ -7,14 +7,19 @@ namespace CodeHub.iOS.Services
 {
     public class NetworkActivityService : INetworkActivityService
     {
+        private static readonly Lazy<NetworkActivityService> _instance = new Lazy<NetworkActivityService>(() => new NetworkActivityService());
         private static UIApplication MainApp = UIApplication.SharedApplication;
-
-        // Since we are a multithreaded application and we could have many
-        // different outgoing network connections (api.twitter, images,
-        // searches) we need a centralized API to keep the network visibility
-        // indicator state
         static readonly object NetworkLock = new object();
         static int _active;
+
+        public static NetworkActivityService Instance
+        {
+            get { return _instance.Value; }
+        }
+
+        private NetworkActivityService()
+        {
+        }
 
         public void PushNetworkActive()
         {

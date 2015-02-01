@@ -22,14 +22,14 @@ namespace CodeHub.iOS.Factories
             return new PickerMenu();
         }
 
-        public Task ShareUrl(string url)
+        public Task ShareUrl(Uri uri)
         {
-            var item = new NSUrl(url);
+            var item = new NSUrl(uri.AbsoluteUri);
             var activityItems = new NSObject[] { item };
             UIActivity[] applicationActivities = null;
             var activityController = new UIActivityViewController (activityItems, applicationActivities);
-            var topViewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
-            return topViewController.PresentViewControllerAsync(activityController, true);
+            var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+            return appDelegate.Window.RootViewController.PresentViewControllerAsync(activityController, true);
         }
 
         public void SendToPasteBoard(string str)

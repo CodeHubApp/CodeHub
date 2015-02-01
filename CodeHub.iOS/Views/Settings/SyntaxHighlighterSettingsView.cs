@@ -21,8 +21,7 @@ namespace CodeHub.iOS.Views.Settings
         private readonly UIPickerView _pickerView = new UIPickerView();
         private readonly IAlertDialogFactory _alertDialogFactory;
 
-        public SyntaxHighlighterSettingsView(INetworkActivityService networkActivity, IAlertDialogFactory alertDialogFactory)
-            : base(networkActivity)
+        public SyntaxHighlighterSettingsView(IAlertDialogFactory alertDialogFactory)
         {
             _alertDialogFactory = alertDialogFactory;
             _pickerView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;

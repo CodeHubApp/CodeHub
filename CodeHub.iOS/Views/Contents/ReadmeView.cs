@@ -10,8 +10,7 @@ namespace CodeHub.iOS.Views.Contents
 {
     public class ReadmeView : BaseWebView<ReadmeViewModel>
     {
-        public ReadmeView(INetworkActivityService networkActivityService)
-            : base(networkActivityService)
+        public ReadmeView()
         {
             Web.ScalesPageToFit = true;
 

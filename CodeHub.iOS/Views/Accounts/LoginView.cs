@@ -14,8 +14,7 @@ namespace CodeHub.iOS.Views.Accounts
     {
         private readonly IAlertDialogFactory _alertDialogService;
 
-        public LoginView(IAlertDialogFactory alertDialogService, INetworkActivityService networkActivityService)
-            : base(networkActivityService)
+        public LoginView(IAlertDialogFactory alertDialogService)
         {
             _alertDialogService = alertDialogService;
 

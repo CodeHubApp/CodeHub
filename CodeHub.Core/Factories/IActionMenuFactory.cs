@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 namespace CodeHub.Core.Factories
 {
@@ -10,7 +11,7 @@ namespace CodeHub.Core.Factories
 
         IPickerMenu CreatePicker();
 
-        Task ShareUrl(string url);
+        Task ShareUrl(Uri uri);
 
         void SendToPasteBoard(string str);
     }
@@ -29,6 +30,14 @@ namespace CodeHub.Core.Factories
         int SelectedOption { get; set; }
 
         Task<int> Show();
+    }
+
+    public static class ActionMenuFactoryExtensions
+    {
+        public static Task ShareUrl(this IActionMenuFactory @this, string uri)
+        {
+            return @this.ShareUrl(new Uri(uri));
+        }
     }
 }
 

@@ -36,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ReleaseViewModel(IApplicationService applicationService, IShareService shareService, 
+        public ReleaseViewModel(IApplicationService applicationService,
             IUrlRouterService urlRouterService, IActionMenuFactory actionMenuService)
         {
             this.WhenAnyValue(x => x.ReleaseModel)
@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Releases
                 .Subscribe(x => Title = x);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(ReleaseModel.HtmlUrl)));
+            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(ReleaseModel.HtmlUrl));
 
             var gotoUrlCommand = new Action<string>(x =>
             {

@@ -87,7 +87,7 @@ namespace CodeHub.iOS.Views.Gists
             headerSection.Add(split);
 
             var commentsSection = new Section("Comments") { FooterView = new TableFooterButton("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan) };
-            var commentsElement = new WebElement("comments");
+            var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
 

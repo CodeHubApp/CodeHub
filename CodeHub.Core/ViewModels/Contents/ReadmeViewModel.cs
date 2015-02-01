@@ -39,14 +39,14 @@ namespace CodeHub.Core.ViewModels.Contents
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
         public ReadmeViewModel(IApplicationService applicationService, 
-            IShareService shareService, IActionMenuFactory actionMenuService)
+            IActionMenuFactory actionMenuService)
         {
             Title = "Readme";
 
             var nonNullContentModel = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(nonNullContentModel);
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(ContentModel.HtmlUrl)));
+            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(ContentModel.HtmlUrl));
 
             var showWebBrowser = new Action<string>(x =>
             {

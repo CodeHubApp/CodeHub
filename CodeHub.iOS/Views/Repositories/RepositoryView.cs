@@ -17,6 +17,8 @@ namespace CodeHub.iOS.Views.Repositories
 
         public RepositoryView()
         {
+            HeaderView.Image = Images.LoginUserUnknown;
+
             _sourceSection = new Section
             {
                 new DialogStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit),
@@ -33,6 +35,18 @@ namespace CodeHub.iOS.Views.Repositories
             this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
                 HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
+            _splitElements[0] = new SplitViewElement();
+            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
+            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
+
+            _splitElements[1] = new SplitViewElement();
+            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Images.IssueOpened, string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
+            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Images.Organization, string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
+
+            _splitElements[2] = new SplitViewElement();
+            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
+            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
+
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
                 .Switch()
@@ -41,16 +55,46 @@ namespace CodeHub.iOS.Views.Repositories
                 .Switch()
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
 
+            this.WhenAnyValue(x => x.ViewModel.RepositoryName)
+                .Subscribe(x => HeaderView.Text = x);
+
             this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.Branches)
+                .SubscribeSafe(x =>
+                {
+                    if (x == null)
+                        _splitElements[2].Button2.Text = "- Branches";
+                    else
+                        _splitElements[2].Button2.Text = (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches");
+                });
+
+            this.WhenAnyValue(x => x.ViewModel.Contributors)
+                .SubscribeSafe(x =>
+                {
+                    if (x == null)
+                        _splitElements[1].Button2.Text = "- Contributors";
+                    else
+                        _splitElements[1].Button2.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors");
+                });
+
+
+            this.WhenAnyValue(x => x.ViewModel.Releases)
+                .SubscribeSafe(x =>
+                {
+                    if (x == null)
+                        _splitElements[2].Button1.Text = "- Releases";
+                    else
+                        _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases");
+                });
+
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.Image = Images.LoginUserUnknown;
 
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
@@ -61,18 +105,6 @@ namespace CodeHub.iOS.Views.Repositories
             // Not very efficient but it'll work for now.
             ViewModel.WhenAnyValue(x => x.Readme).IsNotNull()
                 .Select(_ => ViewModel.Repository).IsNotNull().Subscribe(_ => Render());
-
-            _splitElements[0] = new SplitViewElement();
-            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
-            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
-
-            _splitElements[1] = new SplitViewElement();
-            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Images.IssueOpened, string.Empty, ViewModel.GoToIssuesCommand.ExecuteIfCan);
-            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Images.Organization, string.Empty, ViewModel.GoToContributors.ExecuteIfCan);
-
-            _splitElements[2] = new SplitViewElement();
-            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Images.Tag, string.Empty, ViewModel.GoToReleasesCommand.ExecuteIfCan);
-            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Images.Branch, string.Empty, ViewModel.GoToBranchesCommand.ExecuteIfCan);
 
             ViewModel.WhenAnyValue(x => x.Stargazers).Subscribe(x =>
                 stargazers.Text = x.HasValue ? x.ToString() : "-");
@@ -85,24 +117,11 @@ namespace CodeHub.iOS.Views.Repositories
                 HeaderView.ImageUri = x.Owner.AvatarUrl;
                 HeaderView.SubText = x.Description;
                 forks.Text = x.ForksCount.ToString();
-                _splitElements[0].Button1.Image = x.Private ? Images.Lock : Images.Lock;
                 _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
                 _splitElements[0].Button2.Text = x.Language ?? "N/A";
                 _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
-
                 Render();
             });
-
-            ViewModel.WhenAnyValue(x => x.Contributors).Where(x => x.HasValue).SubscribeSafe(x => 
-                _splitElements[1].Button2.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"));
-
-            ViewModel.WhenAnyValue(x => x.Branches).Where(x => x != null).SubscribeSafe(x => 
-                _splitElements[2].Button2.Text = (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"));
-
-            ViewModel.WhenAnyValue(x => x.Releases).Where(x => x.HasValue).SubscribeSafe(x => 
-                _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"));
-
-            ViewModel.WhenAnyValue(x => x.RepositoryName).Subscribe(x => HeaderView.Text = x);
         }
 
         private void Render()

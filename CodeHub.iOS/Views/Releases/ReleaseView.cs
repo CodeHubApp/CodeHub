@@ -5,14 +5,12 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Views.Releases;
 using Humanizer;
-using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Releases
 {
     public class ReleaseView : BaseWebView<ReleaseViewModel>
     {
-        public ReleaseView(INetworkActivityService networkActivityService)
-            : base(networkActivityService)
+        public ReleaseView()
         {
             Web.ScalesPageToFit = true;
 

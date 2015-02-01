@@ -6,7 +6,6 @@ using CodeHub.Core.ViewModels.Source;
 using CodeHub.WebViews;
 using Foundation;
 using CodeHub.Core.Factories;
-using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -15,8 +14,7 @@ namespace CodeHub.iOS.Views.Source
         private readonly IAlertDialogFactory _alertDialogFactory;
         private bool _fullScreen;
 
-        protected FileSourceView(INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogFactory)
-            : base(networkActivityService)
+        protected FileSourceView(IAlertDialogFactory alertDialogFactory)
         {
             _alertDialogFactory = alertDialogFactory;
 

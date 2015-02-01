@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         public FeedbackTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<FeedbackItemViewModel> collection) 
             : base(tableView, collection, FeedbackCellView.Key, 69.0f)
         {
-            _cache = new TableViewCellHeightCache<FeedbackCellView, FeedbackItemViewModel>(69.0f, new Lazy<FeedbackCellView>(FeedbackCellView.Create));
+            _cache = new TableViewCellHeightCache<FeedbackCellView, FeedbackItemViewModel>(69.0f, FeedbackCellView.Create);
             tableView.RegisterNibForCellReuse(FeedbackCellView.Nib, FeedbackCellView.Key);
         }
 

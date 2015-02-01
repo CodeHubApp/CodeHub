@@ -53,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
-        public GistViewModel(IApplicationService applicationService, IShareService shareService, 
+        public GistViewModel(IApplicationService applicationService, 
             IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory) 
         {
             Comments = new ReactiveList<GistCommentModel>();
@@ -65,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Gists
                     Title = x);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(new Uri(Gist.HtmlUrl)));
+            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(new Uri(Gist.HtmlUrl)));
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue),

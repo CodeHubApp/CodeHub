@@ -28,7 +28,7 @@ namespace CodeHub.iOS.Cells
             _numberView.Layer.CornerRadius = 5f;
             _numberView.TextAlignment = UITextAlignment.Center;
             _numberView.TextColor = UIColor.White;
-            _numberView.Font = UIFont.SystemFontOfSize(12f);
+            _numberView.Font = UIFont.SystemFontOfSize(14f);
         }
 
         public override void LayoutSubviews()
@@ -62,7 +62,8 @@ namespace CodeHub.iOS.Cells
 
             if (NotificationNumber > 0)
             {
-                _numberView.Frame = new CGRect(ContentView.Bounds.Width - 44, 11, 34, 22f);
+                _numberView.Frame = new CGRect(0, 0, 38, 28f);
+                _numberView.Center = new CGPoint(ContentView.Bounds.Width - 44, ContentView.Bounds.Height / 2f);
                 _numberView.Text = NotificationNumber.ToString();
                 AddSubview(_numberView);
             }

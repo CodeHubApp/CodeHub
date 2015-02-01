@@ -94,9 +94,9 @@ namespace CodeHub.iOS.Views.App
             TableView.TableFooterView = new UIView(new CGRect(0, 0, View.Bounds.Width, 0));
             TableView.BackgroundColor = Themes.Theme.Current.MenuBackgroundColor;
             TableView.ScrollsToTop = false;
-            TableView.SeparatorInset = UIEdgeInsets.Zero;
             TableView.SeparatorColor = Themes.Theme.Current.PrimaryNavigationBarColor;
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
+            TableView.RowHeight = 54f;
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
             ViewModel.WhenAnyValue(x => x.PinnedRepositories).Subscribe(x => CreateMenuRoot());

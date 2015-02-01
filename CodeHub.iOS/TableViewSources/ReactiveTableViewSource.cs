@@ -95,11 +95,13 @@ namespace CodeHub.iOS.TableViewSources
 
         public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
-            base.RowSelected(tableView, indexPath);
-
             var item = ItemAt(indexPath) as ICanGoToViewModel;
             if (item != null)
                 item.GoToCommand.ExecuteIfCan();
+
+            base.RowSelected(tableView, indexPath);
+
+
 
 //            tableView.DeselectRow(indexPath, true);
         }

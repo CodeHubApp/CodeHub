@@ -200,12 +200,14 @@ namespace CodeHub.iOS.Views
             : base(style)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+            ClearsSelectionOnViewWillAppear = false;
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             _appearingSubject.OnNext(animated);
+            TableView.DeselectRow(TableView.IndexPathForSelectedRow, animated);
         }
 
         public override void ViewDidAppear(bool animated)

@@ -1,23 +1,20 @@
 using System;
-using CodeHub.Core.Services;
 using System.Collections.Generic;
 using UIKit;
 using Foundation;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views
 {
     public abstract class BaseWebView<TViewModel> : BaseViewController<TViewModel> where TViewModel : class
     {
         private bool _domLoaded;
-        private readonly INetworkActivityService _networkActivityService;
         private readonly List<string> _toBeExecuted = new List<string>();
 
         public UIWebView Web { get; private set; }
 
-        protected BaseWebView(INetworkActivityService networkActivityService)
+        protected BaseWebView()
         {
-            _networkActivityService = networkActivityService;
-
             Web = new UIWebView {ScalesPageToFit = true};
             Web.LoadFinished += OnLoadFinished;
             Web.LoadStarted += OnLoadStarted;
@@ -48,17 +45,17 @@ namespace CodeHub.iOS.Views
 
         protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
         {
-            _networkActivityService.PopNetworkActive();
+            NetworkActivityService.Instance.PopNetworkActive();
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            _networkActivityService.PushNetworkActive();
+            NetworkActivityService.Instance.PushNetworkActive();
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            _networkActivityService.PopNetworkActive();
+            NetworkActivityService.Instance.PopNetworkActive();
         }
 
         public override void ViewWillDisappear(bool animated)

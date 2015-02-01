@@ -97,7 +97,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
         public IssueViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory,
-            IShareService shareService, IMarkdownService markdownService, IGraphicService graphicsService)
+            IMarkdownService markdownService, IGraphicService graphicsService)
         {
             _applicationService = applicationService;
 
@@ -129,7 +129,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToProperty(this, x => x.MarkdownDescription);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
-            ShareCommand.Subscribe(_ => shareService.ShareUrl(Issue.HtmlUrl));
+            ShareCommand.Subscribe(_ => actionMenuFactory.ShareUrl(Issue.HtmlUrl));
 
             var events = new ReactiveList<IIssueEventItemViewModel>();
             Events = events.CreateDerivedCollection(x => x);

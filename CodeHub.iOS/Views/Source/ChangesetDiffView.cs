@@ -10,11 +10,6 @@ namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetDiffView : BaseWebView<ChangesetDiffViewModel>
     {
-        public ChangesetDiffView(INetworkActivityService networkActivityService)
-            : base(networkActivityService)
-        {
-        }
-
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();

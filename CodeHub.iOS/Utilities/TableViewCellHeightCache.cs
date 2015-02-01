@@ -26,9 +26,9 @@ namespace CodeHub.iOS.Utilities
         }
 
 
-        public TableViewCellHeightCache(nfloat defaultHeight, Lazy<TCell> cachedCell)
+        public TableViewCellHeightCache(nfloat defaultHeight, Func<TCell> cachedCell)
         {
-            _cachedCell = cachedCell;
+            _cachedCell = new Lazy<TCell>(cachedCell);
             _heightCache = new Dictionary<Tuple<int, int>, nfloat>(100);
             _defaultHeight = defaultHeight;
         }
