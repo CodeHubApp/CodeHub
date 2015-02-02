@@ -17,46 +17,49 @@ namespace CodeHub.iOS.Views.Source
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly Section _commentSection = new Section();
+        private readonly Section _headerSection;
 
         public CommitView()
         {
+            HeaderView.Image = Images.LoginUserUnknown;
+
             this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            var additions = _split.AddButton("Additions");
+            var deletions = _split.AddButton("Deletions");
+            var parents = _split.AddButton("Parents");
+            _headerSection = new Section { _split };
+
+            this.WhenAnyValue(x => x.ViewModel.Commit)
+                .SubscribeSafe(x =>
+                {
+                    additions.Text = x != null ? x.Stats.Additions.ToString() : "-";
+                    deletions.Text = x != null ? x.Stats.Deletions.ToString() : "-";
+                    parents.Text = x != null ? x.Parents.Count.ToString() : "-";
+                });
+
+            this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary)
+                .Subscribe(x =>
+                {
+                    HeaderView.Text = x;
+                    RefreshHeaderView();
+                });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            HeaderView.Image = Images.LoginUserUnknown;
-
-            var additions = _split.AddButton("Additions", "-");
-            var deletions = _split.AddButton("Deletions", "-");
-            var parents = _split.AddButton("Parents", "-");
-
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
-            var headerSection = new Section { _split };
-            Root.Reset(headerSection);
-
             ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().SubscribeSafe(x =>
             {
-                HeaderView.Image = Images.LoginUserUnknown;
                 HeaderView.ImageUri = x.GenerateGravatarUrl();
-
-                var msg = x.Commit.Message ?? string.Empty;
-                var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
-                HeaderView.Text = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
-
                 HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
-
-                additions.Text = x.Stats.Additions.ToString();
-                deletions.Text = x.Stats.Deletions.ToString();
-                parents.Text = x.Parents.Count.ToString();
-
-                TableView.ReloadData();
+                RefreshHeaderView();
             });
 
             ViewModel.Comments.Changed.Select(_ => new Unit()).StartWith(new Unit()).Subscribe(x =>
@@ -75,7 +78,7 @@ namespace CodeHub.iOS.Views.Source
             ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(commitModel =>
             {
                 var detailSection = new Section();
-                Root.Reset(headerSection, detailSection);
+                Root.Reset(_headerSection, detailSection);
 
                 var user = commitModel.GenerateCommiterName();
                 detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)

@@ -83,6 +83,11 @@ namespace CodeHub.iOS.Views
             return new DialogTableViewSource(TableView, true);
         }
 
+        protected void RefreshHeaderView()
+        {
+            TableView.TableHeaderView = HeaderView;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

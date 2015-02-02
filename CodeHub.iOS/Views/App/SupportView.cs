@@ -56,7 +56,7 @@ namespace CodeHub.iOS.Views.App
 
             public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                return 64f;
+                return 58f;
             }
         }
     }

@@ -47,6 +47,30 @@ namespace CodeHub.iOS.Views.Repositories
             _splitElements[2].Button1 = new SplitViewElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
             _splitElements[2].Button2 = new SplitViewElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
 
+            var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
+            var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
+            var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel.Stargazers)
+                .Select(x => x != null ? x.ToString() : "-")
+                .Subscribe(x => stargazers.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.Watchers)
+                .Select(x => x != null ? x.ToString() : "-")
+                .Subscribe(x => watchers.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.Repository.ForksCount)
+                .Subscribe(x => forks.Text = x.ToString());
+
+            this.WhenAnyValue(x => x.ViewModel.Repository)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
+                    _splitElements[0].Button2.Text = x.Language ?? "N/A";
+                    _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
+                });
+
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
                 .Switch()
@@ -89,39 +113,28 @@ namespace CodeHub.iOS.Views.Repositories
                     else
                         _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases");
                 });
-
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
-            var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
-            var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.ViewModel.Repository)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    HeaderView.ImageUri = x.Owner.AvatarUrl;
+                    HeaderView.SubText = x.Description;
+                    RefreshHeaderView();
+                });
 
-            Root.Reset(new Section { _split });
+            this.WhenAnyValue(x => x.ViewModel.Repository)
+                .IsNotNull()
+                .Subscribe(_ => Render());
 
-            // Not very efficient but it'll work for now.
-            ViewModel.WhenAnyValue(x => x.Readme).IsNotNull()
-                .Select(_ => ViewModel.Repository).IsNotNull().Subscribe(_ => Render());
-
-            ViewModel.WhenAnyValue(x => x.Stargazers).Subscribe(x =>
-                stargazers.Text = x.HasValue ? x.ToString() : "-");
-
-            ViewModel.WhenAnyValue(x => x.Watchers).Subscribe(x =>
-                watchers.Text = x.HasValue ? x.ToString() : "-");
-
-            ViewModel.WhenAnyValue(x => x.Repository).Where(x => x != null).Subscribe(x =>
-            {
-                HeaderView.ImageUri = x.Owner.AvatarUrl;
-                HeaderView.SubText = x.Description;
-                forks.Text = x.ForksCount.ToString();
-                _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
-                _splitElements[0].Button2.Text = x.Language ?? "N/A";
-                _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
-                Render();
-            });
+            this.WhenAnyValue(x => x.ViewModel.Readme)
+                .Where(x => x != null && ViewModel.Repository != null)
+                .Subscribe(_ => Render());
         }
 
         private void Render()

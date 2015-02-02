@@ -19,7 +19,7 @@ namespace CodeHub.iOS.DialogElements
             return AddButton(caption, text, () => tapped.ExecuteIfCan());
         }
 
-        public SplitButton AddButton(string caption, string text, Action tapped = null)
+        public SplitButton AddButton(string caption, string text = null, Action tapped = null)
         {
             var btn = new SplitButton(caption, text);
             if (tapped != null)

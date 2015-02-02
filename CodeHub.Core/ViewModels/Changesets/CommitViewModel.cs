@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Factories;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -24,6 +25,12 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             get { return _commitModel; }
             private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<string> _commitMessageSummary;
+        public string CommitMessageSummary
+        {
+            get { return _commitMessageSummary.Value; }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
@@ -48,6 +55,16 @@ namespace CodeHub.Core.ViewModels.Changesets
 
             var comments = new ReactiveList<Octokit.CommitComment>();
             Comments = comments.CreateDerivedCollection(x => x);
+
+            this.WhenAnyValue(x => x.Commit)
+                .IsNotNull()
+                .Select(x => x.Commit.Message ?? string.Empty)
+                .Select(x =>
+                {
+                    var firstNewLine = x.IndexOf("\n", StringComparison.Ordinal);
+                    return firstNewLine > 0 ? x.Substring(0, firstNewLine) : x;
+                })
+                .ToProperty(this, x => x.CommitMessageSummary, out _commitMessageSummary);
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
             GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(x => 

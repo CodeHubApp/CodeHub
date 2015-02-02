@@ -127,11 +127,11 @@ namespace CodeHub.iOS.TableViewSources
 
             return tableView.RowHeight;
         }
-
-        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
-        {
-            return _unevenRows ? UITableView.AutomaticDimension : -1;
-        }
+//
+//        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
+//        {
+//            return _unevenRows ? UITableView.AutomaticDimension : -1;
+//        }
     }
 }
    

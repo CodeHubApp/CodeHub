@@ -8,12 +8,15 @@ namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationView : BaseDialogViewController<OrganizationViewModel>
     {
+        public OrganizationView()
+        {
+            HeaderView.SubText = "Organization";
+            HeaderView.Image = Images.LoginUserUnknown;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.SubText = "Organization";
-            HeaderView.Image = Images.LoginUserUnknown;
 
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);
@@ -32,7 +35,7 @@ namespace CodeHub.iOS.Views.Organizations
                     followers.Text = x != null ? x.Followers.ToString() : "-";
                     following.Text = x != null ? x.Following.ToString() : "-";
                     HeaderView.ImageUri = x.AvatarUrl;
-                    TableView.ReloadData();
+                    RefreshHeaderView();
                 });
         }
     }

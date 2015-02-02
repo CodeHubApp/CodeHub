@@ -9,6 +9,23 @@ namespace CodeHub.iOS.Views.Users
 {
     public class UserView : BaseDialogViewController<UserViewModel>
     {
+        public UserView()
+        {
+            HeaderView.Image = Images.LoginUserUnknown;
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
+                .Switch()
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
+
+            this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
+                    null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -22,28 +39,13 @@ namespace CodeHub.iOS.Views.Users
             var gists = new DialogStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Gist);
             Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
-            this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
-                    null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
-
-            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
-            HeaderView.Image = Images.LoginUserUnknown;
-
-            Appeared.Take(1)
-                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
-                .Switch()
-                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue))
-                .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
-
             this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x =>
             {
                 HeaderView.ImageUri = x.AvatarUrl;
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
-                TableView.ReloadData();
+                RefreshHeaderView();
             });
         }
     }
