@@ -28,11 +28,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IReactiveCommand<object> GoToGitHubCommand { get; private set; }
-
         public IReactiveCommand<object> GoToLinkCommand { get; private set; }
-
-        public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
@@ -48,8 +44,8 @@ namespace CodeHub.Core.ViewModels.Releases
                 })
                 .Subscribe(x => Title = x);
 
-            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(ReleaseModel.HtmlUrl));
+            var shareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
+            shareCommand.Subscribe(_ => actionMenuService.ShareUrl(ReleaseModel.HtmlUrl));
 
             var gotoUrlCommand = new Action<string>(x =>
             {
@@ -58,8 +54,8 @@ namespace CodeHub.Core.ViewModels.Releases
                 NavigateTo(vm);
             });
 
-            GoToGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            GoToGitHubCommand.Select(_ => ReleaseModel.HtmlUrl).Subscribe(gotoUrlCommand);
+            var gotoGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
+            gotoGitHubCommand.Select(_ => ReleaseModel.HtmlUrl).Subscribe(gotoUrlCommand);
 
             GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(x =>
@@ -71,13 +67,12 @@ namespace CodeHub.Core.ViewModels.Releases
                     gotoUrlCommand(x);
             });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null),
-                _ =>
+            var canShowMenu = this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null);
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, _ =>
                 {
                     var menu = actionMenuService.Create(Title);
-                    menu.AddButton("Share", ShowMenuCommand);
-                    menu.AddButton("Show in GitHub", GoToGitHubCommand);
+                    menu.AddButton("Share", shareCommand);
+                    menu.AddButton("Show in GitHub", gotoGitHubCommand);
                     return menu.Show();
                 });
 

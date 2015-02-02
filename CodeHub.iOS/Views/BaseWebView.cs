@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using CodeHub.iOS.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.Views
 {
@@ -10,6 +13,7 @@ namespace CodeHub.iOS.Views
     {
         private bool _domLoaded;
         private readonly List<string> _toBeExecuted = new List<string>();
+        private readonly Lazy<UIActivityIndicatorView> _activityIndicator;
 
         public UIWebView Web { get; private set; }
 
@@ -20,6 +24,41 @@ namespace CodeHub.iOS.Views
             Web.LoadStarted += OnLoadStarted;
             Web.LoadError += OnLoadError;
             Web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
+
+            _activityIndicator = new Lazy<UIActivityIndicatorView>(() => new UIActivityIndicatorView
+            {
+                Frame = new CoreGraphics.CGRect(0, 0, 320f, 88f),
+                Color = Theme.PrimaryNavigationBarColor,
+                AutoresizingMask = UIViewAutoresizing.FlexibleWidth,
+                Alpha = 0
+            });
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<ILoadableViewModel>()
+                .Select(x => x.LoadCommand.IsExecuting)
+                .Switch()
+                .Subscribe(x =>
+                {
+                    Web.UserInteractionEnabled = !x;
+                    var activityView = _activityIndicator.Value;
+
+                    if (x && activityView.Superview == null)
+                    {
+                        View.Add(activityView);
+                        activityView.StartAnimating();
+                        UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
+                            () => activityView.Alpha = 1, null);
+                    }
+                    else if (!x)
+                    {
+                        UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
+                            () => activityView.Alpha = 0, () =>
+                        {
+                            activityView.RemoveFromSuperview();
+                            activityView.StopAnimating();
+                        });
+                    }
+                });
         }
 
         protected virtual bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
