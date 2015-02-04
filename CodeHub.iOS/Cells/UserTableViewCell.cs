@@ -1,42 +1,45 @@
-using System;
-using CodeHub.Core.ViewModels.Users;
+﻿using System;
 using Foundation;
-using CoreGraphics;
 using UIKit;
-using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Cells
 {
-    public class UserTableViewCell : ReactiveTableViewCell<UserItemViewModel>
+    public partial class UserTableViewCell : ReactiveTableViewCell<UserItemViewModel>
     {
-        public static NSString Key = new NSString("usercell");
-        private const float ImageSpacing = 10f;
-        private static CGRect ImageFrame = new CGRect(ImageSpacing, 6f, 32, 32);
+        public static readonly UINib Nib = UINib.FromName("UserTableViewCell", NSBundle.MainBundle);
+        public static readonly NSString Key = new NSString("UserTableViewCell");
 
         public UserTableViewCell(IntPtr handle)
             : base(handle)
-        { 
-            SeparatorInset = new UIEdgeInsets(0, ImageFrame.Right + ImageSpacing, 0, 0);
-            ImageView.Layer.CornerRadius = ImageFrame.Height / 2f;
-            ImageView.Layer.MasksToBounds = true;
-            ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
+        {
+        }
+
+        public static UserTableViewCell Create()
+        {
+            return (UserTableViewCell)Nib.Instantiate(null, null)[0];
+        }
+
+        public override void AwakeFromNib()
+        {
+            base.AwakeFromNib();
+
+            SeparatorInset = new UIEdgeInsets(0, UserNameLabel.Frame.X, 0, 0);
+
+            UserImageView.Layer.CornerRadius = UserImageView.Frame.Height / 2f;
+            UserImageView.Layer.MasksToBounds = true;
+            UserImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
             ContentView.Opaque = true;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull()
                 .Subscribe(x =>
                 {
-                    TextLabel.Text = x.Name;
-                    ImageView.SetAvatar(x.Avatar);
+                    UserNameLabel.Text = x.Name;
+                    UserImageView.SetAvatar(x.Avatar);
                 });
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ImageView.Frame = ImageFrame;
-            TextLabel.Frame = new CGRect(ImageFrame.Right + ImageSpacing, TextLabel.Frame.Y, TextLabel.Frame.Width, TextLabel.Frame.Height);
         }
     }
 }

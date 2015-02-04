@@ -221,7 +221,6 @@
     <Compile Include="Cells\AccountCellView.cs" />
     <Compile Include="TableViewSources\EventTableViewSource.cs" />
     <Compile Include="Cells\ReactiveTableViewCell.cs" />
-    <Compile Include="Cells\UserTableViewCell.cs" />
     <Compile Include="Cells\TeamCellView.cs" />
     <Compile Include="Cells\BranchCellView.cs" />
     <Compile Include="Cells\TagCellView.cs" />
@@ -367,6 +366,11 @@
     <Compile Include="OcticonExtensions.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Utilities\TableViewCellHeightCache.cs" />
+    <Compile Include="Cells\UserTableViewCell.cs" />
+    <Compile Include="Cells\UserTableViewCell.designer.cs">
+      <DependentUpon>UserTableViewCell.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\UserTableViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
