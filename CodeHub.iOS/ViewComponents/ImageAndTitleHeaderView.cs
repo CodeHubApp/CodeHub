@@ -157,12 +157,13 @@ namespace CodeHub.iOS.ViewComponents
             _label = new UILabel();
             _label.TextAlignment = UITextAlignment.Center;
             _label.Lines = 0;
+            _label.Font = UIFont.PreferredHeadline;
             Add(_label);
 
             _label2 = new UILabel();
             _label2.Hidden = true;
             _label2.TextAlignment = UITextAlignment.Center;
-            _label2.Font = UIFont.SystemFontOfSize(13f);
+            _label.Font = UIFont.PreferredBody;
             _label2.Lines = 0;
             Add(_label2);
 
@@ -222,7 +223,7 @@ namespace CodeHub.iOS.ViewComponents
             _label.SizeToFit();
             _label.Frame = new CGRect(20, ImageButton.Frame.Bottom + 10f, Bounds.Width - 40, _label.Frame.Height);
 
-            _label2.Frame = new CGRect(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, 16f);
+            _label2.Frame = new CGRect(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, _label2.Font.LineHeight + 2f);
             _label2.SizeToFit();
             _label2.Frame = new CGRect(20, _label.Frame.Bottom + 2f, Bounds.Width - 40f, _label2.Frame.Height);
 

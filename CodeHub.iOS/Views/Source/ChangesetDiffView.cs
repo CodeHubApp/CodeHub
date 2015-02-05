@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Source
                 {
                     var razorView = new CommitDiffRazorView
                     { 
-                        Model = x.Split('\n')
+                        Model = new CommitDiffModel(x.Split('\n'), (int)UIFont.PreferredBody.PointSize)
                     };
 
                     LoadContent(razorView.GenerateString(), NSBundle.MainBundle.BundlePath);

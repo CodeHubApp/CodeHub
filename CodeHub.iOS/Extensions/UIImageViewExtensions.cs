@@ -5,6 +5,9 @@ using CodeHub.iOS;
 using Foundation;
 
 // Analysis disable once CheckNamespace
+using CoreAnimation;
+
+
 namespace UIKit
 {
     public static class UIImageViewExtensions
@@ -13,9 +16,21 @@ namespace UIKit
         {
             var avatarUri = avatar.ToUri(size);
             if (avatarUri == null)
+            {
                 @this.Image = Images.LoginUserUnknown;
+            }
             else
-                @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown);
+            {
+                @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) =>
+                {
+                    if (type == SDImageCacheType.None)
+                    {
+                        @this.Image = Images.LoginUserUnknown;
+                        @this.BeginInvokeOnMainThread(() =>
+                            UIView.Transition(@this, 0.4f, UIViewAnimationOptions.TransitionCrossDissolve, () => @this.Image = img, null));
+                    }
+                });
+            }
         }
     }
 }

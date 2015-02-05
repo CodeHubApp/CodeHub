@@ -75,6 +75,7 @@ namespace CodeHub.iOS.Views
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
+            RefreshHeaderView();
             TableView.ReloadData();
         }
 

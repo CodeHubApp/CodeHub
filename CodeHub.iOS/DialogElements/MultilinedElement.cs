@@ -44,8 +44,8 @@ namespace CodeHub.iOS.DialogElements
         {
             Caption = caption;
 			BackgroundColor = UIColor.White;
-            CaptionFont = UIFont.SystemFontOfSize(15f);
-            ValueFont = UIFont.SystemFontOfSize(13f );
+            CaptionFont = UIFont.PreferredHeadline;
+            ValueFont = UIFont.PreferredBody;
             CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
             Accessory = UITableViewCellAccessory.None;
         }

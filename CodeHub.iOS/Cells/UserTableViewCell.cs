@@ -11,6 +11,7 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("UserTableViewCell", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("UserTableViewCell");
+        public static readonly nfloat DefaultHeight = 58.0f;
 
         public UserTableViewCell(IntPtr handle)
             : base(handle)

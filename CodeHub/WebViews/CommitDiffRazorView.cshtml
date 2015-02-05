@@ -1,9 +1,14 @@
-﻿@model String[]
+﻿@model CommitDiffModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Diff</title>
     <link href="WebResources/Diff/diffview.css" type="text/css" rel="stylesheet" />
+    <style>
+        html {
+            font-size: @(Model.FontSize)px !important;
+        }
+    </style>
 </head>
 <body>
     <table class="diff inlinediff">
@@ -11,9 +16,9 @@
     		int baseLine = 0;
     		int newLine = 0;
     	}
-		@for (var i = 0; i < Model.Length; i++)
+		@for (var i = 0; i < Model.Lines.Length; i++)
 		{
-			var line = Model[i];
+			var line = Model.Lines[i];
 			if (line.StartsWith("@@"))
 			{
 				var s = line.Split(' ');
