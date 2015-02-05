@@ -88,25 +88,25 @@
                     <constraint firstItem="7" firstAttribute="leading" secondItem="36" secondAttribute="leading" id="26G-T0-2HT"/>
                     <constraint firstItem="40" firstAttribute="leading" secondItem="46" secondAttribute="trailing" constant="8" id="7j1-8R-6Mx"/>
                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="43" secondAttribute="bottom" constant="8" id="7qR-xu-Fdb"/>
-                    <constraint firstItem="31" firstAttribute="top" secondItem="8" secondAttribute="top" id="8GT-fN-5yx"/>
-                    <constraint firstItem="8" firstAttribute="top" secondItem="7" secondAttribute="top" constant="-2" id="8dT-wR-bof"/>
-                    <constraint firstItem="31" firstAttribute="centerY" secondItem="40" secondAttribute="centerY" id="9e6-nA-gl0"/>
+                    <constraint firstItem="7" firstAttribute="centerY" secondItem="8" secondAttribute="centerY" id="7zd-0b-4Ab"/>
                     <constraint firstItem="46" firstAttribute="leading" secondItem="31" secondAttribute="trailing" constant="8" id="FHk-eS-wAZ"/>
                     <constraint firstItem="43" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="I34-Eb-v1I"/>
                     <constraint firstItem="36" firstAttribute="top" secondItem="6" secondAttribute="bottom" constant="4" id="KXW-MQ-1DX"/>
                     <constraint firstItem="6" firstAttribute="top" secondItem="ho5-JP-Lze" secondAttribute="top" constant="8" id="NCm-z4-JYf"/>
-                    <constraint firstItem="46" firstAttribute="top" secondItem="30" secondAttribute="top" id="ROE-oI-gG4"/>
+                    <constraint firstItem="7" firstAttribute="centerY" secondItem="31" secondAttribute="centerY" id="R1e-2z-ni9"/>
+                    <constraint firstItem="7" firstAttribute="centerY" secondItem="46" secondAttribute="centerY" id="Rhl-oz-Poq"/>
                     <constraint firstItem="30" firstAttribute="leading" secondItem="8" secondAttribute="trailing" constant="8" id="UEK-at-WWu"/>
-                    <constraint firstItem="46" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="8" id="W0a-gq-cHX"/>
                     <constraint firstAttribute="trailing" secondItem="6" secondAttribute="trailing" constant="8" id="XiP-59-wz3"/>
                     <constraint firstAttribute="bottom" secondItem="7" secondAttribute="bottom" constant="8" id="fMe-fN-8a4"/>
+                    <constraint firstItem="8" firstAttribute="top" secondItem="36" secondAttribute="bottom" constant="6" id="fsf-Ai-caM"/>
                     <constraint firstItem="6" firstAttribute="leading" secondItem="43" secondAttribute="trailing" constant="8" id="gvt-73-dnh"/>
                     <constraint firstItem="31" firstAttribute="leading" secondItem="30" secondAttribute="trailing" constant="8" id="jNa-V5-yZD"/>
                     <constraint firstItem="8" firstAttribute="leading" secondItem="7" secondAttribute="trailing" constant="8" id="l0Q-w9-IRZ"/>
                     <constraint firstAttribute="trailing" secondItem="36" secondAttribute="trailing" constant="8" id="lgg-J0-ubn"/>
                     <constraint firstItem="36" firstAttribute="leading" secondItem="43" secondAttribute="trailing" constant="8" id="maQ-Rn-z7i"/>
                     <constraint firstItem="43" firstAttribute="leading" secondItem="ho5-JP-Lze" secondAttribute="leading" constant="8" id="qhb-zF-AtN"/>
-                    <constraint firstItem="46" firstAttribute="top" secondItem="7" secondAttribute="top" id="wAd-J9-07W"/>
+                    <constraint firstItem="7" firstAttribute="centerY" secondItem="30" secondAttribute="centerY" id="sfe-eJ-t6q"/>
+                    <constraint firstItem="7" firstAttribute="centerY" secondItem="40" secondAttribute="centerY" id="z6p-KV-w9d"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

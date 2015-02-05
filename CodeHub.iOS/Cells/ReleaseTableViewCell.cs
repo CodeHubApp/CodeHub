@@ -11,7 +11,6 @@ namespace CodeHub.iOS.Cells
     public class ReleaseTableViewCell : ReactiveTableViewCell<ReleaseItemViewModel>
     {
         public static NSString Key = new NSString("release");
-        private const float ImageSpacing = 10f;
 
         [Export("initWithStyle:reuseIdentifier:")]
         public ReleaseTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
@@ -26,6 +25,7 @@ namespace CodeHub.iOS.Cells
                 });
 
             TextLabel.TextColor = Theme.MainTitleColor;
+            TextLabel.Font = UIFont.PreferredHeadline;
             DetailTextLabel.Font = UIFont.PreferredFootnote;
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
         }

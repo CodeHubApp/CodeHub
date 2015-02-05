@@ -81,7 +81,7 @@ namespace CodeHub.iOS.Views
 
         protected virtual DialogTableViewSource CreateTableViewSource()
         {
-            return new DialogTableViewSource(TableView, true);
+            return new DialogTableViewSource(TableView);
         }
 
         protected void RefreshHeaderView()

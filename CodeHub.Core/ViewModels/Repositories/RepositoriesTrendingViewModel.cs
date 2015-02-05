@@ -68,8 +68,6 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                Repositories = null;
-
                 var requests = _times.Select(t =>
                 {
                     var language = (SelectedLanguage != null && SelectedLanguage.Slug != null) ? SelectedLanguage.Slug : null;
@@ -86,7 +84,11 @@ namespace CodeHub.Core.ViewModels.Repositories
                 }).ToList();
             });
 
-            this.WhenAnyValue(x => x.SelectedLanguage).Skip(1).Subscribe(_ => LoadCommand.ExecuteIfCan());
+            this.WhenAnyValue(x => x.SelectedLanguage).Skip(1).Subscribe(_ => 
+            {
+                Repositories = null;
+                LoadCommand.ExecuteIfCan();
+            });
         }
 
         private class TimeModel

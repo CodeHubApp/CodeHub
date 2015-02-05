@@ -31,6 +31,8 @@ namespace CodeHub.iOS.Cells
 
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
+            ContentView.Opaque = true;
+
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
             TitleLabel.TextColor = Theme.MainTitleColor;
             DetailsLabel.TextColor = UIColor.Gray;

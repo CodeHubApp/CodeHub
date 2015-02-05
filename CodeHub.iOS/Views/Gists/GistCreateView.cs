@@ -103,7 +103,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 
-                : base (dvc.TableView, true)
+                : base (dvc.TableView)
             {
                 _parent = dvc;
             }

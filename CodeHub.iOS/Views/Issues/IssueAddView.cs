@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Views.Issues
 		{
 			base.ViewDidLoad();
 
-            var source = new DialogTableViewSource(TableView, true);
+            var source = new DialogTableViewSource(TableView);
             TableView.Source = source;
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {

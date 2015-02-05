@@ -71,6 +71,9 @@ namespace CodeHub.iOS.Cells
             SeparatorInset = EdgeInsets;
             ActionImage.TintColor = Time.TextColor;
 
+            Header.TextColor = UIColor.FromRGB(41, 41, 41);
+            Body.TextColor = UIColor.FromRGB(90, 90, 90);
+
             Header.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
             Body.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
 

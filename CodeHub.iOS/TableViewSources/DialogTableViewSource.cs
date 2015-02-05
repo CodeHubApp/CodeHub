@@ -10,7 +10,6 @@ namespace CodeHub.iOS.TableViewSources
     public class DialogTableViewSource : UITableViewSource
     {
         private readonly RootElement _root;
-        private readonly bool _unevenRows;
         private readonly Subject<CGPoint> _scrolledSubject = new Subject<CGPoint>();
 
         public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject; } }
@@ -20,9 +19,9 @@ namespace CodeHub.iOS.TableViewSources
             get { return _root; }
         }
 
-        public DialogTableViewSource(UITableView container, bool unevenRows = false)
+        public DialogTableViewSource(UITableView container)
         {
-            _unevenRows = unevenRows;
+            container.RowHeight = UITableView.AutomaticDimension;
             _root = new RootElement(container);
         }
 
@@ -59,17 +58,6 @@ namespace CodeHub.iOS.TableViewSources
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
             return element.GetCell(tableView);
-        }
-
-        public override void WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
-        {
-            //              if (Root.NeedColorUpdate){
-            //                  var section = Root[indexPath.Section];
-            //                  var element = section [indexPath.Row];
-            //                  var colorized = element as IColorizeBackground;
-            //                  if (colorized != null)
-            //                      colorized.WillDisplay (tableView, cell, indexPath);
-            //              }
         }
 
         public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
@@ -117,21 +105,11 @@ namespace CodeHub.iOS.TableViewSources
 
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
-            if (_unevenRows)
-            {
-                var section = Root[indexPath.Section];
-                var element = section[indexPath.Row];
-                var sizable = element as IElementSizing;
-                return sizable == null ? tableView.RowHeight : sizable.GetHeight(tableView, indexPath);
-            }
-
-            return tableView.RowHeight;
+            var section = Root[indexPath.Section];
+            var element = section[indexPath.Row];
+            var sizable = element as IElementSizing;
+            return sizable == null ? tableView.RowHeight : sizable.GetHeight(tableView, indexPath);
         }
-//
-//        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
-//        {
-//            return _unevenRows ? UITableView.AutomaticDimension : -1;
-//        }
     }
 }
    

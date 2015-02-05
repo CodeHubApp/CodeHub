@@ -30,6 +30,8 @@ namespace CodeHub.iOS.Cells
 
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
+            ContentView.Opaque = true;
+
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
             TitleLabel.TextColor = Theme.MainTitleColor;
             TimeLabel.TextColor = Theme.MainSubtitleColor;
@@ -46,14 +48,6 @@ namespace CodeHub.iOS.Cells
                     TimeLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
                 });
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
         }
     }
 }

@@ -31,7 +31,7 @@ namespace CodeHub.iOS.ViewComponents
                                      UIViewAutoresizing.FlexibleBottomMargin | UIViewAutoresizing.FlexibleWidth;
             Title.Text = emptyText;
             Title.TextAlignment = UITextAlignment.Center;
-            Title.Font = UIFont.BoldSystemFontOfSize(16f);
+            Title.Font = UIFont.PreferredHeadline;
             Title.TextColor = Themes.Theme.Current.PrimaryNavigationBarColor;
             Add(Title);
 

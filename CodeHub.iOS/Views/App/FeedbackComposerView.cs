@@ -43,7 +43,7 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
-            var source = new DialogTableViewSource(TableView, true);
+            var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { _titleElement, _descriptionElement });
             TableView.Source = source;
             TableView.TableFooterView = new UIView();

@@ -15,10 +15,6 @@ namespace CodeHub.iOS.Cells
         public static bool RoundImages = true;
         private static nfloat DefaultConstraintSize = 0.0f;
 
-        static RepositoryCellView()
-        {
-        }
-
         public RepositoryCellView(IntPtr handle)
             : base(handle)
         {
@@ -47,8 +43,9 @@ namespace CodeHub.iOS.Cells
 
             OwnerImageView.Layer.MasksToBounds = true;
             OwnerImageView.Layer.CornerRadius = OwnerImageView.Bounds.Height / 2f;
-            DefaultConstraintSize = ContentConstraint.Constant;
             ContentView.Opaque = true;
+
+            DefaultConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
@@ -65,14 +62,6 @@ namespace CodeHub.iOS.Cells
                     UserLabel.Text = x.Owner ?? string.Empty;
                     ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
                 });
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
         }
     }
 }

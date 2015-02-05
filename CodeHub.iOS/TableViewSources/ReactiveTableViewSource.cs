@@ -27,9 +27,8 @@ namespace CodeHub.iOS.TableViewSources
         protected ReactiveTableViewSource(UITableView tableView, nfloat sizeHint)
             : base(tableView)
         {
-            _estimatedHeight = sizeHint;
-            tableView.RowHeight = _estimatedHeight;
-            tableView.EstimatedRowHeight = _estimatedHeight;
+            tableView.RowHeight = sizeHint;
+            tableView.EstimatedRowHeight = sizeHint;
             this.WhenAnyValue(x => x.Data).IsNotNull().Select(x => x.Count == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
@@ -37,9 +36,8 @@ namespace CodeHub.iOS.TableViewSources
             Foundation.NSString cellKey, nfloat sizeHint, Action<UITableViewCell> initializeCellAction = null) 
             : base(tableView, collection, cellKey, (float)sizeHint, initializeCellAction)
         {
-            _estimatedHeight = sizeHint;
-            tableView.RowHeight = _estimatedHeight;
-            tableView.EstimatedRowHeight = _estimatedHeight;
+            tableView.RowHeight = sizeHint;
+            tableView.EstimatedRowHeight = sizeHint;
             collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
@@ -86,11 +84,6 @@ namespace CodeHub.iOS.TableViewSources
                 // We need to skip an event loop to stay out of trouble
                 BeginInvokeOnMainThread(() => _requestMoreSubject.OnNext(Unit.Default));
             }
-        }
-
-        public override nfloat EstimatedHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
-        {
-            return _estimatedHeight;
         }
 
         public override void RowSelected(UITableView tableView, Foundation.NSIndexPath indexPath)

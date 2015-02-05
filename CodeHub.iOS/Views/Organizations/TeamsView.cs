@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Organizations
         {
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
-            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Teams, TeamCellView.Key, 44f);
+            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Teams, TeamCellView.Key, (float)UITableView.AutomaticDimension);
             source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
             TableView.Source = source;
         }
