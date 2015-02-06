@@ -9,6 +9,9 @@ namespace ReactiveUI
     {
         public static void ExecuteIfCan(this IReactiveCommand @this, object o)
         {
+            if (@this == null)
+                return;
+
             if (@this.CanExecute(o))
                 @this.Execute(o);
         }

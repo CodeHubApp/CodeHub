@@ -33,13 +33,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebViews\Comment.cs" />
     <Compile Include="WebViews\CommentsView.cs">
-      <DependentUpon>..\..\CodeHub.iOS\WebViews\CommentsView.cshtml</DependentUpon>
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\CommitDiffRazorView.cs">
       <DependentUpon>CommitDiffRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\DescriptionView.cs">
-      <DependentUpon>..\..\CodeHub.iOS\WebViews\DescriptionView.cshtml</DependentUpon>
+      <DependentUpon>DescriptionView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\MarkdownView.cs">
       <DependentUpon>..\..\CodeHub.iOS\WebViews\MarkdownView.cshtml</DependentUpon>

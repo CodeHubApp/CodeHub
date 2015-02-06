@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         internal IssueEventItemViewModel(Octokit.EventInfo issueEvent)
         {
-            Actor = issueEvent.Actor.Name;
+            Actor = issueEvent.Actor.Login;
             AvatarUrl = issueEvent.Actor.AvatarUrl;
             CreatedAt = issueEvent.CreatedAt;
             Commit = issueEvent.CommitId;
@@ -47,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Issues
         internal IssueCommentItemViewModel(Octokit.IssueComment comment)
         {
             Comment = comment.Body;
-            Actor = comment.User.Name;
+            Actor = comment.User.Login;
             AvatarUrl = comment.User.AvatarUrl;
             CreatedAt = comment.CreatedAt;
         }

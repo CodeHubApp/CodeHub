@@ -371,6 +371,7 @@
       <DependentUpon>UserTableViewCell.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Cells\UserTableViewCell.xib" />
+    <Compile Include="Views\Issues\BaseIssueView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -772,6 +773,8 @@
     <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
       <Link>octicons.ttf</Link>
     </BundleResource>
+    <BundleResource Include="Images\issue-closed.png" />
+    <BundleResource Include="Images\issue-closed%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

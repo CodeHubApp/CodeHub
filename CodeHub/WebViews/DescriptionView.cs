@@ -36,46 +36,118 @@ WriteLiteral("<html><head>\n<meta");
 
 WriteLiteral(" name=\"viewport\"");
 
-WriteLiteral(" content=\"width=device-width,minimum-scale=1.0, maximum-scale=1.0\"");
+WriteLiteral(" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable" +
+"=0\"");
 
-WriteLiteral(" />\n<script");
+WriteLiteral(@"/>
+<style>
+* {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+font-family: Helvetica;
+font-size: 13px;
+}
 
-WriteLiteral(" type=\"text/javascript\"");
+html {
+-webkit-text-size-adjust: none;
+}
 
-WriteLiteral(">\nfunction size() { return document.getElementById(\'main\').scrollHeight; }\nfuncti" +
-"on rs() { document.location.href = \'app://resize\'; }; window.onsize = rs;\nvar h " +
-"= 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100);\n</" +
-"script>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\nfont" +
-"-family: Helvetica;\nfont-size: 13px;\n}\n\nhtml {\n-webkit-text-size-adjust: none;\n}" +
-"\n\nbody{\nfont-family: Helvetica;\nfont-size: 13px;\nmargin: 0 1em;\n}\n\nh1, h2, h3, h" +
-"4, h5, h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-height: 1.7;" +
-"\ncursor: text;\nposition: relative;\n}\nh1 {\nfont-size: 1.8em;\nborder-bottom: 1px s" +
-"olid #ddd;\n}\np, blockquote, ul, ol, dl, table, pre {\nmargin: 15px 0;\n}\nh2 {\nfont" +
-"-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\nul, ol {\npadding-left: 30px;\n}\na " +
-"{\ncolor: #4183c4;\ntext-decoration: none;\ntext-decoration: none;\n}\n.highlight pre" +
-", pre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd;\nfont-size: 13px;\nline" +
-"-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3px;\n}\npre {\nwo" +
-"rd-wrap: normal;\n}\ndl {\npadding: 0;\n}\ndl dt {\nfont-size: 14px;\nfont-weight: bold" +
-";\nfont-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\ndl dd {\nmargin-bottom: 15p" +
-"x;\npadding: 0 15px;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndisplay: block;\n}\ntab" +
-"le tr {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\ntable tr:nth-child" +
-"(2n) {\nbackground-color: #f8f8f8;\n}\ntable th, table td {\nborder: 1px solid #ddd;" +
-"\npadding: 6px 13px;\n}\ntable th {\nfont-weight: bold;\n}\nimg {\nmax-width: 100%;\n-mo" +
-"z-box-sizing: border-box;\nbox-sizing: border-box;\n}\n</style>\n<title>Readme</titl" +
-"e></head>\n<body><div");
+body{
+font-family: Helvetica;
+font-size: 13px;
+margin: 0 1em;
+}
 
-WriteLiteral(" id=\"main\"");
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 30px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+font-size: 13px;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-size: 14px;
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+</style>
+<title>Description</title>
+</head>
+<body>");
 
-WriteLiteral("><div>");
 
-
-#line 106 "DescriptionView.cshtml"
-                     WriteLiteral(Model);
+#line 102 "DescriptionView.cshtml"
+            WriteLiteral(Model);
 
 
 #line default
 #line hidden
-WriteLiteral("</div></div></body>\n</html>");
+WriteLiteral("</body>\n</html>");
 
 }
 }

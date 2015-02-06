@@ -56,6 +56,8 @@ namespace CodeHub.iOS
 
         public static UIImage IssueOpened { get { return CreateTemplateFromBundle("Images/issue-opened"); } }
 
+        public static UIImage IssueClosed { get { return CreateTemplateFromBundle("Images/issue-closed"); } }
+
         public static UIImage News { get { return CreateTemplateFromAuto("Images/news"); } }
 
         public static UIImage Inbox { get { return CreateTemplateFromAuto("Images/inbox"); } }

@@ -20,20 +20,16 @@ namespace CodeHub.iOS.DialogElements
             get { return _height; }
         }
 
-        public bool HasValue { get; private set; }
-
         public string ContentPath
         {
             set
             {
                 if (value == null)
                 {
-                    HasValue = false;
                     WebView.LoadHtmlString(string.Empty, NSBundle.MainBundle.BundleUrl);
                 }
                 else
                 {
-                    HasValue = true;
                     WebView.LoadRequest(new NSUrlRequest(NSUrl.FromFilename(value)));
                 }
             }
@@ -45,12 +41,10 @@ namespace CodeHub.iOS.DialogElements
             {
                 if (value == null)
                 {
-                    HasValue = false;
                     WebView.LoadHtmlString(string.Empty, NSBundle.MainBundle.BundleUrl);
                 }
                 else
                 {
-                    HasValue = true;
                     WebView.LoadHtmlString(value, NSBundle.MainBundle.BundleUrl);
                 }
             }
@@ -58,21 +52,6 @@ namespace CodeHub.iOS.DialogElements
 
         private bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
-            if (request.Url.AbsoluteString.StartsWith("app://resize"))
-            {
-//                try
-//                {
-//                    _height = WebView.SizeThatFits(SizeF.Empty).Height;
-//                    if (HeightChanged != null)
-//                        HeightChanged(_height);
-//                }
-//                catch
-//                {
-//                }
-
-                return false;
-            }
-
             if (!request.Url.AbsoluteString.StartsWith("file://"))
             {
                 if (UrlRequested != null)
@@ -93,28 +72,39 @@ namespace CodeHub.iOS.DialogElements
         public HtmlElement (string cellKey) 
         {
             Key = new NSString(cellKey);
+
             WebView = new UIWebView();
+            WebView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             WebView.ScrollView.ScrollEnabled = false;
-            WebView.ScalesPageToFit = true;
+            //WebView.ScalesPageToFit = true;
             WebView.ScrollView.Bounces = false;
             WebView.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
+
             WebView.LoadFinished += (sender, e) => 
             {
-                _height = WebView.SizeThatFits(CGSize.Empty).Height;
+                var f = WebView.Frame;
+                f.Height = 1;
+                WebView.Frame = f;
+                _height = f.Height = WebView.ScrollView.ContentSize.Height;
+                WebView.Frame = f;
+
                 if (HeightChanged != null)
                     HeightChanged(_height);
             };
 
-            HeightChanged = (x) => {
-                var root = this.GetRootElement();
-                if (root != null)
-                    root.Reload(this);
-            };
+            HeightChanged = (x) => Reload();
+        }
+
+        private void Reload()
+        {
+            var root = this.GetRootElement();
+            if (root != null)
+                root.Reload(this);
         }
 
         public nfloat GetHeight (UITableView tableView, NSIndexPath indexPath)
         {
-            return HasValue ? _height : 100f;
+            return _height;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
@@ -126,7 +116,6 @@ namespace CodeHub.iOS.DialogElements
             }  
 
             WebView.Frame = new CGRect(0, 0, cell.ContentView.Frame.Width, cell.ContentView.Frame.Height);
-            WebView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             WebView.RemoveFromSuperview();
             cell.ContentView.AddSubview (WebView);
             cell.ContentView.Layer.MasksToBounds = true;

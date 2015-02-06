@@ -212,6 +212,7 @@
     <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\BaseIssueViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

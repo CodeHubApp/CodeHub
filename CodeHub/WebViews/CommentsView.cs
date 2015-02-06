@@ -36,62 +36,55 @@ WriteLiteral("<html><head>\n<meta");
 
 WriteLiteral(" name=\"viewport\"");
 
-WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
+WriteLiteral(" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<script");
-
-WriteLiteral(" type=\"text/javascript\"");
-
-WriteLiteral(">\nfunction size() { return document.getElementById(\'main\').scrollHeight + 0; }\nfu" +
-"nction rs() { document.location.href = \'app://resize\'; }; window.onsize = rs;\nva" +
-"r h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 100)" +
-";\n</script>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\n" +
-"font-family: Helvetica;\nfont-size: 13px;\n}\n\nhtml {\n    -webkit-text-size-adjust:" +
-" none;\n}\n\nbody{\nfont-family: Helvetica;\nfont-size: 13px;\nmargin: 0px;\n}\n\n#main >" +
-" .comment:first-child {\nborder-top: none;\n}\n\n#main > .comment {\nborder-top: 1px " +
-"solid #c8c8c8;\n}\n\n#main > .comment > img {\nposition: absolute;\nborder-radius: 16" +
-"px;\nmargin-left: 8px;\nmargin-top: 8px;\nmargin-bottom: 8px;\nwidth: 32px;\nheight: " +
-"32px;\n}\n\n#main > .comment > div {\ndisplay: inline-block;\nmargin-left: 48px;\nmarg" +
-"in-top: 8px;\nmargin-right: 8px;\n}\n\n#main > .comment > div > h1 {\nfont-size: 14px" +
-";\nmargin: 1px 0 2px 0;\ncolor: #406fb9;\nwhite-space: nowrap;\noverflow: hidden;\n}\n" +
-"\n#main > .comment > div > h2 {\nfont-size: 11px;\nmargin: 0 0 4px 0;\nfont-weight: " +
-"normal;\ncolor: #404040;\nwhite-space: nowrap;\noverflow: hidden;\n}\n\n#main > .comme" +
-"nt > div > div {\nmargin: 0;\nword-wrap: break-word;\n}\n\n#main > .comment > div > ." +
-"mark {\n\tmargin-top: 8px;\n\tmargin-bottom: 8px;\n\tmargin-right: 8px;\n}\n\n#main > .co" +
-"mment > div > div img {\nmax-width: 100%;\n}\n\n#main { width: 100%; }\n\nimg { max-wi" +
-"dth: 100%; } \np { margin: 10px 0; white-space: pre-wrap; } \npre, li, ul { word-w" +
-"rap: break-word; } \n\n.mark h1, .mark h2, .mark h3, .mark h4, .mark h5, .mark h6 " +
-"{\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-height: 1.7;\ncursor: t" +
-"ext;\nposition: relative;\n}\n\nul, ol {\npadding: 0;\nmargin-top: 0;\nmargin-bottom: 0" +
-";\npadding-left: 20px;\n}\n\npre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd" +
-";\nfont-size: 13px;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-" +
-"radius: 3px;\nword-wrap: normal;\n}\ndl dt {\nfont-size: 14px;\nfont-weight: bold;\nfo" +
-"nt-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\nblockquote {\nborder-left: 4px " +
-"solid #DDD;\npadding: 0 15px;\ncolor: #777;\n}\ntable {\nwidth: 100%;\noverflow: auto;" +
-"\ndisplay: block;\n}\ntable tr {\nborder-top: 1px solid #ccc;\nbackground-color: #fff" +
-";\n}\ntable th {\nfont-weight: bold;\n}\ntable th, table td {\nborder: 1px solid #ddd;" +
-"\npadding: 4px 11px;\n}\ntable tr:nth-child(2n) {\nbackground-color: #f8f8f8;\n}\n.mar" +
-"k h2 {\nfont-size: 1.2em;\nborder-bottom: 1px solid #eee;\n}\n.mark h1 {\nfont-size: " +
-"1.6em;\nborder-bottom: 1px solid #ddd;\n}\n\n.mark .label {\ndisplay: inline;\npadding" +
-": .2em .6em .2em;\nfont-size: 85%;\nfont-weight: 700;\nline-height: 1;\ncolor: #fff;" +
-"\ntext-align: center;\nwhite-space: nowrap;\nvertical-align: baseline;\nborder-radiu" +
-"s: .25em;\n}\n.label-danger {\nbackground-color: #d9534f;\n}\n.label-success {\nbackgr" +
-"ound-color: #5cb85c;\n}\n.label-info {\nbackground-color: #6e5494;\n}\n.label-default" +
-" {\nbackground-color: #999;\n}\n</style>\n</head>\n<body>\n\t<div");
+WriteLiteral("/>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\nfont-famil" +
+"y: Helvetica;\nfont-size: 13px;\n}\n\nhtml {\n    -webkit-text-size-adjust: none;\n}\n\n" +
+"body{\nfont-family: Helvetica;\nfont-size: 13px;\nmargin: 0px;\n}\n\n#main > .comment:" +
+"first-child {\nborder-top: none;\n}\n\n#main > .comment {\nborder-top: 1px solid #c8c" +
+"8c8;\n}\n\n#main > .comment > img {\nposition: absolute;\nborder-radius: 16px;\nmargin" +
+"-left: 8px;\nmargin-top: 8px;\nmargin-bottom: 8px;\nwidth: 32px;\nheight: 32px;\n}\n\n#" +
+"main > .comment > div {\ndisplay: inline-block;\nmargin-left: 48px;\nmargin-top: 8p" +
+"x;\nmargin-right: 8px;\n}\n\n#main > .comment > div > h1 {\nfont-size: 14px;\nmargin: " +
+"1px 0 2px 0;\ncolor: #406fb9;\nwhite-space: nowrap;\noverflow: hidden;\n}\n\n#main > ." +
+"comment > div > h2 {\nfont-size: 11px;\nmargin: 0 0 4px 0;\nfont-weight: normal;\nco" +
+"lor: #404040;\nwhite-space: nowrap;\noverflow: hidden;\n}\n\n#main > .comment > div >" +
+" div {\nmargin: 0;\nword-wrap: break-word;\n}\n\n#main > .comment > div > .mark {\n\tma" +
+"rgin-top: 8px;\n\tmargin-bottom: 8px;\n\tmargin-right: 8px;\n}\n\n#main > .comment > di" +
+"v > div img {\nmax-width: 100%;\n}\n\n#main { width: 100%; }\n\nimg { max-width: 100%;" +
+" } \np { margin: 10px 0; white-space: pre-wrap; } \npre, li, ul { word-wrap: break" +
+"-word; } \n\n.mark h1, .mark h2, .mark h3, .mark h4, .mark h5, .mark h6 {\nmargin: " +
+"1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-height: 1.7;\ncursor: text;\nposit" +
+"ion: relative;\n}\n\nul, ol {\npadding: 0;\nmargin-top: 0;\nmargin-bottom: 0;\npadding-" +
+"left: 20px;\n}\n\npre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd;\nfont-siz" +
+"e: 13px;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3p" +
+"x;\nword-wrap: normal;\n}\ndl dt {\nfont-size: 14px;\nfont-weight: bold;\nfont-style: " +
+"italic;\npadding: 0;\nmargin-top: 15px;\n}\nblockquote {\nborder-left: 4px solid #DDD" +
+";\npadding: 0 15px;\ncolor: #777;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndisplay: " +
+"block;\n}\ntable tr {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\ntable " +
+"th {\nfont-weight: bold;\n}\ntable th, table td {\nborder: 1px solid #ddd;\npadding: " +
+"4px 11px;\n}\ntable tr:nth-child(2n) {\nbackground-color: #f8f8f8;\n}\n.mark h2 {\nfon" +
+"t-size: 1.2em;\nborder-bottom: 1px solid #eee;\n}\n.mark h1 {\nfont-size: 1.6em;\nbor" +
+"der-bottom: 1px solid #ddd;\n}\n\n.mark .label {\ndisplay: inline;\npadding: .2em .6e" +
+"m .2em;\nfont-size: 85%;\nfont-weight: 700;\nline-height: 1;\ncolor: #fff;\ntext-alig" +
+"n: center;\nwhite-space: nowrap;\nvertical-align: baseline;\nborder-radius: .25em;\n" +
+"}\n.label-danger {\nbackground-color: #d9534f;\n}\n.label-success {\nbackground-color" +
+": #5cb85c;\n}\n.label-info {\nbackground-color: #6e5494;\n}\n.label-default {\nbackgro" +
+"und-color: #999;\n}\n</style>\n</head>\n<body>\n\t<div");
 
 WriteLiteral(" id=\"main\"");
 
 WriteLiteral(">\n");
 
 
-#line 184 "CommentsView.cshtml"
+#line 179 "CommentsView.cshtml"
 		
 
 #line default
 #line hidden
 
-#line 184 "CommentsView.cshtml"
+#line 179 "CommentsView.cshtml"
    foreach (var comment in Model)
 		{
 
@@ -106,7 +99,7 @@ WriteLiteral(">\n\t\t\t\t<img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 187 "CommentsView.cshtml"
+#line 182 "CommentsView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -116,7 +109,7 @@ WriteAttribute ("src", " src=\"", "\""
 WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 
 
-#line 189 "CommentsView.cshtml"
+#line 184 "CommentsView.cshtml"
     Write(comment.Name);
 
 
@@ -125,7 +118,7 @@ WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 WriteLiteral("</h1>\n\t\t\t\t\t<h2>");
 
 
-#line 190 "CommentsView.cshtml"
+#line 185 "CommentsView.cshtml"
     Write(comment.Date);
 
 
@@ -140,7 +133,7 @@ WriteLiteral(">\n");
 WriteLiteral("\t\t\t\t\t");
 
 
-#line 192 "CommentsView.cshtml"
+#line 187 "CommentsView.cshtml"
                 WriteLiteral(comment.Body);
 
 
@@ -149,7 +142,7 @@ WriteLiteral("\t\t\t\t\t");
 WriteLiteral("\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n");
 
 
-#line 196 "CommentsView.cshtml"
+#line 191 "CommentsView.cshtml"
 		}
 
 
