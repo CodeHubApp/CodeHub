@@ -36,7 +36,7 @@ namespace CodeHub.iOS.Views
                 HeaderView.Text = value;
                 SlideUpTitle.Text = value;
                 base.Title = value;
-                TableView.ReloadData();
+                RefreshHeaderView();
             }
         }
 
@@ -76,7 +76,6 @@ namespace CodeHub.iOS.Views
         {
             base.DidRotate(fromInterfaceOrientation);
             RefreshHeaderView();
-            TableView.ReloadData();
         }
 
         protected virtual DialogTableViewSource CreateTableViewSource()

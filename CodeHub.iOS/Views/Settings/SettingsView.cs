@@ -10,13 +10,19 @@ namespace CodeHub.iOS.Views.Settings
 {
     public class SettingsView : BaseDialogViewController<SettingsViewModel>
 	{
+        public SettingsView()
+        {
+            HeaderView.Image = Images.LoginUserUnknown;
+            HeaderView.SubText = "Settings apply to this account only.";
+
+            this.WhenAnyValue(x => x.ViewModel.AccountImageUrl)
+                .IsNotNull()
+                .Subscribe(x => HeaderView.ImageUri = x);
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            HeaderView.SubText = "Settings apply to this account only.";
-            HeaderView.Image = Images.LoginUserUnknown;
-            ViewModel.WhenAnyValue(x => x.AccountImageUrl).IsNotNull().Subscribe(x => HeaderView.ImageUri = x);
 
             var saveCredentials = new BooleanElement("Save Credentials", 
                 ViewModel.SaveCredentials, e => ViewModel.SaveCredentials = e.Value);

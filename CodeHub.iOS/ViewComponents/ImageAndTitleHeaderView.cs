@@ -163,7 +163,7 @@ namespace CodeHub.iOS.ViewComponents
             _label2 = new UILabel();
             _label2.Hidden = true;
             _label2.TextAlignment = UITextAlignment.Center;
-            _label.Font = UIFont.PreferredBody;
+            _label2.Font = UIFont.PreferredSubheadline;
             _label2.Lines = 0;
             Add(_label2);
 

@@ -83,7 +83,7 @@ namespace CodeHub.iOS.DialogElements
     public class StyledStringElement : StringElement 
     {
         public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
-        public static UIFont  DefaultDetailFont = UIFont.PreferredBody;
+        public static UIFont  DefaultDetailFont = UIFont.PreferredSubheadline;
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
         public static UIColor DefaultDetailColor = UIColor.FromRGB(80, 80, 80);
         public static UIColor BgColor = UIColor.White;

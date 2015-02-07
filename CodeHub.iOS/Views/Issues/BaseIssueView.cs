@@ -52,7 +52,7 @@ namespace CodeHub.iOS.Views.Issues
                 .Subscribe(x => HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
             Appeared.Take(1)
-                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsClosed))

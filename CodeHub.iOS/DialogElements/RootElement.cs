@@ -185,7 +185,7 @@ namespace CodeHub.iOS.DialogElements
             }
 
             if (_tableView != null)
-                _tableView.ReloadData ();
+                _tableView.ReloadData();
         }
 
         public void Reset(params Section[] sections)
