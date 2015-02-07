@@ -28,7 +28,7 @@ namespace CodeHub.iOS.TableViewSources
         public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
         {
             var section = Root[indexPath.Section];
-            var element = (section[indexPath.Row] as StyledStringElement);
+            var element = (section[indexPath.Row] as StringElement);
             if (element != null)
                 element.AccessoryTap();
         }

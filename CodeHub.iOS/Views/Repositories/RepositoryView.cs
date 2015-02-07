@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Views.Repositories
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
-        private readonly StyledStringElement _ownerElement;
+        private readonly StringElement _ownerElement;
         private readonly Section _sourceSection;
 
         public RepositoryView()
@@ -26,7 +26,7 @@ namespace CodeHub.iOS.Views.Repositories
                 new DialogStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Code),
             };
 
-            _ownerElement = new StyledStringElement("Owner", string.Empty) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _ownerElement = new StringElement("Owner", string.Empty) { Image = Images.Person };
             _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.Repository)
                 .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
@@ -146,7 +146,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             if (model.Parent != null)
             {
-                var parent = new StyledStringElement("Forked From", model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                var parent = new StringElement("Forked From", model.Parent.FullName) { Image = Images.Fork };
                 parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
                 sec1.Add(parent);
             }

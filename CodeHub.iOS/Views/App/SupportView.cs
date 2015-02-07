@@ -11,9 +11,9 @@ namespace CodeHub.iOS.Views.App
     public class SupportView : BaseDialogViewController<SupportViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
-        private readonly StyledStringElement _addFeatureButton;
-        private readonly StyledStringElement _addBugButton;
-        private readonly StyledStringElement _featuresButton;
+        private readonly StringElement _addFeatureButton;
+        private readonly StringElement _addBugButton;
+        private readonly StringElement _featuresButton;
 
         public SupportView()
         {

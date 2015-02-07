@@ -22,6 +22,7 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
+                    ImageView.Image = Images.FileCode;
                     TextLabel.Text = x.Name;
                 });
         }

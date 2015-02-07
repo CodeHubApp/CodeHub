@@ -14,11 +14,12 @@ namespace CodeHub.iOS.Views.Issues
 {
     public abstract class BaseIssueView<TViewModel> : BaseDialogViewController<TViewModel> where TViewModel : BaseIssueViewModel
     {
+        protected readonly SplitButtonElement SplitButton = new SplitButtonElement();
         protected readonly Section DetailsSection = new Section();
         protected readonly Section CommentsSection = new Section();
-        protected readonly StyledStringElement MilestoneElement;
-        protected readonly StyledStringElement AssigneeElement;
-        protected readonly StyledStringElement LabelsElement;
+        protected readonly StringElement MilestoneElement;
+        protected readonly StringElement AssigneeElement;
+        protected readonly StringElement LabelsElement;
         protected readonly HtmlElement DescriptionElement;
         protected readonly HtmlElement CommentsElement;
 
@@ -65,20 +66,20 @@ namespace CodeHub.iOS.Views.Issues
                         Images.IssueOpened.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate));
                 });
 
-            MilestoneElement = new StyledStringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-            MilestoneElement.Tapped += () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
+            MilestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Milestone};
+            MilestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => MilestoneElement.Value = x);
 
-            AssigneeElement = new StyledStringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Person, Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            AssigneeElement.Tapped += () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
+            AssigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Person};
+            AssigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedUser)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => AssigneeElement.Value = x);
 
-            LabelsElement = new StyledStringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Tag, Accessory = UITableViewCellAccessory.DisclosureIndicator};
-            LabelsElement.Tapped += () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
+            LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Tag};
+            LabelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x))
                 .Subscribe(x => LabelsElement.Value = x);
@@ -158,12 +159,21 @@ namespace CodeHub.iOS.Views.Issues
                         CommentsSection.Remove(CommentsElement);
                     }
                 });
+
+            var commentsButton = SplitButton.AddButton("Comments", "-");
+            var participantsButton = SplitButton.AddButton("Participants", "-");
+
+            this.WhenAnyValue(x => x.ViewModel.Issue.Comments)
+                .Subscribe(x => commentsButton.Text = x.ToString());
+
+            this.WhenAnyValue(x => x.ViewModel.Participants)
+                .Subscribe(x => participantsButton.Text = x.ToString());
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            Root.Reset(new Section(), DetailsSection, CommentsSection);
+            Root.Reset(new Section { SplitButton }, DetailsSection, CommentsSection);
         }
 
         private void ShowAssigneeSelector()

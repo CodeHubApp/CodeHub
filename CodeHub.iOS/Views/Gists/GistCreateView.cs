@@ -56,8 +56,7 @@ namespace CodeHub.iOS.Views.Gists
                         continue;
 
                     var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
-                    var el = new StyledStringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { 
-                        Accessory = UITableViewCellAccessory.DisclosureIndicator,
+                    var el = new StringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { 
                         Image = Images.FileCode
                     };
 

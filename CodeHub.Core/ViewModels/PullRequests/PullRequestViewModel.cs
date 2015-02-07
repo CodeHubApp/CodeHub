@@ -45,10 +45,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand MergeCommand { get; private set; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
-
-        public IReactiveCommand<object> GoToUrlCommand { get; private set; }
- 
         public PullRequestViewModel(
             IApplicationService applicationService, 
             IMarkdownService markdownService, 
@@ -92,13 +88,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
 //                }
 //            });
 
-            GoToUrlCommand = ReactiveCommand.Create();
-            GoToUrlCommand.OfType<string>().Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.PullRequest).Select(x => x != null));
             GoToHtmlUrlCommand.Select(_ => PullRequest.HtmlUrl).Subscribe(x => GoToUrlCommand.ExecuteIfCan(x.AbsolutePath));
@@ -115,8 +104,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             GoToFilesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<PullRequestFilesViewModel>();
-                vm.Username = RepositoryOwner;
-                vm.Repository = RepositoryName;
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
                 vm.PullRequestId = Id;
                 NavigateTo(vm);
             });
@@ -152,6 +141,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         protected override async Task Load(IApplicationService applicationService)
         {
             PullRequest = await applicationService.GitHubClient.PullRequest.Get(RepositoryOwner, RepositoryName, Id);
+            await base.Load(applicationService);
         }
     }
 }

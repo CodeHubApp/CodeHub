@@ -40,20 +40,16 @@ namespace CodeHub.iOS.Views.Settings
                 ViewModel.ShowRepositoryDescriptionInList, e => ViewModel.ShowRepositoryDescriptionInList = e.Value);
             ViewModel.WhenAnyValue(x => x.ShowRepositoryDescriptionInList).Subscribe(x => repoDescriptions.Value = x);
 
-            var startupView = new StyledStringElement("Startup View", ViewModel.DefaultStartupViewName, UITableViewCellStyle.Value1) { 
-              Accessory = UITableViewCellAccessory.DisclosureIndicator,
-            };
-            startupView.Tapped += () => ViewModel.GoToDefaultStartupViewCommand.ExecuteIfCan();
+            var startupView = new StringElement("Startup View", ViewModel.DefaultStartupViewName, UITableViewCellStyle.Value1);
+            startupView.Tapped = () => ViewModel.GoToDefaultStartupViewCommand.ExecuteIfCan();
             ViewModel.WhenAnyValue(x => x.DefaultStartupViewName).Subscribe(x => 
             {
                 startupView.Value = x;
                 Root.Reload(startupView);
             });
 
-            var syntaxHighlighter = new StyledStringElement("Syntax Highlighter", ViewModel.SyntaxHighlighter, UITableViewCellStyle.Value1) { 
-                Accessory = UITableViewCellAccessory.DisclosureIndicator,
-            };
-            syntaxHighlighter.Tapped += () => ViewModel.GoToSyntaxHighlighterCommand.ExecuteIfCan();
+            var syntaxHighlighter = new StringElement("Syntax Highlighter", ViewModel.SyntaxHighlighter, UITableViewCellStyle.Value1);
+            syntaxHighlighter.Tapped = () => ViewModel.GoToSyntaxHighlighterCommand.ExecuteIfCan();
             ViewModel.WhenAnyValue(x => x.SyntaxHighlighter).Subscribe(x => 
             {
                 syntaxHighlighter.Value = x;
@@ -68,9 +64,8 @@ namespace CodeHub.iOS.Views.Settings
             if (major >= 8)
             {
                 applicationSection.Add(
-                    new StyledStringElement("Go To Application Settings", 
-                        () => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString)))
-                        { Accessory = UITableViewCellAccessory.DisclosureIndicator });
+                    new StringElement("Go To Application Settings", 
+                        () => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
             }
 
             var accountSection = new Section("Account") { saveCredentials };
@@ -86,10 +81,10 @@ namespace CodeHub.iOS.Views.Settings
 
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!")
             {
-                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
-                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
-                new StyledStringElement("Source Code", () => ViewModel.GoToSourceCodeCommand.ExecuteIfCan()),
-                new StyledStringElement("App Version", ViewModel.Version)
+                new StringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
+                new StringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
+                new StringElement("Source Code", () => ViewModel.GoToSourceCodeCommand.ExecuteIfCan()),
+                new StringElement("App Version", ViewModel.Version)
             };
 
             Root.Reset(accountSection, appearanceSection, applicationSection, aboutSection);

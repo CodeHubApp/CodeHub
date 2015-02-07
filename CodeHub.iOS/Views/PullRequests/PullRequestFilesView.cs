@@ -21,7 +21,10 @@ namespace CodeHub.iOS.Views.PullRequests
             base.ViewDidLoad();
 
             var notificationSource = new CommitedFilesTableViewSource(TableView);
-            ViewModel.WhenAnyValue(x => x.Files).Where(x => x != null).Subscribe(notificationSource.SetData);
+            this.WhenAnyValue(x => x.ViewModel.Files.Changed)
+                .Switch()
+                .Select(_ => ViewModel.Files)
+                .Subscribe(notificationSource.SetData);
             TableView.Source = notificationSource;
         }
     }

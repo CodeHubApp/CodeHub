@@ -7,9 +7,9 @@ namespace CodeHub.iOS.DialogElements
         public InputElement(string caption, string placeholder, string value)
             : base(caption, placeholder, value)
         {
-            TitleFont = StyledStringElement.DefaultTitleFont.WithSize(StyledStringElement.DefaultTitleFont.PointSize);
+            TitleFont = StringElement.DefaultTitleFont.WithSize(StringElement.DefaultTitleFont.PointSize);
             EntryFont = UIFont.SystemFontOfSize(14);
-            TitleColor = StyledStringElement.DefaultTitleColor;
+            TitleColor = StringElement.DefaultTitleColor;
         }
     }
 }

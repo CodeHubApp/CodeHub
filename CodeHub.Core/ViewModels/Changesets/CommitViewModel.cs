@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
 
-        public IReactiveCommand GoToCommentCommand { get; private set; }
+        public IReactiveCommand AddCommentCommand { get; private set; }
 
         public IReadOnlyReactiveList<Octokit.CommitComment> Comments { get; private set; }
 
@@ -83,7 +83,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 NavigateTo(vm);
             });
 
-            GoToCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<CommitCommentViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
@@ -139,7 +139,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(_ =>
             {
                 var menu = actionMenuService.Create(Title);
-                menu.AddButton("Add Comment", GoToCommentCommand);
+                menu.AddButton("Add Comment", AddCommentCommand);
                 menu.AddButton("Copy SHA", copyShaCommand);
                 menu.AddButton("Browse Code", browseCodeCommand);
                 menu.AddButton("Share", shareCommand);

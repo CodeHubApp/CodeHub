@@ -3,7 +3,7 @@ using UIKit;
 
 namespace CodeHub.iOS.DialogElements
 {
-    public class DialogStringElement : StyledStringElement
+    public class DialogStringElement : StringElement
     {
         public DialogStringElement(string title, Action action, UIImage img)
             : base(title, action, img.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate))

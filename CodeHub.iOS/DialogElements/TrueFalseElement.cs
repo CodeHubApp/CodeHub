@@ -62,9 +62,9 @@ namespace CodeHub.iOS.DialogElements
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
             }
 
-            cell.BackgroundColor = StyledStringElement.BgColor;
-            cell.TextLabel.Font = StyledStringElement.DefaultTitleFont.WithSize(StyledStringElement.DefaultTitleFont.PointSize);
-            cell.TextLabel.TextColor = StyledStringElement.DefaultTitleColor;
+            cell.BackgroundColor = StringElement.BgColor;
+            cell.TextLabel.Font = StringElement.DefaultTitleFont.WithSize(StringElement.DefaultTitleFont.PointSize);
+            cell.TextLabel.TextColor = StringElement.DefaultTitleColor;
             cell.TextLabel.Text = Caption;
             cell.AccessoryView = _switch;
             return cell;

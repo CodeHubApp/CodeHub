@@ -12,9 +12,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public long PullRequestId { get; set; }
 
-        public string Username { get; set; }
+        public string RepositoryOwner { get; set; }
 
-        public string Repository { get; set; }
+        public string RepositoryName { get; set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
@@ -26,6 +26,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, y =>
             {
                 var vm = this.CreateViewModel<SourceViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
                 vm.Name = y.Name;
                 vm.Path = x.Filename;
                 vm.GitUrl = x.ContentsUrl;
@@ -35,8 +37,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                var request = applicationService.Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles();
-                files.Reset((await applicationService.Client.ExecuteAsync(request)).Data);
+                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].GetFiles();
+                var response = await applicationService.Client.ExecuteAsync(request);
+                files.Reset(response.Data);
             });
         }
     }

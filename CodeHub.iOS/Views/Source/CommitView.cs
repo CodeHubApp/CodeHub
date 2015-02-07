@@ -10,13 +10,14 @@ using System.Collections.Generic;
 using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class CommitView : BaseDialogViewController<CommitViewModel>
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
-        private readonly Section _commentSection = new Section();
+        private readonly Section _commentsSection;
         private readonly Section _headerSection;
 
         public CommitView()
@@ -46,6 +47,17 @@ namespace CodeHub.iOS.Views.Source
                     HeaderView.Text = x;
                     RefreshHeaderView();
                 });
+
+            this.WhenAnyValue(x => x.ViewModel.Commit)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    HeaderView.ImageUri = x.GenerateGravatarUrl();
+                    HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
+                    RefreshHeaderView();
+                });
+
+            _commentsSection = new Section(null, new TableFooterButton("Add Comment", () => ViewModel.AddCommentCommand.ExecuteIfCan()));
         }
 
         public override void ViewDidLoad()
@@ -54,13 +66,6 @@ namespace CodeHub.iOS.Views.Source
 
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
-
-            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().SubscribeSafe(x =>
-            {
-                HeaderView.ImageUri = x.GenerateGravatarUrl();
-                HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
-                RefreshHeaderView();
-            });
 
             ViewModel.Comments.Changed.Select(_ => new Unit()).StartWith(new Unit()).Subscribe(x =>
             {
@@ -71,7 +76,7 @@ namespace CodeHub.iOS.Views.Source
                 commentsElement.Value = html;
 
                 if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
-                    _commentSection.Add(commentsElement);
+                    _commentsSection.Add(commentsElement);
                 TableView.ReloadData();
             });
 
@@ -90,11 +95,9 @@ namespace CodeHub.iOS.Views.Source
 
                 if (ViewModel.ShowRepository)
                 {
-                    var repo = new StyledStringElement(ViewModel.RepositoryName) { 
-                        Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
-                        Lines = 1, 
-                        Font = StyledStringElement.DefaultDetailFont, 
-                        TextColor = StyledStringElement.DefaultDetailColor,
+                    var repo = new StringElement(ViewModel.RepositoryName) { 
+                        Font = StringElement.DefaultDetailFont, 
+                        TextColor = StringElement.DefaultDetailColor,
                         Image = Images.Repo
                     };
                     repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
@@ -120,11 +123,7 @@ namespace CodeHub.iOS.Views.Source
                     Root.Add(fileSection);
                 }
 
-                Root.Add(_commentSection);
-
-                var addComment = new StyledStringElement("Add Comment") { Image = Images.Pencil };
-                addComment.Tapped += () => ViewModel.GoToCommentCommand.ExecuteIfCan();
-                Root.Add(new Section { addComment });
+                Root.Add(_commentsSection);
             });
         }
     }

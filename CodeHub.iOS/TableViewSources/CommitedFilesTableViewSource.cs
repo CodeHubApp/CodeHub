@@ -18,16 +18,11 @@ namespace CodeHub.iOS.TableViewSources
 
         public void SetData(IEnumerable<CommitedFileItemViewModel> collections)
         {
-            Data = collections.GroupBy(x => x.RootPath).Select(x =>
-            {
-                var headerView = new UITableViewHeaderFooterView();
-                headerView.TextLabel.Text = x.Key;
-                return new TableSectionInformation<CommitedFileItemViewModel, CommitedFileTableViewCell>(
-                    new ReactiveList<CommitedFileItemViewModel>(x), CommitedFileTableViewCell.Key, 44f)
-                {
-                    Header = new TableSectionHeader(() => headerView, 30f)
-                };
-            }).ToList();
+            Data = collections
+                .GroupBy(x => x.RootPath)
+                .Select(x => new TableSectionInformation<CommitedFileItemViewModel, CommitedFileTableViewCell>(
+                    new ReactiveList<CommitedFileItemViewModel>(x), CommitedFileTableViewCell.Key, 44f) { Header = new TableSectionHeader(x.Key) })
+                .ToList();
         }
     }
 }

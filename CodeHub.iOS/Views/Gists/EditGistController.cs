@@ -104,7 +104,7 @@ namespace CodeHub.iOS.Views.Gists
             section.Remove(element);
         }
 
-        private class FileElement : StyledStringElement
+        private class FileElement : StringElement
         {
             public readonly GistEditModel.File File;
             public readonly string Key;
@@ -113,7 +113,6 @@ namespace CodeHub.iOS.Views.Gists
             {
                 File = file;
                 Key = key;
-                Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
                 if (file.Content != null)
                     Value = System.Text.ASCIIEncoding.UTF8.GetByteCount(file.Content) + " bytes";

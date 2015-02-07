@@ -55,6 +55,12 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _assignedLabels.Value; }
         }
 
+        private readonly ObservableAsPropertyHelper<int> _participants;
+        public int Participants
+        {
+            get { return _participants.Value; }
+        }
+
         private Octokit.Issue _issueModel;
         public Octokit.Issue Issue
         {
@@ -109,6 +115,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
             Events = InternalEvents.CreateDerivedCollection(x => x);
+
+            _participants = Events.Changed
+                .Select(_ => Events.Select(y => y.Actor).Distinct().Count())
+                .Select(x => x == 0 ? 1 : x)
+                .ToProperty(this, x => x.Participants);
 
             GoToAssigneesCommand = ReactiveCommand.Create(issuePresenceObservable)
                 .WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
@@ -187,6 +198,15 @@ namespace CodeHub.Core.ViewModels.Issues
                     vm.SaveCommand.Subscribe(x => InternalEvents.Add(new IssueCommentItemViewModel(x)));
                     NavigateTo(vm);
                 });
+
+
+            GoToUrlCommand = ReactiveCommand.Create();
+            GoToUrlCommand.OfType<string>().Subscribe(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x;
+                NavigateTo(vm);
+            });
         }
 
         protected virtual async Task Load(IApplicationService applicationService)

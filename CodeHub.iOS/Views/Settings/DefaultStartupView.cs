@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Settings
             {
                 var items = ViewModel.StartupViews.Select(view => 
                 {
-                    var el = new StyledStringElement(view, () => ViewModel.SelectedStartupView = view);
+                    var el = new StringElement(view, () => ViewModel.SelectedStartupView = view);
                     el.Accessory = string.Equals(view, ViewModel.SelectedStartupView, StringComparison.OrdinalIgnoreCase) 
                         ? UITableViewCellAccessory.Checkmark :  UITableViewCellAccessory.None;
                     return el;

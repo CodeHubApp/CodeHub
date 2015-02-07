@@ -2,7 +2,7 @@ using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.DialogElements
 {
-    public class ChangesetElement : StyledStringElement
+    public class ChangesetElement : StringElement
     {
         private readonly int? _added;
         private readonly int? _removed;
@@ -10,9 +10,6 @@ namespace CodeHub.iOS.DialogElements
         public ChangesetElement(string title, string subtitle, int? added, int? removed)
             : base(title, subtitle, UIKit.UITableViewCellStyle.Subtitle)
         {
-            Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator;
-            LineBreakMode = UIKit.UILineBreakMode.TailTruncation;
-            Lines = 1;
             _added = added;
             _removed = removed;
         }

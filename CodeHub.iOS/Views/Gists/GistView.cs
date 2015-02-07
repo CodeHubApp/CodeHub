@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.Gists
     {
         private readonly SplitViewElement _splitRow1;
         private readonly SplitViewElement _splitRow2;
-        private readonly StyledStringElement _ownerElement;
+        private readonly StringElement _ownerElement;
 
         public GistView()
         {
@@ -46,8 +46,7 @@ namespace CodeHub.iOS.Views.Gists
             _splitRow2.Button1 = new SplitViewElement.SplitButton(Images.Pencil, string.Empty);
             _splitRow2.Button2 = new SplitViewElement.SplitButton(Images.Star, string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
 
-            _ownerElement = new StyledStringElement("Owner", string.Empty) { Image = Images.Person };
-            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+            _ownerElement = new StringElement("Owner", string.Empty) { Image = Images.Person };
 
             this.WhenAnyValue(x => x.ViewModel.IsStarred)
                 .Where(x => x.HasValue)
@@ -113,12 +112,12 @@ namespace CodeHub.iOS.Views.Gists
                 if (x.Owner == null)
                 {
                     _ownerElement.Value = "Anonymous";
-                    _ownerElement.Accessory = UITableViewCellAccessory.None;
+                    _ownerElement.Tapped = null;
                 }
                 else
                 {
                     _ownerElement.Value = x.Owner.Login;
-                    _ownerElement.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+                    _ownerElement.Tapped = () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
                 }
 
                 Root.Reload(_ownerElement);
@@ -143,12 +142,7 @@ namespace CodeHub.iOS.Views.Gists
                 var elements = new List<Element>();
                 foreach (var file in x.Files.Keys)
                 {
-                    var sse = new StyledStringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
-                        Accessory = UITableViewCellAccessory.DisclosureIndicator, 
-                        LineBreakMode = UILineBreakMode.TailTruncation,
-                        Lines = 1 
-                    };
-
+                    var sse = new StringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle);
                     sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);
                 }
