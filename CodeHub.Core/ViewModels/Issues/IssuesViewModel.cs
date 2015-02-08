@@ -70,7 +70,7 @@ namespace CodeHub.Core.ViewModels.Issues
 	            var vm = this.CreateViewModel<IssueAddViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-                //vm.CreatedIssue.IsNotNull().Subscribe(IssuesCollection.Add);
+                vm.CreatedIssue.IsNotNull().Subscribe(IssuesBacking.Add);
                 NavigateTo(vm);
 	        });
 

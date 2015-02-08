@@ -55,11 +55,6 @@ namespace CodeHub.Core.ViewModels.Issues
                 NavigateTo(vm);
             });
 
-            gotoIssueCommand.CanExecuteObservable.Subscribe(x =>
-            {
-                System.Diagnostics.Debug.WriteLine("OH SHIT {0}", x);
-            });
-
             Issues = IssuesBacking.CreateDerivedCollection(
                 x => new IssueItemViewModel(x, gotoIssueCommand), 
                 filter: x => x.Title.ContainsKeyword(SearchKeyword), 

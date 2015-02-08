@@ -16,12 +16,15 @@ using CodeHub.iOS.Views.Contents;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
+using CodeHub.iOS.Views.Issues;
+using System.Reactive;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS
 {
     class TransitionOrchestrationService : ITransitionOrchestrationService, IEnableLogger
     {
-        private static NSObject NSObject = new NSObject();
+        private readonly static NSObject ThreadObject = new NSObject();
         private readonly IViewModelViewService _viewModelViewService;
         private readonly IServiceConstructor _serviceConstructor;
 
@@ -33,7 +36,7 @@ namespace CodeHub.iOS
 
         public void Transition(IViewFor fromView, IViewFor toView)
         {
-            NSObject.BeginInvokeOnMainThread(() => DoTransition(fromView, toView));
+            ThreadObject.BeginInvokeOnMainThread(() => DoTransition(fromView, toView));
         }
 
         private void DoTransition(IViewFor fromView, IViewFor toView)
@@ -42,15 +45,16 @@ namespace CodeHub.iOS
             var toViewModel = (IBaseViewModel)toView.ViewModel;
             var fromViewController = (UIViewController)fromView;
             var routableToViewModel = toViewModel as IRoutingViewModel;
-            IReactiveCommand<object> toViewDismissCommand = null;
+            IReactiveCommand<Unit> toViewDismissCommand = null;
 
 
             if (toViewController is AccountsView || toViewController is WebBrowserView || toViewController is GistCommentView ||
-                toViewController is CommitCommentView || toViewController is GistCreateView || toViewController is FeedbackComposerView)
+                toViewController is CommitCommentView || toViewController is GistCreateView || toViewController is FeedbackComposerView || 
+                toViewController is IssueAddView)
             {
                 var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
                 var rootNav = (UINavigationController)appDelegate.Window.RootViewController;
-                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => rootNav.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.CreateAsyncTask(_ => rootNav.DismissViewControllerAsync(true));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 var navController = new ThemedNavigationController(toViewController);
                 rootNav.PresentViewController(navController, true, null);
@@ -61,12 +65,12 @@ namespace CodeHub.iOS
                 var nav = ((UINavigationController)appDelegate.Window.RootViewController);
                 var slideout = new SlideoutNavigationController();
                 slideout.MenuViewController = new MenuNavigationController(toViewController, slideout);
-                UIView.Transition(nav.View, 0.1, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
+                UIView.Transition(nav.View, 0.3, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
                     () => nav.PushViewController(slideout, false), null);
             }
             else if (toViewController is NewAccountView && fromViewController is StartupView)
             {
-                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => toViewController.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.CreateAsyncTask(_ => toViewController.DismissViewControllerAsync(true));
                 fromViewController.PresentViewController(new ThemedNavigationController(toViewController), true, null);
             }
             else if (fromViewController is MenuView)
@@ -75,7 +79,7 @@ namespace CodeHub.iOS
             }
             else if (toViewController is LanguagesView && fromViewController is RepositoriesTrendingView)
             {
-                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => fromViewController.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.CreateAsyncTask(_ => fromViewController.DismissViewControllerAsync(true));
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 var ctrlToPresent = new ThemedNavigationController(toViewController);
                 ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
@@ -83,13 +87,17 @@ namespace CodeHub.iOS
             }
             else if (toViewController is EditFileView || toViewController is CreateFileView)
             {
-                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => fromViewController.DismissViewController(true, null));
+                toViewDismissCommand = ReactiveCommand.CreateAsyncTask(_ => fromViewController.DismissViewControllerAsync(true));
+
                 toViewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => toViewDismissCommand.ExecuteIfCan());
                 fromViewController.PresentViewController(new ThemedNavigationController(toViewController), true, null);
             }
             else
             {
-                toViewDismissCommand = ReactiveCommand.Create().WithSubscription(_ => toViewController.NavigationController.PopToViewController(fromViewController, true));
+                toViewDismissCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    toViewController.NavigationController.PopToViewController(fromViewController, true);
+                });
+
                 fromViewController.NavigationController.PushViewController(toViewController, true);
             }
 

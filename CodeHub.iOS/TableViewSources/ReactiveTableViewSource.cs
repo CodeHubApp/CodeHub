@@ -12,7 +12,6 @@ namespace CodeHub.iOS.TableViewSources
     {
         private readonly ISubject<Unit> _requestMoreSubject = new Subject<Unit>();
         private readonly ISubject<bool> _isEmptySubject = new BehaviorSubject<bool>(true);
-        private readonly nfloat _estimatedHeight;
 
         public IObservable<Unit> RequestMore
         {

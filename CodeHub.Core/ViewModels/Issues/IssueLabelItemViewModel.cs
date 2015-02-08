@@ -1,7 +1,6 @@
 ﻿using System;
 using ReactiveUI;
 using System.Drawing;
-using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -10,8 +9,6 @@ namespace CodeHub.Core.ViewModels.Issues
         public string Name { get; private set; }
 
         public Color Color { get; private set; }
-
-        public object Image { get; private set; }
 
         private bool _isSelected;
         public bool IsSelected
@@ -22,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal IssueLabelItemViewModel(IGraphicService graphicService, Octokit.Label label)
+        internal IssueLabelItemViewModel(Octokit.Label label)
         {
             Name = label.Name;
 
@@ -36,7 +33,6 @@ namespace CodeHub.Core.ViewModels.Issues
             var blueB = Convert.ToByte(blue, 16);
 
             Color = Color.FromArgb(byte.MaxValue, redB, greenB, blueB);
-            Image = graphicService.CreateLabelImage(Color);
 
             GoToCommand = ReactiveCommand.Create()
                 .WithSubscription(_ => IsSelected = !IsSelected);

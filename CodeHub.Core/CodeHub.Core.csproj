@@ -48,7 +48,6 @@
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
-    <Compile Include="Services\IGraphicService.cs" />
     <Compile Include="Services\IImgurService.cs" />
     <Compile Include="Services\ILoginService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />

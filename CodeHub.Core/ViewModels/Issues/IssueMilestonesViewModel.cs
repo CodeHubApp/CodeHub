@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Octokit;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -17,8 +18,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueMilestonesViewModel(
             Func<Task<IReadOnlyList<Milestone>>> loadMilestones,
-            Func<Task<Issue>> loadIssue,
-            Func<IssueUpdate, Task<Issue>> updateIssue
+            Func<Task<Milestone>> currentMilestone,
+            Func<Milestone, Task> updateIssue
         )
         {
             var milestones = new ReactiveList<Milestone>();
@@ -27,17 +28,15 @@ namespace CodeHub.Core.ViewModels.Issues
                 var vm = new IssueMilestoneItemViewModel(x);
                 if (_selectedMilestone != null)
                     vm.IsSelected = x.Number == _selectedMilestone.Number;
-                vm.GoToCommand.Subscribe(_ =>
-                {
-                    var milestone = vm.IsSelected ? (int?)vm.Number : null;
-                    updateIssue(new IssueUpdate { Milestone = milestone }).ToBackground();
-                });
+                vm.GoToCommand
+                    .Select(_ => vm.IsSelected ? x : null)
+                    .Subscribe(milestone => updateIssue(milestone).ToBackground());
                 return vm;
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                _selectedMilestone = (await loadIssue()).Milestone;
+                _selectedMilestone = (await currentMilestone());
                 milestones.Reset(await loadMilestones());
             });
         }

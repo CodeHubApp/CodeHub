@@ -15,9 +15,8 @@ namespace CodeHub.Core.ViewModels.Issues
         public IssueViewModel(
             IApplicationService applicationService, 
             IActionMenuFactory actionMenuFactory,
-            IMarkdownService markdownService, 
-            IGraphicService graphicsService)
-            : base(applicationService, graphicsService, markdownService)
+            IMarkdownService markdownService)
+            : base(applicationService, markdownService)
         {
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
 

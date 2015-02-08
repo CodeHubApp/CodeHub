@@ -81,7 +81,7 @@ namespace CodeHub.iOS.Views.Issues
             LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Tag};
             LabelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
-                .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x))
+                .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => LabelsElement.Value = x);
 
             DetailsSection.Add(MilestoneElement);

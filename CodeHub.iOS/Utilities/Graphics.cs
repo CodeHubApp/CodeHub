@@ -1,6 +1,7 @@
 using CoreGraphics;
 using UIKit;
 using Foundation;
+using System.Drawing;
 
 namespace CodeHub.iOS.Utilities
 {
@@ -16,6 +17,24 @@ namespace CodeHub.iOS.Utilities
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return img;
+        }
+
+        public static UIImage CreateLabelImage(Color color)
+        {
+            var size = new CGSize(28f, 28f);
+            var cgColor = UIColor.FromRGB(color.R, color.G, color.B).CGColor;
+
+            UIGraphics.BeginImageContextWithOptions(size, false, 0);
+            var ctx = UIGraphics.GetCurrentContext();
+            ctx.SetLineWidth(1.0f);
+            ctx.SetStrokeColor(cgColor);
+            ctx.AddEllipseInRect(new CGRect(0, 0, size.Width, size.Height));
+            ctx.SetFillColor(cgColor);
+            ctx.FillPath();
+
+            var image = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return image;
         }
 
         /// <summary>

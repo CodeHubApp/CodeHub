@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Threading;
 using System.Linq;
 using CodeHub.Core.ViewModels.Users;
+using System.Collections.ObjectModel;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -108,7 +109,6 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected BaseIssueViewModel(
             IApplicationService applicationService, 
-            IGraphicService graphicsService,
             IMarkdownService markdownService)
         {
             _applicationService = applicationService;
@@ -145,19 +145,18 @@ namespace CodeHub.Core.ViewModels.Issues
 
             Assignees = new IssueAssigneeViewModel(
                 () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
-                () => Task.FromResult(Issue),
-                UpdateIssue);
+                () => Task.FromResult(Issue.Assignee),
+                x => UpdateIssue(new Octokit.IssueUpdate { Assignee = x == null ? null : x.Login }));
 
             Milestones = new IssueMilestonesViewModel(
                 () => applicationService.GitHubClient.Issue.Milestone.GetForRepository(RepositoryOwner, RepositoryName),
-                () => Task.FromResult(Issue),
-                UpdateIssue);
+                () => Task.FromResult(Issue.Milestone),
+                x => UpdateIssue(new Octokit.IssueUpdate { Milestone = x == null ? (int?)null : x.Number }));
 
             Labels = new IssueLabelsViewModel(
                 () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
-                () => Task.FromResult(Issue),
-                UpdateIssue,
-                graphicsService);
+                () => Task.FromResult((IReadOnlyList<Octokit.Label>)new ReadOnlyCollection<Octokit.Label>(Issue.Labels.ToList())),
+                x => UpdateIssue(new Octokit.IssueUpdate { Labels = x.Select(y => y.Name).ToList() }));
 
             _markdownDescription = this.WhenAnyValue(x => x.Issue)
                 .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : markdownService.Convert(x.Body)))

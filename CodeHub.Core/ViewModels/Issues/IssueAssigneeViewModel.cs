@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Octokit;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -24,8 +25,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueAssigneeViewModel(
             Func<Task<IReadOnlyList<User>>> loadAssignees,
-            Func<Task<Issue>> loadIssue,
-            Func<IssueUpdate, Task<Issue>> updateIssue
+            Func<Task<User>> loadCurrentlyAssigned,
+            Func<User, Task> updateIssue
         )
         {
             var derivedFunc = new Func<User, IssueAssigneeItemViewModel>(x =>
@@ -34,11 +35,9 @@ namespace CodeHub.Core.ViewModels.Issues
                 if (_selectedUser != null)
                     vm.IsSelected = x.Id == _selectedUser.Id;
 
-                vm.GoToCommand.Subscribe(_ =>
-                {
-                    var assigneeName = vm.IsSelected ? vm.Name : null;
-                    updateIssue(new IssueUpdate { Assignee = assigneeName }).ToBackground();
-                });
+                vm.GoToCommand
+                    .Select(_ => vm.IsSelected ? x : null)
+                    .Subscribe(user => updateIssue(user).ToBackground());
                 return vm;
             });
 
@@ -50,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                _selectedUser = (await loadIssue()).Assignee;
+                _selectedUser = (await loadCurrentlyAssigned());
                 assignees.Reset(await loadAssignees());
             });
         }

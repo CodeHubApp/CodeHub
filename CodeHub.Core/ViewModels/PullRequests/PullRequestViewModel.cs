@@ -48,9 +48,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public PullRequestViewModel(
             IApplicationService applicationService, 
             IMarkdownService markdownService, 
-            IActionMenuFactory actionMenuService,
-            IGraphicService graphicsService)
-            : base(applicationService, graphicsService, markdownService)
+            IActionMenuFactory actionMenuService)
+            : base(applicationService, markdownService)
         {
             this.WhenAnyValue(x => x.Id)
                 .Subscribe(x => Title = "Pull Request #" + x);

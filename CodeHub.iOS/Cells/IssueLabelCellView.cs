@@ -4,6 +4,7 @@ using Foundation;
 using ReactiveUI;
 using System.Reactive.Linq;
 using UIKit;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.Cells
 {
@@ -19,7 +20,7 @@ namespace CodeHub.iOS.Cells
                 .Subscribe(x =>
                 {
                     TextLabel.Text = x.Name;
-                    ImageView.Image = x.Image as UIImage;
+                    ImageView.Image = Graphics.CreateLabelImage(x.Color);
                 });
 
             this.WhenAnyValue(x => x.ViewModel)

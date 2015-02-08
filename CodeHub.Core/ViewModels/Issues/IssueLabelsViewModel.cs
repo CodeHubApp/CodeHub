@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using Octokit;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueLabelsViewModel : ReactiveObject, ILoadableViewModel
     {
+        private readonly IList<Label> _previouslySelectedLabels = new List<Label>();
         private readonly IList<Label> _selectedLabels = new List<Label>();
-        private Issue _issue;
 
         public IReadOnlyReactiveList<IssueLabelItemViewModel> Labels { get; private set; }
 
@@ -23,15 +24,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueLabelsViewModel(
             Func<Task<IReadOnlyList<Label>>> loadLabels,
-            Func<Task<Issue>> loadIssue,
-            Func<IssueUpdate, Task<Issue>> updateIssue, 
-            IGraphicService graphicService)
+            Func<Task<IReadOnlyList<Label>>> currentLabels,
+            Func<IReadOnlyList<Label>, Task> updateIssue)
 	    {
             var labels = new ReactiveList<Label>();
 
             Labels = labels.CreateDerivedCollection(x => 
             {
-                var vm = new IssueLabelItemViewModel(graphicService, x);
+                var vm = new IssueLabelItemViewModel(x);
                 vm.IsSelected = _selectedLabels.Any(y => string.Equals(y.Name, x.Name));
                 vm.GoToCommand
                     .Select(_ => x)
@@ -46,17 +46,23 @@ namespace CodeHub.Core.ViewModels.Issues
 
             SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(t =>
 	        {
-                if (!_selectedLabels.All(_issue.Labels.Contains))
-                    return updateIssue(new IssueUpdate { Labels = _selectedLabels.Select(x => x.Name).ToList() });
+                if (!_selectedLabels.All(_previouslySelectedLabels.Contains))
+                    return updateIssue(new ReadOnlyCollection<Label>(_selectedLabels));
                 return Task.FromResult(0);
 	        });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                _issue = await loadIssue();
+                _previouslySelectedLabels.Clear();
                 _selectedLabels.Clear();
-                foreach (var l in _issue.Labels)
+
+                var currentlySelectedLabels = (await currentLabels()) ?? Enumerable.Empty<Label>();
+                foreach (var l in currentlySelectedLabels)
+                {
+                    _previouslySelectedLabels.Add(l);
                     _selectedLabels.Add(l);
+                }
+
                 labels.Reset(await loadLabels());
             });
 	    }

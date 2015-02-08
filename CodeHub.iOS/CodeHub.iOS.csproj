@@ -235,7 +235,6 @@
     <Compile Include="ViewComponents\TrendingTitleButton.cs" />
     <Compile Include="ViewComponents\MenuProfileView.cs" />
     <Compile Include="Cells\IssueLabelCellView.cs" />
-    <Compile Include="Services\GraphicService.cs" />
     <Compile Include="TableViewSources\IssueLabelTableViewSource.cs" />
     <Compile Include="Views\Users\RepositoryContributorsView.cs" />
     <Compile Include="Views\Source\CommitCommentView.cs" />

@@ -10,7 +10,6 @@ namespace CodeHub.iOS.Services
         {
             resolverToUse.RegisterLazySingleton(() => new ViewModelViewService(), typeof(IViewModelViewService));
             resolverToUse.RegisterLazySingleton(() => new DefaultValueService(), typeof(IDefaultValueService));
-            resolverToUse.RegisterLazySingleton(() => new GraphicService(), typeof(IGraphicService));
             resolverToUse.RegisterLazySingleton(() => new MarkdownService(), typeof(IMarkdownService));
             resolverToUse.RegisterLazySingleton(() => new ErrorService(), typeof(IErrorService));
             resolverToUse.RegisterLazySingleton(() => new ServiceConstructor(), typeof(IServiceConstructor));

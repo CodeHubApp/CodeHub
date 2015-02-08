@@ -31,8 +31,10 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
-        public IssueEditViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory)
-            : base(alertDialogFactory)
+        public IssueEditViewModel(
+            IApplicationService applicationService, 
+            IAlertDialogFactory alertDialogFactory)
+            : base(applicationService, alertDialogFactory)
 	    {
 	        _applicationService = applicationService;
 
