@@ -30,8 +30,6 @@ namespace CodeHub.iOS
 
         public static UIImage Commit { get { return CreateTemplateFromBundle("Images/git-commit"); } }
 
-        public static UIImage Following { get { return CreateTemplateFromBundle("Images/following"); } }
-
         public static UIImage Eye { get { return CreateTemplateFromBundle("Images/eye"); } }
 
         public static UIImage PullRequest { get { return CreateTemplateFromBundle("Images/git-pull-request"); } }

@@ -453,10 +453,6 @@
       <DependentUpon>view.png</DependentUpon>
     </Content>
     <Content Include="Images\Buttons\view.png" />
-    <Content Include="Images\following%402x.png">
-      <DependentUpon>following.png</DependentUpon>
-    </Content>
-    <Content Include="Images\following.png" />
     <Content Include="Images\Logos\github.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
     <BundleResource Include="Resources\Default-Landscape.png" />

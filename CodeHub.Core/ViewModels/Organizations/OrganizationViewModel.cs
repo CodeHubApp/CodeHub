@@ -26,6 +26,13 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
         }
 
+        private bool _canViewTeams;
+        public bool CanViewTeams
+        {
+            get { return _canViewTeams; }
+            private set { this.RaiseAndSetIfChanged(ref _canViewTeams, value); }
+        }
+
         public IReactiveCommand GoToMembersCommand { get; private set; }
 
         public IReactiveCommand GoToTeamsCommand { get; private set; }
@@ -102,6 +109,9 @@ namespace CodeHub.Core.ViewModels.Organizations
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
+                applicationService.GitHubClient.Organization.Team.GetAll(Username)
+                    .ToBackground(x => CanViewTeams = true);
+
                 Organization = await applicationService.GitHubClient.Organization.Get(Username);
             });
         }

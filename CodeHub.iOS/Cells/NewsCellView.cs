@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Cells
             {EventItemViewModel.EventType.Comment, () => Images.Comment},
             {EventItemViewModel.EventType.Commit, () => Images.Commit},
             {EventItemViewModel.EventType.Delete, () => Images.Trashcan},
-            {EventItemViewModel.EventType.Follow, () => Images.Following},
+            {EventItemViewModel.EventType.Follow, () => Images.Person},
             {EventItemViewModel.EventType.Fork, () => Images.Fork},
             {EventItemViewModel.EventType.Gist, () => Images.Gist},
             {EventItemViewModel.EventType.Issue, () => Images.IssueOpened},

@@ -77,7 +77,7 @@ namespace CodeHub.iOS.Views.Gists
             base.ViewDidLoad();
 
             var headerSection = new Section();
-            var filesSection = new Section("Files");
+            var filesSection = new Section();
 
             var split = new SplitButtonElement();
             var files = split.AddButton("Files", "-");
@@ -85,7 +85,7 @@ namespace CodeHub.iOS.Views.Gists
             var forks = split.AddButton("Forks", "-");
             headerSection.Add(split);
 
-            var commentsSection = new Section("Comments") { FooterView = new TableFooterButton("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan) };
+            var commentsSection = new Section() { FooterView = new TableFooterButton("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan) };
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
@@ -143,6 +143,7 @@ namespace CodeHub.iOS.Views.Gists
                 foreach (var file in x.Files.Keys)
                 {
                     var sse = new StringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle);
+                    sse.Image = Images.FileCode;
                     sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);
                 }
