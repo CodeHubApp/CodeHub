@@ -25,35 +25,29 @@ namespace CodeHub.iOS.Cells
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
             ImageView.TintColor = Themes.Theme.Current.PrimaryNavigationBarColor;
 
-            var issueOpened = Images.IssueOpened.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            var pullRequest = Images.PullRequest.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            var commit = Images.Commit.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            var tag = Images.Tag.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-            var inbox = Images.Inbox.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            this.OneWayBind(ViewModel, x => x.Title, x => x.TextLabel.Text);
+            this.OneWayBind(ViewModel, x => x.UpdatedAt, x => x.DetailTextLabel.Text);
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    TextLabel.Text = x.Title;
-                    DetailTextLabel.Text = x.UpdatedAt;
-
                     switch (x.Type)
                     {
                         case NotificationItemViewModel.NotificationType.Issue:
-                            ImageView.Image = issueOpened;
+                            ImageView.Image = Octicon.IssueOpened.ToImage(ImageView.Frame.Width);
                             break;
                         case NotificationItemViewModel.NotificationType.PullRequest:
-                            ImageView.Image = pullRequest;
+                            ImageView.Image = Octicon.GitPullRequest.ToImage(ImageView.Frame.Width);
                             break;
                         case NotificationItemViewModel.NotificationType.Commit:
-                            ImageView.Image = commit;
+                            ImageView.Image = Octicon.GitCommit.ToImage(ImageView.Frame.Width);
                             break;
                         case NotificationItemViewModel.NotificationType.Release:
-                            ImageView.Image = tag;
+                            ImageView.Image = Octicon.Tag.ToImage(ImageView.Frame.Width);
                             break;
                         default:
-                            ImageView.Image = inbox;
+                            ImageView.Image = Octicon.Inbox.ToImage(ImageView.Frame.Width);
                             break;
                     }
                 });

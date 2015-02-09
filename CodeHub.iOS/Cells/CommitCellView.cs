@@ -38,14 +38,15 @@ namespace CodeHub.iOS.Cells
             ContentLabel.TextColor = Theme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TitleLabel.Text);
+            this.OneWayBind(ViewModel, x => x.Description, x => x.ContentLabel.Text);
+            this.OneWayBind(ViewModel, x => x.Time, x => x.TimeLabel.Text);
+
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .SubscribeSafe(x =>
                 {
                     MainImageView.SetAvatar(x.Avatar);
-                    TitleLabel.Text = x.Name;
-                    ContentLabel.Text = x.Description;
-                    TimeLabel.Text = x.Time.UtcDateTime.Humanize();
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
                 });
         }

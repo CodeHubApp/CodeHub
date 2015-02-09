@@ -1,6 +1,5 @@
 using System;
 using ReactiveUI;
-using System.Reactive.Linq;
 using Foundation;
 using CodeHub.Core.ViewModels.Organizations;
 
@@ -13,8 +12,7 @@ namespace CodeHub.iOS.Cells
         public TeamCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel.Name)
-                .IsNotNull().Subscribe(x => TextLabel.Text = x);
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
         }
     }
 }

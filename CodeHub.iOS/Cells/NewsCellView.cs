@@ -23,25 +23,25 @@ namespace CodeHub.iOS.Cells
             UIFont.PreferredSubheadline.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold), 
             UIFont.PreferredSubheadline.PointSize); 
 
-        private static IDictionary<EventItemViewModel.EventType, Func<UIImage>> _eventToImage 
-            = new Dictionary<EventItemViewModel.EventType, Func<UIImage>>
+        private static IDictionary<EventItemViewModel.EventType, Octicon> _eventToImage 
+        = new Dictionary<EventItemViewModel.EventType, Octicon>
         {
-            {EventItemViewModel.EventType.Unknown, () => Images.Alert},
-            {EventItemViewModel.EventType.Branch, () => Images.Branch},
-            {EventItemViewModel.EventType.Comment, () => Images.Comment},
-            {EventItemViewModel.EventType.Commit, () => Images.Commit},
-            {EventItemViewModel.EventType.Delete, () => Images.Trashcan},
-            {EventItemViewModel.EventType.Follow, () => Images.Person},
-            {EventItemViewModel.EventType.Fork, () => Images.Fork},
-            {EventItemViewModel.EventType.Gist, () => Images.Gist},
-            {EventItemViewModel.EventType.Issue, () => Images.IssueOpened},
-            {EventItemViewModel.EventType.Organization, () => Images.Organization},
-            {EventItemViewModel.EventType.Public, () => Images.Globe},
-            {EventItemViewModel.EventType.PullRequest, () => Images.PullRequest},
-            {EventItemViewModel.EventType.Repository, () => Images.Repo},
-            {EventItemViewModel.EventType.Star, () => Images.Star},
-            {EventItemViewModel.EventType.Tag, () => Images.Tag},
-            {EventItemViewModel.EventType.Wiki, () => Images.Pencil},
+            {EventItemViewModel.EventType.Unknown, Octicon.Alert},
+            {EventItemViewModel.EventType.Branch, Octicon.GitBranch},
+            {EventItemViewModel.EventType.Comment, Octicon.Comment},
+            {EventItemViewModel.EventType.Commit, Octicon.GitCommit},
+            {EventItemViewModel.EventType.Delete, Octicon.Trashcan},
+            {EventItemViewModel.EventType.Follow, Octicon.Person},
+            {EventItemViewModel.EventType.Fork, Octicon.RepoForked},
+            {EventItemViewModel.EventType.Gist, Octicon.Gist},
+            {EventItemViewModel.EventType.Issue, Octicon.IssueOpened},
+            {EventItemViewModel.EventType.Organization, Octicon.Organization},
+            {EventItemViewModel.EventType.Public, Octicon.Globe},
+            {EventItemViewModel.EventType.PullRequest, Octicon.GitPullRequest},
+            {EventItemViewModel.EventType.Repository, Octicon.Repo},
+            {EventItemViewModel.EventType.Star, Octicon.Star},
+            {EventItemViewModel.EventType.Tag, Octicon.Tag},
+            {EventItemViewModel.EventType.Wiki, Octicon.Pencil},
         };
 
         public class Link
@@ -107,8 +107,7 @@ namespace CodeHub.iOS.Cells
                     Time.Text = x.Created.UtcDateTime.Humanize();
 
                     ActionImage.Image = _eventToImage.ContainsKey(x.Type) ? 
-                        _eventToImage[x.Type]().ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : 
-                        Images.Alert.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+                        _eventToImage[x.Type].ToImage() : Octicon.Alert.ToImage();
 
                     List<NewsCellView.Link> headerLinks;
                     Header.Text = CreateAttributedStringFromBlocks(x.HeaderBlocks, out headerLinks);

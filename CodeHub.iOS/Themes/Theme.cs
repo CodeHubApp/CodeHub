@@ -9,6 +9,7 @@ using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers;
 using System.Reflection;
 using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Themes
 {
@@ -81,6 +82,7 @@ namespace CodeHub.iOS.Themes
                 UILabel.AppearanceWhenContainedIn(navbarAppearance).Font = UIFont.SystemFontOfSize(14f);
             }
 
+            StringElement.DefaultTintColor = theme.PrimaryNavigationBarColor;
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 

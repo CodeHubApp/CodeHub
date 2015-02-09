@@ -98,7 +98,7 @@ namespace CodeHub.iOS.Views.Source
                     var repo = new StringElement(ViewModel.RepositoryName) { 
                         Font = StringElement.DefaultDetailFont, 
                         TextColor = StringElement.DefaultDetailColor,
-                        Image = Images.Repo
+                        Image = Octicon.Repo.ToImage()
                     };
                     repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
                     detailSection.Add(repo);

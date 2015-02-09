@@ -16,25 +16,25 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             _split1 = new SplitViewElement
             {
-                Button1 = new SplitViewElement.SplitButton(Images.Gear, string.Empty),
-                Button2 = new SplitViewElement.SplitButton(Images.Gear, string.Empty)
+                Button1 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty),
+                Button2 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty)
             };
 
             _split2 = new SplitViewElement
             {
-                Button1 = new SplitViewElement.SplitButton(Images.Gear, string.Empty),
-                Button2 = new SplitViewElement.SplitButton(Images.Gear, string.Empty)
+                Button1 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty),
+                Button2 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty)
             };
 
             _commitsElement = new StringElement("Commits", string.Empty) 
             { 
-                Image = Images.Commit,
+                Image = Octicon.GitCommit.ToImage(),
                 Tapped = () => ViewModel.GoToCommitsCommand.ExecuteIfCan()
             };
 
             _filesElement = new StringElement("Files", string.Empty)
             {
-                Image = Images.Code,
+                Image = Octicon.FileCode.ToImage(),
                 Tapped = () => ViewModel.GoToFilesCommand.ExecuteIfCan()
             };
 

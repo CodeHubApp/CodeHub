@@ -7,6 +7,7 @@ namespace CodeHub.iOS.DialogElements
 {
     public class StringElement : Element 
     {
+        public static UIColor DefaultTintColor = null;
         public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
         public static UIFont  DefaultDetailFont = UIFont.PreferredSubheadline;
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
@@ -39,6 +40,8 @@ namespace CodeHub.iOS.DialogElements
                     cell.DetailTextLabel.Text = value ?? string.Empty;
             }
         }
+
+        public UIColor ImageTintColor { get; set; }
 
         public StringElement (string caption)
         {
@@ -115,6 +118,7 @@ namespace CodeHub.iOS.DialogElements
             cell.SelectionStyle = (Tapped != null) ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
             cell.TextLabel.Text = Caption;
             cell.ImageView.Image = Image;
+            cell.ImageView.TintColor = ImageTintColor ?? DefaultTintColor;
 
             if (Accessory.HasValue)
                 cell.Accessory = Accessory.Value;

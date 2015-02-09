@@ -34,22 +34,13 @@ namespace CodeHub.iOS.Cells
             TitleLabel.TextColor = Theme.MainTitleColor;
             TimeLabel.TextColor = Theme.MainTextColor;
 
+            this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text);
+            this.OneWayBind(ViewModel, x => x.Details, x => x.TimeLabel.Text);
+
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    MainImageView.SetAvatar(x.Avatar);
-                    TitleLabel.Text = x.Title;
-                    TimeLabel.Text = x.Details;
-                });
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-            TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
+                .Select(x => x.Avatar)
+                .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }
 }

@@ -57,7 +57,7 @@ namespace CodeHub.iOS.Views.Gists
 
                     var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
                     var el = new StringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { 
-                        Image = Images.FileCode
+                        Image = Octicon.FileCode.ToImage()
                     };
 
                     el.Tapped += () => ViewModel.ModifyGistFileCommand.ExecuteIfCan(key);

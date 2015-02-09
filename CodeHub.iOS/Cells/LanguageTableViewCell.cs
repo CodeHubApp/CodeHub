@@ -1,5 +1,4 @@
 using System;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using Foundation;
 using ReactiveUI;
@@ -14,12 +13,7 @@ namespace CodeHub.iOS.Cells
         public LanguageTableViewCell(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TextLabel.Text = x.Name;
-                });
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)

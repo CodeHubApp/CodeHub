@@ -35,18 +35,22 @@ namespace CodeHub.iOS.Views.Gists
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
                 .Switch()
-                .Select(x => x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null)
+                .Select(x => x.Value ? Octicon.Star.ToImage() : null)
                 .Subscribe(HeaderView.SetSubImage);
 
             _splitRow1 = new SplitViewElement();
-            _splitRow1.Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
-            _splitRow1.Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
+            _splitRow1.Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage(), string.Empty);
+            _splitRow1.Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage(), string.Empty);
 
             _splitRow2 = new SplitViewElement();
-            _splitRow2.Button1 = new SplitViewElement.SplitButton(Images.Pencil, string.Empty);
-            _splitRow2.Button2 = new SplitViewElement.SplitButton(Images.Star, string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
+            _splitRow2.Button1 = new SplitViewElement.SplitButton(Octicon.Pencil.ToImage(), string.Empty);
+            _splitRow2.Button2 = new SplitViewElement.SplitButton(Octicon.Star.ToImage(), string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
 
-            _ownerElement = new StringElement("Owner", string.Empty) { Image = Images.Person };
+            _ownerElement = new StringElement("Owner", string.Empty) 
+            { 
+                Image = Octicon.Person.ToImage(),
+                ImageTintColor = Theme.PrimaryNavigationBarColor
+            };
 
             this.WhenAnyValue(x => x.ViewModel.IsStarred)
                 .Where(x => x.HasValue)
@@ -61,7 +65,6 @@ namespace CodeHub.iOS.Views.Gists
                     var revisionCount = x.History == null ? 0 : x.History.Count;
 
                     _splitRow1.Button1.Text = publicGist ? "Public" : "Private";
-                    _splitRow1.Button1.Image = publicGist ? Images.Lock : Images.Lock;
                     _splitRow1.Button2.Text = revisionCount + " Revisions";
 
                     var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
@@ -143,7 +146,7 @@ namespace CodeHub.iOS.Views.Gists
                 foreach (var file in x.Files.Keys)
                 {
                     var sse = new StringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle);
-                    sse.Image = Images.FileCode;
+                    sse.Image = Octicon.FileCode.ToImage();
                     sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);
                 }

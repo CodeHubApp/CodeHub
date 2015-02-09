@@ -2,6 +2,7 @@ using System;
 using System.Reactive.Linq;
 using Foundation;
 using CodeHub.Core.ViewModels.Source;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Cells
 {
@@ -12,18 +13,17 @@ namespace CodeHub.iOS.Cells
         public SourceContentCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenViewModel(x => x.Name)
-                .Subscribe(x => TextLabel.Text = x);
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
 
             this.WhenViewModel(x => x.Type)
                 .Subscribe(x =>
                 {
                     if (x == SourceItemType.Directory)
-                        ImageView.Image = Images.Directory;
+                        ImageView.Image = Octicon.FileDirectory.ToImage();
                     else if (x == SourceItemType.Submodule)
-                        ImageView.Image = Images.Submodule;
+                        ImageView.Image = Octicon.FileSubmodule.ToImage();
                     else
-                        ImageView.Image = Images.FileCode;
+                        ImageView.Image = Octicon.FileCode.ToImage();
                 });
         }
     }

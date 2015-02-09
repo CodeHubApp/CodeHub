@@ -2,6 +2,8 @@ using CoreGraphics;
 using UIKit;
 using Foundation;
 using System.Drawing;
+using System;
+using AddressBook;
 
 namespace CodeHub.iOS.Utilities
 {
@@ -10,10 +12,17 @@ namespace CodeHub.iOS.Utilities
         public static UIImage ImageFromFont(UIFont font, char character, UIColor fillColor)
         {
             var s = new NSString("" + character);
-            var size = s.StringSize(font);
+            var stringSize = s.StringSize(font);
+            var maxSize = (nfloat)Math.Max(stringSize.Height, stringSize.Width);
+            var size = new CGSize(maxSize, maxSize);
+
             UIGraphics.BeginImageContextWithOptions(size, false, 0f);
             fillColor.SetFill();
-            s.DrawString(new CGPoint(0, 0), font);
+
+            var drawPoint = new CGPoint((size.Width / 2f) - (stringSize.Width / 2f),
+                                (size.Height / 2f) - (stringSize.Height / 2f));
+            s.DrawString(drawPoint, font);
+
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return img;

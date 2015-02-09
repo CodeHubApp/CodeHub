@@ -154,7 +154,7 @@ namespace CodeHub.iOS.Views
                                         () => EmptyView.Value.Alpha = 1.0f, null);
                                 }
                             }
-                            else
+                            else if (EmptyView.IsValueCreated)
                                 EmptyView.Value.RemoveFromSuperview();
                         }));
                 }

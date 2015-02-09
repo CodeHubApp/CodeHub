@@ -61,24 +61,22 @@ namespace CodeHub.iOS.Views.Issues
                 .Subscribe(x => 
                 {
                     HeaderView.SubImageView.TintColor = x ? UIColor.FromRGB(0xbd, 0x2c, 0) : UIColor.FromRGB(0x6c, 0xc6, 0x44);
-                    HeaderView.SetSubImage(x ? 
-                        Images.IssueClosed.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) :
-                        Images.IssueOpened.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate));
+                    HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
                 });
 
-            MilestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Milestone};
+            MilestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage()};
             MilestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => MilestoneElement.Value = x);
 
-            AssigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Person};
+            AssigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage()};
             AssigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedUser)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => AssigneeElement.Value = x);
 
-            LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Images.Tag};
+            LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage()};
             LabelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))

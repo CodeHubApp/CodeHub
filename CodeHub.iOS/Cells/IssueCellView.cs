@@ -29,16 +29,16 @@ namespace CodeHub.iOS.Cells
             Number.TextColor = Theme.MainTitleColor;
             AddSubview(new SeperatorIssues {Frame = new CGRect(65f, 5f, 1f, Frame.Height - 10f)});
 
-            Image1.Image = Images.Gear.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image1.Image = Octicon.Gear.ToImage(Image1.Frame.Height);
             Image1.TintColor = Label1.TextColor;
 
-            Image2.Image = Images.Comment.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image2.Image = Octicon.Comment.ToImage(Image2.Frame.Height);
             Image2.TintColor = Label2.TextColor;
 
-            Image3.Image = Images.Person.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image3.Image = Octicon.Person.ToImage(Image3.Frame.Height);
             Image3.TintColor = Label3.TextColor;
 
-            Image4.Image = Images.Pencil.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            Image4.Image = Octicon.Pencil.ToImage(Image4.Frame.Height);
             Image4.TintColor = Label4.TextColor;
 
             SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);

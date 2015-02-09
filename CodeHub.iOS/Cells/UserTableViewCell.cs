@@ -34,13 +34,12 @@ namespace CodeHub.iOS.Cells
             UserImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
             ContentView.Opaque = true;
 
+            this.OneWayBind(ViewModel, x => x.Name, x => x.UserNameLabel.Text);
+
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull()
-                .Subscribe(x =>
-                {
-                    UserNameLabel.Text = x.Name;
-                    UserImageView.SetAvatar(x.Avatar);
-                });
+                .Select(x => x.Avatar)
+                .Subscribe(x => UserImageView.SetAvatar(x));
         }
     }
 }

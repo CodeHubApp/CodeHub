@@ -10,9 +10,18 @@ namespace CodeHub.iOS.Cells
     {
         public static NSString Key = new NSString("menucell");
         private const float ImageSize = 24f;
-        private readonly UILabel _numberView;
+        private readonly UILabel _numberView = new UILabel();
 
-        public int NotificationNumber { get; set; }
+        private int _notificationNumber;
+        public int NotificationNumber 
+        {
+            get { return _notificationNumber; }
+            set
+            {
+                _notificationNumber = value;
+                _numberView.Text = value.ToString();
+            }
+        }
 
         public bool RoundedImage { get; set; }
 
@@ -23,7 +32,7 @@ namespace CodeHub.iOS.Cells
             TextLabel.TextColor = Themes.Theme.Current.MenuTextColor;
             SelectedBackgroundView = new UIView { BackgroundColor = Themes.Theme.Current.MenuSelectedBackgroundColor };
 
-            _numberView = new UILabel { BackgroundColor = Themes.Theme.Current.PrimaryNavigationBarColor };
+            _numberView.BackgroundColor = Themes.Theme.Current.PrimaryNavigationBarColor;
             _numberView.Layer.MasksToBounds = true;
             _numberView.Layer.CornerRadius = 5f;
             _numberView.TextAlignment = UITextAlignment.Center;

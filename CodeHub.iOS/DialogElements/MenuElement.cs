@@ -13,7 +13,18 @@ namespace CodeHub.iOS.DialogElements
         private readonly Action _tapped;
         private readonly string _title;
 
-        public int NotificationNumber { get; set; }
+
+        private int _notificationNumber;
+        public int NotificationNumber 
+        {
+            get { return _notificationNumber; }
+            set
+            {
+                _notificationNumber = value;
+                var cell = GetActiveCell() as MenuTableViewCell;
+                if (cell != null) cell.NotificationNumber = value;
+            }
+        }
 
         public bool TintImage { get; set; }
 

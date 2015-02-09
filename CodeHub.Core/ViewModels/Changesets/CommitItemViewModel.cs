@@ -2,6 +2,7 @@
 using ReactiveUI;
 using GitHubSharp.Models;
 using CodeHub.Core.Utilities;
+using Humanizer;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -13,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public string Description { get; private set; }
 
-        public DateTimeOffset Time { get; private set; }
+        public string Time { get; private set; }
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
@@ -25,9 +26,10 @@ namespace CodeHub.Core.ViewModels.Changesets
             var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
             Description = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 
-            Time = DateTimeOffset.MinValue;
+            var time = DateTimeOffset.MinValue;
             if (commit.Commit.Committer != null)
-                Time = commit.Commit.Committer.Date;
+                time = commit.Commit.Committer.Date;
+            Time = time.UtcDateTime.Humanize();
 
             Name = commit.GenerateCommiterName();
             Avatar = new GitHubAvatar(commit.GenerateGravatarUrl());

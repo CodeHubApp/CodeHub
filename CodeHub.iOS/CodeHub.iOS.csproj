@@ -332,7 +332,6 @@
     <Compile Include="ViewControllers\ReactiveTableViewControllerExtensions.cs" />
     <Compile Include="Views\BaseWebView.cs" />
     <Compile Include="DialogElements\ChangesetElement.cs" />
-    <Compile Include="DialogElements\DialogStringElement.cs" />
     <Compile Include="DialogElements\DummyInputElement.cs" />
     <Compile Include="DialogElements\ExpandingInputElement.cs" />
     <Compile Include="DialogElements\HtmlElement.cs" />
@@ -414,9 +413,6 @@
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
     </Reference>
-    <Reference Include="Splat">
-      <HintPath>..\packages\Splat.1.6.0\lib\Xamarin.iOS10\Splat.dll</HintPath>
-    </Reference>
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.1.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
     </Reference>
@@ -434,6 +430,9 @@
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.33.7\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.1\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -506,91 +505,11 @@
     <BundleResource Include="Settings.bundle\Root.plist" />
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
     <BundleResource Include="Themes\InvertedDefault.json" />
-    <BundleResource Include="Images\gist%402x.png" />
-    <BundleResource Include="Images\inbox%402x.png" />
-    <BundleResource Include="Images\issue-opened%402x.png" />
-    <BundleResource Include="Images\megaphone%402x.png" />
-    <BundleResource Include="Images\organization%402x.png" />
-    <BundleResource Include="Images\radio-tower%402x.png" />
-    <BundleResource Include="Images\rss%402x.png" />
-    <BundleResource Include="Images\tag.png" />
-    <BundleResource Include="Images\tag%402x.png" />
-    <BundleResource Include="Images\star.png" />
-    <BundleResource Include="Images\star%402x.png" />
-    <BundleResource Include="Images\rss.png" />
-    <BundleResource Include="Images\repo.png" />
-    <BundleResource Include="Images\repo%402x.png" />
-    <BundleResource Include="Images\radio-tower.png" />
-    <BundleResource Include="Images\person.png" />
-    <BundleResource Include="Images\person%402x.png" />
-    <BundleResource Include="Images\organization.png" />
-    <BundleResource Include="Images\megaphone.png" />
-    <BundleResource Include="Images\lock.png" />
-    <BundleResource Include="Images\lock%402x.png" />
-    <BundleResource Include="Images\git-pull-request.png" />
-    <BundleResource Include="Images\git-pull-request%402x.png" />
-    <BundleResource Include="Images\git-commit.png" />
-    <BundleResource Include="Images\git-commit%402x.png" />
-    <BundleResource Include="Images\git-branch.png" />
-    <BundleResource Include="Images\git-branch%402x.png" />
-    <BundleResource Include="Images\gist.png" />
-    <BundleResource Include="Images\gear.png" />
-    <BundleResource Include="Images\gear%402x.png" />
-    <BundleResource Include="Images\file-code.png" />
-    <BundleResource Include="Images\file-code%402x.png" />
-    <BundleResource Include="Images\file-directory.png" />
-    <BundleResource Include="Images\file-directory%402x.png" />
-    <BundleResource Include="Images\file-submodule.png" />
-    <BundleResource Include="Images\file-submodule%402x.png" />
-    <BundleResource Include="Images\repo-forked.png" />
-    <BundleResource Include="Images\repo-forked%402x.png" />
-    <BundleResource Include="Images\pencil.png" />
-    <BundleResource Include="Images\pencil%402x.png" />
-    <BundleResource Include="Images\question.png" />
-    <BundleResource Include="Images\question%402x.png" />
-    <BundleResource Include="Images\comment.png" />
-    <BundleResource Include="Images\comment%402x.png" />
-    <BundleResource Include="Images\globe.png" />
-    <BundleResource Include="Images\globe%402x.png" />
-    <BundleResource Include="Images\git-merge.png" />
-    <BundleResource Include="Images\git-merge%402x.png" />
-    <BundleResource Include="Images\issue-opened.png" />
-    <BundleResource Include="Images\inbox.png" />
-    <BundleResource Include="Images\code.png" />
-    <BundleResource Include="Images\code%402x.png" />
-    <BundleResource Include="Images\book.png" />
-    <BundleResource Include="Images\book%402x.png" />
-    <BundleResource Include="Images\heart.png" />
-    <BundleResource Include="Images\heart%402x.png" />
-    <BundleResource Include="Images\info.png" />
-    <BundleResource Include="Images\info%402x.png" />
-    <BundleResource Include="Images\eye.png" />
-    <BundleResource Include="Images\eye%402x.png" />
-    <BundleResource Include="Images\alert.png" />
-    <BundleResource Include="Images\package.png" />
-    <BundleResource Include="Images\package%402x.png" />
-    <BundleResource Include="Images\trashcan.png" />
-    <BundleResource Include="Images\trashcan%402x.png" />
-    <BundleResource Include="Images\calendar.png" />
-    <BundleResource Include="Images\calendar%402x.png" />
-    <BundleResource Include="Images\milestone.png" />
-    <BundleResource Include="Images\milestone%402x.png" />
-    <BundleResource Include="Images\light-bulb.png" />
-    <BundleResource Include="Images\light-bulb%402x.png" />
-    <BundleResource Include="Images\bug.png" />
-    <BundleResource Include="Images\bug%402x.png" />
-    <BundleResource Include="Images\telescope.png" />
-    <BundleResource Include="Images\telescope%402x.png" />
-    <BundleResource Include="Images\pulse.png" />
-    <BundleResource Include="Images\pulse%402x.png" />
-    <BundleResource Include="Images\clippy.png" />
-    <BundleResource Include="Images\clippy%402x.png" />
     <BundleResource Include="Images\forward-chevron.png" />
     <BundleResource Include="Images\forward-chevron%402x.png" />
     <BundleResource Include="Images\back-chevron.png" />
     <BundleResource Include="Images\back-chevron%402x.png" />
     <BundleResource Include="Themes\Default.json" />
-    <BundleResource Include="Images\alert%402x.png" />
     <BundleResource Include="..\CodeHub\WebResources\styles\brown_papersq.png">
       <Link>WebResources\styles\brown_papersq.png</Link>
     </BundleResource>
@@ -768,8 +687,6 @@
     <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
       <Link>octicons.ttf</Link>
     </BundleResource>
-    <BundleResource Include="Images\issue-closed.png" />
-    <BundleResource Include="Images\issue-closed%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -38,6 +38,8 @@ namespace CodeHub.iOS.Cells
             DetailsLabel.TextColor = UIColor.Gray;
             DefaultContentConstraintSize = DetailsConstraint.Constant;
 
+            this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text);
+
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x =>
@@ -47,18 +49,9 @@ namespace CodeHub.iOS.Cells
                     else
                         MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
 
-                    TitleLabel.Text = x.Title;
                     DetailsLabel.Text = "Created " + x.Created.UtcDateTime.Humanize();
                     DetailsConstraint.Constant = string.IsNullOrEmpty(DetailsLabel.Text) ? 0f : DefaultContentConstraintSize;
                 });
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-            TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
         }
     }
 }

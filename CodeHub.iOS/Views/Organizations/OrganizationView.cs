@@ -21,11 +21,11 @@ namespace CodeHub.iOS.Views.Organizations
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);
             var following = split.AddButton("Following", "-", ViewModel.GoToFollowingCommand.ExecuteIfCan);
-            var members = new DialogStringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Images.Person);
-            var teams = new DialogStringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Images.Organization);
-            var events = new DialogStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Rss);
-            var repos = new DialogStringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Images.Repo);
-            var gists = new DialogStringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Images.Gist);
+            var members = new StringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Octicon.Person.ToImage());
+            var teams = new StringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Octicon.Organization.ToImage());
+            var events = new StringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Octicon.Rss.ToImage());
+            var repos = new StringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Octicon.Gist.ToImage());
             var membersAndTeams = new Section { members };
 
             Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });

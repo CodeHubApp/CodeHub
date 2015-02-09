@@ -21,12 +21,12 @@ namespace CodeHub.iOS.Views.Repositories
 
             _sourceSection = new Section
             {
-                new DialogStringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Images.Commit),
-                new DialogStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Images.PullRequest),
-                new DialogStringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Images.Code),
+                new StringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Octicon.GitCommit.ToImage()),
+                new StringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Octicon.GitPullRequest.ToImage()),
+                new StringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Octicon.Code.ToImage()),
             };
 
-            _ownerElement = new StringElement("Owner", string.Empty) { Image = Images.Person };
+            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
             _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.Repository)
                 .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
@@ -36,16 +36,16 @@ namespace CodeHub.iOS.Views.Repositories
                 HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
             _splitElements[0] = new SplitViewElement();
-            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Images.Lock, string.Empty);
-            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Images.Package, string.Empty);
+            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage(), string.Empty);
+            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage(), string.Empty);
 
             _splitElements[1] = new SplitViewElement();
-            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Images.IssueOpened, string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
-            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Images.Organization, string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
+            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Octicon.IssueOpened.ToImage(), string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
+            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Octicon.Organization.ToImage(), string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
 
             _splitElements[2] = new SplitViewElement();
-            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Images.Tag, string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
-            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Images.Branch, string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
+            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Octicon.Tag.ToImage(), string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
+            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Octicon.GitBranch.ToImage(), string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
 
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
@@ -77,7 +77,7 @@ namespace CodeHub.iOS.Views.Repositories
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
                 .Switch()
-                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
             this.WhenAnyValue(x => x.ViewModel.RepositoryName)
                 .Subscribe(x => HeaderView.Text = x);
@@ -146,26 +146,26 @@ namespace CodeHub.iOS.Views.Repositories
 
             if (model.Parent != null)
             {
-                var parent = new StringElement("Forked From", model.Parent.FullName) { Image = Images.Fork };
+                var parent = new StringElement("Forked From", model.Parent.FullName) { Image = Octicon.RepoForked.ToImage() };
                 parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
                 sec1.Add(parent);
             }
 
-            var events = new DialogStringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Images.Rss);
+            var events = new StringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Octicon.Rss.ToImage());
             var sec2 = new Section { events };
 
             if (model.HasIssues)
-                sec2.Add(new DialogStringElement("Issues", ViewModel.GoToIssuesCommand.ExecuteIfCan, Images.IssueOpened));
+                sec2.Add(new StringElement("Issues", ViewModel.GoToIssuesCommand.ExecuteIfCan, Octicon.IssueOpened.ToImage()));
 
             if (ViewModel.Readme != null)
-                sec2.Add(new DialogStringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Images.Book));
+                sec2.Add(new StringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Octicon.Book.ToImage()));
 
             Root.Reset(new Section { _split }, sec1, sec2, _sourceSection);
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {
                 Root.Add(new Section { 
-                    new DialogStringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Images.Globe)
+                    new StringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Octicon.Globe.ToImage())
                 });
             }
         }

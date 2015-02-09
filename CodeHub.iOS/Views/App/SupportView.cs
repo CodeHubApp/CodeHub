@@ -20,9 +20,9 @@ namespace CodeHub.iOS.Views.App
             var contributors = _split.AddButton("Contributors", "-");
             var lastCommit = _split.AddButton("Last Commit", "-");
 
-            _addFeatureButton = new ButtonElement("Suggest a feature", () => ViewModel.GoToSuggestFeatureCommand.ExecuteIfCan(), Images.LightBulb);
-            _addBugButton = new ButtonElement("Report a bug", () => ViewModel.GoToReportBugCommand.ExecuteIfCan(), Images.Bug);
-            _featuresButton = new ButtonElement("Submitted Work Items", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Images.Clippy);
+            _addFeatureButton = new ButtonElement("Suggest a feature", () => ViewModel.GoToSuggestFeatureCommand.ExecuteIfCan(), Octicon.LightBulb.ToImage());
+            _addBugButton = new ButtonElement("Report a bug", () => ViewModel.GoToReportBugCommand.ExecuteIfCan(), Octicon.Bug.ToImage());
+            _featuresButton = new ButtonElement("Submitted Work Items", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Octicon.Clippy.ToImage());
 
             this.WhenViewModel(x => x.Contributors).Where(x => x.HasValue).SubscribeSafe(x =>
                 contributors.Text = (x.Value >= 100 ? "100+" : x.Value.ToString()));
@@ -47,7 +47,7 @@ namespace CodeHub.iOS.Views.App
             Root.Reset(new Section { _split }, new Section { _addFeatureButton, _addBugButton }, new Section { _featuresButton });
         }
 
-        private class ButtonElement : DialogStringElement, IElementSizing
+        private class ButtonElement : StringElement, IElementSizing
         {
             public ButtonElement(string name, Action click, UIImage img)
                 : base(name, click, img)

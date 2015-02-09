@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Users
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsFollowing).Where(x => x.HasValue))
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Images.Star.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate) : null));
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
             this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
@@ -33,10 +33,10 @@ namespace CodeHub.iOS.Views.Users
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
             var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
-            var events = new DialogStringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Images.Rss);
-            var organizations = new DialogStringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Images.Organization);
-            var repos = new DialogStringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Images.Repo);
-            var gists = new DialogStringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Images.Gist);
+            var events = new StringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Octicon.Rss.ToImage());
+            var organizations = new StringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Octicon.Organization.ToImage());
+            var repos = new StringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Octicon.Gist.ToImage());
             Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
             this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x =>

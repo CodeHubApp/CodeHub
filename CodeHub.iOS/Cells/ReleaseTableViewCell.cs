@@ -1,10 +1,7 @@
-using System;
 using Foundation;
 using UIKit;
 using ReactiveUI;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Releases;
-using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -16,18 +13,13 @@ namespace CodeHub.iOS.Cells
         public ReleaseTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
             : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
         { 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TextLabel.Text = x.Name;
-                    DetailTextLabel.Text = x.Created.Humanize();
-                });
-
             TextLabel.TextColor = Theme.MainTitleColor;
             TextLabel.Font = UIFont.PreferredHeadline;
             DetailTextLabel.Font = UIFont.PreferredFootnote;
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
+
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
+            this.OneWayBind(ViewModel, x => x.Created, x => x.DetailTextLabel.Text);
         }
     }
 }
