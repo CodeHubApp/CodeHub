@@ -126,7 +126,6 @@
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\Source\TagItemViewModel.cs" />
-    <Compile Include="ViewModels\Users\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Users\RepositoryContributorsViewModel.cs" />
@@ -193,7 +192,6 @@
     <Compile Include="Services\IEnvironmentalService.cs" />
     <Compile Include="Services\IErrorService.cs" />
     <Compile Include="Services\IFilesystemService.cs" />
-    <Compile Include="Services\IJavascriptService.cs" />
     <Compile Include="Services\INetworkActivityService.cs" />
     <Compile Include="Services\IServiceConstructor.cs" />
     <Compile Include="Services\ITransitionOrchestrationService.cs" />
@@ -212,6 +210,9 @@
     <Compile Include="ViewModels\Issues\IssueAssigneeViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\BaseIssueViewModel.cs" />
+    <Compile Include="Extensions\FunctionalExtensions.cs" />
+    <Compile Include="ViewModels\Changesets\CommitCommentItemViewModel.cs" />
+    <Compile Include="ViewModels\Users\BaseUsersViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -249,14 +250,8 @@
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.6.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Insights">
-      <HintPath>..\packages\Xamarin.Insights.1.8.3\lib\portable-win+net40+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.3.1\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.dll</HintPath>
@@ -266,6 +261,12 @@
     </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.1\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.9.0.106\lib\portable-win+net40+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.4.0.1\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

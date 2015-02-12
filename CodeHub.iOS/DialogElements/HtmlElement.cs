@@ -73,7 +73,10 @@ namespace CodeHub.iOS.DialogElements
         {
             Key = new NSString(cellKey);
 
+            _height = 10f;
+
             WebView = new UIWebView();
+            WebView.Frame = new CGRect(0, 0, 320f, 44f);
             WebView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             WebView.ScrollView.ScrollEnabled = false;
             //WebView.ScalesPageToFit = true;

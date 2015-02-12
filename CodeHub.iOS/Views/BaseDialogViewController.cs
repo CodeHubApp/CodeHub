@@ -9,11 +9,6 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views
 {
-    public abstract class ReactiveDialogViewController
-    {
-        public static UIColor RefreshIndicatorColor = UIColor.Gray;
-    }
-
     public abstract class BaseDialogViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class, IBaseViewModel
     {
         protected readonly SlideUpTitleView SlideUpTitle;
@@ -43,33 +38,33 @@ namespace CodeHub.iOS.Views
         protected BaseDialogViewController()
             : base(UITableViewStyle.Grouped)
         {
-            NavigationItem.TitleView = SlideUpTitle = new SlideUpTitleView(44f)
-            {
-                Offset = 100f,
-            };
+            SlideUpTitle = new SlideUpTitleView(44f) { Offset = 100f };
+            NavigationItem.TitleView = SlideUpTitle;
 
             HeaderView = new ImageAndTitleHeaderView();
+
+            Appearing
+                .Where(x => ToolbarItems != null && NavigationController != null)
+                .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
+            Disappearing
+                .Where(x => ToolbarItems != null && NavigationController != null)
+                .Subscribe(x => NavigationController.SetToolbarHidden(true, x));
+            Disappearing
+                .Where(_ => NavigationController != null)
+                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null);
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
             NavigationController.NavigationBar.ShadowImage = new UIImage();
+
+            RefreshControl.Do(x => x.TintColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f));
 
             HeaderView.BackgroundColor = NavigationController.NavigationBar.BackgroundColor;
             HeaderView.TextColor = NavigationController.NavigationBar.TintColor;
             HeaderView.SubTextColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f);
             (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            NavigationController.NavigationBar.ShadowImage = null;
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -106,9 +101,6 @@ namespace CodeHub.iOS.Views
             TableView.TableHeaderView = HeaderView;
             TableView.SectionHeaderHeight = 0;
             TableView.Source = _dialogSource;
-
-            if (RefreshControl != null)
-                RefreshControl.TintColor = ReactiveDialogViewController.RefreshIndicatorColor;
 
             var frame = TableView.Bounds;
             frame.Y = -frame.Size.Height;

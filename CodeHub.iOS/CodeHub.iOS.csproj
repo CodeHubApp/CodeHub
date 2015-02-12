@@ -313,7 +313,6 @@
     <Compile Include="Services\EnvironmentalService.cs" />
     <Compile Include="Services\FilesystemService.cs" />
     <Compile Include="Services\InAppPurchaseService.cs" />
-    <Compile Include="Services\JavascriptService.cs" />
     <Compile Include="Services\NetworkActivityService.cs" />
     <Compile Include="Services\ServiceConstructor.cs" />
     <Compile Include="DialogElements\CustomElement.cs" />
@@ -416,9 +415,6 @@
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.1.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.3.1\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="Akavache.Sqlite3">
       <HintPath>..\packages\akavache.sqlite3.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
@@ -433,6 +429,9 @@
     </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.1\lib\Xamarin.iOS10\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.4.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

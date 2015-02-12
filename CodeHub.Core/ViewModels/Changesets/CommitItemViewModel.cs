@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         internal CommitItemViewModel(CommitModel commit, Action<CommitItemViewModel> action)
         {
-            var msg = commit.Commit.Message ?? string.Empty;
+            var msg = commit.With(x => x.Commit).With(x => x.Message, () => string.Empty);
             var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
             Description = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 

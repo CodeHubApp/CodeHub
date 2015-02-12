@@ -1,4 +1,6 @@
-﻿namespace CodeHub.WebViews
+﻿using System;
+
+namespace CodeHub.WebViews
 {
     public class Comment
     {
@@ -10,9 +12,10 @@
 
         public string Body { get; private set; }
 
-        public Comment(string avatarUrl, string name, string body, string date)
+        public Comment(Uri avatar, string name, string body, string date)
         {
-            AvatarUrl = avatarUrl;
+            if (avatar != null)
+                AvatarUrl = avatar.AbsoluteUri;
             Name = name;
             Body = body;
             Date = date;

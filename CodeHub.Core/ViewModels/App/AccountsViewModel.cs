@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.App
                 .Subscribe(x =>
                 {
                     foreach (var account in Accounts)
-                        account.Selected = Equals(account.Account, x);
+                        account.Selected = account.Id == x.Key;
                 });
 
             DeleteAccountCommand = ReactiveCommand.Create();
@@ -82,8 +82,7 @@ namespace CodeHub.Core.ViewModels.App
 
         private AccountItemViewModel CreateAccountItem(GitHubAccount githubAccount)
         {
-            var viewModel = new AccountItemViewModel();
-            viewModel.Account = githubAccount;
+            var viewModel = new AccountItemViewModel(githubAccount);
             viewModel.Selected = Equals(githubAccount, ActiveAccount);
             viewModel.DeleteCommand.Subscribe(_ => DeleteAccountCommand.ExecuteIfCan(githubAccount));
             viewModel.GoToCommand.Subscribe(_ => LoginCommand.ExecuteIfCan(githubAccount));

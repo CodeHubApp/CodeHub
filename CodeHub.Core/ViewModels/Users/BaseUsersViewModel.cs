@@ -8,7 +8,7 @@ using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public abstract class BaseUserCollectionViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
+    public abstract class BaseUsersViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
         public IReadOnlyReactiveList<UserItemViewModel> Users { get; private set; }
 
@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Users
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected BaseUserCollectionViewModel()
+        protected BaseUsersViewModel()
         {
             var users = new ReactiveList<BasicUserModel>();;
             Users = users.CreateDerivedCollection(

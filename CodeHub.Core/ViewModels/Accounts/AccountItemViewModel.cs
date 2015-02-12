@@ -1,18 +1,10 @@
 ﻿using ReactiveUI;
 using CodeHub.Core.Data;
-using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AccountItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        private GitHubAccount _account;
-        public GitHubAccount Account
-        {
-            get { return _account; }
-            internal set { this.RaiseAndSetIfChanged(ref _account, value); }
-        }
-
         private bool _selected;
         public bool Selected
         {
@@ -20,38 +12,27 @@ namespace CodeHub.Core.ViewModels.Accounts
             internal set { this.RaiseAndSetIfChanged(ref _selected, value); }
         }
 
-        private readonly ObservableAsPropertyHelper<string> _username;
-        public string Username
-        {
-            get { return _username.Value; }
-        }
+        public string Username { get; private set; }
 
-        private readonly ObservableAsPropertyHelper<string> _avatarUrl;
-        public string AvatarUrl
-        {
-            get { return _avatarUrl.Value; }
-        }
+        public string AvatarUrl { get; private set; }
 
-        private readonly ObservableAsPropertyHelper<string> _domain;
-        public string Domain
-        {
-            get { return _domain.Value; }
-        }
+        public string Domain { get; private set; }
+
+        public string Id { get; private set; }
 
         public IReactiveCommand<object> DeleteCommand { get; private set; }
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal AccountItemViewModel()
+        internal AccountItemViewModel(GitHubAccount account)
         {
             DeleteCommand = ReactiveCommand.Create();
             GoToCommand = ReactiveCommand.Create();
 
-            var accountObservable = this.WhenAnyValue(x => x.Account).IsNotNull();
-
-            _username = accountObservable.Select(x => x.Username).ToProperty(this, x => x.Username);
-            _avatarUrl = accountObservable.Select(x => x.AvatarUrl).ToProperty(this, x => x.AvatarUrl);
-            _domain = accountObservable.Select(x => x.WebDomain ?? "https://api.github.com").ToProperty(this, x => x.Domain);
+            Id = account.Key;
+            Username = account.Username;
+            AvatarUrl = account.AvatarUrl;
+            Domain = account.WebDomain ?? "https://api.github.com";
         }
     }
 }

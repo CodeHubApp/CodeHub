@@ -11,6 +11,7 @@ using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewComponents;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -67,18 +68,20 @@ namespace CodeHub.iOS.Views.Source
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
-            ViewModel.Comments.Changed.Select(_ => new Unit()).StartWith(new Unit()).Subscribe(x =>
-            {
-                var commentModels = ViewModel.Comments.Select(c => 
-                new Comment(c.User.AvatarUrl, c.User.Login, c.Body, c.CreatedAt.UtcDateTime.Humanize()));
-                var razorView = new CommentsView { Model = commentModels };
-                var html = razorView.GenerateString();
-                commentsElement.Value = html;
+            ViewModel.Comments.Changed
+                .Select(_ => new Unit())
+                .StartWith(new Unit())
+                .Subscribe(x =>
+                {
+                    var commentModels = ViewModel.Comments.Select(c => new Comment(c.Avatar.ToUri(), c.Actor, c.Body, c.UtcCreatedAt.Humanize()));
+                    var razorView = new CommentsView { Model = commentModels };
+                    var html = razorView.GenerateString();
+                    commentsElement.Value = html;
 
-                if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
-                    _commentsSection.Add(commentsElement);
-                TableView.ReloadData();
-            });
+                    if (commentsElement.GetRootElement() == null && ViewModel.Comments.Count > 0)
+                        _commentsSection.Add(commentsElement);
+                    TableView.ReloadData();
+                });
 
             ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(commitModel =>
             {

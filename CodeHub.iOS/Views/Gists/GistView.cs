@@ -9,6 +9,7 @@ using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.DialogElements;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -110,21 +111,14 @@ namespace CodeHub.iOS.Views.Gists
                         detailsSection.Add(_ownerElement);
                 });
 
-            updatedGistObservable.SubscribeSafe(x =>
-            {
-                if (x.Owner == null)
-                {
-                    _ownerElement.Value = "Anonymous";
-                    _ownerElement.Tapped = null;
-                }
-                else
-                {
-                    _ownerElement.Value = x.Owner.Login;
-                    _ownerElement.Tapped = () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
-                }
 
-                Root.Reload(_ownerElement);
-            });
+            updatedGistObservable
+                .Select(x => x.With(y => y.Owner).With(y => y.Login, () => "Anonymous"))
+                .Subscribe(x => _ownerElement.Value = x);
+
+            updatedGistObservable
+                .Select(x => x.Owner != null ? () => ViewModel.GoToOwnerCommand.ExecuteIfCan() : (Action)null)
+                .SubscribeSafe(x => _ownerElement.Tapped = x);
 
             updatedGistObservable.SubscribeSafe(x =>
             {
@@ -158,7 +152,7 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.Comments.Changed.Subscribe(_ =>
             {
                 var commentModels = ViewModel.Comments
-                    .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, x.BodyHtml, x.CreatedAt.UtcDateTime.Humanize()))
+                    .Select(x => new Comment(new GitHubAvatar(x.With(y => y.User).With(y => y.AvatarUrl)).ToUri(), x.User.Login, x.BodyHtml, x.CreatedAt.UtcDateTime.Humanize()))
                     .ToList();
 
                 if (commentModels.Count > 0)

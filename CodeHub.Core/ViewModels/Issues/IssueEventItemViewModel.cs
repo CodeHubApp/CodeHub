@@ -1,5 +1,6 @@
 ﻿using System;
 using ReactiveUI;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -9,14 +10,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         string Actor { get; }
 
-        string AvatarUrl { get; }
+        GitHubAvatar AvatarUrl { get; }
     }
 
     public class IssueEventItemViewModel : ReactiveObject, IIssueEventItemViewModel
     {
         public string Actor { get; private set; }
 
-        public string AvatarUrl { get; private set; }
+        public GitHubAvatar AvatarUrl { get; private set; }
 
         public DateTimeOffset CreatedAt { get; private set; }
 
@@ -26,8 +27,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         internal IssueEventItemViewModel(Octokit.EventInfo issueEvent)
         {
-            Actor = issueEvent.Actor.Login;
-            AvatarUrl = issueEvent.Actor.AvatarUrl;
+            Actor = issueEvent.With(x => x.Actor).With(x => x.Login, () => "Deleted User");
+            AvatarUrl = new GitHubAvatar(issueEvent.With(x => x.Actor).With(x => x.AvatarUrl));
             CreatedAt = issueEvent.CreatedAt;
             Commit = issueEvent.CommitId;
             EventInfo = issueEvent;
@@ -40,15 +41,15 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string Actor { get; private set; }
 
-        public string AvatarUrl { get; private set; }
+        public GitHubAvatar AvatarUrl { get; private set; }
 
         public DateTimeOffset CreatedAt { get; private set; }
 
         internal IssueCommentItemViewModel(Octokit.IssueComment comment)
         {
             Comment = comment.Body;
-            Actor = comment.User.Login;
-            AvatarUrl = comment.User.AvatarUrl;
+            Actor = comment.With(x => x.User).With(x => x.Login);
+            AvatarUrl = new GitHubAvatar(comment.With(x => x.User).With(x => x.AvatarUrl));
             CreatedAt = comment.CreatedAt;
         }
     }

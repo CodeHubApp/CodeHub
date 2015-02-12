@@ -25,8 +25,7 @@ namespace CodeHub.iOS.DialogElements
         private Uri _imageUri;
         private string _value;
         public UITableViewCellAccessory? Accessory;
-
-        public Action Tapped;
+        private Action _tapped;
         public Action AccessoryTapped;
 
         public string Value
@@ -38,6 +37,18 @@ namespace CodeHub.iOS.DialogElements
                 var cell = GetActiveCell();
                 if (cell != null && cell.DetailTextLabel != null)
                     cell.DetailTextLabel.Text = value ?? string.Empty;
+            }
+        }
+
+        public Action Tapped
+        {
+            get { return _tapped; }
+            set
+            {
+                _tapped = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.Accessory = (value == null ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator);
             }
         }
 

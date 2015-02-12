@@ -43,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand AddCommentCommand { get; private set; }
 
-        public IReadOnlyReactiveList<Octokit.CommitComment> Comments { get; private set; }
+        public IReadOnlyReactiveList<CommitCommentItemViewModel> Comments { get; private set; }
 
         public IReactiveCommand GoToUrlCommand { get; private set; }
 
@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             Title = "Commit";
 
             var comments = new ReactiveList<Octokit.CommitComment>();
-            Comments = comments.CreateDerivedCollection(x => x);
+            Comments = comments.CreateDerivedCollection(x => new CommitCommentItemViewModel(x));
 
             this.WhenAnyValue(x => x.Commit)
                 .IsNotNull()

@@ -138,7 +138,7 @@ namespace CodeHub.iOS.Views.Issues
                         else if (@event != null)
                             body = CreateEventBody(@event.EventInfo, @event.Commit);
 
-                        return new Comment(x.AvatarUrl, x.Actor, body, x.CreatedAt.LocalDateTime.Humanize());
+                        return new Comment(x.AvatarUrl.ToUri(), x.Actor, body, x.CreatedAt.LocalDateTime.Humanize());
                     })
                     .Where(x => !string.IsNullOrEmpty(x.Body))
                     .ToList();

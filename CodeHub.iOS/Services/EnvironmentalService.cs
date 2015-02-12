@@ -7,29 +7,24 @@ namespace CodeHub.iOS.Services
 {
     public class EnvironmentalService : IEnvironmentalService
     {
-        public static Tuple<int, int> iOSVersion
+        public string OSVersion
         {
             get
             {
+                Tuple<int, int> v;
+
                 try
                 {
                     var version = UIDevice.CurrentDevice.SystemVersion.Split('.');
                     var major = Int32.Parse(version[0]);
                     var minor = Int32.Parse(version[1]);
-                    return new Tuple<int, int>(major, minor);
+                    v = new Tuple<int, int>(major, minor);
                 }
-                catch (Exception e)
+                catch
                 {
-                    return new Tuple<int, int>(5, 0);
+                    v = new Tuple<int, int>(5, 0);
                 }
-            }
-        }
 
-        public string OSVersion
-        {
-            get
-            {
-                var v = iOSVersion;
                 return String.Format("{0}.{1}", v.Item1, v.Item2);
             }
         }

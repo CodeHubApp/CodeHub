@@ -6,7 +6,7 @@ using System;
 
 namespace CodeHub.iOS.Views.Users
 {
-    public abstract class BaseUserCollectionView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseUserCollectionViewModel
+    public abstract class BaseUserCollectionView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseUsersViewModel
     {
         protected BaseUserCollectionView(string emptyString)
         {

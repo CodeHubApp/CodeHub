@@ -21,15 +21,6 @@ namespace ReactiveUI
             ExecuteIfCan(@this, null);
         }
 
-        public static IDisposable TriggerNetworkActivity(this IReactiveCommand @this, INetworkActivityService networkActivity)
-        {
-            return @this.IsExecuting.Skip(1).Subscribe(x =>
-            {
-                if (x) networkActivity.PushNetworkActive();
-                else networkActivity.PopNetworkActive();
-            });
-        }
-
         public static IReactiveCommand<object> WithSubscription(this IReactiveCommand<object> @this, Action<object> action)
         {
             @this.Subscribe(action);

@@ -14,6 +14,8 @@ using CodeHub.iOS.Views.Settings;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Factories;
 using CodeHub.Core.Factories;
+using CodeHub.Core.ViewModels.Changesets;
+using System.Linq;
 
 namespace CodeHub.iOS
 {
@@ -151,54 +153,58 @@ namespace CodeHub.iOS
 		{
 			try
 			{
-//				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
-//                var appService = Mvx.Resolve<IApplicationService>();
-//                var repoId = new RepositoryIdentifier(data["r"].ToString());
-//                var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
-//
-//                MvxViewModelRequest request;
-//                if (data.ContainsKey(new NSString("c")))
-//                {
-//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Changesets.ChangesetViewModel>.GetDefaultRequest();
-//                    parameters.Add("Node", data["c"].ToString());
-//                    parameters.Add("ShowRepository", "True");
-//                }
-//                else if (data.ContainsKey(new NSString("i")))
-//                {
-//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Issues.IssueViewModel>.GetDefaultRequest();
-//                    parameters.Add("Id", data["i"].ToString());
-//                }
-//                else if (data.ContainsKey(new NSString("p")))
-//                {
-//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>.GetDefaultRequest();
-//                    parameters.Add("Id", data["p"].ToString());
-//                }
-//                else
-//                {
-//                    request = MvxViewModelRequest<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>.GetDefaultRequest();
-//                }
-//
-//                request.ParameterValues = parameters;
-//
-//                var username = data["u"].ToString();
-//
-//                if (appService.Account == null || !appService.Account.Username.Equals(username))
-//                {
-//                    var user = appService.Accounts.FirstOrDefault(x => x.Username.Equals(username));
-//                    if (user != null)
-//                    {
-//                        appService.DeactivateUser();
-//                        appService.Accounts.SetDefault(user);
-//                    }
-//                }
-//
-//                appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(request));
-//
-//                if (appService.Account == null && !fromBootup)
-//                {
+                var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                var appService = Locator.Current.GetService<IApplicationService>();
+                var accounts = Locator.Current.GetService<IAccountsService>();
+                var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
+                var username = data["u"].ToString();
+                var repoId = new RepositoryIdentifier(data["r"].ToString());
+
+                if (data.ContainsKey(new NSString("c")))
+                {
+                    var vm = serviceConstructor.Construct<CommitViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                    vm.Node = data["c"].ToString();
+                    vm.ShowRepository = true;
+                }
+                else if (data.ContainsKey(new NSString("i")))
+                {
+                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Issues.IssueViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                    vm.Id = int.Parse(data["i"].ToString());
+                }
+                else if (data.ContainsKey(new NSString("p")))
+                {
+                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                    vm.Id = int.Parse(data["p"].ToString());
+                }
+                else
+                {
+                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>();
+                    vm.RepositoryOwner = repoId.Owner;
+                    vm.RepositoryName = repoId.Name;
+                }
+
+                if (appService.Account == null || !appService.Account.Username.Equals(username))
+                {
+                    var user = accounts.FirstOrDefault(x => x.Username.Equals(username));
+                    if (user != null)
+                    {
+                        accounts.ActiveAccount = user;
+                    }
+                }
+
+                //appService.SetUserActivationAction(() => transitionOrchestration.Transition);
+
+                if (appService.Account == null && !fromBootup)
+                {
 //                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
 //                    viewDispatcher.ShowViewModel(startupViewModelRequest);
-//                }
+                }
 			}
 			catch (Exception e)
 			{

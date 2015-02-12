@@ -19,41 +19,42 @@ namespace CodeHub.Core.Services
 
         public GitHubAccount Account
         {
-            get { return _accountsService.ActiveAccount as GitHubAccount; }
+            get { return _accountsService.ActiveAccount; }
         }
 
         public ApplicationService(IAccountsService accountsService)
         {
             _accountsService = accountsService;
 
-
-            accountsService.WhenAnyObservable(x => x.ActiveAccountChanged).StartWith(accountsService.ActiveAccount).Subscribe(account =>
-            {
-                if (account == null)
+            accountsService.WhenAnyObservable(x => x.ActiveAccountChanged)
+                .StartWith(accountsService.ActiveAccount)
+                .Subscribe(account =>
                 {
-                    Client = null;
-                    GitHubClient = null;
-                }
-                else
-                {
-                    var githubAccount = (GitHubAccount) account;
-                    var domain = githubAccount.Domain ?? Client.DefaultApi;
-                    if (!string.IsNullOrEmpty(githubAccount.OAuth))
+                    if (account == null)
                     {
-                        Client = Client.BasicOAuth(githubAccount.OAuth, domain);
-                        GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
-                            new InMemoryCredentialStore(new Credentials(githubAccount.OAuth)), 
-                            new Uri(domain));
+                        Client = null;
+                        GitHubClient = null;
                     }
-                    else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
+                    else
                     {
-                        Client = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
-                        GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
-                            new InMemoryCredentialStore(new Credentials(githubAccount.Username, githubAccount.Password)), 
-                            new Uri(domain));
+                        var githubAccount = account;
+                        var domain = githubAccount.Domain ?? Client.DefaultApi;
+                        if (!string.IsNullOrEmpty(githubAccount.OAuth))
+                        {
+                            Client = Client.BasicOAuth(githubAccount.OAuth, domain);
+                            GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
+                                new InMemoryCredentialStore(new Credentials(githubAccount.OAuth)), 
+                                new Uri(domain));
+                        }
+                        else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
+                        {
+                            Client = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
+                            GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
+                                new InMemoryCredentialStore(new Credentials(githubAccount.Username, githubAccount.Password)), 
+                                new Uri(domain));
+                        }
                     }
-                }
-            });
+                });
         }
 
         public void SetUserActivationAction(Action action)
@@ -103,18 +104,5 @@ namespace CodeHub.Core.Services
 //                cache.DeleteAll();
 //            }
 //        }
-
-        private class GitHubCache : ICache
-        {
-            public T Get<T>(string url)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Set<T>(string url, T data)
-            {
-                throw new NotImplementedException();
-            }
-        }
     }
 }

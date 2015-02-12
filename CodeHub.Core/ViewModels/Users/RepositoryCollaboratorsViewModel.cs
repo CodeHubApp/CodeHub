@@ -2,7 +2,7 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public class RepositoryCollaboratorsViewModel : BaseUserCollectionViewModel
+    public class RepositoryCollaboratorsViewModel : BaseUsersViewModel
     {
         private readonly IApplicationService _applicationService;
 
