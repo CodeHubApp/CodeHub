@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Gists
     {
         public string Id { get; set; }
 
-        public IReactiveCommand<Octokit.GistComment> SaveCommand { get; protected set; }
+        public IReactiveCommand<GitHubSharp.Models.GistCommentModel> SaveCommand { get; protected set; }
 
         public GistCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
             IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
@@ -19,7 +19,11 @@ namespace CodeHub.Core.ViewModels.Gists
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
-                async t => await applicationService.GitHubClient.Gist.Comment.Create(int.Parse(Id), Text));
+                async t => 
+                {
+                    var request = applicationService.Client.Gists[Id].CreateGistComment(Text);
+                    return (await applicationService.Client.ExecuteAsync(request)).Data;
+                });
             SaveCommand.Subscribe(x => Dismiss());
         }
     }

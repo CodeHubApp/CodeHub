@@ -134,7 +134,7 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var vm = this.CreateViewModel<GistCommentViewModel>();
                 vm.Id = Id;
-                vm.SaveCommand.Subscribe(x => LoadCommand.ExecuteIfCan());
+                vm.SaveCommand.Subscribe(Comments.Add);
                 NavigateTo(vm);
             });
 
