@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public string RepositoryName { get; set; }
 
-        public IReactiveCommand<Octokit.CommitComment> SaveCommand { get; protected set; }
+        public IReactiveCommand<GitHubSharp.Models.CommentModel> SaveCommand { get; protected set; }
 
         public CommitCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
             IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
@@ -22,10 +22,10 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
-                t => 
+                async t => 
                 {
-                    var commitComment = new Octokit.NewCommitComment(Text);
-                    return applicationService.GitHubClient.Repository.RepositoryComments.Create(RepositoryOwner, RepositoryName, Node, commitComment);
+                    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.Create(Text);
+                    return (await applicationService.Client.ExecuteAsync(request)).Data;
                 });
             SaveCommand.Subscribe(x => Dismiss());
         }

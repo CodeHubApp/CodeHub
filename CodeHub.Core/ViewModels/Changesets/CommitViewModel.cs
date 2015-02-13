@@ -6,7 +6,6 @@ using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Factories;
-using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -53,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             Title = "Commit";
 
-            var comments = new ReactiveList<Octokit.CommitComment>();
+            var comments = new ReactiveList<GitHubSharp.Models.CommentModel>();
             Comments = comments.CreateDerivedCollection(x => new CommitCommentItemViewModel(x));
 
             this.WhenAnyValue(x => x.Commit)
@@ -149,8 +148,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                applicationService.GitHubClient.Repository.RepositoryComments.GetForCommit(RepositoryOwner, RepositoryName, Node)
-                    .ToBackground(x => comments.Reset(x));
+                var commentRequest = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.GetAll();
+                applicationService.Client.ExecuteAsync(commentRequest).ToBackground(x => comments.Reset(x.Data));
                 Commit = await applicationService.GitHubClient.Repository.Commits.Get(RepositoryOwner, RepositoryName, Node);
             });
         }
