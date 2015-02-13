@@ -92,10 +92,6 @@ namespace CodeHub.iOS.TableViewSources
                 item.GoToCommand.ExecuteIfCan();
 
             base.RowSelected(tableView, indexPath);
-
-
-
-//            tableView.DeselectRow(indexPath, true);
         }
     }
 

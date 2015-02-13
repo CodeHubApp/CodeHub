@@ -36,27 +36,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected BaseIssuesViewModel()
 	    {
-            var gotoIssueCommand = ReactiveCommand.Create();
-            gotoIssueCommand.OfType<IssueItemViewModel>().Where(x => x.IsPullRequest).Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<PullRequestViewModel>();
-                vm.RepositoryOwner = x.RepositoryOwner;
-                vm.RepositoryName = x.RepositoryName;
-                vm.Id = x.Number;
-                NavigateTo(vm);
-
-            });
-            gotoIssueCommand.OfType<IssueItemViewModel>().Where(x => !x.IsPullRequest).Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<IssueViewModel>();
-                vm.RepositoryOwner = x.RepositoryOwner;
-                vm.RepositoryName = x.RepositoryName;
-                vm.Id = x.Number;
-                NavigateTo(vm);
-            });
-
             Issues = IssuesBacking.CreateDerivedCollection(
-                x => new IssueItemViewModel(x, gotoIssueCommand), 
+                x => CreateItemViewModel(x),
                 filter: x => x.Title.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
@@ -72,6 +53,35 @@ namespace CodeHub.Core.ViewModels.Issues
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
 	    }
+
+        private IssueItemViewModel CreateItemViewModel(IssueModel issue)
+        {
+            var item = new IssueItemViewModel(issue);
+            if (item.IsPullRequest)
+            {
+                item.GoToCommand.Subscribe(_ =>
+                {
+                    var vm = this.CreateViewModel<PullRequestViewModel>();
+                    vm.RepositoryOwner = item.RepositoryOwner;
+                    vm.RepositoryName = item.RepositoryName;
+                    vm.Id = item.Number;
+                    NavigateTo(vm);
+                });
+            }
+            else
+            {
+                item.GoToCommand.Subscribe(_ =>
+                {
+                    var vm = this.CreateViewModel<IssueViewModel>();
+                    vm.RepositoryOwner = item.RepositoryOwner;
+                    vm.RepositoryName = item.RepositoryName;
+                    vm.Id = item.Number;
+                    NavigateTo(vm);
+                });
+            }
+
+            return item;
+        }
 
         protected abstract GitHubRequest<List<IssueModel>> CreateRequest();
     }

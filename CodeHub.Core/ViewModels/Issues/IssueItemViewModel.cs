@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal IssueItemViewModel(IssueModel issue, IReactiveCommand gotoCommand)
+        internal IssueItemViewModel(IssueModel issue)
         {
             var isPullRequest = issue.PullRequest != null && !(string.IsNullOrEmpty(issue.PullRequest.HtmlUrl));
             var s1 = issue.Url.Substring(issue.Url.IndexOf("/repos/", StringComparison.Ordinal) + 7);
@@ -45,8 +45,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Comments = issue.Comments;
             Assignee = issue.Assignee != null ? issue.Assignee.Login : "Unassigned";
             UpdatedAt = issue.UpdatedAt;
-            GoToCommand = ReactiveCommand.Create(gotoCommand.CanExecuteObservable)
-                .WithSubscription(_ => gotoCommand.ExecuteIfCan(this));
+            GoToCommand = ReactiveCommand.Create();
         }
     }
 }

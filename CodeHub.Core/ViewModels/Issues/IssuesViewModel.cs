@@ -62,7 +62,7 @@ namespace CodeHub.Core.ViewModels.Issues
                         return IssueFilterSelection.Mine;
                     return IssueFilterSelection.Custom;
                 })
-                .ToProperty(this, Xamarin => Xamarin.FilterSelection);
+                .ToProperty(this, x => x.FilterSelection);
 
             GoToNewIssueCommand = ReactiveCommand.Create();
 	        GoToNewIssueCommand.Subscribe(_ =>
