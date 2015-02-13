@@ -102,11 +102,20 @@ WriteLiteral(" id=\"code\"");
 
 WriteLiteral(" style=\"display: none;\"");
 
+WriteAttribute ("class", " class=\"", "\""
+
+#line 48 "SyntaxHighlighterView.cshtml"
+             , Tuple.Create<string,object,bool> ("", Model.Language
+
+#line default
+#line hidden
+, false)
+);
 WriteLiteral(">");
 
 
 #line 48 "SyntaxHighlighterView.cshtml"
-                                        Write(Model.Content);
+                                                                Write(Model.Content);
 
 
 #line default

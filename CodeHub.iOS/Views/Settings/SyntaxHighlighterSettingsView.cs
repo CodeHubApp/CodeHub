@@ -59,11 +59,7 @@ namespace CodeHub.iOS.Views.Settings
                 {
                     var razorView = new SyntaxHighlighterView
                     { 
-                        Model = new SourceBrowserModel
-                        {
-                            Content = reader.ReadToEnd(),
-                            Theme = theme ?? "idea"
-                        }
+                        Model = new SourceBrowserModel(reader.ReadToEnd(), theme ?? "idea", _resourceName)
                     };
 
                     base.LoadContent(razorView.GenerateString());
