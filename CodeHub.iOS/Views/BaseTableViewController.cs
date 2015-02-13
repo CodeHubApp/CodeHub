@@ -203,6 +203,12 @@ namespace CodeHub.iOS.Views
             ClearsSelectionOnViewWillAppear = false;
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            TableView.TintColor = Theme.PrimaryNavigationBarColor;
+        }
+
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);

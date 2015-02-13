@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Gists
         public StarredGistsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Star.ToImage(64f), "You have not starred any gists."));
+                new EmptyListView(Octicon.Star.ToEmptyListImage(), "You have not starred any gists."));
         }
     }
 }

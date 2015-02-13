@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.PullRequests
         public PullRequestFilesView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.FileCode.ToImage(64f), "There are no files."));
+                new EmptyListView(Octicon.FileCode.ToEmptyListImage(), "There are no files."));
         }
 
         public override void ViewDidLoad()

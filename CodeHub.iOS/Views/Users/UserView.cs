@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Users
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
             this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x ? 
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x ?
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
         }
 

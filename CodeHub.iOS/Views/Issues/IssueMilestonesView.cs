@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Issues
         public IssueMilestonesView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Milestone.ToImage(64f), "There are no milestones."));
+                new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
         }
 
         public override void ViewDidLoad()

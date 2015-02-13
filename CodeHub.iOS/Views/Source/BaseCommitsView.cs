@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Source
         protected BaseCommitsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.GitCommit.ToImage(64f), "There are no commits."));
+                new EmptyListView(Octicon.GitCommit.ToEmptyListImage(), "There are no commits."));
         }
 
 		public override void ViewDidLoad()

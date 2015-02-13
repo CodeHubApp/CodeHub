@@ -28,7 +28,7 @@ namespace CodeHub.iOS.Views.Repositories
                 .Subscribe(x => titleButton.Text = x.Name);
 
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Pulse.ToImage(64f), "There are no trending repositories."));
+                new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no trending repositories."));
 
             Appearing
                 .Where(_ => NavigationController != null)

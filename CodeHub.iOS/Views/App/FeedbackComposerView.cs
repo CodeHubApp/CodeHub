@@ -12,12 +12,11 @@ namespace CodeHub.iOS.Views.App
 {
     public class FeedbackComposerView : BaseTableViewController<FeedbackComposerViewModel>
     {
-        private readonly InputElement _titleElement = new DummyInputElement("Title");
-        private readonly ExpandingInputElement _descriptionElement;
+        private readonly DummyInputElement _titleElement = new DummyInputElement("Title");
+        private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");
 
         public FeedbackComposerView()
         {
-            _descriptionElement = new ExpandingInputElement("Description");
             _descriptionElement.AccessoryView = x =>
                 new MarkdownAccessoryView(x, ViewModel.PostToImgurCommand) { Frame = new CGRect(0, 0, 320f, 44f) };
 

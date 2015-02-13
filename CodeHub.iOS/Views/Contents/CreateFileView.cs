@@ -17,7 +17,6 @@ namespace CodeHub.iOS.Views.Contents
 
         public CreateFileView()
         {
-            _titleElement.EntryFont = UIFont.SystemFontOfSize(14f);
             _titleElement.SpellChecking = false;
 
             _descriptionElement = new ExpandingInputElement("Content");

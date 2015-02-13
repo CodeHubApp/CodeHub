@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Source
         public CommitBranchesView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.GitBranch.ToImage(64f), "There are no branches."));
+                new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), "There are no branches."));
         }
 
         public override void ViewDidLoad()

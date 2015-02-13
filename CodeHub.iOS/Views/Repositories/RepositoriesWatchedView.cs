@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Repositories
         public RepositoriesWatchedView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Eye.ToImage(64f), "You are not watching any repositories."));
+                new EmptyListView(Octicon.Eye.ToEmptyListImage(), "You are not watching any repositories."));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Organizations
         public OrganizationsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Organization.ToImage(64f), "There are no organizations."));
+                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no organizations."));
         }
 
         public override void ViewDidLoad()

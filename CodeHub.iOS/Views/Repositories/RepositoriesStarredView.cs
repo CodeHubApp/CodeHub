@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Repositories
         public RepositoriesStarredView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Star.ToImage(64f), "You have not starred any repositories."));
+                new EmptyListView(Octicon.Star.ToEmptyListImage(), "You have not starred any repositories."));
         }
     }
 }

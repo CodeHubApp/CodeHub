@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Activity
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
 
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Inbox.ToImage(64f), "No new notifications."));
+                new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
 
             _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
 

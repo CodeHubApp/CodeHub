@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Issues
         public IssueLabelsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Tag.ToImage(64f), "There are no labels."));
+                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
         }
 
         public override void ViewDidLoad()

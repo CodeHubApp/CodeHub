@@ -38,7 +38,7 @@ namespace CodeHub.iOS.DialogElements
         {
             SpellChecking = true;
             _description = description;
-            Font = CustomInputCell.InputFont;
+            Font = UIFont.PreferredBody;
         }
 
         public override UITableViewCell GetCell(UITableView tv)
@@ -87,7 +87,7 @@ namespace CodeHub.iOS.DialogElements
         private class CustomInputCell : UITableViewCell
         {
             public static NSString Key = new NSString("CustomInputCell");
-            public static UIFont InputFont = UIFont.SystemFontOfSize(14f);
+            public static UIFont InputFont = UIFont.PreferredBody;
             public readonly UITextView TextView;
 
             public CustomInputCell(string placeholder)
@@ -134,6 +134,7 @@ namespace CodeHub.iOS.DialogElements
                     _placeholderView.TextColor = UIColor.FromWhiteAlpha(0.702f, 1.0f);
                     _placeholderView.Frame = new CGRect(5, 8, 100f, 16f);
                     _placeholderView.UserInteractionEnabled = false;
+                    _placeholderView.Font = UIFont.PreferredBody;
                     this.Add(_placeholderView);
 
                     this.Changed += (sender, e) =>

@@ -319,7 +319,6 @@
     <Compile Include="DialogElements\Element.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
-    <Compile Include="DialogElements\InputElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
     <Compile Include="DialogElements\RootElement.cs" />
     <Compile Include="DialogElements\Section.cs" />
@@ -369,6 +368,7 @@
     </Compile>
     <InterfaceDefinition Include="Cells\UserTableViewCell.xib" />
     <Compile Include="Views\Issues\BaseIssueView.cs" />
+    <Compile Include="Views\Issues\IssueModifyView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

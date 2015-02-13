@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Repositories
         public RepositoryForksView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.RepoForked.ToImage(64f), "There are no forks."));
+                new EmptyListView(Octicon.RepoForked.ToEmptyListImage(), "There are no forks."));
         }
 
     }

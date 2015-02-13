@@ -4,7 +4,7 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.DialogElements
 {
-    class DummyInputElement : InputElement
+    class DummyInputElement : EntryElement
     {
         public bool SpellChecking { get; set; }
 

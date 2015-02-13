@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Views.Organizations
         public TeamsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Organization.ToImage(64f), "There are no teams."));
+                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
         }
 
         public override void ViewDidLoad()

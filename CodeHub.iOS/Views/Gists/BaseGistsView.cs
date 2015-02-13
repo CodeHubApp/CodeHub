@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Gists
         protected BaseGistsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Gist.ToImage(64f), "There are no gists."));
+                new EmptyListView(Octicon.Gist.ToEmptyListImage(), "There are no gists."));
         }
 
         public override void ViewDidLoad()

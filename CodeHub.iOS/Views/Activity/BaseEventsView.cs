@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Activity
         protected BaseEventsView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.RadioTower.ToImage(64f), "There is no activity."));
+                new EmptyListView(Octicon.RadioTower.ToEmptyListImage(), "There is no activity."));
         }
 
         public override void ViewDidLoad()

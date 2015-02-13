@@ -54,6 +54,12 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<bool> _canAddFile;
+        public bool CanAddFile
+        {
+            get { return _canAddFile.Value; }
+        }
+
         public IReactiveCommand<object> GoToSourceCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
@@ -70,6 +76,10 @@ namespace CodeHub.Core.ViewModels.Source
                 x => CreateSourceItemViewModel(x),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+
+            _canAddFile = this.WhenAnyValue(x => x.TrueBranch, y => y.PushAccess)
+                .Select(x => x.Item1 && x.Item2.HasValue && x.Item2.Value)
+                .ToProperty(this, x => x.CanAddFile);
 
             this.WhenAnyValue(x => x.Path, y => y.RepositoryName, (x, y) => new { Path = x, Repo = y })
                 .Subscribe(x =>

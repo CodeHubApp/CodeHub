@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Issues
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.IssueOpened.ToImage(64f), "There are no issues."));
+                new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no issues."));
 
             this.WhenActivated(d =>
             {

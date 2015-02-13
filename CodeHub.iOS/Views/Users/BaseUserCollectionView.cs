@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Users
         protected BaseUserCollectionView(string emptyString)
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Person.ToImage(64f), emptyString ?? "There are no users."));
+                new EmptyListView(Octicon.Person.ToEmptyListImage(), emptyString ?? "There are no users."));
         }
 
         public override void ViewDidLoad()

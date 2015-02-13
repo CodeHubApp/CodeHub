@@ -127,8 +127,8 @@ namespace CodeHub.iOS.DialogElements
 
 		public EntryElement (string caption, string placeholder, string value)
 		{ 
-            TitleFont = UIFont.BoldSystemFontOfSize (17);
-            EntryFont = UIFont.SystemFontOfSize(17);
+            TitleFont = UIFont.PreferredBody;
+            EntryFont = UIFont.PreferredBody;
             TitleColor = UIColor.Black;
 			Value = value;
             Caption = caption;
@@ -137,8 +137,8 @@ namespace CodeHub.iOS.DialogElements
 		
 		public EntryElement (string caption, string placeholder, string value, bool isPassword)
 		{
-            TitleFont = UIFont.BoldSystemFontOfSize (17);
-            EntryFont = UIFont.SystemFontOfSize(17);
+            TitleFont = UIFont.PreferredBody;
+            EntryFont = UIFont.PreferredBody;
             TitleColor = UIColor.Black;
 			Value = value;
             Caption = caption;

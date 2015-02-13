@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Releases
         public ReleasesView()
         {
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Tag.ToImage(64f), "There are no releases."));
+                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no releases."));
         }
 
         public override void ViewDidLoad()
