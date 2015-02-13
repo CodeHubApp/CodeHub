@@ -98,6 +98,7 @@ namespace CodeHub.iOS.Views
                     {
                         _loadingActivityView.Value.StartAnimating();
                         TableView.TableFooterView = _loadingActivityView.Value;
+                        RefreshControl.Do(x => x.EndRefreshing());
                         RefreshControl = null;
                     }
                 });
@@ -114,9 +115,7 @@ namespace CodeHub.iOS.Views
                     }
 
                     if (RefreshControl == null)
-                    {
                         RefreshControl = refreshControl;
-                    }
                 });
 
             this.WhenActivated(d =>

@@ -358,7 +358,6 @@
     <Compile Include="TableViewSources\IssueAssigneeTableViewSource.cs" />
     <Compile Include="Cells\IssueAssigneeTableViewCell.cs" />
     <Compile Include="Views\Source\CommitBranchesView.cs" />
-    <Compile Include="Views\Issues\IssueOptionSelectorView.cs" />
     <Compile Include="OcticonExtensions.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Utilities\TableViewCellHeightCache.cs" />

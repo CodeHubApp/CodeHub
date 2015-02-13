@@ -35,6 +35,16 @@ namespace CodeHub.iOS.Views
             }
         }
 
+        public override UIRefreshControl RefreshControl
+        {
+            get { return base.RefreshControl; }
+            set
+            {
+                value.Do(x => x.TintColor = Theme.PrimaryNavigationBarTextColor.ColorWithAlpha(0.8f));
+                base.RefreshControl = value;
+            }
+        }
+
         protected BaseDialogViewController()
             : base(UITableViewStyle.Grouped)
         {
@@ -59,13 +69,12 @@ namespace CodeHub.iOS.Views
             base.ViewWillAppear(animated);
             NavigationController.NavigationBar.ShadowImage = new UIImage();
 
-            RefreshControl.Do(x => x.TintColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f));
-
             HeaderView.BackgroundColor = NavigationController.NavigationBar.BackgroundColor;
             HeaderView.TextColor = NavigationController.NavigationBar.TintColor;
             HeaderView.SubTextColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f);
             (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
         }
+
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
