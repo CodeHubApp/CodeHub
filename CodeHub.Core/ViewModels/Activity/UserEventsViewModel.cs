@@ -14,9 +14,9 @@ namespace CodeHub.Core.ViewModels.Activity
         {
         }
 
-        protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
+        protected override GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[Username].GetEvents(page, perPage);
+			return ApplicationService.Client.Users[Username].GetEvents();
         }
     }
 }

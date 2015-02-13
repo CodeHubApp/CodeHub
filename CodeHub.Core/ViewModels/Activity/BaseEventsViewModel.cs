@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
-    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel
     {
         protected readonly IApplicationService ApplicationService;
         private readonly IReactiveCommand<object> _gotoRepositoryCommand;
@@ -26,6 +26,13 @@ namespace CodeHub.Core.ViewModels.Activity
         private readonly Action<string> _gotoUrlCommand;
 
         public IReadOnlyReactiveList<EventItemViewModel> Events { get; private set; }
+
+        private IReactiveCommand<Unit> _loadMoreCommand;
+        public IReactiveCommand<Unit> LoadMoreCommand
+        {
+            get { return _loadMoreCommand; }
+            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
+        }
 
         public IReactiveCommand<Unit> LoadCommand { get; set; }
 
@@ -70,15 +77,12 @@ namespace CodeHub.Core.ViewModels.Activity
                 NavigateTo(vm);
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t => 
-                this.RequestModel(CreateRequest(0, 100), t as bool?, response =>
-                {
-                    //this.CreateMore(response, m => { }, events.AddRange);
-                    events.Reset(response.Data);
-                }));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
+                events.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
         }
        
-        protected abstract GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage);
+        protected abstract GitHubRequest<List<EventModel>> CreateRequest();
 
         private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {

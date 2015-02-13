@@ -12,9 +12,9 @@ namespace CodeHub.Core.ViewModels.Activity
             Title = "News";
         }
 
-        protected override GitHubSharp.GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
+        protected override GitHubSharp.GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[ApplicationService.Account.Username].GetReceivedEvents(page, perPage);
+			return ApplicationService.Client.Users[ApplicationService.Account.Username].GetReceivedEvents();
         }
     }
 }
