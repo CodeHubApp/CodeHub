@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CodeHub.Core.Services
+﻿namespace CodeHub.Core.Services
 {
     public interface INetworkActivityService
     {

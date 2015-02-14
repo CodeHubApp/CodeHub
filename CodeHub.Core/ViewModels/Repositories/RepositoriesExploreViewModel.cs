@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive;
-using Xamarin.Utilities.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -22,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<Unit> SearchCommand { get; private set; }
 
-        public RepositoriesExploreViewModel(IApplicationService applicationService, INetworkActivityService networkActivityService)
+        public RepositoriesExploreViewModel(IApplicationService applicationService)
         {
             ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
 
@@ -56,14 +55,6 @@ namespace CodeHub.Core.ViewModels.Repositories
                 {
                     throw new Exception("Unable to search for repositories. Please try again.", e);
                 }
-            });
-            
-            SearchCommand.IsExecuting.Skip(1).Subscribe(x => 
-            {
-                if (x)
-                    networkActivityService.PushNetworkActive();
-                else
-                    networkActivityService.PopNetworkActive();
             });
         }
     }
