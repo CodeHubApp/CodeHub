@@ -8,24 +8,11 @@ namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestView : BaseIssueView<PullRequestViewModel>
     {
-        private readonly SplitViewElement _split1, _split2;
         private readonly StringElement _commitsElement;
         private readonly StringElement _filesElement;
 
         public PullRequestView()
         {
-            _split1 = new SplitViewElement
-            {
-                Button1 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty),
-                Button2 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty)
-            };
-
-            _split2 = new SplitViewElement
-            {
-                Button1 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty),
-                Button2 = new SplitViewElement.SplitButton(Octicon.Gear.ToImage(), string.Empty)
-            };
-
             _commitsElement = new StringElement("Commits", string.Empty) 
             { 
                 Image = Octicon.GitCommit.ToImage(),
@@ -48,10 +35,6 @@ namespace CodeHub.iOS.Views.PullRequests
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            DetailsSection.Insert(0, _split1);
-            DetailsSection.Insert(1, _split2);
-
             Root.Insert(Root.Count - 1, new Section { _commitsElement, _filesElement });
         }
 

@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Gists
             HeaderView.Image = Images.LoginUserUnknown;
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
 
-            this.WhenViewModel(x => x.ShowMenuCommand)
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 

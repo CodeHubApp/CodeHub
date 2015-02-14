@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Cells
 
             this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
 
-            this.WhenViewModel(x => x.Type)
+            this.WhenAnyValue(x => x.ViewModel.Type)
                 .Subscribe(x =>
                 {
                     if (x == SourceItemType.Directory)

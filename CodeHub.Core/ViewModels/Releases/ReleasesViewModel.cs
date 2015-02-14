@@ -20,23 +20,25 @@ namespace CodeHub.Core.ViewModels.Releases
             Title = "Releases";
 
             var releases = new ReactiveList<Octokit.Release>();
-            Releases = releases.CreateDerivedCollection(x => 
-            {
-                var releaseItem = new ReleaseItemViewModel(x);
-                releaseItem.GoToCommand.Subscribe(_ => {
-                    var vm = this.CreateViewModel<ReleaseViewModel>();
-                    vm.RepositoryName = RepositoryName;
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.ReleaseId = x.Id;
-                    NavigateTo(vm);
-                });
-
-                return releaseItem;
-            },
-            x => !x.Draft);
+            Releases = releases.CreateDerivedCollection(CreateItemViewModel, x => !x.Draft);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
                 releases.Reset(await applicationService.GitHubClient.Release.GetAll(RepositoryOwner, RepositoryName)));
+        }
+
+        private ReleaseItemViewModel CreateItemViewModel(Octokit.Release release)
+        {
+            var releaseItem = new ReleaseItemViewModel(release);
+            releaseItem.GoToCommand.Subscribe(_ => 
+            {
+                var vm = this.CreateViewModel<ReleaseViewModel>();
+                vm.RepositoryName = RepositoryName;
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.ReleaseId = release.Id;
+                NavigateTo(vm);
+            });
+
+            return releaseItem;
         }
     }
 }

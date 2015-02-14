@@ -21,13 +21,12 @@ namespace CodeHub.iOS.Views.Activity
 
         public NotificationsView()
         {
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
-
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
 
             _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
 
+            _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             _markToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _markButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             ToolbarItems = _segmentToolbar;

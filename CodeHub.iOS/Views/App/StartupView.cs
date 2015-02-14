@@ -71,7 +71,7 @@ namespace CodeHub.iOS.Views.App
             Add(_statusLabel);
             Add(_activityView);
 
-            this.WhenViewModel(x => x.IsLoggingIn).Subscribe(x =>
+            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Subscribe(x =>
             {
                 if (x)
                 {

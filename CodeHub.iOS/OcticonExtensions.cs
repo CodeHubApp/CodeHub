@@ -30,6 +30,8 @@ namespace CodeHub
             else
             {
                 var img = Graphics.ImageFromFont(UIFont.FromName("octicons", size), @this.CharacterCode, UIColor.Black);
+                if (img == null)
+                    return null;
                 var pngData = img.AsPNG();
                 pngData.Save(combinedPath, false);
                 return img.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);

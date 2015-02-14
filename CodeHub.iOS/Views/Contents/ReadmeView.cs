@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Views.Contents;
 using CodeHub.Core.ViewModels.Contents;
-using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Contents
 {
@@ -14,8 +13,10 @@ namespace CodeHub.iOS.Views.Contents
         {
             Web.ScalesPageToFit = true;
 
-            this.WhenAnyValue(x => x.ViewModel.ContentText).IsNotNull().Subscribe(x =>
-                LoadContent(new ReadmeRazorView { Model = x }.GenerateString()));
+            this.WhenAnyValue(x => x.ViewModel.ContentText)
+                .IsNotNull()
+                .Select(x => new ReadmeRazorView { Model = x }.GenerateString())
+                .Subscribe(LoadContent);
 
             this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))

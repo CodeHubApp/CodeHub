@@ -48,7 +48,7 @@ namespace CodeHub.iOS.ViewControllers
         {
             EdgesForExtendedLayout = UIRectEdge.None;
             TextView = new UITextView(CGRect.Empty);
-            TextView.Font = UIFont.FromName("Courier", 16f);
+            TextView.Font = UIFont.PreferredBody;
 
             // Work around an Apple bug in the UITextView that crashes
             if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)

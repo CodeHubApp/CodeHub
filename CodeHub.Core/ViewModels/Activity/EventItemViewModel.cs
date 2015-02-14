@@ -25,8 +25,7 @@ namespace CodeHub.Core.ViewModels.Activity
         internal EventItemViewModel(
             EventModel eventModel, 
             IReadOnlyCollection<BaseEventsViewModel.TextBlock> headerBlocks, 
-            IReadOnlyCollection<BaseEventsViewModel.TextBlock> bodyBlocks,
-            Action gotoAction = null)
+            IReadOnlyCollection<BaseEventsViewModel.TextBlock> bodyBlocks)
         {
             Event = eventModel;
             HeaderBlocks = headerBlocks ?? new BaseEventsViewModel.TextBlock[0];
@@ -35,9 +34,6 @@ namespace CodeHub.Core.ViewModels.Activity
             Avatar = eventModel.Actor != null ? new GitHubAvatar(eventModel.Actor.AvatarUrl) : GitHubAvatar.Empty;
             Created = eventModel.CreatedAt;
             Type = ChooseImage(eventModel);
-
-            if (gotoAction != null)
-                GoToCommand.Subscribe(x => gotoAction());
         }
 
         private static EventType ChooseImage(EventModel eventModel)

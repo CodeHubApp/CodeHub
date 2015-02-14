@@ -206,6 +206,12 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.Url = x;
                 NavigateTo(vm);
             });
+            GoToUrlCommand.OfType<Uri>().Subscribe(x =>
+            {
+                var vm = this.CreateViewModel<WebBrowserViewModel>();
+                vm.Url = x.AbsoluteUri;
+                NavigateTo(vm);
+            });
         }
 
         protected virtual async Task Load(IApplicationService applicationService)

@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand GoToEditCommand { get; private set; }
 
-        public IReactiveCommand ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public IReactiveCommand GoToCommitsCommand { get; private set; }
 
@@ -89,7 +89,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.PullRequest).Select(x => x != null));
-            GoToHtmlUrlCommand.Select(_ => PullRequest.HtmlUrl).Subscribe(x => GoToUrlCommand.ExecuteIfCan(x.AbsolutePath));
+            GoToHtmlUrlCommand.Select(_ => PullRequest.HtmlUrl).Subscribe(GoToUrlCommand.ExecuteIfCan);
 
             GoToCommitsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
@@ -108,9 +108,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 vm.PullRequestId = Id;
                 NavigateTo(vm);
             });
-//
-//            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.PullRequest).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)))
-//                .WithSubscription(_ => shareService.ShareUrl(PullRequest.HtmlUrl));
+
+            ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.PullRequest).Select(x => x != null));
+            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(PullRequest.HtmlUrl));
 
             GoToEditCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {

@@ -20,6 +20,7 @@ namespace CodeHub.iOS.Cells
             {
                 _notificationNumber = value;
                 _numberView.Text = value.ToString();
+                SetupNotificationView();
             }
         }
 
@@ -69,19 +70,25 @@ namespace CodeHub.iOS.Cells
                 }
             }
 
+            SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.Left, 0, 0);
+            SetupNotificationView();
+        }
+
+        private void SetupNotificationView()
+        {
             if (NotificationNumber > 0)
             {
                 _numberView.Frame = new CGRect(0, 0, 38, 28f);
                 _numberView.Center = new CGPoint(ContentView.Bounds.Width - 44, ContentView.Bounds.Height / 2f);
                 _numberView.Text = NotificationNumber.ToString();
-                AddSubview(_numberView);
+
+                if (_numberView.Superview == null)
+                    AddSubview(_numberView);
             }
             else
             {
                 _numberView.RemoveFromSuperview();
             }
-
-            SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.Left, 0, 0);
         }
     }
 }

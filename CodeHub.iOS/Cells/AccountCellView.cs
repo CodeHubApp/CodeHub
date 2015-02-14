@@ -39,9 +39,9 @@ namespace CodeHub.iOS.Cells
             this.OneWayBind(ViewModel, x => x.Username, x => x.TitleLabel.Text);
             this.OneWayBind(ViewModel, x => x.Domain, x => x.SubtitleLabel.Text);
 
-            this.WhenViewModel(x => x.AvatarUrl).Where(x => !string.IsNullOrEmpty(x)).Subscribe(x => ImageView.SetImage(new NSUrl(x), Images.LoginUserUnknown));
-            this.WhenViewModel(x => x.AvatarUrl).Where(x => string.IsNullOrEmpty(x)).Subscribe(_ => ImageView.Image = Images.LoginUserUnknown);
-            this.WhenViewModel(x => x.Selected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
+            this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => !string.IsNullOrEmpty(x)).Subscribe(x => ImageView.SetImage(new NSUrl(x), Images.LoginUserUnknown));
+            this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => string.IsNullOrEmpty(x)).Subscribe(_ => ImageView.Image = Images.LoginUserUnknown);
+            this.WhenAnyValue(x => x.ViewModel.Selected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
         }
 
         public override void LayoutSubviews()

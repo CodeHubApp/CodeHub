@@ -18,11 +18,11 @@ namespace CodeHub.iOS.Views.Source
         {
             _alertDialogFactory = alertDialogFactory;
 
-            this.WhenViewModel(x => x.ShowMenuCommand)
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
-            this.WhenViewModel(x => x.OpenWithCommand)
+            this.WhenAnyValue(x => x.ViewModel.OpenWithCommand)
                 .Switch()
                 .Subscribe(_ =>
                 {

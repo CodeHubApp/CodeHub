@@ -16,6 +16,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
+        public IReactiveCommand<Milestone> SelectMilestoneCommand { get; private set; }
+
         public IssueMilestonesViewModel(
             Func<Task<IReadOnlyList<Milestone>>> loadMilestones,
             Func<Task<Milestone>> currentMilestone,

@@ -17,7 +17,10 @@ namespace CodeHub.Core.ViewModels.Releases
         public long ReleaseId { get; set; }
 
         private readonly ObservableAsPropertyHelper<string> _contentText;
-        public string ContentText { get { return _contentText.Value; } }
+        public string ContentText 
+        { 
+            get { return _contentText.Value; } 
+        }
 
         private ReleaseModel _releaseModel;
         public ReleaseModel ReleaseModel

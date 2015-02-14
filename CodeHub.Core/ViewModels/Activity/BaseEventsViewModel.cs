@@ -21,9 +21,6 @@ namespace CodeHub.Core.ViewModels.Activity
     public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel
     {
         protected readonly IApplicationService ApplicationService;
-        private readonly IReactiveCommand<object> _gotoRepositoryCommand;
-        private readonly IReactiveCommand<object> _gotoGistCommand;
-        private readonly Action<string> _gotoUrlCommand;
 
         public IReadOnlyReactiveList<EventItemViewModel> Events { get; private set; }
 
@@ -47,39 +44,37 @@ namespace CodeHub.Core.ViewModels.Activity
             ApplicationService = applicationService;
             Title = "Events";
 
-            _gotoUrlCommand = new Action<string>(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
-
             var events = new ReactiveList<EventModel>();
             Events = events.CreateDerivedCollection(CreateEventTextBlocks);
             ReportRepository = true;
 
-            _gotoRepositoryCommand = ReactiveCommand.Create();
-            _gotoRepositoryCommand.OfType<EventModel.RepoModel>().Subscribe(x =>
-            {
-                var repoId = new RepositoryIdentifier(x.Name);
-                var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = repoId.Owner;
-                vm.RepositoryName = repoId.Name;
-                NavigateTo(vm);
-            });
-
-            _gotoGistCommand = ReactiveCommand.Create();
-            _gotoGistCommand.OfType<EventModel.GistEvent>().Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<GistViewModel>();
-                vm.Id = x.Gist.Id;
-                vm.Gist = x.Gist;
-                NavigateTo(vm);
-            });
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 events.SimpleCollectionLoad(CreateRequest(), t as bool?, 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
+        }
+
+        private void GoToUrl(string url)
+        {
+            var vm = this.CreateViewModel<WebBrowserViewModel>();
+            vm.Url = url;
+            NavigateTo(vm);
+        }
+
+        private void GoToRepository(EventModel.RepoModel repo)
+        {
+            var repoId = new RepositoryIdentifier(repo.Name);
+            var vm = this.CreateViewModel<RepositoryViewModel>();
+            vm.RepositoryOwner = repoId.Owner;
+            vm.RepositoryName = repoId.Name;
+            NavigateTo(vm);
+        }
+
+        private void GoToGist(EventModel.GistEvent gist)
+        {
+            var vm = this.CreateViewModel<GistViewModel>();
+            vm.Id = gist.Gist.Id;
+            vm.Gist = gist.Gist;
+            NavigateTo(vm);
         }
        
         protected abstract GitHubRequest<List<EventModel>> CreateRequest();
@@ -129,6 +124,7 @@ namespace CodeHub.Core.ViewModels.Activity
             vm.RepositoryOwner = repo.Owner;
             vm.RepositoryName = repo.Name;
             vm.Id = (int)id;
+            NavigateTo(vm);
         }
 
         private void GoToPullRequest(RepositoryIdentifier repo, int id)
@@ -205,7 +201,7 @@ namespace CodeHub.Core.ViewModels.Activity
                 {
                     if (ReportRepository)
                     {
-                        eventAction = () => _gotoRepositoryCommand.Execute(eventModel.Repo);
+                        eventAction = () => GoToRepository(eventModel.Repo);
 						headerBlocks.Add(new TextBlock(" created repository "));
                         headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
                     }
@@ -288,7 +284,7 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 var forkEvent = (EventModel.ForkEvent)eventModel.PayloadObject;
                 var forkedRepo = new EventModel.RepoModel {Id = forkEvent.Forkee.Id, Name = forkEvent.Forkee.FullName, Url = forkEvent.Forkee.Url};
-                eventAction = () => _gotoRepositoryCommand.Execute(forkedRepo);
+                eventAction = () => GoToRepository(forkedRepo);
 				headerBlocks.Add(new TextBlock(" forked "));
                 headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 headerBlocks.Add(new TextBlock(" to "));
@@ -300,7 +296,7 @@ namespace CodeHub.Core.ViewModels.Activity
             else if (eventModel.PayloadObject is EventModel.ForkApplyEvent)
             {
                 var forkEvent = (EventModel.ForkApplyEvent)eventModel.PayloadObject;
-                eventAction = () => _gotoRepositoryCommand.Execute(eventModel.Repo);
+                eventAction = () => GoToRepository(eventModel.Repo);
 				headerBlocks.Add(new TextBlock(" applied fork to "));
                 headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 headerBlocks.Add(new TextBlock(" on branch "));
@@ -312,7 +308,7 @@ namespace CodeHub.Core.ViewModels.Activity
             else if (eventModel.PayloadObject is EventModel.GistEvent)
             {
                 var gistEvent = (EventModel.GistEvent)eventModel.PayloadObject;
-                eventAction = () => _gotoGistCommand.ExecuteIfCan(gistEvent);
+                eventAction = () => GoToGist(gistEvent);
 
                 if (string.Equals(gistEvent.Action, "create", StringComparison.OrdinalIgnoreCase))
 					headerBlocks.Add(new TextBlock(" created Gist #"));
@@ -341,7 +337,7 @@ namespace CodeHub.Core.ViewModels.Activity
                     for (var i = 0; i < gollumEvent.Pages.Count; i++)
 					{
                         var p = gollumEvent.Pages[i];
-						bodyBlocks.Add(new AnchorBlock(p.PageName, () => _gotoUrlCommand(p.HtmlUrl)));
+                        bodyBlocks.Add(new AnchorBlock(p.PageName, () => GoToUrl(p.HtmlUrl)));
 
                         var newLine = string.Empty;
                         if (i != gollumEvent.Pages.Count - 1)
@@ -403,7 +399,7 @@ namespace CodeHub.Core.ViewModels.Activity
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
             {
                 var memberEvent = (EventModel.MemberEvent)eventModel.PayloadObject;
-                eventAction = () => _gotoRepositoryCommand.Execute(eventModel.Repo);
+                eventAction = () => GoToRepository(eventModel.Repo);
 
                 if (memberEvent.Action.Equals("added"))
                     headerBlocks.Add(new TextBlock(" added as a collaborator"));
@@ -421,7 +417,7 @@ namespace CodeHub.Core.ViewModels.Activity
              */
             else if (eventModel.PayloadObject is EventModel.PublicEvent)
             {
-                eventAction = () => _gotoRepositoryCommand.Execute(eventModel.Repo);
+                eventAction = () => GoToRepository(eventModel.Repo);
                 if (ReportRepository)
                 {
                     headerBlocks.Add(new TextBlock(" has open sourced "));
@@ -542,7 +538,7 @@ namespace CodeHub.Core.ViewModels.Activity
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
             {
                 var watchEvent = (EventModel.WatchEvent)eventModel.PayloadObject;
-				eventAction = () => _gotoRepositoryCommand.Execute(eventModel.Repo);
+                eventAction = () => GoToRepository(eventModel.Repo);
                 headerBlocks.Add(watchEvent.Action.Equals("started") ? 
 					new TextBlock(" starred ") : new TextBlock(" unstarred "));
                 headerBlocks.Add(CreateRepositoryTextBlock(eventModel.Repo));
@@ -550,11 +546,13 @@ namespace CodeHub.Core.ViewModels.Activity
             else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
 			{
                 var releaseEvent = (EventModel.ReleaseEvent)eventModel.PayloadObject;
-				eventAction = () => _gotoUrlCommand(releaseEvent.Release.HtmlUrl);
+                eventAction = () => GoToUrl(releaseEvent.Release.HtmlUrl);
 				headerBlocks.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
 			}
 
-            return new EventItemViewModel(eventModel, headerBlocks, bodyBlocks, eventAction);
+            var vm = new EventItemViewModel(eventModel, headerBlocks, bodyBlocks);
+            eventAction.Do(x => vm.GoToCommand.Subscribe(_ => x()));
+            return vm;
         }
 
         private static string CreateShortMessage(string message)
@@ -586,7 +584,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
 //            var repoOwner = repoSplit[0];
 //            var repoName = repoSplit[1];
-			return new AnchorBlock(repoModel.Name, () => _gotoRepositoryCommand.Execute(repoModel));
+            return new AnchorBlock(repoModel.Name, () => GoToRepository(repoModel));
         }
             
         public class TextBlock

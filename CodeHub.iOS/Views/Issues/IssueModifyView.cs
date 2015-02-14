@@ -32,10 +32,10 @@ namespace CodeHub.iOS.Views.Issues
                 .Switch()
                 .Subscribe(_ => ShowLabelsSelector());
 
-            this.WhenViewModel(x => x.Subject).Subscribe(x => _titleElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x);
             _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;
 
-            this.WhenViewModel(x => x.Content).Subscribe(x => _descriptionElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Content).Subscribe(x => _descriptionElement.Value = x);
             _descriptionElement.ValueChanged += (sender, e) => ViewModel.Content = _descriptionElement.Value;
 
             this.WhenAnyValue(x => x.ViewModel.SaveCommand)

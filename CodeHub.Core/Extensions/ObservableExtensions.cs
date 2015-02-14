@@ -10,12 +10,6 @@ namespace System.Reactive.Linq
         {
             return @this.Where(x => x != null);
         }
-
-        public static IObservable<TRet> WhenViewModel<TViewModel, TRet>(this IViewFor<TViewModel> @this, 
-            System.Linq.Expressions.Expression<Func<TViewModel, TRet>> @select) where TViewModel : class
-        {
-            return @this.WhenAnyValue(x => x.ViewModel).Where(x => x != null).Select(x => x.WhenAnyValue(@select)).Switch();
-        }
     }
 }
 

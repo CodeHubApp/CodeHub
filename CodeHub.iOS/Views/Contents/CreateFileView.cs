@@ -20,13 +20,13 @@ namespace CodeHub.iOS.Views.Contents
             _titleElement.SpellChecking = false;
 
             _descriptionElement = new ExpandingInputElement("Content");
-            _descriptionElement.Font = UIFont.FromName("Courier", 14f);
+            _descriptionElement.Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize);
             _descriptionElement.SpellChecking = false;
 
-            this.WhenViewModel(x => x.Name).Subscribe(x => _titleElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Name).Subscribe(x => _titleElement.Value = x);
             _titleElement.Changed += (sender, e) => ViewModel.Name = _titleElement.Value;
 
-            this.WhenViewModel(x => x.Content).Subscribe(x => _descriptionElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Content).Subscribe(x => _descriptionElement.Value = x);
             _descriptionElement.ValueChanged += (sender, e) => ViewModel.Content = _descriptionElement.Value;
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, PromptForCommitMessage);
@@ -49,7 +49,6 @@ namespace CodeHub.iOS.Views.Contents
 
             var viewController = new MessageComposerViewController();
             viewController.Title = "Commit Message";
-            viewController.TextView.Font = UIFont.SystemFontOfSize(16f);
             ViewModel.WhenAnyValue(x => x.CommitMessage).Subscribe(x => viewController.TextView.Text = x);
             viewController.TextView.Changed += (s, e) => ViewModel.CommitMessage = viewController.TextView.Text;
             viewController.NavigationItem.RightBarButtonItem = ViewModel.SaveCommand.ToBarButtonItem(UIBarButtonSystemItem.Save);

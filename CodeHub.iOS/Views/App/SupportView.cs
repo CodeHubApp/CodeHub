@@ -24,10 +24,10 @@ namespace CodeHub.iOS.Views.App
             _addBugButton = new ButtonElement("Report a bug", () => ViewModel.GoToReportBugCommand.ExecuteIfCan(), Octicon.Bug.ToImage());
             _featuresButton = new ButtonElement("Submitted Work Items", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Octicon.Clippy.ToImage());
 
-            this.WhenViewModel(x => x.Contributors).Where(x => x.HasValue).SubscribeSafe(x =>
+            this.WhenAnyValue(x => x.ViewModel.Contributors).Where(x => x.HasValue).SubscribeSafe(x =>
                 contributors.Text = (x.Value >= 100 ? "100+" : x.Value.ToString()));
 
-            this.WhenViewModel(x => x.LastCommit).Where(x => x.HasValue).SubscribeSafe(x =>
+            this.WhenAnyValue(x => x.ViewModel.LastCommit).Where(x => x.HasValue).SubscribeSafe(x =>
                 lastCommit.Text = x.Value.UtcDateTime.Humanize());
 
             this.WhenAnyValue(x => x.ViewModel)

@@ -2,8 +2,8 @@ using System;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
 using CodeHub.iOS.TableViewSources;
-using System.Reactive.Linq;
 using CodeHub.iOS.ViewComponents;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.PullRequests
             _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
             NavigationItem.TitleView = _viewSegment;
 
-            this.WhenViewModel(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
+            this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
             _viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment;
 
             EmptyView = new Lazy<UIView>(() =>
