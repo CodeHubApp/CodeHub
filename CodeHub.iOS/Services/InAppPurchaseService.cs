@@ -5,9 +5,9 @@ using Foundation;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 
-namespace Xamarin.Utilities.Services
+namespace CodeHub.iOS.Services
 {
-    public class InAppPurchaseService
+    public class InAppPurchaseService : IInAppPurchaseService
     {
         private readonly TransactionObserver _observer;
         private TaskCompletionSource<bool> _actionSource;
@@ -28,7 +28,7 @@ namespace Xamarin.Utilities.Services
                 _actionSource.TrySetResult(true);
         }
 
-        private InAppPurchaseService()
+        public InAppPurchaseService()
         {
             _observer = new TransactionObserver(this);
             SKPaymentQueue.DefaultQueue.AddTransactionObserver(_observer);

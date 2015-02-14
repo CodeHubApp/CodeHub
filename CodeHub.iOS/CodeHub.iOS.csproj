@@ -368,6 +368,8 @@
     <InterfaceDefinition Include="Cells\UserTableViewCell.xib" />
     <Compile Include="Views\Issues\BaseIssueView.cs" />
     <Compile Include="Views\Issues\IssueModifyView.cs" />
+    <Compile Include="Services\IInAppPurchaseService.cs" />
+    <Compile Include="Services\InAppPurchaseNetworkDecorator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

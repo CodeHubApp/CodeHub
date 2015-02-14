@@ -7,22 +7,21 @@ using CodeHub.Core.Factories;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.App;
 using ReactiveUI;
-using Splat;
-using Xamarin.Utilities.Services;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.App
 {
     public class UpgradesView : BaseTableViewController<UpgradesViewModel>
     {
         private readonly IFeaturesService _featuresService;
-        private readonly INetworkActivityService _networkActivityService;
+        private readonly IInAppPurchaseService _inAppPurchaseService;
         private readonly IAlertDialogFactory _alertDialogService;
         private readonly List<Item> _items = new List<Item>();
 
-        public UpgradesView(IFeaturesService featuresService, INetworkActivityService networkActivityService, IAlertDialogFactory alertDialogService)
+        public UpgradesView(IFeaturesService featuresService, IAlertDialogFactory alertDialogService, IInAppPurchaseService inAppPurchaseService)
         {
             _featuresService = featuresService;
-            _networkActivityService = networkActivityService;
+            _inAppPurchaseService = inAppPurchaseService;
             _alertDialogService = alertDialogService;
         }
 
@@ -38,8 +37,7 @@ namespace CodeHub.iOS.Views.App
         {
             try
             {
-                _networkActivityService.PushNetworkActive();
-                var data = await Locator.Current.GetService<InAppPurchaseService>().RequestProductData(keys);
+                var data = await _inAppPurchaseService.RequestProductData(keys);
                 _items.Clear();
                 _items.AddRange(data.Products.Select(x => new Item { Id = x.ProductIdentifier, Name = x.LocalizedTitle, Description = x.LocalizedDescription, Price = x.LocalizedPrice() }));
                 Render();
@@ -47,10 +45,6 @@ namespace CodeHub.iOS.Views.App
             catch (Exception e)
             {
                 _alertDialogService.Alert("Error", e.Message);
-            }
-            finally
-            {
-                _networkActivityService.PopNetworkActive();
             }
         }
 
@@ -78,7 +72,7 @@ namespace CodeHub.iOS.Views.App
 
         private void Restore()
         {
-            Locator.Current.GetService<InAppPurchaseService>().Restore();
+            _inAppPurchaseService.Restore();
         }
 
         private void Tapped(Item item)
