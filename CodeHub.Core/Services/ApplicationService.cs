@@ -5,6 +5,9 @@ using System;
 using ReactiveUI;
 using Octokit;
 using Octokit.Internal;
+using System.Diagnostics;
+using CodeHub.Core.Utilities;
+using Splat;
 
 namespace CodeHub.Core.Services
 {
@@ -39,20 +42,31 @@ namespace CodeHub.Core.Services
                     {
                         var githubAccount = account;
                         var domain = githubAccount.Domain ?? Client.DefaultApi;
+                        Credentials credentials;
+
                         if (!string.IsNullOrEmpty(githubAccount.OAuth))
                         {
                             Client = Client.BasicOAuth(githubAccount.OAuth, domain);
-                            GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
-                                new InMemoryCredentialStore(new Credentials(githubAccount.OAuth)), 
-                                new Uri(domain));
+                            credentials = new Credentials(githubAccount.OAuth);
                         }
                         else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
                         {
                             Client = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
-                            GitHubClient = new GitHubClient(new ProductHeaderValue("CodeHub"), 
-                                new InMemoryCredentialStore(new Credentials(githubAccount.Username, githubAccount.Password)), 
-                                new Uri(domain));
+                            credentials = new Credentials(githubAccount.Username, githubAccount.Password);
                         }
+                        else
+                        {
+                            Debugger.Break();
+                            return;
+                        }
+
+                        var connection = new Connection(
+                            new ProductHeaderValue("CodeHub"),
+                            new Uri(domain),
+                            new InMemoryCredentialStore(credentials),
+                            new OctokitNetworkClient(new HttpClientAdapter(), Locator.Current.GetService<INetworkActivityService>()),
+                            new Octokit.Internal.SimpleJsonSerializer());
+                        GitHubClient = new GitHubClient(connection);
                     }
                 });
         }
