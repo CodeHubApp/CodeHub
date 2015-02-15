@@ -74,8 +74,8 @@ namespace CodeHub.iOS.Cells
             Header.TextColor = UIColor.FromRGB(41, 41, 41);
             Body.TextColor = UIColor.FromRGB(90, 90, 90);
 
-            Header.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
-            Body.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
+//            Header.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
+//            Body.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
 
             Header.LinkAttributes = new CTStringAttributes {
                 Font = new CTFont(LinkFont.Name, LinkFont.PointSize),
