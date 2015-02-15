@@ -110,7 +110,8 @@ namespace CodeHub.iOS.Views.Issues
                     }
                     else
                     {
-                        var markdown = new DescriptionView { Model = x };
+                        var model = new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize);
+                        var markdown = new DescriptionView { Model = model };
                         var html = markdown.GenerateString();
                         DescriptionElement.Value = html;
 
@@ -145,7 +146,8 @@ namespace CodeHub.iOS.Views.Issues
 
                     if (comments.Count > 0)
                     {
-                        var razorView = new CommentsView { Model = comments };
+                        var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                        var razorView = new CommentsView { Model = commentModel };
                         var html = razorView.GenerateString();
                         CommentsElement.Value = html;
 

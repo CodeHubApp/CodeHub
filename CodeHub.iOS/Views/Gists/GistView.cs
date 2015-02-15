@@ -157,7 +157,8 @@ namespace CodeHub.iOS.Views.Gists
 
                 if (commentModels.Count > 0)
                 {
-                    var razorView = new CommentsView { Model = commentModels };
+                    var model = new CommentModel(commentModels, (int)UIFont.PreferredSubheadline.PointSize);
+                    var razorView = new CommentsView { Model = model };
                     var html = razorView.GenerateString();
                     commentsElement.Value = html;
 

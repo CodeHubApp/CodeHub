@@ -73,8 +73,9 @@ namespace CodeHub.iOS.Views.Source
                 .StartWith(new Unit())
                 .Subscribe(x =>
                 {
-                    var commentModels = ViewModel.Comments.Select(c => new Comment(c.Avatar.ToUri(), c.Actor, c.Body, c.UtcCreatedAt.Humanize()));
-                    var razorView = new CommentsView { Model = commentModels };
+                    var comments = ViewModel.Comments.Select(c => new Comment(c.Avatar.ToUri(), c.Actor, c.Body, c.UtcCreatedAt.Humanize())).ToList();
+                    var commentModel = new CodeHub.WebViews.CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                    var razorView = new CommentsView { Model = commentModel };
                     var html = razorView.GenerateString();
                     commentsElement.Value = html;
 

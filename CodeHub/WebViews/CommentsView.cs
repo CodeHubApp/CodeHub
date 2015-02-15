@@ -24,7 +24,7 @@ public partial class CommentsView : CommentsViewBase
 #line hidden
 
 #line 1 "CommentsView.cshtml"
-public IEnumerable<Comment> Model { get; set; }
+public CommentModel Model { get; set; }
 
 #line default
 #line hidden
@@ -39,53 +39,103 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\nfont-famil" +
-"y: Helvetica;\nfont-size: 13px;\n}\n\nhtml {\n    -webkit-text-size-adjust: none;\n}\n\n" +
-"body{\nfont-family: Helvetica;\nfont-size: 13px;\nmargin: 0px;\n}\n\n#main > .comment:" +
-"first-child {\nborder-top: none;\n}\n\n#main > .comment {\n    border-top: 1px solid " +
-"#c8c8c8;\n    padding: 8px 0 0 0;\n}\n\n#main > .comment > img {\n    position: absol" +
-"ute;\n    border-radius: 16px;\n    margin-left: 8px;\n    margin-top: 1px;\n    mar" +
-"gin-bottom: 8px;\n    width: 32px;\n    height: 32px;\n}\n\n#main > .comment > div {\n" +
-"margin-left: 48px;\nmargin-right: 8px;\n}\n\n#main > .comment > div > h1 {\nfont-size" +
-": 14px;\nmargin: 0px 0 2px 0;\ncolor: #406fb9;\nwhite-space: nowrap;\noverflow: hidd" +
-"en;\n}\n\n#main > .comment > div > h2 {\nfont-size: 11px;\nmargin: 0 0 4px 0;\nfont-we" +
-"ight: normal;\ncolor: #404040;\nwhite-space: nowrap;\noverflow: hidden;\n}\n\n#main > " +
-".comment > div > div {\nmargin: 0;\nword-wrap: break-word;\n}\n\n#main > .comment > d" +
-"iv > .mark {\n\tmargin-top: 8px;\n\tmargin-bottom: 8px;\n\tmargin-right: 8px;\n}\n\n#main" +
-" > .comment > div > div img {\nmax-width: 100%;\n}\n\n#main { width: 100%; }\n\nimg { " +
-"max-width: 100%; } \np { margin: 10px 0; white-space: pre-wrap; } \npre, li, ul { " +
-"word-wrap: break-word; } \n\n.mark h1, .mark h2, .mark h3, .mark h4, .mark h5, .ma" +
-"rk h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-height: 1.7;\ncur" +
-"sor: text;\nposition: relative;\n}\n\nul, ol {\npadding: 0;\nmargin-top: 0;\nmargin-bot" +
-"tom: 0;\npadding-left: 20px;\n}\n\npre {\nbackground-color: #f8f8f8;\nborder: 1px soli" +
-"d #ddd;\nfont-size: 13px;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nb" +
-"order-radius: 3px;\nword-wrap: normal;\n}\ndl dt {\nfont-size: 14px;\nfont-weight: bo" +
-"ld;\nfont-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\nblockquote {\nborder-left" +
-": 4px solid #DDD;\npadding: 0 15px;\ncolor: #777;\n}\ntable {\nwidth: 100%;\noverflow:" +
-" auto;\ndisplay: block;\n}\ntable tr {\nborder-top: 1px solid #ccc;\nbackground-color" +
-": #fff;\n}\ntable th {\nfont-weight: bold;\n}\ntable th, table td {\nborder: 1px solid" +
-" #ddd;\npadding: 4px 11px;\n}\ntable tr:nth-child(2n) {\nbackground-color: #f8f8f8;\n" +
-"}\n.mark h2 {\nfont-size: 1.2em;\nborder-bottom: 1px solid #eee;\n}\n.mark h1 {\nfont-" +
-"size: 1.6em;\nborder-bottom: 1px solid #ddd;\n}\n\n.mark .label {\ndisplay: inline;\np" +
-"adding: .2em .6em .2em;\nfont-size: 85%;\nfont-weight: 700;\nline-height: 1;\ncolor:" +
-" #fff;\ntext-align: center;\nwhite-space: nowrap;\nvertical-align: baseline;\nborder" +
-"-radius: .25em;\n}\n.label-danger {\nbackground-color: #d9534f;\n}\n.label-success {\n" +
-"background-color: #5cb85c;\n}\n.label-info {\nbackground-color: #6e5494;\n}\n.label-d" +
-"efault {\nbackground-color: #999;\n}\n</style>\n</head>\n<body>\n\t<div");
+WriteLiteral("/>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-select: none;\n\n}\n\nhtml {" +
+"\n    -webkit-text-size-adjust: none;\n}\n\nbody{\n    font-family: \"Helvetica Neue\"," +
+" Helvetica;\n    font-size: ");
+
+
+#line 17 "CommentsView.cshtml"
+           Write(Model.FontSize);
+
+
+#line default
+#line hidden
+WriteLiteral(@"px;
+    margin: 0px;
+}
+
+#main > .comment:first-child {
+border-top: none;
+}
+
+#main > .comment {
+    border-top: 1px solid #c8c8c8;
+    padding: 8px 0 0 0;
+}
+
+#main > .comment > img {
+    position: absolute;
+    border-radius: 16px;
+    margin-left: 8px;
+    margin-top: 1px;
+    margin-bottom: 8px;
+    width: 32px;
+    height: 32px;
+}
+
+#main > .comment > div {
+margin-left: 48px;
+margin-right: 8px;
+}
+
+#main > .comment > div > h1 {
+font-size: ");
+
+
+#line 46 "CommentsView.cshtml"
+       Write(Model.FontSize);
+
+
+#line default
+#line hidden
+WriteLiteral("px;\nmargin: 0;\ncolor: #406fb9;\nwhite-space: nowrap;\noverflow: hidden;\n}\n\n#main > " +
+".comment > div > h2 {\nfont-size: ");
+
+
+#line 54 "CommentsView.cshtml"
+       Write(Model.FontSize - 2);
+
+
+#line default
+#line hidden
+WriteLiteral("px;\nmargin: 0 0 4px 0;\nfont-weight: normal;\ncolor: #404040;\nwhite-space: nowrap;\n" +
+"overflow: hidden;\n}\n\n#main > .comment > div > div {\nmargin: 0;\nword-wrap: break-" +
+"word;\n}\n\n#main > .comment > div > .mark {\n\tmargin-top: 8px;\n\tmargin-bottom: 8px;" +
+"\n\tmargin-right: 8px;\n}\n\n#main > .comment > div > div img {\nmax-width: 100%;\n}\n\n#" +
+"main { width: 100%; }\n\nimg { max-width: 100%; } \np { margin: 10px 0; white-space" +
+": pre-wrap; } \npre, li, ul { word-wrap: break-word; } \n\n.mark h1, .mark h2, .mar" +
+"k h3, .mark h4, .mark h5, .mark h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight" +
+": bold;\nline-height: 1.7;\ncursor: text;\nposition: relative;\n}\n\nul, ol {\npadding:" +
+" 0;\nmargin-top: 0;\nmargin-bottom: 0;\npadding-left: 20px;\n}\n\npre {\nbackground-col" +
+"or: #f8f8f8;\nborder: 1px solid #ddd;\nline-height: 19px;\noverflow: auto;\npadding:" +
+" 6px 10px;\nborder-radius: 3px;\nword-wrap: normal;\n}\ndl dt {\nfont-weight: bold;\nf" +
+"ont-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\nblockquote {\nborder-left: 4px" +
+" solid #DDD;\npadding: 0 15px;\ncolor: #777;\n}\ntable {\nwidth: 100%;\noverflow: auto" +
+";\ndisplay: block;\n}\ntable tr {\nborder-top: 1px solid #ccc;\nbackground-color: #ff" +
+"f;\n}\ntable th {\nfont-weight: bold;\n}\ntable th, table td {\nborder: 1px solid #d9d" +
+"9e0;\nborder: 0.5px solid #d9d9d9;\npadding: 4px 11px;\n}\ntable tr:nth-child(2n) {\n" +
+"background-color: #f8f8f8;\n}\n.mark h2 {\nfont-size: 1.2em;\nborder-bottom: 1px sol" +
+"id #eee;\n}\n.mark h1 {\nfont-size: 1.6em;\nborder-bottom: 1px solid #ddd;\n}\n\n.mark " +
+".label {\ndisplay: inline;\npadding: .2em .6em .2em;\nfont-size: 85%;\nfont-weight: " +
+"700;\nline-height: 1;\ncolor: #fff;\ntext-align: center;\nwhite-space: nowrap;\nverti" +
+"cal-align: baseline;\nborder-radius: .25em;\n}\n.label-danger {\nbackground-color: #" +
+"d9534f;\n}\n.label-success {\nbackground-color: #5cb85c;\n}\n.label-info {\nbackground" +
+"-color: #6e5494;\n}\n.label-default {\nbackground-color: #999;\n}\n</style>\n</head>\n<" +
+"body>\n\t<div");
 
 WriteLiteral(" id=\"main\"");
 
 WriteLiteral(">\n");
 
 
-#line 178 "CommentsView.cshtml"
+#line 176 "CommentsView.cshtml"
 		
 
 #line default
 #line hidden
 
-#line 178 "CommentsView.cshtml"
-   foreach (var comment in Model)
+#line 176 "CommentsView.cshtml"
+   foreach (var comment in Model.Comments)
 		{
 
 
@@ -99,7 +149,7 @@ WriteLiteral(">\n\t\t\t\t<img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 181 "CommentsView.cshtml"
+#line 179 "CommentsView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -109,7 +159,7 @@ WriteAttribute ("src", " src=\"", "\""
 WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 
 
-#line 183 "CommentsView.cshtml"
+#line 181 "CommentsView.cshtml"
     Write(comment.Name);
 
 
@@ -118,7 +168,7 @@ WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 WriteLiteral("</h1>\n\t\t\t\t\t<h2>");
 
 
-#line 184 "CommentsView.cshtml"
+#line 182 "CommentsView.cshtml"
     Write(comment.Date);
 
 
@@ -133,8 +183,8 @@ WriteLiteral(">\n");
 WriteLiteral("\t\t\t\t\t");
 
 
-#line 186 "CommentsView.cshtml"
-                WriteLiteral(comment.Body);
+#line 184 "CommentsView.cshtml"
+WriteLiteral(comment.Body);
 
 
 #line default
@@ -142,7 +192,7 @@ WriteLiteral("\t\t\t\t\t");
 WriteLiteral("\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n");
 
 
-#line 190 "CommentsView.cshtml"
+#line 188 "CommentsView.cshtml"
 		}
 
 

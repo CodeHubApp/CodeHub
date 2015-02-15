@@ -1,12 +1,11 @@
-﻿@model IEnumerable<Comment>
+﻿@model CommentModel
 <html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 <style>
 * {
 -webkit-touch-callout: none;
 -webkit-user-select: none;
-font-family: Helvetica;
-font-size: 13px;
+
 }
 
 html {
@@ -14,9 +13,9 @@ html {
 }
 
 body{
-font-family: Helvetica;
-font-size: 13px;
-margin: 0px;
+    font-family: "Helvetica Neue", Helvetica;
+    font-size: @(Model.FontSize)px;
+    margin: 0px;
 }
 
 #main > .comment:first-child {
@@ -44,15 +43,15 @@ margin-right: 8px;
 }
 
 #main > .comment > div > h1 {
-font-size: 14px;
-margin: 0px 0 2px 0;
+font-size: @(Model.FontSize)px;
+margin: 0;
 color: #406fb9;
 white-space: nowrap;
 overflow: hidden;
 }
 
 #main > .comment > div > h2 {
-font-size: 11px;
+font-size: @(Model.FontSize - 2)px;
 margin: 0 0 4px 0;
 font-weight: normal;
 color: #404040;
@@ -100,7 +99,6 @@ padding-left: 20px;
 pre {
 background-color: #f8f8f8;
 border: 1px solid #ddd;
-font-size: 13px;
 line-height: 19px;
 overflow: auto;
 padding: 6px 10px;
@@ -108,7 +106,6 @@ border-radius: 3px;
 word-wrap: normal;
 }
 dl dt {
-font-size: 14px;
 font-weight: bold;
 font-style: italic;
 padding: 0;
@@ -132,7 +129,8 @@ table th {
 font-weight: bold;
 }
 table th, table td {
-border: 1px solid #ddd;
+border: 1px solid #d9d9e0;
+border: 0.5px solid #d9d9d9;
 padding: 4px 11px;
 }
 table tr:nth-child(2n) {
@@ -175,7 +173,7 @@ background-color: #999;
 </head>
 <body>
 	<div id="main">
-		@foreach (var comment in Model)
+		@foreach (var comment in Model.Comments)
 		{
 			<div class="comment">
 				<img src="@comment.AvatarUrl">

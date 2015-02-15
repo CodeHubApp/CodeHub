@@ -24,7 +24,7 @@ public partial class DescriptionView : DescriptionViewBase
 #line hidden
 
 #line 1 "DescriptionView.cshtml"
-public String Model { get; set; }
+public DescriptionModel Model { get; set; }
 
 #line default
 #line hidden
@@ -39,110 +39,104 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable" +
 "=0\"");
 
-WriteLiteral(@"/>
-<style>
-* {
--webkit-touch-callout: none;
--webkit-user-select: none;
-font-family: Helvetica;
-font-size: 13px;
-}
+WriteLiteral("/>\n<style>\n* {\n    -webkit-touch-callout: none;\n    -webkit-user-select: none;\n}\n" +
+"\nhtml {\n    -webkit-text-size-adjust: none;\n}\n\nbody{\n    font-family: \"Helvetica" +
+" Neue\", Helvetica;\n    font-size: ");
 
-html {
--webkit-text-size-adjust: none;
-}
 
-body{
-font-family: Helvetica;
-font-size: 13px;
-margin: 0 1em;
+#line 16 "DescriptionView.cshtml"
+           Write(Model.FontSize);
+
+
+#line default
+#line hidden
+WriteLiteral(@"px;
+    margin: 0 1em;
 }
 
 h1, h2, h3, h4, h5, h6 {
-margin: 1em 0 15px;
-padding: 0;
-font-weight: bold;
-line-height: 1.7;
-cursor: text;
-position: relative;
+    margin: 1em 0 15px;
+    padding: 0;
+    font-weight: bold;
+    line-height: 1.7;
+    cursor: text;
+    position: relative;
 }
 h1 {
-font-size: 1.8em;
-border-bottom: 1px solid #ddd;
+    font-size: 1.8em;
+    border-bottom: 1px solid #ddd;
 }
 p, blockquote, ul, ol, dl, table, pre {
-margin: 15px 0;
+    margin: 15px 0;
 }
 h2 {
-font-size: 1.4em;
-border-bottom: 1px solid #eee;
+    font-size: 1.4em;
+    border-bottom: 1px solid #eee;
 }
 ul, ol {
-padding-left: 30px;
+    padding-left: 30px;
 }
 a {
-color: #4183c4;
-text-decoration: none;
-text-decoration: none;
+    color: #4183c4;
+    text-decoration: none;
+    text-decoration: none;
 }
 .highlight pre, pre {
-background-color: #f8f8f8;
-border: 1px solid #ddd;
-font-size: 13px;
-line-height: 19px;
-overflow: auto;
-padding: 6px 10px;
-border-radius: 3px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
 }
 pre {
-word-wrap: normal;
+    word-wrap: normal;
 }
 dl {
-padding: 0;
+    padding: 0;
 }
 dl dt {
-font-size: 14px;
-font-weight: bold;
-font-style: italic;
-padding: 0;
-margin-top: 15px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin-top: 15px;
 }
 dl dd {
-margin-bottom: 15px;
-padding: 0 15px;
+    margin-bottom: 15px;
+    padding: 0 15px;
 }
 table {
-width: 100%;
-overflow: auto;
-display: block;
+    width: 100%;
+    overflow: auto;
+    display: block;
 }
 table tr {
-border-top: 1px solid #ccc;
-background-color: #fff;
+    border-top: 1px solid #ccc;
+    background-color: #fff;
 }
 table tr:nth-child(2n) {
-background-color: #f8f8f8;
+    background-color: #f8f8f8;
 }
 table th, table td {
-border: 1px solid #ddd;
-padding: 6px 13px;
+    border: 1px solid #ddd;
+    padding: 6px 13px;
 }
 table th {
-font-weight: bold;
+    font-weight: bold;
 }
 img {
-max-width: 100%;
--moz-box-sizing: border-box;
-box-sizing: border-box;
+    max-width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 </style>
-<title>Description</title>
+<title></title>
 </head>
 <body>");
 
 
-#line 102 "DescriptionView.cshtml"
-            WriteLiteral(Model);
+#line 98 "DescriptionView.cshtml"
+WriteLiteral(Model.Body);
 
 
 #line default

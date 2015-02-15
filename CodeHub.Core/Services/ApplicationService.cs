@@ -60,11 +60,16 @@ namespace CodeHub.Core.Services
                             return;
                         }
 
+                        // Decorate the HttpClient
+                        IHttpClient httpClient = new HttpClientAdapter();
+                        //httpClient = new OctokitCacheClient(httpClient);
+                        httpClient = new OctokitNetworkClient(httpClient, Locator.Current.GetService<INetworkActivityService>());
+
                         var connection = new Connection(
                             new ProductHeaderValue("CodeHub"),
                             new Uri(domain),
                             new InMemoryCredentialStore(credentials),
-                            new OctokitNetworkClient(new HttpClientAdapter(), Locator.Current.GetService<INetworkActivityService>()),
+                            httpClient,
                             new Octokit.Internal.SimpleJsonSerializer());
                         GitHubClient = new GitHubClient(connection);
                     }

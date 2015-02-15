@@ -57,6 +57,8 @@
     </Compile>
     <Compile Include="Resources\Octicons.cs" />
     <Compile Include="WebViews\CommitDiffModel.cs" />
+    <Compile Include="WebViews\DescriptionModel.cs" />
+    <Compile Include="WebViews\CommentModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
