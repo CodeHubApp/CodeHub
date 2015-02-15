@@ -362,10 +362,6 @@
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Utilities\TableViewCellHeightCache.cs" />
     <Compile Include="Cells\UserTableViewCell.cs" />
-    <Compile Include="Cells\UserTableViewCell.designer.cs">
-      <DependentUpon>UserTableViewCell.cs</DependentUpon>
-    </Compile>
-    <InterfaceDefinition Include="Cells\UserTableViewCell.xib" />
     <Compile Include="Views\Issues\BaseIssueView.cs" />
     <Compile Include="Views\Issues\IssueModifyView.cs" />
     <Compile Include="Services\IInAppPurchaseService.cs" />

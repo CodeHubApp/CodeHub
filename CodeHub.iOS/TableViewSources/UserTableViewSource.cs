@@ -7,9 +7,9 @@ namespace CodeHub.iOS.TableViewSources
     public class UserTableViewSource : ReactiveTableViewSource<UserItemViewModel>
     {
         public UserTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<UserItemViewModel> collection) 
-            : base(tableView, collection,  UserTableViewCell.Key, UserTableViewCell.DefaultHeight)
+            : base(tableView, collection,  UserTableViewCell.Key, 44f)
         {
-            tableView.RegisterNibForCellReuse(UserTableViewCell.Nib, UserTableViewCell.Key);
+            tableView.RegisterClassForCellReuse(typeof(UserTableViewCell), UserTableViewCell.Key);
         }
     }
 }
