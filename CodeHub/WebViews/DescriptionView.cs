@@ -52,6 +52,11 @@ WriteLiteral("/>\n<style>\n* {\n    -webkit-touch-callout: none;\n    -webkit-us
 #line hidden
 WriteLiteral(@"px;
     margin: 0 1em;
+    word-wrap: break-word;
+}
+a {
+    color: #406fb9;
+    text-decoration: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -135,8 +140,8 @@ img {
 <body>");
 
 
-#line 98 "DescriptionView.cshtml"
-WriteLiteral(Model.Body);
+#line 103 "DescriptionView.cshtml"
+            WriteLiteral(Model.Body);
 
 
 #line default

@@ -52,6 +52,12 @@ WriteLiteral("/>\n<style>\n* {\n-webkit-touch-callout: none;\n-webkit-user-selec
 #line hidden
 WriteLiteral(@"px;
     margin: 0px;
+    word-wrap: break-word;
+}
+
+a {
+    color: #406fb9;
+    text-decoration: none;
 }
 
 #main > .comment:first-child {
@@ -82,7 +88,7 @@ margin-right: 8px;
 font-size: ");
 
 
-#line 46 "CommentsView.cshtml"
+#line 52 "CommentsView.cshtml"
        Write(Model.FontSize);
 
 
@@ -92,7 +98,7 @@ WriteLiteral("px;\nmargin: 0;\ncolor: #406fb9;\nwhite-space: nowrap;\noverflow: 
 ".comment > div > h2 {\nfont-size: ");
 
 
-#line 54 "CommentsView.cshtml"
+#line 60 "CommentsView.cshtml"
        Write(Model.FontSize - 2);
 
 
@@ -128,13 +134,13 @@ WriteLiteral(" id=\"main\"");
 WriteLiteral(">\n");
 
 
-#line 176 "CommentsView.cshtml"
+#line 182 "CommentsView.cshtml"
 		
 
 #line default
 #line hidden
 
-#line 176 "CommentsView.cshtml"
+#line 182 "CommentsView.cshtml"
    foreach (var comment in Model.Comments)
 		{
 
@@ -149,7 +155,7 @@ WriteLiteral(">\n\t\t\t\t<img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 179 "CommentsView.cshtml"
+#line 185 "CommentsView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -159,7 +165,7 @@ WriteAttribute ("src", " src=\"", "\""
 WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 
 
-#line 181 "CommentsView.cshtml"
+#line 187 "CommentsView.cshtml"
     Write(comment.Name);
 
 
@@ -168,7 +174,7 @@ WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 WriteLiteral("</h1>\n\t\t\t\t\t<h2>");
 
 
-#line 182 "CommentsView.cshtml"
+#line 188 "CommentsView.cshtml"
     Write(comment.Date);
 
 
@@ -183,8 +189,8 @@ WriteLiteral(">\n");
 WriteLiteral("\t\t\t\t\t");
 
 
-#line 184 "CommentsView.cshtml"
-WriteLiteral(comment.Body);
+#line 190 "CommentsView.cshtml"
+                WriteLiteral(comment.Body);
 
 
 #line default
@@ -192,7 +198,7 @@ WriteLiteral(comment.Body);
 WriteLiteral("\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n");
 
 
-#line 188 "CommentsView.cshtml"
+#line 194 "CommentsView.cshtml"
 		}
 
 

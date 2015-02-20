@@ -79,16 +79,14 @@ namespace CodeHub.iOS.DialogElements
             WebView.Frame = new CGRect(0, 0, 320f, 44f);
             WebView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
             WebView.ScrollView.ScrollEnabled = false;
-            //WebView.ScalesPageToFit = true;
+            WebView.ScalesPageToFit = true;
             WebView.ScrollView.Bounces = false;
             WebView.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
 
             WebView.LoadFinished += (sender, e) => 
             {
                 var f = WebView.Frame;
-                f.Height = 1;
-                WebView.Frame = f;
-                _height = f.Height = WebView.ScrollView.ContentSize.Height;
+                f.Height = _height = int.Parse(WebView.EvaluateJavascript("document.body.scrollHeight;"));
                 WebView.Frame = f;
 
                 if (HeightChanged != null)

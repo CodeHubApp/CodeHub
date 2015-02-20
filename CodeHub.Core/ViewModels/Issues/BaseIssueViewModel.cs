@@ -219,12 +219,12 @@ namespace CodeHub.Core.ViewModels.Issues
             var issueRequest = applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id)
                 .ContinueWith(x => Issue = x.Result, new CancellationToken(), TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext());
             var eventsRequest = applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
-            var commentsRequest = applicationService.GitHubClient.Issue.Comment.GetForIssue(RepositoryOwner, RepositoryName, Id);
+            var commentsRequest = applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments());
             await Task.WhenAll(issueRequest, eventsRequest, commentsRequest);
 
-            var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Count);
+            var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Data.Count);
             tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
-            tempList.AddRange(commentsRequest.Result.Select(x => new IssueCommentItemViewModel(x)));
+            tempList.AddRange(commentsRequest.Result.Data.Select(x => new IssueCommentItemViewModel(x)));
             InternalEvents.Reset(tempList.OrderBy(x => x.CreatedAt));
         }
 

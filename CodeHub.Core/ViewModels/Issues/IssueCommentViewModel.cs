@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public int Id { get; set; }
 
-        public IReactiveCommand<Octokit.IssueComment> SaveCommand { get; private set; }
+        public IReactiveCommand<GitHubSharp.Models.IssueCommentModel> SaveCommand { get; private set; }
 
         public IssueCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
             IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
@@ -23,7 +23,10 @@ namespace CodeHub.Core.ViewModels.Issues
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
-                t => applicationService.GitHubClient.Issue.Comment.Create(RepositoryOwner, RepositoryName, Id, Text));
+                async t => {
+                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].CreateComment(Text);
+                return (await applicationService.Client.ExecuteAsync(request)).Data;
+            });
             SaveCommand.Subscribe(x => Dismiss());
         }
     }
