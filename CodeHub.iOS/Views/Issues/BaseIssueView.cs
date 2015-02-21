@@ -82,6 +82,10 @@ namespace CodeHub.iOS.Views.Issues
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => LabelsElement.Value = x);
 
+            this.WhenAnyValue(x => x.ViewModel.CanModify)
+                .Select(x => x ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None)
+                .Subscribe(x => MilestoneElement.Accessory = AssigneeElement.Accessory = LabelsElement.Accessory = x);
+
             DetailsSection.Add(MilestoneElement);
             DetailsSection.Add(AssigneeElement);
             DetailsSection.Add(LabelsElement);

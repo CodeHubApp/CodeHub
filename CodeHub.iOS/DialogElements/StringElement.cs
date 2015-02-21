@@ -24,7 +24,7 @@ namespace CodeHub.iOS.DialogElements
         public UIColor BackgroundColor, DetailColor;
         private Uri _imageUri;
         private string _value;
-        public UITableViewCellAccessory? Accessory;
+        private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
         private Action _tapped;
         public Action AccessoryTapped;
 
@@ -46,9 +46,18 @@ namespace CodeHub.iOS.DialogElements
             set
             {
                 _tapped = value;
+                Accessory = (value == null ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator);
+            }
+        }
+
+        public UITableViewCellAccessory Accessory
+        {
+            get { return _accessory; }
+            set
+            {
+                _accessory = value;
                 var cell = GetActiveCell();
-                if (cell != null)
-                    cell.Accessory = (value == null ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator);
+                if (cell != null) cell.Accessory = value;
             }
         }
 
@@ -130,11 +139,7 @@ namespace CodeHub.iOS.DialogElements
             cell.TextLabel.Text = Caption;
             cell.ImageView.Image = Image;
             cell.ImageView.TintColor = ImageTintColor ?? DefaultTintColor;
-
-            if (Accessory.HasValue)
-                cell.Accessory = Accessory.Value;
-            else
-                cell.Accessory = (Tapped != null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+            cell.Accessory = Accessory;
 
             if (ImageUri != null)
                 cell.ImageView.SetImage(new NSUrl(ImageUri.AbsoluteUri), Image);

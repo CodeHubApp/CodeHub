@@ -81,6 +81,13 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _isClosed.Value; }
         }
 
+        private bool _canModify;
+        public bool CanModify
+        {
+            get { return _canModify; }
+            private set { this.RaiseAndSetIfChanged(ref _canModify, value); }
+        }
+
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
 
         public IssueAssigneeViewModel Assignees { get; private set; }
@@ -113,7 +120,8 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             _applicationService = applicationService;
 
-            var issuePresenceObservable = this.WhenAnyValue(x => x.Issue).Select(x => x != null);
+            var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
+                .Select(x => x.Item1 != null && x.Item2);
             Events = InternalEvents.CreateDerivedCollection(x => x);
 
             _participants = Events.Changed
@@ -226,6 +234,10 @@ namespace CodeHub.Core.ViewModels.Issues
             tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
             tempList.AddRange(commentsRequest.Result.Data.Select(x => new IssueCommentItemViewModel(x)));
             InternalEvents.Reset(tempList.OrderBy(x => x.CreatedAt));
+
+            applicationService.GitHubClient.Repository.RepoCollaborators
+                .IsCollaborator(RepositoryOwner, RepositoryName, applicationService.Account.Username)
+                .ToBackground(x => CanModify = x);
         }
 
         private async Task<Octokit.Issue> UpdateIssue(Octokit.IssueUpdate update)
