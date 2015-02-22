@@ -6,6 +6,7 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using ReactiveUI;
 using UIKit;
+using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -56,6 +57,9 @@ namespace CodeHub.iOS.Views.Issues
             _labelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
             _labelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
+                .Select(x => x.Changed.Select(y => Unit.Default).StartWith(Unit.Default))
+                .Switch()
+                .Select(x => ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => _labelsElement.Value = x);
         }

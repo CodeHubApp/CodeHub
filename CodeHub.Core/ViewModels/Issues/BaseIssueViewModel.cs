@@ -154,17 +154,30 @@ namespace CodeHub.Core.ViewModels.Issues
             Assignees = new IssueAssigneeViewModel(
                 () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(Issue.Assignee),
-                x => UpdateIssue(new Octokit.IssueUpdate { Assignee = x == null ? null : x.Login }));
+                x => UpdateIssue(new Octokit.IssueUpdate 
+                { 
+                    Assignee = x.With(y => y.Login),
+                    Milestone = AssignedMilestone.With(y => (int?)y.Number)
+                }));
 
             Milestones = new IssueMilestonesViewModel(
                 () => applicationService.GitHubClient.Issue.Milestone.GetForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(Issue.Milestone),
-                x => UpdateIssue(new Octokit.IssueUpdate { Milestone = x == null ? (int?)null : x.Number }));
+                x => UpdateIssue(new Octokit.IssueUpdate 
+                { 
+                    Assignee = AssignedUser.With(y => y.Login),
+                    Milestone = x.With(y => (int?)y.Number)
+                }));
 
             Labels = new IssueLabelsViewModel(
                 () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult((IReadOnlyList<Octokit.Label>)new ReadOnlyCollection<Octokit.Label>(Issue.Labels.ToList())),
-                x => UpdateIssue(new Octokit.IssueUpdate { Labels = x.Select(y => y.Name).ToList() }));
+                x => UpdateIssue(new Octokit.IssueUpdate 
+                { 
+                    Assignee = AssignedUser.With(y => y.Login),
+                    Milestone = AssignedMilestone.With(y => (int?)y.Number),
+                    Labels = x.Select(y => y.Name).ToList()
+                }));
 
             _markdownDescription = this.WhenAnyValue(x => x.Issue)
                 .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : markdownService.Convert(x.Body)))
@@ -224,25 +237,35 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected virtual async Task Load(IApplicationService applicationService)
         {
-            var issueRequest = applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id)
-                .ContinueWith(x => Issue = x.Result, new CancellationToken(), TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext());
-            var eventsRequest = applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
-            var commentsRequest = applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments());
-            await Task.WhenAll(issueRequest, eventsRequest, commentsRequest);
+            var issueRequest = applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id);
+            var eventsRequest = RetrieveEvents();
 
-            var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Data.Count);
-            tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
-            tempList.AddRange(commentsRequest.Result.Data.Select(x => new IssueCommentItemViewModel(x)));
-            InternalEvents.Reset(tempList.OrderBy(x => x.CreatedAt));
+            await Task.WhenAll(issueRequest, eventsRequest);
+
+            Issue = issueRequest.Result;
 
             applicationService.GitHubClient.Repository.RepoCollaborators
                 .IsCollaborator(RepositoryOwner, RepositoryName, applicationService.Account.Username)
                 .ToBackground(x => CanModify = x);
         }
 
+        private async Task RetrieveEvents()
+        {
+            var eventsRequest = _applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
+            var commentsRequest = _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments());
+            await Task.WhenAll(eventsRequest, commentsRequest);
+
+            var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Data.Count);
+            tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
+            tempList.AddRange(commentsRequest.Result.Data.Select(x => new IssueCommentItemViewModel(x)));
+            InternalEvents.Reset(tempList.OrderBy(x => x.CreatedAt));
+        }
+
         private async Task<Octokit.Issue> UpdateIssue(Octokit.IssueUpdate update)
         {
-            return Issue = await _applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, update);
+            Issue = await _applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, update);
+            await RetrieveEvents();
+            return Issue;
         }
     }
 }

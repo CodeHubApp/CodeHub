@@ -31,22 +31,17 @@ namespace CodeHub.Core.ViewModels.Issues
         public Octokit.User AssignedUser
         {
             get { return _assignedUser; }
-            set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
+            private set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
         }
 
         private Octokit.Milestone _assignedMilestone;
         public Octokit.Milestone AssignedMilestone
         {
             get { return _assignedMilestone; }
-            set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
+            private set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
         }
 
-        private IReadOnlyList<Octokit.Label> _assignedLabels;
-        public IReadOnlyList<Octokit.Label> AssignedLabels
-        {
-            get { return _assignedLabels; }
-            set { this.RaiseAndSetIfChanged(ref _assignedLabels, value); }
-        }
+        public IReadOnlyReactiveList<Octokit.Label> AssignedLabels { get; private set; }
 
         private bool? _isCollaborator;
         public bool? IsCollaborator
@@ -80,13 +75,8 @@ namespace CodeHub.Core.ViewModels.Issues
             IAlertDialogFactory alertDialogFactory)
 	    {
             GoToAssigneesCommand = ReactiveCommand.Create();
-                //.WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
-
             GoToLabelsCommand = ReactiveCommand.Create();
-                //.WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
-
             GoToMilestonesCommand = ReactiveCommand.Create();
-                //.WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
 
             Assignees = new IssueAssigneeViewModel(
                 () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
@@ -98,14 +88,20 @@ namespace CodeHub.Core.ViewModels.Issues
                 () => Task.FromResult(AssignedMilestone),
                 x => Task.FromResult(AssignedMilestone = x));
 
+            var assignedLabels = new ReactiveList<Octokit.Label>();
+            AssignedLabels = assignedLabels.CreateDerivedCollection(y => y);
+
             Labels = new IssueLabelsViewModel(
                 () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
-                () => Task.FromResult(AssignedLabels),
-                x => Task.FromResult(AssignedLabels = x));
+                () => Task.FromResult(new ReadOnlyCollection<Octokit.Label>(AssignedLabels.ToList()) as IReadOnlyList<Octokit.Label>),
+                x => {
+                    assignedLabels.Reset(x);
+                    return Task.FromResult(0);
+                });
+
             Labels.SelectedLabels.Changed
                 .Select(_ => new ReadOnlyCollection<Octokit.Label>(Labels.SelectedLabels.ToList()))
-                .Subscribe(x => 
-                    AssignedLabels = x);
+                .Subscribe(x => assignedLabels.Reset(x));
 
 
             var canSave = this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x));

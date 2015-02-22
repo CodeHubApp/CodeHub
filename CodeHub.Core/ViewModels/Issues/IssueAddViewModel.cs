@@ -6,6 +6,7 @@ using System.Reactive.Subjects;
 using CodeHub.Core.Factories;
 using System.Collections.Generic;
 using ReactiveUI;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -32,7 +33,11 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			try
 			{
-                var request = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.Create(Subject, Content, null, null, new string[0]);
+                var labels = AssignedLabels.With(x => x.Select(y => y.Name).ToArray());
+                var milestone = AssignedMilestone.With(x => (int?)x.Number);
+                var user = AssignedUser.With(x => x.Login);
+                var request = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues
+                    .Create(Subject, Content, user, milestone, labels);
                 var data = await _applicationService.Client.ExecuteAsync(request);
                 _createdIssueSubject.OnNext(data.Data);
 			}

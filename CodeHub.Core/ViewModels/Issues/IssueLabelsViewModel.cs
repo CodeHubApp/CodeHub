@@ -48,9 +48,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
             SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(t =>
 	        {
-                if (!SelectedLabels.All(_previouslySelectedLabels.Contains))
-                    return updateIssue(new ReadOnlyCollection<Label>(SelectedLabels));
-                return Task.FromResult(0);
+                var selectedLabelsUrl = SelectedLabels.Select(x => x.Url).ToArray();
+                var prevSelectedLabelsUrl = _previouslySelectedLabels.Select(x => x.Url).ToArray();
+                var intersect = selectedLabelsUrl.Intersect(prevSelectedLabelsUrl).ToArray();
+                var different = selectedLabelsUrl.Length != prevSelectedLabelsUrl.Length || intersect.Length != selectedLabelsUrl.Length;
+                return different ? updateIssue(new ReadOnlyCollection<Label>(SelectedLabels)) : Task.FromResult(0);
 	        });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
