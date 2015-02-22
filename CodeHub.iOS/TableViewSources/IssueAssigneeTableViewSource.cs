@@ -11,6 +11,12 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RegisterClassForCellReuse(typeof(IssueAssigneeTableViewCell), IssueAssigneeTableViewCell.Key);
         }
+
+        public override void RowSelected(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
+        {
+            base.RowSelected(tableView, indexPath);
+            tableView.DeselectRow(indexPath, true);
+        }
     }
 }
 

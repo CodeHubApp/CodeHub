@@ -6,7 +6,6 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using ReactiveUI;
 using UIKit;
-using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -87,32 +86,27 @@ namespace CodeHub.iOS.Views.Issues
                 .Subscribe(x => section.Clear());
         }
 
-
         private void ShowAssigneeSelector()
         {
             var viewController = new IssueAssigneeView { Title = "Assignees" };
             viewController.ViewModel = ViewModel.Assignees;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => NavigationController.PopToViewController(this, true));
+            NavigationController.PushViewController(viewController, true);
         }
 
         private void ShowLabelsSelector()
         {
             var viewController = new IssueLabelsView { Title = "Labels" };
             viewController.ViewModel = ViewModel.Labels;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => {
-                ViewModel.Labels.SelectLabelsCommand.ExecuteIfCan();
-                viewController.DismissViewController(true, null);
-            });
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
+            NavigationController.PushViewController(viewController, true);
         }
 
         private void ShowMilestonesSelector()
         {
             var viewController = new IssueMilestonesView { Title = "Milestones" };
             viewController.ViewModel = ViewModel.Milestones;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => NavigationController.PopToViewController(this, true));
+            NavigationController.PushViewController(viewController, true);
         }
     }
 }

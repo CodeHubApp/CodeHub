@@ -184,8 +184,9 @@ namespace CodeHub.iOS.Views.Issues
         {
             var viewController = new IssueAssigneeView { Title = "Assignees" };
             viewController.ViewModel = ViewModel.Assignees;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
             PresentViewController(new ThemedNavigationController(viewController), true, null);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => DismissViewController(true, null));
         }
 
         private void ShowLabelsSelector()
@@ -203,8 +204,9 @@ namespace CodeHub.iOS.Views.Issues
         {
             var viewController = new IssueMilestonesView { Title = "Milestones" };
             viewController.ViewModel = ViewModel.Milestones;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.DismissViewController(true, null));
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
             PresentViewController(new ThemedNavigationController(viewController), true, null);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => DismissViewController(true, null));
         }
 
 

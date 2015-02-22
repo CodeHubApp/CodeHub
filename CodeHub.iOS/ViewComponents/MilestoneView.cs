@@ -11,26 +11,40 @@ namespace CodeHub.iOS.ViewComponents
         private readonly UILabel _dueLabel;
         private readonly ProgressBarView _progressView;
 
-        public void Init(string title, int openIssues, int closedIssues, DateTimeOffset? dueDate)
+        public string Title
         {
-            _titleLabel.Text = title;
-            _openClosedLabel.Text = string.Format("{0} closed - {1} open", closedIssues, openIssues);
+            get { return _titleLabel.Text; }
+            set { _titleLabel.Text = value; }
+        }
 
-            var totalIssues = closedIssues + openIssues;
-            var percentage = totalIssues == 0 ? 0 : ((float)closedIssues / totalIssues);
-            _progressView.Percentage = (int)Math.Ceiling(percentage * 100);
-            if (dueDate.HasValue)
+        public DateTimeOffset? DueDate
+        {
+            set
             {
-                var remainingDays = (int)Math.Ceiling((dueDate.Value - DateTimeOffset.Now).TotalDays);
-                if (remainingDays == 0)
-                    _dueLabel.Text = "Due Today";
-                else if (remainingDays > 0)
-                    _dueLabel.Text = "Due in " + remainingDays + " days";
-                else if (remainingDays < 0)
-                    _dueLabel.Text = "Overdue " + Math.Abs(remainingDays) + " days";
+                if (value.HasValue)
+                {
+                    var remainingDays = (int)Math.Ceiling((value.Value - DateTimeOffset.Now).TotalDays);
+                    if (remainingDays == 0)
+                        _dueLabel.Text = "Due Today";
+                    else if (remainingDays > 0)
+                        _dueLabel.Text = "Due in " + remainingDays + " days";
+                    else if (remainingDays < 0)
+                        _dueLabel.Text = "Overdue " + Math.Abs(remainingDays) + " days";
+                }
+                else
+                    _dueLabel.Text = "No Due Date";
             }
-            else
-                _dueLabel.Text = "No Due Date";
+        }
+
+        public Tuple<int, int> OpenClosedIssues
+        {
+            set
+            {
+                _openClosedLabel.Text = string.Format("{0} closed - {1} open", value.Item2, value.Item1);
+                var totalIssues = value.Item2 + value.Item1;
+                var percentage = totalIssues == 0 ? 0 : ((float)value.Item2 / totalIssues);
+                _progressView.Percentage = (int)Math.Ceiling(percentage * 100);
+            }
         }
 
         public MilestoneView()

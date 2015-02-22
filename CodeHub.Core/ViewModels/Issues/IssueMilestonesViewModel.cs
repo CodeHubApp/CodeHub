@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Octokit;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -18,12 +19,16 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<Milestone> SelectMilestoneCommand { get; private set; }
 
+        public IReactiveCommand<object> DismissCommand { get; private set; }
+
         public IssueMilestonesViewModel(
             Func<Task<IReadOnlyList<Milestone>>> loadMilestones,
             Func<Task<Milestone>> currentMilestone,
             Func<Milestone, Task> updateIssue
         )
         {
+            DismissCommand = ReactiveCommand.Create();
+
             var milestones = new ReactiveList<Milestone>();
             Milestones = milestones.CreateDerivedCollection(x =>
             {
@@ -32,7 +37,13 @@ namespace CodeHub.Core.ViewModels.Issues
                     vm.IsSelected = x.Number == _selectedMilestone.Number;
                 vm.GoToCommand
                     .Select(_ => vm.IsSelected ? x : null)
-                    .Subscribe(milestone => updateIssue(milestone).ToBackground());
+                    .Subscribe(milestone => 
+                    {
+                        foreach (var a in Milestones.Where(y => y != vm))
+                            a.IsSelected = false;
+                        updateIssue(milestone).ToBackground();
+                        DismissCommand.ExecuteIfCan();
+                    });
                 return vm;
             });
 

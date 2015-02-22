@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Octokit;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -23,12 +24,16 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReadOnlyReactiveList<IssueAssigneeItemViewModel> Assignees { get; private set; }
 
+        public IReactiveCommand<object> DismissCommand { get; private set; }
+
         public IssueAssigneeViewModel(
             Func<Task<IReadOnlyList<User>>> loadAssignees,
             Func<Task<User>> loadCurrentlyAssigned,
             Func<User, Task> updateIssue
         )
         {
+            DismissCommand = ReactiveCommand.Create();
+
             var derivedFunc = new Func<User, IssueAssigneeItemViewModel>(x =>
             {
                 var vm = new IssueAssigneeItemViewModel(x);
@@ -37,7 +42,13 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 vm.GoToCommand
                     .Select(_ => vm.IsSelected ? x : null)
-                    .Subscribe(user => updateIssue(user).ToBackground());
+                    .Subscribe(user => 
+                    {
+                        foreach (var a in Assignees.Where(y => y != vm))
+                            a.IsSelected = false;
+                        updateIssue(user).ToBackground();
+                        DismissCommand.ExecuteIfCan();
+                    });
                 return vm;
             });
 

@@ -6,6 +6,8 @@ using CodeHub.Core.Factories;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -77,14 +79,14 @@ namespace CodeHub.Core.ViewModels.Issues
             IApplicationService applicationService, 
             IAlertDialogFactory alertDialogFactory)
 	    {
-            GoToAssigneesCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
+            GoToAssigneesCommand = ReactiveCommand.Create();
+                //.WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
 
-            GoToLabelsCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
+            GoToLabelsCommand = ReactiveCommand.Create();
+                //.WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
 
-            GoToMilestonesCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
+            GoToMilestonesCommand = ReactiveCommand.Create();
+                //.WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
 
             Assignees = new IssueAssigneeViewModel(
                 () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
@@ -100,6 +102,10 @@ namespace CodeHub.Core.ViewModels.Issues
                 () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(AssignedLabels),
                 x => Task.FromResult(AssignedLabels = x));
+            Labels.SelectedLabels.Changed
+                .Select(_ => new ReadOnlyCollection<Octokit.Label>(Labels.SelectedLabels.ToList()))
+                .Subscribe(x => 
+                    AssignedLabels = x);
 
 
             var canSave = this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x));
