@@ -1,29 +1,26 @@
-using System;
-using CodeHub.Core.ViewModels.App;
-using UIKit;
-using CodeHub.iOS.ViewComponents;
-using ReactiveUI;
+﻿using System;
+using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.DialogElements;
+using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
+using UIKit;
 
-namespace CodeHub.iOS.Views.App
+namespace CodeHub.iOS.Views.Gists
 {
-    public class FeedbackComposerView : BaseTableViewController<FeedbackComposerViewModel>
+    public abstract class GistFileModifyView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : GistFileModifyViewModel
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Title");
         private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");
 
-        public FeedbackComposerView()
+        protected GistFileModifyView()
         {
-            _descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
-
-            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x);
-            _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;
+            this.WhenAnyValue(x => x.ViewModel.Filename).Subscribe(x => _titleElement.Value = x);
+            _titleElement.Changed += (sender, e) => ViewModel.Filename = _titleElement.Value;
 
             this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
             _descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = _descriptionElement.Value;
 
-            this.WhenAnyValue(x => x.ViewModel.SubmitCommand).Subscribe(x =>
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x =>
             {
                 NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) =>
                 {
@@ -46,3 +43,4 @@ namespace CodeHub.iOS.Views.App
         }
     }
 }
+

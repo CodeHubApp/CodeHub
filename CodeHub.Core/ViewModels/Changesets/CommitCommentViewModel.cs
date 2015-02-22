@@ -2,11 +2,10 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public class CommitCommentViewModel : MarkdownComposerViewModel
+    public class CommitCommentViewModel : BaseViewModel, IComposerViewModel
     {
         public string Node { get; set; }
 
@@ -14,11 +13,16 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public string RepositoryName { get; set; }
 
+        private string _text;
+        public string Text
+        {
+            get { return _text; }
+            set { this.RaiseAndSetIfChanged(ref _text, value); }
+        }
+
         public IReactiveCommand<GitHubSharp.Models.CommentModel> SaveCommand { get; protected set; }
 
-        public CommitCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
-            : base(imgurService, mediaPicker, alertDialogFactory)
+        public CommitCommentViewModel(IApplicationService applicationService) 
         {
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),

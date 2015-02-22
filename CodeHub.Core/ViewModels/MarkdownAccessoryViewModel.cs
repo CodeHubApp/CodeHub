@@ -1,23 +1,18 @@
 ﻿using System;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using System.IO;
 using CodeHub.Core.Factories;
+using System.IO;
+using System.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels
 {
-    public abstract class MarkdownComposerViewModel : BaseViewModel, IComposerViewModel
+    public class MarkdownAccessoryViewModel : ReactiveObject
     {
-        private string _text;
-        public string Text
-        {
-            get { return _text; }
-            set { this.RaiseAndSetIfChanged(ref _text, value); }
-        }
-
         public IReactiveCommand<string> PostToImgurCommand { get; private set; }
 
-        protected MarkdownComposerViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
+        protected MarkdownAccessoryViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
         {
             PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
@@ -32,6 +27,10 @@ namespace CodeHub.Core.ViewModels
                     return model.Data.Link;
                 }
             });
+
+            PostToImgurCommand.ThrownExceptions
+                .Where(x => !(x is TaskCanceledException))
+                .Subscribe(x => alertDialogFactory.Alert("Upload Error", x.Message));
         }
     }
 }

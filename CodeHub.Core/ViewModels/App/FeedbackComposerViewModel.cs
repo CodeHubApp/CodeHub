@@ -45,11 +45,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand<Unit> SubmitCommand { get; private set; }
 
-        public IReactiveCommand<string> PostToImgurCommand { get; private set; }
-
-        public FeedbackComposerViewModel(
-            IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogService)
+        public FeedbackComposerViewModel(IApplicationService applicationService)
         {
             this.WhenAnyValue(x => x.IsFeature).Subscribe(x => Title = x ? "New Feature" : "Bug Report");
 
@@ -71,24 +67,6 @@ namespace CodeHub.Core.ViewModels.App
                 _createdIssueSubject.OnNext(createdIssue);
                 Dismiss();
             });
-
-            PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                var photo = await mediaPicker.PickPhoto();
-                var memoryStream = new MemoryStream();
-                await photo.Save(Splat.CompressedBitmapFormat.Jpeg, 0.8f, memoryStream);
-                using (alertDialogService.Activate("Uploading..."))
-                {
-                    var model = await imgurService.SendImage(memoryStream.ToArray());
-                    if (model == null || model.Data == null || model.Data.Link == null)
-                        throw new InvalidOperationException("Unable to upload to Imgur. Please try again later.");
-                    return model.Data.Link;
-                }
-            });
-
-            PostToImgurCommand.ThrownExceptions
-                .Where(x => !(x is TaskCanceledException))
-                .Subscribe(x => alertDialogService.Alert("Upload Error", x.Message));
         }
     }
 }

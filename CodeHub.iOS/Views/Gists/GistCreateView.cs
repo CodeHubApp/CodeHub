@@ -1,101 +1,61 @@
 using System;
-using System.Reactive;
 using UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
-using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.ViewComponents;
-using System.Collections.Generic;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
+using System.Linq;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : BaseDialogViewController<GistCreateViewModel>
+    public class GistCreateView : BaseTableViewController<GistCreateViewModel>
     {
+        private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description (Optional)");
         private readonly BooleanElement _publicElement;
-        private readonly Section _fileSection;
-        private readonly MultilinedElement _descriptionElement;
+        private readonly StringElement _addFileElement = new StringElement("Add File");
+        private readonly Section _fileSection = new Section("Files");
+        private readonly IAlertDialogFactory _alertDialogFactory;
 
-        public GistCreateView()
+        public GistCreateView(IAlertDialogFactory alertDialogFactory)
         {
-            HeaderView.Image = Images.LoginUserUnknown;
+            _alertDialogFactory = alertDialogFactory;
 
             this.WhenAnyValue(x => x.ViewModel.SaveCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
-            this.WhenAnyValue(x => x.ViewModel.CurrentAccount).Subscribe(x =>
-            {
-                HeaderView.SubText = x.Username;
-                HeaderView.ImageUri = x.AvatarUrl;
-            });
-
             _publicElement = new BooleanElement("Public", false, (e) => ViewModel.IsPublic = e.Value);
             this.WhenAnyValue(x => x.ViewModel.IsPublic).Subscribe(x => _publicElement.Value = x);
 
-            _descriptionElement = new MultilinedElement("Description");
-            _descriptionElement.Tapped += ChangeDescription;
             this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
+            _descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = _descriptionElement.Value;
 
-            _fileSection = new Section(null, new TableFooterButton("Add File", () => ViewModel.AddGistFileCommand.ExecuteIfCan()));
-            this.WhenAnyValue(x => x.ViewModel.Files).Subscribe(x =>
-            {
-                if (x == null)
-                {
-                    _fileSection.Clear();
-                    return;
-                }
+            _addFileElement.Image = Octicon.Plus.ToImage();
+            _addFileElement.Tapped = () => ViewModel.AddGistFileCommand.ExecuteIfCan();
 
-                var elements = new List<Element>();
-                foreach (var file in x.Keys)
-                {
-                    var key = file;
-                    if (string.IsNullOrEmpty(ViewModel.Files[file]))
-                        continue;
-
-                    var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
-                    var el = new StringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { 
-                        Image = Octicon.FileCode.ToImage()
-                    };
-
-                    el.Tapped += () => ViewModel.ModifyGistFileCommand.ExecuteIfCan(key);
-                    elements.Add(el);
-                }
-
-                _fileSection.Reset(elements);
-            });
+            this.WhenAnyValue(x => x.ViewModel.Files)
+                .Select(x => x.Changed)
+                .Switch()
+                .Select(_ => ViewModel.Files.Select(x => new FileElement(x)))
+                .Subscribe(x => _fileSection.Reset(x));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.WhenAnyValue(x => x.Description, x => x.Files, (x, x1) => Unit.Default)
-                .Subscribe(x => Root.Reset(new Section(), new Section { _descriptionElement, _publicElement }, _fileSection));
+
+            var source = new EditSource(this);
+            source.Root.Add(_fileSection, new Section { _addFileElement }, new Section("Details") { _publicElement, _descriptionElement });
+
+            TableView.Source = source;
+            TableView.TableFooterView = new UIView();
         }
 
-        private void ChangeDescription()
+        private void PresentFileEditor()
         {
-            var composer = new ComposerViewController() { Title = "Description", Text = ViewModel.Description };
-            composer.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => composer.DismissViewController(true, null));
-            composer.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => 
-            {
-                ViewModel.Description = composer.Text;
-                composer.DismissViewController(true, null);
-            });
 
-            NavigationController.PresentViewController(new ThemedNavigationController(composer), true, null);
-        }
-
-        private void Delete(Element element)
-        {
-            ViewModel.Files.Remove(element.Caption);
-        }
-
-        protected override DialogTableViewSource CreateTableViewSource()
-        {
-            return new EditSource(this);
         }
 
         private class EditSource : DialogTableViewSource
@@ -109,14 +69,12 @@ namespace CodeHub.iOS.Views.Gists
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                return (indexPath.Section == 1 && indexPath.Row != (Root[1].Count - 1));
+                return Root.IndexOf(_parent._fileSection) == indexPath.Section;
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                if (indexPath.Section == 1 && indexPath.Row != (Root[1].Count - 1))
-                    return UITableViewCellEditingStyle.Delete;
-                return UITableViewCellEditingStyle.None;
+                return CanEditRow(tableView, indexPath) ? UITableViewCellEditingStyle.Delete : UITableViewCellEditingStyle.None;
             }
 
             public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
@@ -125,16 +83,25 @@ namespace CodeHub.iOS.Views.Gists
                 {
                     case UITableViewCellEditingStyle.Delete:
                         var section = Root[indexPath.Section];
-                        var element = section[indexPath.Row];
-                        _parent.Delete(element);
-                        section.Remove(element);
+                        var element = section[indexPath.Row] as FileElement;
+                        if (element != null)
+                            element.ViewModel.DeleteCommand.ExecuteIfCan();
                         break;
                 }
             }
         }
 
-        public class ComposerViewController : MessageComposerViewController<object>
+        private class FileElement : StringElement
         {
+            public GistFileItemViewModel ViewModel { get; private set; }
+
+            public FileElement(GistFileItemViewModel vm) 
+                : base(vm.Name, vm.Size + " bytes", UITableViewCellStyle.Subtitle)
+            {
+                Image = Octicon.FileCode.ToImage();
+                Tapped = () => vm.EditCommand.ExecuteIfCan();
+                ViewModel = vm;
+            }
         }
     }
 }

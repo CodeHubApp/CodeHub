@@ -11,6 +11,8 @@ namespace CodeHub.iOS.ViewComponents
 
         public ButtonAccessoryView(IEnumerable<UIButton> buttons)
         {
+            Frame = new CGRect(0, 0, 320f, 44f);
+
             var normalButtonImage = ImageFromColor(UIColor.White);
             var pressedButtonImage = ImageFromColor(UIColor.FromWhiteAlpha(0.0f, 0.4f));
 

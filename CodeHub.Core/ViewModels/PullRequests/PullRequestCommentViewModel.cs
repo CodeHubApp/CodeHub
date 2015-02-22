@@ -2,11 +2,10 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestCommentViewModel : MarkdownComposerViewModel
+    public class PullRequestCommentViewModel : BaseViewModel, IComposerViewModel
     {
         public string RepositoryOwner { get; set; }
 
@@ -14,11 +13,16 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public int Id { get; set; }
 
+        private string _text;
+        public string Text
+        {
+            get { return _text; }
+            set { this.RaiseAndSetIfChanged(ref _text, value); }
+        }
+
         public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; protected set; }
 
-        public PullRequestCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
-            : base(imgurService, mediaPicker, alertDialogFactory)
+        public PullRequestCommentViewModel(IApplicationService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

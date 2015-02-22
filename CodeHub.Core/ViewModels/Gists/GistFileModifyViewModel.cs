@@ -1,9 +1,11 @@
 ﻿using System;
 using ReactiveUI;
+using System.Threading.Tasks;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class ModifyGistViewModel : BaseViewModel
+    public abstract class GistFileModifyViewModel : BaseViewModel
     {
         private string _filename;
         public string Filename
@@ -19,24 +21,15 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
-        public new string Title
-        {
-            get { return base.Title; }
-            set { base.Title = value; }
-        }
+        public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public IReactiveCommand<object> SaveCommand { get; private set; }
-
-        public ModifyGistViewModel()
+        protected GistFileModifyViewModel(Func<Tuple<string, string>, Task> saveFunc)
         {
             var validObservable = this.WhenAnyValue(x => x.Filename, x => x.Description, (x, y) => 
                 !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y));
-            SaveCommand = ReactiveCommand.Create(validObservable);
-        }
-
-        public new void Dismiss()
-        {
-            base.Dismiss();
+            SaveCommand = ReactiveCommand.CreateAsyncTask(validObservable, 
+                t => saveFunc(Tuple.Create(Filename, Description)));
+            SaveCommand.Subscribe(_ => Dismiss());
         }
     }
 }

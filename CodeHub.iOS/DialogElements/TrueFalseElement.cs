@@ -7,6 +7,7 @@ namespace CodeHub.iOS.DialogElements
     {
         private UISwitch _switch;
         private bool _value;
+        private UIImage _image;
 
         public event EventHandler ValueChanged;
 
@@ -24,6 +25,17 @@ namespace CodeHub.iOS.DialogElements
                     _switch.On = value;
                 if (emit && ValueChanged != null)
                     ValueChanged (this, EventArgs.Empty);
+            }
+        }
+
+        public UIImage Image {
+            get { return _image; }
+            set 
+            {
+                _image = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.ImageView.Image = value;
             }
         }
 
@@ -67,6 +79,7 @@ namespace CodeHub.iOS.DialogElements
             cell.TextLabel.TextColor = StringElement.DefaultTitleColor;
             cell.TextLabel.Text = Caption;
             cell.AccessoryView = _switch;
+            cell.ImageView.Image = _image;
             return cell;
         }
     }

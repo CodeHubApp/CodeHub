@@ -370,6 +370,9 @@
     <Compile Include="Views\Issues\IssueModifyView.cs" />
     <Compile Include="Services\IInAppPurchaseService.cs" />
     <Compile Include="Services\InAppPurchaseNetworkDecorator.cs" />
+    <Compile Include="Views\Gists\GistFileModifyView.cs" />
+    <Compile Include="Views\Gists\GistFileAddView.cs" />
+    <Compile Include="Views\Gists\GistFileEditView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

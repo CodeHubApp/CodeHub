@@ -6,15 +6,20 @@ using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistCommentViewModel : MarkdownComposerViewModel
+    public class GistCommentViewModel : BaseViewModel, IComposerViewModel
     {
         public string Id { get; set; }
 
+        private string _text;
+        public string Text
+        {
+            get { return _text; }
+            set { this.RaiseAndSetIfChanged(ref _text, value); }
+        }
+
         public IReactiveCommand<GitHubSharp.Models.GistCommentModel> SaveCommand { get; protected set; }
 
-        public GistCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
-            : base(imgurService, mediaPicker, alertDialogFactory)
+        public GistCommentViewModel(IApplicationService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

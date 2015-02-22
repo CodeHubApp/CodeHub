@@ -34,11 +34,14 @@ namespace CodeHub.iOS.DialogElements
 
         public Func<UITextView, UIView> AccessoryView { get; set; }
 
+        public bool HiddenSeperator { get; set; }
+
         public ExpandingInputElement(string description)
         {
             SpellChecking = true;
             _description = description;
             Font = UIFont.PreferredBody;
+            HiddenSeperator = true;
         }
 
         public override UITableViewCell GetCell(UITableView tv)
@@ -54,6 +57,8 @@ namespace CodeHub.iOS.DialogElements
                 cell.TextView.SpellCheckingType = SpellChecking ? UITextSpellCheckingType.Default : UITextSpellCheckingType.No;
                 cell.TextView.AutocapitalizationType = SpellChecking ? UITextAutocapitalizationType.Sentences : UITextAutocapitalizationType.None;
             }
+
+            cell.HiddenSeperator = HiddenSeperator;
 
             if (_textEditEnded != null)
                 _textEditEnded.Dispose();
@@ -90,9 +95,12 @@ namespace CodeHub.iOS.DialogElements
             public static UIFont InputFont = UIFont.PreferredBody;
             public readonly UITextView TextView;
 
+            public bool HiddenSeperator { get; set; }
+
             public CustomInputCell(string placeholder)
                 : base(UITableViewCellStyle.Default, Key)
             {
+                HiddenSeperator = true;
                 TextView = new CustomTextView(placeholder)
                 { 
                     Frame = new CGRect(12, 0, ContentView.Frame.Width - 24f, ContentView.Frame.Height),
@@ -107,7 +115,11 @@ namespace CodeHub.iOS.DialogElements
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
-                SeparatorInset = new UIEdgeInsets(0, Bounds.Width, 0, 0);
+
+                if (HiddenSeperator)
+                    SeparatorInset = new UIEdgeInsets(0, Bounds.Width, 0, 0);
+                else
+                    SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
             }
 
             private class CustomTextView : UITextView
@@ -132,9 +144,10 @@ namespace CodeHub.iOS.DialogElements
                 {
                     _placeholderView.Text = placeholder;
                     _placeholderView.TextColor = UIColor.FromWhiteAlpha(0.702f, 1.0f);
-                    _placeholderView.Frame = new CGRect(5, 8, 100f, 16f);
+                    _placeholderView.Frame = new CGRect(5, 8, 200f, 16f);
                     _placeholderView.UserInteractionEnabled = false;
                     _placeholderView.Font = UIFont.PreferredBody;
+                    _placeholderView.Hidden = Text.Length > 0;
                     this.Add(_placeholderView);
 
                     this.Changed += (sender, e) =>

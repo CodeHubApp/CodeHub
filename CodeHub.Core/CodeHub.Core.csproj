@@ -151,7 +151,6 @@
     <Compile Include="ViewModels\Issues\IssueEventItemViewModel.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
     <Compile Include="Utilities\GitHubAvatar.cs" />
-    <Compile Include="ViewModels\Gists\ModifyGistViewModel.cs" />
     <Compile Include="ViewModels\Contents\CreateFileViewModel.cs" />
     <Compile Include="ViewModels\Contents\EditFileViewModel.cs" />
     <Compile Include="ViewModels\Contents\ReadmeViewModel.cs" />
@@ -166,7 +165,6 @@
     <Compile Include="ViewModels\Activity\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\TeamItemViewModel.cs" />
     <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
-    <Compile Include="ViewModels\MarkdownComposerViewModel.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Extensions\ReactiveExtensions.cs" />
@@ -215,6 +213,11 @@
     <Compile Include="ViewModels\Users\BaseUsersViewModel.cs" />
     <Compile Include="Utilities\OctokitNetworkClient.cs" />
     <Compile Include="Utilities\OctokitCacheClient.cs" />
+    <Compile Include="ViewModels\Gists\GistFileModifyViewModel.cs" />
+    <Compile Include="ViewModels\MarkdownAccessoryViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistFileAddViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistFileEditViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistFileItemViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

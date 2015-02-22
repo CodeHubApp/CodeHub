@@ -3,21 +3,27 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System;
 using ReactiveUI;
+using Splat;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.ViewComponents
 {
     public class MarkdownAccessoryView : ButtonAccessoryView
     {
-        public MarkdownAccessoryView(UITextView controller, IReactiveCommand<string> postImage)
-            : base(CreateButtons(controller, postImage))
+        public MarkdownAccessoryView(UITextView controller)
+            : base(CreateButtons(controller))
         {
         }
 
-        private static IEnumerable<UIButton> CreateButtons(UITextView controller, IReactiveCommand<string> postImage)
+        private static IEnumerable<UIButton> CreateButtons(UITextView controller)
         {
             var pictureImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/picture");
             var linkImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/link");
             var photoImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/photo");
+
+            var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+            var vm = serviceConstructor.Construct<MarkdownAccessoryViewModel>();
 
             return new []
             {
@@ -32,7 +38,7 @@ namespace CodeHub.iOS.ViewComponents
                 }),
 
                 CreateAccessoryButton(photoImage, () => 
-                    postImage.ExecuteAsync().Catch(Observable.Empty<string>())
+                    vm.PostToImgurCommand.ExecuteAsync().Catch(Observable.Empty<string>())
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(x => controller.InsertText("![Image](" + x + ")"))),
 

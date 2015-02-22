@@ -2,11 +2,10 @@
 using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive.Linq;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueCommentViewModel : MarkdownComposerViewModel
+    public class IssueCommentViewModel : BaseViewModel, IComposerViewModel
     {
         public string RepositoryOwner { get; set; }
 
@@ -14,11 +13,16 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public int Id { get; set; }
 
+        private string _text;
+        public string Text
+        {
+            get { return _text; }
+            set { this.RaiseAndSetIfChanged(ref _text, value); }
+        }
+
         public IReactiveCommand<GitHubSharp.Models.IssueCommentModel> SaveCommand { get; private set; }
 
-        public IssueCommentViewModel(IApplicationService applicationService, IImgurService imgurService, 
-            IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory) 
-            : base(imgurService, mediaPicker, alertDialogFactory)
+        public IssueCommentViewModel(IApplicationService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
