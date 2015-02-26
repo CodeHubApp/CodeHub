@@ -6,6 +6,9 @@ using CodeHub.Core.ViewModels;
 using CoreGraphics;
 using System.Reactive.Subjects;
 using CodeHub.iOS.TableViewSources;
+using Splat;
+using CodeHub.Core.Services;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views
 {
@@ -50,6 +53,20 @@ namespace CodeHub.iOS.Views
                     _ => _isLoadedSubject.OnNext(true),
                     e => Console.WriteLine(e));
 
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IRoutingViewModel>()
+                .Select(x => x.RequestNavigation)
+                .Switch()
+                .Subscribe(x =>
+                {
+                    var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
+                    var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                    var viewType = viewModelViewService.GetViewFor(x.GetType());
+                    var view = (IViewFor)serviceConstructor.Construct(viewType);
+                    view.ViewModel = x;
+                    HandleNavigation(x, view as UIViewController);
+                });
+
             this.WhenActivated(d => { });
 
             _loadingActivityView = new Lazy<UIActivityIndicatorView>(() =>
@@ -58,6 +75,21 @@ namespace CodeHub.iOS.Views
                     Frame = new CGRect(0, 0, 320f, 88f),
                     Color = Theme.PrimaryNavigationBarColor,
                 });
+        }
+
+        protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
+        {
+            if (view is IModalView)
+            {
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
+                PresentViewController(new ThemedNavigationController(view), true, null);
+                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
+            }
+            else
+            {
+                NavigationController.PushViewController(view, true);
+                viewModel.RequestDismiss.Subscribe(_ => NavigationController.PopToViewController(this, true));
+            }
         }
 
         public override void ViewDidLoad()

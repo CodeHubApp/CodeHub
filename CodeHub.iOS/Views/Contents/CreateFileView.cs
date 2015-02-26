@@ -10,7 +10,7 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Contents
 {
-    public class CreateFileView : BaseTableViewController<CreateFileViewModel>
+    public class CreateFileView : BaseTableViewController<CreateFileViewModel>, IModalView
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Name");
         private readonly ExpandingInputElement _descriptionElement;

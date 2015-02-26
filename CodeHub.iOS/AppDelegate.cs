@@ -75,17 +75,9 @@ namespace CodeHub.iOS
 
             Themes.Theme.Load("Default");
 
-            var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
             var vm = serviceConstructor.Construct<StartupViewModel>();
             var startupViewController = new StartupView { ViewModel = vm };
-            ((IRoutingViewModel)vm).RequestNavigation.Subscribe(x =>
-            {
-                var toViewType = viewModelViews.GetViewFor(x.GetType());
-                var toView = serviceConstructor.Construct(toViewType) as IViewFor;
-                toView.ViewModel = x;
-                transitionOrchestration.Transition(startupViewController, toView);
-            });
 
             var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
             MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ =>
@@ -156,7 +148,6 @@ namespace CodeHub.iOS
                 var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
                 var appService = Locator.Current.GetService<IApplicationService>();
                 var accounts = Locator.Current.GetService<IAccountsService>();
-                var transitionOrchestration = Locator.Current.GetService<ITransitionOrchestrationService>();
                 var username = data["u"].ToString();
                 var repoId = new RepositoryIdentifier(data["r"].ToString());
 

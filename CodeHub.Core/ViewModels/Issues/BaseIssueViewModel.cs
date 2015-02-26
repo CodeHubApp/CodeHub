@@ -50,8 +50,8 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _assignedMilestone.Value; }
         }
 
-        private readonly ObservableAsPropertyHelper<ICollection<Octokit.Label>> _assignedLabels;
-        public ICollection<Octokit.Label> AssignedLabels
+        private readonly ObservableAsPropertyHelper<IReadOnlyList<Octokit.Label>> _assignedLabels;
+        public IReadOnlyList<Octokit.Label> AssignedLabels
         {
             get { return _assignedLabels.Value; }
         }
@@ -172,12 +172,18 @@ namespace CodeHub.Core.ViewModels.Issues
             Labels = new IssueLabelsViewModel(
                 () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult((IReadOnlyList<Octokit.Label>)new ReadOnlyCollection<Octokit.Label>(Issue.Labels.ToList())),
-                x => UpdateIssue(new Octokit.IssueUpdate 
-                { 
-                    Assignee = AssignedUser.With(y => y.Login),
-                    Milestone = AssignedMilestone.With(y => (int?)y.Number),
-                    Labels = x.Select(y => y.Name).ToList()
-                }));
+                x =>
+                {
+                    var update = new Octokit.IssueUpdate
+                    { 
+                        Assignee = AssignedUser.With(y => y.Login),
+                        Milestone = AssignedMilestone.With(y => (int?)y.Number),
+                    };
+
+                    foreach (var label in x.Select(y => y.Name))
+                        update.AddLabel(label);
+                    return UpdateIssue(update);
+                });
 
             _markdownDescription = this.WhenAnyValue(x => x.Issue)
                 .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : markdownService.Convert(x.Body)))

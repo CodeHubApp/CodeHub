@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class CommitCommentView : MarkdownComposerView<CommitCommentViewModel>
+    public class CommitCommentView : MarkdownComposerView<CommitCommentViewModel>, IModalView
     {
         public CommitCommentView(IMarkdownService markdownService) 
             : base(markdownService)

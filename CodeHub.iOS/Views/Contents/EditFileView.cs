@@ -7,7 +7,7 @@ using CodeHub.Core.ViewModels.Contents;
 
 namespace CodeHub.iOS.Views.Contents
 {
-    public class EditFileView : MessageComposerViewController<EditFileViewModel>
+    public class EditFileView : MessageComposerViewController<EditFileViewModel>, IModalView
     {
 		public EditFileView()
 		{

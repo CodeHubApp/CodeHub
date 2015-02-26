@@ -18,17 +18,17 @@ namespace CodeHub.Core.Utilities
             _httpClient = httpClient;
         }
 
-        public async Task<IResponse<T>> Send<T>(IRequest request, System.Threading.CancellationToken cancellationToken)
+        public async Task<IResponse> Send(IRequest request, System.Threading.CancellationToken cancellationToken)
         {
             if (request.Method != HttpMethod.Get)
-                return await _httpClient.Send<T>(request, cancellationToken);
+                return await _httpClient.Send(request, cancellationToken);
 
             var key = "octokit_cache_" + new Uri(request.BaseAddress, request.Endpoint).AbsoluteUri;
-            var response = await BlobCache.LocalMachine.GetObject<IResponse<T>>(key).Catch(Observable.Empty<IResponse<T>>()).DefaultIfEmpty();
+            var response = await BlobCache.LocalMachine.GetObject<IResponse>(key).Catch(Observable.Empty<IResponse>()).DefaultIfEmpty();
 
             if (response == null)
             {
-                response = await _httpClient.Send<T>(request, cancellationToken);
+                response = await _httpClient.Send(request, cancellationToken);
                 await BlobCache.LocalMachine.InsertObject(key, response, TimeSpan.FromMinutes(30));
                 return response;
             }
@@ -36,7 +36,7 @@ namespace CodeHub.Core.Utilities
             if (!String.IsNullOrEmpty(response.ApiInfo.Etag))
             {
                 request.Headers["If-None-Match"] = String.Format("{0}", response.ApiInfo.Etag);
-                var conditionalResponse = await _httpClient.Send<T>(request, cancellationToken);
+                var conditionalResponse = await _httpClient.Send(request, cancellationToken);
                 if (conditionalResponse.StatusCode == HttpStatusCode.NotModified)
                     return response;
 
@@ -44,7 +44,7 @@ namespace CodeHub.Core.Utilities
                 return conditionalResponse;
             }
 
-            response = await _httpClient.Send<T>(request, cancellationToken);
+            response = await _httpClient.Send(request, cancellationToken);
             await BlobCache.LocalMachine.InsertObject(key, response, TimeSpan.FromMinutes(30));
             return response;
         }

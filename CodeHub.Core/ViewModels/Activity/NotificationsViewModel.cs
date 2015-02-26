@@ -100,7 +100,6 @@ namespace CodeHub.Core.ViewModels.Activity
         {
             if (notification == null || !notification.Unread) return;
             await _applicationService.GitHubClient.Notification.MarkAsRead(int.Parse(notification.Id));
-            notification.Unread = false;
             _notifications.Remove(notification);
         }
 

@@ -9,6 +9,8 @@ using CodeHub.iOS.TableViewSources;
 using CoreGraphics;
 using CodeHub.iOS.ViewComponents;
 using System.Collections.Generic;
+using RepositoryStumble.Transitions;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -52,6 +54,22 @@ namespace CodeHub.iOS.Views.Repositories
                     Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
                 }))
                 .Subscribe(x => source.Data = x.ToList());
+        }
+
+        protected override void HandleNavigation(CodeHub.Core.ViewModels.IBaseViewModel viewModel, UIViewController view)
+        {
+            if (view is LanguagesView)
+            {
+                var ctrlToPresent = new ThemedNavigationController(view);
+                ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
+                PresentViewController(ctrlToPresent, true, null);
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissViewController(true, null));
+                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
+            }
+            else
+            {
+                base.HandleNavigation(viewModel, view);
+            }
         }
 
         private static UILabel CreateHeaderView(string name)

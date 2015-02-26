@@ -11,6 +11,7 @@ using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -97,6 +98,22 @@ namespace CodeHub.iOS.Views.App
 
             ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
             ViewModel.WhenAnyValue(x => x.PinnedRepositories).Subscribe(x => CreateMenuRoot());
+        }
+
+        protected override void HandleNavigation(CodeHub.Core.ViewModels.IBaseViewModel viewModel, UIViewController view)
+        {
+            if (view is AccountsView)
+            {
+                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+                var rootNav = (UINavigationController)appDelegate.Window.RootViewController;
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => rootNav.DismissViewController(true, null));
+                viewModel.RequestDismiss.Subscribe(_ => rootNav.DismissViewController(true, null));
+                rootNav.PresentViewController(new ThemedNavigationController(view), true, null);
+            }
+            else
+            {
+                base.HandleNavigation(viewModel, view);
+            }
         }
 
 	    private void CreateMenuRoot()

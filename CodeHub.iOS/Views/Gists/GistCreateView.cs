@@ -6,22 +6,18 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
 using System.Linq;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : BaseTableViewController<GistCreateViewModel>
+    public class GistCreateView : BaseTableViewController<GistCreateViewModel>, IModalView
     {
         private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description (Optional)");
         private readonly BooleanElement _publicElement;
         private readonly StringElement _addFileElement = new StringElement("Add File");
         private readonly Section _fileSection = new Section("Files");
-        private readonly IAlertDialogFactory _alertDialogFactory;
 
-        public GistCreateView(IAlertDialogFactory alertDialogFactory)
+        public GistCreateView()
         {
-            _alertDialogFactory = alertDialogFactory;
-
             this.WhenAnyValue(x => x.ViewModel.SaveCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);

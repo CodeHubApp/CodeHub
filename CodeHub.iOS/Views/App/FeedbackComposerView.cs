@@ -8,7 +8,7 @@ using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class FeedbackComposerView : BaseTableViewController<FeedbackComposerViewModel>
+    public class FeedbackComposerView : BaseTableViewController<FeedbackComposerViewModel>, IModalView
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Title");
         private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");

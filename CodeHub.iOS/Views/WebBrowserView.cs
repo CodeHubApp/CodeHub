@@ -7,7 +7,7 @@ using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views
 {
-    public class WebBrowserView : BaseViewController<WebBrowserViewModel>
+    public class WebBrowserView : BaseViewController<WebBrowserViewModel>, IModalView
     {
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;

@@ -5,6 +5,9 @@ using UIKit;
 using System.Reactive.Subjects;
 using Foundation;
 using CodeHub.Core.ViewModels;
+using Splat;
+using CodeHub.Core.Services;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views
 {
@@ -45,7 +48,36 @@ namespace CodeHub.iOS.Views
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
 
+            this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IRoutingViewModel>()
+                .Select(x => x.RequestNavigation)
+                .Switch()
+                .Subscribe(x =>
+                {
+                    var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
+                    var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                    var viewType = viewModelViewService.GetViewFor(x.GetType());
+                    var view = (IViewFor)serviceConstructor.Construct(viewType);
+                    view.ViewModel = x;
+                    HandleNavigation(x, view as UIViewController);
+                });
+
             this.WhenActivated(d => { });
+        }
+
+        protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
+        {
+            if (view is IModalView)
+            {
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
+                PresentViewController(new ThemedNavigationController(view), true, null);
+                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
+            }
+            else
+            {
+                NavigationController.PushViewController(view, true);
+                viewModel.RequestDismiss.Subscribe(_ => NavigationController.PopToViewController(this, true));
+            }
         }
     }
 

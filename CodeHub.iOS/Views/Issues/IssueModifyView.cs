@@ -10,7 +10,7 @@ using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : IssueModifyViewModel
+    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel>, IModalView where TViewModel : IssueModifyViewModel
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Name");
         private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");

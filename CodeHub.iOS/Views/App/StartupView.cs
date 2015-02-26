@@ -6,6 +6,8 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using SDWebImage;
 using Foundation;
+using MonoTouch.SlideoutNavigation;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -39,6 +41,24 @@ namespace CodeHub.iOS.Views.App
                 UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
                 UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
             });
+        }
+
+        protected override void HandleNavigation(CodeHub.Core.ViewModels.IBaseViewModel viewModel, UIViewController view)
+        {
+            if (view is MenuView)
+            {
+                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+                var nav = ((UINavigationController)appDelegate.Window.RootViewController);
+                var slideout = new SlideoutNavigationController();
+                slideout.MenuViewController = new MenuNavigationController(view, slideout);
+                UIView.Transition(nav.View, 0.3, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
+                    () => nav.PushViewController(slideout, false), null);
+            }
+            else
+            {
+                PresentViewController(new ThemedNavigationController(view), true, null);
+                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
+            }
         }
  
         public override void ViewWillLayoutSubviews()

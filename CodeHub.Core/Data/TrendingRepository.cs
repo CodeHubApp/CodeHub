@@ -19,9 +19,9 @@ namespace CodeHub.Core.Data
             if (!string.IsNullOrEmpty(language))
                 query += string.Format("&language={0}", language);
             var data = await BlobCache.LocalMachine.DownloadUrl(TrendingUrl + query, absoluteExpiration: DateTimeOffset.Now.AddHours(1));
-            return JsonConvert.DeserializeObject<List<Octokit.Repository>>(Encoding.UTF8.GetString(data, 0, data.Length), new JsonSerializerSettings {
-                ContractResolver = new UnderscoreContractResolver()
-            });
+            var serializer = new Octokit.Internal.SimpleJsonSerializer();
+            var decodedData = Encoding.UTF8.GetString(data, 0, data.Length);
+            return serializer.Deserialize<List<Octokit.Repository>>(decodedData);
         }
     }
 }

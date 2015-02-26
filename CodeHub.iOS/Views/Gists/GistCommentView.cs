@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCommentView : MarkdownComposerView<GistCommentViewModel>
+    public class GistCommentView : MarkdownComposerView<GistCommentViewModel>, IModalView
     {
         public GistCommentView(IMarkdownService markdownService) 
             : base(markdownService)
