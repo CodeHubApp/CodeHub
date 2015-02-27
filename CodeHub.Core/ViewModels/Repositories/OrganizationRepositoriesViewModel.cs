@@ -6,7 +6,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private string _name;
         public string Name
@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _name, value); }
         }
 
-        public OrganizationRepositoriesViewModel(IApplicationService applicationService)
+        public OrganizationRepositoriesViewModel(ISessionService applicationService)
             : base(applicationService)
         {
             _applicationService = applicationService;

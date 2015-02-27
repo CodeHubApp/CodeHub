@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Issues
     public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly ReactiveList<IIssueEventItemViewModel> InternalEvents = new ReactiveList<IIssueEventItemViewModel>();
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private int _id;
         public int Id 
@@ -115,7 +115,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<object> AddCommentCommand { get; private set; }
 
         protected BaseIssueViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IMarkdownService markdownService)
         {
             _applicationService = applicationService;
@@ -241,7 +241,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected virtual async Task Load(IApplicationService applicationService)
+        protected virtual async Task Load(ISessionService applicationService)
         {
             var issueRequest = applicationService.GitHubClient.Issue.Get(RepositoryOwner, RepositoryName, Id);
             var eventsRequest = RetrieveEvents();

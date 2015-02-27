@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public IssueViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IActionMenuFactory actionMenuFactory,
             IMarkdownService markdownService)
             : base(applicationService, markdownService)

@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public CommitBranchesViewModel(IApplicationService applicationService)
+        public CommitBranchesViewModel(ISessionService applicationService)
         {
             Title = "Commit Branch";
 

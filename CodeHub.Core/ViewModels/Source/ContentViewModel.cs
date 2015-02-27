@@ -37,10 +37,10 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; protected set; }
 
-        protected ContentViewModel(IAccountsService accounts)
+        protected ContentViewModel(ISessionService sessionService)
         {
             OpenWithCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SourceItem).Select(x => x != null));
-            Theme = accounts.ActiveAccount.CodeEditTheme ?? "idea";
+            Theme = sessionService.Account.CodeEditTheme ?? "idea";
 
             GoToUrlCommand = ReactiveCommand.Create();
             GoToUrlCommand.OfType<string>().Subscribe(x =>

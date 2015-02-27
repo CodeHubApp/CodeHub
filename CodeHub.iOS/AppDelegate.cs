@@ -16,6 +16,7 @@ using CodeHub.iOS.Factories;
 using CodeHub.Core.Factories;
 using CodeHub.Core.ViewModels.Changesets;
 using System.Linq;
+using CodeHub.Core;
 
 namespace CodeHub.iOS
 {
@@ -67,8 +68,6 @@ namespace CodeHub.iOS
             CodeHub.Core.Bootstrap.Init();
             Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
-            SetupPushNotifications();
-            HandleNotificationOptions(options);
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
@@ -88,6 +87,10 @@ namespace CodeHub.iOS
 
             Window = new UIWindow(UIScreen.MainScreen.Bounds) {RootViewController = mainNavigationController};
             Window.MakeKeyAndVisible();
+
+            SetupPushNotifications();
+            HandleNotificationOptions(options);
+
             return true;
         }
 
@@ -98,10 +101,7 @@ namespace CodeHub.iOS
             if (!options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) return;
 
             var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-            if (remoteNotification != null)
-            {
-                HandleNotification(remoteNotification, true);
-            }
+            remoteNotification.Do(x => HandleNotification(x, true));
         }
 
         private void SetupPushNotifications()
@@ -141,80 +141,16 @@ namespace CodeHub.iOS
             HandleNotification(userInfo, false);
 		}
 
-        private void HandleNotification(NSDictionary data, bool fromBootup)
+        private static void HandleNotification(NSDictionary data, bool fromBootup)
 		{
-			try
-			{
-                var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                var appService = Locator.Current.GetService<IApplicationService>();
-                var accounts = Locator.Current.GetService<IAccountsService>();
-                var username = data["u"].ToString();
-                var repoId = new RepositoryIdentifier(data["r"].ToString());
-
-                if (data.ContainsKey(new NSString("c")))
-                {
-                    var vm = serviceConstructor.Construct<CommitViewModel>();
-                    vm.RepositoryOwner = repoId.Owner;
-                    vm.RepositoryName = repoId.Name;
-                    vm.Node = data["c"].ToString();
-                    vm.ShowRepository = true;
-                }
-                else if (data.ContainsKey(new NSString("i")))
-                {
-                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Issues.IssueViewModel>();
-                    vm.RepositoryOwner = repoId.Owner;
-                    vm.RepositoryName = repoId.Name;
-                    vm.Id = int.Parse(data["i"].ToString());
-                }
-                else if (data.ContainsKey(new NSString("p")))
-                {
-                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>();
-                    vm.RepositoryOwner = repoId.Owner;
-                    vm.RepositoryName = repoId.Name;
-                    vm.Id = int.Parse(data["p"].ToString());
-                }
-                else
-                {
-                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>();
-                    vm.RepositoryOwner = repoId.Owner;
-                    vm.RepositoryName = repoId.Name;
-                }
-
-                if (appService.Account == null || !appService.Account.Username.Equals(username))
-                {
-                    var user = accounts.FirstOrDefault(x => x.Username.Equals(username));
-                    if (user != null)
-                    {
-                        accounts.ActiveAccount = user;
-                    }
-                }
-
-                //appService.SetUserActivationAction(() => transitionOrchestration.Transition);
-
-                if (appService.Account == null && !fromBootup)
-                {
-//                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
-//                    viewDispatcher.ShowViewModel(startupViewModelRequest);
-                }
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Handle Notifications issue: " + e);
-			}
+            var cmd = new PushNotificationCommand(data.ToDictionary(x => x.Key.ToString(), x => x.Value.ToString()));
+            Locator.Current.GetService<ISessionService>().SetStartupCommand(cmd);
 		}
 
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
             DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
-
-            var app = Locator.Current.GetService<IApplicationService>();
-            var accounts = Locator.Current.GetService<IAccountsService>();
-            if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
-            {
-                Task.Run(() => Locator.Current.GetService<IPushNotificationsService>().Register());
-                app.Account.IsPushNotificationsEnabled = true;
-                accounts.Update(app.Account);
-            }
+            Locator.Current.GetService<ISessionService>().RegisterForNotifications();
 		}
 
 		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)

@@ -4,6 +4,7 @@ using System;
 using Splat;
 using CodeHub.Core.Services;
 using CodeHub.Core.Factories;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core
 {
@@ -15,12 +16,11 @@ namespace CodeHub.Core
                 Locator.Current.GetService<IAlertDialogFactory>().Alert("Error", e.Message));
 
             var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
-            var accountService = new GitHubAccountsService(defaultValueService);
-            var applicationService = new ApplicationService(accountService);
+            var accountService = new AccountsRepository(defaultValueService);
             var loginService = new LoginService(accountService);
 
-            Locator.CurrentMutable.RegisterLazySingleton(() => accountService, typeof(IAccountsService));
-            Locator.CurrentMutable.RegisterLazySingleton(() => applicationService, typeof(IApplicationService));
+            Locator.CurrentMutable.RegisterLazySingleton(() => accountService, typeof(IAccountsRepository));
+            Locator.CurrentMutable.RegisterLazySingleton(() => new SessionService(), typeof(ISessionService));
             Locator.CurrentMutable.RegisterLazySingleton(() => loginService, typeof(ILoginService));
             Locator.CurrentMutable.RegisterLazySingleton(() => new ImgurService(), typeof(IImgurService));
         }

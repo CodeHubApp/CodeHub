@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<GitHubSharp.Models.IssueCommentModel> SaveCommand { get; private set; }
 
-        public IssueCommentViewModel(IApplicationService applicationService) 
+        public IssueCommentViewModel(ISessionService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

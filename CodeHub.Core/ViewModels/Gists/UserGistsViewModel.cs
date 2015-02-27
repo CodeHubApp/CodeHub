@@ -6,7 +6,7 @@ namespace CodeHub.Core.ViewModels.Gists
 {
     public class UserGistsViewModel : BaseGistsViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private string _username;
         public string Username
@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToCreateGistCommand { get; private set; }
 
-        public UserGistsViewModel(IApplicationService applicationService)
+        public UserGistsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Username = _applicationService.Account.Username;

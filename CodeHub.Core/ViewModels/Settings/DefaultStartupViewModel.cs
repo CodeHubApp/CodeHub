@@ -6,13 +6,12 @@ using System.Reactive.Linq;
 using CodeHub.Core.Utilities;
 using System.Linq;
 using CodeHub.Core.ViewModels.App;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Settings
 {
     public class DefaultStartupViewModel : BaseViewModel
     {
-        protected readonly IAccountsService AccountsService;
-
         public IReadOnlyReactiveList<string> StartupViews { get; private set; } 
 
         private string _selectedStartupView;
@@ -22,18 +21,17 @@ namespace CodeHub.Core.ViewModels.Settings
             set { this.RaiseAndSetIfChanged(ref _selectedStartupView, value); }
         }
 
-        public DefaultStartupViewModel(IAccountsService accountsService)
+        public DefaultStartupViewModel(ISessionService sessionService, IAccountsRepository accountsService)
         {
             Title = "Default Startup View";
 
-            AccountsService = accountsService;
             var menuViewModelType = typeof(MenuViewModel);
 
-            SelectedStartupView = AccountsService.ActiveAccount.DefaultStartupView;
+            SelectedStartupView = sessionService.Account.DefaultStartupView;
             this.WhenAnyValue(x => x.SelectedStartupView).Skip(1).Subscribe(x =>
             {
-                AccountsService.ActiveAccount.DefaultStartupView = x;
-                AccountsService.Update(AccountsService.ActiveAccount);
+                sessionService.Account.DefaultStartupView = x;
+                accountsService.Update(sessionService.Account);
                 Dismiss();
             });
 

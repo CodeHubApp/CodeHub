@@ -17,6 +17,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private const string DefaultWebDomain = "https://github.com";
         private readonly ILoginService _loginFactory;
+        private readonly IAccountsRepository _accountsRepository;
 
         private readonly ObservableAsPropertyHelper<string> _loginUrl;
         public string LoginUrl
@@ -56,20 +57,20 @@ namespace CodeHub.Core.ViewModels.Accounts
         }
 
         public LoginViewModel(ILoginService loginFactory, 
-                              IAccountsService accountsService,
+                              IAccountsRepository accountsRepository,
                               IActionMenuFactory actionMenuService,
                               IAlertDialogFactory alertDialogService)
         {
             _loginFactory = loginFactory;
+            _accountsRepository = accountsRepository;
 
             Title = "Login";
 
             GoToOldLoginWaysCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<AddAccountViewModel>()));
 
-            var loginCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x)), _ => Login(Code));
-            loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            var canLogin = this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x));
+            var loginCommand = ReactiveCommand.CreateAsyncTask(canLogin,_ => Login(Code));
             loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
 
@@ -136,6 +137,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             var account = AttemptedAccount;
             var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+            await _accountsRepository.SetDefault(loginData.Account);
             return loginData.Account;
         }
     }

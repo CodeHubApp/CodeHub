@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand GoToRepositoryCommand { get; private set; }
 
-        public SupportViewModel(IApplicationService applicationService)
+        public SupportViewModel(ISessionService applicationService)
         {
             Title = "Feedback & Support";
 

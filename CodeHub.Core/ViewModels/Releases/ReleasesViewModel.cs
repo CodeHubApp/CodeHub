@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public string RepositoryName { get; set; }
 
-        public ReleasesViewModel(IApplicationService applicationService)
+        public ReleasesViewModel(ISessionService applicationService)
         {
             Title = "Releases";
 

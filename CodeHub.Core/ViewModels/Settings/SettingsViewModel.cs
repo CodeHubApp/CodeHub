@@ -5,14 +5,15 @@ using CodeHub.Core.ViewModels.Repositories;
 using Xamarin.Utilities.Services;
 using System.Reactive.Linq;
 using Humanizer;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Settings
 {
     public class SettingsViewModel : BaseViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _sessionService;
         private readonly IFeaturesService _featuresService;
-        private readonly IAccountsService _accountsService;
+        private readonly IAccountsRepository _accountsService;
         private readonly IEnvironmentalService _environmentService;
         private readonly IPushNotificationsService _pushNotificationsService;
 
@@ -22,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public string DefaultStartupViewName
         {
-            get { return _applicationService.Account.DefaultStartupView ?? "Default"; }
+            get { return _sessionService.Account.DefaultStartupView ?? "Default"; }
             private set { this.RaisePropertyChanged(); }
         }
 
@@ -31,8 +32,8 @@ namespace CodeHub.Core.ViewModels.Settings
             get 
             { 
                 const string @default = "Default";
-                if (_applicationService.Account.CodeEditTheme != null)
-                    return _applicationService.Account.CodeEditTheme.Humanize(LetterCasing.Title) ?? @default;
+                if (_sessionService.Account.CodeEditTheme != null)
+                    return _sessionService.Account.CodeEditTheme.Humanize(LetterCasing.Title) ?? @default;
                 else
                     return @default;
             }
@@ -88,26 +89,26 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public IReactiveCommand GoToSyntaxHighlighterCommand { get; private set; }
 
-        public SettingsViewModel(IApplicationService applicationService, IFeaturesService featuresService, 
-            IAccountsService accountsService, IEnvironmentalService environmentalService, 
+        public SettingsViewModel(ISessionService applicationService, IFeaturesService featuresService, 
+            IAccountsRepository accountsService, IEnvironmentalService environmentalService, 
             IPushNotificationsService pushNotificationsService)
         {
             Title = "Account Settings";
 
-            _applicationService = applicationService;
+            _sessionService = applicationService;
             _featuresService = featuresService;
             _accountsService = accountsService;
             _environmentService = environmentalService;
             _pushNotificationsService = pushNotificationsService;
 
-            AccountImageUrl = _accountsService.ActiveAccount.AvatarUrl;
+            AccountImageUrl = applicationService.Account.AvatarUrl;
 
             GoToDefaultStartupViewCommand = ReactiveCommand.Create();
             GoToDefaultStartupViewCommand.Subscribe(_ => 
             {
                 var vm = this.CreateViewModel<DefaultStartupViewModel>();
-                vm.WhenAnyValue(x => x.SelectedStartupView).Subscribe(x => 
-                    DefaultStartupViewName = x);
+                vm.WhenAnyValue(x => x.SelectedStartupView)
+                    .Subscribe(x => DefaultStartupViewName = x);
                 NavigateTo(vm);
             });
 
@@ -128,32 +129,32 @@ namespace CodeHub.Core.ViewModels.Settings
                 NavigateTo(vm);
             });
 
-            ShowOrganizationsInEvents = accountsService.ActiveAccount.ShowOrganizationsInEvents;
+            ShowOrganizationsInEvents = applicationService.Account.ShowOrganizationsInEvents;
             this.WhenAnyValue(x => x.ShowOrganizationsInEvents).Skip(1).Subscribe(x =>
             {
-                accountsService.ActiveAccount.ShowOrganizationsInEvents = x;
-                accountsService.Update(accountsService.ActiveAccount);
+                applicationService.Account.ShowOrganizationsInEvents = x;
+                accountsService.Update(applicationService.Account);
             });
 
-            ExpandOrganizations = accountsService.ActiveAccount.ExpandOrganizations;
+            ExpandOrganizations = applicationService.Account.ExpandOrganizations;
             this.WhenAnyValue(x => x.ExpandOrganizations).Skip(1).Subscribe(x =>
             {
-                accountsService.ActiveAccount.ExpandOrganizations = x;
-                accountsService.Update(accountsService.ActiveAccount);
+                applicationService.Account.ExpandOrganizations = x;
+                accountsService.Update(applicationService.Account);
             });
 
-            ShowRepositoryDescriptionInList = accountsService.ActiveAccount.ShowRepositoryDescriptionInList;
+            ShowRepositoryDescriptionInList = applicationService.Account.ShowRepositoryDescriptionInList;
             this.WhenAnyValue(x => x.ShowRepositoryDescriptionInList).Skip(1).Subscribe(x =>
             {
-                accountsService.ActiveAccount.ShowRepositoryDescriptionInList = x;
-                accountsService.Update(accountsService.ActiveAccount);
+                applicationService.Account.ShowRepositoryDescriptionInList = x;
+                accountsService.Update(applicationService.Account);
             });
 
-            SaveCredentials = accountsService.ActiveAccount.SaveCredentails;
+            SaveCredentials = applicationService.Account.SaveCredentails;
             this.WhenAnyValue(x => x.SaveCredentials).Skip(1).Subscribe(x =>
             {
-                accountsService.ActiveAccount.SaveCredentails = x;
-                accountsService.Update(accountsService.ActiveAccount);
+                applicationService.Account.SaveCredentails = x;
+                accountsService.Update(applicationService.Account);
             });
         }
 
@@ -166,7 +167,7 @@ namespace CodeHub.Core.ViewModels.Settings
 		{
             get 
             { 
-                return PushNotificationsActivated && _applicationService.Account.IsPushNotificationsEnabled.HasValue && _applicationService.Account.IsPushNotificationsEnabled.Value; 
+                return PushNotificationsActivated && _sessionService.Account.IsPushNotificationsEnabled.HasValue && _sessionService.Account.IsPushNotificationsEnabled.Value; 
             }
             set 
             { 
@@ -182,33 +183,19 @@ namespace CodeHub.Core.ViewModels.Settings
 			{
 				if (enabled)
                 {
-                    await _pushNotificationsService.Register();
+                    await _pushNotificationsService.Register(_sessionService.Account);
                 }
 				else
                 {
-                    await _pushNotificationsService.Deregister();
+                    await _pushNotificationsService.Deregister(_sessionService.Account);
                 }
 
-				_applicationService.Account.IsPushNotificationsEnabled = enabled;
-				_accountsService.Update(_applicationService.Account);
+				_sessionService.Account.IsPushNotificationsEnabled = enabled;
+				_accountsService.Update(_sessionService.Account);
 			}
 			catch (Exception e)
 			{
                 System.Diagnostics.Debug.WriteLine("Unable to register push notifications: " + e.Message);
-			}
-		}
-
-		public float CacheSize
-		{
-			get
-			{
-//				if (_applicationService.Account.Cache == null)
-//					return 0f;
-//
-//				var totalCacheSize = _applicationService.Account.Cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-//				var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
-//				return totalCacheSizeMB;
-			    return 0;
 			}
 		}
     }

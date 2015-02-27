@@ -23,8 +23,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryViewModel : BaseViewModel, ILoadableViewModel
     {
-        protected readonly IApplicationService ApplicationService;
-        private readonly IAccountsService _accountsService;
+        protected readonly ISessionService ApplicationService;
+        private readonly IAccountsRepository _accountsService;
         private bool? _starred;
         private bool? _watched;
         private RepositoryModel _repository;
@@ -155,8 +155,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand ToggleWatchCommand { get; private set; }
 
-        public RepositoryViewModel(IApplicationService applicationService, 
-            IAccountsService accountsService, IActionMenuFactory actionMenuService)
+        public RepositoryViewModel(ISessionService applicationService, 
+            IAccountsRepository accountsService, IActionMenuFactory actionMenuService)
         {
             ApplicationService = applicationService;
             _accountsService = accountsService;

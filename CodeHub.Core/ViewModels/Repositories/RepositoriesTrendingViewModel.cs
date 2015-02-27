@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public RepositoriesTrendingViewModel(IApplicationService applicationService)
+        public RepositoriesTrendingViewModel(ISessionService applicationService)
         {
             ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
             var trendingRepository = new TrendingRepository();

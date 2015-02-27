@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; protected set; }
 
-        public PullRequestCommentViewModel(IApplicationService applicationService) 
+        public PullRequestCommentViewModel(ISessionService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

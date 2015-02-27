@@ -66,7 +66,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<object> GoToAddFileCommand { get; private set; }
 
-        public SourceTreeViewModel(IApplicationService applicationService)
+        public SourceTreeViewModel(ISessionService applicationService)
         {
             Branch = "master";
             Path = string.Empty;

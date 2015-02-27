@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net;
 using Akavache;
 using System.Reactive.Linq;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.Utilities
 {
@@ -47,6 +48,15 @@ namespace CodeHub.Core.Utilities
             response = await _httpClient.Send(request, cancellationToken);
             await BlobCache.LocalMachine.InsertObject(key, response, TimeSpan.FromMinutes(30));
             return response;
+        }
+
+        private class InternalResponse
+        {
+            public object Body { get; private set; }
+            public Dictionary<string, string> Headers { get; set; }
+            public ApiInfo ApiInfo { get; set; }
+            public HttpStatusCode StatusCode { get; set; }
+            public string ContentType { get; set; }
         }
     }
 }

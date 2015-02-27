@@ -4,9 +4,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesWatchedViewModel : BaseRepositoriesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
-        public RepositoriesWatchedViewModel(IApplicationService applicationService) 
+        public RepositoriesWatchedViewModel(ISessionService applicationService) 
             : base(applicationService)
         {
             _applicationService = applicationService;

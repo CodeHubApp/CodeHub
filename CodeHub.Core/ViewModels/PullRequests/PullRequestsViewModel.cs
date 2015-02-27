@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public PullRequestsViewModel(IApplicationService applicationService)
+        public PullRequestsViewModel(ISessionService applicationService)
 		{
             Title = "Pull Requests";
 

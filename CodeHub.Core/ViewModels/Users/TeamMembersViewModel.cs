@@ -4,11 +4,11 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class TeamMembersViewModel : BaseUsersViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public long Id { get; set; }
 
-        public TeamMembersViewModel(IApplicationService applicationService)
+        public TeamMembersViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Title = "Members";

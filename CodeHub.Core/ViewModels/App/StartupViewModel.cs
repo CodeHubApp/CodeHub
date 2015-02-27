@@ -5,12 +5,14 @@ using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
 using System.Reactive;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel
     {
-        private readonly IAccountsService _accountsService;
+        private readonly IAccountsRepository _accountsService;
+        private readonly ISessionService _sessionService;
         private readonly ILoginService _loginService;
 
         public IReactiveCommand<Unit> StartupCommand { get; private set; }
@@ -36,17 +38,20 @@ namespace CodeHub.Core.ViewModels.App
             protected set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
-        public StartupViewModel(IAccountsService accountsService, ILoginService loginService)
+        public StartupViewModel(ISessionService sessionService, 
+            IAccountsRepository accountsService, ILoginService loginService)
         {
+            _sessionService = sessionService;
             _accountsService = accountsService;
             _loginService = loginService;
 
             StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
 
-        private void GoToAccountsOrNewUser()
+        private async Task GoToAccountsOrNewUser()
         {
-            if (_accountsService.Any())
+            var accounts = await _accountsService.GetAll();
+            if (accounts.Any())
                 NavigateTo(this.CreateViewModel<AccountsViewModel>());
             else
                 NavigateTo(this.CreateViewModel<NewAccountViewModel>());
@@ -54,12 +59,12 @@ namespace CodeHub.Core.ViewModels.App
 
         private async Task Load()
         {
-            var account = _accountsService.GetDefault();
+            var account = await _accountsService.GetDefault();
 
             // Account no longer exists
             if (account == null)
             {
-                GoToAccountsOrNewUser();
+                await GoToAccountsOrNewUser();
             }
             else
             {
@@ -73,7 +78,7 @@ namespace CodeHub.Core.ViewModels.App
 
                     IsLoggingIn = true;
                     await _loginService.LoginAccount(account);
-                    _accountsService.ActiveAccount = account;
+                    _sessionService.SetSessionAccount(account);
                     NavigateTo(this.CreateViewModel<MenuViewModel>());
                 }
                 catch

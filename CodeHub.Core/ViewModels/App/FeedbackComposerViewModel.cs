@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand<Unit> SubmitCommand { get; private set; }
 
-        public FeedbackComposerViewModel(IApplicationService applicationService)
+        public FeedbackComposerViewModel(ISessionService applicationService)
         {
             this.WhenAnyValue(x => x.IsFeature).Subscribe(x => Title = x ? "New Feature" : "Bug Report");
 

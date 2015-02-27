@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-		public BranchesAndTagsViewModel(IApplicationService applicationService)
+		public BranchesAndTagsViewModel(ISessionService applicationService)
 		{
             var branches = new ReactiveList<Octokit.Branch>();
             Branches = branches.CreateDerivedCollection(

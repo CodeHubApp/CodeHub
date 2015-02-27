@@ -8,11 +8,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : BaseCommitsViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public long PullRequestId { get; set; }
 
-        public PullRequestCommitsViewModel(IApplicationService applicationService)
+        public PullRequestCommitsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
         }

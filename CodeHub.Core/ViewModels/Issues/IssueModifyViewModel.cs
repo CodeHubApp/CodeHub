@@ -71,7 +71,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
         protected IssueModifyViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IAlertDialogFactory alertDialogFactory)
 	    {
             GoToAssigneesCommand = ReactiveCommand.Create();

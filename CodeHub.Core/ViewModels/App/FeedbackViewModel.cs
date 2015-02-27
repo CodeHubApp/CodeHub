@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public FeedbackViewModel(IApplicationService applicationService)
+        public FeedbackViewModel(ISessionService applicationService)
         {
             Title = "Feedback";
 

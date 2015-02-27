@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Organizations
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public TeamsViewModel(IApplicationService applicationService)
+        public TeamsViewModel(ISessionService applicationService)
         {
             Title = "Teams";
 

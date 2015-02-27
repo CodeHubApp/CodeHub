@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueEditViewModel : IssueModifyViewModel
     {
-	    private readonly IApplicationService _applicationService;
+	    private readonly ISessionService _applicationService;
 	    private IssueModel _issue;
 		private bool _open;
 
@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<object> GoToDescriptionCommand { get; private set; }
 
         public IssueEditViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IAlertDialogFactory alertDialogFactory)
             : base(applicationService, alertDialogFactory)
 	    {

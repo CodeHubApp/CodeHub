@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public string RepositoryOwner { get; set; }
 
-        public RepositoryEventsViewModel(IApplicationService applicationService)
+        public RepositoryEventsViewModel(ISessionService applicationService)
             : base(applicationService)
         {
         }

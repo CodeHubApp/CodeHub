@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<Unit> SearchCommand { get; private set; }
 
-        public RepositoriesExploreViewModel(IApplicationService applicationService)
+        public RepositoriesExploreViewModel(ISessionService applicationService)
         {
             ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
 

@@ -4,9 +4,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesStarredViewModel : BaseRepositoriesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
-        public RepositoriesStarredViewModel(IApplicationService applicationService) 
+        public RepositoriesStarredViewModel(ISessionService applicationService) 
             : base(applicationService)
         {
             _applicationService = applicationService;

@@ -31,7 +31,7 @@ namespace CodeHub.Core.ViewModels
                 request.RequestFromCache = false;
             }
 
-            var application = Locator.Current.GetService<IApplicationService>();
+            var application = Locator.Current.GetService<ISessionService>();
 
             var result = await application.Client.ExecuteAsync(request);
             update(result);
@@ -55,7 +55,7 @@ namespace CodeHub.Core.ViewModels
             assignMore(async () =>
             {
                 response.More.UseCache = false;
-                var moreResponse = await Locator.Current.GetService<IApplicationService>().Client.ExecuteAsync(response.More);
+                var moreResponse = await Locator.Current.GetService<ISessionService>().Client.ExecuteAsync(response.More);
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
             });

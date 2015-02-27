@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Issues
 	public class IssueAddViewModel : IssueModifyViewModel
 	{
         private readonly Subject<IssueModel> _createdIssueSubject = new Subject<IssueModel>();
-	    private readonly IApplicationService _applicationService;
+	    private readonly ISessionService _applicationService;
 
         public IObservable<IssueModel> CreatedIssue
         {
@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Issues
         }
 
         public IssueAddViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IAlertDialogFactory statusIndicatorService)
             : base(applicationService, statusIndicatorService)
         {

@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistCreateViewModel : BaseViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private string _description;
         public string Description
@@ -36,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> AddGistFileCommand { get; private set; }
 
-        public GistCreateViewModel(IApplicationService applicationService, IAlertDialogFactory alertDialogFactory)
+        public GistCreateViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
         {
             _applicationService = applicationService;
             CurrentAccount = applicationService.Account;

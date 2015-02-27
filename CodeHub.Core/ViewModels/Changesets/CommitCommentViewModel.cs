@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<GitHubSharp.Models.CommentModel> SaveCommand { get; protected set; }
 
-        public CommitCommentViewModel(IApplicationService applicationService) 
+        public CommitCommentViewModel(ISessionService applicationService) 
         {
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),

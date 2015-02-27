@@ -7,11 +7,11 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
 	public class CommitsViewModel : BaseCommitsViewModel
 	{
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
 	    public string Branch { get; set; }
 
-        public CommitsViewModel(IApplicationService applicationService)
+        public CommitsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
         }

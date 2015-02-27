@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public string Username { get; set; }
 
-        public OrganizationEventsViewModel(IApplicationService applicationService)
+        public OrganizationEventsViewModel(ISessionService applicationService)
             : base(applicationService)
         {
         }

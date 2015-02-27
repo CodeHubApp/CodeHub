@@ -8,7 +8,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesViewModel : BaseIssuesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
         private readonly MyIssuesFilterModel _openFilter = MyIssuesFilterModel.CreateOpenFilter();
         private readonly MyIssuesFilterModel _closedFilter = MyIssuesFilterModel.CreateClosedFilter();
 
@@ -37,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
-        public MyIssuesViewModel(IApplicationService applicationService)
+        public MyIssuesViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
 

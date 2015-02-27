@@ -5,11 +5,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class UserRepositoriesViewModel : BaseRepositoriesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public string Username { get; set; }
 
-        public UserRepositoriesViewModel(IApplicationService applicationService)
+        public UserRepositoriesViewModel(ISessionService applicationService)
             : base(applicationService)
         {
             _applicationService = applicationService;

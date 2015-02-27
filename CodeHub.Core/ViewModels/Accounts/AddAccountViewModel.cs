@@ -10,29 +10,27 @@ namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AddAccountViewModel : BaseViewModel 
     {
-        private readonly ILoginService _loginFactory;
-        private string _username;
-        private string _password;
-        private string _domain;
-
         public bool IsEnterprise { get; set; }
 
         public string TwoFactor { get; set; }
 
         public IReactiveCommand LoginCommand { get; private set; }
 
+        private string _username;
         public string Username
         {
             get { return _username; }
             set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
+        private string _password;
         public string Password
         {
             get { return _password; }
             set { this.RaiseAndSetIfChanged(ref _password, value); }
         }
 
+        private string _domain;
         public string Domain
         {
             get { return _domain; }
@@ -46,11 +44,9 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
         }
 
-        public AddAccountViewModel(ILoginService loginFactory, IAccountsService accountsService)
+        public AddAccountViewModel(ILoginService loginFactory, IAccountsRepository accountsService)
         {
             Title = "Login";
-
-            _loginFactory = loginFactory;
 
             this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
             {
@@ -59,30 +55,30 @@ namespace CodeHub.Core.ViewModels.Accounts
                 Domain = x.Domain;
             });
 
-            var loginCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Username, y => y.Password, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y)),
-                _ => Login());
-            loginCommand.Subscribe(x => accountsService.ActiveAccount = x);
+            var canLogin = this.WhenAnyValue(x => x.Username, y => y.Password, 
+                (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y));
+
+            var loginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => 
+            {
+                var apiUrl = IsEnterprise ? Domain : null;
+                if (apiUrl != null)
+                {
+                    if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
+                        apiUrl = "https://" + apiUrl;
+                    if (!apiUrl.EndsWith("/"))
+                        apiUrl += "/";
+                    if (!apiUrl.Contains("/api/"))
+                        apiUrl += "api/v3/";
+                }
+
+                var loginData = await loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
+                await loginFactory.LoginAccount(loginData.Account);
+                accountsService.SetDefault(loginData.Account);
+                return loginData.Account;
+            });
+
             loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
-        }
-
-		private async Task<GitHubAccount> Login()
-        {
-            var apiUrl = IsEnterprise ? Domain : null;
-            if (apiUrl != null)
-            {
-                if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
-                    apiUrl = "https://" + apiUrl;
-                if (!apiUrl.EndsWith("/"))
-                    apiUrl += "/";
-                if (!apiUrl.Contains("/api/"))
-                    apiUrl += "api/v3/";
-            }
-
-            var loginData = await _loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
-			await _loginFactory.LoginAccount(loginData.Account);
-            return loginData.Account;
         }
     }
 }

@@ -437,6 +437,9 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.2.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png">

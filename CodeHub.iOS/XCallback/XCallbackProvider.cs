@@ -9,9 +9,9 @@ namespace CodeHub.iOS
 {
     public class XCallbackProvider
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
-        public XCallbackProvider(IApplicationService applicationService)
+        public XCallbackProvider(ISessionService applicationService)
         {
             _applicationService = applicationService;
         }

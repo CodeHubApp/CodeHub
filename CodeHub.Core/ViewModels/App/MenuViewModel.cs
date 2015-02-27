@@ -20,8 +20,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class MenuViewModel : BaseViewModel
     {
-        private readonly IApplicationService _applicationService;
-        private readonly IAccountsService _accountsService;
+        private readonly ISessionService _applicationService;
 		private int _notifications;
 
 		public int Notifications
@@ -48,13 +47,12 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReadOnlyList<PinnedRepository> PinnedRepositories 
         {
-            get { return new ReadOnlyCollection<PinnedRepository>(_accountsService.ActiveAccount.PinnnedRepositories); }
+            get { return new ReadOnlyCollection<PinnedRepository>(_applicationService.Account.PinnnedRepositories); }
         }
 		
-        public MenuViewModel(IApplicationService applicationService, IAccountsService accountsService)
+        public MenuViewModel(ISessionService sessionService, IAccountsRepository accountsService)
         {
-            _applicationService = applicationService;
-            _accountsService = accountsService;
+            _applicationService = sessionService;
 
             GoToNotificationsCommand = ReactiveCommand.Create();
             GoToNotificationsCommand.Subscribe(_ =>
@@ -166,17 +164,17 @@ namespace CodeHub.Core.ViewModels.App
 
             DeletePinnedRepositoryCommand.OfType<PinnedRepository>()
                 .Subscribe(x =>
-                    {
-                        accountsService.ActiveAccount.PinnnedRepositories.Remove(x);
-                        accountsService.Update(accountsService.ActiveAccount);
-                    });
+                {
+                    sessionService.Account.PinnnedRepositories.Remove(x);
+                    accountsService.Update(sessionService.Account);
+                });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
                 {
-                    var notifications = applicationService.GitHubClient.Notification.GetAllForCurrent();
+                    var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
                     notifications.ToBackground(x => Notifications = x.Count);
 
-                    var organizations = applicationService.GitHubClient.Organization.GetAllForCurrent();
+                    var organizations = sessionService.GitHubClient.Organization.GetAllForCurrent();
                     organizations.ToBackground(x => Organizations = x);
 
                     return Task.WhenAll(notifications, organizations);

@@ -46,7 +46,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public IReactiveCommand MergeCommand { get; private set; }
 
         public PullRequestViewModel(
-            IApplicationService applicationService, 
+            ISessionService applicationService, 
             IMarkdownService markdownService, 
             IActionMenuFactory actionMenuService)
             : base(applicationService, markdownService)
@@ -137,7 +137,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
         }
 
-        protected override async Task Load(IApplicationService applicationService)
+        protected override async Task Load(ISessionService applicationService)
         {
             PullRequest = await applicationService.GitHubClient.PullRequest.Get(RepositoryOwner, RepositoryName, Id);
             await base.Load(applicationService);

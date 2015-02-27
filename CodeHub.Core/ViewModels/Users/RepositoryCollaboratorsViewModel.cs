@@ -4,13 +4,13 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class RepositoryCollaboratorsViewModel : BaseUsersViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-        public RepositoryCollaboratorsViewModel(IApplicationService applicationService)
+        public RepositoryCollaboratorsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Title = "Collaborators";

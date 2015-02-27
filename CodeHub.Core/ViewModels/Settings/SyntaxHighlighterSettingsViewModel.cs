@@ -1,10 +1,10 @@
 ﻿using System;
-using Xamarin.Utilities.Services;
 using System.Linq;
 using System.Collections.Generic;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using System.Reactive;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Settings
 {
@@ -21,7 +21,8 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public SyntaxHighlighterSettingsViewModel(IAccountsService accountsService, IFilesystemService filesystemService)
+        public SyntaxHighlighterSettingsViewModel(ISessionService applicationService,
+            IAccountsRepository accountsRepository, IFilesystemService filesystemService)
         {
             Title = "Syntax Highlighter";
 
@@ -31,12 +32,12 @@ namespace CodeHub.Core.ViewModels.Settings
                 .Select(x => System.IO.Path.GetFileNameWithoutExtension(x))
                 .ToList();
 
-            SelectedTheme = accountsService.ActiveAccount.CodeEditTheme ?? "idea";
+            SelectedTheme = applicationService.Account.CodeEditTheme ?? "idea";
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                accountsService.ActiveAccount.CodeEditTheme = SelectedTheme;
-                accountsService.Update(accountsService.ActiveAccount);
+                applicationService.Account.CodeEditTheme = SelectedTheme;
+                accountsRepository.Update(applicationService.Account);
             });
         }
     }

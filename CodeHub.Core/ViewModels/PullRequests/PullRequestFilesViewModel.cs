@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public PullRequestFilesViewModel(IApplicationService applicationService)
+        public PullRequestFilesViewModel(ISessionService applicationService)
         {
             Title = "Files";
 

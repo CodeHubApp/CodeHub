@@ -19,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<GitHubSharp.Models.GistCommentModel> SaveCommand { get; protected set; }
 
-        public GistCommentViewModel(IApplicationService applicationService) 
+        public GistCommentViewModel(ISessionService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(

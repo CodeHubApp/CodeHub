@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Organizations
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public OrganizationsViewModel(IApplicationService applicationService)
+        public OrganizationsViewModel(ISessionService applicationService)
         {
             Title = "Organizations";
 

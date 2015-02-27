@@ -4,11 +4,11 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class UserFollowingsViewModel : BaseUsersViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public string Username { get; set; }
 
-        public UserFollowingsViewModel(IApplicationService applicationService)
+        public UserFollowingsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Title = "Following";

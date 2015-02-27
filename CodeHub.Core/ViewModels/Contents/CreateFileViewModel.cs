@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public CreateFileViewModel(IApplicationService applicationService)
+        public CreateFileViewModel(ISessionService applicationService)
         {
             Path = "/";
             Branch = "master";

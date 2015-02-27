@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
-        protected readonly IApplicationService ApplicationService;
+        protected readonly ISessionService ApplicationService;
 
         public bool ShowRepositoryDescription
         {
@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected BaseRepositoriesViewModel(IApplicationService applicationService)
+        protected BaseRepositoriesViewModel(ISessionService applicationService)
         {
             ApplicationService = applicationService;
             ShowRepositoryOwner = true;

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
@@ -25,11 +26,11 @@ namespace CodeHub.Core.Services
             new Route("^[^/]*/(?<RepositoryOwner>[^/]*)/(?<RepositoryName>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(Core.ViewModels.Source.SourceTreeViewModel)),
         };
 
-        private readonly IAccountsService _accountsService;
+        private readonly ISessionService _sessionService;
 
-        public UrlRouterService(IAccountsService accountsService)
+        public UrlRouterService(ISessionService sessionService)
         {
-            _accountsService = accountsService;
+            _sessionService = sessionService;
         }
 
         public IBaseViewModel Handle(string url)
@@ -38,11 +39,11 @@ namespace CodeHub.Core.Services
             if (!Uri.TryCreate(url, UriKind.Absolute, out uri))
                 return null;
 
-            if (_accountsService.ActiveAccount == null)
+            if (_sessionService.Account == null)
                 return null;
 
             Uri webDomain;
-            if (!Uri.TryCreate(_accountsService.ActiveAccount.WebDomain, UriKind.Absolute, out webDomain))
+            if (!Uri.TryCreate(_sessionService.Account.WebDomain, UriKind.Absolute, out webDomain))
                 return null;
 
             if (uri.Scheme != webDomain.Scheme || uri.Host != webDomain.Host)

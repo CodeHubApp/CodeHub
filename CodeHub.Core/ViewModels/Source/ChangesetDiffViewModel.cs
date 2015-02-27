@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ChangesetDiffViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory)
+        public ChangesetDiffViewModel(ISessionService applicationService, IActionMenuFactory actionMenuFactory)
 	    {
             var comments = new ReactiveList<CommitComment>();
             Comments = comments.CreateDerivedCollection(x => x);

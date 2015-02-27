@@ -1,13 +1,14 @@
 using System;
 using System.Threading.Tasks;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
     public interface IPushNotificationsService
     {
-        Task Register();
+        Task Register(GitHubAccount account);
 
-        Task Deregister();
+        Task Deregister(GitHubAccount account);
     }
 }
 

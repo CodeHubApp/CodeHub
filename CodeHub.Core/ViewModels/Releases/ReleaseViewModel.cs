@@ -35,7 +35,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ReleaseViewModel(IApplicationService applicationService,
+        public ReleaseViewModel(ISessionService applicationService,
             IUrlRouterService urlRouterService, IActionMenuFactory actionMenuService)
         {
             this.WhenAnyValue(x => x.ReleaseModel)

@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
         
-        public CommitViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuService)
+        public CommitViewModel(ISessionService applicationService, IActionMenuFactory actionMenuService)
         {
             Title = "Commit";
 

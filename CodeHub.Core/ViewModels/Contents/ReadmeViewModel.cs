@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ReadmeViewModel(IApplicationService applicationService, 
+        public ReadmeViewModel(ISessionService applicationService, 
             IActionMenuFactory actionMenuService)
         {
             Title = "Readme";

@@ -14,7 +14,6 @@ namespace CodeHub.Core.ViewModels.Source
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-
         public string Branch { get; set; }
 
         public string RepositoryOwner { get; set; }
@@ -62,9 +61,9 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public SourceViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuFactory,
-            IAccountsService accountsService, IFilesystemService filesystemService)
-            : base(accountsService)
+        public SourceViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory,
+            IFilesystemService filesystemService)
+            : base(sessionService)
 	    {
             var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch, x => x.PushAccess)
                 .Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary && x.Item3.HasValue && x.Item3.Value);
@@ -117,7 +116,7 @@ namespace CodeHub.Core.ViewModels.Source
 
                 if (!PushAccess.HasValue)
                 {
-                    applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
+                    sessionService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
                         .ToBackground(x => PushAccess = x.Permissions.Push);
                 }
 
@@ -125,7 +124,7 @@ namespace CodeHub.Core.ViewModels.Source
                 {
                     if (MarkdownExtensions.Any(Path.EndsWith))
                     {
-                        var renderedContent = await applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFileRendered(Path, Branch);
+                        var renderedContent = await sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFileRendered(Path, Branch);
                         using (var stringWriter = new StreamWriter(stream))
                         {
                             await stringWriter.WriteAsync(renderedContent);
@@ -135,13 +134,13 @@ namespace CodeHub.Core.ViewModels.Source
                     {
                         if (string.IsNullOrEmpty(GitUrl) || string.IsNullOrEmpty(HtmlUrl))
                         {
-                            var req = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(Path, Branch);
-                            var data = (await applicationService.Client.ExecuteAsync(req)).Data;
+                            var req = sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(Path, Branch);
+                            var data = (await sessionService.Client.ExecuteAsync(req)).Data;
                             GitUrl = data.GitUrl;
                             HtmlUrl = data.HtmlUrl;
                         }
 
-                        var mime = await applicationService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
+                        var mime = await sessionService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
                         isBinary = !(mime ?? string.Empty).Contains("charset");
                     }
                 }

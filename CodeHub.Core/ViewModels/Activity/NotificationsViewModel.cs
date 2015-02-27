@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Activity
         private const int AllFilter = 2;
 
         private readonly ReactiveList<Octokit.Notification> _notifications = new ReactiveList<Octokit.Notification>(); 
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private IList<NotificationGroupViewModel> _groupedNotifications;
         public IList<NotificationGroupViewModel> GroupedNotifications
@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public IReactiveCommand<object> ReadSelectedCommand { get; private set; }
 
-        public NotificationsViewModel(IApplicationService applicationService)
+        public NotificationsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Title = "Notifications";

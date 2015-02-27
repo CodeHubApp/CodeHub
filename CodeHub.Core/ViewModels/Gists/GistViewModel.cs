@@ -53,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
-        public GistViewModel(IApplicationService applicationService, 
+        public GistViewModel(ISessionService applicationService, 
             IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory) 
         {
             Comments = new ReactiveList<GistCommentModel>();

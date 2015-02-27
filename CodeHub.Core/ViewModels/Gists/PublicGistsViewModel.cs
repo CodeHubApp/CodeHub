@@ -4,9 +4,9 @@ namespace CodeHub.Core.ViewModels.Gists
 {
     public class PublicGistsViewModel : BaseGistsViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
-        public PublicGistsViewModel(IApplicationService applicationService)
+        public PublicGistsViewModel(ISessionService applicationService)
         {
             _applicationService = applicationService;
             Title = "Public Gists";

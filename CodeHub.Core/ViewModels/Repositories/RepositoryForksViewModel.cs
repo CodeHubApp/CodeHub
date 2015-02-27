@@ -4,13 +4,13 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryForksViewModel : BaseRepositoriesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-        public RepositoryForksViewModel(IApplicationService applicationService)
+        public RepositoryForksViewModel(ISessionService applicationService)
             : base(applicationService)
         {
             _applicationService = applicationService;

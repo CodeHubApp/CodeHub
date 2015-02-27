@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Activity
     {
         public string Username { get; set; }
 
-        public UserEventsViewModel(IApplicationService applicationService)
+        public UserEventsViewModel(ISessionService applicationService)
             : base(applicationService)
         {
         }

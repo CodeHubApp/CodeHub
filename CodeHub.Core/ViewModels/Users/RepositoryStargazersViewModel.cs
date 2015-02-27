@@ -4,13 +4,13 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class RepositoryStargazersViewModel : BaseUsersViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
 
-	    public RepositoryStargazersViewModel(IApplicationService applicationService)
+	    public RepositoryStargazersViewModel(ISessionService applicationService)
 	    {
             _applicationService = applicationService;
             Title = "Stargazers";

@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
-        public OrganizationViewModel(IApplicationService applicationService)
+        public OrganizationViewModel(ISessionService applicationService)
         {
             this.WhenAnyValue(x => x.Organization, x => x.Username, 
                 (x, y) => x == null ? y : (string.IsNullOrEmpty(x.Name) ? x.Login : x.Name))

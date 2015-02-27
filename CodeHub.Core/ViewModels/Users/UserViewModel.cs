@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class UserViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
 
         private string _username;
         public string Username 
@@ -74,7 +74,7 @@ namespace CodeHub.Core.ViewModels.Users
 			IsFollowing = !IsFollowing.Value;
 		}
 
-        public UserViewModel(IApplicationService applicationService, IActionMenuFactory actionMenuService)
+        public UserViewModel(ISessionService applicationService, IActionMenuFactory actionMenuService)
         {
             _applicationService = applicationService;
 

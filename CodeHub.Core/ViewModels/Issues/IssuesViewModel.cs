@@ -8,7 +8,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssuesViewModel : BaseIssuesViewModel
     {
-        private readonly IApplicationService _applicationService;
+        private readonly ISessionService _applicationService;
         private readonly IssuesFilterModel _openFilter = IssuesFilterModel.CreateOpenFilter();
         private readonly IssuesFilterModel _closedFilter = IssuesFilterModel.CreateClosedFilter();
         private readonly IssuesFilterModel _mineFilter;
@@ -43,7 +43,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-	    public IssuesViewModel(IApplicationService applicationService)
+	    public IssuesViewModel(ISessionService applicationService)
 	    {
             _applicationService = applicationService;
             _mineFilter = IssuesFilterModel.CreateMineFilter(applicationService.Account.Username);

@@ -8,9 +8,9 @@ namespace CodeHub.Core.Services
     public class LoginService : ILoginService
     {
         private static readonly string[] Scopes = { "user", "public_repo", "repo", "notifications", "gist" };
-        private readonly IAccountsService _accounts;
+        private readonly IAccountsRepository _accounts;
 
-        public LoginService(IAccountsService accounts)
+        public LoginService(IAccountsRepository accounts)
         {
             _accounts = accounts;
         }
