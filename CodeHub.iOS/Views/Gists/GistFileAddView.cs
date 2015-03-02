@@ -1,5 +1,4 @@
-﻿using System;
-using CodeHub.Core.ViewModels.Gists;
+﻿using CodeHub.Core.ViewModels.Gists;
 
 namespace CodeHub.iOS.Views.Gists
 {

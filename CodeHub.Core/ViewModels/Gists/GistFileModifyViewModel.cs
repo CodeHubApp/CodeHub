@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Gists
             var validObservable = this.WhenAnyValue(x => x.Filename, x => x.Description, (x, y) => 
                 !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y));
             SaveCommand = ReactiveCommand.CreateAsyncTask(validObservable, 
-                t => saveFunc(Tuple.Create(Filename, Description)));
+                async _ => await saveFunc(Tuple.Create(Filename, Description)));
             SaveCommand.Subscribe(_ => Dismiss());
         }
     }

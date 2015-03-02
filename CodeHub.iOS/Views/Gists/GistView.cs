@@ -139,7 +139,7 @@ namespace CodeHub.iOS.Views.Gists
                 var elements = new List<Element>();
                 foreach (var file in x.Files.Keys)
                 {
-                    var sse = new StringElement(file, x.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle);
+                    var sse = new StringElement(file);
                     sse.Image = Octicon.FileCode.ToImage();
                     sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);

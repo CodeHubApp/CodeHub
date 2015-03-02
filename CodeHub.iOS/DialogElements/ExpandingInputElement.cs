@@ -127,6 +127,19 @@ namespace CodeHub.iOS.DialogElements
                 private readonly UILabel _placeholderView = new UILabel();
                 public string Placeholder { get; set; }
 
+                public override string Text
+                {
+                    get
+                    {
+                        return base.Text;
+                    }
+                    set
+                    {
+                        base.Text = value;
+                        _placeholderView.Hidden = Text.Length > 0;
+                    }
+                }
+
                 public override UIFont Font
                 {
                     get

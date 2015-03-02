@@ -63,20 +63,19 @@ namespace CodeHub.Core.ViewModels.Gists
                 return item;
             });
 
-            SaveCommand = ReactiveCommand.CreateAsyncTask(Files.CountChanged.Select(x => x > 0),
-                async t =>
+            SaveCommand = ReactiveCommand.CreateAsyncTask(Files.CountChanged.Select(x => x > 0), async t =>
+            {
+                var createGist = new GistCreateModel
                 {
-                    var createGist = new GistCreateModel
-                    {
-                        Description = Description,
-                        Public = IsPublic,
-                        Files = Files.ToDictionary(x => x.Name, x => new GistCreateModel.File { Content = x.Content })
-                    };
+                    Description = Description ?? string.Empty,
+                    Public = IsPublic,
+                    Files = Files.ToDictionary(x => x.Name, x => new GistCreateModel.File { Content = x.Content })
+                };
 
-                    var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
-                    using (alertDialogFactory.Activate("Creating Gist..."))
-                        return (await _applicationService.Client.ExecuteAsync(request)).Data;
-                });
+                var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
+                using (alertDialogFactory.Activate("Creating Gist..."))
+                    return (await _applicationService.Client.ExecuteAsync(request)).Data;
+            });
             SaveCommand.Subscribe(_ => Dismiss());
 
             AddGistFileCommand = ReactiveCommand.Create()

@@ -49,11 +49,6 @@ namespace CodeHub.iOS.Views.Gists
             TableView.TableFooterView = new UIView();
         }
 
-        private void PresentFileEditor()
-        {
-
-        }
-
         private class EditSource : DialogTableViewSource
         {
             private readonly GistCreateView _parent;
@@ -92,7 +87,7 @@ namespace CodeHub.iOS.Views.Gists
             public GistFileItemViewModel ViewModel { get; private set; }
 
             public FileElement(GistFileItemViewModel vm) 
-                : base(vm.Name, vm.Size + " bytes", UITableViewCellStyle.Subtitle)
+                : base(vm.Name)
             {
                 Image = Octicon.FileCode.ToImage();
                 Tapped = () => vm.EditCommand.ExecuteIfCan();

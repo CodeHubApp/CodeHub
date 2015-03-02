@@ -8,8 +8,6 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public string Content { get; private set; }
 
-        public int Size { get; private set; }
-
         public IReactiveCommand<object> EditCommand { get; private set; }
 
         public IReactiveCommand<object> DeleteCommand { get; private set; }
@@ -20,7 +18,6 @@ namespace CodeHub.Core.ViewModels.Gists
             Content = content;
             EditCommand = ReactiveCommand.Create();
             DeleteCommand = ReactiveCommand.Create();
-            Size = System.Text.Encoding.UTF8.GetByteCount(content);
         }
     }
 }

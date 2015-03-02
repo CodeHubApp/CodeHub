@@ -60,7 +60,7 @@ namespace CodeHub.Core.Services
 
             // Decorate the HttpClient
             IHttpClient httpClient = new OctokitModernHttpClient();
-            httpClient = new OctokitCacheClient(httpClient);
+            //httpClient = new OctokitCacheClient(httpClient);
             httpClient = new OctokitNetworkClient(httpClient, Locator.Current.GetService<INetworkActivityService>());
 
             var connection = new Connection(

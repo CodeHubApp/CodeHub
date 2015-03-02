@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels
     {
         public IReactiveCommand<string> PostToImgurCommand { get; private set; }
 
-        protected MarkdownAccessoryViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
+        public MarkdownAccessoryViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
         {
             PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
