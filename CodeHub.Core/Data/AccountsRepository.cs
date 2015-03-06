@@ -24,10 +24,20 @@ namespace CodeHub.Core.Data
             return Task.FromResult(0);
         }
 
-        public Task<GitHubAccount> GetDefault()
+        public async Task<GitHubAccount> GetDefault()
         {
             string id;
-            return !_defaults.TryGet("DEFAULT_ACCOUNT", out id) ? null : Find(id);
+            if (!_defaults.TryGet("DEFAULT_ACCOUNT", out id))
+                return null;
+
+            try
+            {
+                return await Find(id);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Task Insert(GitHubAccount account)

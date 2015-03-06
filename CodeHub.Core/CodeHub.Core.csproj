@@ -250,9 +250,6 @@
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.dll</HintPath>
     </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.33.7\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.1\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
     </Reference>
@@ -273,6 +270,9 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.7.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.34.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
