@@ -373,6 +373,7 @@
     <Compile Include="Views\Gists\GistFileAddView.cs" />
     <Compile Include="Views\Gists\GistFileEditView.cs" />
     <Compile Include="Views\IModalView.cs" />
+    <InterfaceDefinition Include="Launch.storyboard" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -459,13 +460,6 @@
     </Content>
     <Content Include="Images\Buttons\view.png" />
     <Content Include="Images\Logos\github.png" />
-    <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\Default-Landscape.png" />
-    <BundleResource Include="Resources\Default-Landscape%402x.png" />
-    <BundleResource Include="Resources\Default-Portrait.png" />
-    <BundleResource Include="Resources\Default-Portrait%402x.png" />
-    <BundleResource Include="Resources\Default.png" />
-    <BundleResource Include="Resources\Default%402x.png" />
     <BundleResource Include="Resources\Icon-72.png" />
     <BundleResource Include="Resources\Icon-72%402x.png" />
     <BundleResource Include="Resources\Icon-Small-50.png" />
@@ -693,6 +687,7 @@
     <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
       <Link>octicons.ttf</Link>
     </BundleResource>
+    <BundleResource Include="CodeHubLaunch.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

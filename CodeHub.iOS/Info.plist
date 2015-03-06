@@ -75,5 +75,7 @@
 	<array>
 		<string>octicons.ttf</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch</string>
 </dict>
 </plist>

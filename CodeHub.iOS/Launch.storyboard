@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4443" systemVersion="13A451" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="5">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733.0"/>
+    </dependencies>
+    <scenes>
+        <scene sceneID="4">
+            <objects>
+                <viewController id="5" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="2"/>
+                        <viewControllerLayoutGuide type="bottom" id="3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" customColorSpace="calibratedWhite" colorSpace="calibratedRGB" red="0.8666666666666667" green="0.8666666666666667" blue="0.8666666666666667" alpha="1"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" id="9" translatesAutoresizingMaskIntoConstraints="NO" image="CodeHubLaunch.png" misplaced="YES">
+                                <rect key="frame" x="53" y="169" width="214" height="279"/>
+                                <constraints>
+                                    <constraint id="18" firstItem="9" firstAttribute="width" constant="214"/>
+                                    <constraint id="20" firstItem="9" firstAttribute="height" constant="279"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="9" firstAttribute="centerY" secondItem="6" secondAttribute="centerY" constant="0.0" id="16"/>
+                            <constraint firstItem="9" firstAttribute="centerX" secondItem="6" secondAttribute="centerX" constant="0.0" id="17"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="420" y="77"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+    <resources>
+        <image name="Images/anonymous.png" width="32" height="32"/>
+        <image name="Images/bin_closed.png" width="16" height="16"/>
+        <image name="Images/branch.png" width="16" height="16"/>
+        <image name="Images/Buttons/black_button.png" width="36" height="36"/>
+        <image name="Images/Buttons/fork.png" width="21" height="24"/>
+        <image name="Images/Buttons/grey_button.png" width="36" height="36"/>
+        <image name="Images/Buttons/save.png" width="24" height="24"/>
+        <image name="Images/Buttons/view.png" width="30" height="30"/>
+        <image name="Images/cog.png" width="16" height="16"/>
+        <image name="Images/comments.png" width="16" height="16"/>
+        <image name="Images/commit.png" width="16" height="16"/>
+        <image name="Images/create.png" width="16" height="16"/>
+        <image name="Images/events.png" width="16" height="16"/>
+        <image name="Images/explore.png" width="16" height="16"/>
+        <image name="Images/eye.png" width="16" height="16"/>
+        <image name="Images/file.png" width="16" height="16"/>
+        <image name="Images/flag.png" width="16" height="16"/>
+        <image name="Images/folder.png" width="16" height="16"/>
+        <image name="Images/following.png" width="16" height="16"/>
+        <image name="Images/fork.png" width="16" height="16"/>
+        <image name="Images/Gist/share.png" width="24" height="24"/>
+        <image name="Images/Gist/star.png" width="24" height="24"/>
+        <image name="Images/Gist/star_highlighted.png" width="24" height="24"/>
+        <image name="Images/Gist/user.png" width="24" height="24"/>
+        <image name="Images/group.png" width="16" height="16"/>
+        <image name="Images/hand.png" width="16" height="16"/>
+        <image name="Images/heart.png" width="16" height="16"/>
+        <image name="Images/info.png" width="16" height="16"/>
+        <image name="Images/language.png" width="16" height="16"/>
+        <image name="Images/locked.png" width="16" height="16"/>
+        <image name="Images/Logos/github.png" width="800" height="209"/>
+        <image name="Images/merge.png" width="16" height="16"/>
+        <image name="Images/milestone.png" width="16" height="16"/>
+        <image name="Images/news.png" width="16" height="16"/>
+        <image name="Images/notifications.png" width="16" height="16"/>
+        <image name="Images/pencil.png" width="16" height="16"/>
+        <image name="Images/person.png" width="16" height="16"/>
+        <image name="Images/priority.png" width="16" height="16"/>
+        <image name="Images/public.png" width="16" height="16"/>
+        <image name="Images/repo.png" width="16" height="16"/>
+        <image name="Images/repository.png" width="72" height="72"/>
+        <image name="Images/repository_fork.png" width="72" height="72"/>
+        <image name="Images/script.png" width="16" height="16"/>
+        <image name="Images/size.png" width="16" height="16"/>
+        <image name="Images/star.png" width="16" height="16"/>
+        <image name="Images/star2.png" width="16" height="16"/>
+        <image name="Images/tag.png" width="16" height="16"/>
+        <image name="Images/team.png" width="16" height="16"/>
+        <image name="Images/unlocked.png" width="16" height="16"/>
+        <image name="Images/user.png" width="16" height="16"/>
+        <image name="Images/webpage.png" width="16" height="16"/>
+        <image name="Default-568h.png" width="640" height="1136"/>
+        <image name="Default-Landscape.png" width="1024" height="768"/>
+        <image name="Default-Portrait.png" width="768" height="1024"/>
+        <image name="Default.png" width="320" height="480"/>
+        <image name="Icon-72.png" width="72" height="72"/>
+        <image name="Icon-Small-50.png" width="50" height="50"/>
+        <image name="Icon-Small.png" width="29" height="29"/>
+        <image name="Icon.png" width="57" height="57"/>
+        <image name="iTunesArtwork.png" width="512" height="512"/>
+        <image name="Images/Web/back.png" width="32" height="32"/>
+        <image name="Images/Web/forward.png" width="32" height="32"/>
+        <image name="Images/Buttons/back.png" width="32" height="24"/>
+        <image name="Images/Buttons/cancel.png" width="22" height="22"/>
+        <image name="Images/Buttons/three_lines.png" width="24" height="24"/>
+        <image name="Images/Buttons/sort.png" width="24" height="24"/>
+        <image name="Icon-60.png" width="120" height="120"/>
+        <image name="Icon-76.png" width="76" height="76"/>
+        <image name="Icon-Small-40.png" width="40" height="40"/>
+        <image name="Images/chart.png" width="16" height="16"/>
+        <image name="Images/MarkdownComposer/link.png" width="25" height="25"/>
+        <image name="Images/MarkdownComposer/photo.png" width="25" height="25"/>
+        <image name="Images/MarkdownComposer/picture.png" width="25" height="25"/>
+        <image name="Images/login_user_unknown.png" width="128" height="128"/>
+        <image name="Images/enterprise.png" width="512" height="512"/>
+        <image name="CodeHubLaunch.png" width="320" height="423"/>
+    </resources>
+</document>
