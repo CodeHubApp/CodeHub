@@ -103,6 +103,7 @@ namespace CodeHub.iOS.Views
         {
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
             var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
+            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
 
             if (iLoadableViewModel == null)
                 return;
@@ -168,9 +169,14 @@ namespace CodeHub.iOS.Views
                 }
 
                 var iSourceInformsEmpty = TableView.Source as IInformsEmpty;
+
                 if (iSourceInformsEmpty != null)
                 {
-                    d(iSourceInformsEmpty.IsEmpty.CombineLatest(iLoadableViewModel.LoadCommand.IsExecuting, (x, y) => x && !y)
+                    var isEmpty = iSourceInformsEmpty.IsEmpty;
+                    var isExecuting = iLoadableViewModel == null ? Observable.Return(false) : iLoadableViewModel.LoadCommand.IsExecuting;
+                    var isSearching = searchableViewModel == null ? Observable.Return(false) : searchableViewModel.WhenAnyValue(x => x.SearchKeyword).Select(x => !string.IsNullOrEmpty(x));
+
+                    d(isEmpty.CombineLatest(isExecuting, isSearching, (x, y, z) => x && !y && !z)
                         .Where(_ => EmptyView != null)
                         .Subscribe(x => 
                         {
