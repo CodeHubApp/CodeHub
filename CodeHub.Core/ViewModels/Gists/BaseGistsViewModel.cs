@@ -5,12 +5,12 @@ using System.Linq;
 using GitHubSharp;
 using System.Collections.Generic;
 using System.Reactive;
-using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel
     {
+        protected ReactiveList<GistModel> InternalGists { get; private set; }
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
 
         private string _searchKeyword;
@@ -31,15 +31,15 @@ namespace CodeHub.Core.ViewModels.Gists
 
         protected BaseGistsViewModel()
         {
-            var gists = new ReactiveList<GistModel>();
-            Gists = gists.CreateDerivedCollection(
+            InternalGists = new ReactiveList<GistModel>();
+            Gists = InternalGists.CreateDerivedCollection(
                 x => CreateGistItemViewModel(x),
                 filter: x => x.Description.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                await gists.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                await InternalGists.SimpleCollectionLoad(CreateRequest(), t as bool?, 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
         }

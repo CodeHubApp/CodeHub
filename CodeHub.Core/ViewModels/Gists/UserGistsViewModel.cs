@@ -1,6 +1,7 @@
 ﻿using System;
 using CodeHub.Core.Services;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -31,6 +32,10 @@ namespace CodeHub.Core.ViewModels.Gists
             GoToCreateGistCommand.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<GistCreateViewModel>();
+                vm.SaveCommand
+                    .Delay(TimeSpan.FromMilliseconds(200))
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(x => InternalGists.Insert(0, x));
                 NavigateTo(vm);
             });
 

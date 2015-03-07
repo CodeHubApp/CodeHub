@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Source
 
             this.WhenAnyValue(x => x.ViewModel.OpenWithCommand)
                 .Switch()
-                .Subscribe(_ =>
+                .SubscribeSafe(_ =>
                 {
                     UIDocumentInteractionController ctrl = UIDocumentInteractionController.FromUrl(new NSUrl(ViewModel.SourceItem.FileUri.AbsoluteUri));
                     ctrl.Delegate = new UIDocumentInteractionControllerDelegate();
