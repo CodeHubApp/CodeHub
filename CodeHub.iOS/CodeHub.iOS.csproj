@@ -141,7 +141,6 @@
     <Compile Include="Views\Gists\PublicGistsView.cs" />
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
-    <Compile Include="Views\Gists\EditGistController.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
@@ -374,6 +373,8 @@
     <Compile Include="Views\Gists\GistFileEditView.cs" />
     <Compile Include="Views\IModalView.cs" />
     <InterfaceDefinition Include="Launch.storyboard" />
+    <Compile Include="Views\Gists\GistModifyView.cs" />
+    <Compile Include="Views\Gists\GistEditView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

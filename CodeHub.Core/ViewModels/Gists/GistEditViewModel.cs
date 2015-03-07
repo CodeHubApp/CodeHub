@@ -1,86 +1,61 @@
+using System;
+using CodeHub.Core.Services;
+using GitHubSharp.Models;
+using System.Linq;
+using CodeHub.Core.Factories;
 using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistEditViewModel : BaseViewModel
+    public class GistEditViewModel : GistModifyViewModel
     {
-        public IReactiveCommand SaveCommand { get; private set; }
+        private readonly ISessionService _sessionService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
 
-        public IReactiveCommand GoToDescriptionCommand { get; private set; }
-
-        public IReactiveCommand<object> DismissCommand { get; private set; }
-
-        public GistEditViewModel()
+        private GistModel  _gist;
+        public GistModel Gist
         {
-            Title = "Edit Gist";
-
-            SaveCommand = ReactiveCommand.Create();
-            DismissCommand = ReactiveCommand.Create();
-
-            GoToDescriptionCommand = ReactiveCommand.Create();
+            get { return _gist; }
+            set { this.RaiseAndSetIfChanged(ref _gist, value); }
         }
 
+        public GistEditViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
+        {
+            _sessionService = sessionService;
+            _alertDialogFactory = alertDialogFactory;
 
-//        public async Task Edit(GistEditModel editModel)
-//        {
-//            var response = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Gists[Id].EditGist(editModel));
-//            Gist = response.Data;
-//        }
-//
+            Title = "Edit Gist";
 
-//        protected virtual void Save()
-//        {
-//            if (_model.Files.Count(x => x.Value != null) == 0)
-//            {
-//                MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
-//                return;
-//            }
-//
-//            this.DoWorkAsync("Saving...", async () =>
-//            {
-//                var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-//                var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
-//                if (Created != null)
-//                    Created(newGist.Data);
-//                DismissViewController(true, null);
-//            });
-//        }
-//
-//        private bool IsDuplicateName(string name)
-//        {
-//            if (_model.Files.Count(x => x.Key.Equals(name) && x.Value != null) > 0)
-//                return true;
-//            return _model.Files.Count(x => x.Value != null && name.Equals(x.Value.Filename)) > 0;
-//        }
-//
-//        int _gistFileCounter = 0;
-//        private string GenerateName()
-//        {
-//            var name = string.Empty;
-//            //Keep trying until we get a valid filename
-//            while (true)
-//            {
-//                name = "gistfile" + (++_gistFileCounter) + ".txt";
-//                if (IsDuplicateName(name))
-//                    continue;
-//                break;
-//            }
-//            return name;
-//        }
-//
-//        private void AddFile()
-//        {
-//            var createController = new ModifyGistFileController();
-//            createController.Save = (name, content) =>
-//            {
-//                if (string.IsNullOrEmpty(name))
-//                    name = GenerateName();
-//
-//                if (IsDuplicateName(name))
-//                    throw new InvalidOperationException("A filename by that type already exists");
-//                _model.Files[name] = new GistEditModel.File { Content = content };
-//            };
-//            NavigationController.PushViewController(createController, true);
-//        }
+            this.WhenAnyValue(x => x.Gist)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    Description = x.Description;
+                    foreach (var file in x.Files)
+                        InternalFiles.Add(Tuple.Create(file.Key, file.Value.Content));
+                });
+        }
+
+        protected override async System.Threading.Tasks.Task<GistModel> SaveGist()
+        {
+            if (Gist == null)
+                throw new InvalidOperationException("Missing Gist context to update!");
+
+            // We need to null out values that existed before but are not present in the update.
+            var files = Gist.Files.ToDictionary(x => x.Key, x => (string)null);
+            foreach (var file in Files)
+                files[file.Name] = file.Content;
+
+            var editGist = new GistEditModel
+            {
+                Description = Description ?? string.Empty,
+                Files = files.ToDictionary(x => x.Key, x => new GistEditModel.File { Content = x.Value })
+            };
+
+            var request = _sessionService.Client.Gists[Gist.Id].EditGist(editGist);
+            using (_alertDialogFactory.Activate("Updating Gist..."))
+                return (await _sessionService.Client.ExecuteAsync(request)).Data;
+        }
     }
 }

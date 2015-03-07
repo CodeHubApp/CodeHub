@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public IReactiveCommand GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToEditCommand { get; private set; }
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
@@ -103,6 +103,13 @@ namespace CodeHub.Core.ViewModels.Gists
             });
 
             GoToEditCommand = ReactiveCommand.Create();
+            GoToEditCommand.Subscribe(_ =>
+            {
+                var vm = this.CreateViewModel<GistEditViewModel>();
+                vm.Gist = Gist;
+                vm.SaveCommand.Subscribe(x => Gist = x);
+                NavigateTo(vm);
+            });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
             GoToHtmlUrlCommand.Select(_ => Gist.HtmlUrl).Subscribe(x =>
