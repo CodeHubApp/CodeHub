@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 {
                     var i = files.IndexOf(x);
                     files.Remove(x);
-                    files.Insert(i, y);
+                    files.Insert(i, Tuple.Create(y.Item1.Trim(), y.Item2));
                     return Task.FromResult(0);
                 })
                 {
@@ -69,7 +69,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 {
                     Description = Description ?? string.Empty,
                     Public = IsPublic,
-                    Files = Files.ToDictionary(x => x.Name, x => new GistCreateModel.File { Content = x.Content })
+                    Files = Files.ToDictionary(x => x.Name.Trim(), x => new GistCreateModel.File { Content = x.Content })
                 };
 
                 var request = _applicationService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
@@ -83,7 +83,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 {
                     if (Files.Any(y => y.Name == x.Item1))
                         throw new Exception("Gist already contains a file with that name!");
-                    files.Add(x);
+                    files.Add(Tuple.Create(x.Item1.Trim(), x.Item2));
                     return Task.FromResult(0);
                 })));
         }

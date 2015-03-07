@@ -82,7 +82,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 if (MarkdownLanguage.Equals(GistFile.Language, StringComparison.OrdinalIgnoreCase))
                     content = await applicationService.Client.Markdown.GetMarkdown(content);
 
-                var gistFileName = System.IO.Path.GetFileName(GistFile.Filename);
+                var gistFileName = System.IO.Path.GetFileName(GistFile.Filename).Trim();
                 string filePath;
                 
                 using (var stream = filesystemService.CreateTempFile(out filePath, gistFileName))
