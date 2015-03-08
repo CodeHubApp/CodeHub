@@ -41,8 +41,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _webDomain, value); }
         }
 
-        public IReactiveCommand<object> GoToOldLoginWaysCommand { get; private set; }
-
         public IReactiveCommand<GitHubAccount> LoginCommand { get; private set; }
 
         public IReactiveCommand<Unit> ShowLoginOptionsCommand { get; private set; }
@@ -66,18 +64,24 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             Title = "Login";
 
-            GoToOldLoginWaysCommand = ReactiveCommand.Create().WithSubscription(_ =>
+            var basicLogin = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<AddAccountViewModel>()));
+
+            var oauthLogin = ReactiveCommand.Create().WithSubscription(_ =>
+                NavigateTo(this.CreateViewModel<OAuthLoginViewModel>()));
 
             var canLogin = this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x));
             var loginCommand = ReactiveCommand.CreateAsyncTask(canLogin,_ => Login(Code));
             loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
 
+
+
             ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var actionMenu = actionMenuService.Create(Title);
-                actionMenu.AddButton("Login via BASIC", GoToOldLoginWaysCommand);
+                actionMenu.AddButton("Login via BASIC", basicLogin);
+                actionMenu.AddButton("Login via Token", oauthLogin);
                 return actionMenu.Show();
             });
 

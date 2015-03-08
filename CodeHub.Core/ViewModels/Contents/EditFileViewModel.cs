@@ -12,6 +12,7 @@ namespace CodeHub.Core.ViewModels.Contents
     public class EditFileViewModel : BaseViewModel, ILoadableViewModel
     {
         private readonly ISubject<ContentUpdateModel> _sourceChangedSubject = new Subject<ContentUpdateModel>();
+        private DateTime _lastLoad, _lastEdit;
 
         public string RepositoryOwner { get; set; }
 
@@ -51,6 +52,8 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
         public EditFileViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
 	    {
             Title = "Edit";
@@ -58,6 +61,9 @@ namespace CodeHub.Core.ViewModels.Contents
             this.WhenAnyValue(x => x.Path)
                 .IsNotNull()
                 .Subscribe(x => CommitMessage = "Updated " + x.Substring(x.LastIndexOf('/') + 1));
+
+            this.WhenAnyValue(x => x.Text)
+                .Subscribe(x => _lastEdit = DateTime.Now);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
     	        {
@@ -71,6 +77,7 @@ namespace CodeHub.Core.ViewModels.Contents
     			    BlobSha = data.Data.Sha;
     	            var content = Convert.FromBase64String(data.Data.Content);
                     Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
+                    _lastLoad = DateTime.Now;
     	        });
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
@@ -89,6 +96,14 @@ namespace CodeHub.Core.ViewModels.Contents
 
                 Dismiss();
             });
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                if (string.IsNullOrEmpty(Text)) return true;
+                if (_lastEdit <= _lastLoad) return true;
+                return await alertDialogFactory.PromptYesNo("Discard Edit?", "Are you sure you want to discard these changes?");
+            });
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
 	    }
     }
 }

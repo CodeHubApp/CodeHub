@@ -106,7 +106,6 @@ namespace CodeHub.iOS.Views.App
             {
                 var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
                 var rootNav = (UINavigationController)appDelegate.Window.RootViewController;
-                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => rootNav.DismissViewController(true, null));
                 viewModel.RequestDismiss.Subscribe(_ => rootNav.DismissViewController(true, null));
                 rootNav.PresentViewController(new ThemedNavigationController(view), true, null);
             }

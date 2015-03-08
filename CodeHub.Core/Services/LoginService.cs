@@ -35,9 +35,9 @@ namespace CodeHub.Core.Services
 			client.Username = username;
 
             if (exists)
-                _accounts.Update(account);
+                await _accounts.Update(account);
             else
-                _accounts.Insert(account);
+                await _accounts.Insert(account);
 			return new LoginData { Client = client, Account = account };
         }
 
@@ -61,7 +61,7 @@ namespace CodeHub.Core.Services
             account.Email = userInfo.Email;
             account.AvatarUrl = userInfo.AvatarUrl;
 			client.Username = userInfo.Login;
-            _accounts.Update(account);
+            await _accounts.Update(account);
             return client;
         }
 
@@ -107,9 +107,9 @@ namespace CodeHub.Core.Services
                 account.AvatarUrl = userInfo.AvatarUrl;
 
                 if (exists)
-                    _accounts.Update(account);
+                    await _accounts.Update(account);
                 else
-                    _accounts.Insert(account);
+                    await _accounts.Insert(account);
 
 				return new LoginData { Client = client, Account = account };
             }
@@ -120,6 +120,38 @@ namespace CodeHub.Core.Services
                     throw new TwoFactorRequiredException();
                 throw new Exception("Unable to login as user " + user + ". Please check your credentials and try again.");
             }
+        }
+
+
+        public async Task<GitHubAccount> Authenticate(string apiDomain, string webDomain, string token, bool enterprise)
+        {
+            //Make some valid checks
+            if (string.IsNullOrEmpty(token))
+                throw new ArgumentException("Token is invalid");
+            if (apiDomain != null && !Uri.IsWellFormedUriString(apiDomain, UriKind.Absolute))
+                throw new ArgumentException("API Domain is invalid");
+            if (webDomain != null && !Uri.IsWellFormedUriString(webDomain, UriKind.Absolute))
+                throw new ArgumentException("Web Domain is invalid");
+
+            var client = Client.BasicOAuth(token, apiDomain);
+            var userInfo = (await client.ExecuteAsync(client.AuthenticatedUser.GetInfo())).Data;
+
+            GitHubAccount account;
+            try { account = await _accounts.Find(apiDomain, userInfo.Login); }
+            catch { account = new GitHubAccount(); }
+
+            account.Username = userInfo.Login;
+            account.Domain = apiDomain;
+            account.WebDomain = webDomain;
+            account.IsEnterprise = enterprise;
+            account.OAuth = token;
+            account.Username = userInfo.Login;
+            account.Name = userInfo.Name;
+            account.Email = userInfo.Email;
+            account.AvatarUrl = userInfo.AvatarUrl;
+
+            await _accounts.Insert(account);
+            return account;
         }
 
         /// <summary>

@@ -1,6 +1,8 @@
-﻿using CodeHub.Core.Services;
+﻿using System;
+using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using System.Linq;
+using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Core.Factories;
 
@@ -25,6 +27,13 @@ namespace CodeHub.Core.ViewModels.Gists
 
             Title = "Create Gist";
             IsPublic = true;
+        }
+
+        protected override async System.Threading.Tasks.Task<bool> Discard()
+        {
+            if (string.IsNullOrEmpty(Description) && Files.Count == 0)
+                return true;
+            return await _alertDialogFactory.PromptYesNo("Discard Gist?", "Are you sure you want to discard this gist?");
         }
 
         protected override async System.Threading.Tasks.Task<GistModel> SaveGist()

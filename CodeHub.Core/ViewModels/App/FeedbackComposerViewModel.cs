@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
+using Humanizer;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -45,7 +46,9 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReactiveCommand<Unit> SubmitCommand { get; private set; }
 
-        public FeedbackComposerViewModel(ISessionService applicationService)
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
+        public FeedbackComposerViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
         {
             this.WhenAnyValue(x => x.IsFeature).Subscribe(x => Title = x ? "New Feature" : "Bug Report");
 
@@ -67,6 +70,15 @@ namespace CodeHub.Core.ViewModels.App
                 _createdIssueSubject.OnNext(createdIssue);
                 Dismiss();
             });
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                if (string.IsNullOrEmpty(Description) && string.IsNullOrEmpty(Subject))
+                    return true;
+                var itemType = IsFeature ? "feature" : "bug";
+                return await alertDialogFactory.PromptYesNo("Discard " + itemType.Transform(To.TitleCase) + "?", "Are you sure you want to discard this " + itemType + "?");
+            });
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
     }
 }

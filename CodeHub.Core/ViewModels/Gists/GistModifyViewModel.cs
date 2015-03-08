@@ -25,6 +25,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<GistModel> SaveCommand { get; private set; }
 
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
         protected GistModifyViewModel()
         {
             Files = InternalFiles.CreateDerivedCollection(x => 
@@ -59,9 +61,14 @@ namespace CodeHub.Core.ViewModels.Gists
                 InternalFiles.Add(Tuple.Create(x.Item1.Trim(), x.Item2));
                 return Task.FromResult(0);
             })));
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(t => Discard());
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
 
         protected abstract Task<GistModel> SaveGist();
+
+        protected abstract Task<bool> Discard();
     }
 }
 

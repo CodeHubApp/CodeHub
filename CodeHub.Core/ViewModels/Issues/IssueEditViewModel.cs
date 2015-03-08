@@ -11,7 +11,8 @@ namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueEditViewModel : IssueModifyViewModel
     {
-	    private readonly ISessionService _applicationService;
+        private readonly ISessionService _applicationService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
 	    private IssueModel _issue;
 		private bool _open;
 
@@ -37,6 +38,7 @@ namespace CodeHub.Core.ViewModels.Issues
             : base(applicationService, alertDialogFactory)
 	    {
 	        _applicationService = applicationService;
+            _alertDialogFactory = alertDialogFactory;
 
             Title = "Edit Issue";
 
@@ -64,6 +66,11 @@ namespace CodeHub.Core.ViewModels.Issues
 	        });
 	    }
 
+        protected override async Task<bool> Discard()
+        {
+            if (string.IsNullOrEmpty(Subject) && string.IsNullOrEmpty(Content)) return true;
+            return await _alertDialogFactory.PromptYesNo("Discard Issue?", "Are you sure you want to discard this issue?");
+        }
 	    protected override async Task Save()
 		{
 //            if (string.IsNullOrEmpty(Title))

@@ -25,6 +25,10 @@ namespace CodeHub.iOS.Views.Gists
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+
             this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
             _descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = _descriptionElement.Value;
 

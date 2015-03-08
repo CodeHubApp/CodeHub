@@ -1,7 +1,6 @@
 using System;
 using UIKit;
 using ReactiveUI;
-using Xamarin.Utilities.Images;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using SDWebImage;
@@ -68,15 +67,6 @@ namespace CodeHub.iOS.Views.App
             _imgView.Frame = new CoreGraphics.CGRect(View.Bounds.Width / 2 - ImageSize / 2, View.Bounds.Height / 2 - ImageSize / 2 - 30f, ImageSize, ImageSize);
             _statusLabel.Frame = new CoreGraphics.CGRect(0, _imgView.Frame.Bottom + 10f, View.Bounds.Width, 15f);
             _activityView.Center = new CoreGraphics.CGPoint(View.Bounds.Width / 2, _statusLabel.Frame.Bottom + 16f + 16F);
-
-            try
-            {
-                View.BackgroundColor = BackgroundHelper.CreateRepeatingBackground();
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("Unable to produce background color for StartupView: {0}", e.Message);
-            }
         }
 
         public override void ViewDidLoad()
@@ -90,6 +80,8 @@ namespace CodeHub.iOS.Views.App
 
             Add(_statusLabel);
             Add(_activityView);
+
+            View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
 
             this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Subscribe(x =>
             {

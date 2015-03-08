@@ -3,6 +3,7 @@ using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Contents
 {
@@ -45,7 +46,9 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public CreateFileViewModel(ISessionService applicationService)
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
+        public CreateFileViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
         {
             Path = "/";
             Branch = "master";
@@ -71,6 +74,13 @@ namespace CodeHub.Core.ViewModels.Contents
                 await applicationService.Client.ExecuteAsync(request);
                 Dismiss();
             });
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                if (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Content)) return true;
+                return await alertDialogFactory.PromptYesNo("Discard File?", "Are you sure you want to discard this file?");
+            });
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
     }
 }

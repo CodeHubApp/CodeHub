@@ -19,7 +19,9 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<GitHubSharp.Models.GistCommentModel> SaveCommand { get; protected set; }
 
-        public GistCommentViewModel(ISessionService applicationService) 
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
+        public GistCommentViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
@@ -30,6 +32,14 @@ namespace CodeHub.Core.ViewModels.Gists
                     return (await applicationService.Client.ExecuteAsync(request)).Data;
                 });
             SaveCommand.Subscribe(x => Dismiss());
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
+            {
+                if (string.IsNullOrEmpty(Text))
+                    return true;
+                return await alertDialogFactory.PromptYesNo("Discard Comment?", "Are you sure you want to discard this comment?");
+            });
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
     }
 }

@@ -17,6 +17,10 @@ namespace CodeHub.iOS.Views.Contents
             this.WhenAnyValue(x => x.ViewModel.Text).IsNotNull().Take(1).Subscribe(x => Text = x);
             this.WhenAnyValue(x => x.ViewModel.Text).IsNotNull().Skip(1).Where(x => !string.Equals(x, TextView.Text)).Subscribe(x => TextView.Text = x);
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, PromptForCommitMessage);
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
 		}
 
         private void PromptForCommitMessage(object sender, EventArgs args)

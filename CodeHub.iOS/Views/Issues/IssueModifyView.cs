@@ -10,7 +10,8 @@ using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel>, IModalView where TViewModel : IssueModifyViewModel
+    public abstract class IssueModifyView<TViewModel> : BaseTableViewController<TViewModel>, IModalView 
+        where TViewModel : IssueModifyViewModel
     {
         private readonly DummyInputElement _titleElement = new DummyInputElement("Name");
         private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");
@@ -62,6 +63,10 @@ namespace CodeHub.iOS.Views.Issues
                 .Select(x => ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => _labelsElement.Value = x);
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
         }
 
         protected override void LoadViewModel()

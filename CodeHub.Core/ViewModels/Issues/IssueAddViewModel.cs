@@ -14,6 +14,7 @@ namespace CodeHub.Core.ViewModels.Issues
 	{
         private readonly Subject<IssueModel> _createdIssueSubject = new Subject<IssueModel>();
 	    private readonly ISessionService _applicationService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
 
         public IObservable<IssueModel> CreatedIssue
         {
@@ -22,10 +23,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueAddViewModel(
             ISessionService applicationService, 
-            IAlertDialogFactory statusIndicatorService)
-            : base(applicationService, statusIndicatorService)
+            IAlertDialogFactory alertDialogService)
+            : base(applicationService, alertDialogService)
         {
             _applicationService = applicationService;
+            _alertDialogFactory = alertDialogService;
             Title = "New Issue";
         }
 
@@ -46,6 +48,12 @@ namespace CodeHub.Core.ViewModels.Issues
                 throw new Exception("Unable to save new issue! Please try again.", e);
 			}
 		}
+
+        protected override async Task<bool> Discard()
+        {
+            if (string.IsNullOrEmpty(Subject) && string.IsNullOrEmpty(Content)) return true;
+            return await _alertDialogFactory.PromptYesNo("Discard Issue?", "Are you sure you want to discard this issue?");
+        }
     }
 }
 

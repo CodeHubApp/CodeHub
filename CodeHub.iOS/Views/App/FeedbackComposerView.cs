@@ -5,6 +5,7 @@ using CodeHub.iOS.ViewComponents;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -33,6 +34,10 @@ namespace CodeHub.iOS.Views.App
 
                 x.CanExecuteObservable.Subscribe(y => NavigationItem.RightBarButtonItem.Enabled = y);
             });
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
         }
 
         public override void ViewDidLoad()

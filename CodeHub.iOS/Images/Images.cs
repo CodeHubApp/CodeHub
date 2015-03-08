@@ -20,7 +20,7 @@ namespace CodeHub.iOS
 
         public static class Logos
         {
-            public static UIImage GitHub { get { return UIImage.FromFile("Images/Logos/github.png"); } }
+            public static UIImage GitHub { get { return UIImage.FromFile("Images/github.png"); } }
 
             public static UIImage Enterprise { get { return UIImage.FromFile("Images/enterprise.png"); } }
         }

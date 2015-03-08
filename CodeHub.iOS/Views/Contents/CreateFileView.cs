@@ -31,6 +31,10 @@ namespace CodeHub.iOS.Views.Contents
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, PromptForCommitMessage);
             this.WhenAnyValue(x => x.ViewModel.CanCommit).Subscribe(x => NavigationItem.RightBarButtonItem.Enabled = x);
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
         }
 
         public override void ViewDidLoad()

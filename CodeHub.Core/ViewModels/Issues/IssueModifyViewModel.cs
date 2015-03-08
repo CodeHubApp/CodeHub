@@ -70,6 +70,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
+        public IReactiveCommand<bool> DismissCommand { get; private set; }
+
         protected IssueModifyViewModel(
             ISessionService applicationService, 
             IAlertDialogFactory alertDialogFactory)
@@ -129,9 +131,14 @@ namespace CodeHub.Core.ViewModels.Issues
                     IsCollaborator = false;
                 }
             });
+
+            DismissCommand = ReactiveCommand.CreateAsyncTask(t => Discard());
+            DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
 	    }
 
 		protected abstract Task Save();
+
+        protected abstract Task<bool> Discard();
     }
 }
 

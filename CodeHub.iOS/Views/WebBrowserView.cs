@@ -39,6 +39,8 @@ namespace CodeHub.iOS.Views
         public WebBrowserView(bool navigationToolbar, bool showPageAsTitle = false)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
+
             Web = new UIWebView {ScalesPageToFit = true};
             Web.LoadFinished += OnLoadFinished;
             Web.LoadStarted += OnLoadStarted;

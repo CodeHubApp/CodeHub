@@ -81,7 +81,6 @@ namespace CodeHub.iOS.Views
         {
             if (view is IModalView)
             {
-                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
                 PresentViewController(new ThemedNavigationController(view), true, null);
                 viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
             }

@@ -308,7 +308,6 @@
     <Compile Include="Factories\Registrations.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="XCallback\XCallbackProvider.cs" />
-    <Compile Include="Images\BackgroundHelper.cs" />
     <Compile Include="Images\UIImageHelper.cs" />
     <Compile Include="Views\WebBrowserView.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
@@ -375,6 +374,12 @@
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\Gists\GistModifyView.cs" />
     <Compile Include="Views\Gists\GistEditView.cs" />
+    <Compile Include="Views\Accounts\OAuthLoginView.cs" />
+    <Compile Include="Views\Accounts\OAuthLoginView.designer.cs">
+      <DependentUpon>OAuthLoginView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Views\Accounts\OAuthLoginView.xib" />
+    <Compile Include="Views\BaseViewControllerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -460,7 +465,6 @@
       <DependentUpon>view.png</DependentUpon>
     </Content>
     <Content Include="Images\Buttons\view.png" />
-    <Content Include="Images\Logos\github.png" />
     <BundleResource Include="Resources\Icon-72.png" />
     <BundleResource Include="Resources\Icon-72%402x.png" />
     <BundleResource Include="Resources\Icon-Small-50.png" />
@@ -689,6 +693,7 @@
       <Link>octicons.ttf</Link>
     </BundleResource>
     <BundleResource Include="CodeHubLaunch.png" />
+    <Content Include="Images\github.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

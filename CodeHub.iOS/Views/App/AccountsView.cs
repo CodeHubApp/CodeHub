@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class AccountsView : BaseTableViewController<AccountsViewModel>
+    public class AccountsView : BaseTableViewController<AccountsViewModel>, IModalView
 	{
         public AccountsView()
         {

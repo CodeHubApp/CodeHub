@@ -129,9 +129,6 @@ namespace CodeHub.iOS.Views.Accounts
         {
             if (IsViewLoaded) {
 
-                //Check if the keyboard is becoming visible
-                bool visible = notification.Name == UIKeyboard.WillShowNotification;
-
                 //Start an animation, using values from the keyboard
                 UIView.BeginAnimations ("AnimateForKeyboard");
                 UIView.SetAnimationBeginsFromCurrentState (true);
@@ -139,44 +136,18 @@ namespace CodeHub.iOS.Views.Accounts
                 UIView.SetAnimationCurve ((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification (notification));
 
                 //Pass the notification, calculating keyboard height, etc.
-                bool landscape = InterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || InterfaceOrientation == UIInterfaceOrientation.LandscapeRight;
-                if (visible) {
-                    var keyboardFrame = UIKeyboard.FrameEndFromNotification (notification);
-
-                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
-                } else {
-                    var keyboardFrame = UIKeyboard.FrameBeginFromNotification (notification);
-
-                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
+                var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.FrameBeginUserInfoKey) as NSValue;
+                if (nsValue != null) 
+                {
+                    var kbSize = nsValue.RectangleFValue.Size;
+                    var view = View.Bounds;
+                    var f = ScrollView.Frame;
+                    f.Height = View.Bounds.Height - kbSize.Height;
+                    ScrollView.Frame = f;
                 }
 
                 //Commit the animation
                 UIView.CommitAnimations (); 
-            }
-        }
-
-        /// <summary>
-        /// Override this method to apply custom logic when the keyboard is shown/hidden
-        /// </summary>
-        /// <param name='visible'>
-        /// If the keyboard is visible
-        /// </param>
-        /// <param name='keyboardHeight'>
-        /// Calculated height of the keyboard (width not generally needed here)
-        /// </param>
-        protected virtual void OnKeyboardChanged (bool visible, nfloat keyboardHeight)
-        {
-            if (visible)
-            {
-                var frame = ScrollView.Frame;
-                frame.Height -= keyboardHeight;
-                ScrollView.Frame = frame;
-            }
-            else
-            {
-                var frame = ScrollView.Frame;
-                frame.Height = View.Bounds.Height;
-                ScrollView.Frame = frame;
             }
         }
     }
