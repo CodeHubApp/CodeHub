@@ -6,6 +6,8 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
 using System.Reactive;
 using CodeHub.Core.Data;
+using CodeHub.Core.Factories;
+using GitHubSharp;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -14,6 +16,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IAccountsRepository _accountsService;
         private readonly ISessionService _sessionService;
         private readonly ILoginService _loginService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
 
         public IReactiveCommand<Unit> StartupCommand { get; private set; }
 
@@ -38,12 +41,16 @@ namespace CodeHub.Core.ViewModels.App
             protected set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
-        public StartupViewModel(ISessionService sessionService, 
-            IAccountsRepository accountsService, ILoginService loginService)
+        public StartupViewModel(
+            ISessionService sessionService, 
+            IAccountsRepository accountsService, 
+            ILoginService loginService,
+            IAlertDialogFactory alertDialogFactory)
         {
             _sessionService = sessionService;
             _accountsService = accountsService;
             _loginService = loginService;
+            _alertDialogFactory = alertDialogFactory;
 
             StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
@@ -81,8 +88,14 @@ namespace CodeHub.Core.ViewModels.App
                     _sessionService.SetSessionAccount(account);
                     NavigateTo(this.CreateViewModel<MenuViewModel>());
                 }
-                catch
+                catch (UnauthorizedException e)
                 {
+                    _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.");
+                    NavigateTo(this.CreateViewModel<AccountsViewModel>());
+                }
+                catch (Exception e)
+                {
+                    _alertDialogFactory.Alert("Unable to login!", e.Message);
                     NavigateTo(this.CreateViewModel<AccountsViewModel>());
                 }
                 finally

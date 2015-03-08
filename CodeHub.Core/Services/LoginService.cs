@@ -2,12 +2,16 @@
 using CodeHub.Core.Data;
 using GitHubSharp;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net.Http;
 
 namespace CodeHub.Core.Services
 {
     public class LoginService : ILoginService
     {
-        private static readonly string[] Scopes = { "user", "public_repo", "repo", "notifications", "gist" };
+        private static readonly string[] Scopes = { "user", "repo", "gist", "read:org" };
         private readonly IAccountsRepository _accounts;
 
         public LoginService(IAccountsRepository accounts)
@@ -136,6 +140,9 @@ namespace CodeHub.Core.Services
             var client = Client.BasicOAuth(token, apiDomain);
             var userInfo = (await client.ExecuteAsync(client.AuthenticatedUser.GetInfo())).Data;
 
+            var scopes = await GetScopes(apiDomain, token);
+            CheckScopes(scopes);
+
             GitHubAccount account;
             try { account = await _accounts.Find(apiDomain, userInfo.Login); }
             catch { account = new GitHubAccount(); }
@@ -163,6 +170,25 @@ namespace CodeHub.Core.Services
                 : base("Two Factor Authentication is Required!")
             {
             }
+        }
+
+        private static async Task<List<string>> GetScopes(string domain, string token)
+        {
+            var client = new HttpClient(new ModernHttpClient.NativeMessageHandler());
+            var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", token, "x-oauth-basic")));
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authToken);
+            domain = (domain.EndsWith("/", StringComparison.Ordinal) ? domain : domain + "/") + "user";
+            var response = await client.GetAsync(domain);
+            var values = response.Headers.GetValues("X-OAuth-Scopes").FirstOrDefault();
+            return values == null ? new List<string>() : values.Split(',').Select(x => x.Trim()).ToList();
+        }
+
+        private static void CheckScopes(IEnumerable<string> scopes)
+        {
+            var missing = Scopes.Except(scopes).ToList();
+            if (missing.Any())
+                throw new InvalidOperationException("Missing scopes! You are missing access to the following " + 
+                    "scopes that are necessary for CodeHub to operate correctly: " + string.Join(", ", missing));
         }
     }
 }

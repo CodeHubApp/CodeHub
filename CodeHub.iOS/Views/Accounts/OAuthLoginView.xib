@@ -22,11 +22,11 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Bx-sc-wIc">
-                            <rect key="frame" x="62" y="151" width="196" height="29"/>
+                            <rect key="frame" x="62" y="151" width="196" height="32"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="196" id="yFt-bL-6ip"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <state key="normal" title="Login!">
                                 <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -47,14 +47,23 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="next"/>
                         </textField>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The provided Personal Access Token must allow access to the following scopes: repo, gist, user, read:org" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTK-Zp-SPY">
+                            <rect key="frame" x="41" y="212" width="239" height="47"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <constraints>
                         <constraint firstAttribute="centerX" secondItem="NfM-bb-XX8" secondAttribute="centerX" id="AXQ-kB-I8A"/>
                         <constraint firstAttribute="centerX" secondItem="Rps-fE-mv8" secondAttribute="centerX" id="DVv-ka-9WP"/>
                         <constraint firstItem="NfM-bb-XX8" firstAttribute="top" secondItem="CAm-E7-qth" secondAttribute="top" constant="20" id="FWZ-GQ-p1O"/>
+                        <constraint firstItem="NfM-bb-XX8" firstAttribute="leading" secondItem="KTK-Zp-SPY" secondAttribute="leading" id="Gbe-Lj-KCG"/>
                         <constraint firstAttribute="centerX" secondItem="4Bx-sc-wIc" secondAttribute="centerX" id="LY8-JL-yJb"/>
                         <constraint firstAttribute="trailing" secondItem="NfM-bb-XX8" secondAttribute="trailing" constant="20" id="Mxj-T8-htJ"/>
-                        <constraint firstAttribute="bottom" secondItem="4Bx-sc-wIc" secondAttribute="bottom" constant="20" id="Wc2-8n-soP"/>
+                        <constraint firstItem="NfM-bb-XX8" firstAttribute="trailing" secondItem="KTK-Zp-SPY" secondAttribute="trailing" id="VUX-Pg-cyv"/>
+                        <constraint firstItem="KTK-Zp-SPY" firstAttribute="top" secondItem="4Bx-sc-wIc" secondAttribute="bottom" constant="29" id="eH6-uL-jTs"/>
+                        <constraint firstAttribute="bottom" secondItem="KTK-Zp-SPY" secondAttribute="bottom" constant="20" id="lmr-Je-OTL"/>
                         <constraint firstItem="NfM-bb-XX8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="CAm-E7-qth" secondAttribute="leading" constant="20" id="nKp-Fu-Dsq"/>
                         <constraint firstItem="4Bx-sc-wIc" firstAttribute="top" secondItem="Rps-fE-mv8" secondAttribute="bottom" constant="16" id="pFU-E9-UQQ"/>
                         <constraint firstItem="Rps-fE-mv8" firstAttribute="top" secondItem="NfM-bb-XX8" secondAttribute="bottom" constant="18" id="pTp-LZ-cRA"/>
@@ -70,6 +79,7 @@
             </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
+            <point key="canvasLocation" x="41" y="425"/>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
