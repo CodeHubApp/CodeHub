@@ -1,5 +1,4 @@
-﻿using System;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -14,16 +13,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             Title = "Account";
 
             GoToDotComLoginCommand = ReactiveCommand.Create()
-                .WithSubscription(_ =>
-                    NavigateTo(this.CreateViewModel<LoginViewModel>()));
+                .WithSubscription(_ => NavigateTo(this.CreateViewModel<LoginViewModel>()));
 
             GoToEnterpriseLoginCommand = ReactiveCommand.Create()
-                .WithSubscription(_ =>
-                {
-                    var vm = this.CreateViewModel<AddAccountViewModel>();
-                    vm.IsEnterprise = true;
-                    NavigateTo(vm);
-                });
+                .WithSubscription(_ => NavigateTo(this.CreateViewModel<AddEnterpriseAccountViewModel>()));
         }
     }
 }

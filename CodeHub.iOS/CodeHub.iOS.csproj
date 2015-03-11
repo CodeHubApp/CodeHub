@@ -380,6 +380,11 @@
     </Compile>
     <InterfaceDefinition Include="Views\Accounts\OAuthLoginView.xib" />
     <Compile Include="Views\BaseViewControllerExtensions.cs" />
+    <Compile Include="Views\Accounts\AddEnterpriseAccountView.cs" />
+    <Compile Include="Views\Accounts\AddEnterpriseAccountView.designer.cs">
+      <DependentUpon>AddEnterpriseAccountView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Views\Accounts\AddEnterpriseAccountView.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -441,11 +446,11 @@
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.2.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.7.2\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.34.0\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.7.3\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,8 @@ using CodeHub.Core.Data;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Factories;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -20,7 +22,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _token, value); }
         }
 
-        public OAuthLoginViewModel(ILoginService loginFactory, IAccountsRepository accountsRepository)
+        public OAuthLoginViewModel(
+            ILoginService loginFactory, 
+            IAccountsRepository accountsRepository,
+            IAlertDialogFactory alertDialogFactory)
         {
             Title = "Login";
 
@@ -30,6 +35,14 @@ namespace CodeHub.Core.ViewModels.Accounts
                 var account = await loginFactory.Authenticate(ApiDomain, WebDomain, Token, false);
                 await accountsRepository.SetDefault(account);
                 return account;
+            });
+
+            LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
+            {
+                if (x)
+                    alertDialogFactory.Show("Logging in...");
+                else
+                    alertDialogFactory.Hide();
             });
 
             LoginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));

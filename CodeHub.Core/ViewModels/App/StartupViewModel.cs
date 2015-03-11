@@ -15,7 +15,6 @@ namespace CodeHub.Core.ViewModels.App
     {
         private readonly IAccountsRepository _accountsService;
         private readonly ISessionService _sessionService;
-        private readonly ILoginService _loginService;
         private readonly IAlertDialogFactory _alertDialogFactory;
 
         public IReactiveCommand<Unit> StartupCommand { get; private set; }
@@ -44,12 +43,10 @@ namespace CodeHub.Core.ViewModels.App
         public StartupViewModel(
             ISessionService sessionService, 
             IAccountsRepository accountsService, 
-            ILoginService loginService,
             IAlertDialogFactory alertDialogFactory)
         {
             _sessionService = sessionService;
             _accountsService = accountsService;
-            _loginService = loginService;
             _alertDialogFactory = alertDialogFactory;
 
             StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
@@ -84,18 +81,17 @@ namespace CodeHub.Core.ViewModels.App
                         ImageUrl = avatarUri;
 
                     IsLoggingIn = true;
-                    await _loginService.LoginAccount(account);
-                    _sessionService.SetSessionAccount(account);
+                    await _sessionService.SetSessionAccount(account);
                     NavigateTo(this.CreateViewModel<MenuViewModel>());
                 }
                 catch (UnauthorizedException e)
                 {
-                    _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.");
+                    _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.").ToBackground();
                     NavigateTo(this.CreateViewModel<AccountsViewModel>());
                 }
                 catch (Exception e)
                 {
-                    _alertDialogFactory.Alert("Unable to login!", e.Message);
+                    _alertDialogFactory.Alert("Unable to login!", e.Message).ToBackground();
                     NavigateTo(this.CreateViewModel<AccountsViewModel>());
                 }
                 finally

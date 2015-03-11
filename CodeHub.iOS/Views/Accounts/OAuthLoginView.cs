@@ -1,34 +1,21 @@
 ﻿using System;
 using UIKit;
 using CodeHub.Core.ViewModels.Accounts;
-using System.Reactive.Linq;
 using CoreGraphics;
 using ReactiveUI;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public partial class OAuthLoginView : BaseViewController<OAuthLoginViewModel>
     {
-        private readonly IAlertDialogFactory _alertDialogFactory;
-
-        public OAuthLoginView(IAlertDialogFactory alertDialogFactory)
+        public OAuthLoginView()
             : base("OAuthLoginView", null)
         {
-            _alertDialogFactory = alertDialogFactory;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            ViewModel.LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
-            {
-                if (x)
-                    _alertDialogFactory.Show("Logging in...");
-                else
-                    _alertDialogFactory.Hide();
-            });
 
             TokenText.EditingChanged += (sender, args) => ViewModel.Token = TokenText.Text;
             ViewModel.WhenAnyValue(x => x.Token).Subscribe(x => TokenText.Text = x);

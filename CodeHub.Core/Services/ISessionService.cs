@@ -11,7 +11,7 @@ namespace CodeHub.Core.Services
 
         Octokit.IGitHubClient GitHubClient { get; }
 
-        void SetSessionAccount(GitHubAccount account);
+        Task SetSessionAccount(GitHubAccount account);
 
         void SetStartupCommand(IStartupCommand startupCommand);
 

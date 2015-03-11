@@ -65,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             Title = "Login";
 
             var basicLogin = ReactiveCommand.Create().WithSubscription(_ =>
-                NavigateTo(this.CreateViewModel<AddAccountViewModel>()));
+                NavigateTo(this.CreateViewModel<AddWebAccountViewModel>()));
 
             var oauthLogin = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<OAuthLoginViewModel>()));

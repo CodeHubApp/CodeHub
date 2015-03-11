@@ -9,14 +9,17 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-	[Register ("AddAccountView")]
-	partial class AddAccountView
+	[Register ("AddEnterpriseAccountView")]
+	partial class AddEnterpriseAccountView
 	{
+		[Outlet]
+		UIKit.UITextField Domain { get; set; }
+
 		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
-		UIKit.UIImageView Logo { get; set; }
+		UIKit.UIImageView LogoImageView { get; set; }
 
 		[Outlet]
 		UIKit.UITextField Password { get; set; }
@@ -25,18 +28,23 @@ namespace CodeHub.iOS.Views.Accounts
 		UIKit.UIScrollView ScrollView { get; set; }
 
 		[Outlet]
-		UIKit.UITextField User { get; set; }
+		UIKit.UITextField Username { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (LoginButton != null) {
-				LoginButton.Dispose ();
-				LoginButton = null;
+			if (LogoImageView != null) {
+				LogoImageView.Dispose ();
+				LogoImageView = null;
 			}
 
-			if (Logo != null) {
-				Logo.Dispose ();
-				Logo = null;
+			if (Domain != null) {
+				Domain.Dispose ();
+				Domain = null;
+			}
+
+			if (Username != null) {
+				Username.Dispose ();
+				Username = null;
 			}
 
 			if (Password != null) {
@@ -44,14 +52,14 @@ namespace CodeHub.iOS.Views.Accounts
 				Password = null;
 			}
 
+			if (LoginButton != null) {
+				LoginButton.Dispose ();
+				LoginButton = null;
+			}
+
 			if (ScrollView != null) {
 				ScrollView.Dispose ();
 				ScrollView = null;
-			}
-
-			if (User != null) {
-				User.Dispose ();
-				User = null;
 			}
 		}
 	}

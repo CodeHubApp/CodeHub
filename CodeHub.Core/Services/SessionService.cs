@@ -16,6 +16,8 @@ namespace CodeHub.Core.Services
 {
     public class SessionService : ISessionService
     {
+        private readonly IAccountsRepository _accountsRepository;
+
         static SessionService()
         {
             GitHubSharp.Client.ClientConstructor = 
@@ -28,7 +30,12 @@ namespace CodeHub.Core.Services
 
         public GitHubAccount Account { get; private set; }
 
-        public void SetSessionAccount(GitHubAccount account)
+        public SessionService(IAccountsRepository accountsRepository)
+        {
+            _accountsRepository = accountsRepository;
+        }
+
+        public async Task SetSessionAccount(GitHubAccount account)
         {
             if (account == null)
             {
@@ -38,39 +45,48 @@ namespace CodeHub.Core.Services
                 return;
             }
 
-            var githubAccount = account;
-            var domain = githubAccount.Domain ?? Client.DefaultApi;
-            Credentials credentials;
-
-            if (!string.IsNullOrEmpty(githubAccount.OAuth))
+            try
             {
-                Client = Client.BasicOAuth(githubAccount.OAuth, domain);
-                credentials = new Credentials(githubAccount.OAuth);
-            }
-            else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
-            {
-                Client = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
-                credentials = new Credentials(githubAccount.Username, githubAccount.Password);
-            }
-            else
-            {
-                Debugger.Break();
-                return;
-            }
+                var githubAccount = account;
+                var domain = githubAccount.Domain ?? Client.DefaultApi;
+                Credentials credentials;
+                Client oldClient;
 
-            // Decorate the HttpClient
-            IHttpClient httpClient = new OctokitModernHttpClient();
-            //httpClient = new OctokitCacheClient(httpClient);
-            httpClient = new OctokitNetworkClient(httpClient, Locator.Current.GetService<INetworkActivityService>());
+                if (!string.IsNullOrEmpty(githubAccount.OAuth))
+                {
+                    oldClient = Client.BasicOAuth(githubAccount.OAuth, domain);
+                    credentials = new Credentials(githubAccount.OAuth);
+                }
+                else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
+                {
+                    oldClient = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
+                    credentials = new Credentials(githubAccount.Username, githubAccount.Password);
+                }
+                else
+                {
+                    Debugger.Break();
+                    return;
+                }
+            
+                var newClient = OctokitClientFactory.Create(new Uri(domain), credentials);
+                var userInfo = await newClient.User.Current();
+                account.Name = userInfo.Name;
+                account.Email = userInfo.Email;
+                account.AvatarUrl = userInfo.AvatarUrl;
+                await _accountsRepository.Update(account);
 
-            var connection = new Connection(
-                new ProductHeaderValue("CodeHub"),
-                new Uri(domain),
-                new InMemoryCredentialStore(credentials),
-                httpClient,
-                new Octokit.Internal.SimpleJsonSerializer());
-            GitHubClient = new GitHubClient(connection);
-            Account = account;
+                // Set all the good stuff.
+                Client = oldClient;
+                GitHubClient = newClient;
+                Account = account;
+            }
+            catch
+            {
+                Account = null;
+                GitHubClient = null;
+                Client = null;
+                throw;
+            }
         }
 
         public Task RegisterForNotifications()

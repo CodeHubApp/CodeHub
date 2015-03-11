@@ -1,20 +1,21 @@
-using System;
+﻿using System;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using CodeHub.Core.Data;
 using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Factories;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AddAccountViewModel : BaseViewModel 
+    public abstract class AddAccountViewModel : BaseViewModel 
     {
-        public bool IsEnterprise { get; set; }
+        private readonly IAlertDialogFactory _alertDialogFactory;
 
         public string TwoFactor { get; set; }
 
-        public IReactiveCommand LoginCommand { get; private set; }
+        public IReactiveCommand<GitHubAccount> LoginCommand { get; private set; }
 
         private string _username;
         public string Username
@@ -44,8 +45,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
         }
 
-        public AddAccountViewModel(ILoginService loginFactory, IAccountsRepository accountsService)
+        protected AddAccountViewModel(IAlertDialogFactory alertDialogFactory)
         {
+            _alertDialogFactory = alertDialogFactory;
+
             Title = "Login";
 
             this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
@@ -55,30 +58,37 @@ namespace CodeHub.Core.ViewModels.Accounts
                 Domain = x.Domain;
             });
 
-            var canLogin = this.WhenAnyValue(x => x.Username, y => y.Password, 
-                (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y));
+            var canLogin = this.WhenAnyValue(x => x.Username, y => y.Password, z => z.Domain,
+                (x, y, z) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && !string.IsNullOrEmpty(z));
+            LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => await Login());
 
-            var loginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => 
+            LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
             {
-                var apiUrl = IsEnterprise ? Domain : null;
-                if (apiUrl != null)
-                {
-                    if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
-                        apiUrl = "https://" + apiUrl;
-                    if (!apiUrl.EndsWith("/"))
-                        apiUrl += "/";
-                    if (!apiUrl.Contains("/api/"))
-                        apiUrl += "api/v3/";
-                }
-
-                var loginData = await loginFactory.Authenticate(apiUrl, Username, Password, TwoFactor, IsEnterprise, _attemptedAccount);
-                await loginFactory.LoginAccount(loginData.Account);
-                accountsService.SetDefault(loginData.Account);
-                return loginData.Account;
+                if (x)
+                    alertDialogFactory.Show("Logging in...");
+                else
+                    alertDialogFactory.Hide();
             });
 
-            loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
-            LoginCommand = loginCommand;
+            LoginCommand.ThrownExceptions.Subscribe(x =>
+            {
+                if (x is LoginService.TwoFactorRequiredException)
+                    PromptForTwoFactor().ToBackground();
+                else
+                    _alertDialogFactory.Alert("Error", x.Message).ToBackground();
+            });
+
+            LoginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
         }
+
+        private async Task PromptForTwoFactor()
+        {
+            var result = await _alertDialogFactory.PromptTextBox("Two Factor Authentication",
+                "This account requires a two factor authentication code", string.Empty, "Ok");
+            TwoFactor = result;
+            LoginCommand.ExecuteIfCan();
+        }
+
+        protected abstract Task<GitHubAccount> Login();
     }
 }

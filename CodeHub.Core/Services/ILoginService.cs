@@ -9,7 +9,7 @@ namespace CodeHub.Core.Services
 
 		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
 
-        Task<LoginData> Authenticate(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount existingAccount);
+        Task<GitHubAccount> Authenticate(string apiDomain, string webDomain, string user, string pass, string twoFactor, bool enterprise);
 
         Task<GitHubAccount> Authenticate(string apiDomain, string webDomain, string token, bool enterprise);
     }

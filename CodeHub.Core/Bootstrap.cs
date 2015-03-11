@@ -20,7 +20,7 @@ namespace CodeHub.Core
             var loginService = new LoginService(accountService);
 
             Locator.CurrentMutable.RegisterLazySingleton(() => accountService, typeof(IAccountsRepository));
-            Locator.CurrentMutable.RegisterLazySingleton(() => new SessionService(), typeof(ISessionService));
+            Locator.CurrentMutable.RegisterLazySingleton(() => new SessionService(accountService), typeof(ISessionService));
             Locator.CurrentMutable.RegisterLazySingleton(() => loginService, typeof(ILoginService));
             Locator.CurrentMutable.RegisterLazySingleton(() => new ImgurService(), typeof(IImgurService));
         }
