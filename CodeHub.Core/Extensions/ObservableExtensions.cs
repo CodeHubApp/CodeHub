@@ -1,5 +1,4 @@
 ﻿using System;
-using ReactiveUI;
 
 // Analysis disable once CheckNamespace
 namespace System.Reactive.Linq

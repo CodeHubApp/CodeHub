@@ -60,14 +60,11 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             var canLogin = this.WhenAnyValue(x => x.Username, y => y.Password, z => z.Domain,
                 (x, y, z) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && !string.IsNullOrEmpty(z));
-            LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => await Login());
-
-            LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
+            
+            LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => 
             {
-                if (x)
-                    alertDialogFactory.Show("Logging in...");
-                else
-                    alertDialogFactory.Hide();
+                using (alertDialogFactory.Activate("Logging in..."))
+                    return await Login();
             });
 
             LoginCommand.ThrownExceptions.Subscribe(x =>

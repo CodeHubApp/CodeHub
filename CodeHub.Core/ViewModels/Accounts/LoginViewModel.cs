@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.Messages;
 using System.Reactive;
 using CodeHub.Core.Factories;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -18,6 +19,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         private const string DefaultWebDomain = "https://github.com";
         private readonly ILoginService _loginFactory;
         private readonly IAccountsRepository _accountsRepository;
+        private readonly IAlertDialogFactory _alertDialogService;
 
         private readonly ObservableAsPropertyHelper<string> _loginUrl;
         public string LoginUrl
@@ -61,6 +63,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             _loginFactory = loginFactory;
             _accountsRepository = accountsRepository;
+            _alertDialogService = alertDialogService;
 
             Title = "Login";
 
@@ -75,8 +78,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
 
-
-
             ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
                 var actionMenu = actionMenuService.Create(Title);
@@ -85,20 +86,12 @@ namespace CodeHub.Core.ViewModels.Accounts
                 return actionMenu.Show();
             });
 
-            LoginCommand.IsExecuting.Skip(1).Subscribe(x => 
-            {
-                if (x)
-                    alertDialogService.Show("Logging in...");
-                else
-                    alertDialogService.Hide();
-            });
-
             _loginUrl = this.WhenAnyValue(x => x.WebDomain)
                 .IsNotNull()
                 .Select(x => x.TrimEnd('/'))
                 .Select(x => 
                     string.Format(x + "/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}", 
-                    ClientId, Uri.EscapeDataString(RedirectUri), Uri.EscapeDataString("user,repo,notifications,gist")))
+                    ClientId, Uri.EscapeDataString(RedirectUri), Uri.EscapeDataString(string.Join(",", OctokitClientFactory.Scopes))))
                 .ToProperty(this, x => x.LoginUrl);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
@@ -139,10 +132,13 @@ namespace CodeHub.Core.ViewModels.Accounts
                 apiUrl = GitHubSharp.Client.DefaultApi;
             }
 
-            var account = AttemptedAccount;
-            var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
-            await _accountsRepository.SetDefault(loginData.Account);
-            return loginData.Account;
+            using (_alertDialogService.Activate("Logging in..."))
+            {
+                var account = AttemptedAccount;
+                var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+                await _accountsRepository.SetDefault(loginData.Account);
+                return loginData.Account;
+            }
         }
     }
 }

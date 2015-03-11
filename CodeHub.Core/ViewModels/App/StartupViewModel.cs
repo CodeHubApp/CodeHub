@@ -84,7 +84,7 @@ namespace CodeHub.Core.ViewModels.App
                     await _sessionService.SetSessionAccount(account);
                     NavigateTo(this.CreateViewModel<MenuViewModel>());
                 }
-                catch (UnauthorizedException e)
+                catch (UnauthorizedException)
                 {
                     _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.").ToBackground();
                     NavigateTo(this.CreateViewModel<AccountsViewModel>());

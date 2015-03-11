@@ -5,6 +5,8 @@ using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Factories;
 using System.Reactive.Linq;
+using System.Diagnostics;
+using GitHubSharp;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -32,17 +34,20 @@ namespace CodeHub.Core.ViewModels.Accounts
             var canLogin = this.WhenAnyValue(y => y.Token, (x) => !string.IsNullOrEmpty(x));
             LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => 
             {
-                var account = await loginFactory.Authenticate(ApiDomain, WebDomain, Token, false);
-                await accountsRepository.SetDefault(account);
-                return account;
-            });
-
-            LoginCommand.IsExecuting.Skip(1).Subscribe(x =>
-            {
-                if (x)
-                    alertDialogFactory.Show("Logging in...");
-                else
-                    alertDialogFactory.Hide();
+                try
+                {
+                    using (alertDialogFactory.Activate("Logging in..."))
+                    {
+                        var account = await loginFactory.Authenticate(ApiDomain, WebDomain, Token, false);
+                        await accountsRepository.SetDefault(account);
+                        return account;
+                    }
+                }
+                catch (UnauthorizedException)
+                {
+                    throw new Exception("The provided token is invalid! Please try again or " +
+                        "create a new token as this one might have been revoked.");
+                }
             });
 
             LoginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));

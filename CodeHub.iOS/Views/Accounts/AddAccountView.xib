@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <development version="5000" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
@@ -59,9 +59,15 @@
                                 <constraint firstAttribute="width" constant="239" id="34"/>
                             </constraints>
                         </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" useAutomaticPreferredMaxLayoutWidth="YES" preferredMaxLayoutWidth="196" translatesAutoresizingMaskIntoConstraints="NO" id="Aba-TE-wmo">
+                            <rect key="frame" x="62" y="250" width="196" height="79"/>
+                            <string key="text">Your username and password are NOT saved on the device. The app will authenticate with these credentials and save a OAuth token instead.</string>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="29" secondAttribute="bottom" constant="149" id="36"/>
                         <constraint firstItem="15" firstAttribute="top" secondItem="27" secondAttribute="top" constant="20" id="38"/>
                         <constraint firstItem="5" firstAttribute="leading" secondItem="29" secondAttribute="leading" id="39"/>
                         <constraint firstAttribute="trailing" secondItem="15" secondAttribute="trailing" constant="40" id="40"/>
@@ -69,11 +75,15 @@
                         <constraint firstItem="4" firstAttribute="leading" secondItem="5" secondAttribute="leading" id="44"/>
                         <constraint firstItem="5" firstAttribute="top" secondItem="4" secondAttribute="bottom" constant="8" symbolic="YES" id="48"/>
                         <constraint firstItem="5" firstAttribute="trailing" secondItem="4" secondAttribute="trailing" id="49"/>
+                        <constraint firstAttribute="trailing" secondItem="Aba-TE-wmo" secondAttribute="trailing" constant="62" id="1dZ-hq-yOQ"/>
+                        <constraint firstItem="Aba-TE-wmo" firstAttribute="top" secondItem="29" secondAttribute="bottom" constant="24" id="2QZ-5Z-a1k"/>
+                        <constraint firstAttribute="bottom" secondItem="Aba-TE-wmo" secondAttribute="bottom" constant="24" id="8R3-q6-Xut"/>
                         <constraint firstAttribute="centerX" secondItem="5" secondAttribute="centerX" id="Fma-rv-6Wt"/>
                         <constraint firstItem="29" firstAttribute="top" secondItem="5" secondAttribute="bottom" constant="20" id="QD4-EZ-Mf3"/>
                         <constraint firstAttribute="centerX" secondItem="4" secondAttribute="centerX" id="gZt-a1-aGK"/>
                         <constraint firstAttribute="centerX" secondItem="15" secondAttribute="centerX" id="hFj-dQ-c4f"/>
                         <constraint firstAttribute="centerX" secondItem="29" secondAttribute="centerX" id="rKV-lZ-osw"/>
+                        <constraint firstItem="Aba-TE-wmo" firstAttribute="leading" secondItem="27" secondAttribute="leading" constant="62" id="skR-P4-5zu"/>
                         <constraint firstItem="4" firstAttribute="top" secondItem="15" secondAttribute="bottom" constant="18" id="xDt-2U-TcN"/>
                     </constraints>
                 </scrollView>
@@ -86,6 +96,7 @@
                 <constraint firstAttribute="trailing" secondItem="27" secondAttribute="trailing" id="54"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+            <point key="canvasLocation" x="-115.5" y="425"/>
         </view>
     </objects>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

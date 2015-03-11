@@ -14,7 +14,6 @@ namespace CodeHub.Core.Services
 {
     public class LoginService : ILoginService
     {
-        private static readonly string[] Scopes = { "user", "repo", "gist", "read:org" };
         private readonly IAccountsRepository _accounts;
 
         public LoginService(IAccountsRepository accounts)
@@ -79,13 +78,14 @@ namespace CodeHub.Core.Services
 //                var client = twoFactor == null ? Client.Basic(user, pass, apiDomain) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiDomain);
 //                var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", Scopes.ToList(), "CodeHub", null));
 
+                var scopes = OctokitClientFactory.Scopes;
                 var client = OctokitClientFactory.Create(new Uri(apiDomain), new Credentials(user, pass));
                 var appAuth = await client.Authorization.GetOrCreateApplicationAuthentication("72f4fb74bdba774b759d", 
-                    "9253ab615f8c00738fff5d1c665ca81e581875cb", new NewAuthorization("CodeHub", Scopes));
+                    "9253ab615f8c00738fff5d1c665ca81e581875cb", new NewAuthorization("CodeHub", scopes));
 
-                if (Scopes.Except(appAuth.Scopes).Any())
+                if (scopes.Except(appAuth.Scopes).Any())
                 {
-                    await client.Authorization.Update(appAuth.Id, new AuthorizationUpdate { Scopes = Scopes });
+                    await client.Authorization.Update(appAuth.Id, new AuthorizationUpdate { Scopes = scopes });
                 }
 
                 return await Authenticate(apiDomain, webDomain, appAuth.Token, enterprise);
@@ -157,7 +157,7 @@ namespace CodeHub.Core.Services
 
         private static void CheckScopes(IEnumerable<string> scopes)
         {
-            var missing = Scopes.Except(scopes).ToList();
+            var missing = OctokitClientFactory.Scopes.Except(scopes).ToList();
             if (missing.Any())
                 throw new InvalidOperationException("Missing scopes! You are missing access to the following " + 
                     "scopes that are necessary for CodeHub to operate correctly: " + string.Join(", ", missing));
