@@ -385,6 +385,8 @@
       <DependentUpon>AddEnterpriseAccountView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\Accounts\AddEnterpriseAccountView.xib" />
+    <Compile Include="ViewComponents\BlurredAlertView.cs" />
+    <Compile Include="Extensions\UIFontExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

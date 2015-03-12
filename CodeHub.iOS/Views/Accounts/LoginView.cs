@@ -7,14 +7,21 @@ using System.Text;
 using ReactiveUI;
 using CodeHub.Core.Factories;
 using CodeHub.Core.Services;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public class LoginView : BaseWebView<LoginViewModel>
     {
         private readonly IAlertDialogFactory _alertDialogService;
+        private static readonly string HasSeenWelcomeKey = "HAS_SEEN_WELCOME";
 
-        public LoginView(IAlertDialogFactory alertDialogService)
+        private static readonly string OAuthWelcome = 
+            "In the following screen you will be prompted for your GitHub credentials. This is done through GitHub's OAuth portal, " +
+            "the recommended way to authenticate.\n\nCodeHub does not save your password. Instead, only the OAuth " + 
+            "token is saved on the device which you may revoke at any time.";
+
+        public LoginView(IAlertDialogFactory alertDialogService, IDefaultValueService defaultValueService)
         {
             _alertDialogService = alertDialogService;
 
@@ -22,7 +29,23 @@ namespace CodeHub.iOS.Views.Accounts
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
-            this.WhenAnyValue(x => x.ViewModel.LoginUrl).IsNotNull().Subscribe(LoadRequest);
+            this.WhenAnyValue(x => x.ViewModel.LoginUrl)
+                .IsNotNull()
+                .Subscribe(LoadRequest);
+
+            this.Appeared
+                .Take(1)
+                .Subscribe(_ => ViewModel.LoadCommand.ExecuteIfCan());
+
+            bool hasSeenWelcome;
+            if (!defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome))
+                hasSeenWelcome = false;
+
+            this.Appeared
+                .Where(_ => !hasSeenWelcome)
+                .Take(1)
+                .Subscribe(_ => 
+                    BlurredAlertView.Display(OAuthWelcome, () => defaultValueService.Set(HasSeenWelcomeKey, true)));
         }
 
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
@@ -41,12 +64,6 @@ namespace CodeHub.iOS.Views.Accounts
             }
 
             return base.ShouldStartLoad(request, navigationType);
-        }
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            ViewModel.LoadCommand.ExecuteIfCan();
         }
 
 		protected override void OnLoadError(object sender, UIWebErrorArgs e)

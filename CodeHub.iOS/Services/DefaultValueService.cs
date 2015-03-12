@@ -19,20 +19,6 @@ namespace CodeHub.iOS.Services
             throw new Exception("Key does not exist in Default database.");
         }
 
-        public bool TryGet<T>(string key, out T value)
-        {
-            try
-            {
-                value = Get<T>(key);
-                return true;
-            }
-            catch
-            {
-                value = default(T);
-                return false;
-            }
-        }
-
         public void Set(string key, object value)
         {
             if (value == null)
