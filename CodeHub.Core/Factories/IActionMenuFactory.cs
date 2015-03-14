@@ -20,7 +20,7 @@ namespace CodeHub.Core.Factories
     {
         void AddButton(string title, IReactiveCommand clickAction);
 
-        Task Show();
+        Task Show(object sender);
     }
 
     public interface IPickerMenu
@@ -29,7 +29,7 @@ namespace CodeHub.Core.Factories
 
         int SelectedOption { get; set; }
 
-        Task<int> Show();
+        Task<int> Show(object sender);
     }
 
     public static class ActionMenuFactoryExtensions

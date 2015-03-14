@@ -78,12 +78,12 @@ namespace CodeHub.Core.ViewModels.Accounts
             loginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
             LoginCommand = loginCommand;
 
-            ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(t =>
+            ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(sender =>
             {
                 var actionMenu = actionMenuService.Create(Title);
                 actionMenu.AddButton("Login via BASIC", basicLogin);
                 actionMenu.AddButton("Login via Token", oauthLogin);
-                return actionMenu.Show();
+                return actionMenu.Show(sender);
             });
 
             _loginUrl = this.WhenAnyValue(x => x.WebDomain)

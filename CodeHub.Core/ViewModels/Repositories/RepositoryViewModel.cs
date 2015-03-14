@@ -318,18 +318,17 @@ namespace CodeHub.Core.ViewModels.Repositories
                 NavigateTo(vm);
             });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
-                .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null),
-                _ =>
-                {
+            var canShowMenu = this.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
+                .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null);
+
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
                 var menu = actionMenuService.Create(Title);
-                    menu.AddButton(IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu", PinCommand);
-                    menu.AddButton(IsStarred.Value ? "Unstar This Repo" : "Star This Repo", ToggleStarCommand);
-                    menu.AddButton(IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo", ToggleWatchCommand);
-                    menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
-                    return menu.Show();
-                });
+                menu.AddButton(IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu", PinCommand);
+                menu.AddButton(IsStarred.Value ? "Unstar This Repo" : "Star This Repo", ToggleStarCommand);
+                menu.AddButton(IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo", ToggleWatchCommand);
+                menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                return menu.Show(sender);
+            });
 
             var gotoWebUrl = new Action<string>(x =>
             {

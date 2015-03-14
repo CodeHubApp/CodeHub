@@ -71,13 +71,12 @@ namespace CodeHub.Core.ViewModels.Releases
             });
 
             var canShowMenu = this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null);
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, _ =>
-                {
-                    var menu = actionMenuService.Create(Title);
-                    menu.AddButton("Share", shareCommand);
-                    menu.AddButton("Show in GitHub", gotoGitHubCommand);
-                    return menu.Show();
-                });
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
+                var menu = actionMenuService.Create(Title);
+                menu.AddButton("Share", shareCommand);
+                menu.AddButton("Show in GitHub", gotoGitHubCommand);
+                return menu.Show(sender);
+            });
 
             _contentText = this.WhenAnyValue(x => x.ReleaseModel).IsNotNull()
                 .Select(x => x.BodyHtml).ToProperty(this, x => x.ContentText);

@@ -61,12 +61,11 @@ namespace CodeHub.Core.ViewModels.Contents
             GoToLinkCommand = ReactiveCommand.Create();
             GoToLinkCommand.OfType<string>().Subscribe(showWebBrowser);
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, _ =>
-            {
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, sender => {
                 var menu = actionMenuService.Create(Title);
                 menu.AddButton("Share", ShareCommand);
                 menu.AddButton("Show in GitHub", GoToGitHubCommand);
-                return menu.Show();
+                return menu.Show(sender);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async x =>

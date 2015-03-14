@@ -135,15 +135,14 @@ namespace CodeHub.Core.ViewModels.Changesets
                     NavigateTo(vm);
                 });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(_ =>
-            {
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender => {
                 var menu = actionMenuService.Create(Title);
                 menu.AddButton("Add Comment", AddCommentCommand);
                 menu.AddButton("Copy SHA", copyShaCommand);
                 menu.AddButton("Browse Code", browseCodeCommand);
                 menu.AddButton("Share", shareCommand);
                 menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
-                return menu.Show();
+                return menu.Show(sender);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>

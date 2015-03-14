@@ -7,6 +7,7 @@ using System.Linq;
 using Foundation;
 using CodeHub.Core.Factories;
 using CodeHub.iOS.ViewComponents;
+using System.Diagnostics;
 
 namespace CodeHub.iOS.Factories
 {
@@ -14,7 +15,7 @@ namespace CodeHub.iOS.Factories
     {
         public IActionMenu Create(string title)
         {
-            return new ActionMenu(title, UIApplication.SharedApplication.KeyWindow);
+            return new ActionMenu(title);
         }
 
         public IPickerMenu CreatePicker()
@@ -28,8 +29,8 @@ namespace CodeHub.iOS.Factories
             var activityItems = new NSObject[] { item };
             UIActivity[] applicationActivities = null;
             var activityController = new UIActivityViewController (activityItems, applicationActivities);
-            var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
-            return appDelegate.Window.RootViewController.PresentViewControllerAsync(activityController, true);
+            var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+            return viewController.PresentViewControllerAsync(activityController, true);
         }
 
         public void SendToPasteBoard(string str)
@@ -40,13 +41,11 @@ namespace CodeHub.iOS.Factories
         private class ActionMenu : IActionMenu
         {
             private readonly string _title;
-            private readonly UIWindow _window;
             private readonly IList<Tuple<string, IReactiveCommand>> _buttonActions = new List<Tuple<string, IReactiveCommand>>();
 
-            public ActionMenu(string title, UIWindow window)
+            public ActionMenu(string title)
             {
                 _title = title;
-                _window = window;
             }
 
             public void AddButton(string title, IReactiveCommand command)
@@ -54,27 +53,35 @@ namespace CodeHub.iOS.Factories
                 _buttonActions.Add(Tuple.Create(title, command));
             }
 
-            public Task Show()
+            public Task Show(object sender)
             {
                 var a = new TaskCompletionSource<object>();
-                var buttonMap = new Dictionary<nint, IReactiveCommand>();
+                var sheet =  UIAlertController.Create(_title, null, UIAlertControllerStyle.ActionSheet);
 
-                var actionSheet = new UIActionSheet(_title);
                 foreach (var b in _buttonActions)
                 {
-                    var index = actionSheet.AddButton(b.Item1);
-                    buttonMap.Add(index, b.Item2);
+                    sheet.AddAction(UIAlertAction.Create(b.Item1, UIAlertActionStyle.Default, x => {
+                        b.Item2.ExecuteIfCan();
+                        a.SetResult(true);
+                    }));
                 }
 
-                actionSheet.Clicked += (s, e) =>
-                {
-                    if (buttonMap.ContainsKey(e.ButtonIndex))
-                        buttonMap[e.ButtonIndex].ExecuteIfCan();
-                };
+                sheet.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, x => a.SetResult(true)));
 
-                actionSheet.Dismissed += (sender, e) => a.SetResult(true);
-                actionSheet.CancelButtonIndex = actionSheet.AddButton("Cancel");
-                actionSheet.ShowInView(_window);
+                var viewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
+
+                (sender as UIBarButtonItem).Do(x => sheet.PopoverPresentationController.BarButtonItem = x);
+                (sender as UIView).Do(x => sheet.PopoverPresentationController.SourceView = x);
+
+                // Last resort
+                if (sheet.PopoverPresentationController.SourceView == null 
+                    && sheet.PopoverPresentationController.BarButtonItem == null)
+                {
+                    Debugger.Break();
+                    sheet.PopoverPresentationController.SourceView = viewController.View;
+                }
+
+                viewController.PresentViewController(sheet, true, null);
                 return a.Task;
             }
         }
@@ -90,7 +97,7 @@ namespace CodeHub.iOS.Factories
 
             public int SelectedOption { get; set; }
 
-            public Task<int> Show()
+            public Task<int> Show(object sender)
             {
                 var a = new TaskCompletionSource<int>();
 

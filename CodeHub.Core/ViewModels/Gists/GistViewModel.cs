@@ -147,17 +147,16 @@ namespace CodeHub.Core.ViewModels.Gists
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Gist).Select(x => x != null), 
-                _ =>
-            {
-                var menu = actionMenuService.Create(Title);
-                if (Gist.Owner != null && string.Equals(applicationService.Account.Username, Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
-                    menu.AddButton("Edit", GoToEditCommand);
-                else
-                    menu.AddButton("Fork", ForkCommand);
-                menu.AddButton("Share", ShareCommand);
-                menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
-                return menu.Show();
-            });
+                sender => {
+                    var menu = actionMenuService.Create(Title);
+                    if (Gist.Owner != null && string.Equals(applicationService.Account.Username, Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
+                        menu.AddButton("Edit", GoToEditCommand);
+                    else
+                        menu.AddButton("Fork", ForkCommand);
+                    menu.AddButton("Share", ShareCommand);
+                    menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                    return menu.Show(sender);
+                });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {

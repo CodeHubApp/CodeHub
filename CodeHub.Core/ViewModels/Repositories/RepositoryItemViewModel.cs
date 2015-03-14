@@ -1,9 +1,11 @@
 ﻿using ReactiveUI;
 using System;
 using CodeHub.Core.Utilities;
+using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
+    [DebuggerDisplay("{Owner}/{Name}")]
     public class RepositoryItemViewModel : ReactiveObject, ICanGoToViewModel
     {
         public string Name { get; private set; }

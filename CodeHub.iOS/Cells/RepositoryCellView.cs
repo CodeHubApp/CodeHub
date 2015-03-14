@@ -26,6 +26,14 @@ namespace CodeHub.iOS.Cells
             return Nib.Instantiate(null, null).GetValue(0) as RepositoryCellView;
         }
 
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            CaptionLabel.PreferredMaxLayoutWidth = CaptionLabel.Frame.Width;
+            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
+            LayoutIfNeeded();
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();

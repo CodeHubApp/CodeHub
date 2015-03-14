@@ -34,7 +34,8 @@ namespace CodeHub.iOS.TableViewSources
         public override nfloat GetHeightForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
             var item = ItemAt(indexPath) as RepositoryItemViewModel;
-            return item != null ? _cache.GenerateHeight(tableView, item, indexPath) : base.GetHeightForRow(tableView, indexPath);
+            var ret = item != null ? _cache.GenerateHeight(tableView, item, indexPath) : base.GetHeightForRow(tableView, indexPath);
+            return ret;
         }
     }
 }

@@ -125,16 +125,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.PullRequest).Select(x => x != null), 
-                _ =>
-            {
-                var menu = actionMenuService.Create(Title);
-                menu.AddButton("Edit", GoToEditCommand);
-                menu.AddButton(PullRequest.State == Octokit.ItemState.Closed ? "Open" : "Close", ToggleStateCommand);
-                menu.AddButton("Comment", GoToAddCommentCommand);
-                menu.AddButton("Share", ShareCommand);
-                menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
-                return menu.Show();
-            });
+                sender => {
+                    var menu = actionMenuService.Create(Title);
+                    menu.AddButton("Edit", GoToEditCommand);
+                    menu.AddButton(PullRequest.State == Octokit.ItemState.Closed ? "Open" : "Close", ToggleStateCommand);
+                    menu.AddButton("Comment", GoToAddCommentCommand);
+                    menu.AddButton("Share", ShareCommand);
+                    menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                    return menu.Show(sender);
+                });
         }
 
         protected override async Task Load(ISessionService applicationService)

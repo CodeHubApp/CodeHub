@@ -24,6 +24,16 @@ namespace CodeHub.iOS.Cells
             return Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
         }
 
+
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+            TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
+            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
+            TimeLabel.PreferredMaxLayoutWidth = TimeLabel.Frame.Width;
+            LayoutIfNeeded();
+        }
+
         public override void AwakeFromNib()
         {
             base.AwakeFromNib();

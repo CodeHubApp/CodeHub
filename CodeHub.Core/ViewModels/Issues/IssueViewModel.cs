@@ -40,19 +40,18 @@ namespace CodeHub.Core.ViewModels.Issues
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Issue).Select(x => x != null),
-                _ =>
-            {
-                var menu = actionMenuFactory.Create(Title);
-                menu.AddButton(Issue.State == Octokit.ItemState.Open ? "Close" : "Open", ToggleStateCommand);
-//
-//
-//                var editButton = _actionSheet.AddButton("Edit");
-//                var commentButton = _actionSheet.AddButton("Comment");
-//                var shareButton = _actionSheet.AddButton("Share");
-//                var showButton = _actionSheet.AddButton("Show in GitHub");
+                sender => {
+                    var menu = actionMenuFactory.Create(Title);
+                    menu.AddButton(Issue.State == Octokit.ItemState.Open ? "Close" : "Open", ToggleStateCommand);
+    //
+    //
+    //                var editButton = _actionSheet.AddButton("Edit");
+    //                var commentButton = _actionSheet.AddButton("Comment");
+    //                var shareButton = _actionSheet.AddButton("Share");
+    //                var showButton = _actionSheet.AddButton("Show in GitHub");
 
-                return menu.Show();
-            });
+                    return menu.Show(sender);
+                });
         }
     }
 }

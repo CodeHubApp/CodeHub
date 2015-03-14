@@ -24,7 +24,7 @@ namespace ReactiveUI
         {
             if (@this == null)
                 return null;
-            var button = new UIBarButtonItem(item, (s, e) => @this.ExecuteIfCan());
+            var button = new UIBarButtonItem(item, (s, e) => @this.ExecuteIfCan(s));
             button.EnableIfExecutable(@this);
             return button;
         }

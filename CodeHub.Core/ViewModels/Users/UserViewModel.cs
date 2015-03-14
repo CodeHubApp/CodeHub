@@ -125,11 +125,10 @@ namespace CodeHub.Core.ViewModels.Users
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue),
-                _ =>
-                {
+                sender => {
                     var menu = actionMenuService.Create(Title);
                     menu.AddButton(IsFollowing.Value ? "Unfollow" : "Follow", ToggleFollowingCommand);
-                    return menu.Show();
+                    return menu.Show(sender);
                 });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>

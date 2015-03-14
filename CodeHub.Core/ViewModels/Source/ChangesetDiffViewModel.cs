@@ -82,11 +82,11 @@ namespace CodeHub.Core.ViewModels.Source
 	            }
 	        });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(_ =>
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
             {
                 var sheet = actionMenuFactory.Create(Title);
                 sheet.AddButton("Add Comment", ReactiveCommand.Create());
-                return sheet.Show();
+                return sheet.Show(sender);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>

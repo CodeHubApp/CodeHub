@@ -96,17 +96,15 @@ namespace CodeHub.Core.ViewModels.Source
                 NavigateTo(vm);
             });
 
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
-                _ =>
-            {
+            var canShowMenu = this.WhenAnyValue(x => x.SourceItem).Select(x => x != null);
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
                 var menu = actionMenuFactory.Create(Title);
                 if (GoToEditCommand.CanExecute(null))
                     menu.AddButton("Edit", GoToEditCommand);
                 menu.AddButton("Open With", OpenWithCommand);
                 if (OpenInGitHubCommand.CanExecute(null))
                     menu.AddButton("Open in GitHub", OpenInGitHubCommand);
-                return menu.Show();
+                return menu.Show(sender);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
