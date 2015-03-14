@@ -343,33 +343,31 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToHomepageCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.Homepage)));
             GoToHomepageCommand.Select(_ => Repository.Homepage).Subscribe(gotoWebUrl);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                var forceCacheInvalidation = t as bool?;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
 
                 var t1 = this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Get(), 
-                    forceCacheInvalidation, response => Repository = response.Data);
+                    true, response => Repository = response.Data);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme(),
-                    forceCacheInvalidation, response => Readme = response.Data);
+                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme())
+                    .ToBackground(x => Readme = x.Data);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches(),
-                    forceCacheInvalidation, response => Branches = response.Data);
+                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches())
+                    .ToBackground(x => Branches = x.Data);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].IsWatching(),
-                    forceCacheInvalidation, response => IsWatched = response.Data);
+                applicationService.GitHubClient.Activity.Watching.CheckWatched(RepositoryOwner, RepositoryName)
+                    .ToBackground(x => IsWatched = x);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].IsStarred(),
-                    forceCacheInvalidation, response => IsStarred = response.Data);
+                applicationService.GitHubClient.Activity.Starring.CheckStarred(RepositoryOwner, RepositoryName)
+                    .ToBackground(x => IsStarred = x);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors(),
-                    forceCacheInvalidation, response => Contributors = response.Data.Count);
+                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors())
+                    .ToBackground(x => Contributors = x.Data.Count);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetLanguages(),
-                    forceCacheInvalidation, response => Languages = response.Data.Count);
+                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetLanguages())
+                    .ToBackground(x => Languages = x.Data.Count);
 
-                this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases(),
-                    forceCacheInvalidation, response => Releases = response.Data.Count);
+                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases())
+                    .ToBackground(x => Releases = x.Data.Count);
 
                 return t1;
             });

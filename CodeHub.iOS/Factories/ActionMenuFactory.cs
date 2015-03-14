@@ -70,15 +70,18 @@ namespace CodeHub.iOS.Factories
 
                 var viewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
 
-                (sender as UIBarButtonItem).Do(x => sheet.PopoverPresentationController.BarButtonItem = x);
-                (sender as UIView).Do(x => sheet.PopoverPresentationController.SourceView = x);
-
-                // Last resort
-                if (sheet.PopoverPresentationController.SourceView == null 
-                    && sheet.PopoverPresentationController.BarButtonItem == null)
+                if (sheet.PopoverPresentationController != null)
                 {
-                    Debugger.Break();
-                    sheet.PopoverPresentationController.SourceView = viewController.View;
+                    (sender as UIBarButtonItem).Do(x => sheet.PopoverPresentationController.BarButtonItem = x);
+                    (sender as UIView).Do(x => sheet.PopoverPresentationController.SourceView = x);
+
+                    // Last resort
+                    if (sheet.PopoverPresentationController.SourceView == null
+                    && sheet.PopoverPresentationController.BarButtonItem == null)
+                    {
+                        Debugger.Break();
+                        sheet.PopoverPresentationController.SourceView = viewController.View;
+                    }
                 }
 
                 viewController.PresentViewController(sheet, true, null);

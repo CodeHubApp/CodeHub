@@ -44,7 +44,7 @@ namespace CodeHub.iOS.Views.App
             }
             catch (Exception e)
             {
-                _alertDialogService.Alert("Error", e.Message);
+                _alertDialogService.Alert("Error", e.Message).ToBackground();
             }
         }
 

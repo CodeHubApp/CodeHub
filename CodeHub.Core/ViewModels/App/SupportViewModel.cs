@@ -92,8 +92,7 @@ namespace CodeHub.Core.ViewModels.App
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
                 applicationService.GitHubClient.Repository.GetAllContributors(CodeHubOwner, CodeHubName)
-                    .ContinueWith(x => Contributors = x.Result.Count, new CancellationToken(),
-                        TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.FromCurrentSynchronizationContext());
+                        .ToBackground(x => Contributors = x.Count);
                 Repository = await applicationService.GitHubClient.Repository.Get(CodeHubOwner, CodeHubName);
             });
         }

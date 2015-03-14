@@ -23,20 +23,19 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Title = "Files";
 
             var files = new ReactiveList<CommitModel.CommitFileModel>();
-            Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, y =>
-            {
+            Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, y => {
                 var vm = this.CreateViewModel<SourceViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.Name = y.Name;
                 vm.Path = x.Filename;
                 vm.GitUrl = x.ContentsUrl;
+                vm.HtmlUrl = x.BlobUrl;
                 vm.ForceBinary = x.Patch == null;
                 NavigateTo(vm);
             }));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].GetFiles();
                 var response = await applicationService.Client.ExecuteAsync(request);
                 files.Reset(response.Data);

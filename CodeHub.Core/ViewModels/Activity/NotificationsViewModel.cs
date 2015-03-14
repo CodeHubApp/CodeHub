@@ -143,7 +143,7 @@ namespace CodeHub.Core.ViewModels.Activity
                 NavigateTo(vm);
             }
 
-            ReadNotification(x);
+            ReadNotification(x).ToBackground();
         }
     }
 }

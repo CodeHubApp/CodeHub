@@ -162,7 +162,8 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var forceCacheInvalidation = t as bool?;
                 var t1 = this.RequestModel(applicationService.Client.Gists[Id].Get(), forceCacheInvalidation, response => Gist = response.Data);
-			    this.RequestModel(applicationService.Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data);
+			    this.RequestModel(applicationService.Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data)
+                        .ToBackground();
 			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments(), forceCacheInvalidation);
                 return t1;
             });

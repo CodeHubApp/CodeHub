@@ -6,6 +6,7 @@ using Xamarin.Utilities.Services;
 using System.Reactive.Linq;
 using Humanizer;
 using CodeHub.Core.Data;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Settings
 {
@@ -173,30 +174,23 @@ namespace CodeHub.Core.ViewModels.Settings
             { 
                 if (!PushNotificationsActivated)
                     throw new Exception("Push notifications have not been activated");
-                RegisterPushNotifications(value);
+                RegisterPushNotifications(value).ToBackground();
             }
 		}
 
-		private async void RegisterPushNotifications(bool enabled)
+        private async Task RegisterPushNotifications(bool enabled)
 		{
-			try
-			{
-				if (enabled)
-                {
-                    await _pushNotificationsService.Register(_sessionService.Account);
-                }
-				else
-                {
-                    await _pushNotificationsService.Deregister(_sessionService.Account);
-                }
+			if (enabled)
+            {
+                await _pushNotificationsService.Register(_sessionService.Account);
+            }
+			else
+            {
+                await _pushNotificationsService.Deregister(_sessionService.Account);
+            }
 
-				_sessionService.Account.IsPushNotificationsEnabled = enabled;
-				_accountsService.Update(_sessionService.Account);
-			}
-			catch (Exception e)
-			{
-                System.Diagnostics.Debug.WriteLine("Unable to register push notifications: " + e.Message);
-			}
+			_sessionService.Account.IsPushNotificationsEnabled = enabled;
+			await _accountsService.Update(_sessionService.Account);
 		}
     }
 }

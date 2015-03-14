@@ -34,10 +34,9 @@ namespace CodeHub.Core.ViewModels.Settings
 
             SelectedTheme = applicationService.Account.CodeEditTheme ?? "idea";
 
-            SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            SaveCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 applicationService.Account.CodeEditTheme = SelectedTheme;
-                accountsRepository.Update(applicationService.Account);
+                await accountsRepository.Update(applicationService.Account);
             });
         }
     }

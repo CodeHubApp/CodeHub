@@ -6,8 +6,6 @@ namespace CodeHub.iOS.ViewComponents
 {
     public class PickerAlertView : UIView
     {
-        private readonly string[] _values;
-        private readonly int _currentSelected;
         private readonly Action<nint> _selected;
         private readonly UIPickerView _pickerView;
         private readonly UIToolbar _toolbar;
@@ -19,8 +17,6 @@ namespace CodeHub.iOS.ViewComponents
             AutosizesSubviews = true;
             this.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
-            _values = values;
-            _currentSelected = currentSelected;
             _selected = selected;
 
             _pickerView = new UIPickerView();
