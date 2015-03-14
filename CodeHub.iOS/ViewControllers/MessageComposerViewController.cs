@@ -102,12 +102,6 @@ namespace CodeHub.iOS.ViewControllers
             TextView.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height - _keyboardBounds.Height);
         }
 
-        [Obsolete]
-        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-        {
-            return true;
-        }
-
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);

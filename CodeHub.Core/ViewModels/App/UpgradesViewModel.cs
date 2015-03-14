@@ -21,8 +21,7 @@ namespace CodeHub.Core.ViewModels.App
         {
             Title = "Upgrades";
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 Keys = (await featuresService.GetAvailableFeatureIds()).ToArray();
             });
         }

@@ -2,13 +2,13 @@ using System;
 using UIKit;
 using CoreGraphics;
 using CodeHub.iOS.Utilities;
+using ReactiveUI;
 
-// Analysis disable once CheckNamespace
-namespace ReactiveUI
+namespace CodeHub.iOS.Views
 {
-    public static class ReactiveTableViewControllerExtensions
+    public static class BaseTableViewControllerExtensions
     {
-        public static ObservableSearchDelegate AddSearchBar(this ReactiveTableViewController @this)
+        public static ObservableSearchDelegate AddSearchBar(this BaseTableViewController @this)
         {
             var searchBar = new UISearchBar(new CGRect(0f, 0f, 320f, 44f));
             searchBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
@@ -21,7 +21,7 @@ namespace ReactiveUI
             return searchDelegate;
         }
 
-        public static ObservableSearchDelegate AddSearchBar(this ReactiveTableViewController @this, Action<string> searchAction)
+        public static ObservableSearchDelegate AddSearchBar(this BaseTableViewController @this, Action<string> searchAction)
         {
             var searchDelegate = AddSearchBar(@this);
 

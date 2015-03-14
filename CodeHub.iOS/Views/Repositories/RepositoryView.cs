@@ -87,32 +87,16 @@ namespace CodeHub.iOS.Views.Repositories
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyValue(x => x.ViewModel.Branches)
-                .SubscribeSafe(x =>
-                {
-                    if (x == null)
-                        _splitElements[2].Button2.Text = "- Branches";
-                    else
-                        _splitElements[2].Button2.Text = (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches");
-                });
+                .Select(x => x == null ? "- Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
+                .SubscribeSafe(x => _splitElements[2].Button2.Text = x);
 
             this.WhenAnyValue(x => x.ViewModel.Contributors)
-                .SubscribeSafe(x =>
-                {
-                    if (x == null)
-                        _splitElements[1].Button2.Text = "- Contributors";
-                    else
-                        _splitElements[1].Button2.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors");
-                });
-
+                .Select(x => x == null ? "- Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
+                .SubscribeSafe(x => _splitElements[1].Button2.Text = x);
 
             this.WhenAnyValue(x => x.ViewModel.Releases)
-                .SubscribeSafe(x =>
-                {
-                    if (x == null)
-                        _splitElements[2].Button1.Text = "- Releases";
-                    else
-                        _splitElements[2].Button1.Text = (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases");
-                });
+                .Select(x => x == null ? "- Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
+                .SubscribeSafe(x => _splitElements[2].Button1.Text = x);
         }
 
         public override void ViewDidLoad()

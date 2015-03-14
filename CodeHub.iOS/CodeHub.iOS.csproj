@@ -328,7 +328,6 @@
     <Compile Include="DialogElements\TrueFalseElement.cs" />
     <Compile Include="TableViewSources\DialogTableViewSource.cs" />
     <Compile Include="Utilities\ObservableSearchDelegate.cs" />
-    <Compile Include="ViewControllers\ReactiveTableViewControllerExtensions.cs" />
     <Compile Include="Views\BaseWebView.cs" />
     <Compile Include="DialogElements\ChangesetElement.cs" />
     <Compile Include="DialogElements\DummyInputElement.cs" />
@@ -387,6 +386,7 @@
     <InterfaceDefinition Include="Views\Accounts\AddEnterpriseAccountView.xib" />
     <Compile Include="ViewComponents\BlurredAlertView.cs" />
     <Compile Include="Extensions\UIFontExtensions.cs" />
+    <Compile Include="Views\BaseTableViewControllerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
