@@ -7,7 +7,7 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         private readonly ISessionService _applicationService;
 
-        public string Username { get; set; }
+        public string Username { get; private set; }
 
         public UserRepositoriesViewModel(ISessionService applicationService)
             : base(applicationService)
@@ -21,6 +21,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             return string.Equals(_applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
                 _applicationService.Client.AuthenticatedUser.Repositories.GetAll() : 
                 _applicationService.Client.Users[Username].Repositories.GetAll();;
+        }
+
+        public UserRepositoriesViewModel Init(string username)
+        {
+            Username = username;
+            return this;
         }
     }
 }

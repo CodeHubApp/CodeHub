@@ -56,7 +56,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             {
                 var state = SelectedFilter == 0 ? "open" : "closed";
 			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);
-                return pullRequests.SimpleCollectionLoad(request, t as bool?, 
+                return pullRequests.SimpleCollectionLoad(request, 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
 

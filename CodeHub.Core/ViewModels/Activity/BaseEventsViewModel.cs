@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Activity
             ReportRepository = true;
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                events.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                events.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
         }
 

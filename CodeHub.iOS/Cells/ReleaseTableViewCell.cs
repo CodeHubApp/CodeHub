@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Cells
             : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
         { 
             TextLabel.TextColor = Theme.MainTitleColor;
-            TextLabel.Font = UIFont.PreferredHeadline;
+            TextLabel.Font = UIFont.PreferredBody;
             DetailTextLabel.Font = UIFont.PreferredFootnote;
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
 

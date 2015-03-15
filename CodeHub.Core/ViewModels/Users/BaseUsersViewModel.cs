@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Users
             signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                users.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                users.SimpleCollectionLoad(CreateRequest(), 
                 x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
         }
 

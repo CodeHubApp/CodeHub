@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                await InternalGists.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                await InternalGists.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
         }

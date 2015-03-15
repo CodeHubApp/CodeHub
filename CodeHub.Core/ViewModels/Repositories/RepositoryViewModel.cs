@@ -337,10 +337,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToHomepageCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && !string.IsNullOrEmpty(x.Homepage)));
             GoToHomepageCommand.Select(_ => Repository.Homepage).Subscribe(gotoWebUrl);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
 
-                var t1 = this.RequestModel(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Get(), 
-                    true, response => Repository = response.Data);
+                var t1 = applicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Get());
 
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme())
                     .ToBackground(x => Readme = x.Data);
@@ -363,7 +362,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases())
                     .ToBackground(x => Releases = x.Data.Count);
 
-                return t1;
+                Repository = (await t1).Data;
             });
         }
 

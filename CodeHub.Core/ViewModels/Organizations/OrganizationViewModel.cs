@@ -80,12 +80,11 @@ namespace CodeHub.Core.ViewModels.Organizations
                 .Select(x => x.Init(Username))
                 .Subscribe(NavigateTo);
 
-            GoToEventsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserEventsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToEventsCommand = ReactiveCommand.Create();
+            GoToEventsCommand
+                .Select(_ => this.CreateViewModel<UserEventsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
             GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand

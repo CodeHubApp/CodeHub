@@ -53,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                commits.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                commits.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
 	    }
 

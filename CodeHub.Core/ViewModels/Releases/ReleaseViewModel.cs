@@ -81,9 +81,10 @@ namespace CodeHub.Core.ViewModels.Releases
             _contentText = this.WhenAnyValue(x => x.ReleaseModel).IsNotNull()
                 .Select(x => x.BodyHtml).ToProperty(this, x => x.ContentText);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(x => 
-                this.RequestModel(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetRelease(ReleaseId), 
-                    x as bool?, r => ReleaseModel = r.Data));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetRelease(ReleaseId);
+                ReleaseModel = (await applicationService.Client.ExecuteAsync(request)).Data;
+            });
         }
     }
 }

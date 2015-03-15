@@ -156,14 +156,15 @@ namespace CodeHub.Core.ViewModels.Gists
                     return menu.Show(sender);
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                var forceCacheInvalidation = t as bool?;
-                var t1 = this.RequestModel(applicationService.Client.Gists[Id].Get(), forceCacheInvalidation, response => Gist = response.Data);
-			    this.RequestModel(applicationService.Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data)
-                        .ToBackground();
-			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments(), forceCacheInvalidation);
-                return t1;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                var request = applicationService.Client.Gists[Id].Get();
+                var t1 = applicationService.Client.ExecuteAsync(request);
+
+                applicationService.GitHubClient.Gist.IsStarred(Id)
+                    .ToBackground(x => IsStarred = x);
+
+			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments());
+                Gist = (await t1).Data;
             });
         }
     }

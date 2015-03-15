@@ -64,7 +64,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                repositories.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                repositories.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
 
 //			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);

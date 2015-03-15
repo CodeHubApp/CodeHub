@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
             {
-                return IssuesBacking.SimpleCollectionLoad(CreateRequest(), t as bool?, 
+                return IssuesBacking.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
             });
 	    }
