@@ -27,6 +27,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 var vm = this.CreateViewModel<SourceViewModel>();
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
+                vm.Branch = y.Ref;
                 vm.Name = y.Name;
                 vm.Path = x.Filename;
                 vm.GitUrl = x.ContentsUrl;

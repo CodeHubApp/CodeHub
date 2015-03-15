@@ -39,21 +39,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
             var pullRequests = new ReactiveList<PullRequestModel>();
             PullRequests = pullRequests.CreateDerivedCollection(
-                x => new PullRequestItemViewModel(x, () =>
-                {
+                x => new PullRequestItemViewModel(x, () => {
                     var vm = this.CreateViewModel<PullRequestViewModel>();
                     vm.RepositoryOwner = RepositoryOwner;
                     vm.RepositoryName = RepositoryName;
                     vm.Id = (int)x.Number;
-                    //vm.PullRequest = x.PullRequest;
-                    //              vm.WhenAnyValue(x => x.PullRequest).Skip(1).Subscribe(x =>
-                    //              {
-                    //                    var index = PullRequests.IndexOf(pullRequest);
-                    //                    if (index < 0) return;
-                    //                    PullRequests[index] = x;
-                    //                    PullRequests.Reset();
-                    //              });
                     NavigateTo(vm);
+
+                    vm.WhenAnyValue(y => y.Issue.State)
+                        .DistinctUntilChanged()
+                        .Skip(1)
+                        .Subscribe(y => LoadCommand.ExecuteIfCan());
                 }),
                 filter: x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));

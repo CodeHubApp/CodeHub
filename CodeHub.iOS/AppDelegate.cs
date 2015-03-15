@@ -17,6 +17,8 @@ using CodeHub.Core.Factories;
 using CodeHub.Core.ViewModels.Changesets;
 using System.Linq;
 using CodeHub.Core;
+using System.Net.Http;
+using ModernHttpClient;
 
 namespace CodeHub.iOS
 {
@@ -63,11 +65,13 @@ namespace CodeHub.iOS
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
+            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
+            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
+
             Locator.CurrentMutable.InitializeFactories();
             Locator.CurrentMutable.InitializeServices();
             CodeHub.Core.Bootstrap.Init();
             Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
-
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
@@ -91,9 +95,19 @@ namespace CodeHub.iOS
             SetupPushNotifications();
             HandleNotificationOptions(options);
 
+
             return true;
         }
 
+        class HttpMessageHandler : NativeMessageHandler
+        {
+            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+            {
+                if (request.Method.ToString().ToLowerInvariant() != "get")
+                    NSUrlCache.SharedCache.RemoveAllCachedResponses();
+                return base.SendAsync(request, cancellationToken);
+            }
+        }
 
         private void HandleNotificationOptions(NSDictionary options)
         {

@@ -13,6 +13,8 @@ namespace CodeHub.Core.Utilities
     {
         private readonly MessageBuilder _messageBuilder = new MessageBuilder();
 
+        public static Func<NativeMessageHandler> CreateMessageHandler = () => new NativeMessageHandler();
+
         /// <summary>
         /// Sends the specified request and returns a response.
         /// </summary>
@@ -24,10 +26,9 @@ namespace CodeHub.Core.Utilities
             if (request == null)
                 throw new ArgumentNullException("request");
 
-            var httpOptions = new NativeMessageHandler
-            {
-                AllowAutoRedirect = request.AllowAutoRedirect
-            };
+            var httpOptions = CreateMessageHandler();
+            httpOptions.AllowAutoRedirect = request.AllowAutoRedirect;
+
             if (httpOptions.SupportsAutomaticDecompression)
             {
                 httpOptions.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;

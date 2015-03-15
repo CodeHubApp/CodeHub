@@ -9,6 +9,7 @@ using System.Threading;
 using System.Linq;
 using CodeHub.Core.ViewModels.Users;
 using System.Collections.ObjectModel;
+using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -88,6 +89,8 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _canModify, value); }
         }
 
+        protected abstract Uri HtmlUrl { get; }
+
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
 
         public IssueAssigneeViewModel Assignees { get; private set; }
@@ -102,7 +105,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; protected set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
@@ -114,9 +117,16 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> AddCommentCommand { get; private set; }
 
+        public IReactiveCommand<object> GoToEditCommand { get; private set; }
+
+        public IReactiveCommand<object> ShareCommand { get; private set; }
+
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
+
         protected BaseIssueViewModel(
             ISessionService applicationService, 
-            IMarkdownService markdownService)
+            IMarkdownService markdownService,
+            IActionMenuFactory actionMenuFactory)
         {
             _applicationService = applicationService;
 
@@ -129,14 +139,14 @@ namespace CodeHub.Core.ViewModels.Issues
                 .Select(x => x == 0 ? 1 : x)
                 .ToProperty(this, x => x.Participants);
 
-            GoToAssigneesCommand = ReactiveCommand.Create(issuePresenceObservable)
-                .WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
+            GoToAssigneesCommand = ReactiveCommand.Create(issuePresenceObservable);
+                //.WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
 
-            GoToLabelsCommand = ReactiveCommand.Create(issuePresenceObservable)
-                .WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
+            GoToLabelsCommand = ReactiveCommand.Create(issuePresenceObservable);
+                //.WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
 
-            GoToMilestonesCommand = ReactiveCommand.Create(issuePresenceObservable)
-                .WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
+            GoToMilestonesCommand = ReactiveCommand.Create(issuePresenceObservable);
+                //.WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
 
             _assignedUser = this.WhenAnyValue(x => x.Issue.Assignee)
                 .ToProperty(this, x => x.AssignedUser);
@@ -225,20 +235,46 @@ namespace CodeHub.Core.ViewModels.Issues
                     NavigateTo(vm);
                 });
 
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
+                this.WhenAnyValue(x => x.Issue).Select(x => x != null),
+                sender => {
+                    var menu = actionMenuFactory.Create(Title);
+                    menu.AddButton("Edit", GoToEditCommand);
+                    menu.AddButton(Issue.State == Octokit.ItemState.Closed ? "Open" : "Close", ToggleStateCommand);
+                    menu.AddButton("Comment", AddCommentCommand);
+                    menu.AddButton("Share", ShareCommand);
+                    menu.AddButton("Show in GitHub", GoToHtmlUrlCommand); 
+                    return menu.Show(sender);
+                });
+
+            GoToEditCommand = ReactiveCommand.Create().WithSubscription(_ => {
+                var vm = this.CreateViewModel<IssueEditViewModel>();
+                vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryName = RepositoryName;
+                vm.Id = Id;
+                //vm.Issue = Issue;
+                //                vm.WhenAnyValue(x => x.Issue).Skip(1).Subscribe(x => Issue = x);
+                NavigateTo(vm);
+            });
 
             GoToUrlCommand = ReactiveCommand.Create();
-            GoToUrlCommand.OfType<string>().Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
-            GoToUrlCommand.OfType<Uri>().Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x.AbsoluteUri;
-                NavigateTo(vm);
-            });
+            GoToUrlCommand.OfType<string>().Subscribe(GoToUrl);
+            GoToUrlCommand.OfType<Uri>().Subscribe(x => GoToUrl(x.AbsoluteUri));
+
+            var hasHtmlObservable = this.WhenAnyValue(x => x.HtmlUrl).Select(x => x != null);
+
+            ShareCommand = ReactiveCommand.Create(hasHtmlObservable);
+            ShareCommand.Subscribe(_ => actionMenuFactory.ShareUrl(HtmlUrl));
+
+            GoToHtmlUrlCommand = ReactiveCommand.Create(hasHtmlObservable);
+            GoToHtmlUrlCommand.Subscribe(_ => GoToUrl(HtmlUrl.AbsoluteUri));
+        }
+
+        private void GoToUrl(string url)
+        {
+            var vm = this.CreateViewModel<WebBrowserViewModel>();
+            vm.Url = url;
+            NavigateTo(vm);
         }
 
         protected virtual async Task Load(ISessionService applicationService)
@@ -249,13 +285,14 @@ namespace CodeHub.Core.ViewModels.Issues
             await Task.WhenAll(issueRequest, eventsRequest);
 
             Issue = issueRequest.Result;
+            InternalEvents.Reset(eventsRequest.Result);
 
             applicationService.GitHubClient.Repository.RepoCollaborators
                 .IsCollaborator(RepositoryOwner, RepositoryName, applicationService.Account.Username)
                 .ToBackground(x => CanModify = x);
         }
 
-        private async Task RetrieveEvents()
+        protected virtual async Task<IEnumerable<IIssueEventItemViewModel>> RetrieveEvents()
         {
             var eventsRequest = _applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
             var commentsRequest = _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments());
@@ -264,13 +301,13 @@ namespace CodeHub.Core.ViewModels.Issues
             var tempList = new List<IIssueEventItemViewModel>(eventsRequest.Result.Count + commentsRequest.Result.Data.Count);
             tempList.AddRange(eventsRequest.Result.Select(x => new IssueEventItemViewModel(x)));
             tempList.AddRange(commentsRequest.Result.Data.Select(x => new IssueCommentItemViewModel(x)));
-            InternalEvents.Reset(tempList.OrderBy(x => x.CreatedAt));
+            return tempList.OrderBy(x => x.CreatedAt);
         }
 
         private async Task<Octokit.Issue> UpdateIssue(Octokit.IssueUpdate update)
         {
             Issue = await _applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, update);
-            await RetrieveEvents();
+            InternalEvents.Reset(await RetrieveEvents());
             return Issue;
         }
     }

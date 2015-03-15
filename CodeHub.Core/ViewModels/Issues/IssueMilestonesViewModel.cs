@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Octokit;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -47,8 +48,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 return vm;
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 _selectedMilestone = (await currentMilestone());
                 milestones.Reset(await loadMilestones());
             });

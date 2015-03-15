@@ -5,6 +5,7 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -42,12 +43,12 @@ namespace CodeHub.iOS.ViewControllers
     {
         private CGRect _keyboardBounds = CGRect.Empty;
 
-        public UITextView TextView { get; private set; }
+        public ExtendedUITextView TextView { get; private set; }
 
         public MessageComposerViewController()
         {
             EdgesForExtendedLayout = UIRectEdge.None;
-            TextView = new UITextView(CGRect.Empty);
+            TextView = new ExtendedUITextView();
             TextView.Font = UIFont.PreferredBody;
 
             // Work around an Apple bug in the UITextView that crashes

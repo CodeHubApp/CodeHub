@@ -387,6 +387,7 @@
     <Compile Include="ViewComponents\BlurredAlertView.cs" />
     <Compile Include="Extensions\UIFontExtensions.cs" />
     <Compile Include="Views\BaseTableViewControllerExtensions.cs" />
+    <Compile Include="ViewComponents\ExtendedUITextView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

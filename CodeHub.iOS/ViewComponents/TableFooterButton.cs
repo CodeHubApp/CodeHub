@@ -16,18 +16,20 @@ namespace CodeHub.iOS.ViewComponents
             set { _button.SetTitle(value, UIControlState.Normal); }
         }
 
-        public TableFooterButton(string title, Action tapped)
-            : this()
+        public TableFooterButton(string title, Action tapped, UIImage buttonImage = null)
+            : this(buttonImage)
         {
             Title = title;
             ButtonTapped += tapped;
         }
 
-        public TableFooterButton()
+        public TableFooterButton(UIImage buttonImage = null)
             : base(new CGRect(0, 0, 320f, 60f))
         {
+            var image = buttonImage ?? Images.Buttons.GreyButton;
+
             _button = new UIButton(UIButtonType.Custom);
-            _button.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
+            _button.SetBackgroundImage(image.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
             _button.Layer.ShadowColor = UIColor.Black.CGColor;
             _button.Layer.ShadowOffset = new CGSize(0, 1);
             _button.Layer.ShadowOpacity = 0.1f;
@@ -39,7 +41,7 @@ namespace CodeHub.iOS.ViewComponents
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
-            _button.Frame = new CGRect(15, 8, Bounds.Width - 30f, Bounds.Height - 16f);
+            _button.Frame = new CGRect(15, 8, Bounds.Width - 30f, 44f);
         }
     }
 }

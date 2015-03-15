@@ -37,16 +37,13 @@ namespace CodeHub.iOS.Views.Issues
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
-            this.WhenAnyValue(x => x.ViewModel.GoToAssigneesCommand)
-                .Switch()
+            this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
                 .Subscribe(_ => ShowAssigneeSelector());
 
-            this.WhenAnyValue(x => x.ViewModel.GoToMilestonesCommand)
-                .Switch()
+            this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
                 .Subscribe(_ => ShowMilestonesSelector());
 
-            this.WhenAnyValue(x => x.ViewModel.GoToLabelsCommand)
-                .Switch()
+            this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
                 .Subscribe(_ => ShowLabelsSelector());
 
             this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand)

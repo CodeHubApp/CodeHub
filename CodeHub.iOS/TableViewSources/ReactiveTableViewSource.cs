@@ -4,6 +4,7 @@ using System.Reactive.Subjects;
 using System.Reactive;
 using CodeHub.Core.ViewModels;
 using ReactiveUI;
+using System.Linq;
 using System.Reactive.Linq;
 
 namespace CodeHub.iOS.TableViewSources
@@ -38,6 +39,7 @@ namespace CodeHub.iOS.TableViewSources
             tableView.RowHeight = sizeHint;
             tableView.EstimatedRowHeight = sizeHint;
             collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
+            (collection as IReactiveCollection<TViewModel>).Do(x => _isEmptySubject.OnNext(!x.Any()));
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)

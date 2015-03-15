@@ -45,6 +45,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public DateTimeOffset CreatedAt { get; private set; }
 
+        internal IssueCommentItemViewModel(string body, string login, string avatar, DateTimeOffset createdAt)
+        {
+            Comment = body;
+            Actor = login;
+            AvatarUrl = new GitHubAvatar(avatar);
+            CreatedAt = createdAt;
+        }
+
         internal IssueCommentItemViewModel(GitHubSharp.Models.IssueCommentModel comment)
         {
             Comment = comment.BodyHtml;

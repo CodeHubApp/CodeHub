@@ -3,6 +3,7 @@ using UIKit;
 using Foundation;
 using CoreGraphics;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -101,10 +102,11 @@ namespace CodeHub.iOS.DialogElements
                 : base(UITableViewCellStyle.Default, Key)
             {
                 HiddenSeperator = true;
-                TextView = new CustomTextView(placeholder)
+                TextView = new ExtendedUITextView()
                 { 
                     Frame = new CGRect(12, 0, ContentView.Frame.Width - 24f, ContentView.Frame.Height),
                     ScrollEnabled = false,
+                    Placeholder = placeholder
                 };
                 TextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                 TextView.BackgroundColor = UIColor.Clear;
@@ -122,51 +124,7 @@ namespace CodeHub.iOS.DialogElements
                     SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
             }
 
-            private class CustomTextView : UITextView
-            {
-                private readonly UILabel _placeholderView = new UILabel();
-                public string Placeholder { get; set; }
 
-                public override string Text
-                {
-                    get
-                    {
-                        return base.Text;
-                    }
-                    set
-                    {
-                        base.Text = value;
-                        _placeholderView.Hidden = Text.Length > 0;
-                    }
-                }
-
-                public override UIFont Font
-                {
-                    get
-                    {
-                        return base.Font;
-                    }
-                    set
-                    {
-                        base.Font = value;
-                        _placeholderView.Font = value;
-                    }
-                }
-
-                public CustomTextView(string placeholder)
-                {
-                    _placeholderView.Text = placeholder;
-                    _placeholderView.TextColor = UIColor.FromWhiteAlpha(0.702f, 1.0f);
-                    _placeholderView.Frame = new CGRect(5, 8, 200f, 16f);
-                    _placeholderView.UserInteractionEnabled = false;
-                    _placeholderView.Font = UIFont.PreferredBody;
-                    _placeholderView.Hidden = Text.Length > 0;
-                    this.Add(_placeholderView);
-
-                    this.Changed += (sender, e) =>
-                        _placeholderView.Hidden = !string.IsNullOrEmpty(Text);
-                }
-            }
         }
 
         public nfloat GetHeight(UITableView tableView, NSIndexPath indexPath)
