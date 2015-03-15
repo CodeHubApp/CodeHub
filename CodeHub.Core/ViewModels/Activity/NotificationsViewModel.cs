@@ -10,6 +10,7 @@ using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
@@ -19,7 +20,8 @@ namespace CodeHub.Core.ViewModels.Activity
         private const int ParticipatingFilter = 1;
         private const int AllFilter = 2;
 
-        private readonly ReactiveList<Octokit.Notification> _notifications = new ReactiveList<Octokit.Notification>(); 
+        private readonly ReactiveList<Octokit.Notification> _notifications = new ReactiveList<Octokit.Notification>();
+        private readonly ISubject<int> _notificationCount = new Subject<int>();
         private readonly ISessionService _applicationService;
 
         private IList<NotificationGroupViewModel> _groupedNotifications;
@@ -35,6 +37,11 @@ namespace CodeHub.Core.ViewModels.Activity
 			get { return _activeFilter; }
 			set { this.RaiseAndSetIfChanged(ref _activeFilter, value); }
 		}
+
+        public IObservable<int> NotificationCount
+        {
+            get { return _notificationCount.AsObservable(); }
+        }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
@@ -80,14 +87,18 @@ namespace CodeHub.Core.ViewModels.Activity
                 });
 
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 var all = ActiveFilter == AllFilter;
                 var participating = ActiveFilter == ParticipatingFilter;
                 var req = new Octokit.NotificationsRequest { All = all, Participating = participating, Since = DateTimeOffset.MinValue };
-                var notifictions = await applicationService.GitHubClient.Notification.GetAllForCurrent(req);
-                _notifications.Reset(notifictions);
+                var notifications = await applicationService.GitHubClient.Notification.GetAllForCurrent(req);
+                _notifications.Reset(notifications);
             });
+
+            LoadCommand
+                .Where(_ => ActiveFilter == UnreadFilter)
+                .Select(_ => _notifications.Count)
+                .Subscribe(_notificationCount.OnNext);
 
             this.WhenAnyValue(x => x.ActiveFilter).Subscribe(x =>
             {

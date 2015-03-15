@@ -26,14 +26,14 @@ namespace CodeHub.Core.ViewModels.App
 		public int Notifications
         {
             get { return _notifications; }
-            set { this.RaiseAndSetIfChanged(ref _notifications, value); }
+            private set { this.RaiseAndSetIfChanged(ref _notifications, value); }
         }
 
         private IReadOnlyList<Octokit.Organization> _organizations;
         public IReadOnlyList<Octokit.Organization> Organizations
         {
             get { return _organizations; }
-            set { this.RaiseAndSetIfChanged(ref _organizations, value); }
+            private set { this.RaiseAndSetIfChanged(ref _organizations, value); }
         }
 		
         public GitHubAccount Account
@@ -54,19 +54,16 @@ namespace CodeHub.Core.ViewModels.App
         {
             _applicationService = sessionService;
 
-            GoToNotificationsCommand = ReactiveCommand.Create();
-            GoToNotificationsCommand.Subscribe(_ =>
-            {
+            GoToNotificationsCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<NotificationsViewModel>();
+                vm.NotificationCount.Subscribe(x => Notifications = x);
                 NavigateTo(vm);
             });
 
             GoToAccountsCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<AccountsViewModel>()));
 
-            GoToProfileCommand = ReactiveCommand.Create();
-            GoToProfileCommand.Subscribe(_ =>
-            {
+            GoToProfileCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<UserViewModel>();
                 vm.Username = Account.Username;
                 NavigateTo(vm);
@@ -79,8 +76,7 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<UpgradesViewModel>()));
      
             GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x =>
-            {
+            GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = x.Owner;
                 vm.RepositoryName = x.Name;
@@ -94,8 +90,7 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<NewsViewModel>()));
 
             GoToOrganizationsCommand = ReactiveCommand.Create();
-            GoToOrganizationsCommand.Subscribe(_ =>
-            {
+            GoToOrganizationsCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<OrganizationsViewModel>();
                 vm.Username = Account.Username;
                 NavigateTo(vm);
@@ -108,24 +103,21 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<RepositoriesExploreViewModel>()));
 
             GoToOrganizationEventsCommand = ReactiveCommand.Create();
-            GoToOrganizationEventsCommand.OfType<Octokit.Organization>().Subscribe(x =>
-            {
+            GoToOrganizationEventsCommand.OfType<Octokit.Organization>().Subscribe(x => {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = x.Login;
                 NavigateTo(vm);
             });
 
             GoToOrganizationCommand = ReactiveCommand.Create();
-            GoToOrganizationCommand.OfType<Octokit.Organization>().Subscribe(x =>
-            {
+            GoToOrganizationCommand.OfType<Octokit.Organization>().Subscribe(x => {
                 var vm = this.CreateViewModel<OrganizationViewModel>();
                 vm.Username = x.Login;
                 NavigateTo(vm);
             });
 
             GoToOwnedRepositoriesCommand = ReactiveCommand.Create();
-            GoToOwnedRepositoriesCommand.Subscribe(_ =>
-            {
+            GoToOwnedRepositoriesCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<UserRepositoriesViewModel>();
                 vm.Username = Account.Username;
                 NavigateTo(vm);
@@ -143,15 +135,13 @@ namespace CodeHub.Core.ViewModels.App
             GoToStarredGistsCommand = ReactiveCommand.Create().WithSubscription(
                 _ => NavigateTo(this.CreateViewModel<StarredGistsViewModel>()));
 
-            GoToMyGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToMyGistsCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<UserGistsViewModel>();
                 vm.Username = Account.Username;
                 NavigateTo(vm);
             });
 
-            GoToMyEvents = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToMyEvents = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Account.Username;
                 NavigateTo(vm);
@@ -163,22 +153,20 @@ namespace CodeHub.Core.ViewModels.App
             DeletePinnedRepositoryCommand = ReactiveCommand.Create();
 
             DeletePinnedRepositoryCommand.OfType<PinnedRepository>()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     sessionService.Account.PinnnedRepositories.Remove(x);
                     accountsService.Update(sessionService.Account);
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(_ =>
-                {
-                    var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
-                    notifications.ToBackground(x => Notifications = x.Count);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
+                var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
+                notifications.ToBackground(x => Notifications = x.Count);
 
-                    var organizations = sessionService.GitHubClient.Organization.GetAllForCurrent();
-                    organizations.ToBackground(x => Organizations = x);
+                var organizations = sessionService.GitHubClient.Organization.GetAllForCurrent();
+                organizations.ToBackground(x => Organizations = x);
 
-                    return Task.WhenAll(notifications, organizations);
-                });
+                return Task.WhenAll(notifications, organizations);
+            });
         }
 
 //        public ICommand GoToDefaultTopView

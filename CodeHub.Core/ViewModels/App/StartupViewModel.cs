@@ -23,21 +23,21 @@ namespace CodeHub.Core.ViewModels.App
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
-            protected set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
+            private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
         private string _status;
         public string Status
         {
             get { return _status; }
-            protected set { this.RaiseAndSetIfChanged(ref _status, value); }
+            private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
         private Uri _imageUrl;
         public Uri ImageUrl
         {
             get { return _imageUrl; }
-            protected set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
+            private set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
         public StartupViewModel(

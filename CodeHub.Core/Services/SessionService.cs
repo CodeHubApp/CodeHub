@@ -1,13 +1,9 @@
-﻿using System.Reactive.Linq;
-using CodeHub.Core.Data;
+﻿using CodeHub.Core.Data;
 using GitHubSharp;
 using System;
-using ReactiveUI;
 using Octokit;
-using Octokit.Internal;
 using System.Diagnostics;
 using CodeHub.Core.Utilities;
-using Splat;
 using System.Threading.Tasks;
 using System.Net.Http;
 using ModernHttpClient;

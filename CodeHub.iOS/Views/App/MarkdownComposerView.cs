@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.App
 
         protected MarkdownComposerView(IMarkdownService markdownService)
         {
-            TextView.Font = UIFont.SystemFontOfSize(16f);
+            TextView.Font = UIFont.PreferredBody;
             TextView.Changed += (sender, e) => ViewModel.Text = TextView.Text;
             TextView.InputAccessoryView = new MarkdownAccessoryView(TextView);
 

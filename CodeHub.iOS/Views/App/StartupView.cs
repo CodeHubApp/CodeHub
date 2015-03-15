@@ -83,20 +83,16 @@ namespace CodeHub.iOS.Views.App
 
             View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
 
-            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Subscribe(x =>
-            {
-                if (x)
-                {
-                    UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
-                        _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 1, null);
-                    _activityView.StartAnimating();
-                }
-                else
-                {
-                    UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
-                        _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 0, null);
-                    _activityView.StopAnimating();
-                }
+            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => x).Subscribe(x => {
+                UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
+                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 1, null);
+                _activityView.StartAnimating();
+            });
+
+            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => !x).Subscribe(x => {
+                UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
+                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 0, null);
+                _activityView.StopAnimating();
             });
 
             ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x);
