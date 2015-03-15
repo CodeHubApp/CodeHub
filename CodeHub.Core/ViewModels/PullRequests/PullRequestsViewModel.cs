@@ -41,9 +41,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             PullRequests = pullRequests.CreateDerivedCollection(
                 x => new PullRequestItemViewModel(x, () => {
                     var vm = this.CreateViewModel<PullRequestViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Id = (int)x.Number;
+                    vm.Init(RepositoryOwner, RepositoryName, (int)x.Number);
                     NavigateTo(vm);
 
                     vm.WhenAnyValue(y => y.Issue.State)

@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 	{
         public IReadOnlyReactiveList<UserItemViewModel> Organizations { get; private set; }
 
-        public string Username { get; set; }
+        public string Username { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
@@ -27,10 +27,9 @@ namespace CodeHub.Core.ViewModels.Organizations
 
             var organizations = new ReactiveList<Octokit.Organization>();
             Organizations = organizations.CreateDerivedCollection(
-                x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () =>
-                {
+                x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () => {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
-                    vm.Username = x.Login;
+                    vm.Init(x.Login);
                     NavigateTo(vm);
                 }),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
@@ -38,6 +37,12 @@ namespace CodeHub.Core.ViewModels.Organizations
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
                 organizations.Reset(await applicationService.GitHubClient.Organization.GetAll(Username)));
+        }
+
+        public OrganizationsViewModel Init(string username)
+        {
+            Username = username;
+            return this;
         }
 	}
 }

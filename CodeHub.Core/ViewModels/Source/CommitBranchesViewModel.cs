@@ -8,9 +8,9 @@ namespace CodeHub.Core.ViewModels.Source
 {
     public class CommitBranchesViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
         public IReadOnlyReactiveList<BranchItemViewModel> Branches { get; private set; }
 
@@ -42,6 +42,13 @@ namespace CodeHub.Core.ViewModels.Source
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
                 branches.Reset(await applicationService.GitHubClient.Repository.GetAllBranches(RepositoryOwner, RepositoryName)));
+        }
+
+        public CommitBranchesViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

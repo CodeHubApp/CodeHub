@@ -25,6 +25,15 @@ namespace CodeHub.Core.ViewModels.Issues
             _htmlUrl = this.WhenAnyValue(x => x.Issue.HtmlUrl)
                 .ToProperty(this, x => x.HtmlUrl);
         }
+
+        public IssueViewModel Init(string repositoryOwner, string repositoryName, int id, Octokit.Issue issue = null)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Id = id;
+            Issue = issue;
+            return this;
+        }
     }
 }
 

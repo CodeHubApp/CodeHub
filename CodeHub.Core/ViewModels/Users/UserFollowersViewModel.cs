@@ -6,7 +6,7 @@ namespace CodeHub.Core.ViewModels.Users
     {
         private readonly ISessionService _applicationService;
 
-        public string Username { get; set; }
+        public string Username { get; private set; }
 
         public UserFollowersViewModel(ISessionService applicationService)
         {
@@ -17,6 +17,12 @@ namespace CodeHub.Core.ViewModels.Users
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
         {
             return _applicationService.Client.Users[Username].GetFollowers();
+        }
+
+        public UserFollowersViewModel Init(string username)
+        {
+            Username = username;
+            return this;
         }
     }
 }

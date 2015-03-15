@@ -9,13 +9,13 @@ namespace CodeHub.Core.ViewModels.Contents
 {
     public class CreateFileViewModel : BaseViewModel
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public string Path { get; set; }
+        public string Path { get; private set; }
 
-        public string Branch { get; set; }
+        public string Branch { get; private set; }
 
         private string _name;
         public string Name
@@ -50,8 +50,6 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public CreateFileViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
         {
-            Path = "/";
-            Branch = "master";
             Title = "Create File";
 
             this.WhenAnyValue(x => x.Name).Subscribe(x => CommitMessage = "Created " + x);
@@ -81,6 +79,14 @@ namespace CodeHub.Core.ViewModels.Contents
                 return await alertDialogFactory.PromptYesNo("Discard File?", "Are you sure you want to discard this file?");
             });
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
+        }
+
+        public void Init(string repositoryOwner, string repositoryName, string path, string branch)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Path = path ?? "/";
+            Branch = branch ?? "master";
         }
     }
 }

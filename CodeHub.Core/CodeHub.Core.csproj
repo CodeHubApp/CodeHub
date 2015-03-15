@@ -169,7 +169,6 @@
     <Compile Include="Factories\IAlertDialogFactory.cs" />
     <Compile Include="Factories\IMediaPickerFactory.cs" />
     <Compile Include="Utilities\GroupedCollection.cs" />
-    <Compile Include="Utilities\UnderscoreContractResolver.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\IBaseViewModel.cs" />
     <Compile Include="ViewModels\IComposerViewModel.cs" />

@@ -98,13 +98,9 @@ namespace CodeHub.Core.ViewModels.Source
             GoToAddFileCommand = ReactiveCommand.Create(
                 this.WhenAnyValue(x => x.PushAccess, x => x.TrueBranch)
                 .Select(x => x.Item1.HasValue && x.Item1.Value && x.Item2))
-                .WithSubscription(_ =>
-                {
+                .WithSubscription(_ => {
                     var vm = this.CreateViewModel<CreateFileViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = Branch;
-                    vm.Path = Path;
+                    vm.Init(RepositoryOwner, RepositoryName, Path, Branch);
                     vm.SaveCommand.Subscribe(z => LoadCommand.ExecuteIfCan());
                     NavigateTo(vm);
                 });

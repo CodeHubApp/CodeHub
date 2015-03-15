@@ -1,9 +1,21 @@
+using System.Diagnostics;
+
 namespace CodeHub.Core.Data
 {
+    [DebuggerDisplay("{Name}")]
     public class Language
     {
-		public string Name { get; set; }
-        public string Slug { get; set; }
+        public Language() { }
+
+        public Language(string name, string slug)
+        {
+            Name = name;
+            Slug = slug;
+        }
+
+		public string Name { get; protected set; }
+
+        public string Slug { get; protected set; }
 
         public override bool Equals(object obj)
         {

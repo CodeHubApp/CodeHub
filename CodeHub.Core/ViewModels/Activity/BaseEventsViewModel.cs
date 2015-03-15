@@ -93,7 +93,7 @@ namespace CodeHub.Core.ViewModels.Activity
         {
             if (string.IsNullOrEmpty(username)) return;
             var vm = this.CreateViewModel<UserViewModel>();
-            vm.Username = username;
+            vm.Init(username);
             NavigateTo(vm);
         }
 
@@ -121,9 +121,7 @@ namespace CodeHub.Core.ViewModels.Activity
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
             var vm = this.CreateViewModel<IssueViewModel>();
-            vm.RepositoryOwner = repo.Owner;
-            vm.RepositoryName = repo.Name;
-            vm.Id = (int)id;
+            vm.Init(repo.Owner, repo.Name, (int)id);
             NavigateTo(vm);
         }
 
@@ -132,9 +130,7 @@ namespace CodeHub.Core.ViewModels.Activity
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
             var vm = this.CreateViewModel<PullRequestViewModel>();
-            vm.RepositoryOwner = repo.Owner;
-            vm.RepositoryName = repo.Name;
-            vm.Id = id;
+            vm.Init(repo.Owner, repo.Name, id);
             NavigateTo(vm);
         }
 

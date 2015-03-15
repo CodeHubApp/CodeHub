@@ -27,16 +27,13 @@ namespace CodeHub.Core.ViewModels.App
             Title = "Feedback";
 
             var items = new ReactiveList<Octokit.Issue>();
-            Items = items.CreateDerivedCollection(x => new FeedbackItemViewModel(x, () =>
-                {
-                    var vm = this.CreateViewModel<IssueViewModel>();
-                    vm.RepositoryOwner = CodeHubOwner;
-                    vm.RepositoryName = CodeHubName;
-                    vm.Id = x.Number;
-                    NavigateTo(vm);
-                }), 
-                filter: x => x.Title.ContainsKeyword(SearchKeyword), 
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+            Items = items.CreateDerivedCollection(x => new FeedbackItemViewModel(x, () => {
+                var vm = this.CreateViewModel<IssueViewModel>();
+                vm.Init(CodeHubOwner, CodeHubName, x.Number);
+                NavigateTo(vm);
+            }), 
+            filter: x => x.Title.ContainsKeyword(SearchKeyword), 
+            signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
                 items.Reset(await applicationService.GitHubClient.Issue.GetForRepository(CodeHubOwner, CodeHubName)));

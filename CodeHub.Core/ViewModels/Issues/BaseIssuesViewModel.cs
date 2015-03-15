@@ -59,25 +59,17 @@ namespace CodeHub.Core.ViewModels.Issues
             var item = new IssueItemViewModel(issue);
             if (item.IsPullRequest)
             {
-                item.GoToCommand.Subscribe(_ =>
-                {
-                    var vm = this.CreateViewModel<PullRequestViewModel>();
-                    vm.RepositoryOwner = item.RepositoryOwner;
-                    vm.RepositoryName = item.RepositoryName;
-                    vm.Id = item.Number;
-                    NavigateTo(vm);
-                });
+                item.GoToCommand
+                    .Select(_ => this.CreateViewModel<PullRequestViewModel>())
+                    .Select(x => x.Init(item.RepositoryOwner, item.RepositoryName, item.Number))
+                    .Subscribe(NavigateTo);
             }
             else
             {
-                item.GoToCommand.Subscribe(_ =>
-                {
-                    var vm = this.CreateViewModel<IssueViewModel>();
-                    vm.RepositoryOwner = item.RepositoryOwner;
-                    vm.RepositoryName = item.RepositoryName;
-                    vm.Id = item.Number;
-                    NavigateTo(vm);
-                });
+                item.GoToCommand
+                    .Select(_ => this.CreateViewModel<IssueViewModel>())
+                    .Select(x => x.Init(item.RepositoryOwner, item.RepositoryName, item.Number))
+                    .Subscribe(NavigateTo);
             }
 
             return item;

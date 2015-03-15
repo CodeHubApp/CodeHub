@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Organizations
     {
         public IReadOnlyReactiveList<TeamItemViewModel> Teams { get; private set; }
 
-        public string OrganizationName { get; set; }
+        public string OrganizationName { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
@@ -38,6 +38,12 @@ namespace CodeHub.Core.ViewModels.Organizations
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => 
                 teams.Reset(await applicationService.GitHubClient.Organization.Team.GetAll(OrganizationName)));
+        }
+
+        public TeamsViewModel Init(string organizationName)
+        {
+            OrganizationName = organizationName;
+            return this;
         }
     }
 }

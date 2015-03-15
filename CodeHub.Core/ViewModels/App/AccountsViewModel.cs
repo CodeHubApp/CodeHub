@@ -8,7 +8,6 @@ using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.Core.Services;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.App
 {

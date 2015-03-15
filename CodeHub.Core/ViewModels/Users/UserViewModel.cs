@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Users
         public string Username 
         {
             get { return _username; }
-            set
+            private set
             {
                 _username = value;
                 Title = value;
@@ -81,12 +81,11 @@ namespace CodeHub.Core.ViewModels.Users
             ToggleFollowingCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue), t => ToggleFollowing());
 
-            GoToGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserGistsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToGistsCommand = ReactiveCommand.Create();
+            GoToGistsCommand
+                .Select(_ => this.CreateViewModel<UserGistsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
             GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
@@ -95,13 +94,12 @@ namespace CodeHub.Core.ViewModels.Users
                 NavigateTo(vm);
             });
 
-            GoToOrganizationsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<OrganizationsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
-
+            GoToOrganizationsCommand = ReactiveCommand.Create();
+            GoToOrganizationsCommand
+                .Select(_ => this.CreateViewModel<OrganizationsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
+            
             GoToEventsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
@@ -109,19 +107,17 @@ namespace CodeHub.Core.ViewModels.Users
                 NavigateTo(vm);
             });
 
-            GoToFollowingCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserFollowingsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToFollowingCommand = ReactiveCommand.Create();
+            GoToFollowingCommand
+                .Select(_ => this.CreateViewModel<UserFollowingsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
-            GoToFollowersCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserFollowersViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToFollowersCommand = ReactiveCommand.Create();
+            GoToFollowersCommand
+                .Select(_ => this.CreateViewModel<UserFollowersViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue),
@@ -141,6 +137,12 @@ namespace CodeHub.Core.ViewModels.Users
 
                 User = await applicationService.GitHubClient.User.Get(Username);
             });
+        }
+
+        public UserViewModel Init(string username)
+        {
+            Username = username;
+            return this;
         }
     }
 }

@@ -63,11 +63,11 @@ namespace CodeHub.Core.ViewModels.App
             GoToAccountsCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<AccountsViewModel>()));
 
-            GoToProfileCommand = ReactiveCommand.Create().WithSubscription(_ => {
-                var vm = this.CreateViewModel<UserViewModel>();
-                vm.Username = Account.Username;
-                NavigateTo(vm);
-            });
+            GoToProfileCommand = ReactiveCommand.Create();
+            GoToProfileCommand
+                .Select(_ => this.CreateViewModel<UserViewModel>())
+                .Select(x => x.Init(Account.Username))
+                .Subscribe(NavigateTo);
 
             GoToMyIssuesCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<MyIssuesViewModel>()));
@@ -90,11 +90,10 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<NewsViewModel>()));
 
             GoToOrganizationsCommand = ReactiveCommand.Create();
-            GoToOrganizationsCommand.Subscribe(_ => {
-                var vm = this.CreateViewModel<OrganizationsViewModel>();
-                vm.Username = Account.Username;
-                NavigateTo(vm);
-            });
+            GoToOrganizationsCommand
+                .Select(_ => this.CreateViewModel<OrganizationsViewModel>())
+                .Select(x => x.Init(Account.Username))
+                .Subscribe(NavigateTo);
 
             GoToTrendingRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<RepositoriesTrendingViewModel>()));
@@ -112,7 +111,7 @@ namespace CodeHub.Core.ViewModels.App
             GoToOrganizationCommand = ReactiveCommand.Create();
             GoToOrganizationCommand.OfType<Octokit.Organization>().Subscribe(x => {
                 var vm = this.CreateViewModel<OrganizationViewModel>();
-                vm.Username = x.Login;
+                vm.Init(x.Login);
                 NavigateTo(vm);
             });
 
@@ -135,12 +134,12 @@ namespace CodeHub.Core.ViewModels.App
             GoToStarredGistsCommand = ReactiveCommand.Create().WithSubscription(
                 _ => NavigateTo(this.CreateViewModel<StarredGistsViewModel>()));
 
-            GoToMyGistsCommand = ReactiveCommand.Create().WithSubscription(_ => {
-                var vm = this.CreateViewModel<UserGistsViewModel>();
-                vm.Username = Account.Username;
-                NavigateTo(vm);
-            });
-
+            GoToMyGistsCommand = ReactiveCommand.Create();
+            GoToMyGistsCommand
+                .Select(_ => this.CreateViewModel<UserGistsViewModel>())
+                .Select(x => x.Init(Account.Username))
+                .Subscribe(NavigateTo);
+  
             GoToMyEvents = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<UserEventsViewModel>();
                 vm.Username = Account.Username;

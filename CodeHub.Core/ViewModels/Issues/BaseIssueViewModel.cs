@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Reactive;
-using System.Threading;
 using System.Linq;
 using CodeHub.Core.ViewModels.Users;
 using System.Collections.ObjectModel;
@@ -22,21 +21,21 @@ namespace CodeHub.Core.ViewModels.Issues
         public int Id 
         {
             get { return _id; }
-            set { this.RaiseAndSetIfChanged(ref _id, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _id, value); }
         }
 
         private string _repositoryOwner;
         public string RepositoryOwner
         {
             get { return _repositoryOwner; }
-            set { this.RaiseAndSetIfChanged(ref _repositoryOwner, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _repositoryOwner, value); }
         }
 
         private string _repositoryName;
         public string RepositoryName
         {
             get { return _repositoryName; }
-            set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
         }
 
         private readonly ObservableAsPropertyHelper<Octokit.User> _assignedUser;
@@ -202,12 +201,10 @@ namespace CodeHub.Core.ViewModels.Issues
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => Load(applicationService));
 
             GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Issue).Select(x => x != null));
-            GoToOwnerCommand.Select(_ => Issue.User).Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<UserViewModel>();
-                vm.Username = x.Login;
-                NavigateTo(vm);
-            });
+            GoToOwnerCommand
+                .Select(_ => this.CreateViewModel<UserViewModel>())
+                .Select(x => x.Init(Issue.User.Login))
+                .Subscribe(NavigateTo);
 
             ToggleStateCommand = ReactiveCommand.CreateAsyncTask(issuePresenceObservable, async t =>
             {

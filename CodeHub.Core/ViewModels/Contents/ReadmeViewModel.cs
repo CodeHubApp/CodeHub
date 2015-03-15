@@ -10,9 +10,9 @@ namespace CodeHub.Core.ViewModels.Contents
 {
     public class ReadmeViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
         private string _contentText;
         public string ContentText
@@ -38,7 +38,8 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
 
-        public ReadmeViewModel(ISessionService applicationService, 
+        public ReadmeViewModel(
+            ISessionService applicationService, 
             IActionMenuFactory actionMenuService)
         {
             Title = "Readme";
@@ -74,6 +75,13 @@ namespace CodeHub.Core.ViewModels.Contents
                 ContentText = await repository.GetReadmeRendered();
                 ContentModel = (await applicationService.Client.ExecuteAsync(repository.GetReadme())).Data;
             });
+        }
+
+        public ReadmeViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

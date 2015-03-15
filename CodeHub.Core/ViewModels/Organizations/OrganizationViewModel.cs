@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Organizations
         public string Username
         {
             get { return _username; }
-            set { this.RaiseAndSetIfChanged(ref _username, value); }
+            private set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
         private Octokit.Organization _userModel;
@@ -33,23 +33,21 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set { this.RaiseAndSetIfChanged(ref _canViewTeams, value); }
         }
 
-        public IReactiveCommand GoToMembersCommand { get; private set; }
+        public IReactiveCommand<object> GoToMembersCommand { get; private set; }
 
-        public IReactiveCommand GoToTeamsCommand { get; private set; }
+        public IReactiveCommand<object> GoToTeamsCommand { get; private set; }
 
-        public IReactiveCommand GoToFollowersCommand { get; private set; }
+        public IReactiveCommand<object> GoToFollowersCommand { get; private set; }
 
-        public IReactiveCommand GoToFollowingCommand { get; private set; }
+        public IReactiveCommand<object> GoToFollowingCommand { get; private set; }
 
-        public IReactiveCommand GoToEventsCommand { get; private set; }
+        public IReactiveCommand<object> GoToEventsCommand { get; private set; }
 
-        public IReactiveCommand GoToGistsCommand { get; private set; }
+        public IReactiveCommand<object> GoToGistsCommand { get; private set; }
 
-        public IReactiveCommand GoToRepositoriesCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoriesCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
         public OrganizationViewModel(ISessionService applicationService)
         {
@@ -58,33 +56,29 @@ namespace CodeHub.Core.ViewModels.Organizations
                 .Select(x => x ?? "Organization")
                 .Subscribe(x => Title = x);
 
-            GoToMembersCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<OrganizationMembersViewModel>();
-                vm.OrganizationName = Username;
-                NavigateTo(vm);
-            });
+            GoToMembersCommand = ReactiveCommand.Create();
+            GoToMembersCommand
+                .Select(_ => this.CreateViewModel<OrganizationMembersViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
-            GoToTeamsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<TeamsViewModel>();
-                vm.OrganizationName = Username;
-                NavigateTo(vm);
-            });
+            GoToTeamsCommand = ReactiveCommand.Create();
+            GoToTeamsCommand
+                .Select(_ => this.CreateViewModel<TeamsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
-            GoToFollowersCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserFollowersViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToFollowersCommand = ReactiveCommand.Create();
+            GoToFollowersCommand
+                .Select(_ => this.CreateViewModel<UserFollowersViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
-            GoToFollowingCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserFollowingsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToFollowingCommand = ReactiveCommand.Create();
+            GoToFollowingCommand
+                .Select(_ => this.CreateViewModel<UserFollowingsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
             GoToEventsCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
@@ -93,12 +87,11 @@ namespace CodeHub.Core.ViewModels.Organizations
                 NavigateTo(vm);
             });
 
-            GoToGistsCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<UserGistsViewModel>();
-                vm.Username = Username;
-                NavigateTo(vm);
-            });
+            GoToGistsCommand = ReactiveCommand.Create();
+            GoToGistsCommand
+                .Select(_ => this.CreateViewModel<UserGistsViewModel>())
+                .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
 
             GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
@@ -114,6 +107,12 @@ namespace CodeHub.Core.ViewModels.Organizations
 
                 Organization = await applicationService.GitHubClient.Organization.Get(Username);
             });
+        }
+
+        public OrganizationViewModel Init(string organizationName)
+        {
+            Username = organizationName;
+            return this;
         }
 	}
 }

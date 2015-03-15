@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public string Username
         {
             get { return _username; }
-            set { this.RaiseAndSetIfChanged(ref _username, value); }
+            private set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
         public bool IsMine
@@ -55,6 +55,12 @@ namespace CodeHub.Core.ViewModels.Gists
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.GistModel>> CreateRequest()
         {
             return _applicationService.Client.Users[Username].Gists.GetGists();
+        }
+
+        public UserGistsViewModel Init(string username)
+        {
+            Username = username;
+            return this;
         }
     }
 }

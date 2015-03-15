@@ -125,7 +125,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
 
-        public IReactiveCommand GoToBranchesCommand { get; private set; }
+        public IReactiveCommand<object> GoToBranchesCommand { get; private set; }
 
         public IReactiveCommand<object> GoToPullRequestsCommand { get; private set; }
 
@@ -176,18 +176,17 @@ namespace CodeHub.Core.ViewModels.Repositories
                 this.WhenAnyValue(x => x.IsWatched, x => x.HasValue), t => ToggleWatch());
 
             GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));
-            GoToOwnerCommand.Select(_ => Repository.Owner).Subscribe(x =>
-            {
+            GoToOwnerCommand.Select(_ => Repository.Owner).Subscribe(x => {
                 if (string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase))
                 {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
-                    vm.Username = RepositoryOwner;
+                    vm.Init(RepositoryOwner);
                     NavigateTo(vm);
                 }
                 else
                 {
                     var vm = this.CreateViewModel<UserViewModel>();
-                    vm.Username = RepositoryOwner;
+                    vm.Init(RepositoryOwner);
                     NavigateTo(vm);
                 }
             });
@@ -242,21 +241,16 @@ namespace CodeHub.Core.ViewModels.Repositories
             });
 
             GoToReadmeCommand = ReactiveCommand.Create();
-            GoToReadmeCommand.Subscribe(_ =>
-            {
-                var vm = this.CreateViewModel<ReadmeViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                NavigateTo(vm);
-            });
+            GoToReadmeCommand
+                .Select(_ => this.CreateViewModel<ReadmeViewModel>())
+                .Select(x => x.Init(RepositoryOwner, RepositoryName))
+                .Subscribe(NavigateTo);
 
-            GoToBranchesCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<CommitBranchesViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                NavigateTo(vm);
-            });
+            GoToBranchesCommand = ReactiveCommand.Create();
+            GoToBranchesCommand
+                .Select(_ => this.CreateViewModel<CommitBranchesViewModel>())
+                .Select(x => x.Init(RepositoryOwner, RepositoryName))
+                .Subscribe(NavigateTo);
 
             GoToCommitsCommand = ReactiveCommand.Create();
             GoToCommitsCommand.Subscribe(_ =>

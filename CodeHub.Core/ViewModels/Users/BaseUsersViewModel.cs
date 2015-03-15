@@ -30,30 +30,26 @@ namespace CodeHub.Core.ViewModels.Users
 
         protected BaseUsersViewModel()
         {
-            var users = new ReactiveList<BasicUserModel>();;
-            Users = users.CreateDerivedCollection(
-                x => 
-                {
-                    var isOrg = string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase);
-                    return new UserItemViewModel(x.Login, x.AvatarUrl, isOrg, () =>
+            var users = new ReactiveList<BasicUserModel>();
+            Users = users.CreateDerivedCollection(x => {
+                var isOrg = string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase);
+                return new UserItemViewModel(x.Login, x.AvatarUrl, isOrg, () => {
+                    if (isOrg)
                     {
-                        if (isOrg)
-                        {
-                            
-                            var vm = this.CreateViewModel<OrganizationViewModel>();
-                            vm.Username = x.Login;
-                            NavigateTo(vm);
-                        }
-                        else
-                        {
-                            var vm = this.CreateViewModel<UserViewModel>();
-                            vm.Username = x.Login;
-                            NavigateTo(vm);
-                        }
-                    });
-                },
-                x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
+                        var vm = this.CreateViewModel<OrganizationViewModel>();
+                        vm.Init(x.Login);
+                        NavigateTo(vm);
+                    }
+                    else
+                    {
+                        var vm = this.CreateViewModel<UserViewModel>();
+                        vm.Init(x.Login);
+                        NavigateTo(vm);
+                    }
+                });
+            },
+            x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
+            signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 users.SimpleCollectionLoad(CreateRequest(), t as bool?, 

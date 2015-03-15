@@ -122,18 +122,14 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
                 var vm = this.CreateViewModel<IssueViewModel>();
-                vm.RepositoryOwner = x.Repository.Owner.Login;
-                vm.RepositoryName = x.Repository.Name;
-                vm.Id = int.Parse(node);
+                vm.Init(x.Repository.Owner.Login, x.Repository.Name, int.Parse(node)); 
                 NavigateTo(vm);
             }
             else if (subject.Equals("pullrequest"))
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
                 var vm = this.CreateViewModel<PullRequestViewModel>();
-                vm.RepositoryOwner = x.Repository.Owner.Login;
-                vm.RepositoryName = x.Repository.Name;
-                vm.Id = int.Parse(node);
+                vm.Init(x.Repository.Owner.Login, x.Repository.Name, int.Parse(node)); 
                 NavigateTo(vm);
             }
             else if (subject.Equals("commit"))

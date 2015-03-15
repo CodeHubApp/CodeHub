@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public Octokit.PullRequest PullRequest
         { 
             get { return _pullRequest; }
-            set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
+            private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
         }
 
         private string _mergeComment;
@@ -44,7 +44,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public bool PushAccess
         { 
             get { return _pushAccess; }
-            set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
+            private set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
         }
 
         private readonly ObservableAsPropertyHelper<Uri> _htmlUrl;
@@ -109,7 +109,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 vm.PullRequestId = Id;
                 NavigateTo(vm);
             });
+        }
 
+        public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, Octokit.PullRequest pullRequest = null)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Id = id;
+            PullRequest = pullRequest;
+            return this;
         }
 
         protected override async Task Load(ISessionService applicationService)

@@ -55,13 +55,9 @@ namespace CodeHub.Core.ViewModels.App
             GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<FeedbackViewModel>()));
 
-            var gotoIssue = new Action<Octokit.Issue>(x =>
-            {
+            var gotoIssue = new Action<Octokit.Issue>(x => {
                 var vm = this.CreateViewModel<IssueViewModel>();
-                vm.Issue = x;
-                vm.RepositoryName = CodeHubName;
-                vm.RepositoryOwner = CodeHubOwner;
-                vm.Id = x.Number;
+                vm.Init(CodeHubOwner, CodeHubName, x.Number, x);
                 NavigateTo(vm);
             });
 
