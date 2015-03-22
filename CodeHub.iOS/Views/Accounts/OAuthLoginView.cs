@@ -6,7 +6,7 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public partial class OAuthLoginView : BaseViewController<OAuthLoginViewModel>
+    public partial class OAuthLoginView : BaseViewController<OAuthTokenLoginViewModel>
     {
         public OAuthLoginView()
             : base("OAuthLoginView", null)

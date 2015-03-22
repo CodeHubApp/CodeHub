@@ -8,6 +8,7 @@ using System.Reactive;
 using CodeHub.Core.Data;
 using CodeHub.Core.Factories;
 using GitHubSharp;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -69,35 +70,35 @@ namespace CodeHub.Core.ViewModels.App
             if (account == null)
             {
                 await GoToAccountsOrNewUser();
+                return;
             }
-            else
+
+            try
             {
-                try
-                {
-                    Status = string.Format("Logging in {0}", account.Username);
+                Status = string.Format("Logging in {0}", account.Username);
+                MessageBus.Current.SendMessage(new LoggingInMessage(account));
 
-                    Uri avatarUri;
-                    if (Uri.TryCreate(account.AvatarUrl, UriKind.Absolute, out avatarUri))
-                        ImageUrl = avatarUri;
+                Uri avatarUri;
+                if (Uri.TryCreate(account.AvatarUrl, UriKind.Absolute, out avatarUri))
+                    ImageUrl = avatarUri;
 
-                    IsLoggingIn = true;
-                    await _sessionService.SetSessionAccount(account);
-                    NavigateTo(this.CreateViewModel<MenuViewModel>());
-                }
-                catch (UnauthorizedException)
-                {
-                    _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.").ToBackground();
-                    NavigateTo(this.CreateViewModel<AccountsViewModel>());
-                }
-                catch (Exception e)
-                {
-                    _alertDialogFactory.Alert("Unable to login!", e.Message).ToBackground();
-                    NavigateTo(this.CreateViewModel<AccountsViewModel>());
-                }
-                finally
-                {
-                    IsLoggingIn = false;
-                }
+                IsLoggingIn = true;
+                await _sessionService.SetSessionAccount(account);
+                NavigateTo(this.CreateViewModel<MenuViewModel>());
+            }
+            catch (UnauthorizedException)
+            {
+                _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.").ToBackground();
+                NavigateTo(this.CreateViewModel<AccountsViewModel>());
+            }
+            catch (Exception e)
+            {
+                _alertDialogFactory.Alert("Unable to login!", e.Message).ToBackground();
+                NavigateTo(this.CreateViewModel<AccountsViewModel>());
+            }
+            finally
+            {
+                IsLoggingIn = false;
             }
         }
     }

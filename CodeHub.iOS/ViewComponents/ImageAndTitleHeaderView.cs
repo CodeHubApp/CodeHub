@@ -34,8 +34,10 @@ namespace CodeHub.iOS.ViewComponents
                     _imageView.Image = null;
                 else
                 {
-                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType, imageUrl) =>
-                        UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null));
+                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType, imageUrl) => {
+                        if (image != null && error == null)
+                            UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null);
+                    });
                 }
             }
         }

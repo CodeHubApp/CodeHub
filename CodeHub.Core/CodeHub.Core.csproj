@@ -56,7 +56,6 @@
     <Compile Include="Utilities\GitHubSharpModelExtensions.cs" />
     <Compile Include="Utilities\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
-    <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
     <Compile Include="ViewModels\App\AccountsViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
@@ -216,11 +215,13 @@
     <Compile Include="StartupCommands.cs" />
     <Compile Include="Utilities\OctokitModernHttpClient.cs" />
     <Compile Include="ViewModels\Gists\GistModifyViewModel.cs" />
-    <Compile Include="ViewModels\Accounts\OAuthLoginViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddEnterpriseAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddWebAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="Utilities\OctokitClientFactory.cs" />
+    <Compile Include="ViewModels\Accounts\OAuthFlowLoginViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\OAuthTokenLoginViewModel.cs" />
+    <Compile Include="Messages\LoginMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

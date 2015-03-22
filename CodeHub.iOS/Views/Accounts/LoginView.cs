@@ -1,6 +1,5 @@
 using System;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
 using System.Text;
@@ -11,7 +10,7 @@ using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-    public class LoginView : BaseWebView<LoginViewModel>
+    public class LoginView : BaseWebView<OAuthFlowLoginViewModel>
     {
         private readonly IAlertDialogFactory _alertDialogService;
         private static readonly string HasSeenWelcomeKey = "HAS_SEEN_WELCOME";
@@ -32,10 +31,6 @@ namespace CodeHub.iOS.Views.Accounts
             this.WhenAnyValue(x => x.ViewModel.LoginUrl)
                 .IsNotNull()
                 .Subscribe(LoadRequest);
-
-            this.Appeared
-                .Take(1)
-                .Subscribe(_ => ViewModel.LoadCommand.ExecuteIfCan());
 
             bool hasSeenWelcome;
             if (!defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome))
@@ -74,13 +69,7 @@ namespace CodeHub.iOS.Views.Accounts
 			if (e.Error.Code == 102)
 				return;
 
-			if (ViewModel.IsEnterprise)
-            {
-                var alert = _alertDialogService.Alert("Error", "Unable to communicate with GitHub with given Url. " + e.Error.LocalizedDescription);
-                alert.ContinueWith(t => ViewModel.LoadCommand.ExecuteIfCan(), TaskContinuationOptions.OnlyOnRanToCompletion);
-            }
-			else
-                _alertDialogService.Alert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription);
+            _alertDialogService.Alert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription).ToBackground();
 		}
 
         protected override void OnLoadFinished(object sender, EventArgs e)
@@ -98,10 +87,8 @@ namespace CodeHub.iOS.Views.Accounts
             script.Append("$('.brand-logo-wordmark').click(function(e) { e.preventDefault(); });");
 
             //Inject some Javascript so we can set the username if there is an attempted account
-			if (ViewModel.AttemptedAccount != null)
-            {
-                script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
-            }
+            ViewModel.AttemptedAccount.Do(x => 
+                script.Append("$('input[name=\"login\"]').val('" + x.Username + "').attr('readonly', 'readonly');"));
 
             Web.EvaluateJavascript("(function(){setTimeout(function(){" + script +"}, 100); })();");
         }

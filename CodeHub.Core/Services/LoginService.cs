@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net.Http;
-using Octokit.Internal;
 using Octokit;
 using CodeHub.Core.Utilities;
 
@@ -21,74 +20,33 @@ namespace CodeHub.Core.Services
             _accounts = accounts;
         }
 
-		public async Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount account)
-        {
-			var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
-			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
-            var info = (await client.ExecuteAsync(client.AuthenticatedUser.GetInfo())).Data;
-            var username = info.Login;
-
-            //Does this user exist?
-            var exists = account != null;
-			if (!exists)
-                account = new GitHubAccount { Username = username };
-			account.OAuth = token.AccessToken;
-            account.AvatarUrl = info.AvatarUrl;
-            account.Name = info.Name;
-            account.Email = info.Email;
-			account.Domain = apiDomain;
-			account.WebDomain = requestDomain;
-			client.Username = username;
-
-            if (exists)
-                await _accounts.Update(account);
-            else
-                await _accounts.Insert(account);
-			return new LoginData { Client = client, Account = account };
-        }
-
-		public async Task<Client> LoginAccount(GitHubAccount account)
-        {
-            //Create the client
-			Client client = null;
-			if (!string.IsNullOrEmpty(account.OAuth))
-			{
-				client = Client.BasicOAuth(account.OAuth, account.Domain ?? Client.DefaultApi);
-			}
-			else if (account.IsEnterprise || !string.IsNullOrEmpty(account.Password))
-			{
-				client = Client.Basic(account.Username, account.Password, account.Domain ?? Client.DefaultApi);
-			}
-
-			var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
-			var userInfo = data.Data;
-            account.Username = userInfo.Login;
-            account.Name = userInfo.Name;
-            account.Email = userInfo.Email;
-            account.AvatarUrl = userInfo.AvatarUrl;
-			client.Username = userInfo.Login;
-            await _accounts.Update(account);
-            return client;
-        }
-
         public async Task<GitHubAccount> Authenticate(string apiDomain, string webDomain, string user, string pass, string twoFactor, bool enterprise)
         {
             try
             {
-//                var client = twoFactor == null ? Client.Basic(user, pass, apiDomain) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiDomain);
-//                var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", Scopes.ToList(), "CodeHub", null));
+                string token = null;
 
-                var scopes = OctokitClientFactory.Scopes;
-                var client = OctokitClientFactory.Create(new Uri(apiDomain), new Credentials(user, pass));
-                var appAuth = await client.Authorization.GetOrCreateApplicationAuthentication("72f4fb74bdba774b759d", 
-                    "9253ab615f8c00738fff5d1c665ca81e581875cb", new NewAuthorization("CodeHub", scopes));
-
-                if (scopes.Except(appAuth.Scopes).Any())
+                if (enterprise)
                 {
-                    await client.Authorization.Update(appAuth.Id, new AuthorizationUpdate { Scopes = scopes });
+                    var client = twoFactor == null ? Client.Basic(user, pass, apiDomain) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiDomain);
+                    var auth = await client.ExecuteAsync(client.Authorizations.Create(OctokitClientFactory.Scopes.ToList(), "CodeHub (GitHub for iOS)", "http://codehub-app.com"));
+                    token = auth.Data.Token;
+                }
+                else
+                {
+                    var scopes = OctokitClientFactory.Scopes;
+                    var client = OctokitClientFactory.Create(new Uri(apiDomain), new Credentials(user, pass));
+
+                    var appAuth = await client.Authorization.GetOrCreateApplicationAuthentication("72f4fb74bdba774b759d", 
+                        "9253ab615f8c00738fff5d1c665ca81e581875cb", new NewAuthorization("CodeHub", scopes));
+
+                    if (scopes.Except(appAuth.Scopes).Any())
+                        await client.Authorization.Update(appAuth.Id, new AuthorizationUpdate { Scopes = scopes });
+
+                    token = appAuth.Token;
                 }
 
-                return await Authenticate(apiDomain, webDomain, appAuth.Token, enterprise);
+                return await Authenticate(apiDomain, webDomain, token, enterprise);
             }
             catch (StatusCodeException ex)
             {
@@ -115,10 +73,7 @@ namespace CodeHub.Core.Services
             var scopes = await GetScopes(apiDomain, token);
             CheckScopes(scopes);
 
-            GitHubAccount account;
-            try { account = await _accounts.Find(apiDomain, userInfo.Login); }
-            catch { account = new GitHubAccount(); }
-
+            var account = (await _accounts.Find(apiDomain, userInfo.Login)) ?? new GitHubAccount();
             account.Username = userInfo.Login;
             account.Domain = apiDomain;
             account.WebDomain = webDomain;

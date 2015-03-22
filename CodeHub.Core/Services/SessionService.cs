@@ -2,7 +2,6 @@
 using GitHubSharp;
 using System;
 using Octokit;
-using System.Diagnostics;
 using CodeHub.Core.Utilities;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -52,28 +51,11 @@ namespace CodeHub.Core.Services
 
             try
             {
-                var githubAccount = account;
-                var domain = githubAccount.Domain ?? Client.DefaultApi;
-                Credentials credentials;
-                Client oldClient;
-
-                if (!string.IsNullOrEmpty(githubAccount.OAuth))
-                {
-                    oldClient = Client.BasicOAuth(githubAccount.OAuth, domain);
-                    credentials = new Credentials(githubAccount.OAuth);
-                }
-                else if (githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password))
-                {
-                    oldClient = Client.Basic(githubAccount.Username, githubAccount.Password, domain);
-                    credentials = new Credentials(githubAccount.Username, githubAccount.Password);
-                }
-                else
-                {
-                    Debugger.Break();
-                    return;
-                }
-            
+                var domain = account.Domain ?? Client.DefaultApi;
+                var credentials = new Credentials(account.OAuth);
+                var oldClient = Client.BasicOAuth(account.OAuth, domain);
                 var newClient = OctokitClientFactory.Create(new Uri(domain), credentials);
+
                 var userInfo = await newClient.User.Current();
                 account.Name = userInfo.Name;
                 account.Email = userInfo.Email;

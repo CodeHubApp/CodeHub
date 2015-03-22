@@ -1,19 +1,15 @@
 using CoreGraphics;
 using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
-using CodeHub.Core.Services;
 using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public partial class NewAccountView : BaseViewController<NewAccountViewModel>
     {
-        private readonly IFeaturesService _featuresService;
-
-        public NewAccountView(IFeaturesService featuresService)
+        public NewAccountView()
 			: base ("NewAccountView", null)
         {
-            _featuresService = featuresService;
         }
 
         public override void ViewDidLoad()
@@ -33,25 +29,9 @@ namespace CodeHub.iOS.Views.Accounts
             EnterpriseButton.Layer.ShadowColor = UIColor.Black.CGColor;
             EnterpriseButton.Layer.ShadowOffset = new CGSize(0, 1);
             EnterpriseButton.Layer.ShadowOpacity = 0.3f;
-
-            EnterpriseButton.TouchUpInside += (sender, e) => GoToEnterprise();
+            EnterpriseButton.TouchUpInside += (sender, e) => ViewModel.GoToEnterpriseLoginCommand.ExecuteIfCan();
 
             ScrollView.ContentSize = new CGSize(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
-        }
-
-        private void GoToEnterprise()
-        {
-            if (_featuresService.IsEnterpriseSupportActivated)
-                ViewModel.GoToEnterpriseLoginCommand.Execute(null);
-            else
-            {
-//                var ctrl = IoC.Resolve<EnableEnterpriseViewController>();
-//                ctrl.Dismissed += (sender, e) => {
-//                    if (_featuresService.IsEnterpriseSupportActivated)
-//                        ViewModel.GoToEnterpriseLoginCommand.Execute(null);
-//                };
-//                PresentViewController(ctrl, true, null);
-            }
         }
     }
 }

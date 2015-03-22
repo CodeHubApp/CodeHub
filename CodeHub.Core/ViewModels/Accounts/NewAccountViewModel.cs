@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             Title = "Account";
 
             GoToDotComLoginCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => NavigateTo(this.CreateViewModel<LoginViewModel>()));
+                .WithSubscription(_ => NavigateTo(this.CreateViewModel<OAuthFlowLoginViewModel>()));
 
             GoToEnterpriseLoginCommand = ReactiveCommand.Create()
                 .WithSubscription(_ => NavigateTo(this.CreateViewModel<AddEnterpriseAccountViewModel>()));

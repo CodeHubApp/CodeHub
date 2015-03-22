@@ -9,16 +9,16 @@ namespace CodeHub.Core.ViewModels.Accounts
     public class AddEnterpriseAccountViewModel : AddAccountViewModel 
     {
         private readonly ILoginService _loginFactory;
-        private readonly IAccountsRepository _accountsService;
+        private readonly IAccountsRepository _accountsRepository;
 
         public AddEnterpriseAccountViewModel(
             ILoginService loginFactory, 
-            IAccountsRepository accountsService,
+            IAccountsRepository accountsRepository,
             IAlertDialogFactory alertDialogFactory)
             : base(alertDialogFactory)
         {
             _loginFactory = loginFactory;
-            _accountsService = accountsService;
+            _accountsRepository = accountsRepository;
         }
 
         protected override async Task<GitHubAccount> Login()
@@ -35,7 +35,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
 
             var account = await _loginFactory.Authenticate(apiUrl, Domain, Username, Password, TwoFactor, true);
-            await _accountsService.SetDefault(account);
+            await _accountsRepository.SetDefault(account);
             return account;
         }
     }

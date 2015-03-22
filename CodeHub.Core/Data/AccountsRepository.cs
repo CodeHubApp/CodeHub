@@ -6,6 +6,7 @@ using System.Linq;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Reactive.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.Data
 {
@@ -67,14 +68,9 @@ namespace CodeHub.Core.Data
 
         public Task<GitHubAccount> Find(string key)
         {
-            try
-            {
-                return BlobCache.UserAccount.GetObject<GitHubAccount>("user_" + key).ToTask();
-            }
-            catch
-            {
-                return null;
-            }
+            return BlobCache.UserAccount.GetObject<GitHubAccount>("user_" + key)
+                .Catch(Observable.Return<GitHubAccount>(null))
+                .ToTask();
         }
 
         public async Task<IEnumerable<GitHubAccount>> GetAll()

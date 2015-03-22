@@ -54,7 +54,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
             {
                 Username = x.Username;
-                Password = x.Password;
                 Domain = x.Domain;
             });
 

@@ -66,7 +66,7 @@ namespace CodeHub.Core.ViewModels.App
         {
             _accountsRepository.GetAll().ToObservable()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => _accounts.Reset(x));
+                .Subscribe(x => _accounts.Reset(x.OrderBy(y => y.Username)));
         }
 
         private async Task LoginAccount(GitHubAccount account)

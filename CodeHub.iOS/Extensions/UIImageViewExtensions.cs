@@ -3,11 +3,9 @@ using CodeHub.Core.Utilities;
 using SDWebImage;
 using CodeHub.iOS;
 using Foundation;
-
-// Analysis disable once CheckNamespace
 using CoreAnimation;
 
-
+// Analysis disable once CheckNamespace
 namespace UIKit
 {
     public static class UIImageViewExtensions
@@ -21,8 +19,10 @@ namespace UIKit
             }
             else
             {
-                @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) =>
-                {
+                @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
+                    if (img == null || err != null)
+                        return;
+                    
                     if (type == SDImageCacheType.None)
                     {
                         @this.Image = Images.LoginUserUnknown;

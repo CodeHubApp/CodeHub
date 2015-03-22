@@ -18,6 +18,7 @@ using System.Linq;
 using CodeHub.Core;
 using System.Net.Http;
 using ModernHttpClient;
+using System.Text;
 
 namespace CodeHub.iOS
 {
@@ -63,9 +64,11 @@ namespace CodeHub.iOS
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
             // Enable flurry analytics
-            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
-                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-            Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
+            //if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+            //    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+            //Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
+
+            SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("Basic Ym9iZG9sZTpDb29sbWFuMTg=", "Authorization");
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
@@ -86,11 +89,25 @@ namespace CodeHub.iOS
             var startupViewController = new StartupView { ViewModel = vm };
 
             var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
-            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ =>
-            {
+
+            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
                 mainNavigationController.PopToRootViewController(false);
                 mainNavigationController.DismissViewController(true, null);
             });
+
+//            MessageBus.Current.Listen<LoginMessage>().Subscribe(x => {
+//                if (x.Account.IsEnterprise)
+//                {
+//                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(x.Account.OAuth + ":x-oauth-basic"));
+//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("Basic " + credentials, "Authorization");
+//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("SDWebImage", "User-Agent");
+//                }
+//                else
+//                {
+//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField(null, "Authorization");
+//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField(null, "User-Agent");
+//                }
+//            });
 
             Window = new UIWindow(UIScreen.MainScreen.Bounds) {RootViewController = mainNavigationController};
             Window.MakeKeyAndVisible();

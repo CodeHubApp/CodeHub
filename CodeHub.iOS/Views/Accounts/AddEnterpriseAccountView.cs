@@ -17,13 +17,16 @@ namespace CodeHub.iOS.Views.Accounts
         {
             base.ViewDidLoad();
 
-            Username.EditingChanged += (sender, args) => ViewModel.Username = Username.Text;
+            Username.EditingChanged += (sender, args) => 
+                ViewModel.Username = Username.Text;
             ViewModel.WhenAnyValue(x => x.Username).Subscribe(x => Username.Text = x);
 
-            Password.EditingChanged += (sender, args) => ViewModel.Password = Password.Text;
+            Password.EditingChanged += (sender, args) => 
+                ViewModel.Password = Password.Text;
             ViewModel.WhenAnyValue(x => x.Password).Subscribe(x => Password.Text = x);
 
-            Domain.ValueChanged += (sender, args) => ViewModel.Domain = Domain.Text;
+            Domain.EditingChanged += (sender, args) => 
+                ViewModel.Domain = Domain.Text;
             ViewModel.WhenAnyValue(x => x.Domain).Subscribe(x => Domain.Text = x);
 
             LoginButton.TouchUpInside += (sender, args) => ViewModel.LoginCommand.ExecuteIfCan();

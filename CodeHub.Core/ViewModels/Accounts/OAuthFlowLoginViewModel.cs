@@ -8,16 +8,16 @@ using CodeHub.Core.Messages;
 using System.Reactive;
 using CodeHub.Core.Factories;
 using CodeHub.Core.Utilities;
+using GitHubSharp;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class LoginViewModel : BaseViewModel
+    public class OAuthFlowLoginViewModel : BaseViewModel
     {
         public const string ClientId = "72f4fb74bdba774b759d";
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private const string DefaultWebDomain = "https://github.com";
-        private readonly ILoginService _loginFactory;
         private readonly IAccountsRepository _accountsRepository;
         private readonly IAlertDialogFactory _alertDialogService;
 
@@ -26,8 +26,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             get { return _loginUrl.Value; }
         }
-
-        public bool IsEnterprise { get; set; }
 
         private GitHubAccount _attemptedAccount;
         public GitHubAccount AttemptedAccount
@@ -47,8 +45,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public IReactiveCommand<Unit> ShowLoginOptionsCommand { get; private set; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
         private string _code;
         public string Code
         {
@@ -56,12 +52,11 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _code, value); }
         }
 
-        public LoginViewModel(ILoginService loginFactory, 
-                              IAccountsRepository accountsRepository,
-                              IActionMenuFactory actionMenuService,
-                              IAlertDialogFactory alertDialogService)
+        public OAuthFlowLoginViewModel(
+            IAccountsRepository accountsRepository,
+            IActionMenuFactory actionMenuService,
+            IAlertDialogFactory alertDialogService)
         {
-            _loginFactory = loginFactory;
             _accountsRepository = accountsRepository;
             _alertDialogService = alertDialogService;
 
@@ -71,7 +66,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 NavigateTo(this.CreateViewModel<AddWebAccountViewModel>()));
 
             var oauthLogin = ReactiveCommand.Create().WithSubscription(_ =>
-                NavigateTo(this.CreateViewModel<OAuthLoginViewModel>()));
+                NavigateTo(this.CreateViewModel<OAuthTokenLoginViewModel>()));
 
             var canLogin = this.WhenAnyValue(x => x.Code).Select(x => !string.IsNullOrEmpty(x));
             var loginCommand = ReactiveCommand.CreateAsyncTask(canLogin,_ => Login(Code));
@@ -94,52 +89,34 @@ namespace CodeHub.Core.ViewModels.Accounts
                     ClientId, Uri.EscapeDataString(RedirectUri), Uri.EscapeDataString(string.Join(",", OctokitClientFactory.Scopes))))
                 .ToProperty(this, x => x.LoginUrl);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
-                if (IsEnterprise && string.IsNullOrEmpty(WebDomain))
-                {
-                    var response = await alertDialogService.PromptTextBox("Enterprise URL",
-                        "Please enter the webpage address for the GitHub Enterprise installation",
-                        DefaultWebDomain, "Ok");
-                    WebDomain = response;
-                }
-                else
-                {
-                    WebDomain = DefaultWebDomain;
-                }
-            });
-
-            LoadCommand.ThrownExceptions.Take(1).Subscribe(x => Dismiss());
+            WebDomain = DefaultWebDomain;
         }
 
         private async Task<GitHubAccount> Login(string code)
         {
-            string apiUrl;
-            if (IsEnterprise)
-            {
-                apiUrl = WebDomain;
-                if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
-                    apiUrl = "https://" + apiUrl;
-                if (!apiUrl.EndsWith("/"))
-                    apiUrl += "/";
-                if (!apiUrl.Contains("/api/"))
-                    apiUrl += "api/v3/";
-
-                apiUrl = apiUrl.TrimEnd('/');
-            }
-            else
-            {
-                apiUrl = GitHubSharp.Client.DefaultApi;
-            }
-
             using (_alertDialogService.Activate("Logging in..."))
             {
-                var account = AttemptedAccount;
-                var loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
-                await _accountsRepository.SetDefault(loginData.Account);
-                return loginData.Account;
+                var token = await Client.RequestAccessToken(ClientId, ClientSecret, code, RedirectUri, WebDomain);
+                var client = Client.BasicOAuth(token.AccessToken);
+                var info = (await client.ExecuteAsync(client.AuthenticatedUser.GetInfo())).Data;
+                client.Username = info.Login;
+
+                var account = (await _accountsRepository.Find(Client.DefaultApi, info.Login)) ?? new GitHubAccount();
+                account.Username = info.Login;
+                account.OAuth = token.AccessToken;
+                account.AvatarUrl = info.AvatarUrl;
+                account.Name = info.Name;
+                account.Email = info.Email;
+                account.Domain = Client.DefaultApi;
+                account.WebDomain = WebDomain;
+                account.IsEnterprise = false;
+
+                await _accountsRepository.Insert(account);
+                await _accountsRepository.SetDefault(account);
+                return account;
             }
         }
+
     }
 }
 

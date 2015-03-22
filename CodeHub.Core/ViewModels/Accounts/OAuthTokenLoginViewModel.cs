@@ -4,13 +4,11 @@ using ReactiveUI;
 using CodeHub.Core.Services;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Factories;
-using System.Reactive.Linq;
-using System.Diagnostics;
 using GitHubSharp;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class OAuthLoginViewModel : BaseViewModel
+    public class OAuthTokenLoginViewModel : BaseViewModel
     {
         private readonly static string ApiDomain = "https://api.github.com";
         private readonly static string WebDomain = "https://github.com";
@@ -24,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             set { this.RaiseAndSetIfChanged(ref _token, value); }
         }
 
-        public OAuthLoginViewModel(
+        public OAuthTokenLoginViewModel(
             ILoginService loginFactory, 
             IAccountsRepository accountsRepository,
             IAlertDialogFactory alertDialogFactory)
