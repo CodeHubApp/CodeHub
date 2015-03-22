@@ -14,7 +14,6 @@ using CodeHub.iOS.Views.Settings;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Factories;
 using CodeHub.Core.Factories;
-using CodeHub.Core.ViewModels.Changesets;
 using System.Linq;
 using CodeHub.Core;
 using System.Net.Http;
