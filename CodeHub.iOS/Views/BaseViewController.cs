@@ -89,33 +89,39 @@ namespace CodeHub.iOS.Views
 
         public IObservable<bool> Appearing
         {
-            get { return _appearingSubject; }
+            get { return _appearingSubject.AsObservable(); }
         }
 
         public IObservable<bool> Appeared
         {
-            get { return _appearedSubject; }
+            get { return _appearedSubject.AsObservable(); }
         }
 
         public IObservable<bool> Disappearing
         {
-            get { return _disappearingSubject; }
+            get { return _disappearingSubject.AsObservable(); }
         }
 
         public IObservable<bool> Disappeared
         {
-            get { return _disappearedSubject; }
+            get { return _disappearedSubject.AsObservable(); }
         }
 
         protected BaseViewController()
         {
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+            CommonConstructor();
         }
 
         protected BaseViewController(string nib, NSBundle bundle)
             : base(nib, bundle)
         {
+            CommonConstructor();
+        }
+
+        private void CommonConstructor()
+        {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
+            Appeared.Take(1).Subscribe(_ => this.TrackScreen());
         }
 
         public override void ViewWillAppear(bool animated)

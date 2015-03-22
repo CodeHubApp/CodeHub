@@ -4,11 +4,28 @@ using UIKit;
 using System.Reactive.Subjects;
 using CoreGraphics;
 using System.Reactive.Linq;
+using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.iOS.Views
 {
     public static class BaseViewControllerExtensions
     {
+        public static IAnalyticsService GetAnalytics(this BaseViewController viewController)
+        {
+            return Locator.Current.GetService<IAnalyticsService>();
+        }
+
+        public static void TrackScreen(this BaseViewController viewController)
+        {
+            var analytics = viewController.GetAnalytics();
+            if (analytics == null)
+                return;
+
+            var screenName = viewController.GetType().Name;
+            analytics.Screen(screenName);
+        }
+
         public static IObservable<CGRect> ViewportObservable(this BaseViewController viewController)
         {
             NSObject hideNotification = null;

@@ -7,12 +7,14 @@ using CodeHub.Core.Utilities;
 using System.Threading.Tasks;
 using System.Net.Http;
 using ModernHttpClient;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.Services
 {
     public class SessionService : ISessionService
     {
         private readonly IAccountsRepository _accountsRepository;
+        private readonly IAnalyticsService _analyticsService;
 
         static SessionService()
         {
@@ -26,9 +28,16 @@ namespace CodeHub.Core.Services
 
         public GitHubAccount Account { get; private set; }
 
-        public SessionService(IAccountsRepository accountsRepository)
+        public SessionService(IAccountsRepository accountsRepository, IAnalyticsService analyticsService)
         {
             _accountsRepository = accountsRepository;
+            _analyticsService = analyticsService;
+        }
+
+        public void Track(string eventName, IDictionary<string, string> properties = null)
+        {
+            if (Account != null)
+                _analyticsService.Track(eventName, properties);
         }
 
         public async Task SetSessionAccount(GitHubAccount account)
@@ -75,6 +84,10 @@ namespace CodeHub.Core.Services
                 Client = oldClient;
                 GitHubClient = newClient;
                 Account = account;
+
+                // Identify for the analytics service
+                _analyticsService.Identify(Account.Username);
+                _analyticsService.Track("login");
             }
             catch
             {

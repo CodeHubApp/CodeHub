@@ -237,6 +237,7 @@ namespace CodeHub.iOS.Views
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
             ClearsSelectionOnViewWillAppear = false;
+            Appeared.Take(1).Subscribe(_ => this.TrackScreen());
         }
 
         public override void ViewDidLoad()

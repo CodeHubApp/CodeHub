@@ -3,11 +3,28 @@ using UIKit;
 using CoreGraphics;
 using CodeHub.iOS.Utilities;
 using ReactiveUI;
+using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.iOS.Views
 {
     public static class BaseTableViewControllerExtensions
     {
+        public static IAnalyticsService GetAnalytics(this BaseTableViewController viewController)
+        {
+            return Locator.Current.GetService<IAnalyticsService>();
+        }
+
+        public static void TrackScreen(this BaseTableViewController viewController)
+        {
+            var analytics = viewController.GetAnalytics();
+            if (analytics == null)
+                return;
+
+            var screenName = viewController.GetType().Name;
+            analytics.Screen(screenName);
+        }
+
         public static ObservableSearchDelegate AddSearchBar(this BaseTableViewController @this)
         {
             var searchBar = new UISearchBar(new CGRect(0f, 0f, 320f, 44f));

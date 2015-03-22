@@ -455,6 +455,15 @@
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.7.3\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
+    <Reference Include="Analytics.NET">
+      <HintPath>..\packages\Analytics.2.0.0\lib\Analytics.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.iOS">
+      <HintPath>..\packages\Flurry.Analytics.1.1.1.2\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.Portable">
+      <HintPath>..\packages\Flurry.Analytics.Portable.1.1.1.2\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png">

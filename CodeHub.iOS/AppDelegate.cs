@@ -63,15 +63,19 @@ namespace CodeHub.iOS
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+            // Enable flurry analytics
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+            Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
 
-            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
-            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             Locator.CurrentMutable.InitializeFactories();
             Locator.CurrentMutable.InitializeServices();
-            CodeHub.Core.Bootstrap.Init();
-            Locator.Current.GetService<IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
+            Bootstrap.Init();
+
+            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
+            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
