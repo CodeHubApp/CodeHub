@@ -9,6 +9,8 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Factories;
 using GitHubSharp;
 using CodeHub.Core.Messages;
+using System.Reactive.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -75,6 +77,7 @@ namespace CodeHub.Core.ViewModels.App
 
             try
             {
+                //throw new Exception("Fuck");
                 Status = string.Format("Logging in {0}", account.Username);
                 MessageBus.Current.SendMessage(new LoggingInMessage(account));
 
@@ -88,13 +91,17 @@ namespace CodeHub.Core.ViewModels.App
             }
             catch (UnauthorizedException)
             {
-                _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.").ToBackground();
-                NavigateTo(this.CreateViewModel<AccountsViewModel>());
+                _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.")
+                    .ToObservable()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(_ => NavigateTo(this.CreateViewModel<AccountsViewModel>()));
             }
             catch (Exception e)
             {
-                _alertDialogFactory.Alert("Unable to login!", e.Message).ToBackground();
-                NavigateTo(this.CreateViewModel<AccountsViewModel>());
+                _alertDialogFactory.Alert("Unable to login!", e.Message)
+                    .ToObservable()
+                    .ObserveOn(RxApp.MainThreadScheduler)
+                    .Subscribe(_ => NavigateTo(this.CreateViewModel<AccountsViewModel>()));
             }
             finally
             {

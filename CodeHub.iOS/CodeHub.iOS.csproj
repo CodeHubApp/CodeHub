@@ -347,7 +347,6 @@
     <InterfaceDefinition Include="Cells\CommitCellView.xib" />
     <InterfaceDefinition Include="Cells\PullRequestCellView.xib" />
     <InterfaceDefinition Include="Cells\FeedbackCellView.xib" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="ViewComponents\EmptyListView.cs" />
     <Compile Include="..\CodeHub\Resources\Octicons.cs">
       <Link>Octicons.cs</Link>
@@ -388,6 +387,7 @@
     <Compile Include="Extensions\UIFontExtensions.cs" />
     <Compile Include="Views\BaseTableViewControllerExtensions.cs" />
     <Compile Include="ViewComponents\ExtendedUITextView.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -420,12 +420,6 @@
     </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.1.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.1.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCL.raw">
       <HintPath>..\packages\SQLitePCL.raw_basic.0.7.1\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
@@ -463,6 +457,12 @@
     </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.1\lib\Xamarin.iOS10\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.1.1\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
