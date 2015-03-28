@@ -112,12 +112,10 @@ namespace CodeHub.Core.ViewModels.Gists
             });
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && !string.IsNullOrEmpty(x.HtmlUrl)));
-            GoToHtmlUrlCommand.Select(_ => Gist.HtmlUrl).Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
+            GoToHtmlUrlCommand
+                .Select(_ => this.CreateViewModel<WebBrowserViewModel>())
+                .Select(x => x.Init(Gist.HtmlUrl))
+                .Subscribe(NavigateTo);
 
             GoToFileSourceCommand = ReactiveCommand.Create();
             GoToFileSourceCommand.OfType<GistFileModel>().Subscribe(x =>

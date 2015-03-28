@@ -9,7 +9,7 @@ namespace CodeHub.Core.Utilities
 {
     public static class OctokitClientFactory
     {
-        public static readonly string[] Scopes = { "user", "repo", "gist", "read:org" };
+        public static readonly string[] Scopes = { "user", "repo", "gist", "notifications" };
 
         public static GitHubClient Create(Uri domain, Credentials credentials)
         {

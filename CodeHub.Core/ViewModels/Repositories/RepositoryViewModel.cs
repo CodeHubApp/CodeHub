@@ -327,7 +327,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             var gotoWebUrl = new Action<string>(x =>
             {
                 var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
+                vm.Init(x);
                 NavigateTo(vm);
             });
 

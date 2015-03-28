@@ -66,13 +66,11 @@ namespace CodeHub.Core.ViewModels.Changesets
                 .ToProperty(this, x => x.CommitMessageSummary, out _commitMessageSummary);
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Commit).Select(x => x != null));
-            GoToHtmlUrlCommand.Select(x => Commit.HtmlUrl).Subscribe(x => 
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
-
+            GoToHtmlUrlCommand
+                .Select(_ => this.CreateViewModel<WebBrowserViewModel>())
+                .Select(x => x.Init(Commit.HtmlUrl))
+                .Subscribe(NavigateTo);
+      
             GoToRepositoryCommand = ReactiveCommand.Create();
             GoToRepositoryCommand.Subscribe(_ =>
             {

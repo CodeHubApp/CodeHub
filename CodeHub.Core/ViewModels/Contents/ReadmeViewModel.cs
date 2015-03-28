@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Contents
             var showWebBrowser = new Action<string>(x =>
             {
                 var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
+                vm.Init(x);
                 NavigateTo(vm);
             });
 

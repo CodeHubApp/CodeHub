@@ -270,7 +270,7 @@ namespace CodeHub.Core.ViewModels.Issues
         private void GoToUrl(string url)
         {
             var vm = this.CreateViewModel<WebBrowserViewModel>();
-            vm.Url = url;
+            vm.Init(url);
             NavigateTo(vm);
         }
 

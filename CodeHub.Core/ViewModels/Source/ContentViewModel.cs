@@ -43,13 +43,9 @@ namespace CodeHub.Core.ViewModels.Source
             Theme = sessionService.Account.CodeEditTheme ?? "idea";
 
             GoToUrlCommand = ReactiveCommand.Create();
-            GoToUrlCommand.OfType<string>().Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
-
+            GoToUrlCommand.OfType<string>()
+                .Select(x => this.CreateViewModel<WebBrowserViewModel>().Init(x))
+                .Subscribe(NavigateTo);
         }
     }
 }

@@ -388,6 +388,10 @@
     <Compile Include="Views\BaseTableViewControllerExtensions.cs" />
     <Compile Include="ViewComponents\ExtendedUITextView.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Utilities\RateMyApp.cs" />
+    <Compile Include="DialogElements\RateElement.cs" />
+    <Compile Include="Utilities\EasyLayout.cs" />
+    <Compile Include="ViewComponents\PixelButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

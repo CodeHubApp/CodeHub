@@ -89,12 +89,10 @@ namespace CodeHub.Core.ViewModels.Source
                 MarkdownExtensions.Any(Path.EndsWith)).ToProperty(this, x => x.IsMarkdown);
 
             OpenInGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.HtmlUrl).Select(x => !string.IsNullOrEmpty(x)));
-            OpenInGitHubCommand.Select(x => this.HtmlUrl).Subscribe(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
-                NavigateTo(vm);
-            });
+            OpenInGitHubCommand
+                .Select(_ => this.CreateViewModel<WebBrowserViewModel>())
+                .Select(x => x.Init(this.HtmlUrl))
+                .Subscribe(NavigateTo);
 
             var canShowMenu = this.WhenAnyValue(x => x.SourceItem).Select(x => x != null);
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {

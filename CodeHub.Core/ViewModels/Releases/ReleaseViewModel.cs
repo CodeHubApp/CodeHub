@@ -53,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Releases
             var gotoUrlCommand = new Action<string>(x =>
             {
                 var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Url = x;
+                vm.Init(x);
                 NavigateTo(vm);
             });
 

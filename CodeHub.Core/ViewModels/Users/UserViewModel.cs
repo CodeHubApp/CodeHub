@@ -41,6 +41,12 @@ namespace CodeHub.Core.ViewModels.Users
 			private set { this.RaiseAndSetIfChanged(ref _isFollowing, value); }
 		}
 
+        private readonly ObservableAsPropertyHelper<bool> _hasBlog;
+        public bool HasBlog
+        {
+            get { return _hasBlog.Value; }
+        }
+
 		public bool IsLoggedInUser
 		{
 			get { return string.Equals(Username, _applicationService.Account.Username); }
@@ -59,6 +65,8 @@ namespace CodeHub.Core.ViewModels.Users
         public IReactiveCommand<object> GoToRepositoriesCommand { get; private set; }
 
         public IReactiveCommand<object> GoToGistsCommand { get; private set; }
+
+        public IReactiveCommand<object> GoToWebsiteCommand { get; private set; }
 
 		public IReactiveCommand ToggleFollowingCommand { get; private set; }
 
@@ -80,6 +88,10 @@ namespace CodeHub.Core.ViewModels.Users
 
             ToggleFollowingCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsFollowing).Select(x => x.HasValue), t => ToggleFollowing());
+
+            _hasBlog = this.WhenAnyValue(x => x.User.Blog)
+                .Select(x => !string.IsNullOrEmpty(x))
+                .ToProperty(this, x => x.HasBlog);
 
             GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand
@@ -115,6 +127,12 @@ namespace CodeHub.Core.ViewModels.Users
             GoToFollowersCommand
                 .Select(_ => this.CreateViewModel<UserFollowersViewModel>())
                 .Select(x => x.Init(Username))
+                .Subscribe(NavigateTo);
+
+            GoToWebsiteCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.HasBlog));
+            GoToWebsiteCommand
+                .Select(_ => this.CreateViewModel<WebBrowserViewModel>())
+                .Select(x => x.Init(User.Blog))
                 .Subscribe(NavigateTo);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(

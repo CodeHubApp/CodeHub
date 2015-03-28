@@ -97,7 +97,7 @@ namespace CodeHub.iOS.Views.App
 
             ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x);
             ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().SubscribeSafe(x => 
-                _imgView.SetImage(new NSUrl("http://10.95.34.84/avatars/u/3"), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
+                _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
                     if (img != null && err == null)
                         UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
             }));

@@ -9,9 +9,13 @@ namespace CodeHub.iOS.Views.Users
 {
     public class UserView : BaseDialogViewController<UserViewModel>
     {
+        private readonly Section _extraSection = new Section();
+        private readonly StringElement _websiteElement;
+
         public UserView()
         {
             HeaderView.Image = Images.LoginUserUnknown;
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
 
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
@@ -24,6 +28,8 @@ namespace CodeHub.iOS.Views.Users
             this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ?
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
+
+            _websiteElement = new StringElement("Website", () => ViewModel.GoToWebsiteCommand.ExecuteIfCan(), Octicon.Globe.ToImage());
         }
 
         public override void ViewDidLoad()
@@ -37,7 +43,7 @@ namespace CodeHub.iOS.Views.Users
             var organizations = new StringElement("Organizations", () => ViewModel.GoToOrganizationsCommand.ExecuteIfCan(), Octicon.Organization.ToImage());
             var repos = new StringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage());
             var gists = new StringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Octicon.Gist.ToImage());
-            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
+            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists }, _extraSection });
 
             this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x =>
             {
@@ -46,6 +52,13 @@ namespace CodeHub.iOS.Views.Users
                 following.Text = x.Following.ToString();
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
                 RefreshHeaderView();
+            });
+
+            this.WhenAnyValue(x => x.ViewModel.HasBlog).Subscribe(x => {
+                if (x && _websiteElement.Section == null)
+                    _extraSection.Add(_websiteElement);
+                else if (!x && _websiteElement.Section != null)
+                    _extraSection.Remove(_websiteElement);
             });
         }
     }
