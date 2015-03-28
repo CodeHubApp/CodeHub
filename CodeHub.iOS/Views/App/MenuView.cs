@@ -67,8 +67,8 @@ namespace CodeHub.iOS.Views.App
                 .IsNotNull()
                 .Subscribe(x =>
             {
-                _profileButton.Name = string.IsNullOrEmpty(x.Name) ? x.Username : x.Name;
-                _profileButton.Username = x.Email;
+                _profileButton.Title = string.IsNullOrEmpty(x.Name) ? x.Username : x.Name;
+                _profileButton.Subtitle = x.Email;
                 _profileButton.ImageUri = x.AvatarUrl;
             });
 
