@@ -396,11 +396,11 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 var memberEvent = (EventModel.MemberEvent)eventModel.PayloadObject;
                 eventAction = () => GoToRepository(eventModel.Repo);
+                headerBlocks.Add(new TextBlock(memberEvent.Action.Equals("added") ? " added " : " removed "));
 
-                if (memberEvent.Action.Equals("added"))
-                    headerBlocks.Add(new TextBlock(" added as a collaborator"));
-                else if (memberEvent.Action.Equals("removed"))
-                    headerBlocks.Add(new TextBlock(" removed as a collaborator"));
+                if (memberEvent.Member != null)
+                    headerBlocks.Add(new AnchorBlock(memberEvent.Member.Login, () => GoToUser(memberEvent.Member.Login)));
+                headerBlocks.Add(new TextBlock(" as a collaborator"));
 
                 if (ReportRepository)
                 {

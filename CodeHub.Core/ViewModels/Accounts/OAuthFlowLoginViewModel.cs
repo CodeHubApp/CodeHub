@@ -62,9 +62,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             Title = "Login";
 
-            var basicLogin = ReactiveCommand.Create().WithSubscription(_ =>
-                NavigateTo(this.CreateViewModel<AddWebAccountViewModel>()));
-
             var oauthLogin = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<OAuthTokenLoginViewModel>()));
 
@@ -76,7 +73,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(sender =>
             {
                 var actionMenu = actionMenuService.Create(Title);
-                actionMenu.AddButton("Login via BASIC", basicLogin);
                 actionMenu.AddButton("Login via Token", oauthLogin);
                 return actionMenu.Show(sender);
             });

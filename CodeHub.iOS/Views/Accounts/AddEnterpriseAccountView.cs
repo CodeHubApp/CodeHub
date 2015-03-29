@@ -3,6 +3,7 @@ using UIKit;
 using CodeHub.Core.ViewModels.Accounts;
 using ReactiveUI;
 using CoreGraphics;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -11,6 +12,9 @@ namespace CodeHub.iOS.Views.Accounts
         public AddEnterpriseAccountView()
             : base("AddEnterpriseAccountView", null)
         {
+            this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
   
         public override void ViewDidLoad()

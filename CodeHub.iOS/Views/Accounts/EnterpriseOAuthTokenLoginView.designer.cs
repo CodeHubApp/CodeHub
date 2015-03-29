@@ -9,49 +9,49 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Views.Accounts
 {
-	[Register ("AddAccountView")]
-	partial class AddAccountView
+	[Register ("EnterpriseOAuthTokenLoginView")]
+	partial class EnterpriseOAuthTokenLoginView
 	{
+		[Outlet]
+		UIKit.UITextField DomainText { get; set; }
+
 		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
-		UIKit.UIImageView Logo { get; set; }
-
-		[Outlet]
-		UIKit.UITextField Password { get; set; }
+		UIKit.UIImageView LogoImageView { get; set; }
 
 		[Outlet]
 		UIKit.UIScrollView ScrollView { get; set; }
 
 		[Outlet]
-		UIKit.UITextField User { get; set; }
+		UIKit.UITextField TokenText { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DomainText != null) {
+				DomainText.Dispose ();
+				DomainText = null;
+			}
+
 			if (LoginButton != null) {
 				LoginButton.Dispose ();
 				LoginButton = null;
 			}
 
-			if (Logo != null) {
-				Logo.Dispose ();
-				Logo = null;
+			if (LogoImageView != null) {
+				LogoImageView.Dispose ();
+				LogoImageView = null;
 			}
 
-			if (Password != null) {
-				Password.Dispose ();
-				Password = null;
+			if (TokenText != null) {
+				TokenText.Dispose ();
+				TokenText = null;
 			}
 
 			if (ScrollView != null) {
 				ScrollView.Dispose ();
 				ScrollView = null;
-			}
-
-			if (User != null) {
-				User.Dispose ();
-				User = null;
 			}
 		}
 	}

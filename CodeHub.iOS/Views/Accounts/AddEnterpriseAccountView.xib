@@ -39,11 +39,11 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="go" secureTextEntry="YES"/>
                         </textField>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="8QM-uf-xPE">
-                            <rect key="frame" x="41" y="20" width="239" height="67"/>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="8QM-uf-xPE">
+                            <rect key="frame" x="40" y="20" width="240" height="67"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="67" id="Lz4-9R-XbM"/>
-                                <constraint firstAttribute="width" constant="239" id="k5b-Vc-iCN"/>
+                                <constraint firstAttribute="width" constant="240" id="k5b-Vc-iCN"/>
                             </constraints>
                         </imageView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GCm-G3-JyX">
@@ -72,7 +72,7 @@
                         <constraint firstItem="863-bg-VcO" firstAttribute="top" secondItem="tqg-ew-uPU" secondAttribute="bottom" constant="9" id="Idj-EY-Q9B"/>
                         <constraint firstAttribute="centerX" secondItem="GCm-G3-JyX" secondAttribute="centerX" id="IjQ-wv-r7G"/>
                         <constraint firstAttribute="bottom" secondItem="GCm-G3-JyX" secondAttribute="bottom" constant="20" id="JGq-ZP-vSm"/>
-                        <constraint firstItem="8QM-uf-xPE" firstAttribute="leading" secondItem="olN-BV-dEl" secondAttribute="leading" constant="41" id="ULa-Si-thP"/>
+                        <constraint firstItem="8QM-uf-xPE" firstAttribute="leading" secondItem="olN-BV-dEl" secondAttribute="leading" constant="40" id="ULa-Si-thP"/>
                         <constraint firstItem="tqg-ew-uPU" firstAttribute="top" secondItem="8QM-uf-xPE" secondAttribute="bottom" constant="18" id="bK7-eo-UGf"/>
                         <constraint firstItem="w0Y-rS-ERE" firstAttribute="top" secondItem="863-bg-VcO" secondAttribute="bottom" constant="9" id="cAg-9n-ZqR"/>
                         <constraint firstAttribute="centerX" secondItem="w0Y-rS-ERE" secondAttribute="centerX" id="inn-Bz-vdO"/>
@@ -85,10 +85,10 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="olN-BV-dEl" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="MSW-h9-fMG"/>
-                <constraint firstAttribute="trailing" secondItem="olN-BV-dEl" secondAttribute="trailing" id="hTZ-wt-Bxn"/>
-                <constraint firstItem="olN-BV-dEl" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="pcT-B5-gwN"/>
-                <constraint firstAttribute="bottom" secondItem="olN-BV-dEl" secondAttribute="bottom" id="qqJ-Sv-RQX"/>
+                <constraint firstAttribute="bottom" secondItem="olN-BV-dEl" secondAttribute="bottom" id="Oe2-7m-pa5"/>
+                <constraint firstItem="olN-BV-dEl" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Qod-RE-oqC"/>
+                <constraint firstAttribute="trailing" secondItem="olN-BV-dEl" secondAttribute="trailing" id="kQG-YH-eYL"/>
+                <constraint firstItem="olN-BV-dEl" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="lJm-Mb-XaX"/>
             </constraints>
         </view>
     </objects>
