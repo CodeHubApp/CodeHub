@@ -151,15 +151,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<object> PinCommand { get; private set; }
 
-        public IReactiveCommand ToggleStarCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleStarCommand { get; private set; }
 
-        public IReactiveCommand ToggleWatchCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleWatchCommand { get; private set; }
+
+        public IReactiveCommand<object> ShareCommand { get; private set; }
 
         public RepositoryViewModel(ISessionService applicationService, 
             IAccountsRepository accountsService, IActionMenuFactory actionMenuService)
         {
             ApplicationService = applicationService;
             _accountsService = accountsService;
+
+            var validRepositoryObservable = this.WhenAnyValue(x => x.Repository).Select(x => x != null);
 
             this.WhenAnyValue(x => x.RepositoryName).Subscribe(x => Title = x);
 
@@ -191,7 +195,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 }
             });
 
-            PinCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));
+            PinCommand = ReactiveCommand.Create(validRepositoryObservable);
             PinCommand.Subscribe(x => PinRepository());
 
             GoToForkParentCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && x.Fork && x.Parent != null));
@@ -312,15 +316,19 @@ namespace CodeHub.Core.ViewModels.Repositories
                 NavigateTo(vm);
             });
 
+            ShareCommand = ReactiveCommand.Create(validRepositoryObservable);
+            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(Repository.HtmlUrl));
+
             var canShowMenu = this.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
                 .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
-                var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create();
                 menu.AddButton(IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu", PinCommand);
                 menu.AddButton(IsStarred.Value ? "Unstar This Repo" : "Star This Repo", ToggleStarCommand);
                 menu.AddButton(IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo", ToggleWatchCommand);
                 menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
+                menu.AddButton("Share", ShareCommand);
                 return menu.Show(sender);
             });
 

@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Factories
 {
     public class ActionMenuFactory : IActionMenuFactory
     {
-        public IActionMenu Create(string title)
+        public IActionMenu Create(string title = null)
         {
             return new ActionMenu(title);
         }

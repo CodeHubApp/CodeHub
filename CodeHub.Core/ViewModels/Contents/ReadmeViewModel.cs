@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Contents
             GoToLinkCommand.OfType<string>().Subscribe(showWebBrowser);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, sender => {
-                var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create();
                 menu.AddButton("Share", ShareCommand);
                 menu.AddButton("Show in GitHub", GoToGitHubCommand);
                 return menu.Show(sender);

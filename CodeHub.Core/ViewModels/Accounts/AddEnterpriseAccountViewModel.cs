@@ -32,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             });
 
             ShowLoginOptionsCommand = ReactiveCommand.CreateAsyncTask(sender => {
-                var actionMenu = actionMenuFactory.Create(Title);
+                var actionMenu = actionMenuFactory.Create();
                 actionMenu.AddButton("Login via Token", gotoOAuthToken);
                 return actionMenu.Show(sender);
             });

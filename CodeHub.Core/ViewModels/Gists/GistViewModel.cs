@@ -144,7 +144,7 @@ namespace CodeHub.Core.ViewModels.Gists
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Gist).Select(x => x != null), 
                 sender => {
-                    var menu = actionMenuService.Create(Title);
+                    var menu = actionMenuService.Create();
                     if (Gist.Owner != null && string.Equals(applicationService.Account.Username, Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
                         menu.AddButton("Edit", GoToEditCommand);
                     else

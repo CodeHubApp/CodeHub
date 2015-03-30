@@ -72,7 +72,7 @@ namespace CodeHub.Core.ViewModels.Releases
 
             var canShowMenu = this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null);
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
-                var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create();
                 menu.AddButton("Share", shareCommand);
                 menu.AddButton("Show in GitHub", gotoGitHubCommand);
                 return menu.Show(sender);

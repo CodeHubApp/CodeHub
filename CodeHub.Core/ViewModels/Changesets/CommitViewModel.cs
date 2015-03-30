@@ -134,7 +134,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender => {
-                var menu = actionMenuService.Create(Title);
+                var menu = actionMenuService.Create();
                 menu.AddButton("Add Comment", AddCommentCommand);
                 menu.AddButton("Copy SHA", copyShaCommand);
                 menu.AddButton("Browse Code", browseCodeCommand);

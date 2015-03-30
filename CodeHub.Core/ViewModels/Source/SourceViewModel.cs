@@ -96,7 +96,7 @@ namespace CodeHub.Core.ViewModels.Source
 
             var canShowMenu = this.WhenAnyValue(x => x.SourceItem).Select(x => x != null);
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
-                var menu = actionMenuFactory.Create(Title);
+                var menu = actionMenuFactory.Create();
                 if (GoToEditCommand.CanExecute(null))
                     menu.AddButton("Edit", GoToEditCommand);
                 menu.AddButton("Open With", OpenWithCommand);

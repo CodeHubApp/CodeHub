@@ -84,7 +84,7 @@ namespace CodeHub.Core.ViewModels.Source
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
             {
-                var sheet = actionMenuFactory.Create(Title);
+                var sheet = actionMenuFactory.Create();
                 sheet.AddButton("Add Comment", ReactiveCommand.Create());
                 return sheet.Show(sender);
             });

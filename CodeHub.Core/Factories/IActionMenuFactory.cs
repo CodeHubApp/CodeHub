@@ -7,7 +7,7 @@ namespace CodeHub.Core.Factories
 {
     public interface IActionMenuFactory
     {
-        IActionMenu Create(string title);
+        IActionMenu Create(string title = null);
 
         IPickerMenu CreatePicker();
 

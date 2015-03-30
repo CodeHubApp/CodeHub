@@ -58,7 +58,7 @@ namespace CodeHub.Core.ViewModels.Gists
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),
                 sender => {
-                    var menu = actionMenuService.Create(Title);
+                    var menu = actionMenuService.Create();
                     menu.AddButton("Open With", OpenWithCommand);
                     return menu.Show(sender);
                 });
