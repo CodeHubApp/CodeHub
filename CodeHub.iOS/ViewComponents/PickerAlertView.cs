@@ -32,10 +32,7 @@ namespace CodeHub.iOS.ViewComponents
             _toolbar.Items = new UIBarButtonItem[]
             {
                 new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => {
-                    _selected(_pickerView.SelectedRowInComponent(0));
-                    Dismiss();
-                })
+                new UIBarButtonItem("Done", UIBarButtonItemStyle.Done, (s, e) => Dismiss())
             };
 
             _innerView = new UIView(new CGRect(0, Frame.Height, Frame.Width, 44f + _pickerView.Frame.Height));
@@ -72,6 +69,7 @@ namespace CodeHub.iOS.ViewComponents
 
         private void Dismiss()
         {
+            _selected(_pickerView.SelectedRowInComponent(0));
             UIView.Animate(0.25, 0, UIViewAnimationOptions.CurveEaseIn, () =>
                 _innerView.Frame = new CGRect(0, Frame.Height, _innerView.Frame.Width, _innerView.Frame.Height), RemoveFromSuperview);
         }
@@ -86,7 +84,7 @@ namespace CodeHub.iOS.ViewComponents
         public void Show()
         {
             var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
-            var window = appDelegate.Window.RootViewController.View;
+            var window = appDelegate.Window.GetVisibleViewController().View;
             Frame = window.Bounds;
             window.AddSubview(this);
             Present();

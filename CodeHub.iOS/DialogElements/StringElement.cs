@@ -2,6 +2,8 @@ using System;
 using UIKit;
 using Foundation;
 using SDWebImage;
+using Humanizer;
+using ReactiveUI;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -167,6 +169,16 @@ namespace CodeHub.iOS.DialogElements
         public override bool Matches (string text)
         {
             return (Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1) || base.Matches (text);
+        }
+    }
+
+    public static class StringElementExtensions
+    {
+        public static StringElement Bind<T, TVal>(this StringElement stringElement, T viewModel, System.Linq.Expressions.Expression<Func<T, TVal>> bindMember)
+            where T : ReactiveObject
+        {
+            viewModel.WhenAnyValue(bindMember).Subscribe(x => stringElement.Value = x.ToString());
+            return stringElement;
         }
     }
 }

@@ -392,6 +392,7 @@
       <DependentUpon>EnterpriseOAuthTokenLoginView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Views\Accounts\EnterpriseOAuthTokenLoginView.xib" />
+    <Compile Include="Views\Issues\MyIssuesFilterView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

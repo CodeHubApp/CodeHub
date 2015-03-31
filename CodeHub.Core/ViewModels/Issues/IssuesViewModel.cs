@@ -87,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             var direction = Filter.Ascending ? "asc" : "desc";
             var state = Filter.Open ? "open" : "closed";
-            var sort = Filter.SortType == BaseIssuesFilterModel.Sort.None ? null : Filter.SortType.ToString().ToLower();
+            var sort = Filter.SortType == IssueSort.None ? null : Filter.SortType.ToString().ToLower();
             var labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
             var assignee = string.IsNullOrEmpty(Filter.Assignee) ? null : Filter.Assignee;
             var creator = string.IsNullOrEmpty(Filter.Creator) ? null : Filter.Creator;

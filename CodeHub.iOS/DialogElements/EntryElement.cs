@@ -3,6 +3,7 @@ using System;
 using UIKit;
 using CoreGraphics;
 using Foundation;
+using ReactiveUI;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -355,4 +356,19 @@ namespace CodeHub.iOS.DialogElements
 				entry.ResignFirstResponder ();
 		}
 	}
+
+    public static class EntryElementExtensions
+    {
+        public static EntryElement Bind<T>(this EntryElement entryElement, IViewFor<T> view, System.Linq.Expressions.Expression<Func<T, string>> bindMember)
+            where T : ReactiveObject
+        {
+//            view.Bind(view.ViewModel, 
+
+
+//            var bindDelegate = bindMember.Compile();
+//            entryElement.Changed += (sender, e) => bindDelegate(;
+//            viewModel.WhenAnyValue(bindMember).Subscribe(x => entryElement.Value = x);
+            return entryElement;
+        }
+    }
 }

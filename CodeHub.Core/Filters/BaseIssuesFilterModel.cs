@@ -4,21 +4,13 @@ namespace CodeHub.Core.Filters
     {
 		public bool Ascending { get; set; }
 
-		public Sort SortType { get; set; }
+		public IssueSort SortType { get; set; }
 
 	    protected BaseIssuesFilterModel()
         {
-			SortType = Sort.None;
+            SortType = IssueSort.None;
 			Ascending = false;
         }
-
-		public enum Sort
-		{
-			None,
-			Created,
-			Updated,
-			Comments
-		}
     }
 }
 

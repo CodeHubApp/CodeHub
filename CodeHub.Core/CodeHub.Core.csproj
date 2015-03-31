@@ -222,6 +222,11 @@
     <Compile Include="ViewModels\Accounts\OAuthTokenLoginViewModel.cs" />
     <Compile Include="Messages\LoginMessage.cs" />
     <Compile Include="ViewModels\Accounts\EnterpriseOAuthTokenLoginViewModel.cs" />
+    <Compile Include="ViewModels\Issues\MyIssuesFilterViewModel.cs" />
+    <Compile Include="Filters\IssueSort.cs" />
+    <Compile Include="Filters\IssueState.cs" />
+    <Compile Include="Filters\IssueFilterState.cs" />
+    <Compile Include="Utilities\EnumDescriptionAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
