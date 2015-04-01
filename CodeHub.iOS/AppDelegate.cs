@@ -149,11 +149,20 @@ namespace CodeHub.iOS
 
             // Notifications don't work on teh simulator so don't bother
             if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
-            {
-                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
-            }
+                RegisterForNotifications();
         }
+
+        private static void RegisterForNotifications()
+        {
+            var notificationTypes = UIUserNotificationSettings.GetSettingsForTypes (UIUserNotificationType.Alert | UIUserNotificationType.Sound, null);
+            UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
+        }
+
+        public override void DidRegisterUserNotificationSettings (UIApplication application, UIUserNotificationSettings notificationSettings)
+        {
+            application.RegisterForRemoteNotifications();
+        }
+
 
         // TODO: IMPORTANT!!!
 //        void HandlePurchaseSuccess (object sender, string e)
@@ -162,8 +171,7 @@ namespace CodeHub.iOS
 //
 //            if (string.Equals(e, FeatureIds.PushNotifications))
 //            {
-//                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-//                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+//                RegisterForNotifications();
 //            }
 //        }
 
