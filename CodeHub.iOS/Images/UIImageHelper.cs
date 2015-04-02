@@ -30,6 +30,11 @@ namespace UIKit
 
         private static UIImage LoadImageFromFile(string filename, string extension = "png")
         {
+            if (UIScreen.MainScreen.Scale > 2.9)
+            {
+                var file = filename + "3x." + extension;
+                return System.IO.File.Exists(file) ? UIImage.FromFile(file) : UIImage.FromFile(filename + "." + extension);
+            }
             if (UIScreen.MainScreen.Scale > 1.0)
             {
                 var file = filename + "@2x." + extension;

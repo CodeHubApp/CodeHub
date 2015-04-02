@@ -15,6 +15,7 @@ using CodeHub.Core.ViewModels.Settings;
 using CodeHub.Core.ViewModels.Users;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using CodeHub.Core.ViewModels.Search;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -99,7 +100,7 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<RepositoriesTrendingViewModel>()));
 
             GoToExploreRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
-                NavigateTo(this.CreateViewModel<RepositoriesExploreViewModel>()));
+                NavigateTo(this.CreateViewModel<ExploreViewModel>()));
 
             GoToOrganizationEventsCommand = ReactiveCommand.Create();
             GoToOrganizationEventsCommand

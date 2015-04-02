@@ -104,7 +104,6 @@
     <Compile Include="ViewModels\Repositories\LangaugeItemViewModel.cs" />
     <Compile Include="ViewModels\Repositories\LanguagesViewModel.cs" />
     <Compile Include="ViewModels\Repositories\OrganizationRepositoriesViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesExploreViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesStarredViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesWatchedViewModel.cs" />
@@ -227,6 +226,7 @@
     <Compile Include="Filters\IssueState.cs" />
     <Compile Include="Filters\IssueFilterState.cs" />
     <Compile Include="Utilities\EnumDescriptionAttribute.cs" />
+    <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -291,5 +291,6 @@
     <Folder Include="ViewModels\Contents\" />
     <Folder Include="Extensions\" />
     <Folder Include="Factories\" />
+    <Folder Include="ViewModels\Search\" />
   </ItemGroup>
 </Project>

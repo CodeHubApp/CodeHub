@@ -18,6 +18,9 @@ namespace CodeHub.iOS
 
         public static UIImage ForwardChevron { get { return UIImageHelper.FromFileAuto("Images/forward-chevron"); } }
 
+        public static UIImage Search { get { return UIImageHelper.FromFileAuto("Images/search"); } }
+
+
         public static class Logos
         {
             public static UIImage GitHub { get { return UIImage.FromFile("Images/github.png"); } }

@@ -150,7 +150,6 @@
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Organizations\OrganizationsView.cs" />
     <Compile Include="Views\Organizations\OrganizationView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
     <None Include="Info.plist" />
@@ -393,6 +392,7 @@
     </Compile>
     <InterfaceDefinition Include="Views\Accounts\EnterpriseOAuthTokenLoginView.xib" />
     <Compile Include="Views\Issues\MyIssuesFilterView.cs" />
+    <Compile Include="Views\Search\ExploreView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -716,6 +716,13 @@
     </BundleResource>
     <BundleResource Include="CodeHubLaunch.png" />
     <Content Include="Images\github.png" />
+    <BundleResource Include="Images\search%403x.png">
+      <DependentUpon>search.png</DependentUpon>
+    </BundleResource>
+    <BundleResource Include="Images\search.png" />
+    <BundleResource Include="Images\search%402x.png">
+      <DependentUpon>search.png</DependentUpon>
+    </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -735,6 +742,7 @@
     <Folder Include="DialogElements\" />
     <Folder Include="Utilities\" />
     <Folder Include="WebResources\" />
+    <Folder Include="Views\Search\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

@@ -27,7 +27,13 @@ namespace CodeHub.iOS.Views
 
         public static ObservableSearchDelegate AddSearchBar(this BaseTableViewController @this)
         {
-            var searchBar = new UISearchBar(new CGRect(0f, 0f, 320f, 44f));
+            UISearchBar searchBar;
+            return AddSearchBar(@this, out searchBar);
+        }
+
+        public static ObservableSearchDelegate AddSearchBar(this BaseTableViewController @this, out UISearchBar searchBar)
+        {
+            searchBar = new UISearchBar(new CGRect(0f, 0f, 320f, 44f));
             searchBar.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 
             var searchDelegate = new ObservableSearchDelegate();

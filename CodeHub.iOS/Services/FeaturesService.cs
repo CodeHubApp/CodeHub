@@ -2,7 +2,6 @@ using CodeHub.Core.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using Xamarin.Utilities.Services;
 using System.Net.Http;
 
 namespace CodeHub.iOS.Services
@@ -57,7 +56,7 @@ namespace CodeHub.iOS.Services
             ids.Add(FeatureIds.EnterpriseSupport);
             var client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 15);
-            var response = await client.GetAsync("http://push.codehub-app.com/in-app");
+            var response = await client.GetAsync("https://push.codehub-app.com/in-app");
             var data = await response.Content.ReadAsStringAsync();
 //            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
             return ids;
