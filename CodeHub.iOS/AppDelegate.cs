@@ -19,6 +19,7 @@ using CodeHub.Core;
 using System.Net.Http;
 using ModernHttpClient;
 using System.Text;
+using System.Diagnostics;
 
 namespace CodeHub.iOS
 {
@@ -28,7 +29,7 @@ namespace CodeHub.iOS
     /// application events from iOS.
     /// </summary>
     [Register("AppDelegate")]
-    public class AppDelegate : UIApplicationDelegate
+    public class AppDelegate : UIApplicationDelegate, IEnableLogger
     {
         public string DeviceToken;
 
@@ -63,18 +64,23 @@ namespace CodeHub.iOS
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
-            // Enable flurry analytics
-            //if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
-            //    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-            //Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
-
-            SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("Basic Ym9iZG9sZTpDb29sbWFuMTg=", "Authorization");
-
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-
             Locator.CurrentMutable.InitializeFactories();
             Locator.CurrentMutable.InitializeServices();
             Bootstrap.Init();
+
+            // Enable flurry analytics
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+            {
+                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+                Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
+            }
+            else
+            {
+                this.Log().Debug("Simulator detected, disabling analytics");
+                Locator.Current.GetService<IAnalyticsService>().Enabled = false;
+            }
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
             OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
@@ -175,13 +181,12 @@ namespace CodeHub.iOS
 //            }
 //        }
 
-
-		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
-		{
-			if (application.ApplicationState == UIApplicationState.Active)
-				return;
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            if (application.ApplicationState == UIApplicationState.Active)
+                return;
             HandleNotification(userInfo, false);
-		}
+        }
 
         private static void HandleNotification(NSDictionary data, bool fromBootup)
 		{
