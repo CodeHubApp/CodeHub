@@ -8,12 +8,6 @@
 	<array>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Application Settings</string>
-		</dict>
-		<dict>
-			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
 			<string>Open URLs in App</string>

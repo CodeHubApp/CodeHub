@@ -31,6 +31,7 @@ namespace CodeHub.iOS
     [Register("AppDelegate")]
     public class AppDelegate : UIApplicationDelegate, IEnableLogger
     {
+        private NSObject _settingsChangedObserver;
         public string DeviceToken;
 
         /// <summary>
@@ -64,6 +65,9 @@ namespace CodeHub.iOS
             // Stamp the date this was installed (first run)
             this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
+            // Register default settings from the settings.bundle
+            RegisterDefaultSettings();
+
             Locator.CurrentMutable.InitializeFactories();
             Locator.CurrentMutable.InitializeServices();
             Bootstrap.Init();
@@ -79,6 +83,8 @@ namespace CodeHub.iOS
                 this.Log().Debug("Simulator detected, disabling analytics");
                 Locator.Current.GetService<IAnalyticsService>().Enabled = false;
             }
+
+            _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
@@ -120,9 +126,25 @@ namespace CodeHub.iOS
 
             SetupPushNotifications();
             HandleNotificationOptions(options);
-
-
             return true;
+        }
+
+        private static void RegisterDefaultSettings()
+        {
+            var userDefaults = NSUserDefaults.StandardUserDefaults;
+            var appDefaults = new NSMutableDictionary(); 
+            appDefaults.SetValueForKey(NSObject.FromObject(true), new NSString("CollectAnonymousUsage"));
+            userDefaults.RegisterDefaults(appDefaults);
+            userDefaults.Synchronize();
+        }
+
+        private static void DefaultsChanged( NSNotification obj )
+        {   
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+            {
+                var analyticsEnabled = NSUserDefaults.StandardUserDefaults.BoolForKey("CollectAnonymousUsage");
+                Locator.Current.GetService<IAnalyticsService>().Enabled = analyticsEnabled;
+            }
         }
 
         class HttpMessageHandler : NativeMessageHandler
