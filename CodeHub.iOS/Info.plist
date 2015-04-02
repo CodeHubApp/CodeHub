@@ -65,10 +65,6 @@
 	<string>3.0.0</string>
 	<key>CFBundleShortVersionString</key>
 	<string>3.0.0</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UIAppFonts</key>
