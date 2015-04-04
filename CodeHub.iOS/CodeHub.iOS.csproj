@@ -177,10 +177,6 @@
     <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
-    <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
-      <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\OrganizationMembersView.cs" />
     <Compile Include="Views\Users\BaseUserCollectionView.cs" />
     <Compile Include="Views\Users\UserFollowersView.cs" />
@@ -333,7 +329,6 @@
     <Compile Include="Utilities\Graphics.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
-    <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <InterfaceDefinition Include="Cells\NewsCellView.xib" />
     <InterfaceDefinition Include="Cells\IssueCellView.xib" />
