@@ -8,6 +8,7 @@ using Foundation;
 using CodeHub.Core.Factories;
 using CodeHub.iOS.ViewComponents;
 using System.Diagnostics;
+using CoreGraphics;
 
 namespace CodeHub.iOS.Factories
 {
@@ -23,14 +24,25 @@ namespace CodeHub.iOS.Factories
             return new PickerMenu();
         }
 
-        public Task ShareUrl(Uri uri)
+        public void ShareUrl(Uri uri)
         {
             var item = new NSUrl(uri.AbsoluteUri);
             var activityItems = new NSObject[] { item };
             UIActivity[] applicationActivities = null;
             var activityController = new UIActivityViewController (activityItems, applicationActivities);
-            var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
-            return viewController.PresentViewControllerAsync(activityController, true);
+
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad) 
+            {
+                var window = UIApplication.SharedApplication.KeyWindow;
+                var pop = new UIPopoverController (activityController);
+                var rect = new CGRect(window.RootViewController.View.Frame.Width / 2, window.RootViewController.View.Frame.Height / 2, 0, 0);
+                pop.PresentFromRect (rect, window.RootViewController.View, UIPopoverArrowDirection.Any, true);
+            } 
+            else 
+            {
+                var viewController = UIApplication.SharedApplication.KeyWindow.RootViewController;
+                viewController.PresentViewController(activityController, true, null);
+            }
         }
 
         public void SendToPasteBoard(string str)
