@@ -87,17 +87,19 @@ namespace CodeHub.iOS.Views.Source
 
         protected virtual void LoadSource(Uri fileUri)
         {
+            var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+            var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
+
             if (ViewModel.IsMarkdown)
             {
-                var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
-                var model = new DescriptionModel(content, (int)UIFont.PreferredSubheadline.PointSize);
+                var model = new DescriptionModel(content, fontSize);
                 var htmlContent = new MarkdownView { Model = model };
                 LoadContent(htmlContent.GenerateString());
             }
             else
             {
-                var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
-                var contentView = new SyntaxHighlighterView { Model = new SourceBrowserModel(content, ViewModel.Theme ?? "idea", fileUri.LocalPath) };
+                var model = new SourceBrowserModel(content, ViewModel.Theme ?? "idea", fontSize, fileUri.LocalPath);
+                var contentView = new SyntaxHighlighterView { Model = model };
                 LoadContent(contentView.GenerateString());
             }
         }

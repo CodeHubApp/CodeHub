@@ -57,11 +57,8 @@ namespace CodeHub.iOS.Views.Settings
                 using (var stream = assembly.GetManifestResourceStream(_resourceName))
                 using (var reader = new StreamReader(stream))
                 {
-                    var razorView = new SyntaxHighlighterView
-                    { 
-                        Model = new SourceBrowserModel(reader.ReadToEnd(), theme ?? "idea", _resourceName)
-                    };
-
+                    var model = new SourceBrowserModel(reader.ReadToEnd(), theme ?? "idea", (int)UIFont.PreferredSubheadline.PointSize, _resourceName);
+                    var razorView = new SyntaxHighlighterView { Model = model };
                     base.LoadContent(razorView.GenerateString());
                 }
             }

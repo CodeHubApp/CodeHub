@@ -64,6 +64,16 @@ body {
     -ms-text-size-adjust: 100%; 
     -moz-text-size-adjust: 100%; 
     -webkit-text-size-adjust: 100%;
+    font-size: ");
+
+
+#line 16 "SyntaxHighlighterView.cshtml"
+           Write(Model.FontSize);
+
+
+#line default
+#line hidden
+WriteLiteral(@"px;
 }
 
 body > pre { margin: 0em; min-width: 100%; min-height: 100%; }
@@ -104,7 +114,7 @@ WriteLiteral(" style=\"display: none;\"");
 
 WriteAttribute ("class", " class=\"", "\""
 
-#line 48 "SyntaxHighlighterView.cshtml"
+#line 49 "SyntaxHighlighterView.cshtml"
              , Tuple.Create<string,object,bool> ("", Model.Language
 
 #line default
@@ -114,7 +124,7 @@ WriteAttribute ("class", " class=\"", "\""
 WriteLiteral(">");
 
 
-#line 48 "SyntaxHighlighterView.cshtml"
+#line 49 "SyntaxHighlighterView.cshtml"
                                                                 Write(Model.Content);
 
 

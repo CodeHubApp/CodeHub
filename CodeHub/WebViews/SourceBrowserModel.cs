@@ -5,11 +5,13 @@
         public string Content { get; private set; }
         public string Theme { get; private set; }
         public string Language { get; private set; }
+        public int FontSize { get; private set; }
 
-        public SourceBrowserModel(string content, string theme, string file = null)
+        public SourceBrowserModel(string content, string theme, int fontSize, string file = null)
         {
             Content = content;
             Theme = theme;
+            FontSize = fontSize;
 
             if (file != null)
                 Language = CalculateLanguage(System.IO.Path.GetExtension(file));
