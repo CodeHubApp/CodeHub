@@ -45,15 +45,17 @@ namespace CodeHub.Core.ViewModels.Gists
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public GistFileViewModel(ISessionService sessionService, ISessionService applicationService, 
-            IFilesystemService filesystemService, IActionMenuFactory actionMenuService)
+            IFilesystemService filesystemService, IActionMenuFactory actionMenuService, IMarkdownService markdownService)
             : base(sessionService)
 	    {
 	        this.WhenAnyValue(x => x.Filename)
                 .Select(x => x == null ? "Gist" : x.Substring(x.LastIndexOf('/') + 1))
                 .Subscribe(x => Title = x);
                 
-            _isMarkdown = this.WhenAnyValue(x => x.GistFile).IsNotNull().Select(x => 
-                string.Equals(x.Language, MarkdownLanguage, StringComparison.OrdinalIgnoreCase)).ToProperty(this, x => x.IsMarkdown);
+            _isMarkdown = this.WhenAnyValue(x => x.GistFile)
+                .IsNotNull()
+                .Select(x => string.Equals(x.Language, MarkdownLanguage, StringComparison.OrdinalIgnoreCase))
+                .ToProperty(this, x => x.IsMarkdown);
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.SourceItem).Select(x => x != null),

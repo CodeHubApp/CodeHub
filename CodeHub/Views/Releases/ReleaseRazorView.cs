@@ -47,7 +47,7 @@ WriteLiteral("/>\n<style>\n* {\nbox-sizing: border-box;\n}\nbody {\ncolor: #333;
 "down-body p, .markdown-body blockquote, .markdown-body ul, .markdown-body ol, .m" +
 "arkdown-body dl, .markdown-body table, .markdown-body pre {\nmargin: 15px 0;\n}\n.m" +
 "arkdown-body h2 {\nfont-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\n.markdown-b" +
-"ody ul, .markdown-body ol {\npadding-left: 30px;\n}\na {\ncolor: #4183c4;\ntext-decor" +
+"ody ul, .markdown-body ol {\npadding-left: 20px;\n}\na {\ncolor: #4183c4;\ntext-decor" +
 "ation: none;\ntext-decoration: none;\n}\n.markdown-body .highlight pre, .markdown-b" +
 "ody pre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd;\nfont-size: 13px;\nli" +
 "ne-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3px;\n}\n.markd" +
@@ -63,11 +63,12 @@ WriteLiteral("/>\n<style>\n* {\nbox-sizing: border-box;\n}\nbody {\ncolor: #333;
 "\n\tmargin-top: 5px;\n\tmargin-bottom: 20px;\n\tfont-size: 14px;\n\tcolor: #999;\n}\n.rele" +
 "ase-authorship img.avatar {\ndisplay: inline-block;\noverflow: hidden;\nline-height" +
 ": 1;\nvertical-align: middle;\nborder-radius: 3px;\n}\n.release-authorship span {\nfo" +
-"nt-weight: bold;\ncolor: #666;\n}\n\n</style>\n<title>Release</title></head>\n<body>\n\t" +
-"<h1>");
+"nt-weight: bold;\ncolor: #666;\n}\nul.task-list > li.task-list-item {\n  list-style-" +
+"type: none;\n}\n.task-list-item-checkbox {\n  margin-left: -20px;\n  vertical-align:" +
+" middle;\n}\n</style>\n<title>Release</title></head>\n<body>\n\t<h1>");
 
 
-#line 117 "ReleaseRazorView.cshtml"
+#line 123 "ReleaseRazorView.cshtml"
 Write(Model.Name);
 
 
@@ -85,7 +86,7 @@ WriteLiteral(" height=\"20\"");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 119 "ReleaseRazorView.cshtml"
+#line 125 "ReleaseRazorView.cshtml"
  , Tuple.Create<string,object,bool> ("", Model.AuthorAvatarUrl
 
 #line default
@@ -97,7 +98,7 @@ WriteLiteral(" width=\"20\"");
 WriteLiteral(">\n\t\t<span>");
 
 
-#line 120 "ReleaseRazorView.cshtml"
+#line 126 "ReleaseRazorView.cshtml"
    Write(Model.Author);
 
 
@@ -106,7 +107,7 @@ WriteLiteral(">\n\t\t<span>");
 WriteLiteral("</span>\n\t\treleased this\n\t\t<time>");
 
 
-#line 122 "ReleaseRazorView.cshtml"
+#line 128 "ReleaseRazorView.cshtml"
    Write(Model.ReleaseTime);
 
 
@@ -116,18 +117,15 @@ WriteLiteral("</time>\n\t</p>\n\t<div");
 
 WriteLiteral(" class=\"markdown-body\"");
 
-WriteLiteral(">\n");
-
-WriteLiteral("\t\t");
+WriteLiteral(">");
 
 
-#line 125 "ReleaseRazorView.cshtml"
-WriteLiteral(Model.Body);
-
+#line 130 "ReleaseRazorView.cshtml"
+                              WriteLiteral(Model.Body);
 
 #line default
 #line hidden
-WriteLiteral("\n\t</div>\n</body>\n</html>");
+WriteLiteral("</div>\n</body>\n</html>");
 
 }
 }

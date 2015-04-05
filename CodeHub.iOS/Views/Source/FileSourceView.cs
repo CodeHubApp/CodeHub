@@ -90,7 +90,8 @@ namespace CodeHub.iOS.Views.Source
             if (ViewModel.IsMarkdown)
             {
                 var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
-                var htmlContent = new MarkdownView { Model = content };
+                var model = new DescriptionModel(content, (int)UIFont.PreferredSubheadline.PointSize);
+                var htmlContent = new MarkdownView { Model = model };
                 LoadContent(htmlContent.GenerateString());
             }
             else

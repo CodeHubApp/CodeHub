@@ -8,11 +8,16 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public class CommitItemViewModel : ReactiveObject, ICanGoToViewModel
     {
+        private readonly Lazy<string> _description;
+
         public string Name { get; private set; }
 
         public GitHubAvatar Avatar { get; private set; }
 
-        public string Description { get; private set; }
+        public string Description
+        {
+            get { return _description.Value; }
+        }
 
         public string Time { get; private set; }
 
@@ -24,7 +29,8 @@ namespace CodeHub.Core.ViewModels.Changesets
         {
             var msg = commit.With(x => x.Commit).With(x => x.Message, () => string.Empty);
             var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);
-            Description = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
+            var description = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
+            _description = new Lazy<string>(() => Emojis.FindAndReplace(description));
 
             var time = DateTimeOffset.MinValue;
             if (commit.Commit.Committer != null)

@@ -62,50 +62,52 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.Register(() => new DiagnosticLogger(), typeof(ILogger));
             #endif 
 
-            // Stamp the date this was installed (first run)
-            this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+            BeginInvokeOnMainThread(() => {
 
-            // Register default settings from the settings.bundle
-            RegisterDefaultSettings();
+                // Stamp the date this was installed (first run)
+                this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
-            Locator.CurrentMutable.InitializeFactories();
-            Locator.CurrentMutable.InitializeServices();
-            Bootstrap.Init();
+                // Register default settings from the settings.bundle
+                RegisterDefaultSettings();
 
-            // Enable flurry analytics
-            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
-            {
-                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-                Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
-            }
-            else
-            {
-                this.Log().Debug("Simulator detected, disabling analytics");
-                Locator.Current.GetService<IAnalyticsService>().Enabled = false;
-            }
+                Locator.CurrentMutable.InitializeFactories();
+                Locator.CurrentMutable.InitializeServices();
+                Bootstrap.Init();
 
-            _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
+                // Enable flurry analytics
+                if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+                {
+                    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+                    Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
+                }
+                else
+                {
+                    this.Log().Debug("Simulator detected, disabling analytics");
+                    Locator.Current.GetService<IAnalyticsService>().Enabled = false;
+                }
 
-            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
 
-            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
-            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
-            viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
+                OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
+                GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
-            Themes.Theme.Load("Default");
+                var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
+                viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
 
-            var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-            var vm = serviceConstructor.Construct<StartupViewModel>();
-            var startupViewController = new StartupView { ViewModel = vm };
+                Themes.Theme.Load("Default");
 
-            var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
+                var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                var vm = serviceConstructor.Construct<StartupViewModel>();
+                var startupViewController = new StartupView { ViewModel = vm };
 
-            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
-                mainNavigationController.PopToRootViewController(false);
-                mainNavigationController.DismissViewController(true, null);
-            });
+                var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
+
+                MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
+                    mainNavigationController.PopToRootViewController(false);
+                    mainNavigationController.DismissViewController(true, null);
+                });
 
 //            MessageBus.Current.Listen<LoginMessage>().Subscribe(x => {
 //                if (x.Account.IsEnterprise)
@@ -121,11 +123,13 @@ namespace CodeHub.iOS
 //                }
 //            });
 
-            Window = new UIWindow(UIScreen.MainScreen.Bounds) {RootViewController = mainNavigationController};
-            Window.MakeKeyAndVisible();
+                Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = mainNavigationController };
+                Window.MakeKeyAndVisible();
 
-            SetupPushNotifications();
-            HandleNotificationOptions(options);
+                SetupPushNotifications();
+                HandleNotificationOptions(options);
+
+            });
             return true;
         }
 

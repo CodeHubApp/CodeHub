@@ -36,7 +36,7 @@ font-size: 1.4em;
 border-bottom: 1px solid #eee;
 }
 .markdown-body ul, .markdown-body ol {
-padding-left: 30px;
+padding-left: 20px;
 }
 a {
 color: #4183c4;
@@ -110,7 +110,13 @@ border-radius: 3px;
 font-weight: bold;
 color: #666;
 }
-
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
 </style>
 <title>Release</title></head>
 <body>
@@ -121,8 +127,6 @@ color: #666;
 		released this
 		<time>@Model.ReleaseTime</time>
 	</p>
-	<div class="markdown-body">
-		@Model.Body
-	</div>
+	<div class="markdown-body">@{WriteLiteral(Model.Body);}</div>
 </body>
 </html>

@@ -93,12 +93,9 @@ namespace CodeHub.iOS.Views.Issues
                 {
                     HeaderView.Text = x.Title;
                     HeaderView.ImageUri = x.User.AvatarUrl;
-
-                    if (x.UpdatedAt.HasValue)
-                        HeaderView.SubText = "Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize();
-                    else
-                        HeaderView.SubText = "Created " + x.CreatedAt.UtcDateTime.Humanize();
-
+                    HeaderView.SubText = x.UpdatedAt.HasValue ? 
+                            ("Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize()) :
+                            ("Created " + x.CreatedAt.UtcDateTime.Humanize());
                     RefreshHeaderView();
                 });
 
@@ -112,7 +109,7 @@ namespace CodeHub.iOS.Views.Issues
                     else
                     {
                         var model = new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize);
-                        var markdown = new DescriptionView { Model = model };
+                        var markdown = new MarkdownView { Model = model };
                         var html = markdown.GenerateString();
                         DescriptionElement.Value = html;
 

@@ -48,7 +48,9 @@ namespace CodeHub.iOS.Views.App
                     TextView.RemoveFromSuperview();
                     Add(_previewView);
 
-                    var markdownView = new MarkdownView { Model = markdownService.Convert(TextView.Text) };
+                    var markdown = markdownService.Convert(TextView.Text);
+                    var model = new DescriptionModel(markdown, (int)UIFont.PreferredSubheadline.PointSize);
+                    var markdownView = new MarkdownView { Model = model };
                     _previewView.LoadHtmlString(markdownView.GenerateString(), null);
                 }
             };

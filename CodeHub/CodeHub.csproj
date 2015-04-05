@@ -38,11 +38,8 @@
     <Compile Include="WebViews\CommitDiffRazorView.cs">
       <DependentUpon>CommitDiffRazorView.cshtml</DependentUpon>
     </Compile>
-    <Compile Include="WebViews\DescriptionView.cs">
-      <DependentUpon>DescriptionView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="WebViews\MarkdownView.cs">
-      <DependentUpon>..\..\CodeHub.iOS\WebViews\MarkdownView.cshtml</DependentUpon>
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="WebViews\SourceBrowserModel.cs" />
     <Compile Include="WebViews\SyntaxHighlighterView.cs">
@@ -52,9 +49,6 @@
       <DependentUpon>ReleaseRazorView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Views\Releases\ReleaseRazorViewModel.cs" />
-    <Compile Include="Views\Contents\ReadmeRazorView.cs">
-      <DependentUpon>ReadmeRazorView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="Resources\Octicons.cs" />
     <Compile Include="WebViews\CommitDiffModel.cs" />
     <Compile Include="WebViews\DescriptionModel.cs" />
@@ -70,10 +64,6 @@
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>CommitDiffRazorView.cs</LastGenOutput>
     </None>
-    <None Include="WebViews\DescriptionView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>DescriptionView.cs</LastGenOutput>
-    </None>
     <None Include="WebViews\MarkdownView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>MarkdownView.cs</LastGenOutput>
@@ -85,10 +75,6 @@
     <None Include="Views\Releases\ReleaseRazorView.cshtml">
       <Generator>RazorTemplatePreprocessor</Generator>
       <LastGenOutput>ReleaseRazorView.cs</LastGenOutput>
-    </None>
-    <None Include="Views\Contents\ReadmeRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>ReadmeRazorView.cs</LastGenOutput>
     </None>
     <None Include="WebResources\LICENSE" />
     <None Include="WebResources\Diff\app.js" />
@@ -154,7 +140,6 @@
   <ItemGroup>
     <Folder Include="Views\" />
     <Folder Include="Views\Releases\" />
-    <Folder Include="Views\Contents\" />
     <Folder Include="WebResources\styles\" />
     <Folder Include="Resources\" />
   </ItemGroup>

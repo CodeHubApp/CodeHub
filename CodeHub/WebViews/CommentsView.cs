@@ -126,21 +126,22 @@ WriteLiteral("px;\nmargin: 0 0 4px 0;\nfont-weight: normal;\ncolor: #404040;\nwh
 "700;\nline-height: 1;\ncolor: #fff;\ntext-align: center;\nwhite-space: nowrap;\nverti" +
 "cal-align: baseline;\nborder-radius: .25em;\n}\n.label-danger {\nbackground-color: #" +
 "d9534f;\n}\n.label-success {\nbackground-color: #5cb85c;\n}\n.label-info {\nbackground" +
-"-color: #6e5494;\n}\n.label-default {\nbackground-color: #999;\n}\n</style>\n</head>\n<" +
-"body>\n\t<div");
+"-color: #6e5494;\n}\n.label-default {\nbackground-color: #999;\n}\nul.task-list > li." +
+"task-list-item {\n  list-style-type: none;\n}\n.task-list-item-checkbox {\n  margin-" +
+"left: -20px;\n  vertical-align: middle;\n}\n</style>\n</head>\n<body>\n\t<div");
 
 WriteLiteral(" id=\"main\"");
 
 WriteLiteral(">\n");
 
 
-#line 182 "CommentsView.cshtml"
+#line 189 "CommentsView.cshtml"
 		
 
 #line default
 #line hidden
 
-#line 182 "CommentsView.cshtml"
+#line 189 "CommentsView.cshtml"
    foreach (var comment in Model.Comments)
 		{
 
@@ -155,7 +156,7 @@ WriteLiteral(">\n\t\t\t\t<img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 185 "CommentsView.cshtml"
+#line 192 "CommentsView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -165,7 +166,7 @@ WriteAttribute ("src", " src=\"", "\""
 WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 
 
-#line 187 "CommentsView.cshtml"
+#line 194 "CommentsView.cshtml"
     Write(comment.Name);
 
 
@@ -174,7 +175,7 @@ WriteLiteral(">\n\t\t\t\t<div>\n\t\t\t\t\t<h1>");
 WriteLiteral("</h1>\n\t\t\t\t\t<h2>");
 
 
-#line 188 "CommentsView.cshtml"
+#line 195 "CommentsView.cshtml"
     Write(comment.Date);
 
 
@@ -184,21 +185,18 @@ WriteLiteral("</h2>\n\t\t\t\t\t<div");
 
 WriteLiteral(" class=\"mark\"");
 
-WriteLiteral(">\n");
-
-WriteLiteral("\t\t\t\t\t");
+WriteLiteral(">");
 
 
-#line 190 "CommentsView.cshtml"
-                WriteLiteral(comment.Body);
-
+#line 196 "CommentsView.cshtml"
+                         WriteLiteral(comment.Body);
 
 #line default
 #line hidden
-WriteLiteral("\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n");
+WriteLiteral("</div>\n\t\t\t\t</div>\n\t\t\t</div>\n");
 
 
-#line 194 "CommentsView.cshtml"
+#line 199 "CommentsView.cshtml"
 		}
 
 

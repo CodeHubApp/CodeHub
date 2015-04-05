@@ -97,6 +97,12 @@ namespace CodeHub.iOS.Views.Repositories
             this.WhenAnyValue(x => x.ViewModel.Releases)
                 .Select(x => x == null ? "- Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
                 .SubscribeSafe(x => _splitElements[2].Button1.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.Description)
+                .Subscribe(x => {
+                    HeaderView.SubText = x;
+                    RefreshHeaderView();
+                });
         }
 
         public override void ViewDidLoad()
@@ -108,7 +114,6 @@ namespace CodeHub.iOS.Views.Repositories
                 .Subscribe(x =>
                 {
                     HeaderView.ImageUri = x.Owner.AvatarUrl;
-                    HeaderView.SubText = x.Description;
                     RefreshHeaderView();
                 });
 

@@ -18,6 +18,7 @@ using System.Reactive;
 using CodeHub.Core.ViewModels.Contents;
 using CodeHub.Core.Factories;
 using CodeHub.Core.ViewModels.Activity;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -105,6 +106,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _watchers, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<string> _description;
+        public string Description
+        {
+            get { return _description.Value; }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
@@ -172,6 +179,10 @@ namespace CodeHub.Core.ViewModels.Repositories
                 Stargazers = x != null ? (int?)x.StargazersCount : null;
                 Watchers = x != null ? (int?)x.SubscribersCount : null;
             });
+
+            this.WhenAnyValue(x => x.Repository.Description)
+                .Select(x => Emojis.FindAndReplace(x))
+                .ToProperty(this, x => x.Description, out _description);
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue), t => ToggleStar());

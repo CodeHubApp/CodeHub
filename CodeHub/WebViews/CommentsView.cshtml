@@ -175,6 +175,13 @@ background-color: #6e5494;
 .label-default {
 background-color: #999;
 }
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
 </style>
 </head>
 <body>
@@ -186,9 +193,7 @@ background-color: #999;
 				<div>
 					<h1>@comment.Name</h1>
 					<h2>@comment.Date</h2>
-					<div class="mark">
-					@comment.Body
-					</div>
+					<div class="mark">@{WriteLiteral(comment.Body);}</div>
 				</div>
 			</div>
 		}
