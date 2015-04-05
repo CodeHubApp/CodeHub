@@ -261,7 +261,7 @@ namespace CodeHub.Core.ViewModels.Issues
             var hasHtmlObservable = this.WhenAnyValue(x => x.HtmlUrl).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(hasHtmlObservable);
-            ShareCommand.Subscribe(_ => actionMenuFactory.ShareUrl(HtmlUrl));
+            ShareCommand.Subscribe(sender => actionMenuFactory.ShareUrl(sender, HtmlUrl));
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(hasHtmlObservable);
             GoToHtmlUrlCommand.Subscribe(_ => GoToUrl(HtmlUrl.AbsoluteUri));

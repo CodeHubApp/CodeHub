@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Releases
                 .Subscribe(x => Title = x);
 
             var shareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.ReleaseModel).Select(x => x != null));
-            shareCommand.Subscribe(_ => actionMenuService.ShareUrl(ReleaseModel.HtmlUrl));
+            shareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, ReleaseModel.HtmlUrl));
 
             var gotoUrlCommand = new Action<string>(x =>
             {

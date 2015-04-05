@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Factories
             return new PickerMenu();
         }
 
-        public void ShareUrl(Uri uri)
+        public void ShareUrl(object sender, Uri uri)
         {
             var item = new NSUrl(uri.AbsoluteUri);
             var activityItems = new NSObject[] { item };
@@ -35,8 +35,17 @@ namespace CodeHub.iOS.Factories
             {
                 var window = UIApplication.SharedApplication.KeyWindow;
                 var pop = new UIPopoverController (activityController);
-                var rect = new CGRect(window.RootViewController.View.Frame.Width / 2, window.RootViewController.View.Frame.Height / 2, 0, 0);
-                pop.PresentFromRect (rect, window.RootViewController.View, UIPopoverArrowDirection.Any, true);
+
+                var barButtonItem = sender as UIBarButtonItem;
+                if (barButtonItem != null)
+                {
+                    pop.PresentFromBarButtonItem(barButtonItem, UIPopoverArrowDirection.Any, true);
+                }
+                else
+                {
+                    var rect = new CGRect(window.RootViewController.View.Frame.Width / 2, window.RootViewController.View.Frame.Height / 2, 0, 0);
+                    pop.PresentFromRect (rect, window.RootViewController.View, UIPopoverArrowDirection.Any, true);
+                }
             } 
             else 
             {
@@ -73,7 +82,7 @@ namespace CodeHub.iOS.Factories
                 foreach (var b in _buttonActions)
                 {
                     sheet.AddAction(UIAlertAction.Create(b.Item1, UIAlertActionStyle.Default, x => {
-                        b.Item2.ExecuteIfCan();
+                        b.Item2.ExecuteIfCan(sender);
                         a.SetResult(true);
                     }));
                 }

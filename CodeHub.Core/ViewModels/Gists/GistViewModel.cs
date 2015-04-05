@@ -65,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Gists
                     Title = x);
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
-            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(new Uri(Gist.HtmlUrl)));
+            ShareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, new Uri(Gist.HtmlUrl)));
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue),

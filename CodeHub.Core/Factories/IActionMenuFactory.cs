@@ -11,7 +11,7 @@ namespace CodeHub.Core.Factories
 
         IPickerMenu CreatePicker();
 
-        void ShareUrl(Uri uri);
+        void ShareUrl(object sender, Uri uri);
 
         void SendToPasteBoard(string str);
     }
@@ -34,9 +34,9 @@ namespace CodeHub.Core.Factories
 
     public static class ActionMenuFactoryExtensions
     {
-        public static void ShareUrl(this IActionMenuFactory @this, string uri)
+        public static void ShareUrl(this IActionMenuFactory @this, object sender, string uri)
         {
-            @this.ShareUrl(new Uri(uri));
+            @this.ShareUrl(sender, new Uri(uri));
         }
     }
 }

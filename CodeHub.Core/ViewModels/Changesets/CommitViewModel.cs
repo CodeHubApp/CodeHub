@@ -121,7 +121,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 .WithSubscription(x => actionMenuService.SendToPasteBoard(this.Commit.Sha));
 
             var shareCommand = ReactiveCommand.Create(validCommitObservable)
-                .WithSubscription(x => actionMenuService.ShareUrl(this.Commit.HtmlUrl));
+                .WithSubscription(sender => actionMenuService.ShareUrl(sender, this.Commit.HtmlUrl));
 
             var browseCodeCommand = ReactiveCommand.Create(validCommitObservable)
                 .WithSubscription(x => 

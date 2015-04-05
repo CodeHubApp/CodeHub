@@ -47,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Contents
             var nonNullContentModel = this.WhenAnyValue(x => x.ContentModel).Select(x => x != null);
 
             ShareCommand = ReactiveCommand.Create(nonNullContentModel);
-            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(ContentModel.HtmlUrl));
+            ShareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, ContentModel.HtmlUrl));
 
             var showWebBrowser = new Action<string>(x =>
             {

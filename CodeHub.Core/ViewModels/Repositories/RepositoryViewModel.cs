@@ -328,7 +328,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             });
 
             ShareCommand = ReactiveCommand.Create(validRepositoryObservable);
-            ShareCommand.Subscribe(_ => actionMenuService.ShareUrl(Repository.HtmlUrl));
+            ShareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, Repository.HtmlUrl));
 
             var canShowMenu = this.WhenAnyValue(x => x.Repository, x => x.IsStarred, x => x.IsWatched)
                 .Select(x => x.Item1 != null && x.Item2 != null && x.Item3 != null);
