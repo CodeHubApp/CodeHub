@@ -388,6 +388,12 @@
     <InterfaceDefinition Include="Views\Accounts\EnterpriseOAuthTokenLoginView.xib" />
     <Compile Include="Views\Issues\MyIssuesFilterView.cs" />
     <Compile Include="Views\Search\ExploreView.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\AccountPinnedRepositories.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Data\LegacyMigration.cs" />
+    <Compile Include="Data\GitHubAccount.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -420,9 +426,6 @@
     </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.1\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
     </Reference>
     <Reference Include="MonoTouch.TTTAttributedLabel">
       <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
@@ -720,6 +723,7 @@
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
@@ -738,6 +742,7 @@
     <Folder Include="Utilities\" />
     <Folder Include="WebResources\" />
     <Folder Include="Views\Search\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

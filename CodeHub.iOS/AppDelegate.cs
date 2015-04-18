@@ -20,6 +20,7 @@ using System.Net.Http;
 using ModernHttpClient;
 using System.Text;
 using System.Diagnostics;
+using CodeHub.Core.Data;
 
 namespace CodeHub.iOS
 {
@@ -62,75 +63,78 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.Register(() => new DiagnosticLogger(), typeof(ILogger));
             #endif 
 
-            BeginInvokeOnMainThread(() => {
+            // Load the launch screen. We'll need to fade.
+            var storyboard = UIStoryboard.FromName("Launch", NSBundle.MainBundle);
+            var viewController = storyboard.InstantiateInitialViewController();
+            Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = viewController };
+            Window.MakeKeyAndVisible();
 
-                // Stamp the date this was installed (first run)
-                this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+            BeginInvokeOnMainThread(() => InitializeApp(options));
 
-                // Register default settings from the settings.bundle
-                RegisterDefaultSettings();
-
-                Locator.CurrentMutable.InitializeFactories();
-                Locator.CurrentMutable.InitializeServices();
-                Bootstrap.Init();
-
-                // Enable flurry analytics
-                if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
-                {
-                    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-                    Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
-                }
-                else
-                {
-                    this.Log().Debug("Simulator detected, disabling analytics");
-                    Locator.Current.GetService<IAnalyticsService>().Enabled = false;
-                }
-
-                _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
-
-                System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
-
-                OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
-                GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
-
-                var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
-                viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
-
-                Themes.Theme.Load("Default");
-
-                var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                var vm = serviceConstructor.Construct<StartupViewModel>();
-                var startupViewController = new StartupView { ViewModel = vm };
-
-                var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
-
-                MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
-                    mainNavigationController.PopToRootViewController(false);
-                    mainNavigationController.DismissViewController(true, null);
-                });
-
-//            MessageBus.Current.Listen<LoginMessage>().Subscribe(x => {
-//                if (x.Account.IsEnterprise)
-//                {
-//                    string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(x.Account.OAuth + ":x-oauth-basic"));
-//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("Basic " + credentials, "Authorization");
-//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField("SDWebImage", "User-Agent");
-//                }
-//                else
-//                {
-//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField(null, "Authorization");
-//                    SDWebImage.SDWebImageDownloader.SharedDownloader.SetValueforHTTPHeaderField(null, "User-Agent");
-//                }
-//            });
-
-                Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = mainNavigationController };
-                Window.MakeKeyAndVisible();
-
-                SetupPushNotifications();
-                HandleNotificationOptions(options);
-
-            });
             return true;
+        }
+
+        private void InitializeApp(NSDictionary options)
+        {
+            // Stamp the date this was installed (first run)
+            this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+
+            // Register default settings from the settings.bundle
+            RegisterDefaultSettings();
+
+            Locator.CurrentMutable.InitializeFactories();
+            Locator.CurrentMutable.InitializeServices();
+            Bootstrap.Init();
+
+            // Enable flurry analytics
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
+            {
+                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+                Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
+            }
+            else
+            {
+                this.Log().Debug("Simulator detected, disabling analytics");
+                Locator.Current.GetService<IAnalyticsService>().Enabled = false;
+            }
+
+            _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
+            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
+
+            var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
+            viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
+
+            Themes.Theme.Load("Default");
+
+            try
+            {
+                var accountsRepository = Locator.Current.GetService<IAccountsRepository>();
+                Data.LegacyMigration.Migrate(accountsRepository);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Unable to migrate DB: " + e.Message);
+            }
+
+            var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+            var vm = serviceConstructor.Construct<StartupViewModel>();
+            var startupViewController = new StartupView { ViewModel = vm };
+
+            var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
+
+            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
+                mainNavigationController.PopToRootViewController(false);
+                mainNavigationController.DismissViewController(true, null);
+            });
+
+            Window.RootViewController = mainNavigationController;
+
+            SetupPushNotifications();
+            HandleNotificationOptions(options);
         }
 
         private static void RegisterDefaultSettings()

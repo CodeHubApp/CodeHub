@@ -172,6 +172,8 @@ namespace CodeHub.iOS.Views.App
 
             private static string GetActualImage(PinnedRepository pinnedRepository)
             {
+                if (pinnedRepository.ImageUri == null)
+                    return null;
                 return !pinnedRepository.ImageUri.StartsWith("http", StringComparison.Ordinal) 
                     ? null : new GitHubAvatar(pinnedRepository.ImageUri).ToUri(64).AbsoluteUri;
             }
@@ -183,7 +185,7 @@ namespace CodeHub.iOS.Views.App
                     GetActualImage(pinnedRepo))
 			{
 				PinnedRepo = pinnedRepo;
-                TintImage = false;
+                TintImage = pinnedRepo.ImageUri == null;
 			}
 		}
 

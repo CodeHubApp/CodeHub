@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Reactive;
@@ -9,13 +10,15 @@ using System.Linq;
 using CodeHub.Core.ViewModels.Users;
 using System.Collections.ObjectModel;
 using CodeHub.Core.Factories;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel
+    public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel, IEnableLogger
     {
         protected readonly ReactiveList<IIssueEventItemViewModel> InternalEvents = new ReactiveList<IIssueEventItemViewModel>();
         private readonly ISessionService _applicationService;
+        private readonly IMarkdownService _markdownService;
 
         private int _id;
         public int Id 
@@ -128,6 +131,7 @@ namespace CodeHub.Core.ViewModels.Issues
             IActionMenuFactory actionMenuFactory)
         {
             _applicationService = applicationService;
+            _markdownService = markdownService;
 
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
                 .Select(x => x.Item1 != null && x.Item2);
@@ -195,8 +199,11 @@ namespace CodeHub.Core.ViewModels.Issues
                 });
 
             _markdownDescription = this.WhenAnyValue(x => x.Issue)
-                .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : markdownService.Convert(x.Body)))
-                .ToProperty(this, x => x.MarkdownDescription);
+                .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : x.Body))
+                .Where(x => x != null)
+                .Select(x => GetMarkdownDescription().ToObservable())
+                .Switch()
+                .ToProperty(this, x => x.MarkdownDescription, null, RxApp.MainThreadScheduler);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t => Load(applicationService));
 
@@ -265,6 +272,25 @@ namespace CodeHub.Core.ViewModels.Issues
 
             GoToHtmlUrlCommand = ReactiveCommand.Create(hasHtmlObservable);
             GoToHtmlUrlCommand.Subscribe(_ => GoToUrl(HtmlUrl.AbsoluteUri));
+        }
+
+        private async Task<string> GetMarkdownDescription()
+        {
+            try
+            {
+                var connection = _applicationService.GitHubClient.Connection;
+                var ret = await connection.Post<string>(new Uri("/markdown", UriKind.Relative), new {
+                    text = Issue.Body,
+                    mode = "gfm",
+                    context = string.Format("{0}/{1}", RepositoryOwner, RepositoryName)
+                }, "application/json", "application/json");
+                return ret.Body;
+            }
+            catch (Exception e)
+            {
+                this.Log().InfoException("Unable to retrieve GitHub Markdown. Falling back to local", e);
+                return _markdownService.Convert(Issue.Body);
+            }
         }
 
         private void GoToUrl(string url)
