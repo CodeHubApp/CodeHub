@@ -13,6 +13,9 @@ namespace CodeHub.iOS.Views.Accounts
 	partial class OAuthLoginView
 	{
 		[Outlet]
+		UIKit.UILabel DescriptionLabel { get; set; }
+
+		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
@@ -44,6 +47,11 @@ namespace CodeHub.iOS.Views.Accounts
 			if (TokenText != null) {
 				TokenText.Dispose ();
 				TokenText = null;
+			}
+
+			if (DescriptionLabel != null) {
+				DescriptionLabel.Dispose ();
+				DescriptionLabel = null;
 			}
 		}
 	}

@@ -13,6 +13,9 @@ namespace CodeHub.iOS.Views.Accounts
 	partial class EnterpriseOAuthTokenLoginView
 	{
 		[Outlet]
+		UIKit.UILabel DescriptionLabel { get; set; }
+
+		[Outlet]
 		UIKit.UITextField DomainText { get; set; }
 
 		[Outlet]
@@ -44,14 +47,19 @@ namespace CodeHub.iOS.Views.Accounts
 				LogoImageView = null;
 			}
 
+			if (ScrollView != null) {
+				ScrollView.Dispose ();
+				ScrollView = null;
+			}
+
 			if (TokenText != null) {
 				TokenText.Dispose ();
 				TokenText = null;
 			}
 
-			if (ScrollView != null) {
-				ScrollView.Dispose ();
-				ScrollView = null;
+			if (DescriptionLabel != null) {
+				DescriptionLabel.Dispose ();
+				DescriptionLabel = null;
 			}
 		}
 	}

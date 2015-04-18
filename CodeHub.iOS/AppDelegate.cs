@@ -159,7 +159,7 @@ namespace CodeHub.iOS
         {
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
             {
-                if (request.Method.ToString().ToLowerInvariant() != "get")
+                if (!string.Equals(request.Method.ToString(), "get", StringComparison.OrdinalIgnoreCase))
                     NSUrlCache.SharedCache.RemoveAllCachedResponses();
                 return base.SendAsync(request, cancellationToken);
             }

@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OAuthLoginView">
             <connections>
+                <outlet property="DescriptionLabel" destination="KTK-Zp-SPY" id="s1u-o5-vnh"/>
                 <outlet property="LoginButton" destination="4Bx-sc-wIc" id="XSN-2x-Hdw"/>
                 <outlet property="LogoImageView" destination="NfM-bb-XX8" id="6Ic-O1-Cci"/>
                 <outlet property="ScrollView" destination="CAm-E7-qth" id="KdQ-eP-McG"/>
@@ -47,7 +48,7 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" returnKeyType="next"/>
                         </textField>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The provided Personal Access Token must allow access to the following scopes: repo, gist, user, read:org" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTK-Zp-SPY">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Description Goes Here" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTK-Zp-SPY">
                             <rect key="frame" x="41" y="212" width="239" height="47"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
