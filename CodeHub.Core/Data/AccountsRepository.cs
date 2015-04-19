@@ -63,7 +63,7 @@ namespace CodeHub.Core.Data
 
         public Task<GitHubAccount> Find(string domain, string username)
         {
-            return Find("user_" + domain + username);
+            return Find(domain + username);
         }
 
         public Task<GitHubAccount> Find(string key)

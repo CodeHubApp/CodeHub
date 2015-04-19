@@ -24,10 +24,6 @@ namespace CodeHub.iOS.Views.Settings
         {
             base.ViewDidLoad();
 
-            var saveCredentials = new BooleanElement("Save Credentials", 
-                ViewModel.SaveCredentials, e => ViewModel.SaveCredentials = e.Value);
-            ViewModel.WhenAnyValue(x => x.SaveCredentials).Subscribe(x => saveCredentials.Value = x);
-
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", 
                 ViewModel.ShowOrganizationsInEvents, e => ViewModel.ShowOrganizationsInEvents = e.Value);
             ViewModel.WhenAnyValue(x => x.ShowOrganizationsInEvents).Subscribe(x => showOrganizationsInEvents.Value = x);
@@ -68,8 +64,6 @@ namespace CodeHub.iOS.Views.Settings
                         () => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
             }
 
-            var accountSection = new Section("Account") { saveCredentials };
-
             var appearanceSection = new Section("Appearance") 
             {
                 showOrganizationsInEvents,
@@ -87,7 +81,7 @@ namespace CodeHub.iOS.Views.Settings
                 new StringElement("App Version", ViewModel.Version)
             };
 
-            Root.Reset(accountSection, appearanceSection, applicationSection, aboutSection);
+            Root.Reset(appearanceSection, applicationSection, aboutSection);
         }
     }
 }

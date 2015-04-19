@@ -79,13 +79,6 @@ namespace CodeHub.Core.ViewModels.Settings
             set { this.RaiseAndSetIfChanged(ref _showRepositoryDescriptionInList, value); }
         }
 
-        private bool _saveCredentials;
-        public bool SaveCredentials
-        {
-            get { return _saveCredentials; }
-            set { this.RaiseAndSetIfChanged(ref _saveCredentials, value); }
-        }
-
         public IReactiveCommand GoToSourceCodeCommand { get; private set; }
 
         public IReactiveCommand GoToSyntaxHighlighterCommand { get; private set; }
@@ -148,13 +141,6 @@ namespace CodeHub.Core.ViewModels.Settings
             this.WhenAnyValue(x => x.ShowRepositoryDescriptionInList).Skip(1).Subscribe(x =>
             {
                 applicationService.Account.ShowRepositoryDescriptionInList = x;
-                accountsService.Update(applicationService.Account);
-            });
-
-            SaveCredentials = applicationService.Account.SaveCredentails;
-            this.WhenAnyValue(x => x.SaveCredentials).Skip(1).Subscribe(x =>
-            {
-                applicationService.Account.SaveCredentails = x;
                 accountsService.Update(applicationService.Account);
             });
         }

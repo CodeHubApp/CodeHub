@@ -74,18 +74,10 @@ namespace CodeHub.Core.Data
         public string DefaultStartupView { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="CodeHub.Core.Data.GitHubAccount"/> save credentails.
-        /// </summary>
-        /// <value><c>true</c> if save credentails; otherwise, <c>false</c>.</value>
-        public bool SaveCredentails { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GitHubAccount"/> class.
         /// </summary>
         public GitHubAccount()
         {
-            //Set some default values
-            SaveCredentails = true;
             ShowOrganizationsInEvents = true;
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
