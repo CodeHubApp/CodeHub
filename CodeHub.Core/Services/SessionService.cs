@@ -4,8 +4,6 @@ using System;
 using Octokit;
 using CodeHub.Core.Utilities;
 using System.Threading.Tasks;
-using System.Net.Http;
-using ModernHttpClient;
 using System.Collections.Generic;
 
 namespace CodeHub.Core.Services
@@ -14,12 +12,6 @@ namespace CodeHub.Core.Services
     {
         private readonly IAccountsRepository _accountsRepository;
         private readonly IAnalyticsService _analyticsService;
-
-        static SessionService()
-        {
-            GitHubSharp.Client.ClientConstructor = 
-                () => new HttpClient(new NativeMessageHandler());
-        }
 
         public Client Client { get; private set; }
 

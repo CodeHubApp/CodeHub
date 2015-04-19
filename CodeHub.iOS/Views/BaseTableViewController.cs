@@ -69,6 +69,10 @@ namespace CodeHub.iOS.Views
 
             this.WhenActivated(d => { });
 
+            this.Appeared
+                .Take(1)
+                .Subscribe(_ => CreateEmptyHandler());
+
             _loadingActivityView = new Lazy<UIActivityIndicatorView>(() =>
                 new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White)
                 { 
@@ -166,36 +170,45 @@ namespace CodeHub.iOS.Views
                         _loadingActivityView.Value.StopAnimating();
                     }));
                 }
-
-                var iSourceInformsEmpty = TableView.Source as IInformsEmpty;
-
-                if (iSourceInformsEmpty != null)
-                {
-                    var isEmpty = iSourceInformsEmpty.IsEmpty;
-                    var isExecuting = iLoadableViewModel == null ? Observable.Return(false) : iLoadableViewModel.LoadCommand.IsExecuting;
-                    var isSearching = searchableViewModel == null ? Observable.Return(false) : searchableViewModel.WhenAnyValue(x => x.SearchKeyword).Select(x => !string.IsNullOrEmpty(x));
-
-                    d(isEmpty.CombineLatest(isExecuting, isSearching, (x, y, z) => x && !y && !z)
-                        .Where(_ => EmptyView != null)
-                        .Subscribe(x => 
-                        {
-                            if (x)
-                            {
-                                if (EmptyView.Value.Superview == null)
-                                {
-                                    EmptyView.Value.Alpha = 0f;
-                                    EmptyView.Value.Frame  = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
-                                    TableView.AddSubview(EmptyView.Value);
-                                    UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
-                                        () => EmptyView.Value.Alpha = 1.0f, null);
-                                }
-                            }
-                            else if (EmptyView.IsValueCreated)
-                                EmptyView.Value.RemoveFromSuperview();
-                        }));
-                }
             });
         }
+
+        private void CreateEmptyHandler()
+        {
+            var iLoadableViewModel = ViewModel as ILoadableViewModel;
+            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
+            var iSourceInformsEmpty = TableView.Source as IInformsEmpty;
+
+            if (iSourceInformsEmpty == null || iLoadableViewModel == null || searchableViewModel == null)
+                return;
+            
+            var isEmpty = iSourceInformsEmpty.IsEmpty;
+            var isExecuting = iLoadableViewModel == null ? Observable.Return(false) : iLoadableViewModel.LoadCommand.IsExecuting;
+            var isSearching = searchableViewModel == null ? Observable.Return(false) : searchableViewModel.WhenAnyValue(x => x.SearchKeyword).Select(x => !string.IsNullOrEmpty(x));
+
+            isEmpty.CombineLatest(isExecuting, isSearching, (x, y, z) => x && !y && !z)
+                .Where(_ => EmptyView != null)
+                .Subscribe(x => {
+                    if (x)
+                    {
+                        if (EmptyView.Value.Superview == null)
+                        {
+                            EmptyView.Value.Alpha = 0f;
+                            EmptyView.Value.Frame  = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
+                            TableView.AddSubview(EmptyView.Value);
+                            TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                            UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
+                                () => EmptyView.Value.Alpha = 1.0f, null);
+                        }
+                    }
+                    else if (EmptyView.IsValueCreated)
+                    {
+                        TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                        EmptyView.Value.RemoveFromSuperview();
+                    }
+                });
+        }
+
 
         protected virtual void CreateSearchBar()
         {
