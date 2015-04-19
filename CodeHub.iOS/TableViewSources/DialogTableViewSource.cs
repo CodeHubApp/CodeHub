@@ -57,7 +57,9 @@ namespace CodeHub.iOS.TableViewSources
         {
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
-            return element.GetCell(tableView);
+            var cell = element.GetCell(tableView);
+            cell.Hidden = element.Hidden;
+            return cell;
         }
 
         public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
@@ -107,6 +109,10 @@ namespace CodeHub.iOS.TableViewSources
         {
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
+
+            if (element.Hidden)
+                return 0f;
+
             var sizable = element as IElementSizing;
             return sizable == null ? tableView.RowHeight : sizable.GetHeight(tableView, indexPath);
         }

@@ -10,6 +10,25 @@ namespace CodeHub.iOS.DialogElements
 
         public string Caption { get; set; }
 
+        private bool _hidden;
+        public bool Hidden
+        {
+            get { return _hidden; }
+            set
+            {
+                if (value != _hidden)
+                {
+                    var root = GetRootElement();
+                    if (root != null)
+                    {
+                        root.Reload(this);
+                    }
+                }
+
+                _hidden = value;
+            }
+        }
+
         protected Element()
         {
         }

@@ -25,6 +25,7 @@ namespace CodeHub.iOS.Views.App
         private readonly Section _infoSection;
         private readonly Section _repoSection;
         private readonly Section _topSection;
+        private readonly MenuElement _trendingElement;
 
         public MenuView()
         {
@@ -41,11 +42,18 @@ namespace CodeHub.iOS.Views.App
                 new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.ExecuteIfCan(), Octicon.IssueOpened.ToImage())
             };
 
+            _trendingElement = new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Octicon.Pulse.ToImage());
+            this.WhenAnyValue(x => x.ViewModel.Account)
+                .Select(x => x != null && x.IsEnterprise)
+                .Subscribe(x => _trendingElement.Hidden = x);
+
+            _trendingElement.Hidden = true;
+
             _repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
             _repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage()));
             _repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.ExecuteIfCan(), Octicon.Star.ToImage()));
             _repoSection.Add(new MenuElement("Watching", () => ViewModel.GoToWatchedRepositoriesCommand.ExecuteIfCan(), Octicon.Eye.ToImage()));
-            _repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Octicon.Pulse.ToImage()));
+            _repoSection.Add(_trendingElement);
             _repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.ExecuteIfCan(), Octicon.Telescope.ToImage()));
 
             _gistsSection = new Section { HeaderView = new MenuSectionView("Gists") };

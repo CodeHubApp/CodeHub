@@ -29,7 +29,9 @@ namespace CodeHub.Core.Services
                 if (enterprise)
                 {
                     var client = twoFactor == null ? Client.Basic(user, pass, apiDomain) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiDomain);
-                    var auth = await client.ExecuteAsync(client.Authorizations.Create(OctokitClientFactory.Scopes.ToList(), "CodeHub (GitHub for iOS)", "http://codehub-app.com"));
+                    var name = string.Format("CodeHub (GitHub for iOS) - {0}", DateTime.Now.ToString("s"));
+                    var request = client.Authorizations.Create(OctokitClientFactory.Scopes.ToList(), name, "http://codehub-app.com");
+                    var auth = await client.ExecuteAsync(request);
                     token = auth.Data.Token;
                 }
                 else
