@@ -144,8 +144,11 @@ namespace CodeHub.Core.ViewModels.App
                 .Select(x => x.Init(Account.Username))
                 .Subscribe(NavigateTo); 
                 
-            GoToFeedbackCommand = ReactiveCommand.Create().WithSubscription(_ => 
-                NavigateTo(this.CreateViewModel<SupportViewModel>()));
+            GoToFeedbackCommand = ReactiveCommand.Create();
+            GoToFeedbackCommand
+                .Select(x => this.CreateViewModel<WebBrowserViewModel>())
+                .Select(x => x.Init("https://codehub.uservoice.com"))
+                .Subscribe(NavigateTo);
 
             DeletePinnedRepositoryCommand = ReactiveCommand.Create();
 
