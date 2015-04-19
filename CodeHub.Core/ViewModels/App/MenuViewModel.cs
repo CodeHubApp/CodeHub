@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -16,6 +17,7 @@ using CodeHub.Core.ViewModels.Users;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using CodeHub.Core.ViewModels.Search;
+using System.Reflection;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -169,39 +171,30 @@ namespace CodeHub.Core.ViewModels.App
             });
         }
 
-//        public ICommand GoToDefaultTopView
-//        {
-//            get
-//            {
-//                var startupViewName = AccountsService.ActiveAccount.DefaultStartupView;
-//                if (!string.IsNullOrEmpty(startupViewName))
-//                {
-//                    var props = from p in GetType().GetRuntimeProperties()
-//                        let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true).ToList()
-//                            where attr.Count == 1
-//                        select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute};
-//
-//                    foreach (var p in props)
-//                    {
-//                        if (string.Equals(startupViewName, p.Attribute.Name))
-//                            return p.Property.GetValue(this) as ICommand;
-//                    }
-//                }
-//
-//                //Oh no... Look for the last resort DefaultStartupViewAttribute
-//                var deprop = (from p in GetType().GetRuntimeProperties()
-//                    let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true).ToList()
-//                    where attr.Count == 1
-//                    select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
-//
-//                //That shouldn't happen...
-//                if (deprop == null)
-//                    return null;
-//                var val = deprop.Property.GetValue(this);
-//                return val as ICommand;
-//            }
-//        }
-//
+        public IReactiveCommand GoToDefaultTopView
+        {
+            get
+            {
+                var startupViewName = Account.DefaultStartupView;
+                if (!string.IsNullOrEmpty(startupViewName))
+                {
+                    var props = from p in GetType().GetRuntimeProperties()
+                       let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true).ToList()
+                       where attr.Count == 1
+                       let a = attr[0] as PotentialStartupViewAttribute
+                       where string.Equals(startupViewName, a.Name)
+                       select p.GetValue(this) as IReactiveCommand;
+
+                    var cmd = props.FirstOrDefault(x => x != null);
+
+                    if (cmd != null)
+                        return cmd;
+                }
+
+                return GoToNewsCommand;
+            }
+        }
+
 
         public IReactiveCommand<object> GoToAccountsCommand { get; private set; }
 
@@ -248,7 +241,6 @@ namespace CodeHub.Core.ViewModels.App
 		[PotentialStartupViewAttribute("Organizations")]
 		public IReactiveCommand<object> GoToOrganizationsCommand { get; private set; }
 
-		[DefaultStartupViewAttribute]
 		[PotentialStartupView("News")]
         public IReactiveCommand<object> GoToNewsCommand { get; private set; }
 

@@ -77,7 +77,6 @@ namespace CodeHub.Core.ViewModels.App
 
             try
             {
-                //throw new Exception("Fuck");
                 Status = string.Format("Logging in {0}", account.Username);
                 MessageBus.Current.SendMessage(new LoggingInMessage(account));
 

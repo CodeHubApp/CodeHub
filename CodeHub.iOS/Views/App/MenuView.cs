@@ -90,6 +90,11 @@ namespace CodeHub.iOS.Views.App
                 var frame = NavigationController.NavigationBar.Frame;
                 _profileButton.Frame = new CGRect(0, 0, frame.Width, frame.Height);
             });
+
+            Appeared
+                .Take(1)
+                .Delay(TimeSpan.FromMilliseconds(250), RxApp.MainThreadScheduler)
+                .Subscribe(_ => ViewModel.GoToDefaultTopView.ExecuteIfCan());
         }
 
         public override void ViewDidLoad()
