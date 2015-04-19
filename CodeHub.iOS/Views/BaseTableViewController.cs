@@ -179,7 +179,7 @@ namespace CodeHub.iOS.Views
             var searchableViewModel = ViewModel as IProvidesSearchKeyword;
             var iSourceInformsEmpty = TableView.Source as IInformsEmpty;
 
-            if (iSourceInformsEmpty == null || iLoadableViewModel == null || searchableViewModel == null)
+            if (iSourceInformsEmpty == null)
                 return;
             
             var isEmpty = iSourceInformsEmpty.IsEmpty;
