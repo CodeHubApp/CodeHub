@@ -28,6 +28,11 @@ namespace CodeHub.Core.ViewModels.Repositories
                                          string description, int stars, int forks,
                                          bool showOwner, Action<RepositoryItemViewModel> gotoCommand)
         {
+            if (!string.IsNullOrEmpty(description) && description.IndexOf(':') >= 0)
+            {
+                description = Emojis.FindAndReplace(description);
+            }
+
             Name = name;
             Owner = owner;
             Avatar = new GitHubAvatar(imageUrl);

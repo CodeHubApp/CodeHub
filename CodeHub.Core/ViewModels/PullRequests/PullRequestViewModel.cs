@@ -8,6 +8,7 @@ using CodeHub.Core.Factories;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.PullRequests
@@ -53,9 +54,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _htmlUrl.Value; }
         }
 
-        public IReactiveCommand GoToCommitsCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
 
-        public IReactiveCommand GoToFilesCommand { get; private set; }
+        public IReactiveCommand<object> GoToFilesCommand { get; private set; }
 
         public IReactiveCommand<Unit> MergeCommand { get; private set; }
 
@@ -69,11 +70,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             this.WhenAnyValue(x => x.Id)
                 .Subscribe(x => Title = "Pull Request #" + x);
 
-            _merged = this.WhenAnyValue(x => x.PullRequest.Merged)
-                .ToProperty(this, x => x.Merged);
+            this.WhenAnyValue(x => x.PullRequest.Merged)
+                .ToProperty(this, x => x.Merged, out _merged);
 
-            _htmlUrl = this.WhenAnyValue(x => x.PullRequest.HtmlUrl)
-                .ToProperty(this, x => x.HtmlUrl);
+            this.WhenAnyValue(x => x.PullRequest.HtmlUrl)
+                .ToProperty(this, x => x.HtmlUrl, out _htmlUrl);
 
             var canMergeObservable = this.WhenAnyValue(x => x.PullRequest)
                 .Select(x => x != null && !x.Merged && x.Mergeable.HasValue && x.Mergeable.Value);
@@ -94,21 +95,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
             });
 
-            GoToCommitsCommand = ReactiveCommand.Create().WithSubscription(_ => {
-                var vm = this.CreateViewModel<PullRequestCommitsViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.PullRequestId = Id;
-                NavigateTo(vm);
-            });
+            GoToCommitsCommand = ReactiveCommand.Create();
+            GoToCommitsCommand
+                .Select(x => this.CreateViewModel<PullRequestCommitsViewModel>())
+                .Select(x => x.Init(RepositoryOwner, RepositoryName, Id))
+                .Subscribe(NavigateTo);
 
-            GoToFilesCommand = ReactiveCommand.Create().WithSubscription(_ => {
-                var vm = this.CreateViewModel<PullRequestFilesViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.PullRequestId = Id;
-                NavigateTo(vm);
-            });
+            GoToFilesCommand = ReactiveCommand.Create();
+            GoToFilesCommand
+                .Select(x => this.CreateViewModel<PullRequestFilesViewModel>())
+                .Select(x => x.Init(RepositoryOwner, RepositoryName, Id))
+                .Subscribe(NavigateTo);
         }
 
         public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, Octokit.PullRequest pullRequest = null)
@@ -122,10 +119,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override async Task Load(ISessionService applicationService)
         {
-            PullRequest = await applicationService.GitHubClient.PullRequest.Get(RepositoryOwner, RepositoryName, Id);
-
             applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
                 .ToBackground(x => PushAccess = x.Permissions.Push);
+            
+            PullRequest = await applicationService.GitHubClient.PullRequest.Get(RepositoryOwner, RepositoryName, Id);
 
             await base.Load(applicationService);
         }

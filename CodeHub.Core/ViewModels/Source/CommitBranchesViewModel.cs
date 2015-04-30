@@ -29,13 +29,9 @@ namespace CodeHub.Core.ViewModels.Source
 
             var branches = new ReactiveList<Octokit.Branch>();
             Branches = branches.CreateDerivedCollection(
-                x => new BranchItemViewModel(x.Name, () =>
-                {
+                x => new BranchItemViewModel(x.Name, () => {
                     var vm = this.CreateViewModel<CommitsViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = x.Name;
-                    NavigateTo(vm);
+                    NavigateTo(vm.Init(RepositoryOwner, RepositoryName, x.Name));
                 }),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));

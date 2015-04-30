@@ -273,10 +273,8 @@ namespace CodeHub.Core.ViewModels.Repositories
                 if (Branches != null && Branches.Count == 1)
                 {
                     var vm = this.CreateViewModel<CommitsViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = Repository == null ? null : Repository.DefaultBranch;
-                    NavigateTo(vm);
+                    var branch = Repository == null ? null : Repository.DefaultBranch;
+                    NavigateTo(vm.Init(RepositoryOwner, RepositoryName, branch));
                 }
                 else
                 {

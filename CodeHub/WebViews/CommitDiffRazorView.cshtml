@@ -4,6 +4,7 @@
 <head>
     <title>Diff</title>
     <link href="WebResources/Diff/diffview.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.75">
     <style>
         html {
             font-size: @(Model.FontSize)px !important;
@@ -15,6 +16,7 @@
     	@{
     		int baseLine = 0;
     		int newLine = 0;
+            var comments = Model.Comments.ToLookup(x => x.Line);
     	}
 		@for (var i = 0; i < Model.Lines.Length; i++)
 		{
@@ -42,6 +44,11 @@
 				newLine++;
 				baseLine++;
 			}
+
+            foreach (var c in comments[i])
+            {
+                <tr class='comment'><td colspan='3'><div class='inner'><header><img src="@(c.AvatarUrl)" />@c.Name</header><div class='content'>@c.Body</div></div></td></tr>
+            }
 		}
     </table>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>

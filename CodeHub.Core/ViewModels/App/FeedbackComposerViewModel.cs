@@ -59,7 +59,7 @@ namespace CodeHub.Core.ViewModels.App
                 if (string.IsNullOrEmpty(Subject))
                     throw new ArgumentException(string.Format("You must provide a title for this {0}!", IsFeature ? "feature" : "bug"));
 
-                var labels = await applicationService.GitHubClient.Issue.Labels.GetForRepository(CodeHubOwner, CodeHubName);
+                var labels = await applicationService.GitHubClient.Issue.Labels.GetAllForRepository(CodeHubOwner, CodeHubName);
                 var createLabels = labels.Where(x => string.Equals(x.Name, IsFeature ? "feature request" : "bug", StringComparison.OrdinalIgnoreCase)).Select(x => x.Name).Distinct();
 
                 var createIssueRequest = new Octokit.NewIssue(Subject) { Body = Description };

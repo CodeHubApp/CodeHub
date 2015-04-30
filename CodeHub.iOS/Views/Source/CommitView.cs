@@ -11,7 +11,6 @@ using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewComponents;
-using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -20,6 +19,9 @@ namespace CodeHub.iOS.Views.Source
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly Section _commentsSection;
         private readonly Section _headerSection;
+        private readonly Section _detailsSection;
+        private readonly MultilinedElement _descriptionElement;
+        private readonly StringElement _gotoRepositoryElement;
 
         public CommitView()
         {
@@ -33,6 +35,31 @@ namespace CodeHub.iOS.Views.Source
             var deletions = _split.AddButton("Deletions");
             var parents = _split.AddButton("Parents");
             _headerSection = new Section { _split };
+
+            _descriptionElement = new MultilinedElement();
+            _detailsSection = new Section { _descriptionElement };
+
+            _gotoRepositoryElement = new StringElement(string.Empty) { 
+                Font = StringElement.DefaultDetailFont, 
+                TextColor = StringElement.DefaultDetailColor,
+                Image = Octicon.Repo.ToImage()
+            };
+            _gotoRepositoryElement.Tapped += () => ViewModel.GoToRepositoryCommand.ExecuteIfCan();
+
+            this.WhenAnyValue(x => x.ViewModel.RepositoryName)
+                .Subscribe(x => _gotoRepositoryElement.Caption = x);
+
+            this.WhenAnyValue(x => x.ViewModel.CommiterName)
+                .Subscribe(x => _descriptionElement.Caption = x ?? string.Empty);
+
+            this.WhenAnyValue(x => x.ViewModel.CommitMessage)
+                .Subscribe(x => _descriptionElement.Details = x ?? string.Empty);
+
+            this.WhenAnyValue(x => x.ViewModel.ShowRepository)
+                .StartWith(false)
+                .Where(x => x)
+                .Take(1)
+                .Subscribe(x => _detailsSection.Add(_gotoRepositoryElement));
 
             this.WhenAnyValue(x => x.ViewModel.Commit)
                 .SubscribeSafe(x =>
@@ -65,6 +92,27 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
+            _detailsSection.Add(
+                new StringElement(Octicon.DiffAdded.ToImage())
+                .BindCommand(() => ViewModel.GoToAddedFiles)
+                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).Select(x => x > 0))
+                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).StartWith(0).Select(x => string.Format("{0} added", x))));
+
+            _detailsSection.Add(
+                new StringElement(Octicon.DiffRemoved.ToImage())
+                .BindCommand(() => ViewModel.GoToRemovedFiles)
+                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).Select(x => x > 0))
+                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).StartWith(0).Select(x => string.Format("{0} removed", x))));
+
+            _detailsSection.Add(
+                new StringElement(Octicon.DiffModified.ToImage())
+                .BindCommand(() => ViewModel.GoToModifiedFiles)
+                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffModifications).Select(x => x > 0))
+                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffModifications).StartWith(0).Select(x => string.Format("{0} modified", x))));
+
+            _detailsSection.Add(new StringElement("All Changes", () => ViewModel.GoToAllFiles.ExecuteIfCan(), Octicon.Diff.ToImage()));
+
+
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
@@ -84,51 +132,7 @@ namespace CodeHub.iOS.Views.Source
                     TableView.ReloadData();
                 });
 
-            ViewModel.WhenAnyValue(x => x.Commit).IsNotNull().Subscribe(commitModel =>
-            {
-                var detailSection = new Section();
-                Root.Reset(_headerSection, detailSection);
-
-                var user = commitModel.GenerateCommiterName();
-                detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)
-                {
-                    CaptionColor = Theme.MainTextColor,
-                    ValueColor = Theme.MainTextColor,
-                    BackgroundColor = UIColor.White
-                });
-
-                if (ViewModel.ShowRepository)
-                {
-                    var repo = new StringElement(ViewModel.RepositoryName) { 
-                        Font = StringElement.DefaultDetailFont, 
-                        TextColor = StringElement.DefaultDetailColor,
-                        Image = Octicon.Repo.ToImage()
-                    };
-                    repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
-                    detailSection.Add(repo);
-                }
-
-                var paths = commitModel.Files.GroupBy(y => {
-                    var filename = "/" + y.Filename;
-                    return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-                }).OrderBy(y => y.Key);
-
-                foreach (var p in paths)
-                {
-                    var fileSection = new Section(p.Key);
-                    foreach (var x in p)
-                    {
-                        var y = x;
-                        var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-                        var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-                        sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
-                        fileSection.Add(sse);
-                    }
-                    Root.Add(fileSection);
-                }
-
-                Root.Add(_commentsSection);
-            });
+            Root.Reset(_headerSection, _detailsSection, _commentsSection);
         }
     }
 }

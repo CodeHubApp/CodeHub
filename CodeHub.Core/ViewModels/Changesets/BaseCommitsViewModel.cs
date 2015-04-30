@@ -10,9 +10,9 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public abstract class BaseCommitsViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
 	{
-		public string RepositoryOwner { get; set; }
+		public string RepositoryOwner { get; private set; }
 
-		public string RepositoryName { get; set; }
+		public string RepositoryName { get; private set; }
 
         public IReadOnlyReactiveList<CommitItemViewModel> Commits { get; private set; }
 
@@ -46,31 +46,25 @@ namespace CodeHub.Core.ViewModels.Changesets
                 NavigateTo(vm);
             });
 
-            var commits = new ReactiveList<CommitModel>();
+            var commits = new ReactiveList<CommitItemViewModel>();
             Commits = commits.CreateDerivedCollection(
-                x => new CommitItemViewModel(x, gotoCommitCommand.ExecuteIfCan), 
-                ContainsSearchKeyword, 
+                x => x, 
+                x => x.Description.ContainsKeyword(SearchKeyword) || x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 commits.SimpleCollectionLoad(CreateRequest(), 
+                    x => new CommitItemViewModel(x, gotoCommitCommand.ExecuteIfCan),
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
 	    }
 
         protected abstract GitHubRequest<List<CommitModel>> CreateRequest();
 
-        private bool ContainsSearchKeyword(CommitModel x)
+        protected BaseCommitsViewModel Init(string repositoryOwner, string repositoryName)
         {
-            try
-            {
-                if (x == null || x.Commit == null || x.Commit.Message == null)
-                    return false;
-                return x.Commit.Message.ContainsKeyword(SearchKeyword) || x.GenerateCommiterName().ContainsKeyword(SearchKeyword);
-            }
-            catch
-            {
-                return false;
-            }
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
 	}
 }

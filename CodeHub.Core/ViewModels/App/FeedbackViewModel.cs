@@ -36,7 +36,7 @@ namespace CodeHub.Core.ViewModels.App
             signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                items.Reset(await applicationService.GitHubClient.Issue.GetForRepository(CodeHubOwner, CodeHubName)));
+                items.Reset(await applicationService.GitHubClient.Issue.GetAllForRepository(CodeHubOwner, CodeHubName)));
         }
     }
 }

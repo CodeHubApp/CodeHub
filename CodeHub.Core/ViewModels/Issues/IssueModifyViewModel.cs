@@ -81,12 +81,12 @@ namespace CodeHub.Core.ViewModels.Issues
             GoToMilestonesCommand = ReactiveCommand.Create();
 
             Assignees = new IssueAssigneeViewModel(
-                () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(AssignedUser),
                 x => Task.FromResult(AssignedUser = x));
 
             Milestones = new IssueMilestonesViewModel(
-                () => applicationService.GitHubClient.Issue.Milestone.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(AssignedMilestone),
                 x => Task.FromResult(AssignedMilestone = x));
 
@@ -94,7 +94,7 @@ namespace CodeHub.Core.ViewModels.Issues
             AssignedLabels = assignedLabels.CreateDerivedCollection(y => y);
 
             Labels = new IssueLabelsViewModel(
-                () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(new ReadOnlyCollection<Octokit.Label>(AssignedLabels.ToList()) as IReadOnlyList<Octokit.Label>),
                 x => {
                     assignedLabels.Reset(x);

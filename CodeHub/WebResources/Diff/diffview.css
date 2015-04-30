@@ -84,6 +84,11 @@ table.diff th.author {
 	background:#EFEFEF
 }
 
+.comment {
+    font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
+    white-space: pre-wrap;
+}
+
 .comment > td {
 background:#EED;
 border:1px solid #BBC;

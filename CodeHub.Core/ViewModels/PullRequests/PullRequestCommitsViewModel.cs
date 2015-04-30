@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
     {
         private readonly ISessionService _applicationService;
 
-        public long PullRequestId { get; set; }
+        public int PullRequestId { get; set; }
 
         public PullRequestCommitsViewModel(ISessionService applicationService)
         {
@@ -20,6 +20,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
         protected override GitHubRequest<List<CommitModel>> CreateRequest()
         {
             return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].GetCommits();
+        }
+
+        public PullRequestCommitsViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId)
+        {
+            Init(repositoryOwner, repositoryName);
+            PullRequestId = pullRequestId;
+            return this;
         }
     }
 }

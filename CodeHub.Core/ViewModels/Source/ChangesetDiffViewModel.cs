@@ -7,11 +7,13 @@ using ReactiveUI;
 using System.Reactive;
 using Octokit;
 using CodeHub.Core.Factories;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class ChangesetDiffViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly IActionMenuFactory _actionMenuFactory;
         private string _filename;
 		private string _actualFilename;
 
@@ -50,6 +52,8 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ChangesetDiffViewModel(ISessionService applicationService, IActionMenuFactory actionMenuFactory)
 	    {
+            _actionMenuFactory = actionMenuFactory;
+
             var comments = new ReactiveList<CommitComment>();
             Comments = comments.CreateDerivedCollection(x => x);
 
@@ -81,22 +85,27 @@ namespace CodeHub.Core.ViewModels.Source
                     Title = _actualFilename;
 	            }
 	        });
-
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender =>
-            {
+   
+            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender => {
                 var sheet = actionMenuFactory.Create();
-                sheet.AddButton("Add Comment", ReactiveCommand.Create());
+                sheet.AddButton("Add Diff Comment", ReactiveCommand.Create());
                 return sheet.Show(sender);
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
-                applicationService.GitHubClient.Repository.RepositoryComments.GetForCommit(Username, Repository, Branch)
+                applicationService.GitHubClient.Repository.RepositoryComments.GetAllForCommit(Username, Repository, Branch)
                     .ToBackground(x => comments.Reset(x));
                 var commits = await applicationService.GitHubClient.Repository.Commits.Get(Username, Repository, Branch);
                 CommitFile = commits.Files.FirstOrDefault(x => string.Equals(x.Filename, Filename, StringComparison.Ordinal));
 	        });
 	    }
+//
+//        public Task CommentLine(int line)
+//        {
+//            
+//
+//        }
     }
 }
 

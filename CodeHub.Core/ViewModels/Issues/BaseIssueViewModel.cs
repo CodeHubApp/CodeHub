@@ -165,7 +165,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToProperty(this, x => x.IsClosed);
 
             Assignees = new IssueAssigneeViewModel(
-                () => applicationService.GitHubClient.Issue.Assignee.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(Issue.Assignee),
                 x => UpdateIssue(new Octokit.IssueUpdate 
                 { 
@@ -174,7 +174,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 }));
 
             Milestones = new IssueMilestonesViewModel(
-                () => applicationService.GitHubClient.Issue.Milestone.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(Issue.Milestone),
                 x => UpdateIssue(new Octokit.IssueUpdate 
                 { 
@@ -183,7 +183,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 }));
 
             Labels = new IssueLabelsViewModel(
-                () => applicationService.GitHubClient.Issue.Labels.GetForRepository(RepositoryOwner, RepositoryName),
+                () => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult((IReadOnlyList<Octokit.Label>)new ReadOnlyCollection<Octokit.Label>(Issue.Labels.ToList())),
                 x =>
                 {
@@ -317,7 +317,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected virtual async Task<IEnumerable<IIssueEventItemViewModel>> RetrieveEvents()
         {
-            var eventsRequest = _applicationService.GitHubClient.Issue.Events.GetForIssue(RepositoryOwner, RepositoryName, Id);
+            var eventsRequest = _applicationService.GitHubClient.Issue.Events.GetAllForIssue(RepositoryOwner, RepositoryName, Id);
             var commentsRequest = _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].GetComments());
             await Task.WhenAll(eventsRequest, commentsRequest);
 

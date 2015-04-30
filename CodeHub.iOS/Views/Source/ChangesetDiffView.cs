@@ -5,6 +5,10 @@ using UIKit;
 using CodeHub.Core.Services;
 using ReactiveUI;
 using CodeHub.WebViews;
+using CodeHub.iOS.Views.App;
+using System.Reactive.Linq;
+using CodeHub.Core.Factories;
+using System.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -14,43 +18,22 @@ namespace CodeHub.iOS.Views.Source
 		{
 			base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Patch).Subscribe(x =>
-            {
-                if (x == null)
-                    LoadContent(string.Empty);
-                else
-                {
-                    var razorView = new CommitDiffRazorView
-                    { 
-                        Model = new CommitDiffModel(x.Split('\n'), (int)UIFont.PreferredBody.PointSize)
-                    };
-
-                    LoadContent(razorView.GenerateString(), NSBundle.MainBundle.BundlePath);
-                }
-            });
-//
-//
-//			ViewModel.Bind(x => x.FilePath, x =>
-//			{
-//				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-//				var patch = JavaScriptStringEncode(data);
-//				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
-//			});
-//
-//			ViewModel.BindCollection(x => x.Comments, e =>
-//			{
-//				//Convert it to something light weight
-//				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
-//					Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
-//					Content = x.Body, Date = x.UpdatedAt
-//				}).ToList();
-//
-//				var c = _serializationService.Serialize(slimComments);
-//				ExecuteJavascript("var a = " + c + "; setComments(a);");
-//			});
+            this.WhenAnyValue(x => x.ViewModel.Patch)
+                .CombineLatest(this.WhenAnyObservable(x => x.ViewModel.Comments.Changed), (x, y) => x)
+                .Subscribe(x => {
+                    if (x == null)
+                        LoadContent(string.Empty);
+                    else
+                    {
+                        var comments = ViewModel.Comments
+                            .Where(y => y.Position.HasValue)
+                            .Select(y => new CommitCommentModel(y.User.Login, y.User.AvatarUrl, y.Body, y.Position.Value));
+                        var model = new CommitDiffModel(x.Split('\n'), comments, (int)UIFont.PreferredBody.PointSize);
+                        var razorView = new CommitDiffRazorView { Model = model };
+                        LoadContent(razorView.GenerateString(), NSBundle.MainBundle.BundlePath);
+                    }
+                });
 		}
-
-
 
         private class JavascriptCommentModel
         {
@@ -66,7 +49,7 @@ namespace CodeHub.iOS.Views.Source
 
 				if(func.Equals("comment")) 
 				{
-					//var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
+                    var commentModel = Newtonsoft.Json.JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
 					//PromptForComment(commentModel);
                 }
 
@@ -92,6 +75,23 @@ namespace CodeHub.iOS.Views.Source
 //					composer.EnableSendButton = true;
 //				}
 //            });
+        }
+
+        public class CommentView : MarkdownComposerView<ChangesetCommentViewModel>, IModalView
+        {
+            public CommentView(IMarkdownService markdownService, IAlertDialogFactory alertDialogFactory) 
+                : base(markdownService)
+            {
+                this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
+                    .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+                this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .Select(x => x.ToBarButtonItem(Images.Cancel))
+                    .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+
+                ViewModel = new ChangesetCommentViewModel(alertDialogFactory, null);
+            }
         }
     }
 }

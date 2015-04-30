@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeHub.WebViews
 {
@@ -8,10 +9,13 @@ namespace CodeHub.WebViews
 
         public int FontSize { get; private set; }
 
-        public CommitDiffModel(string[] lines, int fontSize)
+        public IList<CommitCommentModel> Comments { get; private set; }
+
+        public CommitDiffModel(string[] lines, IEnumerable<CommitCommentModel> comments, int fontSize)
         {
             Lines = lines;
             FontSize = fontSize;
+            Comments = comments.ToList();
         }
     }
 }

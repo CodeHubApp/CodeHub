@@ -90,6 +90,7 @@ namespace CodeHub.iOS.Views
         protected void RefreshHeaderView()
         {
             TableView.TableHeaderView = HeaderView;
+            TableView.ReloadData();
         }
 
         public override void ViewDidLoad()

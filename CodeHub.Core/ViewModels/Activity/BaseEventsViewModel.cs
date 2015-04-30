@@ -83,10 +83,7 @@ namespace CodeHub.Core.ViewModels.Activity
         {
             var repoId = new RepositoryIdentifier(repoModel.Name);
             var vm = this.CreateViewModel<CommitsViewModel>();
-            vm.RepositoryOwner = repoId.Owner;
-            vm.RepositoryName = repoId.Name;
-            vm.Branch = branch;
-            NavigateTo(vm);
+            NavigateTo(vm.Init(repoId.Owner, repoId.Name, branch));
         }
 
         private void GoToUser(string username)

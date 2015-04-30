@@ -1,98 +1,74 @@
 using System;
 using UIKit;
-using CoreGraphics;
+using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.DialogElements
 {
-    public class MultilinedElement : CustomElement
+    public class MultilinedElement : Element, IElementSizing
     {
-        private const float PaddingY = 10f;
-        private const float PaddingX = 15f;
-
-		private string _value;
-
-        public string Value
-		{
-			get { return _value; }
-			set
-			{
-				_value = value;
-                var root = GetRootElement();
-				if (root != null)
-				{
-					root.Reload(this, UITableViewRowAnimation.None);
-				}
-			}
-		}
-
-
-        public UIFont CaptionFont { get; set; }
-        public UIFont ValueFont { get; set; }
-        public UIColor CaptionColor { get; set; }
-        public UIColor ValueColor { get; set; }
-
-        public UITableViewCellAccessory Accessory;
-
-        public MultilinedElement(string caption, string value)
-            : this(caption)
+        private string _caption;
+        public new string Caption
         {
-            Value = value;
-        }
-
-        public MultilinedElement(string caption)
-            : base(UITableViewCellStyle.Default, "multilinedelement")
-        {
-            Caption = caption;
-			BackgroundColor = UIColor.White;
-            CaptionFont = UIFont.PreferredHeadline;
-            ValueFont = UIFont.PreferredBody;
-            CaptionColor = ValueColor = UIColor.FromRGB(41, 41, 41);
-            Accessory = UITableViewCellAccessory.None;
-        }
-
-		public override UITableViewCell GetCell(UITableView tv)
-		{
-			var cell = base.GetCell(tv);
-			cell.SeparatorInset = UIEdgeInsets.Zero;
-            cell.Accessory = Accessory;
-			return cell;
-		}
-
-        public override void Draw(CGRect bounds, CoreGraphics.CGContext context, UIView view)
-        {
-			view.BackgroundColor = UIColor.White;
-            CaptionColor.SetColor();
-            var width = bounds.Width - PaddingX * 2;
-            var textHeight = Caption.MonoStringHeight(CaptionFont, width);
-            Caption.DrawString(new CGRect(PaddingX, PaddingY, width, bounds.Height - PaddingY * 2), CaptionFont, UILineBreakMode.WordWrap);
-
-            if (Value != null)
+            get
             {
-                ValueColor.SetColor();
-                var valueOrigin = new CGPoint(PaddingX, PaddingY + textHeight + 8f);
-                var valueSize = new CGSize(width, bounds.Height - valueOrigin.Y);
-                Value.DrawString(new CGRect(valueOrigin, valueSize), ValueFont, UILineBreakMode.WordWrap);
+                return _caption;
+            }
+            set
+            {
+                if (_caption == value)
+                    return;
+                _caption = value;
+                ReloadThis();
             }
         }
 
-        public override float Height(UITableView tableView, CGRect bounds)
+        private string _details;
+        public string Details
         {
-            var cell = GetCell(tableView);
-            cell.Bounds = new CGRect(0, 0, bounds.Width, 44f);
+            get
+            {
+                return _details;
+            }
+            set
+            {
+                if (_details == value)
+                    return;
+                _details = value;
+                ReloadThis();
+            }
+        }
+
+        public override UITableViewCell GetCell(UITableView tv)
+        {
+            var cell = tv.DequeueReusableCell(MultilinedCellView.Key) as MultilinedCellView ?? MultilinedCellView.Create();
+            cell.Caption = Caption;
+            cell.Details = Details;
+
+            cell.SetNeedsUpdateConstraints();
+            cell.UpdateConstraintsIfNeeded();
+
+            return cell;
+        }
+
+        public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
+        {
+            var root = GetRootElement();
+            if (root == null)
+                return 44f;
+            var cell = root.GetOffscreenCell<MultilinedCellView>(MultilinedCellView.Key, MultilinedCellView.Create);
+            cell.Caption = Caption;
+            cell.Details = Details;
+
+            cell.SetNeedsUpdateConstraints();
+            cell.UpdateConstraintsIfNeeded();
+
+            cell.Bounds = new CoreGraphics.CGRect(0, 0, tableView.Bounds.Width, cell.Bounds.Height);
+
             cell.SetNeedsLayout();
             cell.LayoutIfNeeded();
 
-            var contentWidth = cell.ContentView.Bounds.Width;
-            var width = contentWidth - PaddingX * 2;
-            var textHeight = Caption.MonoStringHeight(CaptionFont, width);
-
-            if (Value != null)
-            {
-                textHeight += 6f;
-                textHeight += Value.MonoStringHeight(ValueFont, width);
-            }
-
-            var height = (int)Math.Ceiling(textHeight + PaddingY * 2) + 1;
+            var height = cell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height;
+            height += 1.0f;
             return height;
         }
     }

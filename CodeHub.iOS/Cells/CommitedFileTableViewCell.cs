@@ -10,20 +10,19 @@ namespace CodeHub.iOS.Cells
     public class CommitedFileTableViewCell : ReactiveTableViewCell<CommitedFileItemViewModel>
     {
         public static NSString Key = new NSString("commitedfile");
-        private const float ImageSpacing = 10f;
 
-        public CommitedFileTableViewCell(IntPtr handle)
-            : base(handle)
-        { 
-            SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
-            ContentView.Opaque = true;
+        [Export("initWithStyle:reuseIdentifier:")]
+        public CommitedFileTableViewCell(UITableViewCellStyle style, NSString reuseIdentifier)
+            : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
+        {
+            ImageView.Image = Octicon.FileCode.ToImage();
+            DetailTextLabel.TextColor = Theme.MainSubtitleColor;
 
             this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    ImageView.Image = Octicon.FileCode.ToImage();
+                .IsNotNull()
+                .Subscribe(x => {
                     TextLabel.Text = x.Name;
+                    DetailTextLabel.Text = x.Subtitle;
                 });
         }
     }

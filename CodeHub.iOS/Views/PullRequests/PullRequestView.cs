@@ -25,9 +25,9 @@ namespace CodeHub.iOS.Views.PullRequests
                 Tapped = () => ViewModel.GoToCommitsCommand.ExecuteIfCan()
             };
 
-            _filesElement = new StringElement("Files", string.Empty)
+            _filesElement = new StringElement("Files Changed", string.Empty)
             {
-                Image = Octicon.FileCode.ToImage(),
+                Image = Octicon.Diff.ToImage(),
                 Tapped = () => ViewModel.GoToFilesCommand.ExecuteIfCan()
             };
 
@@ -44,7 +44,7 @@ namespace CodeHub.iOS.Views.PullRequests
             this.WhenAnyValue(x => x.ViewModel.PullRequest.ChangedFiles)
                 .Subscribe(x => _filesElement.Value = x.ToString());
 
-            this.WhenAnyValue(x => x.ViewModel.Merged, x => x.ViewModel.CanMerge)
+            this.WhenAnyValue(x => x.ViewModel.Merged, x => x.ViewModel.CanMerge, x => x.ViewModel.PullRequest.State)
                 .Subscribe(x => {
                     if (x.Item1)
                     {
@@ -52,7 +52,7 @@ namespace CodeHub.iOS.Views.PullRequests
                         _mergeButton.Tapped = null;
                         _mergeButton.Accessory = UITableViewCellAccessory.Checkmark;
                     }
-                    else if (!x.Item1 && x.Item2)
+                    else if (!x.Item1 && x.Item2 && x.Item3 == Octokit.ItemState.Open)
                     {
                         _mergeButton.Caption = "Merge";
                         _mergeButton.Tapped = PromptForCommitMessage;

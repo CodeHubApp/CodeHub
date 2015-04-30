@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 	{
         private readonly ISessionService _applicationService;
 
-	    public string Branch { get; set; }
+	    public string Branch { get; private set; }
 
         public CommitsViewModel(ISessionService applicationService)
         {
@@ -19,6 +19,13 @@ namespace CodeHub.Core.ViewModels.Changesets
 		protected override GitHubRequest<List<CommitModel>> CreateRequest()
         {
             return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits.GetAll(Branch ?? "master");
+        }
+
+        public CommitsViewModel Init(string repositoryOwner, string repositoryName, string branch)
+        {
+            Init(repositoryOwner, repositoryName);
+            Branch = branch;
+            return this;
         }
     }
 }

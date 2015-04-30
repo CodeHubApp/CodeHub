@@ -7,11 +7,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommentViewModel : BaseViewModel, IComposerViewModel
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public int Id { get; set; }
+        public int PullRequestId { get; private set; }
+
+        public string Path { get; private set; }
+
+        public string CommitSha { get; private set; }
+
+        public int Position { get; private set; }
 
         private string _text;
         public string Text
@@ -20,20 +26,31 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _text, value); }
         }
 
-        public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; protected set; }
+        public IReactiveCommand<Octokit.PullRequestReviewComment> SaveCommand { get; private set; }
 
         public PullRequestCommentViewModel(ISessionService applicationService) 
         {
             Title = "Add Comment";
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Text).Select(x => !string.IsNullOrEmpty(x)),
-                t => 
-                {
-                    var req = new Octokit.PullRequestReviewCommentCreate(Text, null, null, 0);
-                    return applicationService.GitHubClient.PullRequest.Comment.Create(RepositoryOwner, RepositoryName, Id, req);
+                t => {
+                    var req = new Octokit.PullRequestReviewCommentCreate(Text, CommitSha, Path, Position);
+                    return applicationService.GitHubClient.PullRequest.Comment.Create(RepositoryOwner, RepositoryName, PullRequestId, req);
                 });
 
             SaveCommand.Subscribe(x => Dismiss());
+        }
+
+        public PullRequestCommentViewModel Init(string repositoryOwner, string repositoryName, 
+            int pullRequestId, string commitSha, string path, int position)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            PullRequestId = pullRequestId;
+            Path = path;
+            CommitSha = commitSha;
+            Position = position;
+            return this;
         }
     }
 }

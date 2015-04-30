@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using ReactiveUI;
 using Splat;
 using System.Reactive.Linq;
+using System.Linq;
 using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels
@@ -58,6 +59,26 @@ namespace CodeHub.Core.ViewModels
                     }
                 });
             viewModel.Reset(response.Data);
+        }
+
+        public static async Task SimpleCollectionLoad<T, TModel>(this IReactiveList<TModel> viewModel, GitHubRequest<List<T>> request, Func<T, TModel> transform, Action<Func<Task>> assignMore = null) where T : new()
+        {
+            if (assignMore == null)
+                assignMore = (x) => {};
+
+            var application = Locator.Current.GetService<ISessionService>();
+            var response = await application.Client.ExecuteAsync(request);
+
+            viewModel.CreateMore(response, assignMore, x =>
+                {
+                    // This is fucking broken for iOS because it can't handle estimated rows and the insertions
+                    // that ReactiveUI seems to be producing
+                    using (viewModel.SuppressChangeNotifications())
+                    {
+                        viewModel.AddRange(x.Select(transform));
+                    }
+                });
+            viewModel.Reset(response.Data.Select(transform));
         }
     }
 }

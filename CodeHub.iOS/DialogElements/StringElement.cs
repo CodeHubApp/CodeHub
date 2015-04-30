@@ -65,14 +65,25 @@ namespace CodeHub.iOS.DialogElements
 
         public UIColor ImageTintColor { get; set; }
 
-        public StringElement (string caption)
+        public StringElement()
         {
-            Caption = caption;
             Font = DefaultTitleFont.WithSize(DefaultTitleFont.PointSize);
             SubtitleFont = DefaultDetailFont.WithSize(DefaultDetailFont.PointSize);
             BackgroundColor = BgColor;
             TextColor = DefaultTitleColor;
             DetailColor = DefaultDetailColor;
+        }
+
+        public StringElement (UIImage image)
+            : this()
+        {
+            Image = image;
+        }
+
+        public StringElement (string caption)
+            : this()
+        {
+            Caption = caption;
         }
 
         public StringElement (string caption, Action tapped) 
@@ -136,7 +147,11 @@ namespace CodeHub.iOS.DialogElements
         {
             var key = GetKey ((int) Style);
             var cell = tv.DequeueReusableCell(key) ?? CreateTableViewCell(Style, key);
+            return InitializeCell(cell);
+        }
 
+        protected virtual UITableViewCell InitializeCell(UITableViewCell cell)
+        {
             cell.SelectionStyle = (Tapped != null) ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
             cell.TextLabel.Text = Caption;
             cell.ImageView.Image = Image;
@@ -148,7 +163,6 @@ namespace CodeHub.iOS.DialogElements
 
             if (cell.DetailTextLabel != null)
                 cell.DetailTextLabel.Text = Value ?? "";
-
             return cell;
         }
 

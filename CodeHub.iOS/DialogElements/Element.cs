@@ -8,7 +8,19 @@ namespace CodeHub.iOS.DialogElements
     {
         internal Section Section;
 
-        public string Caption { get; set; }
+        private string _caption;
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                if (_caption == value)
+                    return;
+
+                _caption = value;
+                ReloadThis();
+            }
+        }
 
         private bool _hidden;
         public bool Hidden
@@ -63,6 +75,19 @@ namespace CodeHub.iOS.DialogElements
                 return null;
             var path = IndexPath;
             return path == null ? null : tv.CellAt(path);
+        }
+
+        protected void ReloadThis()
+        {
+            var cell = GetActiveCell();
+            if (cell != null)
+            {
+                var el = GetRootElement();
+                if (el != null)
+                {
+                    el.Reload(this);
+                }
+            }
         }
 
         public NSIndexPath IndexPath { 

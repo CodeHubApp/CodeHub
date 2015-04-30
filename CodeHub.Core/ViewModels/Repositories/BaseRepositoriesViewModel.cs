@@ -53,18 +53,19 @@ namespace CodeHub.Core.ViewModels.Repositories
                 NavigateTo(vm);
             });
 
-            var repositories = new ReactiveList<RepositoryModel>();
+            var repositories = new ReactiveList<RepositoryItemViewModel>();
             Repositories = repositories.CreateDerivedCollection(
-                x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
-                    ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
-                    ShowRepositoryOwner, gotoRepository), 
+                x => x, 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                repositories.SimpleCollectionLoad(CreateRequest(), 
+                repositories.SimpleCollectionLoad(CreateRequest(),
+                    x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
+                        ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
+                        ShowRepositoryOwner, gotoRepository),
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
 
 //			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
