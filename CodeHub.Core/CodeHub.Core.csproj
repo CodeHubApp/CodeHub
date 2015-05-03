@@ -232,6 +232,8 @@
     <Compile Include="ViewModels\Source\ChangesetCommentViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestDiffViewModel.cs" />
+    <Compile Include="Services\INavigationService.cs" />
+    <Compile Include="Repositories\PullRequestRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -275,9 +277,6 @@
     <Reference Include="Flurry.Analytics.Portable">
       <HintPath>..\packages\Flurry.Analytics.Portable.1.1.1.2\lib\portable-wp80+win80+wpa81+net45+sl50+MonoTouch10+MonoAndroid10+XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="ModernHttpClient">
-      <HintPath>..\packages\modernhttpclient.2.3.0\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
     </Reference>
@@ -290,6 +289,9 @@
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.10.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.4.0\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\Settings\" />
@@ -297,5 +299,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Factories\" />
     <Folder Include="ViewModels\Search\" />
+    <Folder Include="Repositories\" />
   </ItemGroup>
 </Project>

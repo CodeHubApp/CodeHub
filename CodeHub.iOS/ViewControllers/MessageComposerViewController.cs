@@ -117,6 +117,13 @@ namespace CodeHub.iOS.ViewControllers
             NSNotificationCenter.DefaultCenter.RemoveObserver(this);
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            TextView.BecomeFirstResponder();
+        }
+
         private static float CalculateHeight(UIInterfaceOrientation orientation)
         {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)

@@ -402,6 +402,7 @@
     <Compile Include="DialogElements\ElementExtensions.cs" />
     <Compile Include="Views\Source\CommitFilesView.cs" />
     <Compile Include="Views\PullRequests\PullRequestDiffView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestCommentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -457,9 +458,6 @@
     <Reference Include="Flurry.Analytics.Portable">
       <HintPath>..\packages\Flurry.Analytics.Portable.1.1.1.2\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="ModernHttpClient">
-      <HintPath>..\packages\modernhttpclient.2.3.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
@@ -474,6 +472,9 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.10.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.4.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

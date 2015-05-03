@@ -59,6 +59,12 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _assignedLabels.Value; }
         }
 
+        protected ObservableAsPropertyHelper<int> _commentsCount;
+        public int CommentCount
+        {
+            get { return _commentsCount.Value; }
+        }
+
         private readonly ObservableAsPropertyHelper<int> _participants;
         public int Participants
         {
@@ -136,6 +142,9 @@ namespace CodeHub.Core.ViewModels.Issues
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
                 .Select(x => x.Item1 != null && x.Item2);
             Events = InternalEvents.CreateDerivedCollection(x => x);
+
+            this.WhenAnyValue(x => x.Issue.Comments)
+                .ToProperty(this, x => x.CommentCount, out _commentsCount);
 
             _participants = Events.Changed
                 .Select(_ => Events.Select(y => y.Actor).Distinct().Count())

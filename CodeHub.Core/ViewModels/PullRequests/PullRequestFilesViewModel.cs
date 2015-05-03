@@ -3,11 +3,23 @@ using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Reactive;
 using Octokit;
+using System;
+using System.Linq;
+using System.Diagnostics;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly ISubject<PullRequestReviewComment> _commentCreatedObservable = new Subject<PullRequestReviewComment>();
+
+        public IObservable<PullRequestReviewComment> CommentCreated
+        {
+            get { return _commentCreatedObservable.AsObservable(); }
+        }
+
         public IReadOnlyReactiveList<CommitedFileItemViewModel> Files { get; private set; }
 
         public IReadOnlyReactiveList<PullRequestReviewComment> Comments { get; private set; }
@@ -18,14 +30,21 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string RepositoryName { get; private set; }
 
+        public string HeadSha { get; private set; }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public PullRequestFilesViewModel(ISessionService applicationService)
         {
             Title = "Files Changed";
 
+            var comments = new ReactiveList<PullRequestReviewComment>();
+            Comments = comments.CreateDerivedCollection(x => x);
+
+            _commentCreatedObservable.Subscribe(comments.Add);
+
             var files = new ReactiveList<PullRequestFile>();
-            Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, y => {
+            Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, Comments.Count(y => string.Equals(y.Path, x.FileName)), y => {
                 if (x.Patch == null)
                 {
                     var vm = this.CreateViewModel<SourceViewModel>();
@@ -41,12 +60,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
                 else
                 {
-                    NavigateTo(this.CreateViewModel<PullRequestDiffViewModel>().Init(this, x));
+                    var vm = this.CreateViewModel<PullRequestDiffViewModel>();
+                    vm.Init(this, x);
+                    vm.CommentCreated.Subscribe(_commentCreatedObservable);
+                    NavigateTo(vm);
                 }
-            }));
-
-            var comments = new ReactiveList<PullRequestReviewComment>();
-            Comments = comments.CreateDerivedCollection(x => x);
+            }), signalReset: comments.CountChanged);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 applicationService.GitHubClient.Repository.PullRequest.Comment.GetAll(RepositoryOwner, RepositoryName, PullRequestId)
@@ -55,11 +74,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
         }
 
-        public PullRequestFilesViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId)
+        public PullRequestFilesViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId, string headSha)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
             PullRequestId = pullRequestId;
+            HeadSha = headSha;
             return this;
         }
     }

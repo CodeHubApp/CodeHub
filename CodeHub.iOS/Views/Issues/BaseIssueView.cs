@@ -161,7 +161,7 @@ namespace CodeHub.iOS.Views.Issues
             var commentsButton = SplitButton.AddButton("Comments", "-");
             var participantsButton = SplitButton.AddButton("Participants", "-");
 
-            this.WhenAnyValue(x => x.ViewModel.Issue.Comments)
+            this.WhenAnyValue(x => x.ViewModel.CommentCount)
                 .Subscribe(x => commentsButton.Text = x.ToString());
 
             this.WhenAnyValue(x => x.ViewModel.Participants)

@@ -27,6 +27,7 @@ namespace CodeHub.iOS.Views.Source
                     {
                         var comments = ViewModel.Comments
                             .Where(y => y.Position.HasValue)
+                            .OrderBy(y => y.Id)
                             .Select(y => new CommitCommentModel(y.User.Login, y.User.AvatarUrl, y.Body, y.Position.Value));
                         var model = new CommitDiffModel(x.Split('\n'), comments, (int)UIFont.PreferredBody.PointSize);
                         var razorView = new CommitDiffRazorView { Model = model };

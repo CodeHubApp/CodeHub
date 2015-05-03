@@ -9,6 +9,12 @@
         html {
             font-size: @(Model.FontSize)px !important;
         }
+
+        td.line a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 <body>
@@ -16,7 +22,7 @@
     	@{
     		int baseLine = 0;
     		int newLine = 0;
-            var comments = Model.Comments.ToLookup(x => x.Line);
+            var comments = Model.CommentsLookup;
     	}
 		@for (var i = 0; i < Model.Lines.Length; i++)
 		{
@@ -30,17 +36,17 @@
 			}
 			else if (line.StartsWith("+"))
 			{
-				<tr data-to="@(i)" data-x="" data-y="@(newLine)"><th></th><th>@newLine</th><td class="insert">@line</td></tr>
+				<tr data-to="@(i)" data-x="" data-y="@(newLine)"><th></th><th>@newLine</th><td class="line insert"><a href="app://comment?line=@(i)">@line</a></td></tr>
 				newLine++;
 			}
 			else if (line.StartsWith("-"))
 			{
-				<tr data-to="@(i)" data-x="@(baseLine)" data-y=""><th>@baseLine</th><th></th><td class="delete">@line</td></tr>
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y=""><th>@baseLine</th><th></th><td class="line delete"><a href="app://comment?line=@(i)">@line</a></td></tr>
 				baseLine++;
 			}
 			else
 			{
-				<tr data-to="@(i)" data-x="@(baseLine)" data-y="@(newLine)"><th>@baseLine</th><th>@newLine</th><td class="equal">@line</td></tr>
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y="@(newLine)"><th>@baseLine</th><th>@newLine</th><td class="line equal"><a href="app://comment?line=@(i)">@line</a></td></tr>
 				newLine++;
 				baseLine++;
 			}

@@ -4,8 +4,8 @@ using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views.Issues;
 using CodeHub.iOS.ViewControllers;
-using UIKit;
 using System.Reactive.Linq;
+using UIKit;
 using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.PullRequests
@@ -44,7 +44,7 @@ namespace CodeHub.iOS.Views.PullRequests
             this.WhenAnyValue(x => x.ViewModel.PullRequest.ChangedFiles)
                 .Subscribe(x => _filesElement.Value = x.ToString());
 
-            this.WhenAnyValue(x => x.ViewModel.Merged, x => x.ViewModel.CanMerge, x => x.ViewModel.PullRequest.State)
+            this.WhenAnyValue(x => x.ViewModel.PullRequest.Merged, x => x.ViewModel.CanMerge, x => x.ViewModel.PullRequest.State)
                 .Subscribe(x => {
                     if (x.Item1)
                     {

@@ -18,20 +18,29 @@ namespace CodeHub.Core.ViewModels.Source
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        private void CalculateSubtitle(int additions, int deletions, int changes)
+        private void CalculateSubtitle(int additions, int deletions, int changes, int comments = 0)
         {
+            var subtitle = string.Empty;
+
             if (additions == changes && deletions == 0)
             {
-                Subtitle = "additions".ToQuantity(additions);
+                subtitle = "additions".ToQuantity(additions);
             }
             else if (deletions == changes && additions == 0)
             {
-                Subtitle = "deletions".ToQuantity(deletions);
+                subtitle = "deletions".ToQuantity(deletions);
             }
             else
             {
-                Subtitle = string.Format("{0}, {1}", "additions".ToQuantity(additions), "deletions".ToQuantity(deletions));
+                subtitle = string.Format("{0}, {1}", "additions".ToQuantity(additions), "deletions".ToQuantity(deletions));
             }
+
+            if (comments > 0)
+            {
+                subtitle = string.Format("{0}, {1}", subtitle, "comments".ToQuantity(comments));
+            }
+
+            Subtitle = subtitle;
         }
 
         private void CalculateRef(string contentsUrl)
@@ -54,12 +63,12 @@ namespace CodeHub.Core.ViewModels.Source
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction(this));
         }
 
-        internal CommitedFileItemViewModel(Octokit.PullRequestFile file, Action<CommitedFileItemViewModel> gotoAction)
+        internal CommitedFileItemViewModel(Octokit.PullRequestFile file, int comments, Action<CommitedFileItemViewModel> gotoAction)
             : this(gotoAction)
         {
             Name = System.IO.Path.GetFileName(file.FileName);
             RootPath = file.FileName.Substring(0, file.FileName.Length - Name.Length);
-            CalculateSubtitle(file.Additions, file.Deletions, file.Changes);
+            CalculateSubtitle(file.Additions, file.Deletions, file.Changes, comments);
             CalculateRef(file.ContentsUrl.AbsoluteUri);
         }
 

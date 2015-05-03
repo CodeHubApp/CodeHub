@@ -8,8 +8,9 @@ using CodeHub.Core.Factories;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Diagnostics;
+using Octokit;
+using System.Collections.ObjectModel;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -21,14 +22,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _canMerge.Value; }
         }
 
-        private readonly ObservableAsPropertyHelper<bool> _merged;
-        public bool Merged
-        {
-            get { return _merged.Value; }
-        }
-
-        private Octokit.PullRequest _pullRequest;
-        public Octokit.PullRequest PullRequest
+        private PullRequest _pullRequest;
+        public PullRequest PullRequest
         { 
             get { return _pullRequest; }
             private set { this.RaiseAndSetIfChanged(ref _pullRequest, value); }
@@ -54,6 +49,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _htmlUrl.Value; }
         }
 
+        private IReadOnlyList<PullRequestReviewComment> _comments;
+        public IReadOnlyList<PullRequestReviewComment> Comments
+        {
+            get { return _comments; }
+            set { this.RaiseAndSetIfChanged(ref _comments, value); }
+        }
+
         public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
 
         public IReactiveCommand<object> GoToFilesCommand { get; private set; }
@@ -67,11 +69,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
             IAlertDialogFactory alertDialogFactory)
             : base(applicationService, markdownService, actionMenuService)
         {
+            
             this.WhenAnyValue(x => x.Id)
                 .Subscribe(x => Title = "Pull Request #" + x);
-
-            this.WhenAnyValue(x => x.PullRequest.Merged)
-                .ToProperty(this, x => x.Merged, out _merged);
 
             this.WhenAnyValue(x => x.PullRequest.HtmlUrl)
                 .ToProperty(this, x => x.HtmlUrl, out _htmlUrl);
@@ -83,8 +83,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 this.WhenAnyValue(x => x.PushAccess), (x, y) => x && y)
                 .ToProperty(this, x => x.CanMerge);
 
+            _commentsCount = this.WhenAnyValue(x => x.Issue.Comments, x => x.Comments.Count, (x, y) => x + y)
+                .ToProperty(this, x => x.CommentCount);
+
             MergeCommand = ReactiveCommand.CreateAsyncTask(canMergeObservable, async t =>  {
-                var req = new Octokit.MergePullRequest(MergeComment ?? string.Empty);
+                var req = new MergePullRequest(MergeComment ?? string.Empty);
 
                 using (alertDialogFactory.Activate("Merging..."))
                 {
@@ -101,11 +104,20 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 .Select(x => x.Init(RepositoryOwner, RepositoryName, Id))
                 .Subscribe(NavigateTo);
 
-            GoToFilesCommand = ReactiveCommand.Create();
+            var canGoToFiles = this.WhenAnyValue(x => x.PullRequest).Select(x => x != null);
+            GoToFilesCommand = ReactiveCommand.Create(canGoToFiles);
             GoToFilesCommand
                 .Select(x => this.CreateViewModel<PullRequestFilesViewModel>())
-                .Select(x => x.Init(RepositoryOwner, RepositoryName, Id))
+                .Select(x => x.Init(RepositoryOwner, RepositoryName, Id, PullRequest.Head.Sha))
+                .Do(x => x.CommentCreated.Subscribe(AddComment))
                 .Subscribe(NavigateTo);
+        }
+
+        private void AddComment(PullRequestReviewComment reviewComment)
+        {
+            var comments = _comments.ToList();
+            comments.Add(reviewComment);
+            Comments = new ReadOnlyCollection<PullRequestReviewComment>(comments);
         }
 
         public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, Octokit.PullRequest pullRequest = null)
@@ -119,12 +131,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override async Task Load(ISessionService applicationService)
         {
-            applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
-                .ToBackground(x => PushAccess = x.Permissions.Push);
-            
             PullRequest = await applicationService.GitHubClient.PullRequest.Get(RepositoryOwner, RepositoryName, Id);
 
             await base.Load(applicationService);
+
+            applicationService.GitHubClient.Repository.PullRequest.Comment.GetAll(RepositoryOwner, RepositoryName, Id)
+                .ToBackground(x => Comments = x);
+
+            applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
+                .ToBackground(x => PushAccess = x.Permissions.Push);
         }
 
         protected override async Task<IEnumerable<IIssueEventItemViewModel>> RetrieveEvents()
