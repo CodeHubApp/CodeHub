@@ -59,22 +59,22 @@ WriteLiteral(">\n    <style>\n        html {\n            font-size: ");
 
 #line default
 #line hidden
-WriteLiteral("px !important;\n        }\n\n        td.line a {\n            display: block;\n       " +
-"     text-decoration: none;\n            color: inherit;\n        }\n    </style>\n<" +
-"/head>\n<body>\n    <table");
+WriteLiteral("px !important;\n            -webkit-text-size-adjust: none;\n        }\n\n        td." +
+"line a {\n            display: block;\n            text-decoration: none;\n        " +
+"    color: inherit;\n        }\n    </style>\n</head>\n<body>\n    <table");
 
 WriteLiteral(" class=\"diff inlinediff\"");
 
 WriteLiteral(">\n");
 
 
-#line 22 "CommitDiffRazorView.cshtml"
+#line 23 "CommitDiffRazorView.cshtml"
     	
 
 #line default
 #line hidden
 
-#line 22 "CommitDiffRazorView.cshtml"
+#line 23 "CommitDiffRazorView.cshtml"
           
     		int baseLine = 0;
     		int newLine = 0;
@@ -86,13 +86,13 @@ WriteLiteral(">\n");
 WriteLiteral("\n");
 
 
-#line 27 "CommitDiffRazorView.cshtml"
+#line 28 "CommitDiffRazorView.cshtml"
 		
 
 #line default
 #line hidden
 
-#line 27 "CommitDiffRazorView.cshtml"
+#line 28 "CommitDiffRazorView.cshtml"
          for (var i = 0; i < Model.Lines.Length; i++)
 		{
 			var line = Model.Lines[i];
@@ -110,7 +110,7 @@ WriteLiteral("\t\t\t\t<tr");
 WriteLiteral(" data-to=\"");
 
 
-#line 35 "CommitDiffRazorView.cshtml"
+#line 36 "CommitDiffRazorView.cshtml"
                          Write(i);
 
 
@@ -129,7 +129,7 @@ WriteLiteral(" class=\"skip\"");
 WriteLiteral(">");
 
 
-#line 35 "CommitDiffRazorView.cshtml"
+#line 36 "CommitDiffRazorView.cshtml"
                                                                                            Write(line);
 
 
@@ -138,7 +138,7 @@ WriteLiteral(">");
 WriteLiteral("</td></tr>\n");
 
 
-#line 36 "CommitDiffRazorView.cshtml"
+#line 37 "CommitDiffRazorView.cshtml"
 			}
 			else if (line.StartsWith("+"))
 			{
@@ -151,7 +151,7 @@ WriteLiteral("\t\t\t\t<tr");
 WriteLiteral(" data-to=\"");
 
 
-#line 39 "CommitDiffRazorView.cshtml"
+#line 40 "CommitDiffRazorView.cshtml"
                          Write(i);
 
 
@@ -164,7 +164,7 @@ WriteLiteral(" data-x=\"\"");
 WriteLiteral(" data-y=\"");
 
 
-#line 39 "CommitDiffRazorView.cshtml"
+#line 40 "CommitDiffRazorView.cshtml"
                                                  Write(newLine);
 
 
@@ -175,7 +175,7 @@ WriteLiteral("\"");
 WriteLiteral("><th></th><th>");
 
 
-#line 39 "CommitDiffRazorView.cshtml"
+#line 40 "CommitDiffRazorView.cshtml"
                                                                          Write(newLine);
 
 
@@ -190,7 +190,7 @@ WriteLiteral("><a");
 WriteAttribute ("href", " href=\"", "\""
 , Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
 
-#line 39 "CommitDiffRazorView.cshtml"
+#line 40 "CommitDiffRazorView.cshtml"
                                                                                                          , Tuple.Create<string,object,bool> ("", i
 
 #line default
@@ -200,7 +200,7 @@ WriteAttribute ("href", " href=\"", "\""
 WriteLiteral(">");
 
 
-#line 39 "CommitDiffRazorView.cshtml"
+#line 40 "CommitDiffRazorView.cshtml"
                                                                                                                                                 Write(line);
 
 
@@ -209,7 +209,7 @@ WriteLiteral(">");
 WriteLiteral("</a></td></tr>\n");
 
 
-#line 40 "CommitDiffRazorView.cshtml"
+#line 41 "CommitDiffRazorView.cshtml"
 				newLine++;
 			}
 			else if (line.StartsWith("-"))
@@ -223,7 +223,7 @@ WriteLiteral("\t\t\t\t<tr");
 WriteLiteral(" data-to=\"");
 
 
-#line 44 "CommitDiffRazorView.cshtml"
+#line 45 "CommitDiffRazorView.cshtml"
                          Write(i);
 
 
@@ -234,7 +234,7 @@ WriteLiteral("\"");
 WriteLiteral(" data-x=\"");
 
 
-#line 44 "CommitDiffRazorView.cshtml"
+#line 45 "CommitDiffRazorView.cshtml"
                                        Write(baseLine);
 
 
@@ -247,7 +247,7 @@ WriteLiteral(" data-y=\"\"");
 WriteLiteral("><th>");
 
 
-#line 44 "CommitDiffRazorView.cshtml"
+#line 45 "CommitDiffRazorView.cshtml"
                                                                  Write(baseLine);
 
 
@@ -262,7 +262,7 @@ WriteLiteral("><a");
 WriteAttribute ("href", " href=\"", "\""
 , Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
 
-#line 44 "CommitDiffRazorView.cshtml"
+#line 45 "CommitDiffRazorView.cshtml"
                                                                                                            , Tuple.Create<string,object,bool> ("", i
 
 #line default
@@ -272,7 +272,7 @@ WriteAttribute ("href", " href=\"", "\""
 WriteLiteral(">");
 
 
-#line 44 "CommitDiffRazorView.cshtml"
+#line 45 "CommitDiffRazorView.cshtml"
                                                                                                                                                   Write(line);
 
 
@@ -281,7 +281,7 @@ WriteLiteral(">");
 WriteLiteral("</a></td></tr>\n");
 
 
-#line 45 "CommitDiffRazorView.cshtml"
+#line 46 "CommitDiffRazorView.cshtml"
 				baseLine++;
 			}
 			else
@@ -295,7 +295,7 @@ WriteLiteral("\t\t\t\t<tr");
 WriteLiteral(" data-to=\"");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                          Write(i);
 
 
@@ -306,7 +306,7 @@ WriteLiteral("\"");
 WriteLiteral(" data-x=\"");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                        Write(baseLine);
 
 
@@ -317,7 +317,7 @@ WriteLiteral("\"");
 WriteLiteral(" data-y=\"");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                                             Write(newLine);
 
 
@@ -328,7 +328,7 @@ WriteLiteral("\"");
 WriteLiteral("><th>");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                                                            Write(baseLine);
 
 
@@ -337,7 +337,7 @@ WriteLiteral("><th>");
 WriteLiteral("</th><th>");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                                                                              Write(newLine);
 
 
@@ -352,7 +352,7 @@ WriteLiteral("><a");
 WriteAttribute ("href", " href=\"", "\""
 , Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                                                                                                             , Tuple.Create<string,object,bool> ("", i
 
 #line default
@@ -362,7 +362,7 @@ WriteAttribute ("href", " href=\"", "\""
 WriteLiteral(">");
 
 
-#line 49 "CommitDiffRazorView.cshtml"
+#line 50 "CommitDiffRazorView.cshtml"
                                                                                                                                                                    Write(line);
 
 
@@ -371,7 +371,7 @@ WriteLiteral(">");
 WriteLiteral("</a></td></tr>\n");
 
 
-#line 50 "CommitDiffRazorView.cshtml"
+#line 51 "CommitDiffRazorView.cshtml"
 				newLine++;
 				baseLine++;
 			}
@@ -398,7 +398,7 @@ WriteLiteral("><header><img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 56 "CommitDiffRazorView.cshtml"
+#line 57 "CommitDiffRazorView.cshtml"
                                                    , Tuple.Create<string,object,bool> ("", c.AvatarUrl
 
 #line default
@@ -408,7 +408,7 @@ WriteAttribute ("src", " src=\"", "\""
 WriteLiteral(" />");
 
 
-#line 56 "CommitDiffRazorView.cshtml"
+#line 57 "CommitDiffRazorView.cshtml"
                                                                                                       Write(c.Name);
 
 
@@ -421,7 +421,7 @@ WriteLiteral(" class=\'content\'");
 WriteLiteral(">");
 
 
-#line 56 "CommitDiffRazorView.cshtml"
+#line 57 "CommitDiffRazorView.cshtml"
                                                                                                                                            Write(c.Body);
 
 
@@ -430,7 +430,7 @@ WriteLiteral(">");
 WriteLiteral("</div></div></td></tr>\n");
 
 
-#line 57 "CommitDiffRazorView.cshtml"
+#line 58 "CommitDiffRazorView.cshtml"
             }
 		}
 

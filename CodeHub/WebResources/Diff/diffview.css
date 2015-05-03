@@ -42,10 +42,10 @@ table.diff tbody {
 }
 table.diff tbody th {
 	font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
-	background:#EED;
 	font-weight:normal;
 	border:1px solid #BBC;
-	color:#886;
+    color: #AAA;
+    background-color: #EEE;
 	padding:.3em .3em;
 	text-align:right;
 }
@@ -90,7 +90,7 @@ table.diff th.author {
 }
 
 .comment > td {
-background:#EED;
+background:#EEE;
 border:1px solid #BBC;
 }
 

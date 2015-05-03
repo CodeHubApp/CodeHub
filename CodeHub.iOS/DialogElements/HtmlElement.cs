@@ -83,17 +83,21 @@ namespace CodeHub.iOS.DialogElements
             WebView.ScrollView.Bounces = false;
             WebView.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
 
-            WebView.LoadFinished += (sender, e) => 
-            {
-                var f = WebView.Frame;
-                f.Height = _height = int.Parse(WebView.EvaluateJavascript("document.body.scrollHeight;"));
-                WebView.Frame = f;
-
-                if (HeightChanged != null)
-                    HeightChanged(_height);
-            };
+            WebView.LoadFinished += (sender, e) => CheckHeight();
 
             HeightChanged = (x) => Reload();
+        }
+
+        public void CheckHeight()
+        {
+            var f = WebView.Frame;
+            f.Height = 1;
+            WebView.Frame = f;
+            f.Height = _height = int.Parse(WebView.EvaluateJavascript("document.body.scrollHeight;"));
+            WebView.Frame = f;
+
+            if (HeightChanged != null)
+                HeightChanged(_height);
         }
 
         private void Reload()

@@ -83,13 +83,15 @@ namespace CodeHub.iOS.Views.Source
             public CommentView(IMarkdownService markdownService, IAlertDialogFactory alertDialogFactory) 
                 : base(markdownService)
             {
-                this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                    .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
-                    .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+                this.WhenActivated(d => {
+                    d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                        .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
+                        .Subscribe(x => NavigationItem.RightBarButtonItem = x));
 
-                this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                    .Select(x => x.ToBarButtonItem(Images.Cancel))
-                    .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+                    d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                        .Select(x => x.ToBarButtonItem(Images.Cancel))
+                        .Subscribe(x => NavigationItem.LeftBarButtonItem = x));
+                });
 
                 ViewModel = new ChangesetCommentViewModel(alertDialogFactory, null);
             }

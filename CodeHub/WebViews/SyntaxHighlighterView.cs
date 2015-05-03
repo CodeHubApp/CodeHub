@@ -53,21 +53,12 @@ WriteAttribute ("href", " href=\"", "\""
 , false)
 , Tuple.Create<string,object,bool> ("", ".css", true)
 );
-WriteLiteral(@" />
-<style>
-html { height: 100%; width: 100%; }
-body { 
-    margin: 0; 
-    min-height: 100%; 
-    min-width: 100%;
-    text-size-adjust: 100%; 
-    -ms-text-size-adjust: 100%; 
-    -moz-text-size-adjust: 100%; 
-    -webkit-text-size-adjust: 100%;
-    font-size: ");
+WriteLiteral(" />\n<style>\nhtml { height: 100%; width: 100%; }\nbody { \n    margin: 0; \n    min-h" +
+"eight: 100%; \n    min-width: 100%;\n    text-size-adjust: 100%; \n    -webkit-text" +
+"-size-adjust: none;\n    font-size: ");
 
 
-#line 16 "SyntaxHighlighterView.cshtml"
+#line 14 "SyntaxHighlighterView.cshtml"
            Write(Model.FontSize);
 
 
@@ -114,8 +105,8 @@ WriteLiteral(" style=\"display: none;\"");
 
 WriteAttribute ("class", " class=\"", "\""
 
-#line 49 "SyntaxHighlighterView.cshtml"
-             , Tuple.Create<string,object,bool> ("", Model.Language
+#line 47 "SyntaxHighlighterView.cshtml"
+                , Tuple.Create<string,object,bool> ("", Model.Language
 
 #line default
 #line hidden
@@ -124,8 +115,8 @@ WriteAttribute ("class", " class=\"", "\""
 WriteLiteral(">");
 
 
-#line 49 "SyntaxHighlighterView.cshtml"
-                                                                Write(Model.Content);
+#line 47 "SyntaxHighlighterView.cshtml"
+                                                                   Write(Model.Content);
 
 
 #line default

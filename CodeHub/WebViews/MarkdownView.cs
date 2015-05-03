@@ -39,20 +39,21 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<style>\n* {\nbox-sizing: border-box;\n}\nbody {\ncolor: #333;\nfont-family: Helveti" +
-"ca, Arial, sans-serif;\nline-height: 1.42;\nfont-size: ");
+WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -webkit-text-size-adjust" +
+": none;\n}\n\nbody {\n    color: #333;\n    font-family: Helvetica, Arial, sans-serif" +
+";\n    line-height: 1.42;\n    font-size: ");
 
 
-#line 12 "MarkdownView.cshtml"
-       Write(Model.FontSize);
+#line 17 "MarkdownView.cshtml"
+           Write(Model.FontSize);
 
 
 #line default
 #line hidden
 WriteLiteral(@"px;
-line-height: 1.7;
-overflow: hidden;
-word-wrap: break-word;
+    line-height: 1.7;
+    overflow: hidden;
+    word-wrap: break-word;
 }
 h1, h2, h3, h4, h5, h6 {
 margin: 1em 0 15px;
@@ -141,7 +142,7 @@ ul.task-list > li.task-list-item {
 <body>");
 
 
-#line 101 "MarkdownView.cshtml"
+#line 106 "MarkdownView.cshtml"
         WriteLiteral(Model.Body);
 
 #line default

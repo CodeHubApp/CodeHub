@@ -203,6 +203,14 @@ namespace CodeHub.iOS.Views.Issues
             viewController.ViewModel.DismissCommand.Subscribe(_ => DismissViewController(true, null));
         }
 
+        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+        {
+            base.DidRotate(fromInterfaceOrientation);
+
+            CommentsElement.CheckHeight();
+            DescriptionElement.CheckHeight();
+        }
+
 
         protected static string CreateEventBody(Octokit.EventInfo eventInfo, string commitId)
         {
