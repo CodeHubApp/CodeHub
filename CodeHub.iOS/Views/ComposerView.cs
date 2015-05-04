@@ -1,16 +1,16 @@
-using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
 using UIKit;
 using System;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels;
 
-namespace CodeHub.iOS.Views.Gists
+namespace CodeHub.iOS.Views
 {
-    public class GistCommentView : MarkdownComposerView<GistCommentViewModel>, IModalView
+    public class ComposerView : MarkdownComposerView<ComposerViewModel>, IModalView
     {
-        public GistCommentView(IMarkdownService markdownService) 
+        public ComposerView(IMarkdownService markdownService) 
             : base(markdownService)
         {
             this.WhenAnyValue(x => x.ViewModel.SaveCommand)

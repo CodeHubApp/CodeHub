@@ -67,7 +67,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             IMarkdownService markdownService, 
             IActionMenuFactory actionMenuService,
             IAlertDialogFactory alertDialogFactory)
-            : base(applicationService, markdownService, actionMenuService)
+            : base(applicationService, markdownService, actionMenuService, alertDialogFactory)
         {
             
             this.WhenAnyValue(x => x.Id)

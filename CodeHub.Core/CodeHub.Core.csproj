@@ -65,10 +65,8 @@
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\App\SupportViewModel.cs" />
     <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
-    <Compile Include="ViewModels\Changesets\CommitCommentViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
     <Compile Include="ViewModels\Gists\BaseGistsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistCommentViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistEditViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
@@ -80,7 +78,6 @@
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IBaseIssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueCommentViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelItemViewModel.cs" />
@@ -91,7 +88,6 @@
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
-    <Compile Include="ViewModels\PullRequests\PullRequestCommentViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestItemViewModel.cs" />
@@ -234,6 +230,7 @@
     <Compile Include="ViewModels\PullRequests\PullRequestDiffViewModel.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Repositories\PullRequestRepository.cs" />
+    <Compile Include="ViewModels\ComposerViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

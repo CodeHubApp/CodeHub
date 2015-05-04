@@ -53,8 +53,10 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> GoToUrlCommand { get; private set; }
 
-        public GistViewModel(ISessionService applicationService, 
-            IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory) 
+        public GistViewModel(
+            ISessionService sessionService, 
+            IActionMenuFactory actionMenuService, 
+            IAlertDialogFactory alertDialogFactory) 
         {
             Comments = new ReactiveList<GistCommentModel>();
 
@@ -74,8 +76,8 @@ namespace CodeHub.Core.ViewModels.Gists
                 try
                 {
                     if (!IsStarred.HasValue) return;
-                    var request = IsStarred.Value ? applicationService.Client.Gists[Id].Unstar() : applicationService.Client.Gists[Id].Star();
-                    await applicationService.Client.ExecuteAsync(request);
+                    var request = IsStarred.Value ? sessionService.Client.Gists[Id].Unstar() : sessionService.Client.Gists[Id].Star();
+                    await sessionService.Client.ExecuteAsync(request);
                     IsStarred = !IsStarred.Value;
                 }
                 catch (Exception e)
@@ -86,7 +88,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
             ForkCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
-                var data = await applicationService.Client.ExecuteAsync(applicationService.Client.Gists[Id].ForkGist());
+                var data = await sessionService.Client.ExecuteAsync(sessionService.Client.Gists[Id].ForkGist());
                 var forkedGist = data.Data;
                 var vm = this.CreateViewModel<GistViewModel>();
                 vm.Id = forkedGist.Id;
@@ -134,18 +136,16 @@ namespace CodeHub.Core.ViewModels.Gists
                 .Subscribe(NavigateTo);
 
             AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<GistCommentViewModel>();
-                vm.Id = Id;
-                vm.SaveCommand.Subscribe(Comments.Add);
-                NavigateTo(vm);
-            });
+                NavigateTo(new ComposerViewModel("Add Comment", async x => {
+                    var request = sessionService.Client.Gists[Id].CreateGistComment(x);
+                    Comments.Add((await sessionService.Client.ExecuteAsync(request)).Data);
+                }, alertDialogFactory)));
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Gist).Select(x => x != null), 
                 sender => {
                     var menu = actionMenuService.Create();
-                    if (Gist.Owner != null && string.Equals(applicationService.Account.Username, Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
+                    if (Gist.Owner != null && string.Equals(sessionService.Account.Username, Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
                         menu.AddButton("Edit", GoToEditCommand);
                     else
                         menu.AddButton("Fork", ForkCommand);
@@ -155,13 +155,13 @@ namespace CodeHub.Core.ViewModels.Gists
                 });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                var request = applicationService.Client.Gists[Id].Get();
-                var t1 = applicationService.Client.ExecuteAsync(request);
+                var request = sessionService.Client.Gists[Id].Get();
+                var t1 = sessionService.Client.ExecuteAsync(request);
 
-                applicationService.GitHubClient.Gist.IsStarred(Id)
+                sessionService.GitHubClient.Gist.IsStarred(Id)
                     .ToBackground(x => IsStarred = x);
 
-			    Comments.SimpleCollectionLoad(applicationService.Client.Gists[Id].GetComments());
+			    Comments.SimpleCollectionLoad(sessionService.Client.Gists[Id].GetComments());
                 Gist = (await t1).Data;
             });
         }

@@ -230,7 +230,6 @@
     <Compile Include="Cells\IssueLabelCellView.cs" />
     <Compile Include="TableViewSources\IssueLabelTableViewSource.cs" />
     <Compile Include="Views\Users\RepositoryContributorsView.cs" />
-    <Compile Include="Views\Source\CommitCommentView.cs" />
     <Compile Include="Views\Releases\ReleasesView.cs" />
     <Compile Include="TableViewSources\ReleasesTableViewSource.cs" />
     <Compile Include="Cells\ReleaseTableViewCell.cs" />
@@ -239,7 +238,6 @@
     <Compile Include="Cells\SourceContentCellView.cs" />
     <Compile Include="ViewControllers\ThemedNavigationController.cs" />
     <Compile Include="TableViewSources\IssueTableViewSource.cs" />
-    <Compile Include="Views\Gists\GistCommentView.cs" />
     <Compile Include="TableViewSources\FeedbackTableViewSource.cs" />
     <Compile Include="Cells\FeedbackCellView.cs" />
     <Compile Include="Cells\FeedbackCellView.designer.cs">
@@ -281,7 +279,6 @@
     <Compile Include="Views\BaseTableViewController.cs" />
     <Compile Include="Views\BaseDialogViewController.cs" />
     <Compile Include="Views\Organizations\TeamsView.cs" />
-    <Compile Include="Views\Issues\IssueCommentView.cs" />
     <Compile Include="ViewComponents\ImageAndTitleHeaderView.cs" />
     <Compile Include="ViewComponents\PickerAlertView.cs" />
     <Compile Include="ViewComponents\ScrollingToolbarView.cs" />
@@ -402,7 +399,7 @@
     <Compile Include="DialogElements\ElementExtensions.cs" />
     <Compile Include="Views\Source\CommitFilesView.cs" />
     <Compile Include="Views\PullRequests\PullRequestDiffView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestCommentView.cs" />
+    <Compile Include="Views\ComposerView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -134,7 +134,8 @@ namespace CodeHub.Core.ViewModels.Issues
         protected BaseIssueViewModel(
             ISessionService applicationService, 
             IMarkdownService markdownService,
-            IActionMenuFactory actionMenuFactory)
+            IActionMenuFactory actionMenuFactory,
+            IAlertDialogFactory alertDialogFactory)
         {
             _applicationService = applicationService;
             _markdownService = markdownService;
@@ -237,16 +238,14 @@ namespace CodeHub.Core.ViewModels.Issues
                 }
             });
 
-            AddCommentCommand = ReactiveCommand.Create()
-                .WithSubscription(_ =>
-                {
-                    var vm = this.CreateViewModel<IssueCommentViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Id = Id;
-                    vm.SaveCommand.Subscribe(x => InternalEvents.Add(new IssueCommentItemViewModel(x)));
-                    NavigateTo(vm);
-                });
+            AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
+                var vm = new ComposerViewModel(async s => {
+                    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].CreateComment(s);
+                    var comment = (await applicationService.Client.ExecuteAsync(request)).Data;
+                    InternalEvents.Add(new IssueCommentItemViewModel(comment));
+                }, alertDialogFactory);
+                NavigateTo(vm);
+            });
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Issue).Select(x => x != null),

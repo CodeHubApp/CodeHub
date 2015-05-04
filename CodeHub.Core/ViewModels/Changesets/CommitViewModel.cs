@@ -87,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
         
-        public CommitViewModel(ISessionService applicationService, IActionMenuFactory actionMenuService)
+        public CommitViewModel(ISessionService applicationService, IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory)
         {
             Title = "Commit";
 
@@ -164,13 +164,11 @@ namespace CodeHub.Core.ViewModels.Changesets
                 NavigateTo(vm);
             });
 
-            AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<CommitCommentViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.Node = Node;
-                vm.SaveCommand.Subscribe(comments.Add);
+            AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
+                var vm = new ComposerViewModel(async s => {
+                    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits[Node].Comments.Create(s);
+                    comments.Add((await applicationService.Client.ExecuteAsync(request)).Data);
+                }, alertDialogFactory);
                 NavigateTo(vm);
             });
 

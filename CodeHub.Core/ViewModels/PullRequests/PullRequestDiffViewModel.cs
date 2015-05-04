@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -63,15 +64,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public PullRequestDiffViewModel(IActionMenuFactory actionMenuFactory)
+        public PullRequestDiffViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory, IAlertDialogFactory alertDialogFactory)
         {
-            var gotoCreateCommentCommand = ReactiveCommand.Create()
-                .WithSubscription(_ => {
-                    var vm = this.CreateViewModel<PullRequestCommentViewModel>();
-                    vm.SaveCommand.Subscribe(_commentCreatedObservable);
-                    vm.Init(_parentViewModel.RepositoryOwner, _parentViewModel.RepositoryName, _parentViewModel.PullRequestId,
-                        _parentViewModel.HeadSha, _pullRequestFile.FileName, SelectedPatchLine.Value);
-                    NavigateTo(vm);
+            var gotoCreateCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
+                var vm = new ComposerViewModel(async s => {
+                    var req = new PullRequestReviewCommentCreate(s, ParentViewModel.HeadSha, Filename, SelectedPatchLine ?? 0);
+                    var comment = await sessionService.GitHubClient.PullRequest.Comment.Create(ParentViewModel.RepositoryOwner, ParentViewModel.RepositoryName, ParentViewModel.PullRequestId, req);
+                    _commentCreatedObservable.OnNext(comment);
+                }, alertDialogFactory);
+                NavigateTo(vm);
             });
 
             GoToCommentCommand = ReactiveCommand.CreateAsyncTask(this.WhenAnyValue(x => x.SelectedPatchLine).Select(x => x != null),

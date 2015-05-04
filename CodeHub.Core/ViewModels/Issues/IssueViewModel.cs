@@ -16,8 +16,9 @@ namespace CodeHub.Core.ViewModels.Issues
         public IssueViewModel(
             ISessionService applicationService, 
             IActionMenuFactory actionMenuFactory,
-            IMarkdownService markdownService)
-            : base(applicationService, markdownService, actionMenuFactory)
+            IMarkdownService markdownService,
+            IAlertDialogFactory alertDialogFactory)
+            : base(applicationService, markdownService, actionMenuFactory, alertDialogFactory)
         {
             this.WhenAnyValue(x => x.Id)
                 .Subscribe(x => Title = "Issue #" + x);
