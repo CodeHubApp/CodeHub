@@ -225,12 +225,13 @@
     <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
     <Compile Include="Utilities\Emojis.cs" />
     <Compile Include="ViewModels\ActionMenuViewModel.cs" />
-    <Compile Include="ViewModels\Source\ChangesetCommentViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestDiffViewModel.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Repositories\PullRequestRepository.cs" />
     <Compile Include="ViewModels\ComposerViewModel.cs" />
+    <Compile Include="ViewModels\IFileDiffViewModel.cs" />
+    <Compile Include="ViewModels\FileDiffCommentViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

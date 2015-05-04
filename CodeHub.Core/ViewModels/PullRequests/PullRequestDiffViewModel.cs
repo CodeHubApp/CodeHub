@@ -6,13 +6,12 @@ using CodeHub.Core.Factories;
 using System.Reactive.Linq;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Reactive.Subjects;
 using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestDiffViewModel : BaseViewModel
+    public class PullRequestDiffViewModel : BaseViewModel, IFileDiffViewModel
     {
         private readonly ISubject<PullRequestReviewComment> _commentCreatedObservable = new Subject<PullRequestReviewComment>();
 
@@ -33,11 +32,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _patch.Value; }
         }
 
-        private ObservableAsPropertyHelper<IReadOnlyList<PullRequestReviewComment>> _comments;
-        public IReadOnlyList<PullRequestReviewComment> Comments
-        {
-            get { return _comments.Value; }
-        }
+        public IReadOnlyReactiveList<FileDiffCommentViewModel> Comments { get; private set; }
 
         private PullRequestFile _pullRequestFile;
         public PullRequestFile PullRequestFile
@@ -86,10 +81,14 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 .IsNotNull()
                 .ToProperty(this, x => x.Patch, out _patch);
 
+            var comments = new ReactiveList<PullRequestReviewComment>();
+            Comments = comments.CreateDerivedCollection(
+                x => new FileDiffCommentViewModel(x.User.Login, x.User.AvatarUrl, x.Body, x.Position ?? 0));
+
             this.WhenAnyValue(x => x.ParentViewModel.Comments)
                 .Merge(this.WhenAnyObservable(x => x.ParentViewModel.Comments.Changed).Select(_ => ParentViewModel.Comments))
                 .Select(x => x.Where(y => string.Equals(y.Path, Filename, StringComparison.OrdinalIgnoreCase)).ToList())
-                .ToProperty(this, x => x.Comments, out _comments);
+                .Subscribe(x => comments.Reset(x));
 
             this.WhenAnyValue(x => x.PullRequestFile.FileName)
                 .ToProperty(this, x => x.Filename, out _filename);

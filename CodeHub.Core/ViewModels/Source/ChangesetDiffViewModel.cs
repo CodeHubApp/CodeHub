@@ -8,14 +8,19 @@ using System.Reactive;
 using Octokit;
 using CodeHub.Core.Factories;
 using System.Threading.Tasks;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class ChangesetDiffViewModel : BaseViewModel, ILoadableViewModel
+    public class ChangesetDiffViewModel : BaseViewModel, ILoadableViewModel, IFileDiffViewModel
     {
-        private readonly IActionMenuFactory _actionMenuFactory;
-        private string _filename;
-		private string _actualFilename;
+        private string _actualFilename;
+        private readonly ISubject<CommitComment> _commentCreatedObservable = new Subject<CommitComment>();
+
+        public IObservable<CommitComment> CommentCreated
+        {
+            get { return _commentCreatedObservable.AsObservable(); }
+        }
 
 		public string Username { get; set; }
 
@@ -23,6 +28,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public string Branch { get; set; }
 
+        private string _filename;
 	    public string Filename
 	    {
 	        get { return _filename; }
@@ -42,34 +48,40 @@ namespace CodeHub.Core.ViewModels.Source
 	        set { this.RaiseAndSetIfChanged(ref _commitFile, value); }
 	    }
 
-        public IReadOnlyReactiveList<CommitComment> Comments { get; private set; }
+        private int? _selectedPatchLine;
+        public int? SelectedPatchLine
+        {
+            get { return _selectedPatchLine; }
+            set { this.RaiseAndSetIfChanged(ref _selectedPatchLine, value); }
+        }
 
-        public IReactiveCommand<object> GoToCommentCommand { get; private set; }
+        public IReadOnlyReactiveList<FileDiffCommentViewModel> Comments { get; private set; }
+
+        public IReactiveCommand<Unit> GoToCommentCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
-
-        public ChangesetDiffViewModel(ISessionService applicationService, IActionMenuFactory actionMenuFactory)
+        public ChangesetDiffViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory, IAlertDialogFactory alertDialogFactory)
 	    {
-            _actionMenuFactory = actionMenuFactory;
-
             var comments = new ReactiveList<CommitComment>();
-            Comments = comments.CreateDerivedCollection(x => x);
+            Comments = comments.CreateDerivedCollection(
+                x => new FileDiffCommentViewModel(x.User.Login, x.User.AvatarUrl, x.Body, x.Position ?? 0));
 
-            GoToCommentCommand = ReactiveCommand.Create();
-            GoToCommentCommand.OfType<int?>().Subscribe(line =>
-            {
-//                var vm = this.CreateViewModel<CommentViewModel>();
-//                ReactiveUI.Legacy.ReactiveCommandMixins.RegisterAsyncTask(vm.SaveCommand, async t =>
-//                {
-//                    var req = applicationService.Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.Create(vm.Comment, Filename, line);
-//                    var response = await applicationService.Client.ExecuteAsync(req);
-//			        comments.Add(response.Data);
-//                    Dismiss();
-//                });
-//                NavigateTo(vm);
+            var gotoCreateCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
+                var vm = new ComposerViewModel(async s => {
+                    var comment = await sessionService.GitHubClient.Repository.RepositoryComments.Create(Username, Repository, Branch, new NewCommitComment(s));
+                    _commentCreatedObservable.OnNext(comment);
+                    comments.Add(comment);
+                }, alertDialogFactory);
+                NavigateTo(vm);
             });
+
+            GoToCommentCommand = ReactiveCommand.CreateAsyncTask(this.WhenAnyValue(x => x.SelectedPatchLine).Select(x => x != null),
+                sender => {
+                    var sheet = actionMenuFactory.Create();
+                    sheet.AddButton(string.Format("Add Comment on Line {0}", SelectedPatchLine), gotoCreateCommentCommand);
+                    return sheet.Show(sender);
+                });
 
             _patch = this.WhenAnyValue(x => x.CommitFile)
                 .IsNotNull().Select(x => x.Patch).ToProperty(this, x => x.Patch);
@@ -85,27 +97,15 @@ namespace CodeHub.Core.ViewModels.Source
                     Title = _actualFilename;
 	            }
 	        });
-   
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(sender => {
-                var sheet = actionMenuFactory.Create();
-                sheet.AddButton("Add Diff Comment", ReactiveCommand.Create());
-                return sheet.Show(sender);
-            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
 	        {
-                applicationService.GitHubClient.Repository.RepositoryComments.GetAllForCommit(Username, Repository, Branch)
-                    .ToBackground(x => comments.Reset(x));
-                var commits = await applicationService.GitHubClient.Repository.Commits.Get(Username, Repository, Branch);
+                sessionService.GitHubClient.Repository.RepositoryComments.GetAllForCommit(Username, Repository, Branch)
+                        .ToBackground(x => comments.Reset(x.Where(y => string.Equals(y.Path, Filename))));
+                var commits = await sessionService.GitHubClient.Repository.Commits.Get(Username, Repository, Branch);
                 CommitFile = commits.Files.FirstOrDefault(x => string.Equals(x.Filename, Filename, StringComparison.Ordinal));
 	        });
 	    }
-//
-//        public Task CommentLine(int line)
-//        {
-//            
-//
-//        }
     }
 }
 

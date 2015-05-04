@@ -400,6 +400,7 @@
     <Compile Include="Views\Source\CommitFilesView.cs" />
     <Compile Include="Views\PullRequests\PullRequestDiffView.cs" />
     <Compile Include="Views\ComposerView.cs" />
+    <Compile Include="Views\FileDiffView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
