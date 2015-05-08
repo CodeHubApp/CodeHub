@@ -22,9 +22,11 @@ namespace CodeHub.Core.ViewModels.Issues
                 {
                     case 0:
                         Filter = _openFilter;
+                        CustomFilterEnabled = false;
                         break;
                     case 1:
                         Filter = _closedFilter;
+                        CustomFilterEnabled = false;
                         break;
                 }
             }
@@ -35,6 +37,13 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             get { return _filter; }
             set { this.RaiseAndSetIfChanged(ref _filter, value); }
+        }
+
+        private bool _customFilterEnabled;
+        public bool CustomFilterEnabled
+        {
+            get { return _customFilterEnabled; }
+            set { this.RaiseAndSetIfChanged(ref _customFilterEnabled, value); }
         }
 
         public IReactiveCommand<object> GoToFilterCommand { get; private set; }
@@ -78,6 +87,7 @@ namespace CodeHub.Core.ViewModels.Issues
                         Open = vm.State,
                         SortType = vm.SortType
                     };
+                    CustomFilterEnabled = true;
                 });
 
                 NavigateTo(vm);

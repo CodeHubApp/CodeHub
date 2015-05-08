@@ -20,6 +20,12 @@ namespace CodeHub.iOS
 
         public static UIImage Search { get { return UIImageHelper.FromFileAuto("Images/search"); } }
 
+        public static UIImage Sort { get { return UIImageHelper.FromFileAuto("Images/sort"); } }
+
+        public static UIImage Filter { get { return UIImageHelper.FromFileAuto("Images/filter"); } }
+
+        public static UIImage FilterFilled { get { return UIImageHelper.FromFileAuto("Images/filter-filled"); } }
+
 
         public static class Logos
         {

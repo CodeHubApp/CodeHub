@@ -734,6 +734,12 @@
     <BundleResource Include="Images\search%402x.png">
       <DependentUpon>search.png</DependentUpon>
     </BundleResource>
+    <BundleResource Include="Images\sort.png" />
+    <BundleResource Include="Images\sort%402x.png" />
+    <BundleResource Include="Images\filter-filled.png" />
+    <BundleResource Include="Images\filter-filled%402x.png" />
+    <BundleResource Include="Images\filter.png" />
+    <BundleResource Include="Images\filter%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />

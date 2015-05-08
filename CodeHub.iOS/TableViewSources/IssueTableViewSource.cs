@@ -3,7 +3,6 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.iOS.Cells;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -20,7 +19,7 @@ namespace CodeHub.iOS.TableViewSources
         public IssueTableViewSource(UIKit.UITableView tableView) 
             : base(tableView, HintSize)
         {
-            //tableView.RegisterNibForCellReuse(IssueCellView.Nib, IssueCellView.Key);
+            tableView.RegisterNibForCellReuse(IssueCellView.Nib, IssueCellView.Key);
         }
 
         public void SetData(IEnumerable<IssueGroupViewModel> collections)

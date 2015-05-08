@@ -17,8 +17,14 @@ namespace CodeHub.iOS.Views.Issues
             NavigationItem.TitleView = _viewSegment;
 
             this.WhenAnyValue(x => x.ViewModel.GoToFilterCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Select(x => x.ToBarButtonItem(Images.Filter))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
+                .Where(_ => NavigationItem.RightBarButtonItem != null)
+                .Subscribe(x => {
+                    NavigationItem.RightBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter;
+                });
 
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no issues."));
