@@ -272,9 +272,6 @@
     <Reference Include="System.Net.Http.Extensions">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="Flurry.Analytics.Portable">
-      <HintPath>..\packages\Flurry.Analytics.Portable.1.1.1.2\lib\portable-wp80+win80+wpa81+net45+sl50+MonoTouch10+MonoAndroid10+XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
     </Reference>
@@ -290,11 +287,14 @@
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.0\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Punchclock">
-      <HintPath>..\packages\Punchclock.1.1.1\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
-    </Reference>
     <Reference Include="Fusillade">
       <HintPath>..\packages\fusillade.0.6.0\lib\Portable-net45+win+wpa81+wp80\Fusillade.dll</HintPath>
+    </Reference>
+    <Reference Include="Punchclock">
+      <HintPath>..\packages\Punchclock.1.2.0\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.Portable">
+      <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\portable-wp80+win80+wpa81+net45+sl50+MonoTouch10+MonoAndroid10+XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

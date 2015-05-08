@@ -450,12 +450,6 @@
     <Reference Include="Analytics.NET">
       <HintPath>..\packages\Analytics.2.0.0\lib\Analytics.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Flurry.Analytics.iOS">
-      <HintPath>..\packages\Flurry.Analytics.1.1.1.2\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Flurry.Analytics.Portable">
-      <HintPath>..\packages\Flurry.Analytics.Portable.1.1.1.2\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
@@ -474,11 +468,17 @@
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.0\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Punchclock">
-      <HintPath>..\packages\Punchclock.1.1.1\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
-    </Reference>
     <Reference Include="Fusillade">
       <HintPath>..\packages\fusillade.0.6.0\lib\Portable-net45+win+wpa81+wp80\Fusillade.dll</HintPath>
+    </Reference>
+    <Reference Include="Punchclock">
+      <HintPath>..\packages\Punchclock.1.2.0\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.iOS">
+      <HintPath>..\packages\Flurry.Analytics.1.2.0\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.Portable">
+      <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

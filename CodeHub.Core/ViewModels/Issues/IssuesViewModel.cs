@@ -65,12 +65,11 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToProperty(this, x => x.FilterSelection);
 
             GoToNewIssueCommand = ReactiveCommand.Create();
-	        GoToNewIssueCommand.Subscribe(_ =>
-	        {
+	        GoToNewIssueCommand.Subscribe(_ => {
 	            var vm = this.CreateViewModel<IssueAddViewModel>();
 	            vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
-                vm.CreatedIssue.IsNotNull().Subscribe(IssuesBacking.Add);
+                vm.SaveCommand.Subscribe(x => LoadCommand.ExecuteIfCan());
                 NavigateTo(vm);
 	        });
 

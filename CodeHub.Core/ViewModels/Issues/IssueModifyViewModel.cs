@@ -31,17 +31,22 @@ namespace CodeHub.Core.ViewModels.Issues
         public Octokit.User AssignedUser
         {
             get { return _assignedUser; }
-            private set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
         }
 
         private Octokit.Milestone _assignedMilestone;
         public Octokit.Milestone AssignedMilestone
         {
             get { return _assignedMilestone; }
-            private set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
         }
 
-        public IReadOnlyReactiveList<Octokit.Label> AssignedLabels { get; private set; }
+        private IReadOnlyList<Octokit.Label> _assignedLabels;
+        public IReadOnlyList<Octokit.Label> AssignedLabels 
+        {
+            get { return _assignedLabels; }
+            protected set { this.RaiseAndSetIfChanged(ref _assignedLabels, value); }
+        }
 
         private bool? _isCollaborator;
         public bool? IsCollaborator
@@ -68,7 +73,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public string RepositoryName { get; set; }
 
-		public IReactiveCommand<Unit> SaveCommand { get; private set; }
+        public IReactiveCommand<Octokit.Issue> SaveCommand { get; private set; }
 
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
@@ -90,34 +95,30 @@ namespace CodeHub.Core.ViewModels.Issues
                 () => Task.FromResult(AssignedMilestone),
                 x => Task.FromResult(AssignedMilestone = x));
 
-            var assignedLabels = new ReactiveList<Octokit.Label>();
-            AssignedLabels = assignedLabels.CreateDerivedCollection(y => y);
+            AssignedLabels = new ReactiveList<Octokit.Label>();
 
             Labels = new IssueLabelsViewModel(
                 () => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName),
                 () => Task.FromResult(new ReadOnlyCollection<Octokit.Label>(AssignedLabels.ToList()) as IReadOnlyList<Octokit.Label>),
                 x => {
-                    assignedLabels.Reset(x);
+                    AssignedLabels = x;
                     return Task.FromResult(0);
                 });
 
             Labels.SelectedLabels.Changed
                 .Select(_ => new ReadOnlyCollection<Octokit.Label>(Labels.SelectedLabels.ToList()))
-                .Subscribe(x => assignedLabels.Reset(x));
+                .Subscribe(x => AssignedLabels = x);
 
 
             var canSave = this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x));
-            SaveCommand = ReactiveCommand.CreateAsyncTask(canSave, async _ => {
+            SaveCommand = ReactiveCommand.CreateAsyncTask(canSave, _ => {
                 using (alertDialogFactory.Activate("Saving..."))
-                {
-                    await Save();
-
-                    // This is because the stupid ReactiveUI issue with the tableview :(
-                    await Task.Delay(400);
-                }
-
-                Dismiss();
+                    return Save();
             });
+
+            // This is because the stupid ReactiveUI issue with the tableview :(
+            SaveCommand.Delay(TimeSpan.FromMilliseconds(400)).Take(1).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
+                Dismiss());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
@@ -136,7 +137,7 @@ namespace CodeHub.Core.ViewModels.Issues
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
 	    }
 
-		protected abstract Task Save();
+        protected abstract Task<Octokit.Issue> Save();
 
         protected abstract Task<bool> Discard();
     }

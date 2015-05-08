@@ -5,6 +5,7 @@ using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
+using System.Reactive.Disposables;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -35,8 +36,8 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
             _segmentBarButton.Width = View.Frame.Width - 10f;
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
         }
 
         public override void ViewWillLayoutSubviews()

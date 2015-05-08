@@ -75,11 +75,12 @@ namespace CodeHub.iOS.Views
             (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
         }
 
-
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-            RefreshHeaderView();
+            TableView.BeginUpdates();
+            TableView.TableHeaderView = HeaderView;
+            TableView.EndUpdates();
         }
 
         protected virtual DialogTableViewSource CreateTableViewSource()

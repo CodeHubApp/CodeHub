@@ -69,7 +69,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
             IAlertDialogFactory alertDialogFactory)
             : base(applicationService, markdownService, actionMenuService, alertDialogFactory)
         {
-            
             this.WhenAnyValue(x => x.Id)
                 .Subscribe(x => Title = "Pull Request #" + x);
 
@@ -87,10 +86,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 .ToProperty(this, x => x.CommentCount);
 
             MergeCommand = ReactiveCommand.CreateAsyncTask(canMergeObservable, async t =>  {
-                var req = new MergePullRequest(MergeComment ?? string.Empty);
-
                 using (alertDialogFactory.Activate("Merging..."))
                 {
+                    var req = new MergePullRequest(MergeComment ?? string.Empty);
                     var response = await applicationService.GitHubClient.PullRequest.Merge(RepositoryOwner, RepositoryName, Id, req);
                     if (!response.Merged)
                         throw new Exception(string.Format("Unable to merge pull request: {0}", response.Message));

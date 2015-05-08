@@ -3,6 +3,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Reactive.Threading;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Reactive;
@@ -223,8 +224,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 .Select(x => x.Init(Issue.User.Login))
                 .Subscribe(NavigateTo);
 
-            ToggleStateCommand = ReactiveCommand.CreateAsyncTask(issuePresenceObservable, async t =>
-            {
+            ToggleStateCommand = ReactiveCommand.CreateAsyncTask(issuePresenceObservable, async t => {
                 try
                 {
                     Issue = await applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, new Octokit.IssueUpdate {
@@ -236,6 +236,8 @@ namespace CodeHub.Core.ViewModels.Issues
                     var close = (Issue.State == Octokit.ItemState.Open) ? "close" : "open";
                     throw new Exception("Unable to " + close + " the item. " + e.Message, e);
                 }
+
+                RetrieveEvents().ToBackground(x => InternalEvents.Reset(x));
             });
 
             AddCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
@@ -264,8 +266,8 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
                 vm.Id = Id;
-                //vm.Issue = Issue;
-                //                vm.WhenAnyValue(x => x.Issue).Skip(1).Subscribe(x => Issue = x);
+                vm.Issue = Issue;
+                vm.SaveCommand.Subscribe(x => Issue = x);
                 NavigateTo(vm);
             });
 

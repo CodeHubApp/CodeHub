@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
-using System.Reactive.Subjects;
 using CodeHub.Core.Factories;
 using System.Linq;
 
@@ -10,14 +8,8 @@ namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueAddViewModel : IssueModifyViewModel
 	{
-        private readonly Subject<IssueModel> _createdIssueSubject = new Subject<IssueModel>();
 	    private readonly ISessionService _applicationService;
         private readonly IAlertDialogFactory _alertDialogFactory;
-
-        public IObservable<IssueModel> CreatedIssue
-        {
-            get { return _createdIssueSubject; }
-        }
 
         public IssueAddViewModel(
             ISessionService applicationService, 
@@ -29,17 +21,23 @@ namespace CodeHub.Core.ViewModels.Issues
             Title = "New Issue";
         }
 
-		protected override async Task Save()
+        protected override Task<Octokit.Issue> Save()
 		{
 			try
 			{
                 var labels = AssignedLabels.With(x => x.Select(y => y.Name).ToArray());
                 var milestone = AssignedMilestone.With(x => (int?)x.Number);
                 var user = AssignedUser.With(x => x.Login);
-                var request = _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues
-                    .Create(Subject, Content, user, milestone, labels);
-                var data = await _applicationService.Client.ExecuteAsync(request);
-                _createdIssueSubject.OnNext(data.Data);
+                var newIssue = new Octokit.NewIssue(Subject) {
+                    Body = Content,
+                    Assignee = user,
+                    Milestone = milestone
+                };
+
+                foreach (var label in labels)
+                    newIssue.Labels.Add(label);
+
+                return _applicationService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, newIssue);
 			}
 			catch (Exception e)
 			{
