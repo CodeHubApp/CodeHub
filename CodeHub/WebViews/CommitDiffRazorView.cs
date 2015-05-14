@@ -188,10 +188,18 @@ WriteLiteral(" class=\"line insert\"");
 WriteLiteral("><a");
 
 WriteAttribute ("href", " href=\"", "\""
-, Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
+, Tuple.Create<string,object,bool> ("", "app://comment?index=", true)
 
 #line 40 "CommitDiffRazorView.cshtml"
-                                                                                                         , Tuple.Create<string,object,bool> ("", i
+                                                                                                          , Tuple.Create<string,object,bool> ("", i
+
+#line default
+#line hidden
+, false)
+, Tuple.Create<string,object,bool> ("", "&line=", true)
+
+#line 40 "CommitDiffRazorView.cshtml"
+                                                                                                                    , Tuple.Create<string,object,bool> ("", newLine
 
 #line default
 #line hidden
@@ -201,7 +209,7 @@ WriteLiteral(">");
 
 
 #line 40 "CommitDiffRazorView.cshtml"
-                                                                                                                                                Write(line);
+                                                                                                                                                                 Write(line);
 
 
 #line default
@@ -260,10 +268,18 @@ WriteLiteral(" class=\"line delete\"");
 WriteLiteral("><a");
 
 WriteAttribute ("href", " href=\"", "\""
-, Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
+, Tuple.Create<string,object,bool> ("", "app://comment?index=", true)
 
 #line 45 "CommitDiffRazorView.cshtml"
-                                                                                                           , Tuple.Create<string,object,bool> ("", i
+                                                                                                            , Tuple.Create<string,object,bool> ("", i
+
+#line default
+#line hidden
+, false)
+, Tuple.Create<string,object,bool> ("", "&line=", true)
+
+#line 45 "CommitDiffRazorView.cshtml"
+                                                                                                                      , Tuple.Create<string,object,bool> ("", baseLine
 
 #line default
 #line hidden
@@ -273,7 +289,7 @@ WriteLiteral(">");
 
 
 #line 45 "CommitDiffRazorView.cshtml"
-                                                                                                                                                  Write(line);
+                                                                                                                                                                    Write(line);
 
 
 #line default
@@ -350,10 +366,18 @@ WriteLiteral(" class=\"line equal\"");
 WriteLiteral("><a");
 
 WriteAttribute ("href", " href=\"", "\""
-, Tuple.Create<string,object,bool> ("", "app://comment?line=", true)
+, Tuple.Create<string,object,bool> ("", "app://comment?index=", true)
 
 #line 50 "CommitDiffRazorView.cshtml"
-                                                                                                                            , Tuple.Create<string,object,bool> ("", i
+                                                                                                                             , Tuple.Create<string,object,bool> ("", i
+
+#line default
+#line hidden
+, false)
+, Tuple.Create<string,object,bool> ("", "&line=", true)
+
+#line 50 "CommitDiffRazorView.cshtml"
+                                                                                                                                       , Tuple.Create<string,object,bool> ("", newLine
 
 #line default
 #line hidden
@@ -363,7 +387,7 @@ WriteLiteral(">");
 
 
 #line 50 "CommitDiffRazorView.cshtml"
-                                                                                                                                                                   Write(line);
+                                                                                                                                                                                    Write(line);
 
 
 #line default

@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using System.Reactive;
+using System;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -7,7 +8,7 @@ namespace CodeHub.Core.ViewModels
     {
         string Patch { get; }
 
-        int? SelectedPatchLine { get; set; }
+        Tuple<int, int> SelectedPatchLine { get; set; }
 
         IReadOnlyReactiveList<FileDiffCommentViewModel> Comments { get; }
 

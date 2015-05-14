@@ -5,10 +5,12 @@ using UIKit;
 using ReactiveUI;
 using System.Linq;
 using CodeHub.WebViews;
+using Splat;
 
 namespace CodeHub.iOS.Views
 {
-    public abstract class FileDiffView<T> : BaseWebView<T> where T : class, IFileDiffViewModel
+    public abstract class FileDiffView<T> : BaseWebView<T>
+        where T : class, IFileDiffViewModel
     {
         public override void ViewDidLoad()
         {
@@ -36,14 +38,19 @@ namespace CodeHub.iOS.Views
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
 
-                if(func.Equals("comment") && !string.IsNullOrEmpty(url.Query) && url.Query.StartsWith("line", StringComparison.Ordinal)) 
+                try
                 {
-                    int line;
-                    if (int.TryParse(url.Query.Substring(url.Query.IndexOf("=", StringComparison.Ordinal) + 1), out line))
+                    if(func.Equals("comment") && !string.IsNullOrEmpty(url.Query))
                     {
-                        ViewModel.SelectedPatchLine = line;
+                        var param = url.Query.Split('&');
+                        var p = param.ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
+                        ViewModel.SelectedPatchLine = Tuple.Create(int.Parse(p["index"]), int.Parse(p["line"]));
                         ViewModel.GoToCommentCommand.ExecuteIfCan();
                     }
+                }
+                catch (Exception e)
+                {
+                    this.Log().ErrorException("Unable to comment on diff", e);
                 }
 
                 return false;

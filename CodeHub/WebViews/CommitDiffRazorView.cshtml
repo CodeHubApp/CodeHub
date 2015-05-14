@@ -37,17 +37,17 @@
 			}
 			else if (line.StartsWith("+"))
 			{
-				<tr data-to="@(i)" data-x="" data-y="@(newLine)"><th></th><th>@newLine</th><td class="line insert"><a href="app://comment?line=@(i)">@line</a></td></tr>
+				<tr data-to="@(i)" data-x="" data-y="@(newLine)"><th></th><th>@newLine</th><td class="line insert"><a href="app://comment?index=@(i)&line=@(newLine)">@line</a></td></tr>
 				newLine++;
 			}
 			else if (line.StartsWith("-"))
 			{
-				<tr data-to="@(i)" data-x="@(baseLine)" data-y=""><th>@baseLine</th><th></th><td class="line delete"><a href="app://comment?line=@(i)">@line</a></td></tr>
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y=""><th>@baseLine</th><th></th><td class="line delete"><a href="app://comment?index=@(i)&line=@(baseLine)">@line</a></td></tr>
 				baseLine++;
 			}
 			else
 			{
-				<tr data-to="@(i)" data-x="@(baseLine)" data-y="@(newLine)"><th>@baseLine</th><th>@newLine</th><td class="line equal"><a href="app://comment?line=@(i)">@line</a></td></tr>
+				<tr data-to="@(i)" data-x="@(baseLine)" data-y="@(newLine)"><th>@baseLine</th><th>@newLine</th><td class="line equal"><a href="app://comment?index=@(i)&line=@(newLine)">@line</a></td></tr>
 				newLine++;
 				baseLine++;
 			}

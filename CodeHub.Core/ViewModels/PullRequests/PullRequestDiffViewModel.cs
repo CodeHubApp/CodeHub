@@ -48,8 +48,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _parentViewModel, value); }
         }
 
-        private int? _selectedPatchLine;
-        public int? SelectedPatchLine
+        private Tuple<int, int> _selectedPatchLine;
+        public Tuple<int, int> SelectedPatchLine
         {
             get { return _selectedPatchLine; }
             set { this.RaiseAndSetIfChanged(ref _selectedPatchLine, value); }
@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             var gotoCreateCommentCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = new ComposerViewModel(async s => {
-                    var req = new PullRequestReviewCommentCreate(s, ParentViewModel.HeadSha, Filename, SelectedPatchLine ?? 0);
+                    var req = new PullRequestReviewCommentCreate(s, ParentViewModel.HeadSha, Filename, SelectedPatchLine.Item1);
                     var comment = await sessionService.GitHubClient.PullRequest.Comment.Create(ParentViewModel.RepositoryOwner, ParentViewModel.RepositoryName, ParentViewModel.PullRequestId, req);
                     _commentCreatedObservable.OnNext(comment);
                 }, alertDialogFactory);
@@ -73,7 +73,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             GoToCommentCommand = ReactiveCommand.CreateAsyncTask(this.WhenAnyValue(x => x.SelectedPatchLine).Select(x => x != null),
                 sender => {
                     var sheet = actionMenuFactory.Create();
-                    sheet.AddButton(string.Format("Add Comment on Line {0}", SelectedPatchLine), gotoCreateCommentCommand);
+                    sheet.AddButton(string.Format("Add Comment on Line {0}", SelectedPatchLine.Item2), gotoCreateCommentCommand);
                     return sheet.Show(sender);
                 });
 
