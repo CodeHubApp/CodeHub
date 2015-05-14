@@ -28,6 +28,13 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _filter, value); }
         }
 
+        private bool _customFilterEnabled;
+        public bool CustomFilterEnabled
+        {
+            get { return _customFilterEnabled; }
+            set { this.RaiseAndSetIfChanged(ref _customFilterEnabled, value); }
+        }
+
         private readonly ObservableAsPropertyHelper<IssueFilterSelection> _filterSelection;
         public IssueFilterSelection FilterSelection
         {
@@ -40,6 +47,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     Filter = _closedFilter;
                 else if (value == IssueFilterSelection.Mine)
                     Filter = _mineFilter;
+                CustomFilterEnabled = value == IssueFilterSelection.Custom;
             }
         }
 
@@ -80,6 +88,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
 
             GoToCustomFilterCommand = ReactiveCommand.Create();
+            GoToCustomFilterCommand.Subscribe(_ => CustomFilterEnabled = true);
 	    }
 
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.IssueModel>> CreateRequest()

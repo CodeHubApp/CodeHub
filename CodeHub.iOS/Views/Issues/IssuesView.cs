@@ -5,30 +5,15 @@ using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
-using System.Reactive.Disposables;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssuesView : BaseTableViewController<IssuesViewModel>
     {
-        private readonly UISegmentedControl _viewSegment;
-        private readonly UIBarButtonItem _segmentBarButton;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new [] { "Open", "Closed", "Mine" });
 
         public IssuesView()
         {
-            _viewSegment = new CustomUISegmentedControl(new [] { "Open", "Closed", "Mine", "Custom" }, 3);
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
-
-            ToolbarItems = new [] { 
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), 
-                _segmentBarButton, 
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) 
-            };
-
-            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Add))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.IssueOpened.ToImage(64f), "There are no issues."));
         }
@@ -36,33 +21,33 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            _segmentBarButton.Width = View.Frame.Width - 10f;
-            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
-        }
 
-        public override void ViewWillLayoutSubviews()
-        {
-            base.ViewWillLayoutSubviews();
-            _segmentBarButton.Width = View.Frame.Width - 10f;
+            var filterBarButtonItem = new UIBarButtonItem(Images.Filter, UIBarButtonItemStyle.Plain, 
+                (s, e) => ViewModel.GoToCustomFilterCommand.ExecuteIfCan());
+
+            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
+                .Subscribe(x => filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter);
+
+            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand, x => x.ViewModel.GoToCustomFilterCommand)
+                .Select(x => new [] { x.Item1.ToBarButtonItem(UIBarButtonSystemItem.Add), filterBarButtonItem })
+                .Subscribe(x => NavigationItem.RightBarButtonItems = x);
+
+            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
+                .Where(x => x)
+                .Subscribe(x => _viewSegment.SelectedSegment = -1);
+
+            NavigationItem.TitleView = _viewSegment;
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
 
             //Before we select which one, make sure we detach the event handler or silly things will happen
             _viewSegment.ValueChanged -= SegmentValueChanged;
             _viewSegment.SelectedSegment = (int)ViewModel.FilterSelection;
             _viewSegment.ValueChanged += SegmentValueChanged;
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
         }
 
         void SegmentValueChanged (object sender, EventArgs e)
@@ -78,27 +63,6 @@ namespace CodeHub.iOS.Views.Issues
                 case 2:
                     ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Mine;
                     break;
-                case 3:
-                    ViewModel.GoToCustomFilterCommand.ExecuteIfCan();
-                    break;
-            }
-        }
-
-        private class CustomUISegmentedControl : UISegmentedControl
-        {
-            readonly int _multipleTouchIndex;
-            public CustomUISegmentedControl(string[] args, int multipleTouchIndex)
-                : base(args)
-            {
-                this._multipleTouchIndex = multipleTouchIndex;
-            }
-
-            public override void TouchesEnded(Foundation.NSSet touches, UIEvent evt)
-            {
-                var previousSelected = SelectedSegment;
-                base.TouchesEnded(touches, evt);
-                if (previousSelected == SelectedSegment && SelectedSegment == _multipleTouchIndex)
-                    SendActionForControlEvents(UIControlEvent.ValueChanged);
             }
         }
     }
