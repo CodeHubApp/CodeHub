@@ -69,7 +69,9 @@ namespace CodeHub.iOS
             Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = viewController };
             Window.MakeKeyAndVisible();
 
-            BeginInvokeOnMainThread(() => InitializeApp(options));
+            //BeginInvokeOnMainThread(() => InitializeApp(options));
+
+            Window.RootViewController = new CodeHub.iOS.ViewControllers.Walkthrough.WelcomePageViewController();;
 
             return true;
         }

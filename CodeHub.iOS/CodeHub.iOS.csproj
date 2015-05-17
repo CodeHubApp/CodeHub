@@ -401,6 +401,33 @@
     <Compile Include="Views\PullRequests\PullRequestDiffView.cs" />
     <Compile Include="Views\ComposerView.cs" />
     <Compile Include="Views\FileDiffView.cs" />
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.designer.cs">
+      <DependentUpon>AboutViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\AboutViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.designer.cs">
+      <DependentUpon>CardPageViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\CardPageViewController~ipad.xib" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\CardPageViewController~iphone.xib" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.designer.cs">
+      <DependentUpon>GoProViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\GoProViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteView.cs" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteView.designer.cs">
+      <DependentUpon>PromoteView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\PromoteView.xib" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.designer.cs">
+      <DependentUpon>WelcomeViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\WelcomeViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomePageViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -740,6 +767,10 @@
     <BundleResource Include="Images\filter-filled%402x.png" />
     <BundleResource Include="Images\filter.png" />
     <BundleResource Include="Images\filter%402x.png" />
+    <BundleResource Include="Briefcase.png" />
+    <BundleResource Include="CodeHubRound.png" />
+    <BundleResource Include="Heart.png" />
+    <BundleResource Include="Rocket.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
@@ -762,6 +793,7 @@
     <Folder Include="WebResources\" />
     <Folder Include="Views\Search\" />
     <Folder Include="Data\" />
+    <Folder Include="ViewControllers\Walkthrough\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
