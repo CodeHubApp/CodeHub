@@ -428,6 +428,12 @@
     </Compile>
     <InterfaceDefinition Include="ViewControllers\Walkthrough\WelcomeViewController.xib" />
     <Compile Include="ViewControllers\Walkthrough\WelcomePageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.designer.cs">
+      <DependentUpon>FeedbackViewController.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\FeedbackViewController.xib" />
+    <Compile Include="Views\App\UpgradeView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -502,10 +508,10 @@
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.11.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+      <HintPath>..\packages\Octokit.0.12.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="ModernHttpClient">
-      <HintPath>..\packages\modernhttpclient.2.4.1\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
+      <HintPath>..\packages\modernhttpclient.2.4.2\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -771,6 +777,7 @@
     <BundleResource Include="CodeHubRound.png" />
     <BundleResource Include="Heart.png" />
     <BundleResource Include="Rocket.png" />
+    <BundleResource Include="Feedback.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.0\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />

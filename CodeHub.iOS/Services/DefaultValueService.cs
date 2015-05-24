@@ -6,7 +6,17 @@ namespace CodeHub.iOS.Services
 {
     public class DefaultValueService : IDefaultValueService
     {
+        private static Lazy<DefaultValueService> _instance = new Lazy<DefaultValueService>(() => new DefaultValueService());
         public static NSUserDefaults Defaults = NSUserDefaults.StandardUserDefaults;
+
+        public static DefaultValueService Instance
+        {
+            get { return _instance.Value; }
+        }
+
+        private DefaultValueService()
+        {
+        }
 
         public T Get<T>(string key)
         {

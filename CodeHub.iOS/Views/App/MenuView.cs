@@ -63,7 +63,7 @@ namespace CodeHub.iOS.Views.App
 
             _infoSection = new Section { HeaderView = new MenuSectionView("Info & Preferences") };
             _infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.ExecuteIfCan(), Octicon.Gear.ToImage()));
-            _infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Octicon.Lock.ToImage()));
+            //RegisterForNotifications_infoSection.Add(new MenuElement("Go Pro", () => ViewModel.GoToUpgradesCommand.ExecuteIfCan(), Octicon.Lock.ToImage()));
             _infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Octicon.Question.ToImage()));
             _infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Octicon.Person.ToImage()));
 

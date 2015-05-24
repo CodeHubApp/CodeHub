@@ -88,7 +88,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             MergeCommand = ReactiveCommand.CreateAsyncTask(canMergeObservable, async t =>  {
                 using (alertDialogFactory.Activate("Merging..."))
                 {
-                    var req = new MergePullRequest(MergeComment ?? string.Empty);
+                    var req = new MergePullRequest { Message = MergeComment };
                     var response = await applicationService.GitHubClient.PullRequest.Merge(RepositoryOwner, RepositoryName, Id, req);
                     if (!response.Merged)
                         throw new Exception(string.Format("Unable to merge pull request: {0}", response.Message));

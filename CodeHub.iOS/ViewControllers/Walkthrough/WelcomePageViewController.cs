@@ -1,6 +1,5 @@
 ﻿using System;
 using UIKit;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,18 +7,31 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
     public class WelcomePageViewController : UIViewController
     {
+        public event Action WantsToDimiss;
+
+        protected void OnWantsToDismiss()
+        {
+            var e = WantsToDimiss;
+            if (e != null)
+                e();
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             View.BackgroundColor = Theme.PrimaryNavigationBarColor;
 
+            var welcomeViewController = new WelcomeViewController();
+            welcomeViewController.WantsToDimiss += OnWantsToDismiss;
+
             var pages = new UIViewController[]
             { 
                 new CardPageViewController(new AboutViewController()),
                 new CardPageViewController(new PromoteView()),
                 new CardPageViewController(new GoProViewController()),
-                new CardPageViewController(new WelcomeViewController()),
+                new CardPageViewController(new FeedbackViewController()),
+                new CardPageViewController(welcomeViewController),
             };
 
             var welcomePageViewController = new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);
@@ -40,9 +52,9 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 
             var transitionAction = new Action<UIViewController>(e => {
                 var isLast = pages.Last() == e;
-                nextButton.Enabled = !isLast;
-                UIView.Animate(0.5f, 0, UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, 
-                    () => nextButton.Alpha = isLast ? 0f : 1f, null);
+                //nextButton.Enabled = !isLast;
+                UIView.Transition(nextButton, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, 
+                    () => nextButton.SetTitle(isLast ? "Done" : "Next", UIControlState.Normal), null);
             });
 
             welcomePageViewController.WillTransition += (sender, e) => transitionAction(e.PendingViewControllers[0]);
@@ -50,9 +62,15 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             nextButton.TouchUpInside += (sender, e) => {
                 var currentViewController = welcomePageViewController.ViewControllers[0];
                 var nextViewController = welcomePageViewController.DataSource.GetNextViewController(welcomePageViewController, currentViewController);
-                if (nextViewController == null) return;
-                transitionAction(nextViewController);
-                welcomePageViewController.SetViewControllers(new [] { nextViewController }, UIPageViewControllerNavigationDirection.Forward, true, null);
+                if (nextViewController != null)
+                {
+                    transitionAction(nextViewController);
+                    welcomePageViewController.SetViewControllers(new [] { nextViewController }, UIPageViewControllerNavigationDirection.Forward, true, null);
+                }
+                else
+                {
+                    // We're done here...
+                }
             };
         }
 

@@ -54,6 +54,10 @@
     <Compile Include="WebViews\DescriptionModel.cs" />
     <Compile Include="WebViews\CommentModel.cs" />
     <Compile Include="WebViews\CommitCommentModel.cs" />
+    <Compile Include="WebViews\UpgradeDetailsRazorView.cs">
+      <DependentUpon>UpgradeDetailsRazorView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\UpgradeDetailsModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -137,6 +141,10 @@
     <None Include="WebResources\marked.js" />
     <None Include="WebResources\highlight.pack.js" />
     <None Include="Resources\octicons.ttf" />
+    <None Include="WebViews\UpgradeDetailsRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>UpgradeDetailsRazorView.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />

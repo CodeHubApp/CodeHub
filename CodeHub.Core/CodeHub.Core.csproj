@@ -64,7 +64,6 @@
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\App\SupportViewModel.cs" />
-    <Compile Include="ViewModels\App\UpgradesViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
     <Compile Include="ViewModels\Gists\BaseGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
@@ -291,10 +290,10 @@
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.11.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+      <HintPath>..\packages\Octokit.0.12.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="ModernHttpClient">
-      <HintPath>..\packages\modernhttpclient.2.4.1\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
+      <HintPath>..\packages\modernhttpclient.2.4.2\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

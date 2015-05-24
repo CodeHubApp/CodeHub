@@ -21,6 +21,7 @@ using ModernHttpClient;
 using System.Text;
 using System.Diagnostics;
 using CodeHub.Core.Data;
+using CodeHub.iOS.ViewControllers.Walkthrough;
 
 namespace CodeHub.iOS
 {
@@ -68,11 +69,7 @@ namespace CodeHub.iOS
             var viewController = storyboard.InstantiateInitialViewController();
             Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = viewController };
             Window.MakeKeyAndVisible();
-
-            //BeginInvokeOnMainThread(() => InitializeApp(options));
-
-            Window.RootViewController = new CodeHub.iOS.ViewControllers.Walkthrough.WelcomePageViewController();;
-
+            BeginInvokeOnMainThread(() => InitializeApp(options));
             return true;
         }
 
@@ -114,29 +111,49 @@ namespace CodeHub.iOS
 
             try
             {
-                var accountsRepository = Locator.Current.GetService<IAccountsRepository>();
-                Data.LegacyMigration.Migrate(accountsRepository);
+                Data.LegacyMigration.Migrate(Locator.Current.GetService<IAccountsRepository>());
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Unable to migrate DB: " + e.Message);
+                this.Log().DebugException("Unable to migrate db!", e);
             }
 
+            bool hasSeenWelcome;
+            if (!DefaultValueService.Instance.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            {
+                //DefaultValueService.Instance.Set("HAS_SEEN_WELCOME", true);
+                var welcomeViewController = new WelcomePageViewController();
+                welcomeViewController.WantsToDimiss += GoToStartupView;
+                TransitionToViewController(welcomeViewController);
+            }
+            else
+            {
+                GoToStartupView();
+            }
+
+            SetupPushNotifications();
+            HandleNotificationOptions(options);
+        }
+
+        private void GoToStartupView()
+        {
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
             var vm = serviceConstructor.Construct<StartupViewModel>();
-            var startupViewController = new StartupView { ViewModel = vm };
+            var startupViewController = new StartupView {ViewModel = vm};
 
             var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
-
             MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
                 mainNavigationController.PopToRootViewController(false);
                 mainNavigationController.DismissViewController(true, null);
             });
 
-            Window.RootViewController = mainNavigationController;
+            TransitionToViewController(mainNavigationController);
+        }
 
-            SetupPushNotifications();
-            HandleNotificationOptions(options);
+        private void TransitionToViewController(UIViewController viewController)
+        {
+            UIView.Transition(Window, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () => 
+                Window.RootViewController = viewController, null);
         }
 
         private static void RegisterDefaultSettings()
@@ -182,7 +199,7 @@ namespace CodeHub.iOS
 
             // Automatic activations in debug mode!
 #if DEBUG
-            Locator.Current.GetService<IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
+            //Locator.Current.GetService<IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
 #endif
 
             // Notifications don't work on teh simulator so don't bother

@@ -95,8 +95,8 @@ namespace CodeHub.iOS.Views.App
                 _activityView.StopAnimating();
             });
 
-            ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x);
-            ViewModel.WhenAnyValue(x => x.ImageUrl).IsNotNull().SubscribeSafe(x => 
+            this.WhenAnyValue(x => x.ViewModel.Status).Subscribe(x => _statusLabel.Text = x);
+            this.WhenAnyValue(x => x.ViewModel.ImageUrl).IsNotNull().SubscribeSafe(x => 
                 _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
                     if (img != null && err == null)
                         UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);

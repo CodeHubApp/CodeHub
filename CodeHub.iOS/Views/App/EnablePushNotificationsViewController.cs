@@ -92,7 +92,7 @@ namespace CodeHub.iOS.Views.App
         private void EnablePushNotifications(object sender, EventArgs e)
         {
             _alertDialogFactory.Show("Enabling...");
-            _featuresService.Activate(FeatureIds.PushNotifications);
+            //_featuresService.Activate(FeatureIds.PushNotifications);
         }
     }
 }

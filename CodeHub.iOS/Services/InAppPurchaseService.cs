@@ -9,12 +9,18 @@ namespace CodeHub.iOS.Services
 {
     public class InAppPurchaseService : IInAppPurchaseService
     {
+        private readonly static Lazy<InAppPurchaseService> _instance = new Lazy<InAppPurchaseService>(() => new InAppPurchaseService());
         private readonly TransactionObserver _observer;
         private TaskCompletionSource<bool> _actionSource;
         private readonly LinkedList<object> _productDataRequests = new LinkedList<object>();
         private readonly ISubject<Exception> _errorSubject = new Subject<Exception>();
 
         public IObservable<Exception> ThrownExceptions { get { return _errorSubject; } }
+
+        public static InAppPurchaseService Instance
+        {
+            get { return _instance.Value; }
+        }
 
         private void OnPurchaseError(SKPayment id, Exception e)
         {
@@ -28,7 +34,7 @@ namespace CodeHub.iOS.Services
                 _actionSource.TrySetResult(true);
         }
 
-        public InAppPurchaseService()
+        private InAppPurchaseService()
         {
             _observer = new TransactionObserver(this);
             SKPaymentQueue.DefaultQueue.AddTransactionObserver(_observer);
@@ -50,7 +56,9 @@ namespace CodeHub.iOS.Services
                 productsRequest.ReceivedResponse += (sender, e) => tcs.SetResult(e.Response);
                 productsRequest.RequestFailed += (sender, e) => tcs.SetException(new Exception(e.Error.LocalizedDescription));
                 productsRequest.Start();
-                var ret = await tcs.Task;
+                if (await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromSeconds(30))) != tcs.Task)
+                    throw new InvalidOperationException("Timeout waiting for Apple to respond");
+                var ret = tcs.Task.Result;
                 productsRequest.Dispose();
                 return ret;
             }

@@ -19,11 +19,7 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.PushNotifications);
-            }
-            set
-            {
-                _defaultValueService.Set(FeatureIds.PushNotifications, value);
+                return IsActivated(FeatureIds.ProEdition);
             }
         }
 
@@ -31,12 +27,29 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.EnterpriseSupport);
+                return IsActivated(FeatureIds.ProEdition);
             }
-            set
+        }
+
+        public bool IsPrivateRepositoriesEnabled
+        {
+            get
             {
-                _defaultValueService.Set(FeatureIds.EnterpriseSupport, value);
+                return IsActivated(FeatureIds.ProEdition);
             }
+        }
+
+        public bool IsProEnabled
+        {
+            get
+            {
+                return IsActivated(FeatureIds.ProEdition);
+            }
+        }
+
+        public void ActivatePro()
+        {
+            throw new NotImplementedException();
         }
 
         public void Activate(string id)
@@ -44,7 +57,7 @@ namespace CodeHub.iOS.Services
             //InAppPurchases.Instance.PurchaseProduct(id);
         }
 
-        public bool IsActivated(string id)
+        private bool IsActivated(string id)
         {
             bool value;
             return _defaultValueService.TryGet<bool>(id, out value) && value;
@@ -52,14 +65,15 @@ namespace CodeHub.iOS.Services
 
         public async Task<IEnumerable<string>> GetAvailableFeatureIds()
         {
-            var ids = new List<string>();
-            ids.Add(FeatureIds.EnterpriseSupport);
-            var client = new HttpClient();
-            client.Timeout = new TimeSpan(0, 0, 15);
-            var response = await client.GetAsync("https://push.codehub-app.com/in-app");
-            var data = await response.Content.ReadAsStringAsync();
-//            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
-            return ids;
+//            var ids = new List<string>();
+//            ids.Add(FeatureIds.EnterpriseSupport);
+//            var client = new HttpClient();
+//            client.Timeout = new TimeSpan(0, 0, 15);
+//            var response = await client.GetAsync("https://push.codehub-app.com/in-app");
+//            var data = await response.Content.ReadAsStringAsync();
+////            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
+//            return ids;
+            return null;
         }
 
         public Task PromptPushNotificationFeature()
@@ -73,6 +87,11 @@ namespace CodeHub.iOS.Services
 //            return tcs.Task;
             throw new NotImplementedException();
         }
+    }
+
+    public static class FeatureIds
+    {
+        public const string ProEdition = "com.dillonbuchanan.codehub.pro";
     }
 }
 
