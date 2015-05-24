@@ -13,9 +13,9 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class AccountsViewModel : BaseViewModel
     {
+        private readonly ReactiveList<GitHubAccount> _accounts = new ReactiveList<GitHubAccount>();
         private readonly IAccountsRepository _accountsRepository;
         private readonly ISessionService _sessionService;
-        private readonly ReactiveList<GitHubAccount> _accounts;
 
         public GitHubAccount ActiveAccount
         {
@@ -40,8 +40,6 @@ namespace CodeHub.Core.ViewModels.App
 
             Title = "Accounts";
 
-            _accounts = new ReactiveList<GitHubAccount>();
-
             Accounts = _accounts.CreateDerivedCollection(CreateAccountItem);
 
             this.WhenAnyValue(x => x.ActiveAccount)
@@ -58,6 +56,7 @@ namespace CodeHub.Core.ViewModels.App
             GoToAddAccountCommand = ReactiveCommand.Create()
                 .WithSubscription(_ => NavigateTo(this.CreateViewModel<NewAccountViewModel>()));
 
+            // Activate immediately since WhenActivated triggers off Did* instead of Will* in iOS
             UpdateAccounts();
             this.WhenActivated(d => UpdateAccounts());
         }
@@ -66,7 +65,9 @@ namespace CodeHub.Core.ViewModels.App
         {
             _accountsRepository.GetAll().ToObservable()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => _accounts.Reset(x.OrderBy(y => y.Username)));
+                .Select(x => x.OrderBy(y => y.Username).ToList())
+                .Where(x => !x.All(_accounts.Contains))
+                .Subscribe(_accounts.Reset);
         }
 
         private async Task LoginAccount(GitHubAccount account)

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using CodeHub.Core.Services;
 using Splat;
+using CodeHub.Core.ViewModels;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -65,7 +67,9 @@ namespace CodeHub.iOS.Views.App
         {
 
             var url = request.Url;
-            if(url.Scheme.Equals("app")) {
+
+            if (url.Scheme.Equals("app"))
+            {
                 var func = url.Host;
 
                 if (string.Equals(func, "buy", StringComparison.OrdinalIgnoreCase))
@@ -80,7 +84,22 @@ namespace CodeHub.iOS.Views.App
                 return false;
             }
 
-            return true;
+            if (url.Scheme.Equals("file"))
+            {
+                return true;
+            }
+
+            if (url.Scheme.Equals("http") || url.Scheme.Equals("https"))
+            {
+                var vm = new WebBrowserViewModel().Init(url.AbsoluteString);
+                var view = new WebBrowserView(true, true) { ViewModel = vm };
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, 
+                    (s, e) => DismissViewController(true, null));
+                PresentViewController(new ThemedNavigationController(view), true, null);
+                return false;
+            }
+
+            return false;
         }
     }
 }

@@ -11,6 +11,7 @@ using GitHubSharp;
 using CodeHub.Core.Messages;
 using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -19,6 +20,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IAccountsRepository _accountsService;
         private readonly ISessionService _sessionService;
         private readonly IAlertDialogFactory _alertDialogFactory;
+        private readonly IDefaultValueService _defaultValueService;
 
         public IReactiveCommand<Unit> StartupCommand { get; private set; }
 
@@ -46,11 +48,13 @@ namespace CodeHub.Core.ViewModels.App
         public StartupViewModel(
             ISessionService sessionService, 
             IAccountsRepository accountsService, 
-            IAlertDialogFactory alertDialogFactory)
+            IAlertDialogFactory alertDialogFactory,
+            IDefaultValueService defaultValueService)
         {
             _sessionService = sessionService;
             _accountsService = accountsService;
             _alertDialogFactory = alertDialogFactory;
+            _defaultValueService = defaultValueService;
 
             StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
@@ -87,6 +91,7 @@ namespace CodeHub.Core.ViewModels.App
                 IsLoggingIn = true;
                 await _sessionService.SetSessionAccount(account);
                 NavigateTo(this.CreateViewModel<MenuViewModel>());
+                StarOrWatch();
             }
             catch (UnauthorizedException)
             {
@@ -105,6 +110,23 @@ namespace CodeHub.Core.ViewModels.App
             finally
             {
                 IsLoggingIn = false;
+            }
+        }
+
+        private async Task StarOrWatch()
+        {
+            bool shouldStar;
+            if (_defaultValueService.TryGet<bool>("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
+            {
+                _defaultValueService.Set("SHOULD_STAR_CODEHUB", false);
+                await _sessionService.GitHubClient.Activity.Starring.StarRepo("thedillonb", "codehub");
+            }
+
+            bool shouldWatch;
+            if (_defaultValueService.TryGet<bool>("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
+            {
+                _defaultValueService.Set("SHOULD_WATCH_CODEHUB", false);
+                await _sessionService.GitHubClient.Activity.Watching.WatchRepo("thedillonb", "codehub", new Octokit.NewSubscription { Subscribed = true });
             }
         }
     }

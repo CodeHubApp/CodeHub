@@ -41,42 +41,42 @@ namespace CodeHub.iOS.TableViewSources
             collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
             (collection as IReactiveCollection<TViewModel>).Do(x => _isEmptySubject.OnNext(!x.Any()));
         }
-
-        public override nint RowsInSection(UITableView tableview, nint section)
-        {
-            if (Data == null || Data.Count == 0)
-                return 0;
-            return base.RowsInSection(tableview, section);
-        }
-
-        public override string TitleForFooter(UITableView tableView, nint section)
-        {
-            if (Data == null || Data.Count == 0)
-                return string.Empty;
-            return base.TitleForFooter(tableView, section);
-        }
-
-        public override string TitleForHeader(UITableView tableView, nint section)
-        {
-            if (Data == null || Data.Count == 0)
-                return string.Empty;
-            return base.TitleForHeader(tableView, section);
-        }
-
-        public override nfloat GetHeightForHeader(UITableView tableView, nint section)
-        {
-            if (Data == null || Data.Count == 0)
-                return UITableView.AutomaticDimension;
-            return base.GetHeightForHeader(tableView, section);
-        }
-
-        public override nfloat GetHeightForFooter(UITableView tableView, nint section)
-        {
-            if (Data == null || Data.Count == 0)
-                return UITableView.AutomaticDimension;
-            return base.GetHeightForFooter(tableView, section);
-        }
-
+//
+//        public override nint RowsInSection(UITableView tableview, nint section)
+//        {
+//            if (Data == null || Data.Count == 0)
+//                return 0;
+//            return base.RowsInSection(tableview, section);
+//        }
+//
+//        public override string TitleForFooter(UITableView tableView, nint section)
+//        {
+//            if (Data == null || Data.Count == 0)
+//                return string.Empty;
+//            return base.TitleForFooter(tableView, section);
+//        }
+//
+//        public override string TitleForHeader(UITableView tableView, nint section)
+//        {
+//            if (Data == null || Data.Count == 0)
+//                return string.Empty;
+//            return base.TitleForHeader(tableView, section);
+//        }
+//
+//        public override nfloat GetHeightForHeader(UITableView tableView, nint section)
+//        {
+//            if (Data == null || Data.Count == 0)
+//                return UITableView.AutomaticDimension;
+//            return base.GetHeightForHeader(tableView, section);
+//        }
+//
+//        public override nfloat GetHeightForFooter(UITableView tableView, nint section)
+//        {
+//            if (Data == null || Data.Count == 0)
+//                return UITableView.AutomaticDimension;
+//            return base.GetHeightForFooter(tableView, section);
+//        }
+//
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, Foundation.NSIndexPath indexPath)
         {
             if (indexPath.Section == (NumberOfSections(tableView) - 1) &&

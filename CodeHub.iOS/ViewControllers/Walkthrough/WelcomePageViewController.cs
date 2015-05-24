@@ -69,7 +69,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
                 }
                 else
                 {
-                    // We're done here...
+                    OnWantsToDismiss();
                 }
             };
         }

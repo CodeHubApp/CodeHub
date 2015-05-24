@@ -21,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
                 var view = new UpgradeView();
                 view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, 
                     (s, e) => DismissViewController(true, null));
-                PresentViewController(new UINavigationController(view), true, null);
+                PresentViewController(new ThemedNavigationController(view), true, null);
             };
         }
     }
