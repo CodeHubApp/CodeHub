@@ -11,15 +11,18 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("PullRequestCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("PullRequestCellView");
+        private bool _isFakeCell;
 
         public PullRequestCellView(IntPtr handle) 
             : base(handle)
         {
         }
 
-        public static PullRequestCellView Create()
+        public static PullRequestCellView Create(bool isFakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as PullRequestCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as PullRequestCellView;
+            cell._isFakeCell = isFakeCell;
+            return cell;
         }
 
         public override void LayoutSubviews()
@@ -45,9 +48,8 @@ namespace CodeHub.iOS.Cells
             this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text);
             this.OneWayBind(ViewModel, x => x.Details, x => x.TimeLabel.Text);
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Select(x => x.Avatar)
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Where(_ => !_isFakeCell)
                 .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }

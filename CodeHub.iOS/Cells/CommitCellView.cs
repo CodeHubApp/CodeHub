@@ -4,7 +4,6 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Changesets;
-using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -13,15 +12,18 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("CommitCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("CommitCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
+        private bool _isFakeCell;
 
         public CommitCellView(IntPtr handle) 
             : base(handle)
         {
         }
 
-        public static CommitCellView Create()
+        public static CommitCellView Create(bool isFakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as CommitCellView;
+            cell._isFakeCell = isFakeCell;
+            return cell;
         }
 
 
@@ -54,11 +56,11 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .SubscribeSafe(x =>
-                {
-                    MainImageView.SetAvatar(x.Avatar);
-                    ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
-                });
+                .SubscribeSafe(x => ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize);
+
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Where(_ => !_isFakeCell)
+                .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }
 }

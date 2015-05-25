@@ -14,15 +14,18 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("FeedbackCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("FeedbackCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
+        private bool _isFakeCell;
 
         public FeedbackCellView(IntPtr handle) 
             : base(handle)
         {
         }
 
-        public static FeedbackCellView Create()
+        public static FeedbackCellView Create(bool isFakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as FeedbackCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as FeedbackCellView;
+            cell._isFakeCell = isFakeCell;
+            return cell;
         }
 
         public override void AwakeFromNib()
@@ -42,15 +45,18 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    if (string.IsNullOrEmpty(x.ImageUrl))
-                        MainImageView.Image = Images.LoginUserUnknown;
-                    else
-                        MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
-
+                .Subscribe(x => {
                     DetailsLabel.Text = "Created " + x.Created.UtcDateTime.Humanize();
                     DetailsConstraint.Constant = string.IsNullOrEmpty(DetailsLabel.Text) ? 0f : DefaultContentConstraintSize;
+                });
+
+            this.WhenAnyValue(x => x.ViewModel.ImageUrl)
+                .Where(_ => !_isFakeCell)
+                .Subscribe(x => {
+                    if (string.IsNullOrEmpty(x))
+                        MainImageView.Image = Images.LoginUserUnknown;
+                    else
+                        MainImageView.SetImage(new NSUrl(x), Images.LoginUserUnknown);
                 });
         }
     }

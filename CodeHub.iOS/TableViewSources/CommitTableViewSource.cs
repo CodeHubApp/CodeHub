@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         public CommitTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<CommitItemViewModel> collection) 
             : base(tableView, collection,  CommitCellView.Key, 64.0f)
         {
-            _cache = new TableViewCellHeightCache<CommitCellView, CommitItemViewModel>(64f, CommitCellView.Create);
+            _cache = new TableViewCellHeightCache<CommitCellView, CommitItemViewModel>(64f, () => CommitCellView.Create(true));
             tableView.RegisterNibForCellReuse(CommitCellView.Nib, CommitCellView.Key);
         }
 

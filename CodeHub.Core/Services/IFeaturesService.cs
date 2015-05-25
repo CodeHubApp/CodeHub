@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace CodeHub.Core.Services
 {
     public interface IFeaturesService
@@ -10,7 +12,9 @@ namespace CodeHub.Core.Services
 
         bool IsProEnabled { get; }
 
-        void ActivatePro();
+        Task ActivatePro();
+
+        Task RestorePro();
     }
 }
 

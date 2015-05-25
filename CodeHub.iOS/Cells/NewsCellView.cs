@@ -18,6 +18,7 @@ namespace CodeHub.iOS.Cells
         public static readonly NSString Key = new NSString("NewsCellView");
         public static readonly UIEdgeInsets EdgeInsets = new UIEdgeInsets(0, 48f, 0, 0);
         public static UIColor LinkColor = Theme.MainTitleColor;
+        private bool _isFakeCell;
 
         public static UIFont LinkFont = UIFont.FromDescriptor(
             UIFont.PreferredSubheadline.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold), 
@@ -51,9 +52,11 @@ namespace CodeHub.iOS.Cells
             public int Id;
         }
 
-        public static NewsCellView Create()
+        public static NewsCellView Create(bool isFakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as NewsCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as NewsCellView;
+            cell._isFakeCell = isFakeCell;
+            return cell;
         }
 
         public NewsCellView(IntPtr handle) 
@@ -103,7 +106,6 @@ namespace CodeHub.iOS.Cells
                 .IsNotNull()
                 .Subscribe(x =>
                 {
-                    Image.SetAvatar(x.Avatar);
                     Time.Text = x.Created.UtcDateTime.Humanize();
 
                     ActionImage.Image = _eventToImage.ContainsKey(x.Type) ? 
@@ -124,6 +126,9 @@ namespace CodeHub.iOS.Cells
                         Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
                 });
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Where(_ => !_isFakeCell)
+                .Subscribe(x => Image.SetAvatar(x));
         }
 
         public override void LayoutSubviews()

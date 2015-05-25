@@ -1,25 +1,31 @@
 using CodeHub.Core.Services;
-using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using System.Net.Http;
+using System.Linq;
 
 namespace CodeHub.iOS.Services
 {
     public class FeaturesService : IFeaturesService
     {
         private readonly IDefaultValueService _defaultValueService;
+        private readonly IInAppPurchaseService _inAppPurchaseService;
 
-        public FeaturesService(IDefaultValueService defaultValueService)
+        /// <summary>
+        /// The pro edition identifier
+        /// </summary>
+        public const string ProEdition = "com.dillonbuchanan.codehub.pro";
+
+        public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {
             _defaultValueService = defaultValueService;
+            _inAppPurchaseService = inAppPurchaseService;
         }
 
         public bool IsPushNotificationsActivated
         {
             get
             {
-                return IsActivated(FeatureIds.ProEdition);
+                return IsActivated(ProEdition);
             }
         }
 
@@ -27,7 +33,7 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.ProEdition);
+                return IsActivated(ProEdition);
             }
         }
 
@@ -35,7 +41,7 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.ProEdition);
+                return IsActivated(ProEdition);
             }
         }
 
@@ -43,18 +49,21 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.ProEdition);
+                return IsActivated(ProEdition);
             }
         }
 
-        public void ActivatePro()
+        public async Task ActivatePro()
         {
-            throw new NotImplementedException();
+            var productData = (await _inAppPurchaseService.RequestProductData(ProEdition)).Products.FirstOrDefault();
+            if (productData == null)
+                throw new InvalidOperationException("Unable to activate CodeHub Pro");
+            await _inAppPurchaseService.PurchaseProduct(productData);
         }
 
-        public void Activate(string id)
+        public Task RestorePro()
         {
-            //InAppPurchases.Instance.PurchaseProduct(id);
+            return _inAppPurchaseService.Restore();
         }
 
         private bool IsActivated(string id)
@@ -62,36 +71,6 @@ namespace CodeHub.iOS.Services
             bool value;
             return _defaultValueService.TryGet<bool>(id, out value) && value;
         }
-
-        public async Task<IEnumerable<string>> GetAvailableFeatureIds()
-        {
-//            var ids = new List<string>();
-//            ids.Add(FeatureIds.EnterpriseSupport);
-//            var client = new HttpClient();
-//            client.Timeout = new TimeSpan(0, 0, 15);
-//            var response = await client.GetAsync("https://push.codehub-app.com/in-app");
-//            var data = await response.Content.ReadAsStringAsync();
-////            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
-//            return ids;
-            return null;
-        }
-
-        public Task PromptPushNotificationFeature()
-        {
-//            var tcs = new TaskCompletionSource<object>();
-////            var ctrl = IoC.Resolve<EnablePushNotificationsViewController>();
-////            ctrl.Dismissed += (sender, e) => tcs.SetResult(null);
-//            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-//            if (appDelegate != null)
-//                appDelegate.Window.RootViewController.PresentViewController(ctrl, true, null);
-//            return tcs.Task;
-            throw new NotImplementedException();
-        }
-    }
-
-    public static class FeatureIds
-    {
-        public const string ProEdition = "com.dillonbuchanan.codehub.pro";
     }
 }
 

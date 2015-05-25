@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         public EventTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
             : base(tableView, collection,  NewsCellView.Key, 100f)
         {
-            _cache = new TableViewCellHeightCache<NewsCellView, EventItemViewModel>(100f, NewsCellView.Create);
+            _cache = new TableViewCellHeightCache<NewsCellView, EventItemViewModel>(100f, () => NewsCellView.Create(true));
             tableView.SeparatorInset = NewsCellView.EdgeInsets;
             tableView.RegisterNibForCellReuse(NewsCellView.Nib, NewsCellView.Key);
         }

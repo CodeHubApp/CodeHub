@@ -121,7 +121,7 @@ namespace CodeHub.iOS
             bool hasSeenWelcome;
             if (!DefaultValueService.Instance.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
-                //DefaultValueService.Instance.Set("HAS_SEEN_WELCOME", true);
+                DefaultValueService.Instance.Set("HAS_SEEN_WELCOME_INTRO", true);
                 var welcomeViewController = new WelcomePageViewController();
                 welcomeViewController.WantsToDimiss += GoToStartupView;
                 TransitionToViewController(welcomeViewController);

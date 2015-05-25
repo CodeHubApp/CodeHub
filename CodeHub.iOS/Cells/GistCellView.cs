@@ -13,15 +13,18 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("GistCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("GistCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
+        private bool _isFakeCell;
 
         public GistCellView(IntPtr handle) 
             : base(handle)
         {
         }
 
-        public static GistCellView Create()
+        public static GistCellView Create(bool isFakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as GistCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as GistCellView;
+            cell._isFakeCell = isFakeCell;
+            return cell;
         }
 
         public override void LayoutSubviews()
@@ -51,12 +54,15 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    MainImageView.SetAvatar(x.Avatar);
                     TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
                     TimeLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
                 });
+
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Where(_ => !_isFakeCell)
+                .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }
 }

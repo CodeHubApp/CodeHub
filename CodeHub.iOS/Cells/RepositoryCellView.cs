@@ -14,6 +14,7 @@ namespace CodeHub.iOS.Cells
         public static NSString Key = new NSString("RepositoryCellView");
         public static bool RoundImages = true;
         private static nfloat DefaultConstraintSize = 0.0f;
+        private bool _fakeCell;
 
         public RepositoryCellView(IntPtr handle)
             : base(handle)
@@ -21,9 +22,11 @@ namespace CodeHub.iOS.Cells
             SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
-        public static RepositoryCellView Create()
+        public static RepositoryCellView Create(bool fakeCell = false)
         {
-            return Nib.Instantiate(null, null).GetValue(0) as RepositoryCellView;
+            var cell = Nib.Instantiate(null, null).GetValue(0) as RepositoryCellView;
+            cell._fakeCell = fakeCell;
+            return cell;
         }
 
         public override void LayoutSubviews()
@@ -49,8 +52,9 @@ namespace CodeHub.iOS.Cells
             ForksImageView.Image = Octicon.RepoForked.ToImage(ForksImageView.Frame.Height);
             UserImageView.Image = Octicon.Person.ToImage(UserImageView.Frame.Height);
 
-            OwnerImageView.Layer.MasksToBounds = true;
             OwnerImageView.Layer.CornerRadius = OwnerImageView.Bounds.Height / 2f;
+            OwnerImageView.Layer.MasksToBounds = true;
+            OwnerImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
             ContentView.Opaque = true;
 
             DefaultConstraintSize = ContentConstraint.Constant;
@@ -63,7 +67,6 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x =>
                 {
-                    OwnerImageView.SetAvatar(x.Avatar);
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
                     UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);
@@ -71,6 +74,10 @@ namespace CodeHub.iOS.Cells
                     UserLabel.Text = x.Owner ?? string.Empty;
                     ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
                 });
+
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Where(_ => !_fakeCell)
+                .Subscribe(x => OwnerImageView.SetAvatar(x));
         }
     }
 }

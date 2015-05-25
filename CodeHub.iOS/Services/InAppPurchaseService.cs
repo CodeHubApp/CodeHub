@@ -4,23 +4,19 @@ using System.Threading.Tasks;
 using Foundation;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Services
 {
     public class InAppPurchaseService : IInAppPurchaseService
     {
-        private readonly static Lazy<InAppPurchaseService> _instance = new Lazy<InAppPurchaseService>(() => new InAppPurchaseService());
         private readonly TransactionObserver _observer;
         private TaskCompletionSource<bool> _actionSource;
         private readonly LinkedList<object> _productDataRequests = new LinkedList<object>();
         private readonly ISubject<Exception> _errorSubject = new Subject<Exception>();
+        private readonly IDefaultValueService _defaultValueService;
 
         public IObservable<Exception> ThrownExceptions { get { return _errorSubject; } }
-
-        public static InAppPurchaseService Instance
-        {
-            get { return _instance.Value; }
-        }
 
         private void OnPurchaseError(SKPayment id, Exception e)
         {
@@ -34,8 +30,9 @@ namespace CodeHub.iOS.Services
                 _actionSource.TrySetResult(true);
         }
 
-        private InAppPurchaseService()
+        public InAppPurchaseService(IDefaultValueService defaultValueService)
         {
+            _defaultValueService = defaultValueService;
             _observer = new TransactionObserver(this);
             SKPaymentQueue.DefaultQueue.AddTransactionObserver(_observer);
         }
@@ -65,7 +62,6 @@ namespace CodeHub.iOS.Services
             finally
             {
                 _productDataRequests.Remove(tcs);
-                Console.WriteLine("Remaining: " + _productDataRequests.Count);
             }
         }
 
@@ -91,13 +87,17 @@ namespace CodeHub.iOS.Services
 
         private void CompleteTransaction (SKPaymentTransaction transaction)
         {
-            Console.WriteLine ("CompleteTransaction " + transaction.TransactionIdentifier);
+            var productId = transaction.Payment.ProductIdentifier;
+            _defaultValueService.Set(productId, true);
+            Console.WriteLine ("CompleteTransaction " + productId);
             OnPurchaseSuccess(transaction.Payment);
         }
 
         private void RestoreTransaction (SKPaymentTransaction transaction)
         {
-            Console.WriteLine("RestoreTransaction " + transaction.TransactionIdentifier + "; OriginalTransaction " + transaction.OriginalTransaction.TransactionIdentifier);
+            var productId = transaction.OriginalTransaction.Payment.ProductIdentifier;;
+            _defaultValueService.Set(productId, true);
+            Console.WriteLine("RestoreTransaction " + productId);
             OnPurchaseSuccess(transaction.OriginalTransaction.Payment);
         }
 
@@ -147,15 +147,6 @@ namespace CodeHub.iOS.Services
                     }
                 }
             }
-
-            //            public override void RemovedTransactions(SKPaymentQueue queue, SKPaymentTransaction[] transactions)
-            //            {
-            //                foreach (var t in transactions)
-            //                {
-            //                    Console.WriteLine("Uh oh: " + t.TransactionState);
-            //
-            //                }
-            //            }
 
             public override void PaymentQueueRestoreCompletedTransactionsFinished (SKPaymentQueue queue)
             {

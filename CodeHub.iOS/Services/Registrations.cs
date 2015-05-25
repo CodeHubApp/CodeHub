@@ -16,9 +16,9 @@ namespace CodeHub.iOS.Services
             resolverToUse.RegisterLazySingleton(() => new FilesystemService(), typeof(IFilesystemService));
             resolverToUse.RegisterLazySingleton(() => new EnvironmentalService(), typeof(IEnvironmentalService));
             resolverToUse.RegisterLazySingleton(() => new UrlRouterService(resolverToUse.GetService<ISessionService>()), typeof(IUrlRouterService));
-            resolverToUse.RegisterLazySingleton(() => new InAppPurchaseNetworkDecorator(InAppPurchaseService.Instance, resolverToUse.GetService<INetworkActivityService>()), typeof(IInAppPurchaseService));
+            resolverToUse.RegisterLazySingleton(() => new InAppPurchaseNetworkDecorator(new InAppPurchaseService(resolverToUse.GetService<IDefaultValueService>()), resolverToUse.GetService<INetworkActivityService>()), typeof(IInAppPurchaseService));
 
-            resolverToUse.RegisterLazySingleton(() => new FeaturesService(resolverToUse.GetService<IDefaultValueService>()), typeof(IFeaturesService));
+            resolverToUse.RegisterLazySingleton(() => new FeaturesService(resolverToUse.GetService<IDefaultValueService>(), resolverToUse.GetService<IInAppPurchaseService>()), typeof(IFeaturesService));
             resolverToUse.RegisterLazySingleton(() => new PushNotificationsService(), typeof(IPushNotificationsService));
         }
     }

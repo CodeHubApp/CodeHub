@@ -1,9 +1,8 @@
 using System;
 using CodeHub.Core.Utilities;
-using SDWebImage;
 using CodeHub.iOS;
+using SDWebImage;
 using Foundation;
-using CoreAnimation;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -12,12 +11,13 @@ namespace UIKit
     {
         public static void SetAvatar(this UIImageView @this, GitHubAvatar avatar, int? size = 64)
         {
+            @this.Image = Images.LoginUserUnknown;
+
+            if (avatar == null)
+                return;
+
             var avatarUri = avatar.ToUri(size);
-            if (avatarUri == null)
-            {
-                @this.Image = Images.LoginUserUnknown;
-            }
-            else
+            if (avatarUri != null)
             {
                 @this.SetImage(new NSUrl(avatarUri.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
                     if (img == null || err != null)
