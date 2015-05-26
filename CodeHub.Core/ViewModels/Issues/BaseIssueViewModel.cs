@@ -252,7 +252,7 @@ namespace CodeHub.Core.ViewModels.Issues
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Issue).Select(x => x != null),
                 sender => {
-                    var menu = actionMenuFactory.Create(Title);
+                    var menu = actionMenuFactory.Create();
                     menu.AddButton("Edit", GoToEditCommand);
                     menu.AddButton(Issue.State == Octokit.ItemState.Closed ? "Open" : "Close", ToggleStateCommand);
                     menu.AddButton("Comment", AddCommentCommand);

@@ -78,12 +78,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
-        private int? _languages;
-        public int? Languages
-        {
-            get { return _languages; }
-            private set { this.RaiseAndSetIfChanged(ref _languages, value); }
-        }
+//        private int? _languages;
+//        public int? Languages
+//        {
+//            get { return _languages; }
+//            private set { this.RaiseAndSetIfChanged(ref _languages, value); }
+//        }
 
         private int? _releases;
         public int? Releases
@@ -373,8 +373,8 @@ namespace CodeHub.Core.ViewModels.Repositories
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors())
                     .ToBackground(x => Contributors = x.Data.Count);
 
-                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetLanguages())
-                    .ToBackground(x => Languages = x.Data.Count);
+//                applicationService.GitHubClient.Repository.GetAllLanguages(RepositoryOwner, RepositoryName)
+//                    .ToBackground(x => Languages = x.Count);
 
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases())
                     .ToBackground(x => Releases = x.Data.Count);
