@@ -37,7 +37,7 @@ namespace CodeHub.iOS.Views.Accounts
                 hasSeenWelcome = false;
 
             this.Appeared
-                .Where(_ => !hasSeenWelcome)
+                //.Where(_ => !hasSeenWelcome)
                 .Take(1)
                 .Subscribe(_ => 
                     BlurredAlertView.Display(OAuthWelcome, () => defaultValueService.Set(HasSeenWelcomeKey, true)));

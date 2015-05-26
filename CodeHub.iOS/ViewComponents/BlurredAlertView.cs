@@ -4,7 +4,7 @@ using CoreGraphics;
 
 namespace CodeHub.iOS.ViewComponents
 {
-    public class BlurredAlertView : UIView
+    public class BlurredAlertView : UIViewController
     {
         private readonly UILabel _label;
         private readonly UIButton _button;
@@ -13,30 +13,30 @@ namespace CodeHub.iOS.ViewComponents
         {
             var window = ((AppDelegate)UIApplication.SharedApplication.Delegate).Window;
 
+            var alertView = new BlurredAlertView(text);
             var blur = UIBlurEffect.FromStyle(UIBlurEffectStyle.Dark);
             var blurView = new UIVisualEffectView(blur);
             blurView.Frame = new CGRect(0, 0, window.Frame.Width, window.Frame.Height);
+            blurView.AutoresizingMask = UIViewAutoresizing.All;
 
-            var alertView = new BlurredAlertView(text);
-            alertView.Frame = new CGRect(0, 0, blurView.Frame.Width, blurView.Frame.Height);
-
-            blurView.ContentView.Add(alertView);
+            blurView.ContentView.Add(alertView.View);
             blurView.Alpha = 0;
+            blurView.AutoresizingMask = UIViewAutoresizing.All;
             window.Add(blurView);
 
-            UIView.Animate(0.4, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 1, null);
+            UIView.Animate(0.3, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 1, null);
 
             alertView._button.TouchUpInside += (sender, e) =>
-                UIView.Animate(0.4, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 0, () => {
+                UIView.Animate(0.3, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 0, () => {
                     blurView.RemoveFromSuperview();
+                    alertView.View.RemoveFromSuperview();
                     dismissed();
                 });
 
-            return blurView;
+            return null;
         }
 
         private BlurredAlertView(string text)
-            : base(new CGRect(0, 0, 320f, 480f))
         {
             _label = new UILabel();
             _label.Lines = 0;
@@ -46,14 +46,12 @@ namespace CodeHub.iOS.ViewComponents
             _label.TextColor = UIColor.White;
 
             _button = new UIButton(UIButtonType.Custom);
-            _button.Frame = new CGRect(0, 0, 100f, 44f);
 
             var buttonLabel = new UILabel();
             buttonLabel.Text = "Ok";
             buttonLabel.Font = UIFont.PreferredBody.MakeBold();
             buttonLabel.TextColor = UIColor.White;
             buttonLabel.SizeToFit();
-            buttonLabel.Center = new CGPoint(_button.Frame.Width / 2, _button.Frame.Height / 2);
             buttonLabel.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
 
             _button.Add(buttonLabel);
@@ -62,22 +60,29 @@ namespace CodeHub.iOS.ViewComponents
             _button.Layer.BorderWidth = 1f;
             _button.Layer.CornerRadius = 6f;
             _button.Layer.MasksToBounds = true;
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            View.BackgroundColor = UIColor.Clear;
 
             Add(_label);
             Add(_button);
-        }
 
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
+            View.ConstrainLayout(() => 
+                _label.Frame.Width <= 360f &&
+                _label.Frame.Left >= View.Frame.Left + 20f &&
+                _label.Frame.Right <= View.Frame.Right - 20f &&
+                _label.Frame.GetCenterX() == View.Frame.GetCenterX() &&
+                _label.Frame.GetCenterY() == View.Frame.GetCenterY() - 30f &&
 
-            _label.Frame = new CGRect(0, 0, 280f, Bounds.Height);
-            _label.SizeToFit();
-
-            _label.Center = new CGPoint(Bounds.Width / 2, Bounds.Height / 2 - _label.Frame.Height / 4);
-
-            _button.Frame = new CGRect(0, 0, 200f, 44f);
-            _button.Center = new CGPoint(Bounds.Width / 2f, _label.Frame.Bottom + _button.Frame.Height + 20f);
+                _button.Frame.Width == 140f &&
+                _button.Frame.Height == 44f &&
+                _button.Frame.GetCenterX() == View.Frame.GetCenterX() &&
+                _button.Frame.Top == _label.Frame.Bottom + 30f
+            );
         }
     }
 }
