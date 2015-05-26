@@ -410,10 +410,10 @@ namespace CodeHub.Core.ViewModels.Repositories
             if (!IsWatched.HasValue)
                 return;
 	
-	        if (IsWatched.Value)
-				await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].StopWatching());
-	        else
-				await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Watch());
+            if (IsWatched.Value)
+                await ApplicationService.GitHubClient.Activity.Watching.UnwatchRepo(RepositoryOwner, RepositoryName);
+            else
+                await ApplicationService.GitHubClient.Activity.Watching.WatchRepo(RepositoryOwner, RepositoryName, new Octokit.NewSubscription { Subscribed = true });
 
             if (Watchers.HasValue)
                 Watchers += (IsWatched.Value ? -1 : 1);
@@ -426,9 +426,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 		        return;
 
             if (IsStarred.Value)
-                await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Unstar());
+                await ApplicationService.GitHubClient.Activity.Starring.RemoveStarFromRepo(RepositoryOwner, RepositoryName);
             else
-                await ApplicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Star());
+                await ApplicationService.GitHubClient.Activity.Starring.StarRepo(RepositoryOwner, RepositoryName);
 
             if (Stargazers.HasValue)
                 Stargazers += (IsStarred.Value ? -1 : 1);

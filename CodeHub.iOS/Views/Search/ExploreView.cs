@@ -45,14 +45,15 @@ namespace CodeHub.iOS.Views.Search
                     TableView.Source = new UserTableViewSource(TableView, ViewModel.Users);
             });
 
+            this.WhenAnyValue(x => x.ViewModel.SearchFilter).Subscribe(x => {
+                _viewSegment.SelectedSegment = (int)x;
+                TableView.ScrollRectToVisible(new CGRect(0, 0, 1, 1), false);
+                searchBar.BecomeFirstResponder();
+            });
+
             this.WhenActivated(d => {
                 d(valueChanged.Subscribe(_ => ViewModel.SearchFilter = (ExploreViewModel.SearchType)(int)_viewSegment.SelectedSegment));
-                d(this.WhenAnyValue(x => x.ViewModel.SearchFilter).Subscribe(x => {
-                    _viewSegment.SelectedSegment = (int)x;
-                    TableView.ScrollRectToVisible(new CGRect(0, 0, 1, 1), false);
-                    searchBar.BecomeFirstResponder();
-                }));
-
+       
                 d(searchDelegate.SearchTextChanging.Subscribe(x => ViewModel.SearchText = x));
                 d(this.WhenAnyValue(x => x.ViewModel.SearchText).Subscribe(x => searchBar.Text = x));
                 d(searchDelegate.SearchTextChanged.Subscribe(x => ViewModel.SearchCommand.ExecuteIfCan()));

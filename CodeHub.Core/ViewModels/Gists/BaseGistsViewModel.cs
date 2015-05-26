@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.Gists
             InternalGists = new ReactiveList<GistModel>();
             Gists = InternalGists.CreateDerivedCollection(
                 x => CreateGistItemViewModel(x),
-                filter: x => x.Description.ContainsKeyword(SearchKeyword),
+                filter: x => x.Description.ContainsKeyword(SearchKeyword) || GetGistTitle(x).ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
@@ -48,11 +48,9 @@ namespace CodeHub.Core.ViewModels.Gists
 
         private GistItemViewModel CreateGistItemViewModel(GistModel gist)
         {
-            var title = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
+            var title = GetGistTitle(gist);
             var description = string.IsNullOrEmpty(gist.Description) ? "Gist " + gist.Id : gist.Description;
             var imageUrl = (gist.Owner == null) ? null : gist.Owner.AvatarUrl;
-            if (gist.Files.Count > 0)
-                title = gist.Files.First().Key;
 
             return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, _ =>
             {
@@ -61,6 +59,14 @@ namespace CodeHub.Core.ViewModels.Gists
                 vm.Gist = gist;
                 NavigateTo(vm);
             });
+        }
+
+        private static string GetGistTitle(GistModel gist)
+        {
+            var title = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
+            if (gist.Files.Count > 0)
+                title = gist.Files.First().Key;
+            return title;
         }
     }
 }
