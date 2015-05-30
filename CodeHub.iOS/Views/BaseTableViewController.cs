@@ -106,7 +106,6 @@ namespace CodeHub.iOS.Views
         {
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
             var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
-            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
 
             if (iLoadableViewModel == null)
                 return;
