@@ -7,6 +7,7 @@ using CodeHub.iOS.TableViewSources;
 using ReactiveUI;
 using UIKit;
 using System.Reactive;
+using CodeHub.iOS.ViewComponents;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -21,6 +22,8 @@ namespace CodeHub.iOS.Views.Issues
 
         protected IssueModifyView()
         {
+            _descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
+
             this.WhenAnyValue(x => x.ViewModel.GoToAssigneesCommand)
                 .Switch()
                 .Subscribe(_ => ShowAssigneeSelector());

@@ -15,6 +15,14 @@
                 return false;
             }
         }
+
+        public static T GetOrDefault<T>(this IDefaultValueService @this, string key, T defaultValue)
+        {
+            T val;
+            if (@this.TryGet(key, out val))
+                return val;
+            return defaultValue;
+        }
     }
 }
 

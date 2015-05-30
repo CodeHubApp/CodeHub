@@ -108,6 +108,7 @@ namespace CodeHub.iOS.DialogElements
                     ScrollEnabled = false,
                     Placeholder = placeholder
                 };
+
                 TextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
                 TextView.BackgroundColor = UIColor.Clear;
                 TextView.Font = InputFont;

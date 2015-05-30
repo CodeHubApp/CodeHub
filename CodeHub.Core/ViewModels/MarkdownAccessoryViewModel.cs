@@ -10,12 +10,26 @@ namespace CodeHub.Core.ViewModels
 {
     public class MarkdownAccessoryViewModel : ReactiveObject
     {
+        private const string IMGUR_UPLOAD_WARN = "IMGUR_UPLOAD_WARN";
+        private const string IMGUR_UPLOAD_WARN_MESSAGE = 
+            "Because GitHub's image upload API is not public images you upload here are hosted by Imgur. " + 
+            "Please be aware of this when posting confidential information";
+
         public IReactiveCommand<string> PostToImgurCommand { get; private set; }
 
-        public MarkdownAccessoryViewModel(IImgurService imgurService, IMediaPickerFactory mediaPicker, IAlertDialogFactory alertDialogFactory)
+        public MarkdownAccessoryViewModel(
+            IImgurService imgurService, 
+            IMediaPickerFactory mediaPicker, 
+            IAlertDialogFactory alertDialogFactory,
+            IDefaultValueService defaultValueService)
         {
-            PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            PostToImgurCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                if (!defaultValueService.GetOrDefault(IMGUR_UPLOAD_WARN, false))
+                {
+                    defaultValueService.Set(IMGUR_UPLOAD_WARN, true);
+                    await alertDialogFactory.Alert("Please Read!", IMGUR_UPLOAD_WARN_MESSAGE);
+                }
+
                 var photo = await mediaPicker.PickPhoto();
                 var memoryStream = new MemoryStream();
                 await photo.Save(Splat.CompressedBitmapFormat.Jpeg, 0.8f, memoryStream);

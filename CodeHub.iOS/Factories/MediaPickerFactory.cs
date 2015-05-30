@@ -43,7 +43,7 @@ namespace CodeHub.iOS.Factories
                     imagePicker.DismissViewController(true, null);
                     UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
 
-                    //tcs.SetResult(originalImage.FromNative());
+                    tcs.SetResult(originalImage.FromNative());
                 }
                 catch (Exception ex)
                 {
