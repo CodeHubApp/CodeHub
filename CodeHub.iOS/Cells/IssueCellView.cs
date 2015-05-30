@@ -60,7 +60,7 @@ namespace CodeHub.iOS.Cells
                     Label1.Text = x.State;
                     Label2.Text = x.Comments == 1 ? "1 comment" : x.Comments + " comments";
                     Label3.Text = x.Assignee;
-                    Label4.Text = x.UpdatedAt.LocalDateTime.Humanize();
+                    Label4.Text = x.UpdatedAt.Humanize();
                     Number.Text = "#" + x.Number;
                     IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
                 });

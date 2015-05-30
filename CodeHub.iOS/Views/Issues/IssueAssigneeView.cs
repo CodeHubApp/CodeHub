@@ -3,6 +3,8 @@ using System;
 using UIKit;
 using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.TableViewSources;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -17,7 +19,10 @@ namespace CodeHub.iOS.Views.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new IssueAssigneeTableViewSource(TableView, ViewModel.Assignees);
+
+            this.WhenAnyValue(x => x.ViewModel.Assignees)
+                .Select(x => new IssueAssigneeTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Octokit;
 using System.Reactive.Linq;
 using System.Linq;
-using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -25,8 +24,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IssueMilestonesViewModel(
             Func<Task<IReadOnlyList<Milestone>>> loadMilestones,
             Func<Task<Milestone>> currentMilestone,
-            Func<Milestone, Task> updateIssue
-        )
+            Func<Milestone, Task> updateIssue)
         {
             DismissCommand = ReactiveCommand.Create();
 

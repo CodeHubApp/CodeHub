@@ -11,7 +11,6 @@ using GitHubSharp;
 using CodeHub.Core.Messages;
 using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
-using Splat;
 
 namespace CodeHub.Core.ViewModels.App
 {

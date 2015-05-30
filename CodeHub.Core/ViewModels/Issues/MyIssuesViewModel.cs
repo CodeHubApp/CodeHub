@@ -48,9 +48,10 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToFilterCommand { get; private set; }
 
-        public MyIssuesViewModel(ISessionService applicationService)
+        public MyIssuesViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
+            _applicationService = sessionService;
 
             Title = "My Issues";
             Filter = MyIssuesFilterModel.CreateOpenFilter();
@@ -92,6 +93,18 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 NavigateTo(vm);
             });
+        }
+
+        protected override bool IssueFilter(GitHubSharp.Models.IssueModel issue)
+        {
+            if (Filter == null)
+                return base.IssueFilter(issue);
+
+            if (Filter.Open == IssueState.Open)
+                return base.IssueFilter(issue) && string.Equals(issue.State, "open", StringComparison.OrdinalIgnoreCase);
+            if (Filter.Open == IssueState.Closed)
+                return base.IssueFilter(issue) && string.Equals(issue.State, "closed", StringComparison.OrdinalIgnoreCase);
+            return base.IssueFilter(issue);
         }
 
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.IssueModel>> CreateRequest()

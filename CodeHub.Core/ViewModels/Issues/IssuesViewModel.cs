@@ -51,10 +51,20 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-	    public IssuesViewModel(ISessionService applicationService)
+        protected override bool IssueFilter(GitHubSharp.Models.IssueModel issue)
+        {
+            if (Filter == null)
+                return base.IssueFilter(issue);
+
+            var state = string.Equals(issue.State, "open", StringComparison.OrdinalIgnoreCase) == Filter.Open;
+            return base.IssueFilter(issue) && state;
+        }
+
+	    public IssuesViewModel(ISessionService sessionService)
+            : base(sessionService)
 	    {
-            _applicationService = applicationService;
-            _mineFilter = IssuesFilterModel.CreateMineFilter(applicationService.Account.Username);
+            _applicationService = sessionService;
+            _mineFilter = IssuesFilterModel.CreateMineFilter(sessionService.Account.Username);
 
             Filter = _openFilter;
             Title = "Issues";

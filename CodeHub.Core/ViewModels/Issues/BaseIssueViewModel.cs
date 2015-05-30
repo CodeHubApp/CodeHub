@@ -12,14 +12,21 @@ using CodeHub.Core.ViewModels.Users;
 using System.Collections.ObjectModel;
 using CodeHub.Core.Factories;
 using Splat;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel, IEnableLogger
     {
         protected readonly ReactiveList<IIssueEventItemViewModel> InternalEvents = new ReactiveList<IIssueEventItemViewModel>();
+        private readonly ISubject<Octokit.Issue> _issueUpdatedObservable = new Subject<Octokit.Issue>();
         private readonly ISessionService _applicationService;
         private readonly IMarkdownService _markdownService;
+
+        public IObservable<Octokit.Issue> IssueUpdated
+        {
+            get { return _issueUpdatedObservable.AsObservable(); }
+        }
 
         private int _id;
         public int Id 
@@ -141,6 +148,8 @@ namespace CodeHub.Core.ViewModels.Issues
             _applicationService = applicationService;
             _markdownService = markdownService;
 
+            IssueUpdated.Subscribe(x => Issue = x);
+
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
                 .Select(x => x.Item1 != null && x.Item2);
             Events = InternalEvents.CreateDerivedCollection(x => x);
@@ -227,9 +236,10 @@ namespace CodeHub.Core.ViewModels.Issues
             ToggleStateCommand = ReactiveCommand.CreateAsyncTask(issuePresenceObservable, async t => {
                 try
                 {
-                    Issue = await applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, new Octokit.IssueUpdate {
+                    var updatedIssue = await applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, new Octokit.IssueUpdate {
                         State = (Issue.State == Octokit.ItemState.Open) ? Octokit.ItemState.Closed : Octokit.ItemState.Open
                     });
+                    _issueUpdatedObservable.OnNext(updatedIssue);
                 }
                 catch (Exception e)
                 {
@@ -267,7 +277,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.RepositoryName = RepositoryName;
                 vm.Id = Id;
                 vm.Issue = Issue;
-                vm.SaveCommand.Subscribe(x => Issue = x);
+                vm.SaveCommand.Subscribe(_issueUpdatedObservable.OnNext);
                 NavigateTo(vm);
             });
 

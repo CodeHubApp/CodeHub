@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using CodeHub.Core.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -27,22 +28,22 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
-        private Octokit.User _assignedUser;
-        public Octokit.User AssignedUser
+        private User _assignedUser;
+        public User AssignedUser
         {
             get { return _assignedUser; }
             protected set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
         }
 
-        private Octokit.Milestone _assignedMilestone;
-        public Octokit.Milestone AssignedMilestone
+        private Milestone _assignedMilestone;
+        public Milestone AssignedMilestone
         {
             get { return _assignedMilestone; }
             protected set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
         }
 
-        private IReadOnlyList<Octokit.Label> _assignedLabels;
-        public IReadOnlyList<Octokit.Label> AssignedLabels 
+        private IReadOnlyList<Label> _assignedLabels;
+        public IReadOnlyList<Label> AssignedLabels 
         {
             get { return _assignedLabels; }
             protected set { this.RaiseAndSetIfChanged(ref _assignedLabels, value); }
@@ -73,7 +74,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 		public string RepositoryName { get; set; }
 
-        public IReactiveCommand<Octokit.Issue> SaveCommand { get; private set; }
+        public IReactiveCommand<Issue> SaveCommand { get; private set; }
 
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
@@ -84,29 +85,33 @@ namespace CodeHub.Core.ViewModels.Issues
             GoToAssigneesCommand = ReactiveCommand.Create();
             GoToLabelsCommand = ReactiveCommand.Create();
             GoToMilestonesCommand = ReactiveCommand.Create();
+            AssignedLabels = new ReactiveList<Label>();
+
+            // Make sure repeated access is cached with Lazy
+            var getAssignees = new Lazy<Task<IReadOnlyList<User>>>(() => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
+            var getMilestones = new Lazy<Task<IReadOnlyList<Milestone>>>(() => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
+            var getLables = new Lazy<Task<IReadOnlyList<Label>>>(() => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
 
             Assignees = new IssueAssigneeViewModel(
-                () => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName),
+                () => getAssignees.Value,
                 () => Task.FromResult(AssignedUser),
                 x => Task.FromResult(AssignedUser = x));
 
             Milestones = new IssueMilestonesViewModel(
-                () => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName),
+                () => getMilestones.Value,
                 () => Task.FromResult(AssignedMilestone),
                 x => Task.FromResult(AssignedMilestone = x));
 
-            AssignedLabels = new ReactiveList<Octokit.Label>();
-
             Labels = new IssueLabelsViewModel(
-                () => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName),
-                () => Task.FromResult(new ReadOnlyCollection<Octokit.Label>(AssignedLabels.ToList()) as IReadOnlyList<Octokit.Label>),
+                () => getLables.Value,
+                () => Task.FromResult(new ReadOnlyCollection<Label>(AssignedLabels.ToList()) as IReadOnlyList<Label>),
                 x => {
                     AssignedLabels = x;
                     return Task.FromResult(0);
                 });
 
             Labels.SelectedLabels.Changed
-                .Select(_ => new ReadOnlyCollection<Octokit.Label>(Labels.SelectedLabels.ToList()))
+                .Select(_ => new ReadOnlyCollection<Label>(Labels.SelectedLabels.ToList()))
                 .Subscribe(x => AssignedLabels = x);
 
 
@@ -117,8 +122,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
 
             // This is because the stupid ReactiveUI issue with the tableview :(
-            SaveCommand.Delay(TimeSpan.FromMilliseconds(400)).Take(1).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ =>
-                Dismiss());
+            SaveCommand.Subscribe(_ => Dismiss());
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
@@ -137,7 +141,7 @@ namespace CodeHub.Core.ViewModels.Issues
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
 	    }
 
-        protected abstract Task<Octokit.Issue> Save();
+        protected abstract Task<Issue> Save();
 
         protected abstract Task<bool> Discard();
     }

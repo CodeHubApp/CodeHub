@@ -106,7 +106,7 @@ namespace CodeHub.iOS.Cells
                 .IsNotNull()
                 .Subscribe(x =>
                 {
-                    Time.Text = x.Created.UtcDateTime.Humanize();
+                    Time.Text = x.Created.Humanize();
 
                     ActionImage.Image = _eventToImage.ContainsKey(x.Type) ? 
                         _eventToImage[x.Type].ToImage() : Octicon.Alert.ToImage();
