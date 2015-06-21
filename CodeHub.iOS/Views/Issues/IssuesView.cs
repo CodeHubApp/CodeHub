@@ -5,6 +5,7 @@ using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.ViewComponents;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -25,16 +26,19 @@ namespace CodeHub.iOS.Views.Issues
             var filterBarButtonItem = new UIBarButtonItem(Images.Filter, UIBarButtonItemStyle.Plain, 
                 (s, e) => ViewModel.GoToCustomFilterCommand.ExecuteIfCan());
 
-            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
-                .Subscribe(x => filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter);
-
             this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand, x => x.ViewModel.GoToCustomFilterCommand)
                 .Select(x => new [] { x.Item1.ToBarButtonItem(UIBarButtonSystemItem.Add), filterBarButtonItem })
                 .Subscribe(x => NavigationItem.RightBarButtonItems = x);
 
-            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
-                .Where(x => x)
-                .Subscribe(x => _viewSegment.SelectedSegment = -1);
+            this.WhenAnyValue(x => x.ViewModel.FilterSelection)
+                .Select(x => x == IssuesViewModel.IssueFilterSelection.Custom)
+                .Subscribe(x => {
+                    filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter;
+                    if (x) _viewSegment.SelectedSegment = -1;
+            });
+
+            this.WhenAnyObservable(x => x.ViewModel.GoToCustomFilterCommand)
+                .Subscribe(_ => ShowFilterView());
 
             NavigationItem.TitleView = _viewSegment;
             TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
@@ -64,6 +68,13 @@ namespace CodeHub.iOS.Views.Issues
                     ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Mine;
                     break;
             }
+        }
+
+        private void ShowFilterView()
+        {
+            var controller = new RepositoryIssuesFilterView { ViewModel = ViewModel.Filter };
+            var navigation = new ThemedNavigationController(controller);
+            PresentViewController(navigation, true, null);
         }
     }
 }

@@ -44,9 +44,9 @@ namespace CodeHub.Core.ViewModels.Issues
                 .Subscribe(x => {
                     Title = string.Format("Edit Issue #{0}", x.Number);
                     Subject = x.Title;
-                    AssignedUser = x.Assignee;
-                    AssignedMilestone = x.Milestone;
-                    AssignedLabels = x.Labels;
+                    Assignees.Selected = x.Assignee;
+                    Milestones.Selected = x.Milestone;
+                    Labels.Selected = x.Labels;
                     Content = x.Body;
                     IsOpen = x.State == Octokit.ItemState.Open;
     	        });
@@ -62,9 +62,9 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
             try
             {
-                var labels = AssignedLabels.With(x => x.Select(y => y.Name).ToArray());
-                var milestone = AssignedMilestone.With(x => (int?)x.Number);
-                var user = AssignedUser.With(x => x.Login);
+                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
+                var milestone = Milestones.Selected?.Number;
+                var user = Assignees.Selected?.Login;
                 var issueUpdate = new Octokit.IssueUpdate {
                     Body = Content,
                     Assignee = user,

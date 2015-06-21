@@ -16,54 +16,47 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReadOnlyReactiveList<IssueLabelItemViewModel> Labels { get; private set; }
 
-        public IReactiveList<Label> SelectedLabels { get; private set; }
+        private IReadOnlyList<Label> _selected;
+        public IReadOnlyList<Label> Selected
+        {
+            get { return _selected; }
+            set { this.RaiseAndSetIfChanged(ref _selected, value); }
+        }
 
         public IReactiveCommand SelectLabelsCommand { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IssueLabelsViewModel(
-            Func<Task<IReadOnlyList<Label>>> loadLabels,
-            Func<Task<IReadOnlyList<Label>>> currentLabels,
-            Func<IReadOnlyList<Label>, Task> updateIssue)
+        public IssueLabelsViewModel(Func<Task<IReadOnlyList<Label>>> loadLabels)
 	    {
             var labels = new ReactiveList<Label>();
-            SelectedLabels = new ReactiveList<Label>();
+            Selected = new ReactiveList<Label>();
             Labels = labels.CreateDerivedCollection(x => 
             {
                 var vm = new IssueLabelItemViewModel(x);
-                vm.IsSelected = SelectedLabels.Any(y => string.Equals(y.Name, x.Name));
-                vm.GoToCommand
-                    .Select(_ => x)
-                    .Where(y => vm.IsSelected)
-                    .Where(y => SelectedLabels.All(l => l.Url != y.Url))
-                    .Subscribe(SelectedLabels.Add);
-                vm.GoToCommand
-                    .Select(_ => x)
-                    .Where(y => !vm.IsSelected)
-                    .Select(y => SelectedLabels.Where(l => l.Url == y.Url).ToArray())
-                    .Subscribe(SelectedLabels.RemoveAll);
+                vm.IsSelected = Selected.Any(y => string.Equals(y.Name, x.Name));
+//                vm.GoToCommand
+//                    .Select(_ => x)
+//                    .Where(y => vm.IsSelected)
+//                    .Where(y => Selected.All(l => l.Url != y.Url))
+//                    .Subscribe(Selected.Add);
+//                vm.GoToCommand
+//                    .Select(_ => x)
+//                    .Where(y => !vm.IsSelected)
+//                    .Select(y => Selected.Where(l => l.Url == y.Url).ToArray())
+//                    .Subscribe(Selected.RemoveAll);
                 return vm;
             });
 
-            SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(t =>
-	        {
-                var selectedLabelsUrl = SelectedLabels.Select(x => x.Url).ToArray();
+            SelectLabelsCommand = ReactiveCommand.CreateAsyncTask(t => {
+                var selectedLabelsUrl = Selected.Select(x => x.Url).ToArray();
                 var prevSelectedLabelsUrl = _previouslySelectedLabels.Select(x => x.Url).ToArray();
                 var intersect = selectedLabelsUrl.Intersect(prevSelectedLabelsUrl).ToArray();
                 var different = selectedLabelsUrl.Length != prevSelectedLabelsUrl.Length || intersect.Length != selectedLabelsUrl.Length;
-                return different ? updateIssue(new ReadOnlyCollection<Label>(SelectedLabels)) : Task.FromResult(0);
+                return Task.FromResult(0); //different ? updateIssue(new ReadOnlyCollection<Label>(Selected)) : Task.FromResult(0);
 	        });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                var currentlySelectedLabels = (await currentLabels()) ?? Enumerable.Empty<Label>();
-                SelectedLabels.Reset(currentlySelectedLabels);
-
-                _previouslySelectedLabels.Clear();
-                foreach (var l in currentlySelectedLabels)
-                    _previouslySelectedLabels.Add(l);
-
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 labels.Reset(await loadLabels());
             });
 	    }

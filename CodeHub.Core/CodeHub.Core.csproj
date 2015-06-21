@@ -40,7 +40,6 @@
     <Compile Include="Data\TrendingRepository.cs" />
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
-    <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
@@ -231,6 +230,9 @@
     <Compile Include="ViewModels\ComposerViewModel.cs" />
     <Compile Include="ViewModels\IFileDiffViewModel.cs" />
     <Compile Include="ViewModels\FileDiffCommentViewModel.cs" />
+    <Compile Include="ViewModels\Issues\RepositoryIssuesFilterViewModel.cs" />
+    <Compile Include="Filters\IssueAssigneeFilter.cs" />
+    <Compile Include="Filters\IssueMilestoneFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -286,14 +288,14 @@
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Portable-Net45+Win8+WP8+WPA81\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.12.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.2\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.36.0\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.13.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

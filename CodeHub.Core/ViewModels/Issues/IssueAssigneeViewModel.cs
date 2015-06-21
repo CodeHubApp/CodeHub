@@ -11,9 +11,12 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAssigneeViewModel : ReactiveObject, ILoadableViewModel, IProvidesSearchKeyword
     {
-        private User _selectedUser;
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        private User _selected;
+        public User Selected
+        {
+            get { return _selected; }
+            set { this.RaiseAndSetIfChanged(ref _selected, value); }
+        }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -24,29 +27,25 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReadOnlyReactiveList<IssueAssigneeItemViewModel> Assignees { get; private set; }
 
+        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+
         public IReactiveCommand<object> DismissCommand { get; private set; }
 
         public IssueAssigneeViewModel(
-            Func<Task<IReadOnlyList<User>>> loadAssignees,
-            Func<Task<User>> loadCurrentlyAssigned,
-            Func<User, Task> updateIssue
-        )
+            Func<Task<IReadOnlyList<User>>> loadAssignees)
         {
             DismissCommand = ReactiveCommand.Create();
 
-            var derivedFunc = new Func<User, IssueAssigneeItemViewModel>(x =>
-            {
+            var derivedFunc = new Func<User, IssueAssigneeItemViewModel>(x => {
                 var vm = new IssueAssigneeItemViewModel(x);
-                if (_selectedUser != null)
-                    vm.IsSelected = x.Id == _selectedUser.Id;
+                vm.IsSelected = x.Id == Selected?.Id;
 
                 vm.GoToCommand
                     .Select(_ => vm.IsSelected ? x : null)
-                    .Subscribe(user => 
-                    {
+                    .Subscribe(user =>  {
                         foreach (var a in Assignees.Where(y => y != vm))
                             a.IsSelected = false;
-                        updateIssue(user).ToBackground();
+                        Selected = user;
                         DismissCommand.ExecuteIfCan();
                     });
                 return vm;
@@ -60,7 +59,6 @@ namespace CodeHub.Core.ViewModels.Issues
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
             {
-                _selectedUser = (await loadCurrentlyAssigned());
                 assignees.Reset(await loadAssignees());
             });
         }

@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesFilterViewModel : BaseViewModel
     {
-        public IReactiveCommand<object> SaveFilter { get; private set; }
+        public IReactiveCommand<object> SaveCommand { get; private set; }
 
         public IReactiveCommand<object> DismissCommand { get; private set; }
 
@@ -62,7 +62,7 @@ namespace CodeHub.Core.ViewModels.Issues
             SortType = IssueSort.None;
             FilterType = IssueFilterState.All;
 
-            SaveFilter = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
+            SaveCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
             DismissCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
 
             SelectStateCommand = ReactiveCommand.CreateAsyncTask(async sender => {

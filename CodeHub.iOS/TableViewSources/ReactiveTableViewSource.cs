@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels;
 using ReactiveUI;
 using System.Linq;
 using System.Reactive.Linq;
+using CoreGraphics;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -13,6 +14,12 @@ namespace CodeHub.iOS.TableViewSources
     {
         private readonly ISubject<Unit> _requestMoreSubject = new Subject<Unit>();
         private readonly ISubject<bool> _isEmptySubject = new BehaviorSubject<bool>(true);
+        private readonly ISubject<CGPoint> _scrollSubject = new Subject<CGPoint>();
+
+        public IObservable<CGPoint> DidScroll
+        {
+            get { return _scrollSubject.AsObservable(); }
+        }
 
         public IObservable<Unit> RequestMore
         {
@@ -22,6 +29,11 @@ namespace CodeHub.iOS.TableViewSources
         public IObservable<bool> IsEmpty
         {
             get { return _isEmptySubject; }
+        }
+
+        public override void Scrolled(UIScrollView scrollView)
+        {
+            _scrollSubject.OnNext(scrollView.ContentOffset);
         }
 
         protected ReactiveTableViewSource(UITableView tableView, nfloat sizeHint)

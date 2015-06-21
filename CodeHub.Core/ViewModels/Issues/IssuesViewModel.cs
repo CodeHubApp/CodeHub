@@ -3,116 +3,95 @@ using System.Reactive.Linq;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using ReactiveUI;
+using CodeHub.Core.Factories;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssuesViewModel : BaseIssuesViewModel
     {
-        private readonly ISessionService _applicationService;
-        private readonly IssuesFilterModel _openFilter = IssuesFilterModel.CreateOpenFilter();
-        private readonly IssuesFilterModel _closedFilter = IssuesFilterModel.CreateClosedFilter();
-        private readonly IssuesFilterModel _mineFilter;
+        private readonly ISessionService _sessionService;
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
         public IReactiveCommand<object> GoToNewIssueCommand { get; private set; }
 
         public IReactiveCommand<object> GoToCustomFilterCommand { get; private set; }
 
-        private IssuesFilterModel _filter;
-        private IssuesFilterModel Filter
-        {
-            get { return _filter; }
-            set { this.RaiseAndSetIfChanged(ref _filter, value); }
-        }
+        public RepositoryIssuesFilterViewModel Filter { get; private set; }
 
-        private bool _customFilterEnabled;
-        public bool CustomFilterEnabled
-        {
-            get { return _customFilterEnabled; }
-            set { this.RaiseAndSetIfChanged(ref _customFilterEnabled, value); }
-        }
-
-        private readonly ObservableAsPropertyHelper<IssueFilterSelection> _filterSelection;
+        private IssueFilterSelection _filterSelection;
         public IssueFilterSelection FilterSelection
         {
-            get { return _filterSelection.Value; }
+            get { return _filterSelection; }
             set
             {
                 if (value == IssueFilterSelection.Open)
-                    Filter = _openFilter;
+                    Filter.SetDefault(true);
                 else if (value == IssueFilterSelection.Closed)
-                    Filter = _closedFilter;
+                    Filter.SetDefault(false);
                 else if (value == IssueFilterSelection.Mine)
-                    Filter = _mineFilter;
-                CustomFilterEnabled = value == IssueFilterSelection.Custom;
+                    Filter.SetDefault(true, _sessionService.Account.Username);
+                this.RaiseAndSetIfChanged(ref _filterSelection, value);
             }
         }
 
         protected override bool IssueFilter(GitHubSharp.Models.IssueModel issue)
         {
-            if (Filter == null)
+            IssueState issueState;
+            if (!Enum.TryParse(issue.State, true, out issueState))
                 return base.IssueFilter(issue);
-
-            var state = string.Equals(issue.State, "open", StringComparison.OrdinalIgnoreCase) == Filter.Open;
-            return base.IssueFilter(issue) && state;
+            
+            return base.IssueFilter(issue) && (Filter.State == issueState);
         }
 
-	    public IssuesViewModel(ISessionService sessionService)
+        public IssuesViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory)
             : base(sessionService)
 	    {
-            _applicationService = sessionService;
-            _mineFilter = IssuesFilterModel.CreateMineFilter(sessionService.Account.Username);
+            _sessionService = sessionService;
+            Filter = new RepositoryIssuesFilterViewModel(sessionService, actionMenuFactory);
 
-            Filter = _openFilter;
             Title = "Issues";
-
-            _filterSelection = this.WhenAnyValue(x => x.Filter)
-                .Select(x =>
-                {
-                    if (x == null || _openFilter.Equals(x))
-                        return IssueFilterSelection.Open;
-                    if (_closedFilter.Equals(x))
-                        return IssueFilterSelection.Closed;
-                    if (_mineFilter.Equals(x))
-                        return IssueFilterSelection.Mine;
-                    return IssueFilterSelection.Custom;
-                })
-                .ToProperty(this, x => x.FilterSelection);
 
             GoToNewIssueCommand = ReactiveCommand.Create();
 	        GoToNewIssueCommand.Subscribe(_ => {
 	            var vm = this.CreateViewModel<IssueAddViewModel>();
-	            vm.RepositoryOwner = RepositoryOwner;
+                vm.RepositoryOwner = RepositoryOwner;
 	            vm.RepositoryName = RepositoryName;
                 vm.SaveCommand.Subscribe(x => LoadCommand.ExecuteIfCan());
                 NavigateTo(vm);
 	        });
 
-            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ => 
-            {
+            Filter.SaveCommand.Subscribe(_ => {
                 IssuesBacking.Clear();
                 LoadCommand.ExecuteIfCan();
             });
 
             GoToCustomFilterCommand = ReactiveCommand.Create();
-            GoToCustomFilterCommand.Subscribe(_ => CustomFilterEnabled = true);
+            GoToCustomFilterCommand.Subscribe(_ => FilterSelection = IssueFilterSelection.Custom);
 	    }
+
+        public IssuesViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = Filter.RepositoryOwner = repositoryOwner;
+            RepositoryName = Filter.RepositoryName = repositoryName;
+            return this;
+        }
 
         protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.IssueModel>> CreateRequest()
         {
             var direction = Filter.Ascending ? "asc" : "desc";
-            var state = Filter.Open ? "open" : "closed";
+            var state = Filter.State.ToString().ToLower();
             var sort = Filter.SortType == IssueSort.None ? null : Filter.SortType.ToString().ToLower();
-            var labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
-            var assignee = string.IsNullOrEmpty(Filter.Assignee) ? null : Filter.Assignee;
             var creator = string.IsNullOrEmpty(Filter.Creator) ? null : Filter.Creator;
             var mentioned = string.IsNullOrEmpty(Filter.Mentioned) ? null : Filter.Mentioned;
-            var milestone = Filter.Milestone == null ? null : Filter.Milestone.Value;
+            var labels = Filter.Labels.Selected?.Count > 0 ? string.Join(",", Filter.Labels.Selected.Select(x => x.Name)) : null;
+            var milestone = Filter.Milestones.Selected?.Number.ToString();
+            var assignee = Filter.Assignees.Selected?.Login;
 
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.GetAll(
+            return _sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.GetAll(
                 sort: sort, labels: labels, state: state, direction: direction,
                 assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
         }

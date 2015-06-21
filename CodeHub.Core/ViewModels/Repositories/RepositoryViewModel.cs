@@ -247,13 +247,10 @@ namespace CodeHub.Core.ViewModels.Repositories
             });
 
             GoToIssuesCommand = ReactiveCommand.Create();
-            GoToIssuesCommand.Subscribe(_ =>
-            {
-                var vm = this.CreateViewModel<IssuesViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                NavigateTo(vm);
-            });
+            GoToIssuesCommand
+                .Select(_ => this.CreateViewModel<IssuesViewModel>())
+                .Select(x => x.Init(RepositoryOwner, RepositoryName))
+                .Subscribe(NavigateTo);
 
             GoToReadmeCommand = ReactiveCommand.Create();
             GoToReadmeCommand

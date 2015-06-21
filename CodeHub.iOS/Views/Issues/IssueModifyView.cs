@@ -48,19 +48,19 @@ namespace CodeHub.iOS.Views.Issues
 
             _milestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1);
             _milestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
+            this.WhenAnyValue(x => x.ViewModel.Milestones.Selected)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => _milestoneElement.Value = x);
 
             _assigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1);
             _assigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.AssignedUser)
+            this.WhenAnyValue(x => x.ViewModel.Assignees.Selected)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => _assigneeElement.Value = x);
 
             _labelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
             _labelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
+            this.WhenAnyValue(x => x.ViewModel.Labels.Selected)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => _labelsElement.Value = x);
 

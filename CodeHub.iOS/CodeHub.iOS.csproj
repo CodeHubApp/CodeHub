@@ -434,6 +434,7 @@
     </Compile>
     <InterfaceDefinition Include="ViewControllers\Walkthrough\FeedbackViewController.xib" />
     <Compile Include="Views\App\UpgradeView.cs" />
+    <Compile Include="Views\Issues\RepositoryIssuesFilterView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -495,23 +496,23 @@
     <Reference Include="Punchclock">
       <HintPath>..\packages\Punchclock.1.2.0\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
     </Reference>
-    <Reference Include="Flurry.Analytics.iOS">
-      <HintPath>..\packages\Flurry.Analytics.1.2.0\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="Flurry.Analytics.Portable">
       <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.12.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.2\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.36.0\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.iOS">
+      <HintPath>..\packages\Flurry.Analytics.1.2.1\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.13.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

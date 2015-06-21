@@ -79,7 +79,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 vm.Labels = Filter.Labels;
                 vm.State = Filter.Open;
                 vm.SortType = Filter.SortType;
-                vm.SaveFilter.Subscribe(__ => {
+                vm.SaveCommand.Subscribe(__ => {
                     Filter = new MyIssuesFilterModel 
                     {
                         Ascending = vm.Ascending,

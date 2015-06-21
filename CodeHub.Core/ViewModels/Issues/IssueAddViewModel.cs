@@ -25,9 +25,9 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			try
 			{
-                var labels = AssignedLabels.With(x => x.Select(y => y.Name).ToArray());
-                var milestone = AssignedMilestone.With(x => (int?)x.Number);
-                var user = AssignedUser.With(x => x.Login);
+                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
+                var milestone = Milestones.Selected?.Number;
+                var user = Assignees.Selected?.Login;
                 var newIssue = new Octokit.NewIssue(Subject) {
                     Body = Content,
                     Assignee = user,

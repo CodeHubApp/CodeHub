@@ -18,6 +18,10 @@ namespace CodeHub.iOS.Views.Issues
             this.WhenAnyValue(x => x.ViewModel.DismissCommand)
                 .Select(x => x.ToBarButtonItem(Images.Cancel))
                 .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                .Select(x => x.ToBarButtonItem(Images.Search))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()
@@ -51,7 +55,7 @@ namespace CodeHub.iOS.Views.Issues
             var filterSection = new Section("Filter") { typeElement, stateElement, labelElement };
             var orderSection = new Section("Order By") { fieldElement, ascElement };
             var searchSection = new Section();
-            searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveFilter.ExecuteIfCan());
+            searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
             source.Root.Add(filterSection, orderSection, searchSection);
         }
     }

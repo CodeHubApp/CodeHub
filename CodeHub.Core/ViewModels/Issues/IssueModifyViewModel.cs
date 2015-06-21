@@ -28,27 +28,6 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
-        private User _assignedUser;
-        public User AssignedUser
-        {
-            get { return _assignedUser; }
-            protected set { this.RaiseAndSetIfChanged(ref _assignedUser, value); }
-        }
-
-        private Milestone _assignedMilestone;
-        public Milestone AssignedMilestone
-        {
-            get { return _assignedMilestone; }
-            protected set { this.RaiseAndSetIfChanged(ref _assignedMilestone, value); }
-        }
-
-        private IReadOnlyList<Label> _assignedLabels;
-        public IReadOnlyList<Label> AssignedLabels 
-        {
-            get { return _assignedLabels; }
-            protected set { this.RaiseAndSetIfChanged(ref _assignedLabels, value); }
-        }
-
         private bool? _isCollaborator;
         public bool? IsCollaborator
         {
@@ -85,35 +64,15 @@ namespace CodeHub.Core.ViewModels.Issues
             GoToAssigneesCommand = ReactiveCommand.Create();
             GoToLabelsCommand = ReactiveCommand.Create();
             GoToMilestonesCommand = ReactiveCommand.Create();
-            AssignedLabels = new ReactiveList<Label>();
 
             // Make sure repeated access is cached with Lazy
             var getAssignees = new Lazy<Task<IReadOnlyList<User>>>(() => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
             var getMilestones = new Lazy<Task<IReadOnlyList<Milestone>>>(() => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
             var getLables = new Lazy<Task<IReadOnlyList<Label>>>(() => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
 
-            Assignees = new IssueAssigneeViewModel(
-                () => getAssignees.Value,
-                () => Task.FromResult(AssignedUser),
-                x => Task.FromResult(AssignedUser = x));
-
-            Milestones = new IssueMilestonesViewModel(
-                () => getMilestones.Value,
-                () => Task.FromResult(AssignedMilestone),
-                x => Task.FromResult(AssignedMilestone = x));
-
-            Labels = new IssueLabelsViewModel(
-                () => getLables.Value,
-                () => Task.FromResult(new ReadOnlyCollection<Label>(AssignedLabels.ToList()) as IReadOnlyList<Label>),
-                x => {
-                    AssignedLabels = x;
-                    return Task.FromResult(0);
-                });
-
-            Labels.SelectedLabels.Changed
-                .Select(_ => new ReadOnlyCollection<Label>(Labels.SelectedLabels.ToList()))
-                .Subscribe(x => AssignedLabels = x);
-
+            Assignees = new IssueAssigneeViewModel(() => getAssignees.Value);
+            Milestones = new IssueMilestonesViewModel(() => getMilestones.Value);
+            Labels = new IssueLabelsViewModel(() => getLables.Value);
 
             var canSave = this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x));
             SaveCommand = ReactiveCommand.CreateAsyncTask(canSave, _ => {
