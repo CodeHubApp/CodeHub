@@ -28,7 +28,10 @@ namespace CodeHub.iOS.Views.Accounts
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
-            this.WhenAnyValue(x => x.ViewModel.LoginUrl)
+            this.Appearing
+                .Take(1)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.LoginUrl))
+                .Switch()
                 .IsNotNull()
                 .Subscribe(LoadRequest);
 
@@ -37,7 +40,7 @@ namespace CodeHub.iOS.Views.Accounts
                 hasSeenWelcome = false;
 
             this.Appeared
-                //.Where(_ => !hasSeenWelcome)
+                .Where(_ => !hasSeenWelcome)
                 .Take(1)
                 .Subscribe(_ => 
                     BlurredAlertView.Display(OAuthWelcome, () => defaultValueService.Set(HasSeenWelcomeKey, true)));
@@ -66,7 +69,7 @@ namespace CodeHub.iOS.Views.Accounts
 			base.OnLoadError(sender, e);
 
 			//Frame interrupted error
-			if (e.Error.Code == 102)
+            if (e.Error.Code == 102 || e.Error.Code == -999)
 				return;
 
             _alertDialogService.Alert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription).ToBackground();
@@ -101,7 +104,7 @@ namespace CodeHub.iOS.Views.Accounts
                 foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
                     Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
                 Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-    			Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(loginUrl)));
+                GoUrl(new Foundation.NSUrl(loginUrl));
             }
             catch (Exception e)
             {
