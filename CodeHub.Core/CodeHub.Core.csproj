@@ -258,9 +258,6 @@
     <Reference Include="Xamarin.Forms.Labs.Cryptography">
       <HintPath>..\packages\Xamarin.Forms.Labs.Cryptography.1.2.0\lib\portable-net45+netcore45+wp8+MonoAndroid1+MonoTouch1\Xamarin.Forms.Labs.Cryptography.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.dll</HintPath>
     </Reference>
@@ -296,6 +293,9 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.13.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
