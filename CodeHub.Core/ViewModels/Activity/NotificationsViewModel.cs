@@ -100,7 +100,7 @@ namespace CodeHub.Core.ViewModels.Activity
                 .Select(_ => _notifications.Count)
                 .Subscribe(_notificationCount.OnNext);
 
-            this.WhenAnyValue(x => x.ActiveFilter).Subscribe(x =>
+            this.WhenAnyValue(x => x.ActiveFilter).Skip(1).Subscribe(x =>
             {
                 _notifications.Clear();
                 LoadCommand.ExecuteIfCan();

@@ -216,6 +216,9 @@ namespace CodeHub.iOS.DialogElements
 				entry.ValueChanged += delegate {
 					FetchValue ();
 				};
+                entry.EditingChanged += delegate {
+                    FetchValue ();
+                };
 				entry.Ended += delegate {                                        
 					FetchValue ();
 					if (EntryEnded != null) {

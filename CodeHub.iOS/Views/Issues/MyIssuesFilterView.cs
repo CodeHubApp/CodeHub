@@ -33,30 +33,33 @@ namespace CodeHub.iOS.Views.Issues
 
             var typeElement = new StringElement("Type", () => ViewModel.SelectFilterTypeCommand.ExecuteIfCan());
             typeElement.Style = UITableViewCellStyle.Value1;
-            this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize());
 
             var stateElement = new StringElement("State", () => ViewModel.SelectStateCommand.ExecuteIfCan());
             stateElement.Style = UITableViewCellStyle.Value1;
-            this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize());
 
             var labelElement = new EntryElement("Labels", "bug,ui,@user", string.Empty) {
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
             labelElement.Changed += (sender, e) => ViewModel.Labels = labelElement.Value;
-            this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x);
 
             var fieldElement = new StringElement("Field", () => ViewModel.SelectSortCommand.ExecuteIfCan());
             fieldElement.Style = UITableViewCellStyle.Value1;
-            this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize());
 
             var ascElement = new BooleanElement("Ascending", false, x => ViewModel.Ascending = x.Value);
-            this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x);
 
             var filterSection = new Section("Filter") { typeElement, stateElement, labelElement };
             var orderSection = new Section("Order By") { fieldElement, ascElement };
             var searchSection = new Section();
             searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
             source.Root.Add(filterSection, orderSection, searchSection);
+
+            this.WhenActivated(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x));
+            });
         }
     }
 }

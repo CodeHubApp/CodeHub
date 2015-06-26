@@ -34,9 +34,11 @@ namespace CodeHub.iOS.Views.Activity
             _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => StartEditing());
             _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) => StopEditing());
 
-            this.WhenActivated(d =>
-            {
-                d(this.WhenAnyValue(x => x.ViewModel.GroupedNotifications)
+            var groupedNotificationsObservable = this.WhenAnyValue(x => x.ViewModel.GroupedNotifications).IsNotNull();
+
+            this.WhenActivated(d => {
+                
+                d(groupedNotificationsObservable
                     .SelectMany(x => x)
                     .SelectMany(x => x.Notifications)
                     .Select(x => x.WhenAnyValue(y => y.IsSelected))
@@ -48,11 +50,11 @@ namespace CodeHub.iOS.Views.Activity
                         _markButton.Title = x ? "Mark Selected as Read" : "Read All as Read";
                     }));
 
-                d(this.WhenAnyValue(x => x.ViewModel.GroupedNotifications)
+                d(groupedNotificationsObservable
                     .Where(x => x.Count == 0 && TableView.Editing)
                     .Subscribe(_ => StopEditing()));
 
-                d(this.WhenAnyValue(x => x.ViewModel.GroupedNotifications)
+                d(groupedNotificationsObservable
                     .Subscribe(x => _editButton.Enabled = x.Count > 0));
 
                 d(this.WhenAnyValue(x => x.ViewModel.ActiveFilter)

@@ -20,15 +20,13 @@ namespace CodeHub.iOS.Views.Gists
             this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
             _descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = _descriptionElement.Value;
 
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x =>
-            {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) =>
-                {
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(x => {
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
                     ResignFirstResponder();
                     x.ExecuteIfCan();
                 });
 
-                x.CanExecuteObservable.Subscribe(y => NavigationItem.RightBarButtonItem.Enabled = y);
+                NavigationItem.RightBarButtonItem.EnableIfExecutable(x);
             });
         }
 
