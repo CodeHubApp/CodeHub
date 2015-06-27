@@ -1,6 +1,5 @@
 using System;
 using CodeHub.Core.Data;
-using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -14,8 +13,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 {
     public class OAuthFlowLoginViewModel : BaseViewModel
     {
-        public const string ClientId = "72f4fb74bdba774b759d";
-        public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
+        public const string ClientId = Secrets.GithubOAuthId;
+        public const string ClientSecret = Secrets.GithubOAuthSecret;
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private const string DefaultWebDomain = "https://github.com";
         private readonly IAccountsRepository _accountsRepository;

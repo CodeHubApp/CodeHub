@@ -233,6 +233,7 @@
     <Compile Include="ViewModels\Issues\RepositoryIssuesFilterViewModel.cs" />
     <Compile Include="Filters\IssueAssigneeFilter.cs" />
     <Compile Include="Filters\IssueMilestoneFilter.cs" />
+    <Compile Include="Secrets.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
