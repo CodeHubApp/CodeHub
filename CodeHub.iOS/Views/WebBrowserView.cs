@@ -116,7 +116,7 @@ namespace CodeHub.iOS.Views
         {
             base.ViewDidLoad();
             Add(Web);
-            ViewModel.WhenAnyValue(x => x.Url).SubscribeSafe(x => GoUrl(new NSUrl(x)));
+            ViewModel.WhenAnyValue(x => x.Uri).SubscribeSafe(x => GoUrl(new NSUrl(x.AbsoluteUri)));
         }
 
         public override void ViewWillLayoutSubviews()

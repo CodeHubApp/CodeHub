@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Changesets
         public Octokit.GitHubCommit Commit
         {
             get { return _commitModel; }
-            private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
+            set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
         }
 
         private readonly ObservableAsPropertyHelper<string> _commitMessageSummary;

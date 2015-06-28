@@ -1,12 +1,22 @@
-﻿namespace CodeHub.Core.ViewModels
+﻿using System;
+
+namespace CodeHub.Core.ViewModels
 {
     public class WebBrowserViewModel : BaseViewModel
     {
-        public string Url { get; private set; }
+        public Uri Uri { get; private set; }
 
         public WebBrowserViewModel Init(string url)
         {
-            Url = url;
+            if (url == null)
+                return this;
+
+            if (!url.StartsWith("http", StringComparison.Ordinal) && !url.Contains("://"))
+                url = "http://" + url;
+
+            Uri uri;
+            if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+                Uri = uri;
             return this;
         }
     }

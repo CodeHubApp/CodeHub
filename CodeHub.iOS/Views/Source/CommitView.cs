@@ -37,7 +37,21 @@ namespace CodeHub.iOS.Views.Source
             _headerSection = new Section { _split };
 
             _descriptionElement = new MultilinedElement();
-            _detailsSection = new Section { _descriptionElement };
+            _detailsSection = new Section();
+
+            Appeared
+                .Take(1)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.CommitMessage, y => y.ViewModel.CommiterName))
+                .Switch()
+                .Where(x => x.Item1 != null && x.Item2 != null)
+                .Take(1)
+                .Subscribe(_ => _detailsSection.Insert(0, UITableViewRowAnimation.Automatic, _descriptionElement));
+
+            this.WhenAnyValue(x => x.ViewModel.CommiterName)
+                .Subscribe(x => _descriptionElement.Caption = x ?? string.Empty);
+
+            this.WhenAnyValue(x => x.ViewModel.CommitMessage)
+                .Subscribe(x => _descriptionElement.Details = x ?? string.Empty);
 
             _gotoRepositoryElement = new StringElement(string.Empty) { 
                 Font = StringElement.DefaultDetailFont, 
@@ -48,12 +62,6 @@ namespace CodeHub.iOS.Views.Source
 
             this.WhenAnyValue(x => x.ViewModel.RepositoryName)
                 .Subscribe(x => _gotoRepositoryElement.Caption = x);
-
-            this.WhenAnyValue(x => x.ViewModel.CommiterName)
-                .Subscribe(x => _descriptionElement.Caption = x ?? string.Empty);
-
-            this.WhenAnyValue(x => x.ViewModel.CommitMessage)
-                .Subscribe(x => _descriptionElement.Details = x ?? string.Empty);
 
             this.WhenAnyValue(x => x.ViewModel.ShowRepository)
                 .StartWith(false)
@@ -111,7 +119,6 @@ namespace CodeHub.iOS.Views.Source
                 .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffModifications).StartWith(0).Select(x => string.Format("{0} modified", x))));
 
             _detailsSection.Add(new StringElement("All Changes", () => ViewModel.GoToAllFiles.ExecuteIfCan(), Octicon.Diff.ToImage()));
-
 
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;

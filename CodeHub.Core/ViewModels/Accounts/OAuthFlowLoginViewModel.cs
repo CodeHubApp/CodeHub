@@ -13,8 +13,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 {
     public class OAuthFlowLoginViewModel : BaseViewModel
     {
-        public const string ClientId = Secrets.GithubOAuthId;
-        public const string ClientSecret = Secrets.GithubOAuthSecret;
+        public readonly static string ClientId = Secrets.GithubOAuthId;
+        public readonly static string ClientSecret = Secrets.GithubOAuthSecret;
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private const string DefaultWebDomain = "https://github.com";
         private readonly IAccountsRepository _accountsRepository;
