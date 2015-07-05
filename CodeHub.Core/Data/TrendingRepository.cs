@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using System.Text;
 using Akavache;
 using System.Reactive.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace CodeHub.Core.Data
 {

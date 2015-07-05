@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Settings
         private readonly IFeaturesService _featuresService;
         private readonly IAccountsRepository _accountsService;
         private readonly IEnvironmentalService _environmentService;
-        private readonly IPushNotificationsService _pushNotificationsService;
+        private readonly IPushNotificationRegistrationService _pushNotificationsService;
 
         public IReactiveCommand<object> GoToDefaultStartupViewCommand { get; private set; }
 
@@ -85,7 +85,7 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public SettingsViewModel(ISessionService applicationService, IFeaturesService featuresService, 
             IAccountsRepository accountsService, IEnvironmentalService environmentalService, 
-            IPushNotificationsService pushNotificationsService)
+            IPushNotificationRegistrationService pushNotificationsService)
         {
             Title = "Account Settings";
 
@@ -115,11 +115,9 @@ namespace CodeHub.Core.ViewModels.Settings
 
             DeleteAllCacheCommand = ReactiveCommand.Create();
 
-            GoToSourceCodeCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToSourceCodeCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = "thedillonb";
-                vm.RepositoryName = "codehub";
+                vm.Init("thedillonb", "codehub");
                 NavigateTo(vm);
             });
 

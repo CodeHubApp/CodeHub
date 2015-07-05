@@ -5,6 +5,7 @@ using Octokit;
 using CodeHub.Core.Utilities;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.Services
 {
@@ -18,6 +19,8 @@ namespace CodeHub.Core.Services
         public IGitHubClient GitHubClient { get; private set; }
 
         public GitHubAccount Account { get; private set; }
+
+        public BaseViewModel StartupViewModel { get; set; }
 
         public SessionService(IAccountsRepository accountsRepository, IAnalyticsService analyticsService)
         {
@@ -82,68 +85,6 @@ namespace CodeHub.Core.Services
 //                accounts.Update(app.Account);
 //            }
             return Task.FromResult(0);
-        }
-
-        public void SetStartupCommand(IStartupCommand startupCommand)
-        {
-//            try
-//            {
-//                var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-//                var appService = Locator.Current.GetService<ISessionService>();
-//                var accounts = Locator.Current.GetService<IAccountsRepository>();
-//                var username = data["u"].ToString();
-//                var repoId = new RepositoryIdentifier(data["r"].ToString());
-//
-//                if (data.ContainsKey(new NSString("c")))
-//                {
-//                    var vm = serviceConstructor.Construct<CommitViewModel>();
-//                    vm.RepositoryOwner = repoId.Owner;
-//                    vm.RepositoryName = repoId.Name;
-//                    vm.Node = data["c"].ToString();
-//                    vm.ShowRepository = true;
-//                }
-//                else if (data.ContainsKey(new NSString("i")))
-//                {
-//                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Issues.IssueViewModel>();
-//                    vm.RepositoryOwner = repoId.Owner;
-//                    vm.RepositoryName = repoId.Name;
-//                    vm.Id = int.Parse(data["i"].ToString());
-//                }
-//                else if (data.ContainsKey(new NSString("p")))
-//                {
-//                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel>();
-//                    vm.RepositoryOwner = repoId.Owner;
-//                    vm.RepositoryName = repoId.Name;
-//                    vm.Id = int.Parse(data["p"].ToString());
-//                }
-//                else
-//                {
-//                    var vm = serviceConstructor.Construct<CodeHub.Core.ViewModels.Repositories.RepositoryViewModel>();
-//                    vm.RepositoryOwner = repoId.Owner;
-//                    vm.RepositoryName = repoId.Name;
-//                }
-//
-//                if (appService.Account == null || !appService.Account.Username.Equals(username))
-//                {
-//                    var user = accounts.FirstOrDefault(x => x.Username.Equals(username));
-//                    if (user != null)
-//                    {
-//                        accounts.ActiveAccount = user;
-//                    }
-//                }
-//
-//                //appService.SetUserActivationAction(() => transitionOrchestration.Transition);
-//
-//                if (appService.Account == null && !fromBootup)
-//                {
-//                    //                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
-//                    //                    viewDispatcher.ShowViewModel(startupViewModelRequest);
-//                }
-//            }
-//            catch (Exception e)
-//            {
-//                Console.WriteLine("Handle Notifications issue: " + e);
-//            }
         }
 
 //        private async Task PromptForPushNotifications()

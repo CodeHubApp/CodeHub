@@ -33,13 +33,13 @@ namespace CodeHub.Core.ViewModels.Repositories
         private List<BranchModel> _branches;
         private int? _contributors;
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
         private string _repositoryName;
         public string RepositoryName
         {
             get { return _repositoryName; }
-            set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
+            private set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
         }
 
         public bool? IsStarred
@@ -430,6 +430,14 @@ namespace CodeHub.Core.ViewModels.Repositories
             if (Stargazers.HasValue)
                 Stargazers += (IsStarred.Value ? -1 : 1);
             IsStarred = !IsStarred.Value;
+        }
+
+        public RepositoryViewModel Init(string repositoryOwner, string repositoryName, RepositoryModel repository = null)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Repository = repository;
+            return this;
         }
     }
 }

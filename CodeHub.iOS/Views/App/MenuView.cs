@@ -94,7 +94,7 @@ namespace CodeHub.iOS.Views.App
             Appeared
                 .Take(1)
                 .Delay(TimeSpan.FromMilliseconds(250), RxApp.MainThreadScheduler)
-                .Subscribe(_ => ViewModel.GoToDefaultTopView.ExecuteIfCan());
+                .Subscribe(_ => ViewModel.ActivateCommand.ExecuteIfCan());
         }
 
         public override void ViewDidLoad()

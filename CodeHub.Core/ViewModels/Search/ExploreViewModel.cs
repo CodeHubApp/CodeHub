@@ -41,8 +41,7 @@ namespace CodeHub.Core.ViewModels.Search
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = x.Owner;
-                vm.RepositoryName = x.Name;
+                vm.Init(x.Owner, x.Name);
                 NavigateTo(vm);
             });
 

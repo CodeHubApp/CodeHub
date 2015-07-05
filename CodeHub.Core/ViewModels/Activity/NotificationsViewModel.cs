@@ -136,9 +136,7 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
                 var vm = this.CreateViewModel<CommitViewModel>();
-                vm.RepositoryOwner = x.Repository.Owner.Login;
-                vm.RepositoryName = x.Repository.Name;
-                vm.Node = node;
+                vm.Init(x.Repository.Owner.Login, x.Repository.Name, node);
                 NavigateTo(vm);
             }
             else if (subject.Equals("release"))

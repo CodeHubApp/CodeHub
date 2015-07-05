@@ -37,13 +37,9 @@ namespace CodeHub.Core.ViewModels.Changesets
             Title = "Commits";
 
             var gotoCommitCommand = ReactiveCommand.Create();
-            gotoCommitCommand.OfType<CommitItemViewModel>().Subscribe(x => {
-                var vm = this.CreateViewModel<CommitViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
-                vm.Node = x.Commit.Sha;
-                NavigateTo(vm);
-            });
+            gotoCommitCommand.OfType<CommitItemViewModel>()
+                .Select(x => this.CreateViewModel<CommitViewModel>().Init(RepositoryOwner, RepositoryName, x.Commit.Sha))
+                .Subscribe(NavigateTo);
 
             var commits = new ReactiveList<CommitItemViewModel>();
             Commits = commits.CreateDerivedCollection(

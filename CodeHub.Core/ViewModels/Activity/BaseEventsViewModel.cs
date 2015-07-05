@@ -64,8 +64,7 @@ namespace CodeHub.Core.ViewModels.Activity
         {
             var repoId = new RepositoryIdentifier(repo.Name);
             var vm = this.CreateViewModel<RepositoryViewModel>();
-            vm.RepositoryOwner = repoId.Owner;
-            vm.RepositoryName = repoId.Name;
+            vm.Init(repoId.Owner, repoId.Name);
             NavigateTo(vm);
         }
 
@@ -146,9 +145,7 @@ namespace CodeHub.Core.ViewModels.Activity
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
             var vm = this.CreateViewModel<CommitViewModel>();
-            vm.RepositoryOwner = repo.Owner;
-            vm.RepositoryName = repo.Name;
-            vm.Node = sha;
+            vm.Init(repo.Owner, repo.Name, sha);
             NavigateTo(vm);
         }
 

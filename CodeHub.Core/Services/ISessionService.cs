@@ -1,6 +1,7 @@
 ﻿using CodeHub.Core.Data;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.Services
 {
@@ -12,11 +13,11 @@ namespace CodeHub.Core.Services
 
         Octokit.IGitHubClient GitHubClient { get; }
 
+        BaseViewModel StartupViewModel { get; set; }
+
         void Track(string eventName, IDictionary<string, string> properties = null);
 
         Task SetSessionAccount(GitHubAccount account);
-
-        void SetStartupCommand(IStartupCommand startupCommand);
 
         Task RegisterForNotifications();
     }

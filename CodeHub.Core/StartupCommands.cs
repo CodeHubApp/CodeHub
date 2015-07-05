@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core
 {
@@ -6,21 +7,34 @@ namespace CodeHub.Core
     {
     }
 
-    public class PushNotificationCommand : IStartupCommand
+    public class PushNotificationRequest : IStartupCommand
     {
         public IDictionary<string, string> Attributes { get; private set; }
 
-        public PushNotificationCommand(IDictionary<string, string> attributes)
+        public PushNotificationRequest(IDictionary<string, string> attributes)
         {
             Attributes = attributes;
         }
     }
 
-    public class UrlCommand : IStartupCommand
+    public class PushNotificationAction
+    {
+        public BaseViewModel ViewModel { get; private set; }
+
+        public string Username { get; private set; }
+
+        public PushNotificationAction(string username, BaseViewModel viewModel)
+        {
+            Username = username;
+            ViewModel = viewModel;
+        }
+    }
+
+    public class UrlStartupCommand : IStartupCommand
     {
         public string Url { get; private set; }
 
-        public UrlCommand(string url)
+        public UrlStartupCommand(string url)
         {
             Url = url;
         }

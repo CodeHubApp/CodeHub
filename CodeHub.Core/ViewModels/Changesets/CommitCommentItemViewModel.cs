@@ -15,8 +15,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         internal CommitCommentItemViewModel(GitHubSharp.Models.CommentModel comment)
         {
-            Avatar = new GitHubAvatar(comment.With(y => y.User).With(y => y.AvatarUrl));
-            Actor = comment.With(x => x.User).With(x => x.Login);
+            Avatar = new GitHubAvatar(comment?.User?.AvatarUrl);
+            Actor = comment?.User?.Login;
             Body = comment.BodyHtml;
             UtcCreatedAt = comment.CreatedAt.UtcDateTime;
         }

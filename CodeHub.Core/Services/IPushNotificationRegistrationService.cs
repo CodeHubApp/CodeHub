@@ -1,10 +1,9 @@
-using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
-    public interface IPushNotificationsService
+    public interface IPushNotificationRegistrationService
     {
         Task Register(GitHubAccount account);
 

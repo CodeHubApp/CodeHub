@@ -3,8 +3,6 @@ using ReactiveUI;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Issues;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Reactive;
 using CodeHub.Core.ViewModels.Repositories;
 
@@ -61,27 +59,23 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(vm);
             });
 
-            GoToSuggestFeatureCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToSuggestFeatureCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<FeedbackComposerViewModel>();
                 vm.IsFeature = true;
                 vm.CreatedIssueObservable.Subscribe(gotoIssue);
                 NavigateTo(vm);
             });
 
-            GoToReportBugCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToReportBugCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<FeedbackComposerViewModel>();
                 vm.IsFeature = false;
                 vm.CreatedIssueObservable.Subscribe(gotoIssue);
                 NavigateTo(vm);
             });
 
-            GoToRepositoryCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToRepositoryCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = CodeHubOwner;
-                vm.RepositoryName = CodeHubName;
+                vm.Init(CodeHubOwner, CodeHubName);
                 NavigateTo(vm);
             });
 

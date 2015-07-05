@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using CodeHub.Core.ViewModels.Search;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -76,12 +77,9 @@ namespace CodeHub.Core.ViewModels.App
                 NavigateTo(this.CreateViewModel<MyIssuesViewModel>()));
      
             GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.OfType<RepositoryIdentifier>().Subscribe(x => {
-                var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = x.Owner;
-                vm.RepositoryName = x.Name;
-                NavigateTo(vm);
-            });
+            GoToRepositoryCommand.OfType<RepositoryIdentifier>()
+                .Select(x => this.CreateViewModel<RepositoryViewModel>().Init(x.Owner, x.Name))
+                .Subscribe(NavigateTo);
 
             GoToSettingsCommand = ReactiveCommand.Create().WithSubscription(_ =>
                 NavigateTo(this.CreateViewModel<SettingsViewModel>()));
@@ -156,6 +154,16 @@ namespace CodeHub.Core.ViewModels.App
                     sessionService.Account.PinnnedRepositories.Remove(x);
                     accountsService.Update(sessionService.Account);
                 });
+
+            ActivateCommand = ReactiveCommand.Create();
+            ActivateCommand.Subscribe(x => {
+                var startupViewModel = sessionService.StartupViewModel;
+                sessionService.StartupViewModel = null;
+                if (startupViewModel != null)
+                    NavigateTo(startupViewModel);
+                else
+                    GoToDefaultTopView.ExecuteIfCan();
+            });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
                 var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
@@ -246,5 +254,8 @@ namespace CodeHub.Core.ViewModels.App
 		public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
 
         public IReactiveCommand<object> GoToFeedbackCommand { get; private set; }
+
+        public IReactiveCommand<object> ActivateCommand { get; private set; }
+
     }
 }

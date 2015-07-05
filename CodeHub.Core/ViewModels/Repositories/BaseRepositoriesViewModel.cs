@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using GitHubSharp.Models;
 using ReactiveUI;
@@ -45,11 +43,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             ShowRepositoryOwner = true;
             Title = "Repositories";
 
-            var gotoRepository = new Action<RepositoryItemViewModel>(x =>
-            {
+            var gotoRepository = new Action<RepositoryItemViewModel>(x => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = x.Owner;
-                vm.RepositoryName = x.Name;
+                vm.Init(x.Owner, x.Name);
                 NavigateTo(vm);
             });
 

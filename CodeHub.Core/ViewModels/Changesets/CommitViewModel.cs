@@ -14,19 +14,19 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public class CommitViewModel : BaseViewModel, ILoadableViewModel
     {
-		public string Node { get; set; }
+		public string Node { get; private set; }
 
-		public string RepositoryOwner { get; set; }
+		public string RepositoryOwner { get; private set; }
 
-		public string RepositoryName { get; set; }
+		public string RepositoryName { get; private set; }
 
-        public bool ShowRepository { get; set; }
+        public bool ShowRepository { get; private set; }
 
         private Octokit.GitHubCommit _commitModel;
         public Octokit.GitHubCommit Commit
         {
             get { return _commitModel; }
-            set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
+            private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
         }
 
         private readonly ObservableAsPropertyHelper<string> _commitMessageSummary;
@@ -156,11 +156,9 @@ namespace CodeHub.Core.ViewModels.Changesets
                 .Subscribe(NavigateTo);
       
             GoToRepositoryCommand = ReactiveCommand.Create();
-            GoToRepositoryCommand.Subscribe(_ =>
-            {
+            GoToRepositoryCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 
@@ -205,6 +203,15 @@ namespace CodeHub.Core.ViewModels.Changesets
                 applicationService.Client.ExecuteAsync(commentRequest).ToBackground(x => comments.Reset(x.Data.Where(y => y.Position.HasValue)));
                 Commit = await applicationService.GitHubClient.Repository.Commits.Get(RepositoryOwner, RepositoryName, Node);
             });
+        }
+
+        public CommitViewModel Init(string repositoryOwner, string repositoryName, string node, Octokit.GitHubCommit commit = null, bool showRepository = false)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Commit = commit;
+            ShowRepository = showRepository;
+            return this;
         }
     }
 }

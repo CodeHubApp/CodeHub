@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Services
             get { return _instance.Value; }
         }
 
-        private DefaultValueService()
+        public DefaultValueService()
         {
         }
 

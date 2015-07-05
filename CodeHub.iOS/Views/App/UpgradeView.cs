@@ -1,8 +1,6 @@
 ﻿using System;
-using ReactiveUI;
 using UIKit;
 using CodeHub.WebViews;
-using CodeHub.Core.ViewModels.App;
 using Foundation;
 using CodeHub.iOS.Services;
 using System.Threading.Tasks;
@@ -23,15 +21,15 @@ namespace CodeHub.iOS.Views.App
         private readonly UIWebView _web;
         private readonly UIActivityIndicatorView _activityView;
 
-        public UpgradeView()
+        public UpgradeView(INetworkActivityService networkActivityService)
         {
             _featuresService = Locator.Current.GetService<IFeaturesService>();
             _inAppPurchaseService = Locator.Current.GetService<IInAppPurchaseService>();
 
             _web = new UIWebView { ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.All };
-            _web.LoadFinished += (sender, e) => NetworkActivityService.Instance.PopNetworkActive();
-            _web.LoadStarted += (sender, e) => NetworkActivityService.Instance.PushNetworkActive();
-            _web.LoadError += (sender, e) => NetworkActivityService.Instance.PopNetworkActive();
+            _web.LoadFinished += (sender, e) => networkActivityService.PopNetworkActive();
+            _web.LoadStarted += (sender, e) => networkActivityService.PushNetworkActive();
+            _web.LoadError += (sender, e) => networkActivityService.PopNetworkActive();
             _web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
 
             _activityView = new UIActivityIndicatorView

@@ -113,7 +113,7 @@ namespace CodeHub.iOS.Views.Gists
 
 
             updatedGistObservable
-                .Select(x => x.With(y => y.Owner).With(y => y.Login, () => "Anonymous"))
+                .Select(x => x?.Owner?.Login ?? "Anonymous")
                 .Subscribe(x => _ownerElement.Value = x);
 
             updatedGistObservable
@@ -149,11 +149,13 @@ namespace CodeHub.iOS.Views.Gists
             });
 
 
-            ViewModel.Comments.Changed.Subscribe(_ =>
-            {
+            ViewModel.Comments.Changed.Subscribe(_ => {
                 var commentModels = ViewModel.Comments
-                    .Select(x => new Comment(new GitHubAvatar(x.With(y => y.User).With(y => y.AvatarUrl)).ToUri(), x.User.Login, x.BodyHtml, x.CreatedAt.UtcDateTime.Humanize()))
-                    .ToList();
+                    .Select(x => {
+                        var avatarUrl = x?.User?.AvatarUrl;
+                        var avatar = new GitHubAvatar(avatarUrl);
+                        return new Comment(avatar.ToUri(), x.User.Login, x.BodyHtml, x.CreatedAt.UtcDateTime.Humanize());
+                    }).ToList();
 
                 if (commentModels.Count > 0)
                 {

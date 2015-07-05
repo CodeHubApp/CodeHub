@@ -8,7 +8,7 @@ using CodeHub.Core.Data;
 
 namespace CodeHub.iOS.Services
 {
-	public class PushNotificationsService : IPushNotificationsService
+	public class PushNotificationRegistrationService : IPushNotificationRegistrationService
     {
 	    private const string RegisterUri = "http://162.243.15.10/register";
         private const string DeregisterUri = "http://162.243.15.10/unregister";

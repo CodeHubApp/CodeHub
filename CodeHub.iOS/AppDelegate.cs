@@ -22,6 +22,7 @@ using System.Text;
 using System.Diagnostics;
 using CodeHub.Core.Data;
 using CodeHub.iOS.ViewControllers.Walkthrough;
+using System.Security.Principal;
 
 namespace CodeHub.iOS
 {
@@ -105,6 +106,7 @@ namespace CodeHub.iOS
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
+            var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
             viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
 
             Themes.Theme.Load("Default");
@@ -119,9 +121,9 @@ namespace CodeHub.iOS
             }
 
             bool hasSeenWelcome;
-            if (!DefaultValueService.Instance.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
-                DefaultValueService.Instance.Set("HAS_SEEN_WELCOME_INTRO", true);
+                defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
                 var welcomeViewController = new WelcomePageViewController();
                 welcomeViewController.WantsToDimiss += GoToStartupView;
                 TransitionToViewController(welcomeViewController);
@@ -190,7 +192,8 @@ namespace CodeHub.iOS
             if (!options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) return;
 
             var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
-            remoteNotification.Do(x => HandleNotification(x, true));
+            if (remoteNotification != null)
+                HandleNotification(remoteNotification, true);
         }
 
         private void SetupPushNotifications()
@@ -237,10 +240,32 @@ namespace CodeHub.iOS
             HandleNotification(userInfo, false);
         }
 
-        private static void HandleNotification(NSDictionary data, bool fromBootup)
+        private async Task HandleNotification(NSDictionary data, bool fromBootup)
 		{
-            var cmd = new PushNotificationCommand(data.ToDictionary(x => x.Key.ToString(), x => x.Value.ToString()));
-            Locator.Current.GetService<ISessionService>().SetStartupCommand(cmd);
+            var dic = data.ToDictionary(x => x.Key.ToString(), x => x.Value.ToString());
+            var pushNotificationService = Locator.Current.GetService<IPushNotificationService>();
+            var accountsRepository = Locator.Current.GetService<IAccountsRepository>();
+            var sessionService = Locator.Current.GetService<ISessionService>();
+            var action = pushNotificationService.Handle(new PushNotificationRequest(dic));
+            if (action == null)
+                return;
+
+            var account = (await accountsRepository.GetAll()).FirstOrDefault(x => string.Equals(x.Username, action.Username, StringComparison.OrdinalIgnoreCase));
+            var changeAccount = account != null && account != sessionService.Account;
+
+            sessionService.StartupViewModel = action.ViewModel;
+
+            if (!fromBootup && changeAccount)
+            {
+                await Locator.Current.GetService<IAccountsRepository>().SetDefault(account);
+                MessageBus.Current.SendMessage(new LogoutMessage());
+            }
+            if (!fromBootup && !changeAccount)
+            {
+                var nav = Window?.RootViewController as UINavigationController;
+                var menuView = nav?.ViewControllers.OfType<MenuView>().FirstOrDefault();
+                menuView?.ViewModel?.ActivateCommand.ExecuteIfCan();
+            }
 		}
 
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)

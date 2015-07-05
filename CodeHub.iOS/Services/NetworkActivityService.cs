@@ -17,10 +17,6 @@ namespace CodeHub.iOS.Services
             get { return _instance.Value; }
         }
 
-        private NetworkActivityService()
-        {
-        }
-
         public void PushNetworkActive()
         {
             lock (NetworkLock)

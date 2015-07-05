@@ -27,8 +27,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
         internal IssueEventItemViewModel(Octokit.EventInfo issueEvent)
         {
-            Actor = issueEvent.With(x => x.Actor).With(x => x.Login, () => "Deleted User");
-            AvatarUrl = new GitHubAvatar(issueEvent.With(x => x.Actor).With(x => x.AvatarUrl));
+            Actor = issueEvent?.Actor?.Login ?? "Deleted User";
+            AvatarUrl = new GitHubAvatar(issueEvent?.Actor?.AvatarUrl);
             CreatedAt = issueEvent.CreatedAt;
             Commit = issueEvent.CommitId;
             EventInfo = issueEvent;
@@ -56,8 +56,8 @@ namespace CodeHub.Core.ViewModels.Issues
         internal IssueCommentItemViewModel(GitHubSharp.Models.IssueCommentModel comment)
         {
             Comment = comment.BodyHtml;
-            Actor = comment.With(x => x.User).With(x => x.Login);
-            AvatarUrl = new GitHubAvatar(comment.With(x => x.User).With(x => x.AvatarUrl));
+            Actor = comment?.User?.Login;
+            AvatarUrl = new GitHubAvatar(comment?.User?.AvatarUrl);
             CreatedAt = comment.CreatedAt;
         }
     }
