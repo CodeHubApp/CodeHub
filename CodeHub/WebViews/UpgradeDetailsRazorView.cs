@@ -97,7 +97,7 @@ WriteLiteral(">Push Notifications</a></li>\n    </ul>\n\n    <p>\n        Before
 "e a look at the detailed description for each feature below. \n        If you\'re " +
 "unsure about any aspect of the Pro version, please feel free to \n        <a");
 
-WriteLiteral(" href=\"mailto://codehubapp@gmail.com?Subject=CodeHub%20Pro%20Question\"");
+WriteLiteral(" href=\"mailto:codehubapp@gmail.com?Subject=CodeHub%20Pro%20Question\"");
 
 WriteLiteral(" target=\"_blank\"");
 
@@ -203,7 +203,7 @@ WriteLiteral(@">Enterprise Support</h3>
     </p>
 
     <p>
-        If you feel unsafe authentication with a username and password pair, you may choose to generate your own OAuth token on your enterprise instance and
+        If you feel unsafe authenticating with a username and password pair, you may choose to generate your own OAuth token on your enterprise instance and
         use it in CodeHub directly. This completely removes the need to type in your username and password within CodeHub. 
     </p>
 

@@ -18,25 +18,15 @@ namespace CodeHub.iOS.Views.App
     {
         private readonly IFeaturesService _featuresService;
         private readonly IInAppPurchaseService _inAppPurchaseService;
-        private readonly UIWebView _web;
-        private readonly UIActivityIndicatorView _activityView;
+        private readonly INetworkActivityService _networkActivityService;
+        private UIWebView _web;
+        private UIActivityIndicatorView _activityView;
 
-        public UpgradeView(INetworkActivityService networkActivityService)
+        public UpgradeView()
         {
             _featuresService = Locator.Current.GetService<IFeaturesService>();
+            _networkActivityService = Locator.Current.GetService<INetworkActivityService>();
             _inAppPurchaseService = Locator.Current.GetService<IInAppPurchaseService>();
-
-            _web = new UIWebView { ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.All };
-            _web.LoadFinished += (sender, e) => networkActivityService.PopNetworkActive();
-            _web.LoadStarted += (sender, e) => networkActivityService.PushNetworkActive();
-            _web.LoadError += (sender, e) => networkActivityService.PopNetworkActive();
-            _web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
-
-            _activityView = new UIActivityIndicatorView
-            {
-                Color = Theme.PrimaryNavigationBarColor,
-                AutoresizingMask = UIViewAutoresizing.FlexibleWidth,
-            };
         }
 
         public override void ViewDidLoad()
@@ -45,7 +35,18 @@ namespace CodeHub.iOS.Views.App
 
             Title = "Pro Upgrade";
 
+            _activityView = new UIActivityIndicatorView
+            {
+                Color = Theme.PrimaryNavigationBarColor,
+                AutoresizingMask = UIViewAutoresizing.FlexibleWidth,
+            };
             _activityView.Frame = new CoreGraphics.CGRect(0, 44, View.Frame.Width, 88f);
+
+            _web = new UIWebView { ScalesPageToFit = true, AutoresizingMask = UIViewAutoresizing.All };
+            _web.LoadFinished += (sender, e) => _networkActivityService.PopNetworkActive();
+            _web.LoadStarted += (sender, e) => _networkActivityService.PushNetworkActive();
+            _web.LoadError += (sender, e) => _networkActivityService.PopNetworkActive();
+            _web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
             _web.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
             Add(_web);
 
@@ -79,7 +80,6 @@ namespace CodeHub.iOS.Views.App
 
         protected virtual bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
-
             var url = request.Url;
 
             if (url.Scheme.Equals("app"))
@@ -97,6 +97,12 @@ namespace CodeHub.iOS.Views.App
                     Activate(_featuresService.RestorePro).ToBackground();
                 }
 
+                return false;
+            }
+
+            if (url.Scheme.Equals("mailto", StringComparison.OrdinalIgnoreCase))
+            {
+                UIApplication.SharedApplication.OpenUrl(url);
                 return false;
             }
 

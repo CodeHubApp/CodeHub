@@ -11,18 +11,14 @@ using Splat;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
 using CodeHub.iOS.Views.Settings;
-using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Factories;
 using CodeHub.Core.Factories;
 using System.Linq;
 using CodeHub.Core;
 using System.Net.Http;
 using ModernHttpClient;
-using System.Text;
-using System.Diagnostics;
 using CodeHub.Core.Data;
 using CodeHub.iOS.ViewControllers.Walkthrough;
-using System.Security.Principal;
 
 namespace CodeHub.iOS
 {
@@ -42,16 +38,23 @@ namespace CodeHub.iOS
         /// </summary>
         public override UIWindow Window { get; set; }
 
-		/// <summary>
-		/// This is the main entry point of the application.
-		/// </summary>
-		/// <param name="args">The args.</param>
-		public static void Main(string[] args)
-		{
-			// if you want to use a different Application Delegate class from "AppDelegate"
-			// you can specify it here.
-			UIApplication.Main(args, null, "AppDelegate");
-		}
+        /// <summary>
+        /// This is the main entry point of the application.
+        /// </summary>
+        /// <param name="args">The args.</param>
+        public static void Main(string[] args)
+        {
+            try
+            {
+                UIApplication.Main(args, null, "AppDelegate");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Flurry.Analytics.Portable.AnalyticsApi.LogError(e);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Finished the launching.
@@ -121,7 +124,7 @@ namespace CodeHub.iOS
             }
 
             bool hasSeenWelcome;
-            if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            if (defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
                 defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
                 var welcomeViewController = new WelcomePageViewController();
@@ -241,7 +244,7 @@ namespace CodeHub.iOS
         }
 
         private async Task HandleNotification(NSDictionary data, bool fromBootup)
-		{
+        {
             var dic = data.ToDictionary(x => x.Key.ToString(), x => x.Value.ToString());
             var pushNotificationService = Locator.Current.GetService<IPushNotificationService>();
             var accountsRepository = Locator.Current.GetService<IAccountsRepository>();
@@ -266,44 +269,45 @@ namespace CodeHub.iOS
                 var menuView = nav?.ViewControllers.OfType<MenuView>().FirstOrDefault();
                 menuView?.ViewModel?.ActivateCommand.ExecuteIfCan();
             }
-		}
+        }
 
-		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
-		{
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
             DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
             Locator.Current.GetService<ISessionService>().RegisterForNotifications();
-		}
+        }
 
-		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
-		{
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
             Locator.Current.GetService<IAlertDialogFactory>().Alert("Error Registering for Notifications", error.LocalizedDescription);
-		}
+        }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            var uri = new Uri(url.AbsoluteString);
-
-            if (uri.Host == "x-callback-url")
-            {
-                //XCallbackProvider.Handle(new XCallbackQuery(url.AbsoluteString));
-                return true;
-            }
-            else
-            {
-                var path = url.AbsoluteString.Replace("codehub://", "");
-                var queryMarker = path.IndexOf("?", StringComparison.Ordinal);
-                if (queryMarker > 0)
-                    path = path.Substring(0, queryMarker);
-
-                if (!path.EndsWith("/", StringComparison.Ordinal))
-                    path += "/";
-                var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
-                var firstIsDomain = first.Contains(".");
-
-                var viewModel = Locator.Current.GetService<IUrlRouterService>().Handle(path);
-                //TODO: Show the ViewModel
-                return true;
-            }
+            return true;
+//            var uri = new Uri(url.AbsoluteString);
+//
+//            if (uri.Host == "x-callback-url")
+//            {
+//                //XCallbackProvider.Handle(new XCallbackQuery(url.AbsoluteString));
+//                return true;
+//            }
+//            else
+//            {
+//                var path = url.AbsoluteString.Replace("codehub://", "");
+//                var queryMarker = path.IndexOf("?", StringComparison.Ordinal);
+//                if (queryMarker > 0)
+//                    path = path.Substring(0, queryMarker);
+//
+//                if (!path.EndsWith("/", StringComparison.Ordinal))
+//                    path += "/";
+//                var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
+//                var firstIsDomain = first.Contains(".");
+//
+//                var viewModel = Locator.Current.GetService<IUrlRouterService>().Handle(path);
+//                //TODO: Show the ViewModel
+//                return true;
+//            }
         }
     }
 }
