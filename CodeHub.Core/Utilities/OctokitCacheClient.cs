@@ -54,6 +54,11 @@ namespace CodeHub.Core.Utilities
             return resp;
         }
 
+        public void Dispose()
+        {
+            _httpClient.Dispose();
+        }
+
         private class Response : IResponse
         {
             public Response(InternalResponse internalResponse)

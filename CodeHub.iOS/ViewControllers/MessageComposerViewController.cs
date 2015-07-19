@@ -5,7 +5,7 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
-using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers
 {

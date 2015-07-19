@@ -8,7 +8,7 @@ using CodeHub.Core.Data;
 
 namespace CodeHub.Core.ViewModels.Settings
 {
-    public class SyntaxHighlighterSettingsViewModel : BaseViewModel
+    public class SyntaxHighlighterViewModel : BaseViewModel
     {
         public IReadOnlyList<string> Themes { get; private set; }
 
@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Settings
 
         public IReactiveCommand<Unit> SaveCommand { get; private set; }
 
-        public SyntaxHighlighterSettingsViewModel(ISessionService applicationService,
+        public SyntaxHighlighterViewModel(ISessionService applicationService,
             IAccountsRepository accountsRepository, IFilesystemService filesystemService)
         {
             Title = "Syntax Highlighter";

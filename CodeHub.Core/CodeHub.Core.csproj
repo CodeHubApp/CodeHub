@@ -112,15 +112,8 @@
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\Source\TagItemViewModel.cs" />
-    <Compile Include="ViewModels\Users\OrganizationMembersViewModel.cs" />
-    <Compile Include="ViewModels\Users\RepositoryCollaboratorsViewModel.cs" />
-    <Compile Include="ViewModels\Users\RepositoryContributorsViewModel.cs" />
-    <Compile Include="ViewModels\Users\RepositoryStargazersViewModel.cs" />
-    <Compile Include="ViewModels\Users\RepositoryWatchersViewModel.cs" />
-    <Compile Include="ViewModels\Users\TeamMembersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserFollowersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserFollowingsViewModel.cs" />
-    <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="ViewModels\Source\CommitedFileItemViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
@@ -192,7 +185,6 @@
     <Compile Include="ViewModels\Issues\BaseIssueViewModel.cs" />
     <Compile Include="Extensions\FunctionalExtensions.cs" />
     <Compile Include="ViewModels\Changesets\CommitCommentItemViewModel.cs" />
-    <Compile Include="ViewModels\Users\BaseUsersViewModel.cs" />
     <Compile Include="Utilities\OctokitNetworkClient.cs" />
     <Compile Include="Utilities\OctokitCacheClient.cs" />
     <Compile Include="ViewModels\Gists\GistFileModifyViewModel.cs" />
@@ -235,6 +227,14 @@
     <Compile Include="Services\IPushNotificationService.cs" />
     <Compile Include="Services\PushNotificationService.cs" />
     <Compile Include="Services\IPushNotificationRegistrationService.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryCollaboratorsViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryContributorsViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryWatchersViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\OrganizationMembersViewModel.cs" />
+    <Compile Include="ViewModels\Organizations\TeamMembersViewModel.cs" />
+    <Compile Include="ViewModels\Users\BaseUsersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
@@ -290,14 +290,14 @@
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.2\lib\Portable-Net45+WinRT45+WP8+WPA81\ModernHttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.13.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net45+wp80+win8+wpa81+dnxcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.37.0\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.14.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

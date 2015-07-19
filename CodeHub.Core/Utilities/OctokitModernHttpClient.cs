@@ -11,7 +11,7 @@ namespace CodeHub.Core.Utilities
 {
     public class OctokitModernHttpClient : IHttpClient
     {
-        private readonly MessageBuilder _messageBuilder = new MessageBuilder();
+        private readonly MessageBuilder _messageBuilder = new MessageBuilder(null);
 
         public static Func<NativeMessageHandler> CreateMessageHandler = () => new NativeMessageHandler();
 
@@ -48,11 +48,21 @@ namespace CodeHub.Core.Utilities
             }
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         /// <summary>
         /// This class' only purpose is so I can call the helper methods.
         /// </summary>
         private class MessageBuilder : HttpClientAdapter
         {
+            public MessageBuilder(Func<HttpMessageHandler> getHandler)
+                : base(getHandler)
+            {
+            }
+
             public new HttpRequestMessage BuildRequestMessage(IRequest request)
             {
                 return base.BuildRequestMessage(request);

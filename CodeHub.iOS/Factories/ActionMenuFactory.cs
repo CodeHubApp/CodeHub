@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using Foundation;
 using CodeHub.Core.Factories;
-using CodeHub.iOS.ViewComponents;
 using System.Diagnostics;
 using CoreGraphics;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.Factories
 {

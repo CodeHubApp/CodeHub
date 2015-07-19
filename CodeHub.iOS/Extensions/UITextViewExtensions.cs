@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using CoreGraphics;
-using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.Views;
 
 // Analysis disable once CheckNamespace
 namespace UIKit

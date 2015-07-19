@@ -1,0 +1,48 @@
+using System;
+using UIKit;
+using ReactiveUI;
+using CodeHub.iOS.ViewControllers;
+using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Contents;
+
+namespace CodeHub.iOS.ViewControllers.Contents
+{
+    public class EditFileViewController : MessageComposerViewController<EditFileViewModel>, IModalViewController
+    {
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, PromptForCommitMessage);
+
+            TextView.Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize);
+            TextView.Changed += (sender, e) => ViewModel.Text = Text;
+
+            this.WhenAnyValue(x => x.ViewModel.Text)
+                .IsNotNull()
+                .Take(1)
+                .Subscribe(x => Text = x);
+            
+            this.WhenAnyValue(x => x.ViewModel.Text)
+                .IsNotNull()
+                .Skip(1)
+                .Where(x => !string.Equals(x, TextView.Text))
+                .Subscribe(x => TextView.Text = x);
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+        }
+
+        private void PromptForCommitMessage(object sender, EventArgs args)
+        {
+            var viewController = new MessageComposerViewController();
+            viewController.Title = "Commit Message";
+            ViewModel.WhenAnyValue(x => x.CommitMessage).Subscribe(x => viewController.TextView.Text = x);
+            viewController.TextView.Changed += (s, e) => ViewModel.CommitMessage = viewController.TextView.Text;
+            viewController.NavigationItem.RightBarButtonItem = ViewModel.SaveCommand.ToBarButtonItem(UIBarButtonSystemItem.Save);
+            NavigationController.PushViewController(viewController, true);
+        }
+    }
+}
+

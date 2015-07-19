@@ -1,7 +1,7 @@
 ﻿using System;
 using UIKit;
 using CoreGraphics;
-using CodeHub.iOS.ViewComponents;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.DialogElements
 {

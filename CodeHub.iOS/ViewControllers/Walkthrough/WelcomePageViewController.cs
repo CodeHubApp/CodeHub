@@ -16,24 +16,29 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
                 e();
         }
 
+        private IEnumerable<UIViewController> GetPages()
+        {
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            var isPro = appDelegate?.IsPro ?? false;
+
+            yield return new AboutViewController();
+            yield return new PromoteView();
+            if (!isPro)
+                yield return new GoProViewController();
+            yield return new FeedbackViewController();
+
+            var welcomeViewController = new WelcomeViewController();
+            welcomeViewController.WantsToDimiss += OnWantsToDismiss;
+            yield return welcomeViewController;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             View.BackgroundColor = Theme.PrimaryNavigationBarColor;
 
-            var welcomeViewController = new WelcomeViewController();
-            welcomeViewController.WantsToDimiss += OnWantsToDismiss;
-
-            var pages = new UIViewController[]
-            { 
-                new CardPageViewController(new AboutViewController()),
-                new CardPageViewController(new PromoteView()),
-                new CardPageViewController(new GoProViewController()),
-                new CardPageViewController(new FeedbackViewController()),
-                new CardPageViewController(welcomeViewController),
-            };
-
+            var pages = GetPages().Select(x => new CardPageViewController(x)).ToArray();
             var welcomePageViewController = new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);
             welcomePageViewController.DataSource = new PageDataSource(pages);
             welcomePageViewController.SetViewControllers(new [] { pages[0] }, UIPageViewControllerNavigationDirection.Forward, true, null);

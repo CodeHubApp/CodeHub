@@ -108,7 +108,7 @@ namespace CodeHub.Core.ViewModels.Settings
 
             GoToSyntaxHighlighterCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
-                var vm = this.CreateViewModel<SyntaxHighlighterSettingsViewModel>();
+                var vm = this.CreateViewModel<SyntaxHighlighterViewModel>();
                 vm.SaveCommand.Subscribe(__ => SyntaxHighlighter = vm.SelectedTheme);
                 NavigateTo(vm);
             });

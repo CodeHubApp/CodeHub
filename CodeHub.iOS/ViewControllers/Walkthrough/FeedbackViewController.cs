@@ -1,6 +1,6 @@
 ﻿using UIKit;
 using CodeHub.Core.ViewModels;
-using CodeHub.iOS.Views;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -29,7 +29,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         private void ShowWebPage(string url)
         {
             var vm = new WebBrowserViewModel().Init(url);
-            var view = new WebBrowserView(true, true) { ViewModel = vm };
+            var view = new WebBrowserViewController(true, true) { ViewModel = vm };
             view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, 
                 (s, e) => DismissViewController(true, null));
             PresentViewController(new ThemedNavigationController(view), true, null);

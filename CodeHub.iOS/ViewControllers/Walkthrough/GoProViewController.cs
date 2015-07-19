@@ -1,5 +1,5 @@
 ﻿using UIKit;
-using CodeHub.iOS.Views.App;
+using CodeHub.iOS.ViewControllers.App;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -18,7 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             TellMeMoreButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             TellMeMoreButton.Layer.CornerRadius = 6f;
             TellMeMoreButton.TouchUpInside += (_, __) => {
-                var view = new UpgradeView();
+                var view = new UpgradeViewController();
                 view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, 
                     (s, e) => DismissViewController(true, null));
                 PresentViewController(new ThemedNavigationController(view), true, null);

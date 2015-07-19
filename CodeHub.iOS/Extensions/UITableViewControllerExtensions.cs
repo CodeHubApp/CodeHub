@@ -20,7 +20,7 @@ namespace UIKit
 
         public static IDisposable BindTableSource<TViewModel, TSource>(this IObservable<IReadOnlyReactiveList<TViewModel>> @this, UITableView tableView, 
             Func<UITableView, IReadOnlyReactiveList<TViewModel>, TSource> source)
-            where TSource : ReactiveUI.ReactiveTableViewSource<TViewModel>
+            where TSource : ReactiveTableViewSource<TViewModel>
         {
             return @this.Subscribe(x => {
                 if (tableView.Source != null)

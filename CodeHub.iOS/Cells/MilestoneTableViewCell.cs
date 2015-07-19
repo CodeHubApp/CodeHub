@@ -1,9 +1,9 @@
 using System;
 using ReactiveUI;
-using CodeHub.iOS.ViewComponents;
 using UIKit;
 using CodeHub.Core.ViewModels.Issues;
 using Foundation;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.Cells
 {

@@ -5,6 +5,7 @@ using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;
 using System.Reactive;
+using CodeHub.Core.ViewModels.Users;
 
 namespace CodeHub.Core.ViewModels.Users
 {

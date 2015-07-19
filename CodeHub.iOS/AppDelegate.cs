@@ -4,13 +4,11 @@ using UIKit;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using ReactiveUI;
-using CodeHub.iOS.Views.App;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.App;
 using Splat;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
-using CodeHub.iOS.Views.Settings;
 using CodeHub.iOS.Factories;
 using CodeHub.Core.Factories;
 using System.Linq;
@@ -18,7 +16,9 @@ using CodeHub.Core;
 using System.Net.Http;
 using ModernHttpClient;
 using CodeHub.Core.Data;
+using CodeHub.iOS.ViewControllers.Settings;
 using CodeHub.iOS.ViewControllers.Walkthrough;
+using CodeHub.iOS.ViewControllers.App;
 
 namespace CodeHub.iOS
 {
@@ -37,6 +37,11 @@ namespace CodeHub.iOS
         /// The window.
         /// </summary>
         public override UIWindow Window { get; set; }
+
+        /// <summary>
+        /// Whether the application is Pro
+        /// </summary>
+        public bool IsPro { get; set; }
 
         /// <summary>
         /// This is the main entry point of the application.
@@ -80,7 +85,9 @@ namespace CodeHub.iOS
         private void InitializeApp(NSDictionary options)
         {
             // Stamp the date this was installed (first run)
-            this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+            var installedDate = this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+            if (installedDate < new DateTime(2015, 12, 5))
+                IsPro = true;
 
             // Register default settings from the settings.bundle
             RegisterDefaultSettings();
@@ -110,7 +117,7 @@ namespace CodeHub.iOS
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
             var defaultValueService = Locator.Current.GetService<IDefaultValueService>();
-            viewModelViews.RegisterViewModels(typeof(SettingsView).Assembly);
+            viewModelViews.RegisterViewModels(typeof(SettingsViewController).Assembly);
 
             Themes.Theme.Load("Default");
 
@@ -144,7 +151,7 @@ namespace CodeHub.iOS
         {
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
             var vm = serviceConstructor.Construct<StartupViewModel>();
-            var startupViewController = new StartupView {ViewModel = vm};
+            var startupViewController = new StartupViewController {ViewModel = vm};
 
             var mainNavigationController = new UINavigationController(startupViewController) { NavigationBarHidden = true };
             MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => {
@@ -266,7 +273,7 @@ namespace CodeHub.iOS
             if (!fromBootup && !changeAccount)
             {
                 var nav = Window?.RootViewController as UINavigationController;
-                var menuView = nav?.ViewControllers.OfType<MenuView>().FirstOrDefault();
+                var menuView = nav?.ViewControllers.OfType<MenuViewController>().FirstOrDefault();
                 menuView?.ViewModel?.ActivateCommand.ExecuteIfCan();
             }
         }

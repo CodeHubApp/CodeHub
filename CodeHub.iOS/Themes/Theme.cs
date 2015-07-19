@@ -4,16 +4,13 @@ using Newtonsoft.Json;
 using System.IO;
 using Foundation;
 using System.Linq;
-using System.Collections.Generic;
 using MonoTouch.SlideoutNavigation;
-using CodeHub.iOS.ViewControllers;
 using System.Reflection;
-using CodeHub.iOS.ViewComponents;
 using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Themes
 {
-
     public class Theme
     {
         public UIColor PrimaryNavigationBarColor { get; set; }

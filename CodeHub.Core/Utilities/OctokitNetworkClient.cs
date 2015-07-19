@@ -1,5 +1,4 @@
-﻿using System;
-using Octokit.Internal;
+﻿using Octokit.Internal;
 using Octokit;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
@@ -26,6 +25,11 @@ namespace CodeHub.Core.Utilities
             request.Headers["Accept"] = "application/vnd.github.v3+json; charset=utf-8";
             using (_networkActivity.ActivateNetwork())
                 return _httpClient.Send(request, cancellationToken);
+        }
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
         }
     }
 }
