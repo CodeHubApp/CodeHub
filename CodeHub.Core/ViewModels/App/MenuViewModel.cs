@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using CodeHub.Core.ViewModels.Search;
 using System.Reflection;
 using System.Xml.Linq;
+using CodeHub.Core.ViewModels.Accounts;
 
 namespace CodeHub.Core.ViewModels.App
 {

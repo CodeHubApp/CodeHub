@@ -9,7 +9,7 @@ using CodeHub.Core.Services;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels.App
+namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AccountsViewModel : BaseViewModel
     {

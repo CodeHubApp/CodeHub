@@ -312,7 +312,6 @@
     </Compile>
     <Compile Include="ViewControllers\Users\UserFollowersViewController.cs" />
     <Compile Include="ViewControllers\Users\UserFollowingsViewController.cs" />
-    <Compile Include="ViewControllers\App\AccountsViewController.cs" />
     <Compile Include="ViewControllers\App\StartupViewController.cs" />
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
@@ -443,6 +442,7 @@
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="Views\PixelButton.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

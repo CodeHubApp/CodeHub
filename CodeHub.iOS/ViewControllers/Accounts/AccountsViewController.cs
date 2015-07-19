@@ -1,11 +1,11 @@
 using System;
 using UIKit;
 using ReactiveUI;
-using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Accounts;
 
-namespace CodeHub.iOS.ViewControllers.App
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public class AccountsViewController : BaseTableViewController<AccountsViewModel>, IModalViewController
 	{

@@ -55,7 +55,6 @@
     <Compile Include="Utilities\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
-    <Compile Include="ViewModels\App\AccountsViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackItemViewModel.cs" />
     <Compile Include="ViewModels\App\FeedbackViewModel.cs" />
@@ -235,6 +234,7 @@
     <Compile Include="ViewModels\Organizations\TeamMembersViewModel.cs" />
     <Compile Include="ViewModels\Users\BaseUsersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
