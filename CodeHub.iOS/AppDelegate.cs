@@ -112,7 +112,7 @@ namespace CodeHub.iOS
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            OctokitModernHttpClient.CreateMessageHandler = () => new HttpMessageHandler();
+            OctokitClientFactory.CreateMessageHandler = () => new HttpMessageHandler();
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
@@ -131,7 +131,7 @@ namespace CodeHub.iOS
             }
 
             bool hasSeenWelcome;
-            if (defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
                 defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
                 var welcomeViewController = new WelcomePageViewController();

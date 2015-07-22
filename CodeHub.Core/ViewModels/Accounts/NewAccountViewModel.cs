@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public NewAccountViewModel()
         {
-            Title = "Account";
+            Title = "GitHub Type";
 
             GoToDotComLoginCommand = ReactiveCommand.Create()
                 .WithSubscription(_ => NavigateTo(this.CreateViewModel<OAuthFlowLoginViewModel>()));

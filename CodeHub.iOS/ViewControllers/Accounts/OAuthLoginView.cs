@@ -44,6 +44,8 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             };
 
             this.ViewportObservable().Subscribe(x => ScrollView.Frame = x);
+
+            ImageHeight.Constant = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad ? 192 : 86;
         }
     }
 }

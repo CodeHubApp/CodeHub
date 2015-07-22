@@ -26,12 +26,11 @@ namespace CodeHub.iOS
 
         public static UIImage FilterFilled { get { return UIImageHelper.FromFileAuto("Images/filter-filled"); } }
 
-
         public static class Logos
         {
-            public static UIImage GitHub { get { return UIImage.FromFile("Images/github.png"); } }
+            public static UIImage GitHub { get { return UIImage.FromFile("Images/dotcom-mascot.png"); } }
 
-            public static UIImage Enterprise { get { return UIImage.FromFile("Images/enterprise.png"); } }
+            public static UIImage Enterprise { get { return UIImage.FromFile("Images/enterprise-mascot.png"); } }
         }
 
         public static class Buttons

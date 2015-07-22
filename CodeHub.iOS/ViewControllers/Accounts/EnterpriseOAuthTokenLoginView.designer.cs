@@ -19,6 +19,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		UIKit.UITextField DomainText { get; set; }
 
 		[Outlet]
+		UIKit.NSLayoutConstraint ImageHeight { get; set; }
+
+		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
@@ -32,6 +35,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DescriptionLabel != null) {
+				DescriptionLabel.Dispose ();
+				DescriptionLabel = null;
+			}
+
 			if (DomainText != null) {
 				DomainText.Dispose ();
 				DomainText = null;
@@ -57,9 +65,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 				TokenText = null;
 			}
 
-			if (DescriptionLabel != null) {
-				DescriptionLabel.Dispose ();
-				DescriptionLabel = null;
+			if (ImageHeight != null) {
+				ImageHeight.Dispose ();
+				ImageHeight = null;
 			}
 		}
 	}

@@ -7,6 +7,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OAuthLoginView">
             <connections>
                 <outlet property="DescriptionLabel" destination="KTK-Zp-SPY" id="s1u-o5-vnh"/>
+                <outlet property="ImageHeight" destination="Ivz-yD-9zN" id="MJV-Iy-PcF"/>
                 <outlet property="LoginButton" destination="4Bx-sc-wIc" id="XSN-2x-Hdw"/>
                 <outlet property="LogoImageView" destination="NfM-bb-XX8" id="6Ic-O1-Cci"/>
                 <outlet property="ScrollView" destination="CAm-E7-qth" id="KdQ-eP-McG"/>

@@ -57,11 +57,14 @@ namespace CodeHub.Core.ViewModels.Accounts
                 Domain = x.Domain;
             });
 
-            var canLogin = this.WhenAnyValue(x => x.Username, y => y.Password, z => z.Domain,
-                (x, y, z) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && !string.IsNullOrEmpty(z));
-            
-            LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => 
-            {
+            LoginCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                if (string.IsNullOrEmpty(Username))
+                    throw new ArgumentException("Must have a valid username!");
+                if (string.IsNullOrEmpty(Password))
+                    throw new ArgumentException("Must have a valid password!");
+                if (string.IsNullOrEmpty(Domain))
+                    throw new ArgumentException("Must have a valid GitHub domain!");
+                
                 using (alertDialogFactory.Activate("Logging in..."))
                     return await Login();
             });

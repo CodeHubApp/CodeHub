@@ -16,6 +16,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		UIKit.UILabel DescriptionLabel { get; set; }
 
 		[Outlet]
+		UIKit.NSLayoutConstraint ImageHeight { get; set; }
+
+		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
@@ -29,6 +32,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DescriptionLabel != null) {
+				DescriptionLabel.Dispose ();
+				DescriptionLabel = null;
+			}
+
 			if (LoginButton != null) {
 				LoginButton.Dispose ();
 				LoginButton = null;
@@ -49,9 +57,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 				TokenText = null;
 			}
 
-			if (DescriptionLabel != null) {
-				DescriptionLabel.Dispose ();
-				DescriptionLabel = null;
+			if (ImageHeight != null) {
+				ImageHeight.Dispose ();
+				ImageHeight = null;
 			}
 		}
 	}

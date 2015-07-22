@@ -35,7 +35,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 .IsNotNull()
                 .Subscribe(LoadRequest);
 
-            bool hasSeenWelcome;
+            bool hasSeenWelcome = false;
             if (!defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome))
                 hasSeenWelcome = false;
 

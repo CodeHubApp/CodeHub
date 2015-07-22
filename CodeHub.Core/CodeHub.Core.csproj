@@ -196,7 +196,6 @@
     <Compile Include="Services\ISessionService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="StartupCommands.cs" />
-    <Compile Include="Utilities\OctokitModernHttpClient.cs" />
     <Compile Include="ViewModels\Gists\GistModifyViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddEnterpriseAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />

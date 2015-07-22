@@ -16,6 +16,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		UIKit.UITextField Domain { get; set; }
 
 		[Outlet]
+		UIKit.NSLayoutConstraint ImageHeight { get; set; }
+
+		[Outlet]
 		UIKit.UIButton LoginButton { get; set; }
 
 		[Outlet]
@@ -32,24 +35,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (LogoImageView != null) {
-				LogoImageView.Dispose ();
-				LogoImageView = null;
-			}
-
 			if (Domain != null) {
 				Domain.Dispose ();
 				Domain = null;
-			}
-
-			if (Username != null) {
-				Username.Dispose ();
-				Username = null;
-			}
-
-			if (Password != null) {
-				Password.Dispose ();
-				Password = null;
 			}
 
 			if (LoginButton != null) {
@@ -57,9 +45,29 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 				LoginButton = null;
 			}
 
+			if (LogoImageView != null) {
+				LogoImageView.Dispose ();
+				LogoImageView = null;
+			}
+
+			if (Password != null) {
+				Password.Dispose ();
+				Password = null;
+			}
+
 			if (ScrollView != null) {
 				ScrollView.Dispose ();
 				ScrollView = null;
+			}
+
+			if (Username != null) {
+				Username.Dispose ();
+				Username = null;
+			}
+
+			if (ImageHeight != null) {
+				ImageHeight.Dispose ();
+				ImageHeight = null;
 			}
 		}
 	}

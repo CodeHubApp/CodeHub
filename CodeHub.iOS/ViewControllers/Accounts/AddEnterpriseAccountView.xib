@@ -7,6 +7,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddEnterpriseAccountView">
             <connections>
                 <outlet property="Domain" destination="tqg-ew-uPU" id="wHE-0k-5vT"/>
+                <outlet property="ImageHeight" destination="Lz4-9R-XbM" id="A6B-3T-twu"/>
                 <outlet property="LoginButton" destination="GCm-G3-JyX" id="bzj-8a-T28"/>
                 <outlet property="LogoImageView" destination="8QM-uf-xPE" id="ZI2-im-Wjp"/>
                 <outlet property="Password" destination="w0Y-rS-ERE" id="wAg-n1-lFz"/>

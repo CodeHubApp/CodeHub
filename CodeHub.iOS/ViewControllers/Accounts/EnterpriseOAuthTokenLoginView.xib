@@ -8,6 +8,7 @@
             <connections>
                 <outlet property="DescriptionLabel" destination="dVo-Jz-48o" id="VEY-7r-ONg"/>
                 <outlet property="DomainText" destination="dvi-nK-1Dk" id="asQ-c4-Phi"/>
+                <outlet property="ImageHeight" destination="kwI-Go-J0e" id="zUg-MN-Vkn"/>
                 <outlet property="LoginButton" destination="7yX-T9-hPw" id="Cdc-EN-JPk"/>
                 <outlet property="LogoImageView" destination="0WK-yV-gN2" id="n23-cl-xxD"/>
                 <outlet property="ScrollView" destination="cxb-6f-lPa" id="yFR-fJ-RXH"/>
@@ -41,8 +42,8 @@
                                 <constraint firstAttribute="height" constant="67" id="kwI-Go-J0e"/>
                             </constraints>
                         </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="A description goes here" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dVo-Jz-48o">
-                            <rect key="frame" x="41" y="246" width="239" height="47"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A description goes here" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dVo-Jz-48o">
+                            <rect key="frame" x="41" y="246" width="239" height="15"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <nil key="highlightedColor"/>

@@ -34,10 +34,12 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             Title = "Login";
 
-            var canLogin = this.WhenAnyValue(x => x.Domain, y => y.Token)
-                .Select(x => !string.IsNullOrEmpty(x.Item1) && !string.IsNullOrEmpty(x.Item2));
-            LoginCommand = ReactiveCommand.CreateAsyncTask(canLogin, async _ => {
-
+            LoginCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                if (string.IsNullOrEmpty(Domain))
+                    throw new ArgumentException("Must have a valid GitHub domain");
+                if (string.IsNullOrEmpty(Token))
+                    throw new ArgumentException("Must have a valid Token");
+                
                 Uri domainUri;
                 if (!Uri.TryCreate(Domain, UriKind.Absolute, out domainUri))
                     throw new Exception("The provided domain is not a valid URL.");

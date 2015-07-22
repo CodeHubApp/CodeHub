@@ -268,10 +268,6 @@
     <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\GoProViewController.xib" />
     <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\PromoteView.xib" />
     <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\WelcomeViewController.xib" />
-    <Compile Include="ViewControllers\Accounts\NewAccountView.cs" />
-    <Compile Include="ViewControllers\Accounts\NewAccountView.designer.cs">
-      <DependentUpon>NewAccountView.cs</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\App\MenuViewController.cs" />
     <Compile Include="ViewControllers\Gists\PublicGistsViewController.cs" />
     <Compile Include="ViewControllers\Gists\StarredGistsViewController.cs" />
@@ -345,7 +341,6 @@
     <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
     <Compile Include="ViewControllers\WebBrowserViewController.cs" />
     <Compile Include="ViewControllers\BaseWebViewController.cs" />
-    <InterfaceDefinition Include="ViewControllers\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="ViewControllers\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="ViewControllers\Issues\IssueMilestonesViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueAssigneeViewController.cs" />
@@ -443,6 +438,7 @@
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="Views\PixelButton.cs" />
     <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -569,7 +565,6 @@
     <BundleResource Include="Images\login_user_unknown.png">
       <DependentUpon>login_user_unknown%402x.png</DependentUpon>
     </BundleResource>
-    <BundleResource Include="Images\enterprise.png" />
     <BundleResource Include="Images\Navigation\back.png" />
     <BundleResource Include="Images\Navigation\back%402x.png">
       <DependentUpon>back.png</DependentUpon>
@@ -768,7 +763,6 @@
       <Link>octicons.ttf</Link>
     </BundleResource>
     <BundleResource Include="CodeHubLaunch.png" />
-    <Content Include="Images\github.png" />
     <BundleResource Include="Images\search%403x.png">
       <DependentUpon>search.png</DependentUpon>
     </BundleResource>
@@ -787,6 +781,8 @@
     <BundleResource Include="Heart.png" />
     <BundleResource Include="Rocket.png" />
     <BundleResource Include="Feedback.png" />
+    <BundleResource Include="Images\enterprise-mascot.png" />
+    <BundleResource Include="Images\dotcom-mascot.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.1\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.1\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
