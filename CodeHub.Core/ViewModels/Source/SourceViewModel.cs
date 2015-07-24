@@ -68,16 +68,14 @@ namespace CodeHub.Core.ViewModels.Source
             var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch, x => x.PushAccess)
                 .Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary && x.Item3.HasValue && x.Item3.Value);
             GoToEditCommand = ReactiveCommand.Create(canEdit);
-	        GoToEditCommand.Subscribe(_ =>
-	        {
+	        GoToEditCommand.Subscribe(_ => {
 	            var vm = this.CreateViewModel<EditFileViewModel>();
                 vm.Path = Path;
                 vm.Branch = Branch;
                 vm.RepositoryOwner = RepositoryOwner;
                 vm.RepositoryName = RepositoryName;
-                vm.SourceChanged.Subscribe(x => 
-                {
-                    GitUrl = x.Content.GitUrl;
+                vm.SaveCommand.Subscribe(x => {
+                    GitUrl = x.Content.GitUrl.AbsoluteUri;
                     LoadCommand.ExecuteIfCan();
                 });
 	            NavigateTo(vm);

@@ -23,7 +23,9 @@ namespace CodeHub.iOS.ViewControllers.Source
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new SourceContentTableViewSource(TableView, ViewModel.Content);
+
+            this.WhenAnyValue(x => x.ViewModel.Content)
+                .BindTableSource(TableView, (tv, s) => new SourceContentTableViewSource(tv, s));
         }
     }
 }

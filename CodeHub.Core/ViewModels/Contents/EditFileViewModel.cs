@@ -11,7 +11,6 @@ namespace CodeHub.Core.ViewModels.Contents
 {
     public class EditFileViewModel : BaseViewModel, ILoadableViewModel
     {
-        private readonly ISubject<ContentUpdateModel> _sourceChangedSubject = new Subject<ContentUpdateModel>();
         private DateTime _lastLoad, _lastEdit;
 
         public string RepositoryOwner { get; set; }
@@ -43,18 +42,13 @@ namespace CodeHub.Core.ViewModels.Contents
 
 		public string Branch { get; set; }
 
-        public IObservable<ContentUpdateModel> SourceChanged
-        {
-            get { return _sourceChangedSubject; }
-        }
-
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public IReactiveCommand<Unit> SaveCommand { get; private set; }
+        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; private set; }
 
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
-        public EditFileViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
+        public EditFileViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
 	    {
             Title = "Edit";
 
@@ -71,9 +65,9 @@ namespace CodeHub.Core.ViewModels.Contents
                     if (!path.StartsWith("/", StringComparison.Ordinal))
                         path = "/" + path;
 
-    	            var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
+    	            var request = sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
     			    request.UseCache = false;
-    			    var data = await applicationService.Client.ExecuteAsync(request);
+    			    var data = await sessionService.Client.ExecuteAsync(request);
     			    BlobSha = data.Data.Sha;
     	            var content = Convert.FromBase64String(data.Data.Content);
                     Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
@@ -81,21 +75,13 @@ namespace CodeHub.Core.ViewModels.Contents
     	        });
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)),
-                async _ =>
-            {
-                var path = Path.StartsWith("/", StringComparison.Ordinal) ? Path : string.Concat("/", Path);
-                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName]
-                    .UpdateContentFile(path, CommitMessage, Text, BlobSha, Branch);
-
-                using (alertDialogFactory.Activate("Commiting..."))
-                {
-                    var response = await applicationService.Client.ExecuteAsync(request);
-                    _sourceChangedSubject.OnNext(response.Data);
-                }
-
-                Dismiss();
+                this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)), async _ => {
+                    var path = Path.TrimStart('/');
+                    var request = new Octokit.UpdateFileRequest(CommitMessage, Text, BlobSha) { Branch = Branch };
+                    using (alertDialogFactory.Activate("Commiting..."))
+                        return await sessionService.GitHubClient.Repository.Content.UpdateFile(RepositoryOwner, RepositoryName, path, request);
             });
+            SaveCommand.Subscribe(x => Dismiss());
 
             DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {

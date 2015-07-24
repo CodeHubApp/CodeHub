@@ -1,6 +1,5 @@
 ﻿using System;
 using ReactiveUI;
-using System.Reactive;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using CodeHub.Core.Factories;
@@ -44,34 +43,30 @@ namespace CodeHub.Core.ViewModels.Contents
             get { return _canCommit.Value; }
         }
 
-        public IReactiveCommand<Unit> SaveCommand { get; private set; }
+        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; private set; }
 
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
-        public CreateFileViewModel(ISessionService applicationService, IAlertDialogFactory alertDialogFactory)
+        public CreateFileViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
         {
             Title = "Create File";
 
-            this.WhenAnyValue(x => x.Name).Subscribe(x => CommitMessage = "Created " + x);
+            this.WhenAnyValue(x => x.Name)
+                .Subscribe(x => CommitMessage = "Created " + x);
 
             _canCommit = this.WhenAnyValue(x => x.Name)
                 .Select(x => !string.IsNullOrEmpty(x))
                 .ToProperty(this, x => x.CanCommit);
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
-                this.WhenAnyValue(x => x.Name).Select(x => !string.IsNullOrEmpty(x)), 
-                async _ =>
-            {
-                var content = Content ?? string.Empty;
-
-                var path = Path;
-                if (string.IsNullOrEmpty(Path))
-                    path = "/";
-                path = System.IO.Path.Combine(path, Name);
-                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].UpdateContentFile(path, CommitMessage, content, null, Branch);
-                await applicationService.Client.ExecuteAsync(request);
-                Dismiss();
-            });
+                this.WhenAnyValue(x => x.Name).Select(x => !string.IsNullOrEmpty(x)), async _ => {
+                    var content = Content ?? string.Empty;
+                    var path = System.IO.Path.Combine(Path ?? string.Empty, Name);
+                    var request = new Octokit.CreateFileRequest(CommitMessage, content) { Branch = Branch };
+                    using (alertDialogFactory.Activate("Commiting..."))
+                        return await sessionService.GitHubClient.Repository.Content.CreateFile(RepositoryOwner, RepositoryName, path, request);
+                });
+            SaveCommand.Subscribe(x => Dismiss());
 
             DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
             {
@@ -85,8 +80,8 @@ namespace CodeHub.Core.ViewModels.Contents
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
-            Path = path ?? "/";
-            Branch = branch ?? "master";
+            Path = path;
+            Branch = branch;
         }
     }
 }

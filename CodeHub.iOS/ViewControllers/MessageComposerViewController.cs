@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public class MessageComposerViewController : ReactiveViewController
+    public class MessageComposerViewController : ReactiveViewController, IActivatable
     {
         private CGRect _keyboardBounds = CGRect.Empty;
 
