@@ -210,6 +210,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
             Commit = commit;
+            Node = node;
             ShowRepository = showRepository;
             return this;
         }
