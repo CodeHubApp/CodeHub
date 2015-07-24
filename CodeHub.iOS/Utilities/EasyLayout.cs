@@ -41,9 +41,9 @@ namespace CodeHub.iOS
         /// </summary>
         /// <param name="view">The superview laying out the referenced subviews.</param>
         /// <param name="constraints">Constraint equations and inequalities.</param>
-        public static NSLayoutConstraint[] ConstrainLayout (this UIView view, Expression<Func<bool>> constraints)
+        public static NSLayoutConstraint[] ConstrainLayout (this UIView view, Expression<Func<bool>> constraints, bool apply = true)
         {
-            return ConstrainLayout (view, constraints, UILayoutPriority.Required);
+            return ConstrainLayout (view, constraints, UILayoutPriority.Required, apply);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace CodeHub.iOS
         /// <param name="view">The superview laying out the referenced subviews.</param>
         /// <param name="constraints">Constraint equations and inequalities.</param>
         /// <param name = "priority">The priority of the constraints</param>
-        public static NSLayoutConstraint[] ConstrainLayout (this UIView view, Expression<Func<bool>> constraints, UILayoutPriority priority)
+        public static NSLayoutConstraint[] ConstrainLayout (this UIView view, Expression<Func<bool>> constraints, UILayoutPriority priority, bool apply = true)
         {
             var body = constraints.Body;
 
@@ -69,7 +69,8 @@ namespace CodeHub.iOS
                 foreach (var c in layoutConstraints) {
                     c.Priority = (float)priority;
                 }
-                view.AddConstraints (layoutConstraints);
+                if (apply)
+                    view.AddConstraints (layoutConstraints);
             }
 
             return layoutConstraints;

@@ -25,7 +25,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class MenuViewModel : BaseViewModel
     {
-        private readonly ISessionService _applicationService;
+        private readonly ISessionService _sessionService;
 		private int _notifications;
 
 		public int Notifications
@@ -43,7 +43,7 @@ namespace CodeHub.Core.ViewModels.App
 		
         public GitHubAccount Account
         {
-            get { return _applicationService.Account; }
+            get { return _sessionService.Account; }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
@@ -52,12 +52,12 @@ namespace CodeHub.Core.ViewModels.App
 
         public IReadOnlyList<PinnedRepository> PinnedRepositories 
         {
-            get { return new ReadOnlyCollection<PinnedRepository>(_applicationService.Account.PinnnedRepositories); }
+            get { return new ReadOnlyCollection<PinnedRepository>(_sessionService.Account.PinnnedRepositories); }
         }
 		
         public MenuViewModel(ISessionService sessionService, IAccountsRepository accountsService)
         {
-            _applicationService = sessionService;
+            _sessionService = sessionService;
 
             GoToNotificationsCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<NotificationsViewModel>();
@@ -143,10 +143,12 @@ namespace CodeHub.Core.ViewModels.App
                 .Subscribe(NavigateTo); 
                 
             GoToFeedbackCommand = ReactiveCommand.Create();
-            GoToFeedbackCommand
-                .Select(x => this.CreateViewModel<WebBrowserViewModel>())
-                .Select(x => x.Init("https://codehub.uservoice.com"))
-                .Subscribe(NavigateTo);
+            GoToFeedbackCommand.Subscribe(_ => {
+                var vm = sessionService.Account.IsEnterprise
+                    ? (IBaseViewModel)this.CreateViewModel<EnterpriseSupportViewModel>()
+                    : this.CreateViewModel<SupportViewModel>();
+                NavigateTo(vm);
+            });
 
             DeletePinnedRepositoryCommand = ReactiveCommand.Create();
 
