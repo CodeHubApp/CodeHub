@@ -2,7 +2,6 @@
 using System;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.Repositories;
-using Xamarin.Utilities.Services;
 using System.Reactive.Linq;
 using Humanizer;
 using CodeHub.Core.Data;
@@ -45,12 +44,7 @@ namespace CodeHub.Core.ViewModels.Settings
         {
             get { return _environmentService.ApplicationVersion; }
         }
-
-        public string OSVersion
-        {
-            get { return _environmentService.OSVersion; }
-        }
-
+        
         private string _accountImageUrl;
         public string AccountImageUrl
         {

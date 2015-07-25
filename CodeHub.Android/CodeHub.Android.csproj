@@ -74,8 +74,15 @@
     <Compile Include="Application.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DefaultValueService.cs" />
+    <Compile Include="Services\EnvironmentalService.cs" />
+    <Compile Include="Services\FilesystemService.cs" />
+    <Compile Include="Services\NetworkActivityService.cs" />
+    <Compile Include="Services\Registrations.cs" />
+    <Compile Include="Services\ServiceConstructor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />

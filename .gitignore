@@ -4,3 +4,4 @@
 *.userprefs
 *.csproj.user
 /packages
+.vs

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -138,7 +138,6 @@
     <None Include="WebResources\styles\vs.css" />
     <None Include="WebResources\styles\xcode.css" />
     <None Include="WebResources\styles\zenburn.css" />
-    <None Include="WebResources\marked.js" />
     <None Include="WebResources\highlight.pack.js" />
     <None Include="Resources\octicons.ttf" />
     <None Include="WebViews\UpgradeDetailsRazorView.cshtml">
@@ -146,10 +145,5 @@
       <LastGenOutput>UpgradeDetailsRazorView.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-    <Folder Include="Views\Releases\" />
-    <Folder Include="WebResources\styles\" />
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

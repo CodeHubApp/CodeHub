@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -48,6 +48,7 @@
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\ImgurService.cs" />
     <Compile Include="Services\LoginService.cs" />
+    <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Services\UrlRouterService.cs" />
     <Compile Include="Utilities\DefaultStartupViewCommand.cs" />
     <Compile Include="Utilities\FilterGroup.cs" />
@@ -239,9 +240,14 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonMark.NET.0.9.1\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
@@ -300,12 +306,5 @@
       <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Settings\" />
-    <Folder Include="ViewModels\Contents\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Factories\" />
-    <Folder Include="ViewModels\Search\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
