@@ -9,13 +9,14 @@ using CodeHub.iOS.TableViewSources;
 using Splat;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public abstract class BaseTableViewController<TViewModel> : BaseTableViewController, IViewFor<TViewModel> where TViewModel : class
     {
+        private readonly Lazy<LoadingIndicatorView> _loadingActivityView = new Lazy<LoadingIndicatorView>(() => new LoadingIndicatorView());
         private readonly ISubject<bool> _isLoadedSubject = new BehaviorSubject<bool>(false);
-        private readonly Lazy<UIActivityIndicatorView> _loadingActivityView;
 
         private TViewModel _viewModel;
         public TViewModel ViewModel
@@ -72,13 +73,6 @@ namespace CodeHub.iOS.ViewControllers
             this.Appeared
                 .Take(1)
                 .Subscribe(_ => CreateEmptyHandler());
-
-            _loadingActivityView = new Lazy<UIActivityIndicatorView>(() =>
-                new UIActivityIndicatorView(UIActivityIndicatorViewStyle.White)
-                { 
-                    Frame = new CGRect(0, 0, 320f, 88f),
-                    Color = Theme.PrimaryNavigationBarColor,
-                });
         }
 
         protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)

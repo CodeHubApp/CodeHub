@@ -440,6 +440,7 @@
     <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
     <Compile Include="ViewControllers\App\EnterpriseSupportViewController.cs" />
+    <Compile Include="Views\LoadingIndicatorView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

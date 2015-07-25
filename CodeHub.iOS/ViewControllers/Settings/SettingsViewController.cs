@@ -10,19 +10,16 @@ namespace CodeHub.iOS.ViewControllers.Settings
 {
     public class SettingsViewController : BaseDialogViewController<SettingsViewModel>
 	{
-        public SettingsViewController()
-        {
-            this.WhenAnyValue(x => x.ViewModel.AccountImageUrl)
-                .IsNotNull()
-                .Subscribe(x => HeaderView.ImageUri = x);
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             HeaderView.Image = Images.LoginUserUnknown;
             HeaderView.SubText = "Settings apply to this account only.";
+
+            this.WhenAnyValue(x => x.ViewModel.AccountImageUrl)
+                .IsNotNull()
+                .Subscribe(x => HeaderView.ImageUri = x);
 
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", 
                 ViewModel.ShowOrganizationsInEvents, e => ViewModel.ShowOrganizationsInEvents = e.Value);
