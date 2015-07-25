@@ -21,11 +21,11 @@ namespace CodeHub.Android.Activities.Users
             SetContentView(Resource.Layout.UsersLayout);
             this.WireUpControls();
 
-            this.WhenAnyValue(x => x.ViewModel).Where(x => x != null).Subscribe(x =>
-            {
-                var adapter = new ReactiveListAdapter<BasicUserModel>(ViewModel.Users, (vm, parent) => null);
-                List.Adapter = adapter;
-            });
+//            this.WhenAnyValue(x => x.ViewModel).Where(x => x != null).Subscribe(x =>
+//            {
+//                var adapter = new ReactiveListAdapter<BasicUserModel>(ViewModel.Users, (vm, parent) => null);
+//                List.Adapter = adapter;
+//            });
         }
     }
 }

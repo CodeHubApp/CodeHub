@@ -12,12 +12,12 @@ namespace CodeHub.Android.Activities.Application
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            ViewModel = new StartupViewModel(IoC.Resolve<IAccountsService>(), IoC.Resolve<ILoginService>());
-
-            this.WhenActivated(d =>
-            {
-                ViewModel.LoadCommand.ExecuteIfCan();
-            });
+//            ViewModel = new StartupViewModel(IoC.Resolve<IAccountsService>(), IoC.Resolve<ILoginService>());
+//
+//            this.WhenActivated(d =>
+//            {
+//                ViewModel.LoadCommand.ExecuteIfCan();
+//            });
         }
     }
 }
