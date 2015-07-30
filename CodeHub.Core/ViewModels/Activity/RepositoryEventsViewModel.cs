@@ -7,9 +7,9 @@ namespace CodeHub.Core.ViewModels.Activity
 {
     public class RepositoryEventsViewModel : BaseEventsViewModel
     {
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
         public RepositoryEventsViewModel(ISessionService applicationService)
             : base(applicationService)
@@ -18,7 +18,14 @@ namespace CodeHub.Core.ViewModels.Activity
 
         protected override GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetEvents();
+			return SessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetEvents();
+        }
+
+        public RepositoryEventsViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

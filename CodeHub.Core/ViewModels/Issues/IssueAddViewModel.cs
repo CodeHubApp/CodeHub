@@ -8,7 +8,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
 	public class IssueAddViewModel : IssueModifyViewModel
 	{
-	    private readonly ISessionService _applicationService;
+        private readonly ISessionService _sessionService;
         private readonly IAlertDialogFactory _alertDialogFactory;
 
         public IssueAddViewModel(
@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Issues
             IAlertDialogFactory alertDialogService)
             : base(applicationService, alertDialogService)
         {
-            _applicationService = applicationService;
+            _sessionService = applicationService;
             _alertDialogFactory = alertDialogService;
             Title = "New Issue";
         }
@@ -37,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 foreach (var label in labels)
                     newIssue.Labels.Add(label);
 
-                return _applicationService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, newIssue);
+                return _sessionService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, newIssue);
 			}
 			catch (Exception e)
 			{

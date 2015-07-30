@@ -9,14 +9,14 @@ namespace CodeHub.Core.ViewModels.Activity
     {
         public string Username { get; private set; }
 
-        public UserEventsViewModel(ISessionService applicationService)
-            : base(applicationService)
+        public UserEventsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
         }
 
         protected override GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[Username].GetEvents();
+			return SessionService.Client.Users[Username].GetEvents();
         }
 
         public UserEventsViewModel Init(string username)

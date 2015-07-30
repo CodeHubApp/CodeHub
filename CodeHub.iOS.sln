@@ -170,6 +170,8 @@ Global
 		$3.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $4
 		$4.IndentSwitchBody = True
+		$4.IndentBlocksInsideExpressions = True
+		$4.AnonymousMethodBraceStyle = NextLine
 		$4.PropertyBraceStyle = NextLine
 		$4.PropertyGetBraceStyle = NextLine
 		$4.PropertySetBraceStyle = NextLine

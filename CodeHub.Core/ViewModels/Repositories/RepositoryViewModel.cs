@@ -223,8 +223,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToStargazersCommand.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<RepositoryStargazersViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 
@@ -232,17 +231,14 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToWatchersCommand.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<RepositoryWatchersViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 
             GoToEventsCommand = ReactiveCommand.Create();
-            GoToEventsCommand.Subscribe(_ =>
-            {
+            GoToEventsCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<RepositoryEventsViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 

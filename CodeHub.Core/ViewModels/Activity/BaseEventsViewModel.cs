@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Activity
 {
     public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel
     {
-        protected readonly ISessionService ApplicationService;
+        protected readonly ISessionService SessionService;
 
         public IReadOnlyReactiveList<EventItemViewModel> Events { get; private set; }
 
@@ -33,15 +33,11 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public IReactiveCommand<Unit> LoadCommand { get; set; }
 
-        public bool ReportRepository
-        {
-            get;
-            private set;
-        }
+        public bool ReportRepository { get; private set; }
 
-        protected BaseEventsViewModel(ISessionService applicationService)
+        protected BaseEventsViewModel(ISessionService sessionService)
         {
-            ApplicationService = applicationService;
+            SessionService = sessionService;
             Title = "Events";
 
             var events = new ReactiveList<EventModel>();

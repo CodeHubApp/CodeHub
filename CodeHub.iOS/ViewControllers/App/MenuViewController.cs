@@ -46,9 +46,8 @@ namespace CodeHub.iOS.ViewControllers.App
             _trendingElement = new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.ExecuteIfCan(), Octicon.Pulse.ToImage());
             this.WhenAnyValue(x => x.ViewModel.Account)
                 .Select(x => x != null && x.IsEnterprise)
+                .StartWith(true)
                 .Subscribe(x => _trendingElement.Hidden = x);
-
-            _trendingElement.Hidden = true;
 
             _repoSection = new Section { HeaderView = new MenuSectionView("Repositories") };
             _repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage()));
@@ -82,7 +81,6 @@ namespace CodeHub.iOS.ViewControllers.App
             });
 
             this.WhenAnyValue(x => x.ViewModel.Notifications)
-                .DistinctUntilChanged()
                 .Subscribe(x => _notifications.NotificationNumber = x);
 
             Appearing.Subscribe(_ => CreateMenuRoot());

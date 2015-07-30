@@ -6,15 +6,15 @@ namespace CodeHub.Core.ViewModels.Activity
 {
     public class NewsViewModel : BaseEventsViewModel
     {
-        public NewsViewModel(ISessionService applicationService) 
-            : base(applicationService)
+        public NewsViewModel(ISessionService sessionService) 
+            : base(sessionService)
         {
             Title = "News";
         }
 
         protected override GitHubSharp.GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[ApplicationService.Account.Username].GetReceivedEvents();
+			return SessionService.Client.Users[SessionService.Account.Username].GetReceivedEvents();
         }
     }
 }

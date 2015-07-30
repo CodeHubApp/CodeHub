@@ -12,7 +12,7 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssuesViewModel : BaseViewModel, IBaseIssuesViewModel, IPaginatableViewModel
+    public abstract class BaseIssuesViewModel : BaseViewModel, IProvidesSearchKeyword, IPaginatableViewModel
     {
         private readonly ISessionService _sessionService;
         protected readonly IReactiveList<IssueModel> IssuesBacking = new ReactiveList<IssueModel>();

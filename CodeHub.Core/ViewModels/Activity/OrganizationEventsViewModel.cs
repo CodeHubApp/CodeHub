@@ -18,7 +18,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
         protected override GitHubRequest<List<EventModel>> CreateRequest()
         {
-			return ApplicationService.Client.Users[Username].GetOrganizationEvents(OrganizationName);
+			return SessionService.Client.Users[Username].GetOrganizationEvents(OrganizationName);
         }
     }
 }

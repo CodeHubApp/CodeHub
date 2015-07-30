@@ -56,7 +56,7 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 if (GroupedNotifications.SelectMany(x => x.Notifications).All(x => !x.IsSelected))
                 {
-                    applicationService.Client.ExecuteAsync(applicationService.Client.Notifications.MarkAsRead()).ToBackground();
+                    applicationService.GitHubClient.Notification.MarkAsRead().ToBackground();
                     _notifications.Clear();
                 }
                 else
@@ -69,8 +69,7 @@ namespace CodeHub.Core.ViewModels.Activity
 
                     Task.WhenAll(tasks).ToBackground();
 
-                    foreach (var s in selected)
-                        _notifications.Remove(s.Notification);
+                    _notifications.RemoveAll(selected.Select(y => y.Notification));
                 }
             });
 
@@ -95,9 +94,8 @@ namespace CodeHub.Core.ViewModels.Activity
                 _notifications.Reset(notifications);
             });
 
-            LoadCommand
+            _notifications.CountChanged
                 .Where(_ => ActiveFilter == UnreadFilter)
-                .Select(_ => _notifications.Count)
                 .Subscribe(_notificationCount.OnNext);
 
             this.WhenAnyValue(x => x.ActiveFilter).Skip(1).Subscribe(x =>
