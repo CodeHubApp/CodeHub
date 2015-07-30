@@ -11,7 +11,6 @@ namespace CodeHub.iOS.ViewControllers.App
 {
     public abstract class MarkdownComposerViewController<TViewModel> : MessageComposerViewController<TViewModel> where TViewModel : class, IComposerViewModel
     {
-        private readonly UISegmentedControl _viewSegment;
         private UIWebView _previewView;
 
         protected MarkdownComposerViewController(IMarkdownService markdownService)
@@ -23,12 +22,12 @@ namespace CodeHub.iOS.ViewControllers.App
             this.WhenAnyValue(x => x.ViewModel.Text)
                 .Subscribe(x => Text = x);
 
-            _viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
-            _viewSegment.SelectedSegment = 0;
-            NavigationItem.TitleView = _viewSegment;
-            _viewSegment.ValueChanged += (sender, e) => 
+            var viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
+            viewSegment.SelectedSegment = 0;
+            NavigationItem.TitleView = viewSegment;
+            viewSegment.ValueChanged += (sender, e) => 
             {
-                if (_viewSegment.SelectedSegment == 0)
+                if (viewSegment.SelectedSegment == 0)
                 {
                     if (_previewView != null)
                     {

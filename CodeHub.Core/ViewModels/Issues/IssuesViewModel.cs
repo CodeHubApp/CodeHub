@@ -29,11 +29,11 @@ namespace CodeHub.Core.ViewModels.Issues
             set
             {
                 if (value == IssueFilterSelection.Open)
-                    Filter.SetDefault(true);
+                    Filter.SetDefault(true).ToBackground();
                 else if (value == IssueFilterSelection.Closed)
-                    Filter.SetDefault(false);
+                    Filter.SetDefault(false).ToBackground();
                 else if (value == IssueFilterSelection.Mine)
-                    Filter.SetDefault(true, _sessionService.Account.Username);
+                    Filter.SetDefault(true, _sessionService.Account.Username).ToBackground();
                 this.RaiseAndSetIfChanged(ref _filterSelection, value);
             }
         }

@@ -1,7 +1,7 @@
 using System;
 using Foundation;
 using UIKit;
-using Xamarin.Utilities.Services;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Services
 {
@@ -52,14 +52,6 @@ namespace CodeHub.iOS.Services
                     return shortVersion;
 
                 return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
-            }
-        }
-
-        public string DeviceName
-        {
-            get
-            {
-                return UIDevice.CurrentDevice.Name;
             }
         }
     }

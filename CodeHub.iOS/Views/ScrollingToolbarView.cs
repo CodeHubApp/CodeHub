@@ -67,7 +67,7 @@ namespace CodeHub.iOS.Views
                 }
                 else
                 {
-                    frame.Width = frame.Width + XPADDING;
+                    frame.Width = frame.Height + XPADDING;
                 }
 
                 button.Frame = frame;

@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views
             }
         }
 
-        public string Title
+        public string Text
         {
             get { return _titleLabel.Text; }
             set { _titleLabel.Text = value; }

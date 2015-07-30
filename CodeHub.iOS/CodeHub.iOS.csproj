@@ -511,14 +511,17 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.1.37.0\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
-    </Reference>
     <Reference Include="Analytics.NET">
       <HintPath>..\packages\Analytics.2.0.1\lib\Analytics.NET.dll</HintPath>
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.14.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonMark">
+      <HintPath>..\packages\CommonMark.NET.0.9.1\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -557,12 +560,6 @@
     <BundleResource Include="Resources\Icon-76%402x.png" />
     <BundleResource Include="Resources\Icon-Small-40.png" />
     <BundleResource Include="Resources\Icon-Small-40%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\link.png" />
-    <BundleResource Include="Images\MarkdownComposer\photo%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\photo.png" />
-    <BundleResource Include="Images\MarkdownComposer\picture%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\picture.png" />
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\login_user_unknown.png">
       <DependentUpon>login_user_unknown%402x.png</DependentUpon>
@@ -598,9 +595,6 @@
     </BundleResource>
     <BundleResource Include="..\CodeHub\WebResources\highlight.pack.js">
       <Link>WebResources\highlight.pack.js</Link>
-    </BundleResource>
-    <BundleResource Include="..\CodeHub\WebResources\marked.js">
-      <Link>WebResources\marked.js</Link>
     </BundleResource>
     <BundleResource Include="..\CodeHub\WebResources\styles\arta.css">
       <Link>WebResources\styles\arta.css</Link>

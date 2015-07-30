@@ -2,6 +2,8 @@
 {
     public interface IEnvironmentalService
     {
+        string OSVersion { get; }
+
         string ApplicationVersion { get; }
     }
 }

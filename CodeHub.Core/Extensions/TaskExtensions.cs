@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using System.Reactive;
 
-
 // Analysis disable once CheckNamespace
 public static class TaskExtensions
 {

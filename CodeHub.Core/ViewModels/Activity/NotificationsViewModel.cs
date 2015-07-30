@@ -90,7 +90,7 @@ namespace CodeHub.Core.ViewModels.Activity
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 var all = ActiveFilter == AllFilter;
                 var participating = ActiveFilter == ParticipatingFilter;
-                var req = new Octokit.NotificationsRequest { All = all, Participating = participating, Since = DateTimeOffset.MinValue };
+                var req = new Octokit.NotificationsRequest { All = all, Participating = participating, Since = DateTimeOffset.Now.Subtract(TimeSpan.FromDays(365)) };
                 var notifications = await applicationService.GitHubClient.Notification.GetAllForCurrent(req);
                 _notifications.Reset(notifications);
             });

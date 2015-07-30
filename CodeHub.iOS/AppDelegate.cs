@@ -203,7 +203,7 @@ namespace CodeHub.iOS
 
             var remoteNotification = options[UIApplication.LaunchOptionsRemoteNotificationKey] as NSDictionary;
             if (remoteNotification != null)
-                HandleNotification(remoteNotification, true);
+                HandleNotification(remoteNotification, true).ToBackground();
         }
 
         private void SetupPushNotifications()
@@ -247,7 +247,7 @@ namespace CodeHub.iOS
         {
             if (application.ApplicationState == UIApplicationState.Active)
                 return;
-            HandleNotification(userInfo, false);
+            HandleNotification(userInfo, false).ToBackground();
         }
 
         private async Task HandleNotification(NSDictionary data, bool fromBootup)

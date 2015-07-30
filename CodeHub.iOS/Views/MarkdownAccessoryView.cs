@@ -18,9 +18,9 @@ namespace CodeHub.iOS.Views
 
         private static IEnumerable<UIButton> CreateButtons(UITextView controller)
         {
-            var pictureImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/picture");
-            var linkImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/link");
-            var photoImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/photo");
+            var pictureImage = Octicon.FileMedia.ToImage(64);
+            var linkImage = Octicon.Link.ToImage(64);
+            var photoImage = Octicon.DeviceCamera.ToImage(64);
 
             var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
             var vm = serviceConstructor.Construct<MarkdownAccessoryViewModel>();

@@ -8,9 +8,10 @@ using CodeHub.Core.Factories;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 using Octokit;
 using System.Collections.ObjectModel;
+using Splat;
+using System.Text;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -150,26 +151,37 @@ namespace CodeHub.Core.ViewModels.PullRequests
             {
                 events.Insert(0, CreateInitialComment(PullRequest));
             }
-            catch
+            catch (Exception e)
             {
-                Debugger.Break();
+                this.Log().ErrorException("Unable to load events", e);
             }
 
             return events;
         }
 
-        private static IssueCommentItemViewModel CreateInitialComment(Octokit.PullRequest pullRequest)
+        private static IssueCommentItemViewModel CreateInitialComment(PullRequest pullRequest)
         {
+            var str = new StringBuilder();
             var login = pullRequest.User.Login;
             var loginHtml = pullRequest.User.HtmlUrl;
-            var baseHtml = pullRequest.Base.Repository.HtmlUrl + "/tree/" + pullRequest.Base.Ref;
-            var headHtml = pullRequest.Head.Repository.HtmlUrl + "/tree/" + pullRequest.Head.Ref;
+            str.AppendFormat("<a href='{0}'>{1}</a> wants to merge ", loginHtml, login);
+            str.AppendFormat("{0} commit{1} ", pullRequest.Commits, (pullRequest.Commits > 1 ? "s" : string.Empty));
+            str.AppendFormat("{0} commit{1} into ", pullRequest.Commits, (pullRequest.Commits > 1 ? "s" : string.Empty));
+            str.Append(CreateLink(pullRequest.Base));
+            str.Append(" from ");
+            str.Append(CreateLink(pullRequest.Head));
+            return new IssueCommentItemViewModel(str.ToString(), login, pullRequest.User.AvatarUrl, pullRequest.CreatedAt);
+        }
 
-            var body = "<a href='" + loginHtml + "'>" + login + "</a> wants to merge " + pullRequest.Commits + " commit" +
-                (pullRequest.Commits > 1 ? "s" : string.Empty) + " into <a href='" + baseHtml + "'>" + pullRequest.Base.Label + 
-                "</a> from <a href='" + headHtml + "'>" + pullRequest.Head.Label + "</a>";
+        private static string CreateLink(GitReference reference)
+        {
+            if (reference.Repository != null)
+            {
+                var baseHtml = reference.Repository.HtmlUrl + "/tree/" + reference.Ref;
+                return string.Format("<a href='{0}'>{1}</a>", baseHtml, reference.Label);
+            }
 
-            return new IssueCommentItemViewModel(body, login, pullRequest.User.AvatarUrl, pullRequest.CreatedAt);
+            return "<a href='#'>unknown repository</a>";
         }
     }
 }

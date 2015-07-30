@@ -3,20 +3,18 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Reactive.Threading;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Reactive;
 using System.Linq;
 using CodeHub.Core.ViewModels.Users;
-using System.Collections.ObjectModel;
 using CodeHub.Core.Factories;
 using Splat;
 using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel, IEnableLogger
+    public abstract class BaseIssueViewModel : BaseViewModel, ILoadableViewModel
     {
         protected readonly ReactiveList<IIssueEventItemViewModel> InternalEvents = new ReactiveList<IIssueEventItemViewModel>();
         private readonly ISubject<Octokit.Issue> _issueUpdatedObservable = new Subject<Octokit.Issue>();

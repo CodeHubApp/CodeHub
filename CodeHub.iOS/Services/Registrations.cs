@@ -1,6 +1,5 @@
 ﻿using Splat;
 using CodeHub.Core.Services;
-using Xamarin.Utilities.Services;
 
 namespace CodeHub.iOS.Services
 {
