@@ -6,9 +6,11 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueLabelItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public Color Color { get; private set; }
+
+        internal Octokit.Label Label { get; }
 
         private bool _isSelected;
         public bool IsSelected
@@ -21,6 +23,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         internal IssueLabelItemViewModel(Octokit.Label label)
         {
+            Label = label;
             Name = label.Name;
 
             var color = label.Color;

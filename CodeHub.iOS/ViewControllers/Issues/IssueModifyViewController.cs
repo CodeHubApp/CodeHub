@@ -6,7 +6,6 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using ReactiveUI;
 using UIKit;
-using System.Reactive;
 using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Issues
@@ -24,17 +23,14 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             _descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
 
-            this.WhenAnyValue(x => x.ViewModel.GoToAssigneesCommand)
-                .Switch()
-                .Subscribe(_ => ShowAssigneeSelector());
+            this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
+                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
 
-            this.WhenAnyValue(x => x.ViewModel.GoToMilestonesCommand)
-                .Switch()
-                .Subscribe(_ => ShowMilestonesSelector());
+            this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
+                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
 
-            this.WhenAnyValue(x => x.ViewModel.GoToLabelsCommand)
-                .Switch()
-                .Subscribe(_ => ShowLabelsSelector());
+            this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
+                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
 
             this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x);
             _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;
@@ -48,19 +44,19 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
             _milestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1);
             _milestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Milestones.Selected)
+            this.WhenAnyValue(x => x.ViewModel.Milestone)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => _milestoneElement.Value = x);
 
             _assigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1);
             _assigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Assignees.Selected)
+            this.WhenAnyValue(x => x.ViewModel.Assignee)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => _assigneeElement.Value = x);
 
             _labelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
             _labelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Labels.Selected)
+            this.WhenAnyValue(x => x.ViewModel.Labels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => _labelsElement.Value = x);
 
@@ -93,29 +89,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
             this.WhenAnyValue(x => x.ViewModel.IsCollaborator)
                 .Where(x => !x.HasValue || !x.Value)
                 .Subscribe(x => section.Clear());
-        }
-
-        private void ShowAssigneeSelector()
-        {
-            var viewController = new IssueAssigneeViewController { Title = "Assignees" };
-            viewController.ViewModel = ViewModel.Assignees;
-            viewController.ViewModel.DismissCommand.Subscribe(_ => NavigationController.PopToViewController(this, true));
-            NavigationController.PushViewController(viewController, true);
-        }
-
-        private void ShowLabelsSelector()
-        {
-            var viewController = new IssueLabelsViewController { Title = "Labels" };
-            viewController.ViewModel = ViewModel.Labels;
-            NavigationController.PushViewController(viewController, true);
-        }
-
-        private void ShowMilestonesSelector()
-        {
-            var viewController = new IssueMilestonesViewController { Title = "Milestones" };
-            viewController.ViewModel = ViewModel.Milestones;
-            viewController.ViewModel.DismissCommand.Subscribe(_ => NavigationController.PopToViewController(this, true));
-            NavigationController.PushViewController(viewController, true);
         }
     }
 }

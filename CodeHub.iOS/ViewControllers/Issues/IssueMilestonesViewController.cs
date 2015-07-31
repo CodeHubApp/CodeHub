@@ -14,15 +14,21 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
+
+            this.WhenActivated(d =>
+            {
+                d(this.WhenAnyValue(x => x.ViewModel.Milestones)
+                    .Select(x => new IssueMilestoneTableViewSource(TableView, x))
+                    .BindTo(TableView, x => x.Source));
+            });
         }
 
-        public override void ViewDidLoad()
+        public static void Show(UIViewController parent, IssueMilestonesViewModel viewModel)
         {
-            base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.Milestones)
-                .Select(x => new IssueMilestoneTableViewSource(TableView, x))
-                .BindTo(TableView, x => x.Source);
+            var viewController = new IssueMilestonesViewController { Title = "Milestones", ViewModel = viewModel };
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
+            parent.PresentViewController(new ThemedNavigationController(viewController), true, null);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.DismissViewController(true, null));
         }
     }
 }

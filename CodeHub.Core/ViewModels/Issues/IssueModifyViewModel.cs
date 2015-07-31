@@ -6,14 +6,18 @@ using CodeHub.Core.Factories;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
+using Octokit;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class IssueModifyViewModel : BaseViewModel, ILoadableViewModel
     {
+        private readonly Lazy<Task<IReadOnlyList<User>>> _assigneesCache;
+        private readonly Lazy<Task<IReadOnlyList<Milestone>>> _milestonesCache;
+        private readonly Lazy<Task<IReadOnlyList<Label>>> _labelsCache;
+
         private string _subject;
         public string Subject
         {
@@ -35,11 +39,26 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
-        public IssueAssigneeViewModel Assignees { get; private set; }
+        private IReadOnlyList<Label> _labels;
+        public IReadOnlyList<Label> Labels
+        {
+            get { return _labels; }
+            protected set { this.RaiseAndSetIfChanged(ref _labels, value); }
+        }
 
-        public IssueLabelsViewModel Labels { get; private set; }
+        private Milestone _milestone;
+        public Milestone Milestone
+        {
+            get { return _milestone; }
+            protected set { this.RaiseAndSetIfChanged(ref _milestone, value); }
+        }
 
-        public IssueMilestonesViewModel Milestones { get; private set; }
+        private User _assignee;
+        public User Assignee
+        {
+            get { return _assignee; }
+            protected set { this.RaiseAndSetIfChanged(ref _assignee, value); }
+        }
 
         public IReactiveCommand<object> GoToAssigneesCommand { get; private set; }
 
@@ -58,21 +77,19 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
         protected IssueModifyViewModel(
-            ISessionService applicationService, 
+            ISessionService sessionService, 
             IAlertDialogFactory alertDialogFactory)
 	    {
             GoToAssigneesCommand = ReactiveCommand.Create();
             GoToLabelsCommand = ReactiveCommand.Create();
             GoToMilestonesCommand = ReactiveCommand.Create();
 
-            // Make sure repeated access is cached with Lazy
-            var getAssignees = new Lazy<Task<IReadOnlyList<User>>>(() => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
-            var getMilestones = new Lazy<Task<IReadOnlyList<Milestone>>>(() => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
-            var getLables = new Lazy<Task<IReadOnlyList<Label>>>(() => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
-
-            Assignees = new IssueAssigneeViewModel(() => getAssignees.Value);
-            Milestones = new IssueMilestonesViewModel(() => getMilestones.Value);
-            Labels = new IssueLabelsViewModel(() => getLables.Value);
+            _assigneesCache = new Lazy<Task<IReadOnlyList<User>>>(() => 
+                sessionService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _milestonesCache = new Lazy<Task<IReadOnlyList<Milestone>>>(() => 
+                sessionService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _labelsCache = new Lazy<Task<IReadOnlyList<Label>>>(() => 
+                sessionService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
 
             var canSave = this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x));
             SaveCommand = ReactiveCommand.CreateAsyncTask(canSave, _ => {
@@ -87,8 +104,8 @@ namespace CodeHub.Core.ViewModels.Issues
             {
                 try
                 {
-                    IsCollaborator = await applicationService.GitHubClient.Repository.RepoCollaborators
-                        .IsCollaborator(RepositoryOwner, RepositoryName, applicationService.Account.Username);
+                    IsCollaborator = await sessionService.GitHubClient.Repository.RepoCollaborators
+                        .IsCollaborator(RepositoryOwner, RepositoryName, sessionService.Account.Username);
                 }
                 catch
                 {
@@ -103,6 +120,31 @@ namespace CodeHub.Core.ViewModels.Issues
         protected abstract Task<Issue> Save();
 
         protected abstract Task<bool> Discard();
+
+        public IssueAssigneeViewModel CreateAssigneeViewModel()
+        {
+            return new IssueAssigneeViewModel(
+                () => _assigneesCache.Value,
+                () => Task.FromResult(Assignee),
+                x => Task.FromResult(Assignee = x));
+        }
+
+        public IssueMilestonesViewModel CreateMilestonesViewModel()
+        {
+            return new IssueMilestonesViewModel(
+                () => _milestonesCache.Value,
+                () => Task.FromResult(Milestone),
+                x => Task.FromResult(Milestone = x));
+        }
+
+        public IssueLabelsViewModel CreateLabelsViewModel()
+        {
+            return new IssueLabelsViewModel(
+                () => _labelsCache.Value,
+                () => Task.FromResult(Labels),
+                x =>  Task.FromResult(Labels = new ReadOnlyCollection<Label>(x.ToList())));
+        }
+
     }
 }
 

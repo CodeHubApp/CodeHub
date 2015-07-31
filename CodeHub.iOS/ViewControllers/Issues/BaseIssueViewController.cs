@@ -38,13 +38,13 @@ namespace CodeHub.iOS.ViewControllers.Issues
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
-                .Subscribe(_ => ShowAssigneeSelector());
+                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
 
             this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
-                .Subscribe(_ => ShowMilestonesSelector());
+                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
 
             this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
-                .Subscribe(_ => ShowLabelsSelector());
+                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
 
             this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand)
                 .Subscribe(x => HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
@@ -137,7 +137,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
                         else if (@event != null)
                             body = CreateEventBody(@event.EventInfo, @event.Commit);
 
-                        return new Comment(x.AvatarUrl.ToUri(), x.Actor, body, x.CreatedAt.LocalDateTime.Humanize());
+                        return new Comment(x.AvatarUrl.ToUri(), x.Actor, body, x.CreatedAt.Humanize());
                     })
                     .Where(x => !string.IsNullOrEmpty(x.Body))
                     .ToList();
@@ -173,36 +173,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
             base.ViewDidLoad();
             Root.Reset(new Section { SplitButton }, DetailsSection, CommentsSection);
         }
-
-        private void ShowAssigneeSelector()
-        {
-            var viewController = new IssueAssigneeViewController { Title = "Assignees" };
-            viewController.ViewModel = ViewModel.Assignees;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
-            viewController.ViewModel.DismissCommand.Subscribe(_ => DismissViewController(true, null));
-        }
-
-        private void ShowLabelsSelector()
-        {
-            var viewController = new IssueLabelsViewController { Title = "Labels" };
-            viewController.ViewModel = ViewModel.Labels;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => {
-                ViewModel.Labels.SelectLabelsCommand.ExecuteIfCan();
-                viewController.DismissViewController(true, null);
-            });
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
-        }
-
-        private void ShowMilestonesSelector()
-        {
-            var viewController = new IssueMilestonesViewController { Title = "Milestones" };
-            viewController.ViewModel = ViewModel.Milestones;
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
-            PresentViewController(new ThemedNavigationController(viewController), true, null);
-            viewController.ViewModel.DismissCommand.Subscribe(_ => DismissViewController(true, null));
-        }
-
+            
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
@@ -222,8 +193,8 @@ namespace CodeHub.iOS.ViewControllers.Issues
             else if (smallCommit.Length > 7)
                 smallCommit = commitId.Substring(0, 7);
 
-            if (eventType == Octokit.EventInfoState.Assigned)
-                return "<p><span class=\"label label-info\">Assigned</span> this issue</p>";
+//            if (eventType == Octokit.EventInfoState.Assigned)
+//                return "<p><span class=\"label label-info\">Assigned</span> to this issue</p>";
             if (eventType == Octokit.EventInfoState.Closed)
                 return "<p><span class=\"label label-danger\">Closed</span> this issue.</p>";
             if (eventType == Octokit.EventInfoState.Reopened)

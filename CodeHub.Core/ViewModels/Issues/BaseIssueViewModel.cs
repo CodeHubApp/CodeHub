@@ -20,6 +20,10 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly ISubject<Octokit.Issue> _issueUpdatedObservable = new Subject<Octokit.Issue>();
         private readonly ISessionService _applicationService;
         private readonly IMarkdownService _markdownService;
+        private readonly IAlertDialogFactory _alertDialogFactory;
+        private readonly Lazy<Task<IReadOnlyList<Octokit.User>>> _assigneesCache;
+        private readonly Lazy<Task<IReadOnlyList<Octokit.Milestone>>> _milestonesCache;
+        private readonly Lazy<Task<IReadOnlyList<Octokit.Label>>> _labelsCache;
 
         public IObservable<Octokit.Issue> IssueUpdated
         {
@@ -107,12 +111,6 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
 
-        public IssueAssigneeViewModel Assignees { get; private set; }
-
-        public IssueLabelsViewModel Labels { get; private set; }
-
-        public IssueMilestonesViewModel Milestones { get; private set; }
-
         public IReactiveCommand<object> GoToAssigneesCommand { get; private set; }
 
         public IReactiveCommand<object> GoToMilestonesCommand { get; private set; }
@@ -145,7 +143,15 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             _applicationService = applicationService;
             _markdownService = markdownService;
+            _alertDialogFactory = alertDialogFactory;
 
+            _assigneesCache = new Lazy<Task<IReadOnlyList<Octokit.User>>>(() => 
+                _applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _milestonesCache = new Lazy<Task<IReadOnlyList<Octokit.Milestone>>>(() => 
+                _applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _labelsCache = new Lazy<Task<IReadOnlyList<Octokit.Label>>>(() => 
+                _applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
+            
             IssueUpdated.Subscribe(x => Issue = x);
 
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
@@ -161,13 +167,8 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToProperty(this, x => x.Participants);
 
             GoToAssigneesCommand = ReactiveCommand.Create(issuePresenceObservable);
-                //.WithSubscription(_ => Assignees.LoadCommand.ExecuteIfCan());
-
             GoToLabelsCommand = ReactiveCommand.Create(issuePresenceObservable);
-                //.WithSubscription(_ => Labels.LoadCommand.ExecuteIfCan());
-
             GoToMilestonesCommand = ReactiveCommand.Create(issuePresenceObservable);
-                //.WithSubscription(_ => Milestones.LoadCommand.ExecuteIfCan());
 
             _assignedUser = this.WhenAnyValue(x => x.Issue.Assignee)
                 .ToProperty(this, x => x.AssignedUser);
@@ -181,40 +182,6 @@ namespace CodeHub.Core.ViewModels.Issues
             _isClosed = this.WhenAnyValue(x => x.Issue.State)
                 .Select(x => x == Octokit.ItemState.Closed)
                 .ToProperty(this, x => x.IsClosed);
-
-//            Assignees = new IssueAssigneeViewModel(
-//                () => applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName),
-//                () => Task.FromResult(Issue.Assignee),
-//                x => UpdateIssue(new Octokit.IssueUpdate 
-//                { 
-//                    Assignee = x.With(y => y.Login),
-//                    Milestone = AssignedMilestone.With(y => (int?)y.Number)
-//                }));
-//
-//            Milestones = new IssueMilestonesViewModel(
-//                () => applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName),
-//                () => Task.FromResult(Issue.Milestone),
-//                x => UpdateIssue(new Octokit.IssueUpdate 
-//                { 
-//                    Assignee = AssignedUser.With(y => y.Login),
-//                    Milestone = x.With(y => (int?)y.Number)
-//                }));
-//
-//            Labels = new IssueLabelsViewModel(
-//                () => applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName),
-//                () => Task.FromResult((IReadOnlyList<Octokit.Label>)new ReadOnlyCollection<Octokit.Label>(Issue.Labels.ToList())),
-//                x =>
-//                {
-//                    var update = new Octokit.IssueUpdate
-//                    { 
-//                        Assignee = AssignedUser.With(y => y.Login),
-//                        Milestone = AssignedMilestone.With(y => (int?)y.Number),
-//                    };
-//
-//                    foreach (var label in x.Select(y => y.Name))
-//                        update.AddLabel(label);
-//                    return UpdateIssue(update);
-//                });
 
             _markdownDescription = this.WhenAnyValue(x => x.Issue)
                 .Select(x => ((x == null || string.IsNullOrEmpty(x.Body)) ? null : x.Body))
@@ -333,6 +300,30 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToBackground(x => CanModify = x);
         }
 
+        public IssueAssigneeViewModel CreateAssigneeViewModel()
+        {
+            return new IssueAssigneeViewModel(
+                () => _assigneesCache.Value,
+                () => Task.FromResult(AssignedUser),
+                x => UpdateIssue(x, AssignedMilestone, AssignedLabels));
+        }
+
+        public IssueMilestonesViewModel CreateMilestonesViewModel()
+        {
+            return new IssueMilestonesViewModel(
+                () => _milestonesCache.Value,
+                () => Task.FromResult(AssignedMilestone),
+                x => UpdateIssue(AssignedUser, x, AssignedLabels));
+        }
+
+        public IssueLabelsViewModel CreateLabelsViewModel()
+        {
+            return new IssueLabelsViewModel(
+                () => _labelsCache.Value,
+                () => Task.FromResult(AssignedLabels),
+                x => UpdateIssue(AssignedUser, AssignedMilestone, x));
+        }
+
         protected virtual async Task<IEnumerable<IIssueEventItemViewModel>> RetrieveEvents()
         {
             var eventsRequest = _applicationService.GitHubClient.Issue.Events.GetAllForIssue(RepositoryOwner, RepositoryName, Id);
@@ -345,11 +336,18 @@ namespace CodeHub.Core.ViewModels.Issues
             return tempList.OrderBy(x => x.CreatedAt);
         }
 
-        private async Task<Octokit.Issue> UpdateIssue(Octokit.IssueUpdate update)
+        private async Task<Octokit.Issue> UpdateIssue(Octokit.User assignee, Octokit.Milestone milestone, IEnumerable<Octokit.Label> labels)
         {
-            Issue = await _applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, update);
-            InternalEvents.Reset(await RetrieveEvents());
-            return Issue;
+            var update = new Octokit.IssueUpdate { Assignee = assignee?.Login, Milestone = milestone?.Number };
+            update.ClearLabels();
+            foreach (var l in (labels ?? Enumerable.Empty<Octokit.Label>())) update.AddLabel(l.Name);
+
+            using (_alertDialogFactory.Activate("Updating..."))
+            {
+                Issue = await _applicationService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, update);
+                InternalEvents.Reset(await RetrieveEvents());
+                return Issue;
+            }
         }
     }
 }

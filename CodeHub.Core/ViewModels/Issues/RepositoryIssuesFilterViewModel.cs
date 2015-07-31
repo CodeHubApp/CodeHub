@@ -22,12 +22,6 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string RepositoryName { get; set; }
 
-        public IssueLabelsViewModel Labels { get; private set; }
-
-        public IssueMilestonesViewModel Milestones { get; private set; }
-
-        public IssueAssigneeViewModel Assignees { get; private set; }
-
         public IReactiveCommand<object> SaveCommand { get; private set; }
 
         public IReactiveCommand<object> SelectAssigneeCommand { get; private set; }
@@ -39,6 +33,27 @@ namespace CodeHub.Core.ViewModels.Issues
         public IReactiveCommand<Unit> SelectStateCommand { get; private set; }
 
         public IReactiveCommand<Unit> SelectSortCommand { get; private set; }
+
+        private IReadOnlyList<Label> _labels;
+        public IReadOnlyList<Label> Labels
+        {
+            get { return _labels; }
+            private set { this.RaiseAndSetIfChanged(ref _labels, value); }
+        }
+
+        private Milestone _milestone;
+        public Milestone Milestone
+        {
+            get { return _milestone; }
+            private set { this.RaiseAndSetIfChanged(ref _milestone, value); }
+        }
+
+        private User _assignee;
+        public User Assignee
+        {
+            get { return _assignee; }
+            private set { this.RaiseAndSetIfChanged(ref _assignee, value); }
+        }
 
         private string _creator;
         public string Creator
@@ -102,27 +117,27 @@ namespace CodeHub.Core.ViewModels.Issues
             _userGet = new Lazy<Task<User>>(sessionService.GitHubClient.User.Current);
 
             SaveCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
-
-            this.WhenAnyValue(x => x.Milestones.Selected)
-                .Select(x => x?.Title)
-                .ToProperty(this, x => x.MilestoneString, out _milestoneString);
-
-            this.WhenAnyValue(x => x.Assignees.Selected)
-                .Select(x => x?.Login)
-                .ToProperty(this, x => x.AssigneeString, out _assigneeString);
-
-            this.WhenAnyValue(x => x.Labels.Selected)
-                .Select(x => x ?? new List<Label>())
-                .Select(x => string.Join(",", x.Select(y => y.Name)))
-                .ToProperty(this, x => x.LabelsString, out _labelsString);
+//
+//            this.WhenAnyValue(x => x.Milestones.Selected)
+//                .Select(x => x?.Title)
+//                .ToProperty(this, x => x.MilestoneString, out _milestoneString);
+//
+//            this.WhenAnyValue(x => x.Assignees.Selected)
+//                .Select(x => x?.Login)
+//                .ToProperty(this, x => x.AssigneeString, out _assigneeString);
+//
+//            this.WhenAnyValue(x => x.Labels.Selected)
+//                .Select(x => x ?? new List<Label>())
+//                .Select(x => string.Join(",", x.Select(y => y.Name)))
+//                .ToProperty(this, x => x.LabelsString, out _labelsString);
 
             var getAssignees = new Lazy<Task<IReadOnlyList<User>>>(() => sessionService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
             var getMilestones = new Lazy<Task<IReadOnlyList<Milestone>>>(() => sessionService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
             var getLables = new Lazy<Task<IReadOnlyList<Label>>>(() => sessionService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
 
-            Assignees = new IssueAssigneeViewModel(() => getAssignees.Value);
-            Milestones = new IssueMilestonesViewModel(() => getMilestones.Value);
-            Labels = new IssueLabelsViewModel(() => getLables.Value);
+//            Assignees = new IssueAssigneeViewModel(() => getAssignees.Value);
+//            Milestones = new IssueMilestonesViewModel(() => getMilestones.Value);
+//            Labels = new IssueLabelsViewModel(() => getLables.Value);
 
             SelectAssigneeCommand = ReactiveCommand.Create();
             SelectMilestoneCommand = ReactiveCommand.Create();
@@ -153,9 +168,9 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             Creator = null;
             Mentioned = null;
-            Assignees.Selected = assignee == null ? null : (await _userGet.Value);
-            Milestones.Selected = null;
-            Labels.Selected = null;
+            //Assignees.Selected = assignee == null ? null : (await _userGet.Value);
+//            Milestones.Selected = null;
+//            Labels.Selected = null;
             Ascending = false;
             SortType = CodeHub.Core.Filters.IssueSort.None;
             State = open ? IssueState.Open : IssueState.Closed;

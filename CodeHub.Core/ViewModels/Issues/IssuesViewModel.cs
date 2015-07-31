@@ -87,9 +87,9 @@ namespace CodeHub.Core.ViewModels.Issues
             var sort = Filter.SortType == IssueSort.None ? null : Filter.SortType.ToString().ToLower();
             var creator = string.IsNullOrEmpty(Filter.Creator) ? null : Filter.Creator;
             var mentioned = string.IsNullOrEmpty(Filter.Mentioned) ? null : Filter.Mentioned;
-            var labels = Filter.Labels.Selected?.Count > 0 ? string.Join(",", Filter.Labels.Selected.Select(x => x.Name)) : null;
-            var milestone = Filter.Milestones.Selected?.Number.ToString();
-            var assignee = Filter.Assignees.Selected?.Login;
+            var labels = Filter.Labels?.Count > 0 ? string.Join(",", Filter.Labels.Select(x => x.Name)) : null;
+            var milestone = Filter.Milestone?.Number.ToString();
+            var assignee = Filter.Assignee?.Login;
 
             return _sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.GetAll(
                 sort: sort, labels: labels, state: state, direction: direction,

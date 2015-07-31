@@ -50,9 +50,7 @@ namespace CodeHub.iOS.ViewControllers
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand.ExecuteAsync())
                 .Switch()
-                .Subscribe(
-                    _ => _isLoadedSubject.OnNext(true),
-                    e => Console.WriteLine(e));
+                .Subscribe(_ => _isLoadedSubject.OnNext(true));
 
             this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IRoutingViewModel>()

@@ -14,15 +14,23 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
+
+            this.WhenActivated(d =>
+            {
+                d(this.WhenAnyValue(x => x.ViewModel.Labels)
+                    .Select(x => new IssueLabelTableViewSource(TableView, x))
+                    .BindTo(TableView, x => x.Source));
+            });
         }
 
-        public override void ViewDidLoad()
+        public static void Show(UIViewController parent, IssueLabelsViewModel viewModel)
         {
-            base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.Labels)
-                .Select(x => new IssueLabelTableViewSource(TableView, x))
-                .BindTo(TableView, x => x.Source);
+            var viewController = new IssueLabelsViewController { Title = "Labels", ViewModel = viewModel };
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => {
+                viewController.ViewModel.SaveCommand.ExecuteIfCan();
+                viewController.DismissViewController(true, null);
+            });
+            parent.PresentViewController(new ThemedNavigationController(viewController), true, null);
         }
     }
 }

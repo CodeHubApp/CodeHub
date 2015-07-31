@@ -25,19 +25,19 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			try
 			{
-                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
-                var milestone = Milestones.Selected?.Number;
-                var user = Assignees.Selected?.Login;
-                var newIssue = new Octokit.NewIssue(Subject) {
-                    Body = Content,
-                    Assignee = user,
-                    Milestone = milestone
-                };
+//                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
+//                var milestone = Milestones.Selected?.Number;
+//                var user = Assignees.Selected?.Login;
+//                var newIssue = new Octokit.NewIssue(Subject) {
+//                    Body = Content,
+//                    Assignee = user,
+//                    Milestone = milestone
+//                };
+//
+//                foreach (var label in labels)
+//                    newIssue.Labels.Add(label);
 
-                foreach (var label in labels)
-                    newIssue.Labels.Add(label);
-
-                return _sessionService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, newIssue);
+                return _sessionService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, null);
 			}
 			catch (Exception e)
 			{

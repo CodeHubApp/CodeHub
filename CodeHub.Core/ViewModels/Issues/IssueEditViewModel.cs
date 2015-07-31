@@ -44,9 +44,9 @@ namespace CodeHub.Core.ViewModels.Issues
                 .Subscribe(x => {
                     Title = string.Format("Edit Issue #{0}", x.Number);
                     Subject = x.Title;
-                    Assignees.Selected = x.Assignee;
-                    Milestones.Selected = x.Milestone;
-                    Labels.Selected = x.Labels;
+                    Milestone = x.Milestone;
+                    Labels = x.Labels;
+                    Assignee = x.Assignee;
                     Content = x.Body;
                     IsOpen = x.State == Octokit.ItemState.Open;
     	        });
@@ -62,23 +62,23 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
             try
             {
-                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
-                var milestone = Milestones.Selected?.Number;
-                var user = Assignees.Selected?.Login;
-                var issueUpdate = new Octokit.IssueUpdate {
-                    Body = Content,
-                    Assignee = user,
-                    Milestone = milestone,
-                    Title = Subject,
-                };
-
-                if (labels != null && labels.Length > 0)
-                {
-                    foreach (var label in labels)
-                        issueUpdate.AddLabel(label);
-                }
-
-                return _sessionService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, issueUpdate);
+//                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
+//                var milestone = Milestones.Selected?.Number;
+//                var user = Assignees.Selected?.Login;
+//                var issueUpdate = new Octokit.IssueUpdate {
+//                    Body = Content,
+//                    Assignee = user,
+//                    Milestone = milestone,
+//                    Title = Subject,
+//                };
+//
+//                if (labels != null && labels.Length > 0)
+//                {
+//                    foreach (var label in labels)
+//                        issueUpdate.AddLabel(label);
+//                }
+//
+                return _sessionService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, null);
             }
             catch (Exception e)
             {

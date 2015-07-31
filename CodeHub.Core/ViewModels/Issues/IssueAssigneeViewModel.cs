@@ -11,11 +11,13 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAssigneeViewModel : ReactiveObject, ILoadableViewModel, IProvidesSearchKeyword
     {
+        private User _previouslySelected;
+
         private User _selected;
         public User Selected
         {
             get { return _selected; }
-            set { this.RaiseAndSetIfChanged(ref _selected, value); }
+            private set { this.RaiseAndSetIfChanged(ref _selected, value); }
         }
 
         private string _searchKeyword;
@@ -25,42 +27,53 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public IReadOnlyReactiveList<IssueAssigneeItemViewModel> Assignees { get; private set; }
+        public IReadOnlyReactiveList<IssueAssigneeItemViewModel> Assignees { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; private set; }
+        public IReactiveCommand<Unit> SaveCommand { get; }
+
+        public IReactiveCommand<object> DismissCommand { get; }
 
         public IssueAssigneeViewModel(
-            Func<Task<IReadOnlyList<User>>> loadAssignees)
+            Func<Task<IReadOnlyList<User>>> loadAssignees,
+            Func<Task<User>> loadSelectedFunc,
+            Func<User, Task> saveFunc)
         {
-            DismissCommand = ReactiveCommand.Create();
-
-            var derivedFunc = new Func<User, IssueAssigneeItemViewModel>(x => {
-                var vm = new IssueAssigneeItemViewModel(x);
-                vm.IsSelected = x.Id == Selected?.Id;
-
-                vm.GoToCommand
-                    .Select(_ => vm.IsSelected ? x : null)
-                    .Subscribe(user =>  {
-                        foreach (var a in Assignees.Where(y => y != vm))
-                            a.IsSelected = false;
-                        Selected = user;
-                        DismissCommand.ExecuteIfCan();
-                    });
-                return vm;
-            });
-
-            var assignees = new ReactiveList<User>();
+            var assignees = new ReactiveList<IssueAssigneeItemViewModel>();
             Assignees = assignees.CreateDerivedCollection(
-                derivedFunc,
+                x => x,
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
-                assignees.Reset(await loadAssignees());
+            this.WhenAnyValue(x => x.Selected)
+                .Subscribe(x => {
+                    foreach (var a in Assignees)
+                        a.IsSelected = string.Equals(a.User.Login, x?.Login);
+                });
+
+            DismissCommand = ReactiveCommand.Create();
+
+            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => {
+                DismissCommand.ExecuteIfCan();
+                return Selected != _previouslySelected ? saveFunc(_selected) : Task.FromResult(0);
             });
+
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                _previouslySelected = Selected = await loadSelectedFunc();
+                assignees.Reset((await loadAssignees()).Select(CreateItemViewModel));
+            });
+        }
+
+        private IssueAssigneeItemViewModel CreateItemViewModel(User x)
+        {
+            var vm = new IssueAssigneeItemViewModel(x);
+            vm.IsSelected = x.Id == _selected?.Id;
+            vm.GoToCommand.Subscribe(_ => {
+                Selected = vm.IsSelected ? x : null;
+                SaveCommand.ExecuteIfCan();
+            });
+            return vm;
         }
     }
 }

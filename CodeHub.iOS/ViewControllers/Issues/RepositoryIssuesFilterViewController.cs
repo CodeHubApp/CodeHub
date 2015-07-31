@@ -85,10 +85,10 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
         private void ShowAssigneeSelector()
         {
-            var viewController = new IssueAssigneeViewController { Title = "Assignees" };
-            viewController.ViewModel = ViewModel.Assignees;
-            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
-            NavigationController.PushViewController(viewController, true);
+//            var viewController = new IssueAssigneeViewController { Title = "Assignees" };
+//            viewController.ViewModel = ViewModel.Assignees;
+//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
+//            NavigationController.PushViewController(viewController, true);
         }
 
         private void ShowLabelsSelector()
@@ -100,11 +100,11 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
         private void ShowMilestonesSelector()
         {
-            var viewController = new IssueMilestonesViewController { Title = "Milestones" };
-            viewController.ViewModel = ViewModel.Milestones;
-            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
-            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.ViewModel = null);
-            NavigationController.PushViewController(viewController, true);
+//            var viewController = new IssueMilestonesViewController { Title = "Milestones" };
+//            viewController.ViewModel = ViewModel.Milestones;
+//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
+//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.ViewModel = null);
+//            NavigationController.PushViewController(viewController, true);
         }
     }
 }
