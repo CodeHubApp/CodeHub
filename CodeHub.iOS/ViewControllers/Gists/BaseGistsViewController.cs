@@ -3,10 +3,12 @@ using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.Views;
 using UIKit;
 using System;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public abstract class BaseGistsViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseGistsViewModel
+    public abstract class BaseGistsViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class, IGistsViewModel
     {
         protected BaseGistsViewController()
         {
@@ -17,7 +19,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new GistTableViewSource(TableView, ViewModel.Gists);
+
+            this.WhenAnyValue(x => x.ViewModel.Gists)
+                .Select(x => new GistTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
     }
 }

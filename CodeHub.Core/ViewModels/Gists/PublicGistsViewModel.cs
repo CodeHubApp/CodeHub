@@ -8,7 +8,7 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class PublicGistsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel
+    public class PublicGistsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
     {
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
 

@@ -302,26 +302,32 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueAssigneeViewModel CreateAssigneeViewModel()
         {
-            return new IssueAssigneeViewModel(
+            var vm = new IssueAssigneeViewModel(
                 () => _assigneesCache.Value,
                 () => Task.FromResult(AssignedUser),
                 x => UpdateIssue(x, AssignedMilestone, AssignedLabels));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         public IssueMilestonesViewModel CreateMilestonesViewModel()
         {
-            return new IssueMilestonesViewModel(
+            var vm = new IssueMilestonesViewModel(
                 () => _milestonesCache.Value,
                 () => Task.FromResult(AssignedMilestone),
                 x => UpdateIssue(AssignedUser, x, AssignedLabels));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         public IssueLabelsViewModel CreateLabelsViewModel()
         {
-            return new IssueLabelsViewModel(
+            var vm = new IssueLabelsViewModel(
                 () => _labelsCache.Value,
                 () => Task.FromResult(AssignedLabels),
                 x => UpdateIssue(AssignedUser, AssignedMilestone, x));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         protected virtual async Task<IEnumerable<IIssueEventItemViewModel>> RetrieveEvents()

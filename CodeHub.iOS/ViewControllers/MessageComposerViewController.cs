@@ -27,19 +27,13 @@ namespace CodeHub.iOS.ViewControllers
         protected MessageComposerViewController()
         {
             this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
-
-            this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IProvidesTitle>()
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
-
-            this.WhenActivated(d => { });
         }
     }
 
-    public class MessageComposerViewController : ReactiveViewController, IActivatable
+    public class MessageComposerViewController : BaseViewController, IActivatable
     {
         private CGRect _keyboardBounds = CGRect.Empty;
 

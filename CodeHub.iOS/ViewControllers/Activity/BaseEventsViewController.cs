@@ -3,6 +3,8 @@ using CodeHub.Core.ViewModels.Activity;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.Views;
 using UIKit;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Activity
 {
@@ -17,7 +19,10 @@ namespace CodeHub.iOS.ViewControllers.Activity
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new EventTableViewSource(TableView, ViewModel.Events);
+
+            this.WhenAnyValue(x => x.ViewModel.Events)
+                .Select(x => new EventTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
     }
 }

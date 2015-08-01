@@ -7,6 +7,8 @@ namespace CodeHub.iOS.ViewControllers
         public ThemedNavigationController(UIViewController ctrl)
             : base(ctrl)
         {
+            ModalPresentationStyle = ctrl.ModalPresentationStyle;
+            ModalTransitionStyle = ctrl.ModalTransitionStyle;
         }
     }
 }

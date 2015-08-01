@@ -24,10 +24,6 @@ namespace CodeHub.iOS.ViewControllers.Users
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
-            this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x ?
-                    null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
-
             var websiteElement = new StringElement("Website", () => ViewModel.GoToWebsiteCommand.ExecuteIfCan(), Octicon.Globe.ToImage());
             var extraSection = new Section();
 
@@ -40,8 +36,11 @@ namespace CodeHub.iOS.ViewControllers.Users
             var gists = new StringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Octicon.Gist.ToImage());
             Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists }, extraSection });
 
-            this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x =>
-            {
+            this.WhenAnyValue(x => x.ViewModel.IsLoggedInUser)
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x ?
+                    null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
+
+            this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x => {
                 HeaderView.ImageUri = x.AvatarUrl;
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();

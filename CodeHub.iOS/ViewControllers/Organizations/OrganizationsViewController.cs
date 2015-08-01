@@ -3,6 +3,8 @@ using CodeHub.iOS.TableViewSources;
 using UIKit;
 using System;
 using CodeHub.iOS.Views;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
@@ -17,7 +19,10 @@ namespace CodeHub.iOS.ViewControllers.Organizations
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new UserTableViewSource(TableView, ViewModel.Organizations);
+
+            this.WhenAnyValue(x => x.ViewModel.Organizations)
+                .Select(x => new UserTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
 	}
 }

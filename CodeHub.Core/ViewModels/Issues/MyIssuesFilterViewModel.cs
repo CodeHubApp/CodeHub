@@ -5,12 +5,13 @@ using CodeHub.Core.Filters;
 using System.Reactive;
 using System.Linq;
 using Humanizer;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesFilterViewModel : BaseViewModel
     {
-        public IReactiveCommand<object> SaveCommand { get; private set; }
+        public IReactiveCommand<MyIssuesFilterModel> SaveCommand { get; private set; }
 
         public IReactiveCommand<object> DismissCommand { get; private set; }
 
@@ -62,7 +63,8 @@ namespace CodeHub.Core.ViewModels.Issues
             SortType = IssueSort.None;
             FilterType = IssueFilterState.All;
 
-            SaveCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
+            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => Task.FromResult(new MyIssuesFilterModel(FilterType, State, SortType, Labels, Ascending)));
+            SaveCommand.Subscribe(_ => DismissCommand.ExecuteIfCan());
             DismissCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
 
             SelectStateCommand = ReactiveCommand.CreateAsyncTask(async sender => {
@@ -94,7 +96,17 @@ namespace CodeHub.Core.ViewModels.Issues
                 var ret = await picker.Show(sender);
                 FilterType = options[ret];
             });
-        } 
+        }
+
+        public MyIssuesFilterViewModel Init(MyIssuesFilterModel model)
+        {
+            Ascending = model.Ascending;
+            FilterType = model.FilterType;
+            Labels = model.Labels;
+            State = model.Open;
+            SortType = model.SortType;
+            return this;
+        }
     }
 }
 

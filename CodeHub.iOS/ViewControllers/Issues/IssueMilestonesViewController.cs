@@ -14,13 +14,15 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
+        }
 
-            this.WhenActivated(d =>
-            {
-                d(this.WhenAnyValue(x => x.ViewModel.Milestones)
-                    .Select(x => new IssueMilestoneTableViewSource(TableView, x))
-                    .BindTo(TableView, x => x.Source));
-            });
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.ViewModel.Milestones)
+                .Select(x => new IssueMilestoneTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
 
         public static void Show(UIViewController parent, IssueMilestonesViewModel viewModel)

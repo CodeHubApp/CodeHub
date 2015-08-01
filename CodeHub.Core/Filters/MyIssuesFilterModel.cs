@@ -1,23 +1,27 @@
+using System;
+
 namespace CodeHub.Core.Filters
 {
-	public class MyIssuesFilterModel
+    public class MyIssuesFilterModel
     {
-		public string Labels { get; set; }
+		public string Labels { get; }
 
-        public IssueFilterState FilterType { get; set; }
+        public IssueFilterState FilterType { get; }
 
-        public IssueState Open { get; set; }
+        public IssueState Open { get; }
 
-        public bool Ascending { get; set; }
+        public bool Ascending { get; }
 
-        public IssueSort SortType { get; set; }
+        public IssueSort SortType { get; }
 
-		public MyIssuesFilterModel()
+        public MyIssuesFilterModel(IssueFilterState filterState = IssueFilterState.All, IssueState issueState = IssueState.Open, 
+            IssueSort sort = IssueSort.None, string labels = null, bool ascending = false)
         {
-            SortType = IssueSort.None;
-            Open = IssueState.Open;
-            Ascending = false;
-            FilterType = IssueFilterState.All;
+            SortType = sort;
+            Open = issueState;
+            Ascending = ascending;
+            FilterType = filterState;
+            Labels = labels;
         }
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace CodeHub.Core.Filters
         /// </summary>
         public static MyIssuesFilterModel CreateOpenFilter()
         {
-            return new MyIssuesFilterModel { FilterType = IssueFilterState.All, Open = IssueState.Open };
+            return new MyIssuesFilterModel();
         }
 
         /// <summary>
@@ -33,7 +37,7 @@ namespace CodeHub.Core.Filters
         /// </summary>
         public static MyIssuesFilterModel CreateClosedFilter()
         {
-            return new MyIssuesFilterModel { FilterType = IssueFilterState.All, Open = IssueState.Closed };
+            return new MyIssuesFilterModel(issueState: IssueState.Closed);
         }
 
         public override bool Equals(object obj)
@@ -44,19 +48,26 @@ namespace CodeHub.Core.Filters
                 return true;
             if (obj.GetType() != typeof(MyIssuesFilterModel))
                 return false;
-            var other = (MyIssuesFilterModel)obj;
-            return Ascending == other.Ascending && Labels == other.Labels && FilterType == other.FilterType && Open == other.Open && SortType == other.SortType;
+            MyIssuesFilterModel other = (MyIssuesFilterModel)obj;
+            return Labels == other.Labels && FilterType == other.FilterType && Open == other.Open && Ascending == other.Ascending && SortType == other.SortType;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Ascending.GetHashCode() ^ (Labels != null ? Labels.GetHashCode() : 0) ^ FilterType.GetHashCode() ^ Open.GetHashCode() ^ SortType.GetHashCode();
+                return (Labels != null ? Labels.GetHashCode() : 0) ^ FilterType.GetHashCode() ^ Open.GetHashCode() ^ (Ascending != null ? Ascending.GetHashCode() : 0) ^ SortType.GetHashCode();
             }
         }
-        
 
+        public static bool operator ==(MyIssuesFilterModel a, MyIssuesFilterModel b)
+        {
+            return a?.Equals(b) == true;
+        }
+
+        public static bool operator !=(MyIssuesFilterModel a, MyIssuesFilterModel b)
+        {
+            return a?.Equals(b) == false;
+        }
     }
 }
-

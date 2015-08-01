@@ -37,8 +37,7 @@ namespace CodeHub.iOS.ViewControllers
                 .OfType<ILoadableViewModel>()
                 .Select(x => x.LoadCommand.IsExecuting)
                 .Switch()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     Web.UserInteractionEnabled = !x;
                     var activityView = _activityIndicator.Value;
 
@@ -52,8 +51,7 @@ namespace CodeHub.iOS.ViewControllers
                     else if (!x)
                     {
                         UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
-                            () => activityView.Alpha = 0, () =>
-                        {
+                            () => activityView.Alpha = 0, () => {
                             activityView.RemoveFromSuperview();
                             activityView.StopAnimating();
                         });

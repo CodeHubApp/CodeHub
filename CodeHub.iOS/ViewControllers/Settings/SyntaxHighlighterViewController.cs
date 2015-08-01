@@ -26,6 +26,8 @@ namespace CodeHub.iOS.ViewControllers.Settings
             _pickerView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             _pickerView.ShowSelectionIndicator = true;
             _pickerView.BackgroundColor = UIColor.FromRGB(244, 244, 244);
+
+            Disappearing.Subscribe(_ => ViewModel.SaveCommand.ExecuteIfCan());
         }
 
         public override void ViewDidLoad()
@@ -41,11 +43,8 @@ namespace CodeHub.iOS.ViewControllers.Settings
             if (selectedIndex >= 0 && selectedIndex < themes.Length)
                 _pickerView.Select(selectedIndex, 0, false);
 
-            this.WhenActivated(d =>
-            {
-                d(model.SelectedObservable.Subscribe(x => ViewModel.SelectedTheme = x));
-                d(this.WhenAnyValue(x => x.ViewModel.SelectedTheme).Subscribe(LoadContent));
-            });
+            model.SelectedObservable.Subscribe(x => ViewModel.SelectedTheme = x);
+            this.WhenAnyValue(x => x.ViewModel.SelectedTheme).Subscribe(LoadContent);
         }
 
         private new void LoadContent(string theme)
@@ -66,12 +65,6 @@ namespace CodeHub.iOS.ViewControllers.Settings
                 this.Log().ErrorException("Unable to load Syntax Highlighter", e);
                 _alertDialogFactory.Alert("Unable to load example!", "Can't load the example code. Looks like you're on your own...");
             }
-        }
-
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            ViewModel.SaveCommand.ExecuteIfCan();
         }
 
         public override void ViewWillLayoutSubviews()

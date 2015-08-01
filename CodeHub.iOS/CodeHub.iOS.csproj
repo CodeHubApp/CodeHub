@@ -31,6 +31,8 @@
     <MtouchProfiling>true</MtouchProfiling>
     <MtouchUseSGen>true</MtouchUseSGen>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchFastDev>true</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -142,7 +144,6 @@
     <Compile Include="Cells\NewsCellView.designer.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs" />
     <Compile Include="Cells\RepositoryCellView.designer.cs" />
-    <Compile Include="Services\MarkdownService.cs" />
     <None Include="packages.config" />
     <Compile Include="Cells\GistCellView.cs" />
     <Compile Include="Cells\GistCellView.designer.cs" />
@@ -296,8 +297,6 @@
     <Compile Include="ViewControllers\Issues\IssueAddViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestCommitsViewController.cs" />
-    <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
-    <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\App\UpgradesView.cs" />
     <Compile Include="ViewControllers\Gists\GistCreateViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoriesTrendingViewController.cs" />

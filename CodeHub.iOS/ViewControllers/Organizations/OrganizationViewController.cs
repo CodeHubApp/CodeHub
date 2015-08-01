@@ -16,21 +16,20 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             HeaderView.Image = Images.LoginUserUnknown;
 
             var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-", ViewModel.GoToFollowersCommand.ExecuteIfCan);
-            var following = split.AddButton("Following", "-", ViewModel.GoToFollowingCommand.ExecuteIfCan);
-            var members = new StringElement("Members", ViewModel.GoToMembersCommand.ExecuteIfCan, Octicon.Person.ToImage());
-            var teams = new StringElement("Teams", ViewModel.GoToTeamsCommand.ExecuteIfCan, Octicon.Organization.ToImage());
-            var events = new StringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Octicon.Rss.ToImage());
-            var repos = new StringElement("Repositories", ViewModel.GoToRepositoriesCommand.ExecuteIfCan, Octicon.Repo.ToImage());
-            var gists = new StringElement("Gists", ViewModel.GoToGistsCommand.ExecuteIfCan, Octicon.Gist.ToImage());
+            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
+            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
+            var members = new StringElement("Members", () => ViewModel.GoToMembersCommand.ExecuteIfCan(), Octicon.Person.ToImage());
+            var teams = new StringElement("Teams", () => ViewModel.GoToTeamsCommand.ExecuteIfCan(), Octicon.Organization.ToImage());
+            var events = new StringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Octicon.Rss.ToImage());
+            var repos = new StringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Octicon.Gist.ToImage());
             var membersAndTeams = new Section { members };
 
             Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });
 
             this.WhenAnyValue(x => x.ViewModel.Organization)
                 .IsNotNull()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     followers.Text = x != null ? x.Followers.ToString() : "-";
                     following.Text = x != null ? x.Following.ToString() : "-";
                     HeaderView.ImageUri = x.AvatarUrl;

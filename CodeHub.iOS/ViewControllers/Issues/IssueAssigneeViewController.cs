@@ -14,13 +14,15 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Person.ToEmptyListImage(), "There are no assignees."));
+        }
 
-            this.WhenActivated(d =>
-            {
-                d(this.WhenAnyValue(x => x.ViewModel.Assignees)
-                    .Select(x => new IssueAssigneeTableViewSource(TableView, x))
-                    .BindTo(TableView, x => x.Source));
-            });
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.ViewModel.Assignees)
+                .Select(x => new IssueAssigneeTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
 
         public static void Show(UIViewController parent, IssueAssigneeViewModel viewModel)

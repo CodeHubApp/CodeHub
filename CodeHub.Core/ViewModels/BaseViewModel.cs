@@ -20,6 +20,8 @@ namespace CodeHub.Core.ViewModels
 
         protected void NavigateTo(IBaseViewModel viewModel)
         {
+            var loadableViewModel = viewModel as ILoadableViewModel;
+            loadableViewModel?.LoadCommand.ExecuteIfCan();
             _requestNavigationSubject.OnNext(viewModel);
         }
 

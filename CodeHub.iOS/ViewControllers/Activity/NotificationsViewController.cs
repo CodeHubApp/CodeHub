@@ -12,7 +12,6 @@ namespace CodeHub.iOS.ViewControllers.Activity
     public class NotificationsViewController : BaseTableViewController<NotificationsViewModel>
     {
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
-        private readonly UIBarButtonItem _segmentBarButton;
         private readonly UIBarButtonItem[] _segmentToolbar;
         private readonly UIBarButtonItem[] _markToolbar;
         private readonly UIBarButtonItem _markButton;
@@ -26,10 +25,7 @@ namespace CodeHub.iOS.ViewControllers.Activity
 
             _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
 
-            _segmentBarButton = new UIBarButtonItem(_viewSegment);
-            _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             _markToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _markButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-            ToolbarItems = _segmentToolbar;
 
             _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => StartEditing());
             _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) => StopEditing());
@@ -65,17 +61,31 @@ namespace CodeHub.iOS.ViewControllers.Activity
                     }));
             });
 
-            Appearing
-                .Where(_ => NavigationController != null)
-                .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+            {
+                NavigationItem.TitleView = _viewSegment;
+                _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+            }
+            else
+            {
+                _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), new UIBarButtonItem(_viewSegment), new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+                ToolbarItems = _segmentToolbar;
+
+                Appearing
+                    .Where(_ => NavigationController != null)
+                    .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
+            }
 
             Disappearing
-                .Where(_ => NavigationController != null)
+                .Where(_ => NavigationController != null && !NavigationController.ToolbarHidden)
                 .Subscribe(x => NavigationController.SetToolbarHidden(true, x));
         }
 
         private void StartEditing()
         {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+                NavigationController.SetToolbarHidden(false, true);
+            
             var allSelected = ViewModel.GroupedNotifications.SelectMany(x => x.Notifications).Any(x => x.IsSelected);
             _markButton.Title = allSelected ? "Mark Selected as Read" : "Read All as Read";
 
@@ -86,6 +96,9 @@ namespace CodeHub.iOS.ViewControllers.Activity
 
         private void StopEditing()
         {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+                NavigationController.SetToolbarHidden(true, true);
+
             NavigationItem.SetRightBarButtonItem(_editButton, true);
             TableView.SetEditing(false, true);
             SetToolbarItems(_segmentToolbar, true);

@@ -10,13 +10,14 @@ using Splat;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public abstract class BaseTableViewController<TViewModel> : BaseTableViewController, IViewFor<TViewModel> where TViewModel : class
     {
         private readonly Lazy<LoadingIndicatorView> _loadingActivityView = new Lazy<LoadingIndicatorView>(() => new LoadingIndicatorView());
-        private readonly ISubject<bool> _isLoadedSubject = new BehaviorSubject<bool>(false);
 
         private TViewModel _viewModel;
         public TViewModel ViewModel
@@ -47,17 +48,10 @@ namespace CodeHub.iOS.ViewControllers
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
 
             this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Select(x => x.LoadCommand.ExecuteAsync())
-                .Switch()
-                .Subscribe(_ => _isLoadedSubject.OnNext(true));
-
-            this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IRoutingViewModel>()
                 .Select(x => x.RequestNavigation)
                 .Switch()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
                     var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
                     var viewType = viewModelViewService.GetViewFor(x.GetType());
@@ -65,8 +59,6 @@ namespace CodeHub.iOS.ViewControllers
                     view.ViewModel = x;
                     HandleNavigation(x, view as UIViewController);
                 });
-
-            this.WhenActivated(d => { });
 
             this.Appeared
                 .Take(1)
@@ -113,55 +105,50 @@ namespace CodeHub.iOS.ViewControllers
 
             iLoadableViewModel.LoadCommand.IsExecuting
                 .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
-                {
-                    nint rows = 0;
-                    if (TableView.Source != null)
                     {
-                        for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
-                            rows += TableView.Source.RowsInSection(TableView, i);
-                    }
+                        nint rows = 0;
+                        if (TableView.Source != null)
+                        {
+                            for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
+                                rows += TableView.Source.RowsInSection(TableView, i);
+                        }
 
-                    if (rows == 0)
-                    {
-                        _loadingActivityView.Value.StartAnimating();
-                        TableView.TableFooterView = _loadingActivityView.Value;
-                        RefreshControl.Do(x => x.EndRefreshing());
-                        RefreshControl = null;
-                    }
-                });
-
+                        if (rows == 0)
+                        {
+                            _loadingActivityView.Value.StartAnimating();
+                            TableView.TableFooterView = _loadingActivityView.Value;
+                            RefreshControl.Do(x => x.EndRefreshing());
+                            RefreshControl = null;
+                        }
+                    });
 
             iLoadableViewModel.LoadCommand.IsExecuting
                 .Where(x => !x).Subscribe(_ =>
-                {
-                    _loadingActivityView.Value.StopAnimating();
-                    if (TableView.TableFooterView != null)
                     {
-                        TableView.TableFooterView = null;
-                        TableView.ReloadData();
-                    }
-
-                    if (RefreshControl == null)
-                        RefreshControl = refreshControl;
-                });
-
-            this.WhenActivated(d =>
-            {
-                var iSourceInformsEnd = TableView.Source as IInformsEnd;
-                if (iPaginatableViewModel != null && iSourceInformsEnd != null)
-                {
-                    d(iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x =>
-                    {
-                        _loadingActivityView.Value.StartAnimating();
-                        TableView.TableFooterView = _loadingActivityView.Value;
-
-                        await x.ExecuteAsync();
-
-                        TableView.TableFooterView = null;
                         _loadingActivityView.Value.StopAnimating();
-                    }));
-                }
-            });
+                        if (TableView.TableFooterView != null)
+                        {
+                            TableView.TableFooterView = null;
+                            TableView.ReloadData();
+                        }
+
+                        if (RefreshControl == null)
+                            RefreshControl = refreshControl;
+                    });
+
+            var iSourceInformsEnd = TableView.Source as IInformsEnd;
+            if (iPaginatableViewModel != null && iSourceInformsEnd != null)
+            {
+                iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x => {
+                    _loadingActivityView.Value.StartAnimating();
+                    TableView.TableFooterView = _loadingActivityView.Value;
+
+                    await x.ExecuteAsync();
+
+                    TableView.TableFooterView = null;
+                    _loadingActivityView.Value.StopAnimating();
+                });
+            }
         }
 
         private void CreateEmptyHandler()
@@ -185,7 +172,7 @@ namespace CodeHub.iOS.ViewControllers
                         if (EmptyView.Value.Superview == null)
                         {
                             EmptyView.Value.Alpha = 0f;
-                            EmptyView.Value.Frame  = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
+                            EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
                             TableView.AddSubview(EmptyView.Value);
                             TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
                             UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
@@ -209,12 +196,13 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public class BaseTableViewController : ReactiveTableViewController
+    public class BaseTableViewController : ReactiveTableViewController, IActivatable
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _appearedSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
+        private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
 
         public IObservable<bool> Appearing
         {
@@ -236,12 +224,23 @@ namespace CodeHub.iOS.ViewControllers
             get { return _disappearedSubject; }
         }
 
+        public void OnActivation(Action<Action<IDisposable>> d)
+        {
+            Appearing.Take(1).Subscribe(_ => d(x => _activations.Add(x)));
+        }
+
         public BaseTableViewController(UITableViewStyle style)
             : base(style)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
             ClearsSelectionOnViewWillAppear = false;
             Appeared.Take(1).Subscribe(_ => this.TrackScreen());
+            Disappeared.Subscribe(_ => {
+                    foreach (var a in _activations)
+                        a.Dispose();
+                    _activations.Clear();
+                });
+            this.WhenActivated(_ => { });
         }
 
         public override void ViewDidLoad()

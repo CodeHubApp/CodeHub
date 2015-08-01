@@ -15,6 +15,12 @@ namespace CodeHub.iOS.ViewControllers.Releases
             this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                 .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            Web.ScalesPageToFit = true;
 
             this.WhenAnyValue(x => x.ViewModel.ContentText)
                 .IsNotNull()
@@ -25,12 +31,6 @@ namespace CodeHub.iOS.ViewControllers.Releases
                     var model = new ReleaseRazorViewModel { Body = contentText, Author = release.Author.Login, Name = name, AuthorAvatarUrl = release.Author.AvatarUrl, ReleaseTime = releaseTime };
                     LoadContent(new ReleaseRazorView { Model = model }.GenerateString());
                 });
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            Web.ScalesPageToFit = true;
         }
 
         protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)

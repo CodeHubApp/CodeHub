@@ -16,6 +16,9 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             NavigationItem.TitleView = _viewSegment;
 
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no issues."));
+
             this.WhenAnyValue(x => x.ViewModel.GoToFilterCommand)
                 .Select(x => x.ToBarButtonItem(Images.Filter))
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
@@ -23,22 +26,16 @@ namespace CodeHub.iOS.ViewControllers.Issues
             this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
                 .Where(_ => NavigationItem.RightBarButtonItem != null)
                 .Subscribe(x => NavigationItem.RightBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter);
-
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no issues."));
+            
+            var valueChanged = Observable.FromEventPattern(x => _viewSegment.ValueChanged += x, x => _viewSegment.ValueChanged -= x);
+            valueChanged.Subscribe(_ => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment);
 
             // Only attach once.
             this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
 
-            this.WhenActivated(d =>
-            {
-                var valueChanged = Observable.FromEventPattern(x => _viewSegment.ValueChanged += x, x => _viewSegment.ValueChanged -= x);
-                d(valueChanged.Subscribe(_ => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment));
-                d(this.WhenAnyValue(x => x.ViewModel.GroupedIssues).IsNotNull().Subscribe(x =>
-                {
-                    var source = TableView.Source as IssueTableViewSource;
-                    if (source != null) source.SetData(x);
-                }));
+            this.WhenAnyValue(x => x.ViewModel.GroupedIssues).IsNotNull().Subscribe(x => {
+                var source = TableView.Source as IssueTableViewSource;
+                if (source != null) source.SetData(x);
             });
         }
 

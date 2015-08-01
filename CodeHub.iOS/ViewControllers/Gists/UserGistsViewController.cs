@@ -8,14 +8,13 @@ namespace CodeHub.iOS.ViewControllers.Gists
 {
     public class UserGistsViewController : BaseGistsViewController<UserGistsViewModel>
     {
-        public override void ViewDidLoad()
+        public UserGistsViewController()
         {
-            base.ViewDidLoad();
-
             this.WhenAnyValue(x => x.ViewModel.IsMine)
                 .Select(x => x ? ViewModel.GoToCreateGistCommand.ToBarButtonItem(UIBarButtonSystemItem.Add) : null)
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
+
     }
 }
 

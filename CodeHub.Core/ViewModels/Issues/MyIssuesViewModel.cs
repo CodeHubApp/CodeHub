@@ -3,12 +3,13 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesViewModel : BaseIssuesViewModel
     {
-        private readonly ISessionService _applicationService;
+        private readonly ISessionService _sessionService;
         private readonly MyIssuesFilterModel _openFilter = MyIssuesFilterModel.CreateOpenFilter();
         private readonly MyIssuesFilterModel _closedFilter = MyIssuesFilterModel.CreateClosedFilter();
 
@@ -43,7 +44,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public bool CustomFilterEnabled
         {
             get { return _customFilterEnabled; }
-            set { this.RaiseAndSetIfChanged(ref _customFilterEnabled, value); }
+            private set { this.RaiseAndSetIfChanged(ref _customFilterEnabled, value); }
         }
 
         public IReactiveCommand<object> GoToFilterCommand { get; private set; }
@@ -51,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public MyIssuesViewModel(ISessionService sessionService)
             : base(sessionService)
         {
-            _applicationService = sessionService;
+            _sessionService = sessionService;
 
             Title = "My Issues";
             Filter = MyIssuesFilterModel.CreateOpenFilter();
@@ -65,32 +66,17 @@ namespace CodeHub.Core.ViewModels.Issues
                 })
                 .ToProperty(this, x => x.SelectedFilter);
 
-            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(_ =>
-            {
+            this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(filter => {
                 IssuesBacking.Clear();
                 LoadCommand.ExecuteIfCan();
+                CustomFilterEnabled = !(filter == _closedFilter || filter == _openFilter);
             });
- 
+
             GoToFilterCommand = ReactiveCommand.Create();
             GoToFilterCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<MyIssuesFilterViewModel>();
-                vm.Ascending = Filter.Ascending;
-                vm.FilterType = Filter.FilterType;
-                vm.Labels = Filter.Labels;
-                vm.State = Filter.Open;
-                vm.SortType = Filter.SortType;
-                vm.SaveCommand.Subscribe(__ => {
-                    Filter = new MyIssuesFilterModel 
-                    {
-                        Ascending = vm.Ascending,
-                        FilterType = vm.FilterType,
-                        Labels = vm.Labels,
-                        Open = vm.State,
-                        SortType = vm.SortType
-                    };
-                    CustomFilterEnabled = true;
-                });
-
+                vm.Init(Filter);
+                vm.SaveCommand.Subscribe(filter => Filter = filter);
                 NavigateTo(vm);
             });
         }
@@ -99,7 +85,6 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             if (Filter == null)
                 return base.IssueFilter(issue);
-
             if (Filter.Open == IssueState.Open)
                 return base.IssueFilter(issue) && string.Equals(issue.State, "open", StringComparison.OrdinalIgnoreCase);
             if (Filter.Open == IssueState.Closed)
@@ -115,7 +100,7 @@ namespace CodeHub.Core.ViewModels.Issues
             var sort = Filter.SortType == IssueSort.None
                 ? null : Filter.SortType.ToString().ToLower();
             var labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
-            return _applicationService.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels,
+            return _sessionService.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels,
                 state: state, direction: direction, filter: filter);
         }
     }

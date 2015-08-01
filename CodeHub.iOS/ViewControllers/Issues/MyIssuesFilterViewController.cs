@@ -15,6 +15,9 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public MyIssuesFilterViewController()
             : base(UITableViewStyle.Grouped)
         {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+                ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
+
             this.WhenAnyValue(x => x.ViewModel.DismissCommand)
                 .Select(x => x.ToBarButtonItem(Images.Cancel))
                 .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
@@ -27,9 +30,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            var source = new DialogTableViewSource(TableView);
-            TableView.Source = source;
 
             var typeElement = new StringElement("Type", () => ViewModel.SelectFilterTypeCommand.ExecuteIfCan());
             typeElement.Style = UITableViewCellStyle.Value1;
@@ -51,15 +51,16 @@ namespace CodeHub.iOS.ViewControllers.Issues
             var orderSection = new Section("Order By") { fieldElement, ascElement };
             var searchSection = new Section();
             searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
+
+            var source = new DialogTableViewSource(TableView);
+            TableView.Source = source;
             source.Root.Add(filterSection, orderSection, searchSection);
 
-            this.WhenActivated(d => {
-                d(this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize()));
-                d(this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize()));
-                d(this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize()));
-                d(this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x));
-            });
+            this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize());
+            this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize());
+            this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize());
+            this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x);
         }
     }
 }

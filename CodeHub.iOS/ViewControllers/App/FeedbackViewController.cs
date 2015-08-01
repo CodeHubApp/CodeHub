@@ -1,7 +1,7 @@
 using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
 using ReactiveUI;
-using UIKit;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.App
 {
@@ -10,8 +10,10 @@ namespace CodeHub.iOS.ViewControllers.App
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
             this.WhenAnyValue(x => x.ViewModel.Items)
-                .BindTableSource(TableView, (tv, x) => new FeedbackTableViewSource(tv, x));
+                .Select(x => new FeedbackTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
     }
 }

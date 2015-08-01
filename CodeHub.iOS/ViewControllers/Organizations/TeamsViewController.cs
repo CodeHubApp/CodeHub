@@ -20,9 +20,17 @@ namespace CodeHub.iOS.ViewControllers.Organizations
         {
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
-            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Teams, TeamCellView.Key, (float)UITableView.AutomaticDimension);
+
+            this.WhenAnyValue(x => x.ViewModel.Teams)
+                .Select(CreateSource)
+                .BindTo(TableView, x => x.Source);
+        }
+
+        private ReactiveTableViewSource<TeamItemViewModel> CreateSource(IReadOnlyReactiveList<TeamItemViewModel> items)
+        {
+            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, items, TeamCellView.Key, (float)UITableView.AutomaticDimension);
             source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
-            TableView.Source = source;
+            return source;
         }
     }
 }

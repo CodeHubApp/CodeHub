@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Linq;
 using CodeHub.iOS.TableViewSources;
 using Foundation;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -13,13 +14,14 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             base.ViewDidLoad();
 
-            var source = new LanguageTableViewSource(TableView, ViewModel.Languages);
-            source.ElementSelected.OfType<LanguageItemViewModel>().Subscribe(x => ViewModel.SelectedLanguage = x);
-            TableView.Source = source;
+            this.WhenAnyValue(x => x.ViewModel.Languages)
+                .Select(x => {
+                    var source = new LanguageTableViewSource(TableView, x);
+                    source.ElementSelected.OfType<LanguageItemViewModel>().Subscribe(y => ViewModel.SelectedLanguage = y);
+                    return source;
+                }).BindTo(TableView, x => x.Source);
 
-            // Loading is assumed to already have begun
-            ViewModel.LoadCommand.IsExecuting.Where(x => !x).Take(1).SubscribeSafe(_ =>
-            {
+            ViewModel.LoadCommand.IsExecuting.Where(x => !x).Take(1).SubscribeSafe(_ => {
                 var selectedLanguageSlug = ViewModel.SelectedLanguage.Slug;
                 var selectedLanguage = ViewModel.Languages.Select((value, index) => new { value, index })
                     .Where(x => x.value.Slug == selectedLanguageSlug)
@@ -29,8 +31,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 if (selectedLanguage >= 0)
                 {
                     var indexPath = NSIndexPath.FromRowSection(selectedLanguage, 0);
-                    BeginInvokeOnMainThread(() =>
-                        TableView.ScrollToRow(indexPath, UIKit.UITableViewScrollPosition.Middle, true));
+                    BeginInvokeOnMainThread(() => TableView.ScrollToRow(indexPath, UIKit.UITableViewScrollPosition.Middle, true));
                 }
             });
         }

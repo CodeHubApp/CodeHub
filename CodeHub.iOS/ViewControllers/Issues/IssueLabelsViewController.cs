@@ -14,14 +14,17 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
-
-            this.WhenActivated(d =>
-            {
-                d(this.WhenAnyValue(x => x.ViewModel.Labels)
-                    .Select(x => new IssueLabelTableViewSource(TableView, x))
-                    .BindTo(TableView, x => x.Source));
-            });
         }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            this.WhenAnyValue(x => x.ViewModel.Labels)
+                .Select(x => new IssueLabelTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
+        }
+
 
         public static void Show(UIViewController parent, IssueLabelsViewModel viewModel)
         {

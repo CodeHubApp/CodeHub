@@ -25,7 +25,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             base.ViewDidLoad();
 
             this.WhenAnyValue(x => x.ViewModel.Content)
-                .BindTableSource(TableView, (tv, s) => new SourceContentTableViewSource(tv, s));
+                .Select(x => new SourceContentTableViewSource(TableView, x))
+                .BindTo(TableView, x => x.Source);
         }
     }
 }

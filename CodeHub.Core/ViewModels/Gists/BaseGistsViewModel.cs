@@ -8,7 +8,12 @@ using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel
+    public interface IGistsViewModel
+    {
+        IReadOnlyReactiveList<GistItemViewModel> Gists { get; }
+    }
+
+    public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
     {
         protected ReactiveList<GistModel> InternalGists { get; private set; }
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }

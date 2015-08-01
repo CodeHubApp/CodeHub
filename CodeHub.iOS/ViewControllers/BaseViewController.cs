@@ -8,6 +8,7 @@ using CodeHub.Core.ViewModels;
 using Splat;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -40,10 +41,6 @@ namespace CodeHub.iOS.ViewControllers
         private void SetupRx()
         {
             this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
-
-            this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IProvidesTitle>()
                 .Select(x => x.WhenAnyValue(y => y.Title))
                 .Switch().Subscribe(x => Title = x ?? string.Empty);
@@ -52,8 +49,7 @@ namespace CodeHub.iOS.ViewControllers
                 .OfType<IRoutingViewModel>()
                 .Select(x => x.RequestNavigation)
                 .Switch()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
                     var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
                     var viewType = viewModelViewService.GetViewFor(x.GetType());
@@ -61,8 +57,6 @@ namespace CodeHub.iOS.ViewControllers
                     view.ViewModel = x;
                     HandleNavigation(x, view as UIViewController);
                 });
-
-            this.WhenActivated(d => { });
         }
 
         protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
@@ -80,12 +74,13 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public abstract class BaseViewController : ReactiveViewController
+    public abstract class BaseViewController : ReactiveViewController, IActivatable
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _appearedSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
+        private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
 
         public IObservable<bool> Appearing
         {
@@ -107,6 +102,11 @@ namespace CodeHub.iOS.ViewControllers
             get { return _disappearedSubject.AsObservable(); }
         }
 
+        protected void OnActivation(Action<Action<IDisposable>> d)
+        {
+            Appearing.Subscribe(_ => d(x => _activations.Add(x)));
+        }
+
         protected BaseViewController()
         {
             CommonConstructor();
@@ -122,6 +122,12 @@ namespace CodeHub.iOS.ViewControllers
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
             Appeared.Take(1).Subscribe(_ => this.TrackScreen());
+            Disappeared.Subscribe(_ => {
+                foreach (var a in _activations)
+                    a.Dispose();
+                _activations.Clear();
+            });
+            this.WhenActivated(_ => { });
         }
 
         public override void ViewWillAppear(bool animated)

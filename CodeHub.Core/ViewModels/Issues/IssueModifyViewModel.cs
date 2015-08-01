@@ -123,26 +123,32 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IssueAssigneeViewModel CreateAssigneeViewModel()
         {
-            return new IssueAssigneeViewModel(
+            var vm = new IssueAssigneeViewModel(
                 () => _assigneesCache.Value,
                 () => Task.FromResult(Assignee),
                 x => Task.FromResult(Assignee = x));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         public IssueMilestonesViewModel CreateMilestonesViewModel()
         {
-            return new IssueMilestonesViewModel(
+            var vm = new IssueMilestonesViewModel(
                 () => _milestonesCache.Value,
                 () => Task.FromResult(Milestone),
                 x => Task.FromResult(Milestone = x));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         public IssueLabelsViewModel CreateLabelsViewModel()
         {
-            return new IssueLabelsViewModel(
+            var vm = new IssueLabelsViewModel(
                 () => _labelsCache.Value,
                 () => Task.FromResult(Labels),
                 x =>  Task.FromResult(Labels = new ReadOnlyCollection<Label>(x.ToList())));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
     }
