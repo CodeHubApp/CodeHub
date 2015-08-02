@@ -8,7 +8,7 @@ using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class SupportViewModel : BaseViewModel
+    public class SupportViewModel : BaseViewModel, ILoadableViewModel
     {
         private const string CodeHubOwner = "thedillonb";
         private const string CodeHubName = "codehub";

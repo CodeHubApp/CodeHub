@@ -28,9 +28,8 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public static void Show(UIViewController parent, IssueAssigneeViewModel viewModel)
         {
             var viewController = new IssueAssigneeViewController { Title = "Assignees", ViewModel = viewModel };
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
-            parent.PresentViewController(new ThemedNavigationController(viewController), true, null);
-            viewController.ViewModel.DismissCommand.Subscribe(_ => parent.DismissViewController(true, null));
+            parent.NavigationController.PushViewController(viewController, true);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => parent.NavigationController.PopToViewController(parent, true));
         }
     }
 }

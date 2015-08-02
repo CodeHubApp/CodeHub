@@ -15,6 +15,16 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public RepositoryIssuesFilterViewController()
             : base(UITableViewStyle.Grouped)
         {
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+                ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
+
+            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                .Select(x => x.ToBarButtonItem(Images.Cancel))
+                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+
+            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                .Select(x => x.ToBarButtonItem(Images.Search))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()
@@ -58,53 +68,23 @@ namespace CodeHub.iOS.ViewControllers.Issues
             searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
             source.Root.Add(filterSection, orderSection, searchSection);
 
-            this.WhenActivated(d => {
-                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                    .Select(x => x.ToBarButtonItem(Images.Search))
-                    .Subscribe(x => NavigationItem.RightBarButtonItem = x));
+            this.WhenAnyObservable(x => x.ViewModel.SelectAssigneeCommand)
+                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
 
-                d(this.WhenAnyObservable(x => x.ViewModel.SelectAssigneeCommand)
-                    .Subscribe(_ => ShowAssigneeSelector()));
+            this.WhenAnyObservable(x => x.ViewModel.SelectMilestoneCommand)
+                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
 
-                d(this.WhenAnyObservable(x => x.ViewModel.SelectMilestoneCommand)
-                    .Subscribe(_ => ShowMilestonesSelector()));
+            this.WhenAnyObservable(x => x.ViewModel.SelectLabelsCommand)
+                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
 
-                d(this.WhenAnyObservable(x => x.ViewModel.SelectLabelsCommand)
-                    .Subscribe(_ => ShowLabelsSelector()));
-
-                d(this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize()));
-                d(this.WhenAnyValue(x => x.ViewModel.LabelsString).Subscribe(x => labelElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.Mentioned).Subscribe(x => mentionedElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.Creator).Subscribe(x => creatorElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.AssigneeString).Subscribe(x => assigneeElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.MilestoneString).Subscribe(x => milestoneElement.Value = x));
-                d(this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize()));
-                d(this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x));
-            });
-        }
-
-        private void ShowAssigneeSelector()
-        {
-//            var viewController = new IssueAssigneeViewController { Title = "Assignees" };
-//            viewController.ViewModel = ViewModel.Assignees;
-//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
-//            NavigationController.PushViewController(viewController, true);
-        }
-
-        private void ShowLabelsSelector()
-        {
-//            var viewController = new IssueLabelsView { Title = "Labels" };
-//            viewController.ViewModel = ViewModel.LabelsViewModel;
-//            NavigationController.PushViewController(viewController, true);
-        }
-
-        private void ShowMilestonesSelector()
-        {
-//            var viewController = new IssueMilestonesViewController { Title = "Milestones" };
-//            viewController.ViewModel = ViewModel.Milestones;
-//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.NavigationController.PopToViewController(this, true));
-//            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.ViewModel = null);
-//            NavigationController.PushViewController(viewController, true);
+            this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize());
+            this.WhenAnyValue(x => x.ViewModel.LabelsString).Subscribe(x => labelElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Mentioned).Subscribe(x => mentionedElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.Creator).Subscribe(x => creatorElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.AssigneeString).Subscribe(x => assigneeElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.MilestoneString).Subscribe(x => milestoneElement.Value = x);
+            this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize());
+            this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x);
         }
     }
 }

@@ -28,9 +28,8 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public static void Show(UIViewController parent, IssueMilestonesViewModel viewModel)
         {
             var viewController = new IssueMilestonesViewController { Title = "Milestones", ViewModel = viewModel };
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => viewController.ViewModel.DismissCommand.ExecuteIfCan());
-            parent.PresentViewController(new ThemedNavigationController(viewController), true, null);
-            viewController.ViewModel.DismissCommand.Subscribe(_ => viewController.DismissViewController(true, null));
+            parent.NavigationController.PushViewController(viewController, true);
+            viewController.ViewModel.DismissCommand.Subscribe(_ => parent.NavigationController.PopToViewController(parent, true));
         }
     }
 }

@@ -25,15 +25,14 @@ namespace CodeHub.iOS.ViewControllers.Issues
                 .BindTo(TableView, x => x.Source);
         }
 
-
         public static void Show(UIViewController parent, IssueLabelsViewModel viewModel)
         {
             var viewController = new IssueLabelsViewController { Title = "Labels", ViewModel = viewModel };
-            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, (s, e) => {
+            viewController.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.BackButton, UIBarButtonItemStyle.Done, (s, e) => {
                 viewController.ViewModel.SaveCommand.ExecuteIfCan();
-                viewController.DismissViewController(true, null);
+                viewController.NavigationController.PopToViewController(parent, true);
             });
-            parent.PresentViewController(new ThemedNavigationController(viewController), true, null);
+            parent.NavigationController.PushViewController(viewController, true);
         }
     }
 }

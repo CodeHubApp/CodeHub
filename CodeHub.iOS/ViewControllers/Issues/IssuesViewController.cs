@@ -26,9 +26,9 @@ namespace CodeHub.iOS.ViewControllers.Issues
             _viewSegment = new UISegmentedControl(new [] { "Open", "Closed", "Mine" });
 
             var filterBarButtonItem = new UIBarButtonItem(Images.Filter, UIBarButtonItemStyle.Plain, 
-                (s, e) => ViewModel.GoToCustomFilterCommand.ExecuteIfCan());
+                (s, e) => ViewModel.GoToFilterCommand.ExecuteIfCan());
 
-            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand, x => x.ViewModel.GoToCustomFilterCommand)
+            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand, x => x.ViewModel.GoToFilterCommand)
                 .Select(x => new [] { x.Item1.ToBarButtonItem(UIBarButtonSystemItem.Add), filterBarButtonItem })
                 .Subscribe(x => NavigationItem.RightBarButtonItems = x);
 
@@ -38,9 +38,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
                     filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter;
                     if (x) _viewSegment.SelectedSegment = -1;
             });
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToCustomFilterCommand)
-                .Subscribe(_ => ShowFilterView());
 
             NavigationItem.TitleView = _viewSegment;
             TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
@@ -70,13 +67,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
                     ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Mine;
                     break;
             }
-        }
-
-        private void ShowFilterView()
-        {
-            var controller = new RepositoryIssuesFilterViewController { ViewModel = ViewModel.Filter };
-            var navigation = new ThemedNavigationController(controller);
-            PresentViewController(navigation, true, null);
         }
     }
 }

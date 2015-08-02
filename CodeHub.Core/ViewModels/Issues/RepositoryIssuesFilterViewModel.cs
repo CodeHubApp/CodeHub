@@ -16,13 +16,17 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class RepositoryIssuesFilterViewModel : BaseViewModel
     {
-        private readonly Lazy<Task<User>> _userGet;
+        private readonly Lazy<Task<IReadOnlyList<User>>> _assigneesCache;
+        private readonly Lazy<Task<IReadOnlyList<Milestone>>> _milestonesCache;
+        private readonly Lazy<Task<IReadOnlyList<Label>>> _labelsCache;
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public IReactiveCommand<object> SaveCommand { get; private set; }
+        public IReactiveCommand<IssuesFilterModel> SaveCommand { get; private set; }
+
+        public IReactiveCommand<object> DismissCommand { get; private set; }
 
         public IReactiveCommand<object> SelectAssigneeCommand { get; private set; }
 
@@ -114,31 +118,33 @@ namespace CodeHub.Core.ViewModels.Issues
             State = IssueState.Open;
             SortType = CodeHub.Core.Filters.IssueSort.None;
 
-            _userGet = new Lazy<Task<User>>(sessionService.GitHubClient.User.Current);
+            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => {
+                var model = new IssuesFilterModel(Assignee, Creator, Mentioned, Labels, Milestone, State, SortType, Ascending);
+                return Task.FromResult(model);      
+            });
+            SaveCommand.Subscribe(_ => Dismiss());
+            DismissCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
 
-            SaveCommand = ReactiveCommand.Create().WithSubscription(_ => Dismiss());
-//
-//            this.WhenAnyValue(x => x.Milestones.Selected)
-//                .Select(x => x?.Title)
-//                .ToProperty(this, x => x.MilestoneString, out _milestoneString);
-//
-//            this.WhenAnyValue(x => x.Assignees.Selected)
-//                .Select(x => x?.Login)
-//                .ToProperty(this, x => x.AssigneeString, out _assigneeString);
-//
-//            this.WhenAnyValue(x => x.Labels.Selected)
-//                .Select(x => x ?? new List<Label>())
-//                .Select(x => string.Join(",", x.Select(y => y.Name)))
-//                .ToProperty(this, x => x.LabelsString, out _labelsString);
+            _assigneesCache = new Lazy<Task<IReadOnlyList<User>>>(() => 
+                sessionService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _milestonesCache = new Lazy<Task<IReadOnlyList<Milestone>>>(() => 
+                sessionService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
+            _labelsCache = new Lazy<Task<IReadOnlyList<Label>>>(() => 
+                sessionService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
 
-            var getAssignees = new Lazy<Task<IReadOnlyList<User>>>(() => sessionService.GitHubClient.Issue.Assignee.GetAllForRepository(RepositoryOwner, RepositoryName));
-            var getMilestones = new Lazy<Task<IReadOnlyList<Milestone>>>(() => sessionService.GitHubClient.Issue.Milestone.GetAllForRepository(RepositoryOwner, RepositoryName));
-            var getLables = new Lazy<Task<IReadOnlyList<Label>>>(() => sessionService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
+            this.WhenAnyValue(x => x.Milestone)
+                .Select(x => x?.Title)
+                .ToProperty(this, x => x.MilestoneString, out _milestoneString);
 
-//            Assignees = new IssueAssigneeViewModel(() => getAssignees.Value);
-//            Milestones = new IssueMilestonesViewModel(() => getMilestones.Value);
-//            Labels = new IssueLabelsViewModel(() => getLables.Value);
+            this.WhenAnyValue(x => x.Assignee)
+                .Select(x => x?.Login)
+                .ToProperty(this, x => x.AssigneeString, out _assigneeString);
 
+            this.WhenAnyValue(x => x.Labels)
+                .Select(x => x ?? new List<Label>())
+                .Select(x => string.Join(", ", x.Select(y => y.Name)))
+                .ToProperty(this, x => x.LabelsString, out _labelsString);
+            
             SelectAssigneeCommand = ReactiveCommand.Create();
             SelectMilestoneCommand = ReactiveCommand.Create();
             SelectLabelsCommand = ReactiveCommand.Create();
@@ -164,17 +170,49 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        public async Task SetDefault(bool open, string assignee = null)
+        public RepositoryIssuesFilterViewModel Init(string repositoryOwner, string repositoryName, IssuesFilterModel model)
         {
-            Creator = null;
-            Mentioned = null;
-            //Assignees.Selected = assignee == null ? null : (await _userGet.Value);
-//            Milestones.Selected = null;
-//            Labels.Selected = null;
-            Ascending = false;
-            SortType = CodeHub.Core.Filters.IssueSort.None;
-            State = open ? IssueState.Open : IssueState.Closed;
-            SaveCommand.ExecuteIfCan();
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Assignee = model.Assignee;
+            Creator = model.Creator;
+            Milestone = model.Milestone;
+            Labels = model.Labels;
+            Mentioned = model.Mentioned;
+            SortType = model.SortType;
+            State = model.IssueState;
+            Ascending = model.Ascending;
+            return this;
+        }
+
+        public IssueAssigneeViewModel CreateAssigneeViewModel()
+        {
+            var vm = new IssueAssigneeViewModel(
+                () => _assigneesCache.Value,
+                () => Task.FromResult(Assignee),
+                x => Task.FromResult(Assignee = x));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
+        }
+
+        public IssueMilestonesViewModel CreateMilestonesViewModel()
+        {
+            var vm = new IssueMilestonesViewModel(
+                () => _milestonesCache.Value,
+                () => Task.FromResult(Milestone),
+                x => Task.FromResult(Milestone = x));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
+        }
+
+        public IssueLabelsViewModel CreateLabelsViewModel()
+        {
+            var vm = new IssueLabelsViewModel(
+                () => _labelsCache.Value,
+                () => Task.FromResult(Labels),
+                x => Task.FromResult(Labels = new ReadOnlyCollection<Label>(x.ToList())));
+            vm.LoadCommand.ExecuteIfCan();
+            return vm;
         }
 
         private static string IssueAssigneeFilterToString(IssueAssigneeFilter filter)

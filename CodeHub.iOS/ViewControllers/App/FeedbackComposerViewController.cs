@@ -11,23 +11,28 @@ namespace CodeHub.iOS.ViewControllers.App
 {
     public class FeedbackComposerViewController : BaseTableViewController<FeedbackComposerViewModel>, IModalViewController
     {
-        private readonly DummyInputElement _titleElement = new DummyInputElement("Title");
-        private readonly ExpandingInputElement _descriptionElement = new ExpandingInputElement("Description");
-
         public FeedbackComposerViewController()
         {
-            _descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
+                ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
+        }
 
-            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x);
-            _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => _descriptionElement.Value = x);
-            _descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = _descriptionElement.Value;
+            var descriptionElement = new ExpandingInputElement("Description");
+            descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
 
-            this.WhenAnyValue(x => x.ViewModel.SubmitCommand).Subscribe(x =>
-            {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) =>
-                {
+            var titleElement = new DummyInputElement("Title");
+            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => titleElement.Value = x);
+            titleElement.Changed += (sender, e) => ViewModel.Subject = titleElement.Value;
+
+            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x);
+            descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = descriptionElement.Value;
+
+            this.WhenAnyValue(x => x.ViewModel.SubmitCommand).Subscribe(x => {
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
                     ResignFirstResponder();
                     x.ExecuteIfCan();
                 });
@@ -38,14 +43,9 @@ namespace CodeHub.iOS.ViewControllers.App
             this.WhenAnyValue(x => x.ViewModel.DismissCommand)
                 .Select(x => x.ToBarButtonItem(Images.Cancel))
                 .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
 
             var source = new DialogTableViewSource(TableView);
-            source.Root.Add(new Section { _titleElement, _descriptionElement });
+            source.Root.Add(new Section { titleElement, descriptionElement });
             TableView.Source = source;
             TableView.TableFooterView = new UIView();
         }

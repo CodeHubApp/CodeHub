@@ -112,8 +112,10 @@ namespace CodeHub.iOS.DialogElements
                 get { return _text.Text; }
                 set 
                 { 
+                    if (_text.Text == value)
+                        return;
                     _text.Text = value; 
-                    this.SetNeedsDisplay();
+                    SetNeedsDisplay();
                 }
             }
 

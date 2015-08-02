@@ -39,7 +39,6 @@
     <Compile Include="Data\ShowcaseRepository.cs" />
     <Compile Include="Data\TrendingRepository.cs" />
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="Filters\BaseIssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
@@ -235,6 +234,7 @@
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\App\EnterpriseSupportViewModel.cs" />
     <Compile Include="Repositories\IssueRepository.cs" />
+    <Compile Include="Filters\IssuesFilterModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
