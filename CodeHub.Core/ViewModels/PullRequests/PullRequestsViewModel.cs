@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive;
+using Octokit;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : BaseViewModel, IPaginatableViewModel
     {
+        private readonly ISessionService _sessionService;
+        private readonly IReactiveList<PullRequest> _pullRequests = new ReactiveList<PullRequest>();
+
         public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; private set; }
 
         public string RepositoryOwner { get; set; }
@@ -33,16 +38,16 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public PullRequestsViewModel(ISessionService applicationService)
+        public PullRequestsViewModel(ISessionService sessionService)
 		{
+            _sessionService = sessionService;
             Title = "Pull Requests";
 
-            var pullRequests = new ReactiveList<PullRequestModel>();
-            PullRequests = pullRequests.CreateDerivedCollection(x => {
+            PullRequests = _pullRequests.CreateDerivedCollection(x => {
                     var vm = new PullRequestItemViewModel(x);
                     vm.GoToCommand.Subscribe(_ => {
                         var prViewModel = this.CreateViewModel<PullRequestViewModel>();
-                        prViewModel.Init(RepositoryOwner, RepositoryName, (int)x.Number);
+                        prViewModel.Init(RepositoryOwner, RepositoryName, x.Number, x);
                         NavigateTo(prViewModel);
 
                         prViewModel.WhenAnyValue(y => y.Issue.State)
@@ -55,19 +60,37 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 filter: x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                var state = SelectedFilter == 0 ? "open" : "closed";
-			    var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests.GetAll(state: state);
-                return pullRequests.SimpleCollectionLoad(request, 
-                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                _pullRequests.Reset(await RetrievePullRequests());
             });
 
-            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => 
-            {
-                pullRequests.Clear();
+            this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => {
+                _pullRequests.Clear();
                 LoadCommand.ExecuteIfCan();
             });
 		}
+
+        private async Task<IReadOnlyList<PullRequest>> RetrievePullRequests(int page = 0)
+        {
+            var connection = _sessionService.GitHubClient.Connection;
+            var parameters = new Dictionary<string, string>();
+            parameters["page"] = page.ToString();
+            parameters["per_page"] = 50.ToString();
+            parameters["state"] = SelectedFilter == 0 ? "open" : "closed";
+            var ret = await connection.Get<IReadOnlyList<PullRequest>>(ApiUrls.PullRequests(RepositoryOwner, RepositoryName), parameters, "application/json");
+
+            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
+            {
+                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    _pullRequests.AddRange(await RetrievePullRequests(page + 1));
+                });
+            }
+            else
+            {
+                LoadMoreCommand = null;
+            }
+
+            return ret.Body;
+        }
     }
 }

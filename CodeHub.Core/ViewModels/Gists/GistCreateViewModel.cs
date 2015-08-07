@@ -1,10 +1,8 @@
-﻿using System;
-using CodeHub.Core.Services;
-using GitHubSharp.Models;
-using System.Linq;
+﻿using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.Core.Factories;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -36,18 +34,15 @@ namespace CodeHub.Core.ViewModels.Gists
             return await _alertDialogFactory.PromptYesNo("Discard Gist?", "Are you sure you want to discard this gist?");
         }
 
-        protected override async System.Threading.Tasks.Task<GistModel> SaveGist()
+        protected override async System.Threading.Tasks.Task<Gist> SaveGist()
         {
-            var createGist = new GistCreateModel
-            {
-                Description = Description ?? string.Empty,
-                Public = IsPublic,
-                Files = Files.ToDictionary(x => x.Name.Trim(), x => new GistCreateModel.File { Content = x.Content })
-            };
+            var newGist = new NewGist { Description = Description ?? string.Empty, Public = IsPublic };
 
-            var request = _sessionService.Client.AuthenticatedUser.Gists.CreateGist(createGist);
+            foreach (var file in Files)
+                newGist.Files[file.Name.Trim()] = file.Content;
+
             using (_alertDialogFactory.Activate("Creating Gist..."))
-                return (await _sessionService.Client.ExecuteAsync(request)).Data;
+                return await _sessionService.GitHubClient.Gist.Create(newGist);
         }
     }
 }

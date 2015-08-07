@@ -4,7 +4,6 @@ using System.Linq;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using System.Reactive.Linq;
-using GitHubSharp.Models;
 using System.Reactive;
 using System.Collections.Generic;
 using CodeHub.WebViews;

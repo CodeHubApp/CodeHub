@@ -6,7 +6,6 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Source;
-using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
@@ -19,6 +18,7 @@ using CodeHub.Core.ViewModels.Contents;
 using CodeHub.Core.Factories;
 using CodeHub.Core.ViewModels.Activity;
 using CodeHub.Core.Utilities;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -28,9 +28,9 @@ namespace CodeHub.Core.ViewModels.Repositories
         private readonly IAccountsRepository _accountsService;
         private bool? _starred;
         private bool? _watched;
-        private Octokit.Repository _repository;
-        private ContentModel _readme;
-        private List<BranchModel> _branches;
+        private Repository _repository;
+        private Readme _readme;
+        private IReadOnlyList<Branch> _branches;
         private int? _contributors;
 
         public string RepositoryOwner { get; private set; }
@@ -60,19 +60,19 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _contributors, value); }
         }
 
-        public Octokit.Repository Repository
+        public Repository Repository
         {
             get { return _repository; }
             private set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
-        public ContentModel Readme
+        public Readme Readme
         {
             get { return _readme; }
             private set { this.RaiseAndSetIfChanged(ref _readme, value); }
         }
 
-        public List<BranchModel> Branches
+        public IReadOnlyList<Branch> Branches
         {
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
@@ -185,7 +185,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));
             GoToOwnerCommand.Select(_ => Repository.Owner).Subscribe(x => {
-                if (Octokit.AccountType.Organization.Equals(x.Type))
+                if (AccountType.Organization.Equals(x.Type))
                 {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
                     vm.Init(RepositoryOwner);
@@ -343,11 +343,11 @@ namespace CodeHub.Core.ViewModels.Repositories
 
                 var t1 = applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName);
 
-                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme())
-                    .ToBackground(x => Readme = x.Data);
+                applicationService.GitHubClient.Repository.Content.GetReadme(RepositoryOwner, RepositoryName)
+                    .ToBackground(x => Readme = x);
 
-                applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetBranches())
-                    .ToBackground(x => Branches = x.Data);
+                applicationService.GitHubClient.Repository.GetAllBranches(RepositoryOwner, RepositoryName)
+                    .ToBackground(x => Branches = x);
 
                 applicationService.GitHubClient.Activity.Watching.CheckWatched(RepositoryOwner, RepositoryName)
                     .ToBackground(x => IsWatched = x);

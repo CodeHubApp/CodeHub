@@ -1,5 +1,4 @@
 ﻿using System;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;

@@ -119,7 +119,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Comments = new ReadOnlyCollection<PullRequestReviewComment>(comments);
         }
 
-        public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, Octokit.PullRequest pullRequest = null)
+        public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, PullRequest pullRequest = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;

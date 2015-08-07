@@ -1,11 +1,11 @@
 using System;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.Source;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.Factories;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -27,8 +27,8 @@ namespace CodeHub.Core.ViewModels.Gists
 	        set { this.RaiseAndSetIfChanged(ref _filename, value); }
 	    }
 
-        private GistFileModel _gistFile;
-	    public GistFileModel GistFile
+        private GistFile _gistFile;
+        public GistFile GistFile
 	    {
 	        get { return _gistFile; }
 	        set { this.RaiseAndSetIfChanged(ref _gistFile, value); }
@@ -45,7 +45,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public GistFileViewModel(ISessionService sessionService, ISessionService applicationService, 
-            IFilesystemService filesystemService, IActionMenuFactory actionMenuService, IMarkdownService markdownService)
+            IFilesystemService filesystemService, IActionMenuFactory actionMenuService)
             : base(sessionService)
 	    {
 	        this.WhenAnyValue(x => x.Filename)
@@ -65,12 +65,11 @@ namespace CodeHub.Core.ViewModels.Gists
                     return menu.Show(sender);
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 if (GistFile == null)
 			    {
-                    var data = await applicationService.Client.ExecuteAsync(applicationService.Client.Gists[_id].Get());
-                    GistFile = data.Data.Files[_filename];
+                    var data = await applicationService.GitHubClient.Gist.Get(_id);
+                    GistFile = data.Files[_filename];
 			    }
 
 			    //Check to make sure...
@@ -81,7 +80,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
                 var content = GistFile.Content;
                 if (MarkdownLanguage.Equals(GistFile.Language, StringComparison.OrdinalIgnoreCase))
-                    content = await applicationService.Client.Markdown.GetMarkdown(content);
+                    content = await applicationService.GitHubClient.Miscellaneous.RenderRawMarkdown(content);
 
                 var gistFileName = System.IO.Path.GetFileName(GistFile.Filename).Trim();
                 string filePath;

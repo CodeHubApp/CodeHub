@@ -7,7 +7,7 @@ namespace CodeHub.Core.ViewModels.Gists
 {
     public class UserGistsViewModel : BaseGistsViewModel
     {
-        private readonly ISessionService _applicationService;
+        private readonly ISessionService _sessionService;
 
         private string _username;
         public string Username
@@ -18,15 +18,16 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public bool IsMine
         {
-			get { return _applicationService.Account.Username.Equals(Username); }
+			get { return _sessionService.Account.Username.Equals(Username); }
         }
 
         public IReactiveCommand<object> GoToCreateGistCommand { get; private set; }
 
-        public UserGistsViewModel(ISessionService applicationService)
+        public UserGistsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
-            Username = _applicationService.Account.Username;
+            _sessionService = sessionService;
+            Username = _sessionService.Account.Username;
 
             GoToCreateGistCommand = ReactiveCommand.Create();
             GoToCreateGistCommand.Subscribe(_ =>
@@ -52,9 +53,9 @@ namespace CodeHub.Core.ViewModels.Gists
             });
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.GistModel>> CreateRequest()
+        protected override Uri RequestUri
         {
-            return _applicationService.Client.Users[Username].Gists.GetGists();
+            get { return Octokit.ApiUrls.UsersGists(Username); }
         }
 
         public UserGistsViewModel Init(string username)

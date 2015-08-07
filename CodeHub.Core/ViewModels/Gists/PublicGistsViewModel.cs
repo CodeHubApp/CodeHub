@@ -1,15 +1,18 @@
 ﻿using System;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Linq;
-using GitHubSharp;
 using System.Reactive;
 using CodeHub.Core.Services;
+using Octokit;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class PublicGistsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
     {
+        private readonly IReactiveList<Gist> _gists = new ReactiveList<Gist>();
+        private readonly ISessionService _sessionService;
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
@@ -23,20 +26,18 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public PublicGistsViewModel(ISessionService sessionService)
         {
+            _sessionService = sessionService;
+
             Title = "Public Gists";
 
-            var gists = new ReactiveList<GistModel>();
-            Gists = gists.CreateDerivedCollection(x => CreateGistItemViewModel(x));
+            Gists = _gists.CreateDerivedCollection(x => CreateGistItemViewModel(x));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
-                var request = sessionService.Client.Gists.GetPublicGists();
-                await gists.SimpleCollectionLoad(request, 
-                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                _gists.Reset(await RetrieveGists());
             });
         }
 
-        private GistItemViewModel CreateGistItemViewModel(GistModel gist)
+        private GistItemViewModel CreateGistItemViewModel(Gist gist)
         {
             var title = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
             var description = string.IsNullOrEmpty(gist.Description) ? "Gist " + gist.Id : gist.Description;
@@ -44,13 +45,32 @@ namespace CodeHub.Core.ViewModels.Gists
             if (gist.Files.Count > 0)
                 title = gist.Files.First().Key;
 
-            return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, _ =>
-            {
+            return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, _ => {
                 var vm = this.CreateViewModel<GistViewModel>();
-                vm.Id = gist.Id;
-                vm.Gist = gist;
+                vm.Init(gist.Id, gist);
                 NavigateTo(vm);
             });
+        }
+
+        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 0)
+        {
+            var connection = _sessionService.GitHubClient.Connection;
+            var parameters = new Dictionary<string, string>();
+            parameters["page"] = page.ToString();
+            var ret = await connection.Get<IReadOnlyList<Gist>>(ApiUrls.PublicGists(), parameters, "application/json");
+
+            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
+            {
+                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    _gists.AddRange(await RetrieveGists(page + 1));
+                });
+            }
+            else
+            {
+                LoadMoreCommand = null;
+            }
+
+            return ret.Body;
         }
     }
 }

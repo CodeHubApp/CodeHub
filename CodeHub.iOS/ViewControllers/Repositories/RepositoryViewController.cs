@@ -1,7 +1,6 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Repositories;
-using GitHubSharp.Models;
 using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;

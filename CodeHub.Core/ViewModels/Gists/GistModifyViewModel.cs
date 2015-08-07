@@ -2,9 +2,9 @@
 using System.Linq;
 using ReactiveUI;
 using System.Threading.Tasks;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public IReactiveCommand<object> AddGistFileCommand { get; private set; }
 
-        public IReactiveCommand<GistModel> SaveCommand { get; private set; }
+        public IReactiveCommand<Gist> SaveCommand { get; private set; }
 
         public IReactiveCommand<bool> DismissCommand { get; private set; }
 
@@ -66,7 +66,7 @@ namespace CodeHub.Core.ViewModels.Gists
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
 
-        protected abstract Task<GistModel> SaveGist();
+        protected abstract Task<Gist> SaveGist();
 
         protected abstract Task<bool> Discard();
     }

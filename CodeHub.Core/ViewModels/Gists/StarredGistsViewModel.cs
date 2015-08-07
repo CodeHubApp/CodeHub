@@ -1,20 +1,19 @@
 ﻿using CodeHub.Core.Services;
+using System;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class StarredGistsViewModel : BaseGistsViewModel
     {
-        private readonly ISessionService _applicationService;
-
-        public StarredGistsViewModel(ISessionService applicationService)
+        public StarredGistsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
             Title = "Starred Gists";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.GistModel>> CreateRequest()
+        protected override Uri RequestUri
         {
-            return _applicationService.Client.Gists.GetStarredGists();
+            get { return Octokit.ApiUrls.StarredGists(); }
         }
     }
 }

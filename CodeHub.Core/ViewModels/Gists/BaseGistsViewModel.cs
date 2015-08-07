@@ -5,6 +5,9 @@ using System.Linq;
 using GitHubSharp;
 using System.Collections.Generic;
 using System.Reactive;
+using CodeHub.Core.Services;
+using System.Threading.Tasks;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -15,8 +18,10 @@ namespace CodeHub.Core.ViewModels.Gists
 
     public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
     {
-        protected ReactiveList<GistModel> InternalGists { get; private set; }
+        protected ReactiveList<Gist> InternalGists { get; private set; }
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
+
+        protected ISessionService SessionService { get; private set; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -34,45 +39,65 @@ namespace CodeHub.Core.ViewModels.Gists
             private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
         }
 
-        protected BaseGistsViewModel()
+        protected BaseGistsViewModel(ISessionService sessionService)
         {
-            InternalGists = new ReactiveList<GistModel>();
+            SessionService = sessionService;
+
+            InternalGists = new ReactiveList<Gist>();
             Gists = InternalGists.CreateDerivedCollection(
                 x => CreateGistItemViewModel(x),
                 filter: x => x.Description.ContainsKeyword(SearchKeyword) || GetGistTitle(x).ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
-                await InternalGists.SimpleCollectionLoad(CreateRequest(), 
-                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                InternalGists.Reset(await RetrieveGists());
             });
         }
 
-        protected abstract GitHubRequest<List<GistModel>> CreateRequest();
-
-        private GistItemViewModel CreateGistItemViewModel(GistModel gist)
+        private GistItemViewModel CreateGistItemViewModel(Gist gist)
         {
             var title = GetGistTitle(gist);
             var description = string.IsNullOrEmpty(gist.Description) ? "Gist " + gist.Id : gist.Description;
             var imageUrl = (gist.Owner == null) ? null : gist.Owner.AvatarUrl;
 
-            return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, _ =>
-            {
+            return new GistItemViewModel(title, imageUrl, description, gist.UpdatedAt, _ => {
                 var vm = this.CreateViewModel<GistViewModel>();
-                vm.Id = gist.Id;
-                vm.Gist = gist;
+                vm.Init(gist.Id, gist);
                 NavigateTo(vm);
             });
         }
 
-        private static string GetGistTitle(GistModel gist)
+        private static string GetGistTitle(Gist gist)
         {
             var title = (gist.Owner == null) ? "Anonymous" : gist.Owner.Login;
             if (gist.Files.Count > 0)
                 title = gist.Files.First().Key;
             return title;
         }
+
+        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 0)
+        {
+            var connection = SessionService.GitHubClient.Connection;
+            var parameters = new Dictionary<string, string>();
+            parameters["page"] = page.ToString();
+            parameters["per_page"] = 100.ToString();
+            var ret = await connection.Get<IReadOnlyList<Gist>>(RequestUri, parameters, "application/json");
+
+            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
+            {
+                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    InternalGists.AddRange(await RetrieveGists(page + 1));
+                });
+            }
+            else
+            {
+                LoadMoreCommand = null;
+            }
+
+            return ret.Body;
+        }
+
+        protected abstract Uri RequestUri { get; }
     }
 }
 

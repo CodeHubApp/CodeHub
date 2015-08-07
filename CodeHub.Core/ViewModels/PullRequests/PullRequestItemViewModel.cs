@@ -1,8 +1,8 @@
 ﻿using System;
 using ReactiveUI;
-using GitHubSharp.Models;
 using Humanizer;
 using CodeHub.Core.Utilities;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -16,12 +16,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Details { get; private set; }
 
-        internal PullRequestItemViewModel(PullRequestModel pullRequest) 
+        internal PullRequest PullRequest { get; private set; }
+
+        internal PullRequestItemViewModel(PullRequest pullRequest) 
         {
-            var user = pullRequest.User ?? new BasicUserModel();
+            PullRequest = pullRequest;
+
+            var login = pullRequest?.User.Login ?? "Unknonwn User";
+            var avatar = pullRequest?.User.AvatarUrl;
             Title = pullRequest.Title ?? "No Title";
-            Avatar = new GitHubAvatar(user.AvatarUrl);
-            Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.UtcDateTime.Humanize(), user.Login);
+            Avatar = new GitHubAvatar(avatar);
+            Details = string.Format("#{0} opened {1} by {2}", pullRequest.Number, pullRequest.CreatedAt.UtcDateTime.Humanize(), login);
             GoToCommand = ReactiveCommand.Create();
         }
     }

@@ -75,10 +75,11 @@ namespace CodeHub.Core.ViewModels.Contents
             NavigateTo(vm);
         }
 
-        public ReadmeViewModel Init(string repositoryOwner, string repositoryName)
+        public ReadmeViewModel Init(string repositoryOwner, string repositoryName, Readme readme = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
+            ContentModel = readme;
             return this;
         }
     }

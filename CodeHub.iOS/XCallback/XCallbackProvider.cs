@@ -1,11 +1,6 @@
-using System;
 using CodeHub.Core.Services;
-using System.Collections.Generic;
-using UIKit;
-using Foundation;
-using Xamarin.Utilities.XCallback;
 
-namespace CodeHub.iOS
+namespace CodeHub.iOS.XCallback
 {
     public class XCallbackProvider
     {
@@ -18,19 +13,19 @@ namespace CodeHub.iOS
 
         public bool Handle(XCallbackQuery query)
         {
-            if (query.Url == "/gist/create")
-            {
-                var description = query.Parameters.ContainsKey("description") ? query.Parameters["description"] : null;
-                var isPublic = query.Parameters.ContainsKey("public") && bool.Parse(query.Parameters["public"]);
-                var files = new Dictionary<string, GitHubSharp.Models.GistCreateModel.File>();
-
-                var fileCounter = 0;
-                foreach (var param in query.Parameters)
-                {
-                    if (param.Key.StartsWith("file", StringComparison.Ordinal))
-                        files.Add("gistfile" + (++fileCounter) + ".txt", new GitHubSharp.Models.GistCreateModel.File { Content = param.Value });
-                }
-
+//            if (query.Url == "/gist/create")
+//            {
+//                var description = query.Parameters.ContainsKey("description") ? query.Parameters["description"] : null;
+//                var isPublic = query.Parameters.ContainsKey("public") && bool.Parse(query.Parameters["public"]);
+//                var files = new Dictionary<string, GitHubSharp.Models.GistCreateModel.File>();
+//
+//                var fileCounter = 0;
+//                foreach (var param in query.Parameters)
+//                {
+//                    if (param.Key.StartsWith("file", StringComparison.Ordinal))
+//                        files.Add("gistfile" + (++fileCounter) + ".txt", new GitHubSharp.Models.GistCreateModel.File { Content = param.Value });
+//                }
+//
 //                var vm = IoC.Resolve<Core.ViewModels.Gists.GistCreateViewModel>();
 //                vm.Files
 //
@@ -46,10 +41,10 @@ namespace CodeHub.iOS
 //                appService.SetUserActivationAction(() => viewDispatcher.ShowViewModel(rec));
 
                 //UIApplication.SharedApplication.OpenUrl(new NSUrl(query.ExpandSuccessUrl(callback(msg))));
-
-                return true;
-            }
-
+//
+//                return true;
+//            }
+//
             return false;
         }
     }

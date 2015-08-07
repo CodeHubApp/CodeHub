@@ -1,11 +1,11 @@
 using System;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using System.Linq;
 using CodeHub.Core.Factories;
 using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -16,8 +16,8 @@ namespace CodeHub.Core.ViewModels.Gists
         private DateTime _lastChanged;
         private DateTime _lastLoaded;
 
-        private GistModel  _gist;
-        public GistModel Gist
+        private Gist  _gist;
+        public Gist Gist
         {
             get { return _gist; }
             set { this.RaiseAndSetIfChanged(ref _gist, value); }
@@ -45,25 +45,21 @@ namespace CodeHub.Core.ViewModels.Gists
                 .Subscribe(_ => _lastChanged = DateTime.Now);
         }
 
-        protected override async System.Threading.Tasks.Task<GistModel> SaveGist()
+        protected override async System.Threading.Tasks.Task<Gist> SaveGist()
         {
             if (Gist == null)
                 throw new InvalidOperationException("Missing Gist context to update!");
 
-            // We need to null out values that existed before but are not present in the update.
-            var files = Gist.Files.ToDictionary(x => x.Key, x => (string)null);
+            var gistUpdate = new GistUpdate { Description = Description ?? string.Empty };
+
+            foreach (var file in Gist.Files)
+                gistUpdate.Files[file.Key] = null;
+
             foreach (var file in Files)
-                files[file.Name] = file.Content;
+                gistUpdate.Files[file.Name] = new GistFileUpdate { Content = file.Content };
 
-            var editGist = new GistEditModel
-            {
-                Description = Description ?? string.Empty,
-                Files = files.ToDictionary(x => x.Key, x => new GistEditModel.File { Content = x.Value })
-            };
-
-            var request = _sessionService.Client.Gists[Gist.Id].EditGist(editGist);
             using (_alertDialogFactory.Activate("Updating Gist..."))
-                return (await _sessionService.Client.ExecuteAsync(request)).Data;
+                return await _sessionService.GitHubClient.Gist.Edit(Gist.Id, gistUpdate);
         }
 
         protected override async System.Threading.Tasks.Task<bool> Discard()

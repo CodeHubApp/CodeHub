@@ -1,6 +1,5 @@
 ﻿using System;
 using ReactiveUI;
-using GitHubSharp.Models;
 using System.Linq;
 using Humanizer;
 
@@ -73,15 +72,6 @@ namespace CodeHub.Core.ViewModels.Source
         }
 
         internal CommitedFileItemViewModel(Octokit.GitHubCommitFile file, Action<CommitedFileItemViewModel> gotoAction)
-            : this(gotoAction)
-        {
-            Name = System.IO.Path.GetFileName(file.Filename);
-            RootPath = file.Filename.Substring(0, file.Filename.Length - Name.Length);
-            CalculateSubtitle(file.Additions, file.Deletions, file.Changes);
-            CalculateRef(file.ContentsUrl);
-        }
-
-        internal CommitedFileItemViewModel(CommitModel.CommitFileModel file, Action<CommitedFileItemViewModel> gotoAction)
             : this(gotoAction)
         {
             Name = System.IO.Path.GetFileName(file.Filename);

@@ -8,7 +8,6 @@ using System.Reactive;
 using CodeHub.Core.Data;
 using CodeHub.Core.Factories;
 using GitHubSharp;
-using CodeHub.Core.Messages;
 using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
 

@@ -67,8 +67,8 @@ namespace CodeHub.Core.ViewModels.Activity
         private void GoToGist(EventModel.GistEvent gist)
         {
             var vm = this.CreateViewModel<GistViewModel>();
-            vm.Id = gist.Gist.Id;
-            vm.Gist = gist.Gist;
+            vm.Init(gist.Gist.Id);
+            //vm.Gist = gist.Gist;
             NavigateTo(vm);
         }
        
