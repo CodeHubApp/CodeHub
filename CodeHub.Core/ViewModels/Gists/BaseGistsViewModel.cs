@@ -75,7 +75,7 @@ namespace CodeHub.Core.ViewModels.Gists
             return title;
         }
 
-        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 0)
+        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 1)
         {
             var connection = SessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();

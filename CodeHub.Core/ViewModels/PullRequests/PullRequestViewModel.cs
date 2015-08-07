@@ -119,12 +119,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Comments = new ReadOnlyCollection<PullRequestReviewComment>(comments);
         }
 
-        public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, PullRequest pullRequest = null)
+        public PullRequestViewModel Init(string repositoryOwner, string repositoryName, int id, PullRequest pullRequest = null, Issue issue = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
             Id = id;
             PullRequest = pullRequest;
+            Issue = issue;
             return this;
         }
 

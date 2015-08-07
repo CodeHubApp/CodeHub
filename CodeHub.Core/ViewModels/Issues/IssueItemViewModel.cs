@@ -1,7 +1,7 @@
-﻿using GitHubSharp.Models;
-using ReactiveUI;
+﻿using ReactiveUI;
 using CodeHub.Core.Utilities;
 using System;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -29,10 +29,10 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal IssueItemViewModel(IssueModel issue)
+        internal IssueItemViewModel(Issue issue)
         {
-            var isPullRequest = issue.PullRequest != null && !(string.IsNullOrEmpty(issue.PullRequest.HtmlUrl));
-            var s1 = issue.Url.Substring(issue.Url.IndexOf("/repos/", StringComparison.Ordinal) + 7);
+            var isPullRequest = issue.PullRequest != null && issue.PullRequest.HtmlUrl != null;
+            var s1 = issue.Url.AbsolutePath.Substring(issue.Url.AbsolutePath.IndexOf("/repos/", StringComparison.Ordinal) + 7);
             var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues", StringComparison.Ordinal)));
 
             RepositoryFullName = repoId.Owner + "/" + repoId.Name;
@@ -40,11 +40,11 @@ namespace CodeHub.Core.ViewModels.Issues
             RepositoryOwner = repoId.Owner;
             IsPullRequest = isPullRequest;
             Title = issue.Title;
-            Number = (int)issue.Number;
-            State = issue.State;
+            Number = issue.Number;
+            State = issue.State.ToString();
             Comments = issue.Comments;
             Assignee = issue.Assignee != null ? issue.Assignee.Login : "Unassigned";
-            UpdatedAt = issue.UpdatedAt;
+            UpdatedAt = issue.UpdatedAt ?? DateTimeOffset.Now;
             GoToCommand = ReactiveCommand.Create();
         }
     }

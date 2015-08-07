@@ -63,12 +63,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             NavigateTo(vm);
         }
 
-        private async Task<IReadOnlyList<Repository>> RetrieveRepositories(int page = 0)
+        private async Task<IReadOnlyList<Repository>> RetrieveRepositories(int page = 1)
         {
             var connection = SessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();
             parameters["page"] = page.ToString();
-            parameters["per_page"] = 100.ToString();
+            parameters["per_page"] = 75.ToString();
             var ret = await connection.Get<IReadOnlyList<Repository>>(RepositoryUri, parameters, "application/json");
 
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))

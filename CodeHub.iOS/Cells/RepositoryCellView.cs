@@ -65,8 +65,7 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
                     UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);

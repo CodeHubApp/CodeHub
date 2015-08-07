@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             NavigateTo(vm);
         }
 
-        private async Task<IReadOnlyList<GitHubCommit>> RetrieveCommits(int page = 0)
+        private async Task<IReadOnlyList<GitHubCommit>> RetrieveCommits(int page = 1)
         {
             var connection = SessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();
@@ -72,7 +72,8 @@ namespace CodeHub.Core.ViewModels.Changesets
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                     var loadMore = await RetrieveCommits(page + 1);
-                    _commits.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
+                    using (_commits.SuppressChangeNotifications())
+                        _commits.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
                 });
             }
             else

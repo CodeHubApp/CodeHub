@@ -85,7 +85,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public Octokit.Issue Issue
         {
             get { return _issueModel; }
-            set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
+            protected set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
         private readonly ObservableAsPropertyHelper<string> _markdownDescription;

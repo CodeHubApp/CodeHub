@@ -5,6 +5,7 @@ using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Linq;
 using System.Reactive.Threading.Tasks;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -56,13 +57,15 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        protected override bool IssueFilter(GitHubSharp.Models.IssueModel issue)
+        protected override bool IssueFilter(Issue issue)
         {
-            IssueState issueState;
-            if (!Enum.TryParse(issue.State, true, out issueState))
+            if (Filter == null)
                 return base.IssueFilter(issue);
-            
-            return base.IssueFilter(issue) && (Filter.IssueState == issueState);
+            if (Filter.IssueState == IssueState.Open)
+                return base.IssueFilter(issue) && issue.State == ItemState.Open;
+            if (Filter.IssueState == IssueState.Closed)
+                return base.IssueFilter(issue) && issue.State == ItemState.Closed;
+            return base.IssueFilter(issue);
         }
 
         public IssuesViewModel(ISessionService sessionService)
@@ -107,20 +110,21 @@ namespace CodeHub.Core.ViewModels.Issues
             return this;
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.IssueModel>> CreateRequest()
+        protected override void AddRequestParameters(System.Collections.Generic.IDictionary<string, string> parameters)
         {
-            var direction = Filter.Ascending ? "asc" : "desc";
-            var state = Filter.IssueState.ToString().ToLower();
-            var sort = Filter.SortType == IssueSort.None ? null : Filter.SortType.ToString().ToLower();
-            var creator = Filter.Creator;
-            var mentioned = Filter.Mentioned;
-            var labels = Filter.Labels?.Count > 0 ? string.Join(",", Filter.Labels.Select(x => x.Name)) : null;
-            var milestone = Filter.Milestone?.Number.ToString();
-            var assignee = Filter.Assignee?.Login;
+            parameters["direction"] = Filter.Ascending ? "asc" : "desc";
+            parameters["state"] = Filter.IssueState.ToString().ToLower();
+            parameters["sort"] = Filter.SortType == CodeHub.Core.Filters.IssueSort.None ? null : Filter.SortType.ToString().ToLower();
+            parameters["creator"] = Filter.Creator;
+            parameters["mentioned"] = Filter.Mentioned;
+            parameters["labels"] = Filter.Labels?.Count > 0 ? string.Join(",", Filter.Labels.Select(x => x.Name)) : null;
+            parameters["milestone"] = Filter.Milestone?.Number.ToString();
+            parameters["assignee"] = Filter.Assignee?.Login;
+        }
 
-            return _sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues.GetAll(
-                sort: sort, labels: labels, state: state, direction: direction,
-                assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
+        protected override Uri RequestUri
+        {
+            get { return Octokit.ApiUrls.Issues(RepositoryOwner, RepositoryName); }
         }
 
         public enum IssueFilterSelection

@@ -4,6 +4,7 @@ using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
 using System.Threading.Tasks;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -81,27 +82,29 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected override bool IssueFilter(GitHubSharp.Models.IssueModel issue)
+        protected override bool IssueFilter(Issue issue)
         {
             if (Filter == null)
                 return base.IssueFilter(issue);
             if (Filter.Open == IssueState.Open)
-                return base.IssueFilter(issue) && string.Equals(issue.State, "open", StringComparison.OrdinalIgnoreCase);
+                return base.IssueFilter(issue) && issue.State == ItemState.Open;
             if (Filter.Open == IssueState.Closed)
-                return base.IssueFilter(issue) && string.Equals(issue.State, "closed", StringComparison.OrdinalIgnoreCase);
+                return base.IssueFilter(issue) && issue.State == ItemState.Closed;
             return base.IssueFilter(issue);
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.IssueModel>> CreateRequest()
+        protected override void AddRequestParameters(System.Collections.Generic.IDictionary<string, string> parameters)
         {
-            var filter = Filter.FilterType.ToString().ToLower();
-            var direction = Filter.Ascending ? "asc" : "desc";
-            var state = Filter.Open.ToString().ToLower();
-            var sort = Filter.SortType == IssueSort.None
-                ? null : Filter.SortType.ToString().ToLower();
-            var labels = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
-            return _sessionService.Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels,
-                state: state, direction: direction, filter: filter);
+            parameters["filter"] = Filter.FilterType.ToString().ToLower();
+            parameters["direction"] = Filter.Ascending ? "asc" : "desc";
+            parameters["state"] = Filter.Open.ToString().ToLower();
+            parameters["sort"] = Filter.SortType == CodeHub.Core.Filters.IssueSort.None ? null : Filter.SortType.ToString().ToLower();
+            parameters["labels"] = string.IsNullOrEmpty(Filter.Labels) ? null : Filter.Labels;
+        }
+
+        protected override Uri RequestUri
+        {
+            get { return ApiUrls.Issues(); }
         }
     }
 }

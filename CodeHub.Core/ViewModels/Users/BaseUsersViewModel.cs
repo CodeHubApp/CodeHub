@@ -63,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Users
             });
         }
 
-        private async Task<IReadOnlyList<User>> RetrieveUsers(int page = 0)
+        private async Task<IReadOnlyList<User>> RetrieveUsers(int page = 1)
         {
             var connection = SessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();

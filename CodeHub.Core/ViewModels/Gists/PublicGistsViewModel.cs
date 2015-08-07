@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Gists
             });
         }
 
-        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 0)
+        private async Task<IReadOnlyList<Gist>> RetrieveGists(int page = 1)
         {
             var connection = _sessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();

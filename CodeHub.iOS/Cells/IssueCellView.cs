@@ -54,8 +54,7 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     Caption.Text = x.Title;
                     Label1.Text = x.State;
                     Label2.Text = x.Comments == 1 ? "1 comment" : x.Comments + " comments";
@@ -65,36 +64,6 @@ namespace CodeHub.iOS.Cells
                     IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
                 });
         }
-//
-//        static readonly UIFont CountFont = UIFont.BoldSystemFontOfSize (13);
-//
-//        private class CounterView : UIView
-//        {
-//            private readonly int _counter;
-//            public CounterView(int counter) 
-//                : base ()
-//            {
-//                _counter = counter;
-//                BackgroundColor = UIColor.Clear;
-//            }
-//
-//            public override void Draw(RectangleF rect)
-//            {
-//                if (_counter > 0){
-//                    var ctx = UIGraphics.GetCurrentContext ();
-//                    var ms = _counter.ToString ();
-//
-//                    var crect = Bounds;
-//                    
-//                    UIColor.Gray.SetFill ();
-//                    GraphicsUtil.FillRoundedRect (ctx, crect, 3);
-//                    UIColor.White.SetColor ();
-//                    crect.X += 5;
-//                    DrawString (ms, crect, CountFont);
-//                }
-//                base.Draw(rect);
-//            }
-//        }
 
         private class SeperatorIssues : UIView
         {

@@ -1,21 +1,20 @@
 using System;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 using System.Linq;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.PullRequests;
 using System.Collections.Generic;
 using System.Reactive;
-using GitHubSharp;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class BaseIssuesViewModel : BaseViewModel, IProvidesSearchKeyword, IPaginatableViewModel
     {
         private readonly ISessionService _sessionService;
-        protected readonly IReactiveList<IssueModel> IssuesBacking = new ReactiveList<IssueModel>();
+        protected readonly IReactiveList<Issue> IssuesBacking = new ReactiveList<Issue>();
 
         public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; private set; }
 
@@ -52,26 +51,24 @@ namespace CodeHub.Core.ViewModels.Issues
                     .Select(x => new IssueGroupViewModel(x.Key, x)).ToList();
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-            {
-                return IssuesBacking.SimpleCollectionLoad(CreateRequest(), 
-                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x()));
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                IssuesBacking.Reset(await RetrieveIssues());
             });
 	    }
 
-        protected virtual bool IssueFilter(IssueModel issue)
+        protected virtual bool IssueFilter(Issue issue)
         {
             return issue.Title.ContainsKeyword(SearchKeyword);
         }
 
-        private IssueItemViewModel CreateItemViewModel(IssueModel issue)
+        private IssueItemViewModel CreateItemViewModel(Issue issue)
         {
             var item = new IssueItemViewModel(issue);
             if (item.IsPullRequest)
             {
                 item.GoToCommand.Subscribe(_ => {
                     var vm = this.CreateViewModel<PullRequestViewModel>();
-                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number);
+                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number, issue: issue);
                     vm.IssueUpdated.Subscribe(x => UpdateIssue(x));
                     NavigateTo(vm);
                 });
@@ -80,7 +77,7 @@ namespace CodeHub.Core.ViewModels.Issues
             {
                 item.GoToCommand.Subscribe(_ => {
                     var vm = this.CreateViewModel<IssueViewModel>();
-                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number);
+                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number, issue);
                     vm.IssueUpdated.Subscribe(x => UpdateIssue(x));
                     NavigateTo(vm);
                 });
@@ -89,9 +86,9 @@ namespace CodeHub.Core.ViewModels.Issues
             return item;
         }
 
-        private async Task UpdateIssue(Octokit.Issue issue)
+        private async Task UpdateIssue(Issue issue)
         {
-            var localIssue = IssuesBacking.FirstOrDefault(x => string.Equals(x.Url, issue.Url.AbsoluteUri, StringComparison.OrdinalIgnoreCase));
+            var localIssue = IssuesBacking.FirstOrDefault(x => x.Url == issue.Url);
             if (localIssue == null)
                 return;
 
@@ -103,12 +100,40 @@ namespace CodeHub.Core.ViewModels.Issues
             if (matches.Count != 1 || matches[0].Groups.Count != 3)
                 return;
 
-            var req = _sessionService.Client.Users[matches[0].Groups[1].Value].Repositories[matches[0].Groups[2].Value].Issues[issue.Number].Get();
-            IssuesBacking[index] = (await _sessionService.Client.ExecuteAsync(req)).Data;
+            IssuesBacking[index] = await _sessionService.GitHubClient.Issue.Get(matches[0].Groups[1].Value, matches[0].Groups[2].Value, issue.Number);
             IssuesBacking.Reset();
         }
 
-        protected abstract GitHubRequest<List<IssueModel>> CreateRequest();
+        private async Task<IReadOnlyList<Issue>> RetrieveIssues(int page = 1)
+        {
+            var connection = _sessionService.GitHubClient.Connection;
+            var parameters = new Dictionary<string, string>();
+            parameters["page"] = page.ToString();
+            parameters["per_page"] = 50.ToString();
+            AddRequestParameters(parameters);
+
+            parameters = parameters.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
+            var ret = await connection.Get<IReadOnlyList<Issue>>(RequestUri, parameters, "application/json");
+
+            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
+            {
+                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    IssuesBacking.AddRange(await RetrieveIssues(page + 1));
+                });
+            }
+            else
+            {
+                LoadMoreCommand = null;
+            }
+
+            return ret.Body;
+        }
+
+        protected virtual void AddRequestParameters(IDictionary<string, string> parameters)
+        {
+        }
+
+        protected abstract Uri RequestUri { get; }
     }
 }
 

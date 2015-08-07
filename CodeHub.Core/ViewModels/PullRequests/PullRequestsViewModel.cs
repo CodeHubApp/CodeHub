@@ -70,7 +70,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
 		}
 
-        private async Task<IReadOnlyList<PullRequest>> RetrievePullRequests(int page = 0)
+        private async Task<IReadOnlyList<PullRequest>> RetrievePullRequests(int page = 1)
         {
             var connection = _sessionService.GitHubClient.Connection;
             var parameters = new Dictionary<string, string>();
