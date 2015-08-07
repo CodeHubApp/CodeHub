@@ -70,7 +70,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     {
                         _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
                         _splitElements[0].Button2.Text = x.Language ?? "N/A";
-                        _splitElements[1].Button1.Text = x.OpenIssues + (x.OpenIssues == 1 ? " Issue" : " Issues");
+                        _splitElements[1].Button1.Text = x.OpenIssuesCount + (x.OpenIssuesCount == 1 ? " Issue" : " Issues");
                     });
 
             Appeared.Take(1)

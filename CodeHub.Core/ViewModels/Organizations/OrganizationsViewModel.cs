@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Organizations
             Organizations = organizations.CreateDerivedCollection(
                 x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () => {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
-                    vm.Init(x.Login);
+                    vm.Init(x.Login, x);
                     NavigateTo(vm);
                 }),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),

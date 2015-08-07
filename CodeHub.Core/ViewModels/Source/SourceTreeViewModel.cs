@@ -105,8 +105,7 @@ namespace CodeHub.Core.ViewModels.Source
                     NavigateTo(vm);
                 });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 if (!PushAccess.HasValue)
                 {
                     applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)

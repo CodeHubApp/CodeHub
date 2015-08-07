@@ -11,6 +11,7 @@ using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views;
+using Octokit;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {

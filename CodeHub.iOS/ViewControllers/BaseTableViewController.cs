@@ -60,6 +60,10 @@ namespace CodeHub.iOS.ViewControllers
                     HandleNavigation(x, view as UIViewController);
                 });
 
+            this.Appearing
+                .Take(1)
+                .Subscribe(_ => SetupLoadMore());
+
             this.Appeared
                 .Take(1)
                 .Subscribe(_ => CreateEmptyHandler());
@@ -86,10 +90,28 @@ namespace CodeHub.iOS.ViewControllers
             LoadViewModel();
         }
 
+        private void SetupLoadMore()
+        {
+            var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
+            var iSourceInformsEnd = TableView.Source as IInformsEnd;
+
+            if (iPaginatableViewModel != null && iSourceInformsEnd != null)
+            {
+                iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x => {
+                    _loadingActivityView.Value.StartAnimating();
+                    TableView.TableFooterView = _loadingActivityView.Value;
+
+                    await x.ExecuteAsync();
+
+                    TableView.TableFooterView = null;
+                    _loadingActivityView.Value.StopAnimating();
+                });
+            }
+        }
+
         protected virtual void LoadViewModel()
         {
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
-            var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
 
             if (iLoadableViewModel == null)
                 return;
@@ -135,20 +157,6 @@ namespace CodeHub.iOS.ViewControllers
                         if (RefreshControl == null)
                             RefreshControl = refreshControl;
                     });
-
-            var iSourceInformsEnd = TableView.Source as IInformsEnd;
-            if (iPaginatableViewModel != null && iSourceInformsEnd != null)
-            {
-                iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x => {
-                    _loadingActivityView.Value.StartAnimating();
-                    TableView.TableFooterView = _loadingActivityView.Value;
-
-                    await x.ExecuteAsync();
-
-                    TableView.TableFooterView = null;
-                    _loadingActivityView.Value.StopAnimating();
-                });
-            }
         }
 
         private void CreateEmptyHandler()

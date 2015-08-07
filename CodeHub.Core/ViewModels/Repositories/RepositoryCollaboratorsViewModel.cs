@@ -5,21 +5,26 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryCollaboratorsViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _applicationService;
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public string RepositoryName { get; set; }
-
-        public RepositoryCollaboratorsViewModel(ISessionService applicationService)
+        public RepositoryCollaboratorsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
             Title = "Collaborators";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetCollaborators();
+            get { return Octokit.ApiUrls.RepoCollaborators(RepositoryOwner, RepositoryName); }
+        }
+
+        public RepositoryCollaboratorsViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

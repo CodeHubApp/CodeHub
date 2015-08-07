@@ -1,11 +1,11 @@
 ﻿using CodeHub.Core.Services;
+using System;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryForksViewModel : BaseRepositoriesViewModel
     {
-        private readonly ISessionService _applicationService;
-
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
@@ -13,14 +13,12 @@ namespace CodeHub.Core.ViewModels.Repositories
         public RepositoryForksViewModel(ISessionService applicationService)
             : base(applicationService)
         {
-            _applicationService = applicationService;
             Title = "Forks";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.RepositoryModel>> CreateRequest()
+        protected override Uri RepositoryUri
         {
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetForks();
+            get { return ApiUrls.RepositoryForks(RepositoryOwner, RepositoryName); }
         }
     }
 }
-

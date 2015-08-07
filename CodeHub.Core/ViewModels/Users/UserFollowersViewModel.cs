@@ -4,19 +4,17 @@ namespace CodeHub.Core.ViewModels.Users
 {
     public class UserFollowersViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _applicationService;
-
         public string Username { get; private set; }
 
-        public UserFollowersViewModel(ISessionService applicationService)
+        public UserFollowersViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
             Title = "Followers";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _applicationService.Client.Users[Username].GetFollowers();
+            get { return Octokit.ApiUrls.Followers(Username); }
         }
 
         public UserFollowersViewModel Init(string username)

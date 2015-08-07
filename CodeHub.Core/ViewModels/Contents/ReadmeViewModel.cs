@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Factories;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Contents
 {
@@ -21,22 +21,22 @@ namespace CodeHub.Core.ViewModels.Contents
             private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-	    private ContentModel _contentModel;
-	    public ContentModel ContentModel
+        private Readme _contentModel;
+        public Readme ContentModel
 	    {
 	        get { return _contentModel; }
 	        private set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
 	    }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToGitHubCommand { get; private set; }
+        public IReactiveCommand<object> GoToGitHubCommand { get; }
 
-        public IReactiveCommand<object> GoToLinkCommand { get; private set; }
+        public IReactiveCommand<object> GoToLinkCommand { get; }
 
-        public IReactiveCommand<object> ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
 
         public ReadmeViewModel(
             ISessionService applicationService, 
@@ -49,18 +49,11 @@ namespace CodeHub.Core.ViewModels.Contents
             ShareCommand = ReactiveCommand.Create(nonNullContentModel);
             ShareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, ContentModel.HtmlUrl));
 
-            var showWebBrowser = new Action<string>(x =>
-            {
-                var vm = this.CreateViewModel<WebBrowserViewModel>();
-                vm.Init(x);
-                NavigateTo(vm);
-            });
-
             GoToGitHubCommand = ReactiveCommand.Create(nonNullContentModel);
-            GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(showWebBrowser);
+            GoToGitHubCommand.Select(_ => ContentModel.HtmlUrl).Subscribe(GoToWebBrowser);
 
             GoToLinkCommand = ReactiveCommand.Create();
-            GoToLinkCommand.OfType<string>().Subscribe(showWebBrowser);
+            GoToLinkCommand.OfType<string>().Subscribe(x => GoToWebBrowser(new Uri(x)));
 
             ShowMenuCommand = ReactiveCommand.CreateAsyncTask(nonNullContentModel, sender => {
                 var menu = actionMenuService.Create();
@@ -69,12 +62,17 @@ namespace CodeHub.Core.ViewModels.Contents
                 return menu.Show(sender);
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async x =>
-            {
-                var repository = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName];
-                ContentText = await repository.GetReadmeRendered();
-                ContentModel = (await applicationService.Client.ExecuteAsync(repository.GetReadme())).Data;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async x => {
+                ContentText = await applicationService.GitHubClient.Repository.Content.GetReadmeHtml(RepositoryOwner, RepositoryName);
+                ContentModel = await applicationService.GitHubClient.Repository.Content.GetReadme(RepositoryOwner, RepositoryName);
             });
+        }
+
+        private void GoToWebBrowser(Uri uri)
+        {
+            var vm = this.CreateViewModel<WebBrowserViewModel>();
+            vm.Init(uri);
+            NavigateTo(vm);
         }
 
         public ReadmeViewModel Init(string repositoryOwner, string repositoryName)

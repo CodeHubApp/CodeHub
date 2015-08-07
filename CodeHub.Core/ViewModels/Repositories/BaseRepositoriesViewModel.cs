@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Reactive;
-using GitHubSharp;
+using Octokit;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
-        protected readonly ISessionService ApplicationService;
+        private readonly ReactiveList<RepositoryItemViewModel> _repositoryItems = new ReactiveList<RepositoryItemViewModel>();
+        protected readonly ISessionService SessionService;
 
         public bool ShowRepositoryDescription
         {
-			get { return ApplicationService.Account.ShowRepositoryDescriptionInList; }
+			get { return SessionService.Account.ShowRepositoryDescriptionInList; }
         }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; private set; }
@@ -37,74 +39,53 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        protected BaseRepositoriesViewModel(ISessionService applicationService)
+        protected BaseRepositoriesViewModel(ISessionService sessionService)
         {
-            ApplicationService = applicationService;
+            SessionService = sessionService;
             ShowRepositoryOwner = true;
             Title = "Repositories";
 
-            var gotoRepository = new Action<RepositoryItemViewModel>(x => {
-                var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.Init(x.Owner, x.Name);
-                NavigateTo(vm);
-            });
-
-            var repositories = new ReactiveList<RepositoryItemViewModel>();
-            Repositories = repositories.CreateDerivedCollection(
+            Repositories = _repositoryItems.CreateDerivedCollection(
                 x => x, 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            //Filter = applicationService.Account.Filters.GetFilter<RepositoriesFilterModel>(filterKey);
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                repositories.SimpleCollectionLoad(CreateRequest(),
-                    x => new RepositoryItemViewModel(x.Name, x.Owner.Login, x.Owner.AvatarUrl, 
-                        ShowRepositoryDescription ? x.Description : string.Empty, x.StargazersCount, x.ForksCount, 
-                        ShowRepositoryOwner, gotoRepository),
-                    x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
-
-//			_repositories.FilteringFunction = x => Repositories.Filter.Ascending ? x.OrderBy(y => y.Name) : x.OrderByDescending(y => y.Name);
-//            _repositories.GroupingFunction = CreateGroupedItems;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+                var ret = await RetrieveRepositories();
+                _repositoryItems.Reset(ret.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
+            });
         }
 
-        protected abstract GitHubRequest<List<RepositoryModel>> CreateRequest();
+        private void GoToRepository(RepositoryItemViewModel itemViewModel)
+        {
+            var vm = this.CreateViewModel<RepositoryViewModel>();
+            vm.Init(itemViewModel.Owner, itemViewModel.Name, itemViewModel.Repository);
+            NavigateTo(vm);
+        }
 
-//        private IEnumerable<IGrouping<string, RepositoryModel>> CreateGroupedItems(IEnumerable<RepositoryModel> model)
-//        {
-//            var order = Filter.OrderBy;
-//            if (order == RepositoriesFilterModel.Order.Forks)
-//            {
-//                var a = model.OrderBy(x => x.Forks).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Forks));
-//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-//                return FilterGroup.CreateNumberedGroup(a, "Forks");
-//            }
-//            if (order == RepositoriesFilterModel.Order.LastUpdated)
-//            {
-//                var a = model.OrderByDescending(x => x.UpdatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
-//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-//                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Updated");
-//            }
-//            if (order == RepositoriesFilterModel.Order.CreatedOn)
-//            {
-//                var a = model.OrderByDescending(x => x.CreatedAt).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
-//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-//                return FilterGroup.CreateNumberedGroup(a, "Days Ago", "Created");
-//            }
-//            if (order == RepositoriesFilterModel.Order.Followers)
-//            {
-//                var a = model.OrderBy(x => x.Watchers).GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Watchers));
-//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-//                return FilterGroup.CreateNumberedGroup(a, "Followers");
-//            }
-//            if (order == RepositoriesFilterModel.Order.Owner)
-//            {
-//                var a = model.OrderBy(x => x.Name).GroupBy(x => x.Owner.Login);
-//                a = Filter.Ascending ? a.OrderBy(x => x.Key) : a.OrderByDescending(x => x.Key);
-//                return a.ToList();
-//            }
-//
-//            return null;
-//        }
+        private async Task<IReadOnlyList<Repository>> RetrieveRepositories(int page = 0)
+        {
+            var connection = SessionService.GitHubClient.Connection;
+            var parameters = new Dictionary<string, string>();
+            parameters["page"] = page.ToString();
+            parameters["per_page"] = 100.ToString();
+            var ret = await connection.Get<IReadOnlyList<Repository>>(RepositoryUri, parameters, "application/json");
+
+            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
+            {
+                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
+                    var loadRet = await RetrieveRepositories(page + 1);
+                    _repositoryItems.AddRange(loadRet.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
+                });
+            }
+            else
+            {
+                LoadMoreCommand = null;
+            }
+
+            return ret.Body;
+        }
+
+        protected abstract Uri RepositoryUri { get; }
     }
 }

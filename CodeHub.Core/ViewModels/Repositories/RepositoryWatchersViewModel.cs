@@ -5,21 +5,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryWatchersViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _sessionService;
-
         public string RepositoryOwner { get; private set; }
 
         public string RepositoryName { get; private set; }
 
-        public RepositoryWatchersViewModel(ISessionService applicationService)
+        public RepositoryWatchersViewModel(ISessionService sessionService)
+            : base(sessionService)
 	    {
-            _sessionService = applicationService;
             Title = "Watchers";
 	    }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetWatchers();
+            get { return Octokit.ApiUrls.Watchers(RepositoryOwner, RepositoryName); }
         }
 
         public RepositoryWatchersViewModel Init(string repositoryOwner, string repositoryName)

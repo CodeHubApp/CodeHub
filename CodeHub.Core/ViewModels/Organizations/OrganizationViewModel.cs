@@ -108,9 +108,10 @@ namespace CodeHub.Core.ViewModels.Organizations
             });
         }
 
-        public OrganizationViewModel Init(string organizationName)
+        public OrganizationViewModel Init(string organizationName, Octokit.Organization organization = null)
         {
             Username = organizationName;
+            Organization = organization;
             return this;
         }
 	}

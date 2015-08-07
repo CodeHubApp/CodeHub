@@ -10,17 +10,14 @@ namespace CodeHub.iOS.ViewControllers.Releases
 {
     public class ReleaseViewController : BaseWebViewController<ReleaseViewModel>
     {
-        public ReleaseViewController()
-        {
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             Web.ScalesPageToFit = true;
+
+            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
+                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyValue(x => x.ViewModel.ContentText)
                 .IsNotNull()

@@ -155,9 +155,10 @@ namespace CodeHub.Core.ViewModels.Users
             });
         }
 
-        public UserViewModel Init(string username)
+        public UserViewModel Init(string username, Octokit.User user = null)
         {
             Username = username;
+            User = user;
             return this;
         }
     }

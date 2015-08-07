@@ -5,19 +5,17 @@ namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationMembersViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _sessionService;
-
         public string OrganizationName { get; private set; }
 
-        public OrganizationMembersViewModel(ISessionService applicationService)
+        public OrganizationMembersViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _sessionService = applicationService;
             Title = "Members";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _sessionService.Client.Organizations[OrganizationName].GetMembers();
+            get { return Octokit.ApiUrls.Members(OrganizationName); }
         }
 
         public OrganizationMembersViewModel Init(string organizationName)

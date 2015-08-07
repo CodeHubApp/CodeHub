@@ -5,19 +5,23 @@ namespace CodeHub.Core.ViewModels.Organizations
 {
     public class TeamMembersViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _sessionService;
+        public int Id { get; private set; }
 
-        public long Id { get; set; }
-
-        public TeamMembersViewModel(ISessionService applicationService)
+        public TeamMembersViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _sessionService = applicationService;
             Title = "Members";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _sessionService.Client.Teams[Id].GetMembers();
+            get { return Octokit.ApiUrls.Teams(Id); }
+        }
+
+        public TeamMembersViewModel Init(int id)
+        {
+            Id = id;
+            return this;
         }
     }
 }

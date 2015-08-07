@@ -70,10 +70,7 @@ namespace CodeHub.Core.ViewModels.Source
             GoToEditCommand = ReactiveCommand.Create(canEdit);
 	        GoToEditCommand.Subscribe(_ => {
 	            var vm = this.CreateViewModel<EditFileViewModel>();
-                vm.Path = Path;
-                vm.Branch = Branch;
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName, Path, null, Branch);
                 vm.SaveCommand.Subscribe(x => {
                     GitUrl = x.Content.GitUrl.AbsoluteUri;
                     LoadCommand.ExecuteIfCan();

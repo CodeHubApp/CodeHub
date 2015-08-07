@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Search
 
             var gotoRepository = new Action<RepositoryItemViewModel>(x => {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.Init(x.Owner, x.Name);
+                vm.Init(x.Owner, x.Name, x.Repository);
                 NavigateTo(vm);
             });
 
@@ -53,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Search
             Users = users.CreateDerivedCollection(x => 
                 new UserItemViewModel(x.Login, x.AvatarUrl, false, () => {
                     var vm = this.CreateViewModel<UserViewModel>();
-                    vm.Init(x.Login);
+                    vm.Init(x.Login, x);
                     NavigateTo(vm);
                 }));
 

@@ -5,13 +5,13 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public class CommitCommentItemViewModel
     {
-        public string Actor { get; private set; }
+        public string Actor { get; }
 
-        public GitHubAvatar Avatar { get; private set; }
+        public GitHubAvatar Avatar { get; }
 
-        public DateTime UtcCreatedAt { get; private set; }
+        public DateTime UtcCreatedAt { get; }
 
-        public string Body { get; private set; }
+        public string Body { get; }
 
         internal CommitCommentItemViewModel(GitHubSharp.Models.CommentModel comment)
         {

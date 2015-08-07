@@ -43,9 +43,9 @@ namespace CodeHub.Core.ViewModels.Contents
             get { return _canCommit.Value; }
         }
 
-        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; private set; }
+        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; }
 
-        public IReactiveCommand<bool> DismissCommand { get; private set; }
+        public IReactiveCommand<bool> DismissCommand { get; }
 
         public CreateFileViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
         {
@@ -68,20 +68,20 @@ namespace CodeHub.Core.ViewModels.Contents
                 });
             SaveCommand.Subscribe(x => Dismiss());
 
-            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 if (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Content)) return true;
                 return await alertDialogFactory.PromptYesNo("Discard File?", "Are you sure you want to discard this file?");
             });
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
         }
 
-        public void Init(string repositoryOwner, string repositoryName, string path, string branch)
+        public CreateFileViewModel Init(string repositoryOwner, string repositoryName, string path, string branch)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
             Path = path;
             Branch = branch;
+            return this;
         }
     }
 }

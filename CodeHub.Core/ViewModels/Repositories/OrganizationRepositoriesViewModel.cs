@@ -6,8 +6,6 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
     {
-        private readonly ISessionService _applicationService;
-
         private string _name;
         public string Name
         {
@@ -18,14 +16,13 @@ namespace CodeHub.Core.ViewModels.Repositories
         public OrganizationRepositoriesViewModel(ISessionService applicationService)
             : base(applicationService)
         {
-            _applicationService = applicationService;
             this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? "Repositories");
             ShowRepositoryOwner = false;
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.RepositoryModel>> CreateRequest()
+        protected override Uri RepositoryUri
         {
-            return _applicationService.Client.Organizations[Name].Repositories.GetAll();
+            get { return Octokit.ApiUrls.OrganizationRepositories(Name); }
         }
     }
 }

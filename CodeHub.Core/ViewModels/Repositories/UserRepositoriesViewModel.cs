@@ -16,11 +16,13 @@ namespace CodeHub.Core.ViewModels.Repositories
             ShowRepositoryOwner = false;
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.RepositoryModel>> CreateRequest()
+        protected override Uri RepositoryUri
         {
-            return string.Equals(_applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
-                _applicationService.Client.AuthenticatedUser.Repositories.GetAll() : 
-                _applicationService.Client.Users[Username].Repositories.GetAll();;
+            get
+            {
+                return string.Equals(_applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
+                    Octokit.ApiUrls.Repositories() : Octokit.ApiUrls.Repositories(Username);
+            }
         }
 
         public UserRepositoriesViewModel Init(string username)

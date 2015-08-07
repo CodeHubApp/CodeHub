@@ -5,21 +5,26 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryContributorsViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _applicationService;
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryName { get; private set;  }
 
-        public string RepositoryName { get; set; }
-
-        public RepositoryContributorsViewModel(ISessionService applicationService)
+        public RepositoryContributorsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
             Title = "Contributors";
         }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContributors();
+            get { return Octokit.ApiUrls.RepositoryContributors(RepositoryOwner, RepositoryName); }
+        }
+
+        public RepositoryContributorsViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using ReactiveUI;
-using GitHubSharp.Models;
 using CodeHub.Core.Utilities;
 using Humanizer;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -23,9 +23,9 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
-        internal CommitModel Commit { get; private set; }
+        internal GitHubCommit Commit { get; private set; }
 
-        internal CommitItemViewModel(CommitModel commit, Action<CommitItemViewModel> action)
+        internal CommitItemViewModel(GitHubCommit commit, Action<CommitItemViewModel> action)
         {
             var msg = commit?.Commit?.Message ?? string.Empty;
             var firstLine = msg.IndexOf("\n", StringComparison.Ordinal);

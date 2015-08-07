@@ -1,24 +1,25 @@
 using CodeHub.Core.Services;
-using GitHubSharp;
 using System.Collections.Generic;
-using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
 	public class CommitsViewModel : BaseCommitsViewModel
 	{
-        private readonly ISessionService _applicationService;
-
 	    public string Branch { get; private set; }
 
-        public CommitsViewModel(ISessionService applicationService)
+        public CommitsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
         }
 
-		protected override GitHubRequest<List<CommitModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Commits.GetAll(Branch ?? "master");
+            get { return Octokit.ApiUrls.RepositoryCommits(RepositoryOwner, RepositoryName); }
+        }
+
+        protected override void AddRequestParameters(IDictionary<string, string> parameters)
+        {
+            parameters["sha"] = Branch ?? "master";
         }
 
         public CommitsViewModel Init(string repositoryOwner, string repositoryName, string branch)

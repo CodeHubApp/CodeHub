@@ -1,25 +1,20 @@
 using CodeHub.Core.Services;
-using GitHubSharp.Models;
-using GitHubSharp;
-using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestCommitsViewModel : BaseCommitsViewModel
     {
-        private readonly ISessionService _applicationService;
+        public int PullRequestId { get; private set; }
 
-        public int PullRequestId { get; set; }
-
-        public PullRequestCommitsViewModel(ISessionService applicationService)
+        public PullRequestCommitsViewModel(ISessionService sessionService)
+            : base(sessionService)
         {
-            _applicationService = applicationService;
         }
 
-        protected override GitHubRequest<List<CommitModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].PullRequests[PullRequestId].GetCommits();
+            get { return Octokit.ApiUrls.PullRequestCommits(RepositoryOwner, RepositoryName, PullRequestId); }
         }
 
         public PullRequestCommitsViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId)

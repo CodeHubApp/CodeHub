@@ -9,6 +9,7 @@ using System.Linq;
 using CodeHub.Core.Factories;
 using CodeHub.Core.Utilities;
 using GitHubSharp.Models;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -22,8 +23,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public bool ShowRepository { get; private set; }
 
-        private Octokit.GitHubCommit _commitModel;
-        public Octokit.GitHubCommit Commit
+        private GitHubCommit _commitModel;
+        public GitHubCommit Commit
         {
             get { return _commitModel; }
             private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
@@ -94,16 +95,15 @@ namespace CodeHub.Core.ViewModels.Changesets
             var comments = new ReactiveList<CommentModel>();
             Comments = comments.CreateDerivedCollection(x => new CommitCommentItemViewModel(x));
 
-            this.WhenAnyValue(x => x.Commit.Files)
-                .Select(x => x.Count(y => string.Equals(y.Status, "added")))
+            var files = this.WhenAnyValue(x => x.Commit.Files).IsNotNull();
+
+            files.Select(x => x.Count(y => string.Equals(y.Status, "added")))
                 .ToProperty(this, x => x.DiffAdditions, out _diffAdditions);
 
-            this.WhenAnyValue(x => x.Commit.Files)
-                .Select(x => x.Count(y => string.Equals(y.Status, "removed")))
+            files.Select(x => x.Count(y => string.Equals(y.Status, "removed")))
                 .ToProperty(this, x => x.DiffDeletions, out _diffDeletions);
 
-            this.WhenAnyValue(x => x.Commit.Files)
-                .Select(x => x.Count(y => string.Equals(y.Status, "modified")))
+            files.Select(x => x.Count(y => string.Equals(y.Status, "modified")))
                 .ToProperty(this, x => x.DiffModifications, out _diffModifications);
 
             GoToAddedFiles = ReactiveCommand.Create(this.WhenAnyValue(x => x.DiffAdditions).Select(x => x > 0));
@@ -205,7 +205,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             });
         }
 
-        public CommitViewModel Init(string repositoryOwner, string repositoryName, string node, Octokit.GitHubCommit commit = null, bool showRepository = false)
+        public CommitViewModel Init(string repositoryOwner, string repositoryName, string node, GitHubCommit commit = null, bool showRepository = false)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;

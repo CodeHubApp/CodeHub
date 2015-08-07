@@ -5,21 +5,19 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryStargazersViewModel : BaseUsersViewModel
     {
-        private readonly ISessionService _sessionService;
-
         public string RepositoryOwner { get; private set; }
 
         public string RepositoryName { get; private set; }
 
-	    public RepositoryStargazersViewModel(ISessionService applicationService)
+	    public RepositoryStargazersViewModel(ISessionService sessionService)
+            : base(sessionService)
 	    {
-            _sessionService = applicationService;
             Title = "Stargazers";
 	    }
 
-        protected override GitHubSharp.GitHubRequest<System.Collections.Generic.List<GitHubSharp.Models.BasicUserModel>> CreateRequest()
+        protected override System.Uri RequestUri
         {
-            return _sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetStargazers();
+            get { return Octokit.ApiUrls.Stargazers(RepositoryOwner, RepositoryName); }
         }
 
         public RepositoryStargazersViewModel Init(string repositoryOwner, string repositoryName)

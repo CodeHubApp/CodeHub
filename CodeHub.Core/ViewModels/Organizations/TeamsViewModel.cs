@@ -1,5 +1,4 @@
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
 using System;
 using System.Reactive;
@@ -30,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Organizations
                 x => new TeamItemViewModel(x.Name, () => 
                 {
                     var vm = this.CreateViewModel<TeamMembersViewModel>();
-                    vm.Id = x.Id;
+                    vm.Init(x.Id);
                     NavigateTo(vm);
                 }),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),

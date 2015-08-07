@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Releases
         public ReleaseModel ReleaseModel
         {
             get { return _releaseModel; }
-            set { this.RaiseAndSetIfChanged(ref _releaseModel, value); }
+            private set { this.RaiseAndSetIfChanged(ref _releaseModel, value); }
         }
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }

@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         private readonly IAccountsRepository _accountsService;
         private bool? _starred;
         private bool? _watched;
-        private RepositoryModel _repository;
+        private Octokit.Repository _repository;
         private ContentModel _readme;
         private List<BranchModel> _branches;
         private int? _contributors;
@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _contributors, value); }
         }
 
-        public RepositoryModel Repository
+        public Octokit.Repository Repository
         {
             get { return _repository; }
             private set { this.RaiseAndSetIfChanged(ref _repository, value); }
@@ -77,13 +77,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
-
-//        private int? _languages;
-//        public int? Languages
-//        {
-//            get { return _languages; }
-//            private set { this.RaiseAndSetIfChanged(ref _languages, value); }
-//        }
 
         private int? _releases;
         public int? Releases
@@ -192,7 +185,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository).Select(x => x != null));
             GoToOwnerCommand.Select(_ => Repository.Owner).Subscribe(x => {
-                if (string.Equals(x.Type, "organization", StringComparison.OrdinalIgnoreCase))
+                if (Octokit.AccountType.Organization.Equals(x.Type))
                 {
                     var vm = this.CreateViewModel<OrganizationViewModel>();
                     vm.Init(RepositoryOwner);
@@ -297,8 +290,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             GoToContributors.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<RepositoryContributorsViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 
@@ -349,7 +341,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
 
-                var t1 = applicationService.Client.ExecuteAsync(ApplicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Get());
+                var t1 = applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName);
 
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme())
                     .ToBackground(x => Readme = x.Data);
@@ -372,7 +364,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 applicationService.Client.ExecuteAsync(applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReleases())
                     .ToBackground(x => Releases = x.Data.Count);
 
-                Repository = (await t1).Data;
+                Repository = await t1;
             });
         }
 
@@ -428,7 +420,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             IsStarred = !IsStarred.Value;
         }
 
-        public RepositoryViewModel Init(string repositoryOwner, string repositoryName, RepositoryModel repository = null)
+        public RepositoryViewModel Init(string repositoryOwner, string repositoryName, Octokit.Repository repository = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;

@@ -19,6 +19,12 @@ namespace CodeHub.Core.ViewModels
                 Uri = uri;
             return this;
         }
+
+        public WebBrowserViewModel Init(Uri uri)
+        {
+            Uri = uri;
+            return this;
+        }
     }
 }
 

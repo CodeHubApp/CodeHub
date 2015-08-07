@@ -3,8 +3,6 @@ using CodeHub.Core.Services;
 using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using GitHubSharp.Models;
 using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Contents
@@ -13,9 +11,13 @@ namespace CodeHub.Core.ViewModels.Contents
     {
         private DateTime _lastLoad, _lastEdit;
 
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
+
+        public string BlobSha { get; private set; }
+
+        public string Branch { get; private set; }
 
 		private string _text;
 		public string Text
@@ -35,18 +37,14 @@ namespace CodeHub.Core.ViewModels.Contents
 		public string Path 
         {
             get { return _path; }
-            set { this.RaiseAndSetIfChanged(ref _path, value); }
+            private set { this.RaiseAndSetIfChanged(ref _path, value); }
         }
 
-		public string BlobSha { get; set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-		public string Branch { get; set; }
+        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; private set; }
-
-        public IReactiveCommand<bool> DismissCommand { get; private set; }
+        public IReactiveCommand<bool> DismissCommand { get; }
 
         public EditFileViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
 	    {
@@ -59,20 +57,19 @@ namespace CodeHub.Core.ViewModels.Contents
             this.WhenAnyValue(x => x.Text)
                 .Subscribe(x => _lastEdit = DateTime.Now);
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-    	        {
-    	            var path = Path;
-                    if (!path.StartsWith("/", StringComparison.Ordinal))
-                        path = "/" + path;
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
+	            var path = Path;
+                if (!path.StartsWith("/", StringComparison.Ordinal))
+                    path = "/" + path;
 
-    	            var request = sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
-    			    request.UseCache = false;
-    			    var data = await sessionService.Client.ExecuteAsync(request);
-    			    BlobSha = data.Data.Sha;
-    	            var content = Convert.FromBase64String(data.Data.Content);
-                    Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
-                    _lastLoad = DateTime.Now;
-    	        });
+	            var request = sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(path, Branch ?? "master");
+			    request.UseCache = false;
+			    var data = await sessionService.Client.ExecuteAsync(request);
+			    BlobSha = data.Data.Sha;
+	            var content = Convert.FromBase64String(data.Data.Content);
+                Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
+                _lastLoad = DateTime.Now;
+	        });
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)), async _ => {
@@ -83,14 +80,23 @@ namespace CodeHub.Core.ViewModels.Contents
             });
             SaveCommand.Subscribe(x => Dismiss());
 
-            DismissCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            DismissCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 if (string.IsNullOrEmpty(Text)) return true;
                 if (_lastEdit <= _lastLoad) return true;
                 return await alertDialogFactory.PromptYesNo("Discard Edit?", "Are you sure you want to discard these changes?");
             });
             DismissCommand.Where(x => x).Subscribe(_ => Dismiss());
 	    }
+
+        public EditFileViewModel Init(string repositoryOwner, string repositoryName, string path, string blobSha, string branch)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Path = path;
+            BlobSha = blobSha;
+            Branch = branch;
+            return this;
+        }
     }
 }
 
