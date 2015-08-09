@@ -59,13 +59,12 @@ namespace CodeHub.iOS.Cells
 
             DefaultConstraintSize = ContentConstraint.Constant;
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.CaptionLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Stars, x => x.FollowersLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Forks, x => x.ForksLabel.Text);
-
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x => {
+                    CaptionLabel.Text = x.Name;
+                    FollowersLabel.Text = x.Stars.ToString();
+                    ForksLabel.Text = x.Forks.ToString();
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
                     UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);

@@ -21,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             base.ViewDidLoad();
 
             EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no trending repositories."));
+                new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no repositories."));
 
             var titleButton = new TrendingTitleButton
             {
@@ -33,14 +33,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
                 .Subscribe(x => titleButton.Text = x.Name);
 
-            Appearing
-                .Where(_ => NavigationController != null)
-                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage());
-
-            Disappearing
-                .Where(_ => NavigationController != null)
-                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null);
-
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
 
@@ -50,6 +42,20 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
                 }))
                 .Subscribe(x => source.Data = x.ToList());
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            if (NavigationController != null)
+                NavigationController.NavigationBar.ShadowImage = new UIImage();
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            if (NavigationController != null)
+                NavigationController.NavigationBar.ShadowImage = null;
         }
 
         protected override void HandleNavigation(CodeHub.Core.ViewModels.IBaseViewModel viewModel, UIViewController view)

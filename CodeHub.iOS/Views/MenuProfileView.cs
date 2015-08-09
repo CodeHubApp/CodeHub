@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views
             set 
             {
                 _imageUrl = value;
-                _imageView.SetImage(new NSUrl(_imageUrl), Images.LoginUserUnknown);
+                _imageView.SetImage(new NSUrl(_imageUrl), Images.UnknownUser);
             }
         }
 

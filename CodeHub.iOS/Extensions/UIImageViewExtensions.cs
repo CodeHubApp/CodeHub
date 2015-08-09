@@ -11,7 +11,7 @@ namespace UIKit
     {
         public static void SetAvatar(this UIImageView @this, GitHubAvatar avatar, int? size = 64)
         {
-            @this.Image = Images.LoginUserUnknown;
+            @this.Image = Images.UnknownUser;
 
             if (avatar == null)
                 return;
@@ -25,9 +25,9 @@ namespace UIKit
                     
                     if (type == SDImageCacheType.None)
                     {
-                        @this.Image = Images.LoginUserUnknown;
+                        @this.Image = Images.UnknownUser;
                         @this.BeginInvokeOnMainThread(() =>
-                            UIView.Transition(@this, 0.4f, UIViewAnimationOptions.TransitionCrossDissolve, () => @this.Image = img, null));
+                            UIView.Transition(@this, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, () => @this.Image = img, null));
                     }
                 });
             }

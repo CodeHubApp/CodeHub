@@ -39,10 +39,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
-        public RepositoriesTrendingViewModel(ISessionService applicationService)
+        public RepositoriesTrendingViewModel(ISessionService applicationService, ITrendingRepository trendingRepository)
         {
             ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
-            var trendingRepository = new TrendingRepository();
 
             Title = "Trending";
 
@@ -58,14 +57,8 @@ namespace CodeHub.Core.ViewModels.Repositories
                 NavigateTo(vm);
             });
 
-            var gotoRepository = new Action<RepositoryItemViewModel>(x => {
-                var vm = this.CreateViewModel<RepositoryViewModel>();
-                vm.Init(x.Owner, x.Name);
-                NavigateTo(vm);
-            });
+            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-            {
                 var requests = _times.Select(t =>
                 {
                     var language = (SelectedLanguage != null && SelectedLanguage.Slug != null) ? SelectedLanguage.Slug : null;
@@ -76,8 +69,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
                 Repositories = requests.Select(r =>
                 {
-                    var transformedRepos = r.Query.Result.Select(x => 
-                        new RepositoryItemViewModel(x, true, gotoRepository));
+                    var transformedRepos = r.Query.Result.Select(x => new RepositoryItemViewModel(x, true, GoToRepository));
                     return new GroupedCollection<RepositoryItemViewModel>(r.Time.Name, new ReactiveList<RepositoryItemViewModel>(transformedRepos));
                 }).ToList();
             });
@@ -87,6 +79,13 @@ namespace CodeHub.Core.ViewModels.Repositories
                 Repositories = null;
                 LoadCommand.ExecuteIfCan();
             });
+        }
+
+        private void GoToRepository(RepositoryItemViewModel viewModel)
+        {
+            var vm = this.CreateViewModel<RepositoryViewModel>();
+            vm.Init(viewModel.Owner, viewModel.Name, viewModel.Repository);
+            NavigateTo(vm);
         }
 
         private class TimeModel

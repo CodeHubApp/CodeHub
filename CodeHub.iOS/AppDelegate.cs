@@ -56,7 +56,6 @@ namespace CodeHub.iOS
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Flurry.Analytics.Portable.AnalyticsApi.LogError(e);
                 throw;
             }
         }
@@ -95,18 +94,6 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.InitializeFactories();
             Locator.CurrentMutable.InitializeServices();
             Bootstrap.Init();
-
-            // Enable flurry analytics
-            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR)
-            {
-                Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-                Flurry.Analytics.FlurryAgent.StartSession("FXD7V6BGG5KHWZN3FFBX");
-            }
-            else
-            {
-                this.Log().Debug("Simulator detected, disabling analytics");
-                Locator.Current.GetService<IAnalyticsService>().Enabled = false;
-            }
 
             _settingsChangedObserver = NSNotificationCenter.DefaultCenter.AddObserver((NSString)"NSUserDefaultsDidChangeNotification", DefaultsChanged); 
 

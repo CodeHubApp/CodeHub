@@ -1,8 +1,6 @@
 using System;
-using GitHubSharp.Models;
 using ReactiveUI;
 using System.Linq;
-using GitHubSharp;
 using System.Collections.Generic;
 using System.Reactive;
 using CodeHub.Core.Services;
@@ -44,9 +42,10 @@ namespace CodeHub.Core.ViewModels.Gists
             SessionService = sessionService;
 
             InternalGists = new ReactiveList<Gist>();
-            Gists = InternalGists.CreateDerivedCollection(
-                x => CreateGistItemViewModel(x),
-                filter: x => x.Description.ContainsKeyword(SearchKeyword) || GetGistTitle(x).ContainsKeyword(SearchKeyword),
+            Gists = InternalGists
+                .CreateDerivedCollection(x => CreateGistItemViewModel(x))
+                .CreateDerivedCollection(x => x,
+                filter: x => x.Description.ContainsKeyword(SearchKeyword) || x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
