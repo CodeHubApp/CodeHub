@@ -49,15 +49,7 @@ namespace CodeHub.Core.ViewModels
             var application = Locator.Current.GetService<ISessionService>();
             var response = await application.Client.ExecuteAsync(request);
 
-            viewModel.CreateMore(response, assignMore, x =>
-                {
-                    // This is fucking broken for iOS because it can't handle estimated rows and the insertions
-                    // that ReactiveUI seems to be producing
-                    using (viewModel.SuppressChangeNotifications())
-                    {
-                        viewModel.AddRange(x);
-                    }
-                });
+            viewModel.CreateMore(response, assignMore, x => viewModel.AddRange(x));
             viewModel.Reset(response.Data);
         }
     }

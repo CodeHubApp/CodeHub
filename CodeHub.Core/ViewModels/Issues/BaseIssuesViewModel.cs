@@ -14,7 +14,7 @@ namespace CodeHub.Core.ViewModels.Issues
     public abstract class BaseIssuesViewModel : BaseViewModel, IProvidesSearchKeyword, IPaginatableViewModel
     {
         private readonly ISessionService _sessionService;
-        protected readonly IReactiveList<Issue> IssuesBacking = new ReactiveList<Issue>();
+        protected readonly IReactiveList<Issue> IssuesBacking = new ReactiveList<Issue>(resetChangeThreshold: 1.0);
 
         public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; private set; }
 

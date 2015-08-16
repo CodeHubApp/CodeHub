@@ -56,7 +56,8 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         private void GoToCommit(CommitItemViewModel viewModel)
         {
-            var vm = this.CreateViewModel<CommitViewModel>().Init(RepositoryOwner, RepositoryName, viewModel.Commit.Sha, viewModel.Commit);
+            var vm = this.CreateViewModel<CommitViewModel>();
+            vm.Init(RepositoryOwner, RepositoryName, viewModel.Commit.Sha, viewModel.Commit);
             NavigateTo(vm);
         }
 
@@ -72,8 +73,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                     var loadMore = await RetrieveCommits(page + 1);
-                    using (_commits.SuppressChangeNotifications())
-                        _commits.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
+                    _commits.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
                 });
             }
             else

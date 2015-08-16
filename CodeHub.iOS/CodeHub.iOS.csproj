@@ -101,7 +101,7 @@
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7s, ARM64</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <DefineConstants>DEBUG</DefineConstants>
@@ -454,9 +454,6 @@
     </Reference>
     <Reference Include="System.Web.Services" />
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="SDWebImage">
-      <HintPath>lib\SDWebImage.dll</HintPath>
-    </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>lib\BTProgressHUD.dll</HintPath>
     </Reference>
@@ -502,6 +499,9 @@
     </Reference>
     <Reference Include="CommonMark">
       <HintPath>..\packages\CommonMark.NET.0.9.1\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
+    </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -805,5 +805,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ViewControllers\Settings\SyntaxHighlightExample" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="sdwebimage">
+      <Version>3.7.1.4</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>

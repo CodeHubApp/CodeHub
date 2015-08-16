@@ -185,15 +185,5 @@ namespace CodeHub.iOS.DialogElements
             return (Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1) || base.Matches (text);
         }
     }
-
-    public static class StringElementExtensions
-    {
-        public static StringElement Bind<T, TVal>(this StringElement stringElement, T viewModel, System.Linq.Expressions.Expression<Func<T, TVal>> bindMember)
-            where T : ReactiveObject
-        {
-            viewModel.WhenAnyValue(bindMember).Subscribe(x => stringElement.Value = x.ToString());
-            return stringElement;
-        }
-    }
 }
 

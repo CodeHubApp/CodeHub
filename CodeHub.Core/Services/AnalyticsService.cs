@@ -16,33 +16,24 @@ namespace CodeHub.Core.Services
         {
             if (!Enabled)
                 return;
-
-            Flurry.Analytics.Portable.AnalyticsApi.LogError(exception);
         }
 
         public void Identify(string user, IDictionary<string, string> properties = null)
         {
             if (!Enabled)
                 return;
-            
-            Flurry.Analytics.Portable.AnalyticsApi.SetUserId(user);
         }
 
         public void Track(string eventName, IDictionary<string, string> properties = null)
         {
             if (!Enabled)
                 return;
-            
-            Flurry.Analytics.Portable.AnalyticsApi.LogEvent("event:" + eventName);
         }
 
         public void Screen(string name, IDictionary<string, string> properties = null)
         {
             if (!Enabled)
                 return;
-            
-            Flurry.Analytics.Portable.AnalyticsApi.LogPageView();
-            Flurry.Analytics.Portable.AnalyticsApi.LogEvent("view:" + name);
         }
     }
 }
