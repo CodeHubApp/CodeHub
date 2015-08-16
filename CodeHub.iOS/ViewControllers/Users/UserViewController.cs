@@ -40,8 +40,10 @@ namespace CodeHub.iOS.ViewControllers.Users
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x ?
                     null : ViewModel.ShowMenuCommand.ToBarButtonItem(UIBarButtonSystemItem.Action));
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+
             this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x => {
-                HeaderView.ImageUri = x.AvatarUrl;
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
                 HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;

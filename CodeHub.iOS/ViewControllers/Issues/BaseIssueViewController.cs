@@ -87,12 +87,13 @@ namespace CodeHub.iOS.ViewControllers.Issues
             DetailsSection.Add(AssigneeElement);
             DetailsSection.Add(LabelsElement);
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .SubscribeSafe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+
             this.WhenAnyValue(x => x.ViewModel.Issue)
                 .IsNotNull()
-                .Subscribe(x => 
-                {
+                .Subscribe(x => {
                     HeaderView.Text = x.Title;
-                    HeaderView.ImageUri = x.User.AvatarUrl;
                     HeaderView.SubText = x.UpdatedAt.HasValue ? 
                             ("Updated " + x.UpdatedAt.Value.UtcDateTime.Humanize()) :
                             ("Created " + x.CreatedAt.UtcDateTime.Humanize());

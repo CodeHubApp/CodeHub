@@ -7,6 +7,7 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.ViewModels.Activity;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -33,6 +34,12 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set { this.RaiseAndSetIfChanged(ref _canViewTeams, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
+        }
+
         public IReactiveCommand<object> GoToMembersCommand { get; private set; }
 
         public IReactiveCommand<object> GoToTeamsCommand { get; private set; }
@@ -55,6 +62,10 @@ namespace CodeHub.Core.ViewModels.Organizations
                 (x, y) => x == null ? y : (string.IsNullOrEmpty(x.Name) ? x.Login : x.Name))
                 .Select(x => x ?? "Organization")
                 .Subscribe(x => Title = x);
+
+            this.WhenAnyValue(x => x.Organization.AvatarUrl)
+                .Select(x => new GitHubAvatar(x))
+                .ToProperty(this, x => x.Avatar, out _avatar);
 
             GoToMembersCommand = ReactiveCommand.Create();
             GoToMembersCommand

@@ -56,7 +56,8 @@ namespace CodeHub.Core.ViewModels.Activity
             {
                 if (GroupedNotifications.SelectMany(x => x.Notifications).All(x => !x.IsSelected))
                 {
-                    applicationService.GitHubClient.Notification.MarkAsRead().ToBackground();
+                    var request = new Octokit.MarkAsReadRequest { LastReadAt = DateTimeOffset.Now };
+                    applicationService.GitHubClient.Notification.MarkAsRead(request).ToBackground();
                     _notifications.Clear();
                 }
                 else

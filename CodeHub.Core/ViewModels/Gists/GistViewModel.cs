@@ -9,6 +9,7 @@ using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Factories;
 using Octokit;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -28,6 +29,12 @@ namespace CodeHub.Core.ViewModels.Gists
         {
             get { return _starred; }
             private set { this.RaiseAndSetIfChanged(ref _starred, value); }
+        }
+
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
         }
 
 		public ReactiveList<GistCommentModel> Comments { get; private set; }
@@ -69,6 +76,10 @@ namespace CodeHub.Core.ViewModels.Gists
 
             ShareCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null));
             ShareCommand.Subscribe(sender => actionMenuService.ShareUrl(sender, new Uri(Gist.HtmlUrl)));
+
+            this.WhenAnyValue(x => x.Gist.Owner.AvatarUrl)
+                .Select(x => new GitHubAvatar(x))
+                .ToProperty(this, x => x.Avatar, out _avatar);
 
             ToggleStarCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.IsStarred).Select(x => x.HasValue),

@@ -2,7 +2,6 @@ using System;
 using UIKit;
 using Foundation;
 using ReactiveUI;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Settings;
 using CodeHub.iOS.DialogElements;
 
@@ -18,8 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Settings
             HeaderView.SubText = "Settings apply to this account only.";
 
             this.WhenAnyValue(x => x.ViewModel.AccountImageUrl)
-                .IsNotNull()
-                .Subscribe(x => HeaderView.ImageUri = x);
+                .SubscribeSafe(x => HeaderView.SetImage(new Uri(x), Images.LoginUserUnknown));
 
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", 
                 ViewModel.ShowOrganizationsInEvents, e => ViewModel.ShowOrganizationsInEvents = e.Value);

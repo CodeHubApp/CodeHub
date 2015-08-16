@@ -26,22 +26,6 @@ namespace CodeHub.iOS.Views
 
         public Action ImageButtonAction { get; set; }
 
-        public string ImageUri
-        {
-            set
-            {
-                if (value == null)
-                    _imageView.Image = null;
-                else
-                {
-                    _imageView.SetImage(new NSUrl(value), Image, (image, error, cacheType, imageUrl) => {
-                        if (image != null && error == null)
-                            UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null);
-                    });
-                }
-            }
-        }
-
         public UIImage Image
         {
             get { return _imageView.Image; }
@@ -187,6 +171,19 @@ namespace CodeHub.iOS.Views
 
             EnableSeperator = false;
             RoundedImage = true;
+        }
+
+        public void SetImage(Uri imageUri, UIImage placeholder)
+        {
+            if (imageUri == null)
+                _imageView.Image = placeholder;
+            else
+            {
+                _imageView.SetImage(new NSUrl(imageUri.AbsoluteUri), placeholder, (image, error, cacheType, imageUrl) => {
+                    if (image != null && error == null)
+                        UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null);
+                });
+            }
         }
 
         public void SetSubImage(UIImage image)

@@ -108,7 +108,6 @@
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseSGen>true</MtouchUseSGen>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -197,8 +196,6 @@
     <Compile Include="Factories\AlertDialogFactory.cs" />
     <Compile Include="Factories\MediaPickerFactory.cs" />
     <Compile Include="Factories\Registrations.cs" />
-    <Compile Include="XCallback\XCallbackQuery.cs" />
-    <Compile Include="XCallback\XCallbackProvider.cs" />
     <Compile Include="Images\UIImageHelper.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\EnvironmentalService.cs" />
@@ -206,7 +203,6 @@
     <Compile Include="Services\InAppPurchaseService.cs" />
     <Compile Include="Services\NetworkActivityService.cs" />
     <Compile Include="Services\ServiceConstructor.cs" />
-    <Compile Include="DialogElements\CustomElement.cs" />
     <Compile Include="DialogElements\Element.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
@@ -218,7 +214,6 @@
     <Compile Include="DialogElements\TrueFalseElement.cs" />
     <Compile Include="TableViewSources\DialogTableViewSource.cs" />
     <Compile Include="Utilities\ObservableSearchDelegate.cs" />
-    <Compile Include="DialogElements\ChangesetElement.cs" />
     <Compile Include="DialogElements\DummyInputElement.cs" />
     <Compile Include="DialogElements\ExpandingInputElement.cs" />
     <Compile Include="DialogElements\HtmlElement.cs" />
@@ -246,8 +241,6 @@
     <Compile Include="Services\InAppPurchaseNetworkDecorator.cs" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Extensions\UIFontExtensions.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
-    <Compile Include="DialogElements\RateElement.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
@@ -420,7 +413,6 @@
     <InterfaceDefinition Include="ViewControllers\Walkthrough\WelcomeViewController.xib" />
     <Compile Include="Views\ProgressBarView.cs" />
     <Compile Include="Views\MilestoneView.cs" />
-    <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\TableViewSectionView.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
@@ -440,6 +432,7 @@
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
     <Compile Include="ViewControllers\App\EnterpriseSupportViewController.cs" />
     <Compile Include="Views\LoadingIndicatorView.cs" />
+    <Compile Include="LinkerOverride.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -567,7 +560,9 @@
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
     <BundleResource Include="Themes\InvertedDefault.json" />
     <BundleResource Include="Images\forward-chevron.png" />
-    <BundleResource Include="Images\forward-chevron%402x.png" />
+    <BundleResource Include="Images\forward-chevron%402x.png">
+      <DependentUpon>forward-chevron.png</DependentUpon>
+    </BundleResource>
     <BundleResource Include="Images\back-chevron.png" />
     <BundleResource Include="Images\back-chevron%402x.png" />
     <BundleResource Include="Themes\Default.json" />
@@ -754,11 +749,17 @@
       <DependentUpon>search.png</DependentUpon>
     </BundleResource>
     <BundleResource Include="Images\sort.png" />
-    <BundleResource Include="Images\sort%402x.png" />
+    <BundleResource Include="Images\sort%402x.png">
+      <DependentUpon>sort.png</DependentUpon>
+    </BundleResource>
     <BundleResource Include="Images\filter-filled.png" />
-    <BundleResource Include="Images\filter-filled%402x.png" />
+    <BundleResource Include="Images\filter-filled%402x.png">
+      <DependentUpon>filter-filled.png</DependentUpon>
+    </BundleResource>
     <BundleResource Include="Images\filter.png" />
-    <BundleResource Include="Images\filter%402x.png" />
+    <BundleResource Include="Images\filter%402x.png">
+      <DependentUpon>filter.png</DependentUpon>
+    </BundleResource>
     <BundleResource Include="Briefcase.png" />
     <BundleResource Include="CodeHubRound.png" />
     <BundleResource Include="Heart.png" />
@@ -783,7 +784,6 @@
     <Folder Include="Themes\" />
     <Folder Include="Extensions\" />
     <Folder Include="Factories\" />
-    <Folder Include="XCallback\" />
     <Folder Include="DialogElements\" />
     <Folder Include="Utilities\" />
     <Folder Include="WebResources\" />

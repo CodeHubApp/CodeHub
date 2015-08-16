@@ -3,10 +3,11 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
-using SDWebImage;
 using Foundation;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers;
+using Akavache;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.App
 {
@@ -82,28 +83,32 @@ namespace CodeHub.iOS.ViewControllers.App
             _imgView.Layer.MasksToBounds = true;
             Add(_imgView);
 
-
             View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
 
             this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => x).Subscribe(x => {
-                UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
+                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
                     _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 1, null);
                 _activityView.StartAnimating();
             });
 
             this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => !x).Subscribe(x => {
-                UIView.Animate(0.1, 0, UIViewAnimationOptions.TransitionCrossDissolve, () =>
+                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
                     _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 0, null);
                 _activityView.StopAnimating();
             });
 
             this.WhenAnyValue(x => x.ViewModel.Status).Subscribe(x => _statusLabel.Text = x);
-            this.WhenAnyValue(x => x.ViewModel.ImageUrl).IsNotNull().SubscribeSafe(x => 
-                _imgView.SetImage(new NSUrl(x.AbsoluteUri), Images.LoginUserUnknown, (img, err, type, imageUrl) => {
-                    if (img != null && err == null)
-                        UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
-            }));
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Select(x => x.ToUri(128))
+                .Where(x => x != null)
+                .Select(x => BlobCache.LocalMachine.LoadImageFromUrl(x.AbsoluteUri))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(img => {
+                    _imgView.Image = Images.LoginUserUnknown;
+                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () => _imgView.Image = img.ToNative(), null);
+                });
         }
 
         public override bool ShouldAutorotate()

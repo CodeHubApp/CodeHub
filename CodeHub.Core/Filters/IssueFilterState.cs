@@ -4,13 +4,13 @@ namespace CodeHub.Core.Filters
 {
     public enum IssueFilterState
     {
-        [EnumDescription("Assigned To You")]
+        [Description("Assigned To You")]
         Assigned,
-        [EnumDescription("Created By You")]
+        [Description("Created By You")]
         Created,
-        [EnumDescription("Mentioning You")]
+        [Description("Mentioning You")]
         Mentioned,
-        [EnumDescription("Issues Subscribed To")]
+        [Description("Issues Subscribed To")]
         Subscribed,
         All
     }

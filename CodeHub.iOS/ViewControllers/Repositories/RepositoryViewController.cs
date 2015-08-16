@@ -105,13 +105,8 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     RefreshHeaderView();
                 });
 
-            this.WhenAnyValue(x => x.ViewModel.Repository)
-                .IsNotNull()
-                .Subscribe(x =>
-                {
-                    HeaderView.ImageUri = x.Owner.AvatarUrl;
-                    RefreshHeaderView();
-                });
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
 
             this.WhenAnyValue(x => x.ViewModel.Repository)
                 .IsNotNull()

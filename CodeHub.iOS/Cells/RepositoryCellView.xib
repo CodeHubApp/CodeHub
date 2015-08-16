@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
@@ -30,32 +30,32 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="100" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8">
-                        <rect key="frame" x="72" y="351" width="38" height="15"/>
+                        <rect key="frame" x="72" y="351" width="42" height="15"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="38" id="rxY-w3-PgW"/>
+                            <constraint firstAttribute="width" constant="42" id="rxY-w3-PgW"/>
                         </constraints>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="30">
-                        <rect key="frame" x="118" y="352" width="12" height="12"/>
+                        <rect key="frame" x="122" y="352" width="12" height="12"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="8gb-oI-Pch"/>
                             <constraint firstAttribute="height" constant="12" id="HRp-vu-VmF"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="21" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="31">
-                        <rect key="frame" x="138" y="351" width="38" height="15"/>
+                        <rect key="frame" x="142" y="351" width="42" height="15"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="38" id="ubt-3C-Tyh"/>
+                            <constraint firstAttribute="width" constant="42" id="ubt-3C-Tyh"/>
                         </constraints>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="thedillonb" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="40">
-                        <rect key="frame" x="204" y="350" width="108" height="15"/>
+                        <rect key="frame" x="212" y="350" width="100" height="15"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -70,7 +70,7 @@
                         </constraints>
                     </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="46">
-                        <rect key="frame" x="184" y="352" width="12" height="12"/>
+                        <rect key="frame" x="192" y="352" width="12" height="12"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="NWq-wc-KPH"/>
                             <constraint firstAttribute="height" constant="12" id="tRc-t0-aFT"/>

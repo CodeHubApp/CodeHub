@@ -5,6 +5,7 @@ using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Factories;
 using Octokit;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Contents
 {
@@ -62,9 +63,14 @@ namespace CodeHub.Core.ViewModels.Contents
                 return menu.Show(sender);
             });
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async x => {
-                ContentText = await applicationService.GitHubClient.Repository.Content.GetReadmeHtml(RepositoryOwner, RepositoryName);
-                ContentModel = await applicationService.GitHubClient.Repository.Content.GetReadme(RepositoryOwner, RepositoryName);
+            LoadCommand = ReactiveCommand.CreateAsyncTask(x => {
+                var contentTask = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadmeRendered()
+                    .ContinueWith(t => ContentText = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+                
+                var modelTask = applicationService.GitHubClient.Repository.Content.GetReadme(RepositoryOwner, RepositoryName)
+                    .ContinueWith(t => ContentModel = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+
+                return Task.WhenAll(contentTask, modelTask);
             });
         }
 

@@ -30,10 +30,13 @@ namespace CodeHub.iOS.Cells
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
+
+            ContentView.SetNeedsLayout();
+            ContentView.LayoutIfNeeded();
+
             TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
             ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
             TimeLabel.PreferredMaxLayoutWidth = TimeLabel.Frame.Width;
-            LayoutIfNeeded();
         }
 
         public override void AwakeFromNib()
@@ -56,7 +59,7 @@ namespace CodeHub.iOS.Cells
                 {
                     TitleLabel.Text = x.Title;
                     ContentLabel.Text = x.Description;
-                    TimeLabel.Text = x.UpdatedAt.UtcDateTime.Humanize();
+                    TimeLabel.Text = x.UpdatedString;
                     ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
                 });
 

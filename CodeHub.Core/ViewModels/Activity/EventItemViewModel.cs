@@ -3,24 +3,27 @@ using ReactiveUI;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using CodeHub.Core.Utilities;
+using Humanizer;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
     public class EventItemViewModel : ReactiveObject
     {
-        public GitHubAvatar Avatar { get; private set; }
+        public GitHubAvatar Avatar { get; }
 
-        public DateTimeOffset Created { get; private set; }
+        public DateTimeOffset Created { get; }
 
-        public IReadOnlyCollection<BaseEventsViewModel.TextBlock> HeaderBlocks { get; private set; }
+        public string CreatedString { get;  }
 
-        public IReadOnlyCollection<BaseEventsViewModel.TextBlock> BodyBlocks { get; private set; }
+        public IReadOnlyCollection<BaseEventsViewModel.TextBlock> HeaderBlocks { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; private set; }
+        public IReadOnlyCollection<BaseEventsViewModel.TextBlock> BodyBlocks { get; }
+
+        public IReactiveCommand<object> GoToCommand { get; }
 
         public EventType Type { get; private set; }
 
-        internal EventModel Event { get; private set; }
+        internal EventModel Event { get; }
 
         internal EventItemViewModel(
             EventModel eventModel, 
@@ -34,6 +37,7 @@ namespace CodeHub.Core.ViewModels.Activity
             Avatar = eventModel.Actor != null ? new GitHubAvatar(eventModel.Actor.AvatarUrl) : GitHubAvatar.Empty;
             Created = eventModel.CreatedAt;
             Type = ChooseImage(eventModel);
+            CreatedString = Created.Humanize();
         }
 
         private static EventType ChooseImage(EventModel eventModel)

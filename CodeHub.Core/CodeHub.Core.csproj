@@ -50,7 +50,6 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Services\UrlRouterService.cs" />
     <Compile Include="Utilities\DefaultStartupViewCommand.cs" />
-    <Compile Include="Utilities\FilterGroup.cs" />
     <Compile Include="Utilities\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\Accounts\AccountItemViewModel.cs" />
     <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
@@ -174,7 +173,6 @@
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="ViewModels\ICanGoToViewModel.cs" />
     <Compile Include="Factories\AlertDialogExtensions.cs" />
-    <Compile Include="Utilities\LoadableReactiveList.cs" />
     <Compile Include="ViewModels\Issues\IssueMilestoneItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAssigneeViewModel.cs" />
@@ -205,7 +203,6 @@
     <Compile Include="Filters\IssueSort.cs" />
     <Compile Include="Filters\IssueState.cs" />
     <Compile Include="Filters\IssueFilterState.cs" />
-    <Compile Include="Utilities\EnumDescriptionAttribute.cs" />
     <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
     <Compile Include="Utilities\Emojis.cs" />
     <Compile Include="ViewModels\ActionMenuViewModel.cs" />
@@ -235,6 +232,7 @@
     <Compile Include="Repositories\IssueRepository.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Utilities\OctokitExtensions.cs" />
+    <Compile Include="Utilities\DescriptionAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

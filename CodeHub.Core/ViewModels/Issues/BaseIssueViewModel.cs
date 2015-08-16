@@ -11,6 +11,7 @@ using CodeHub.Core.ViewModels.Users;
 using CodeHub.Core.Factories;
 using Splat;
 using System.Reactive.Subjects;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -107,6 +108,12 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _canModify, value); }
         }
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
+        }
+
         protected abstract Uri HtmlUrl { get; }
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
@@ -153,6 +160,10 @@ namespace CodeHub.Core.ViewModels.Issues
                 _applicationService.GitHubClient.Issue.Labels.GetAllForRepository(RepositoryOwner, RepositoryName));
             
             IssueUpdated.Subscribe(x => Issue = x);
+
+            _avatar = this.WhenAnyValue(x => x.Issue.User.AvatarUrl)
+                .Select(x => new GitHubAvatar(x))
+                .ToProperty(this, x => x.Avatar);
 
             var issuePresenceObservable = this.WhenAnyValue(x => x.Issue, x => x.CanModify)
                 .Select(x => x.Item1 != null && x.Item2);

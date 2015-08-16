@@ -70,15 +70,23 @@ namespace CodeHub.iOS.ViewControllers.Activity
             {
                 _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), new UIBarButtonItem(_viewSegment), new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
                 ToolbarItems = _segmentToolbar;
-
-                Appearing
-                    .Where(_ => NavigationController != null)
-                    .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
             }
+        }
 
-            Disappearing
-                .Where(_ => NavigationController != null && !NavigationController.ToolbarHidden)
-                .Subscribe(x => NavigationController.SetToolbarHidden(true, x));
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+
+            if (NavigationController != null && !NavigationController.ToolbarHidden)
+                NavigationController.SetToolbarHidden(true, animated);
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone && NavigationController != null)
+                NavigationController.SetToolbarHidden(false, animated);
         }
 
         private void StartEditing()

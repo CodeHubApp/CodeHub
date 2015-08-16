@@ -125,10 +125,12 @@ namespace CodeHub.iOS.ViewControllers.Source
                     RefreshHeaderView();
                 });
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+
             this.WhenAnyValue(x => x.ViewModel.Commit)
                 .IsNotNull()
                 .Subscribe(x => {
-                    HeaderView.ImageUri = x.GenerateGravatarUrl();
                     HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
                     RefreshHeaderView();
                 });

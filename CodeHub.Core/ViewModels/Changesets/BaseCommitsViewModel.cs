@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 {
     public abstract class BaseCommitsViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
 	{
-        private readonly IReactiveList<CommitItemViewModel> _commits = new ReactiveList<CommitItemViewModel>();
+        private readonly IReactiveList<CommitItemViewModel> _commits = new ReactiveList<CommitItemViewModel>(resetChangeThreshold: 1.0);
 
         protected ISessionService SessionService { get; private set; }
 

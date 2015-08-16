@@ -1,26 +1,30 @@
 ﻿using System;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
+using Humanizer;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        public GitHubAvatar Avatar { get; private set; }
+        public GitHubAvatar Avatar { get; }
 
-        public string Title { get; private set; }
+        public string Title { get; }
 
-        public string Description { get; private set; }
+        public string Description { get; }
 
-        public DateTimeOffset UpdatedAt { get; private set; }
+        public DateTimeOffset UpdatedAt { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; private set; }
+        public string UpdatedString { get; }
+
+        public IReactiveCommand<object> GoToCommand { get; }
 
         public GistItemViewModel(string title, string avatarUrl, string description, DateTimeOffset updatedAt, Action<GistItemViewModel> gotoAction)
         {
             Title = title;
             Description = description;
             UpdatedAt = updatedAt;
+            UpdatedString = UpdatedAt.Humanize();
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoAction(this));
             Avatar = new GitHubAvatar(avatarUrl);
         }

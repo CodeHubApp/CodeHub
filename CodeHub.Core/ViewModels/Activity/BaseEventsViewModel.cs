@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Activity
             SessionService = sessionService;
             Title = "Events";
 
-            var events = new ReactiveList<EventModel>();
+            var events = new ReactiveList<EventModel>(resetChangeThreshold: 1.0);
             Events = events.CreateDerivedCollection(CreateEventTextBlocks);
             ReportRepository = true;
 

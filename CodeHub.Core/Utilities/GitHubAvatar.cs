@@ -1,44 +1,53 @@
 ﻿using System;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.Utilities
 {
     public class GitHubAvatar
     {
-        private readonly string _avatarUrl;
+        public string AvatarUrl { get; }
 
         public static GitHubAvatar Empty
         {
-            get { return new GitHubAvatar(null); }
+            get { return new GitHubAvatar((string)null); }
         }
 
         public GitHubAvatar(string avatarUrl)
         {
-            _avatarUrl = avatarUrl;
+            AvatarUrl = avatarUrl;
         }
 
-        public Uri ToUri(int? size = null)
+        public GitHubAvatar(Uri avatarUri)
         {
-            if (_avatarUrl == null)
-                return null;
+            AvatarUrl = avatarUri.AbsoluteUri;
+        }
+    }
+}
 
-            try
-            {
-                var baseUri = new UriBuilder(_avatarUrl);
+public static class GitHubAvatarExtensions
+{
+    public static Uri ToUri(this GitHubAvatar @this, int? size = null)
+    {
+        if (@this == null || @this.AvatarUrl == null)
+            return null;
 
-                if (size == null)
-                    return baseUri.Uri;
+        try
+        {
+            var baseUri = new UriBuilder(@this.AvatarUrl);
 
-                var queryToAppend = "size=" + size.Value;
-                if (baseUri.Query != null && baseUri.Query.Length > 1)
-                    baseUri.Query = baseUri.Query.Substring(1) + "&" + queryToAppend; 
-                else
-                    baseUri.Query = queryToAppend; 
+            if (size == null)
                 return baseUri.Uri;
-            }
-            catch
-            {
-                return null;
-            }
+
+            var queryToAppend = "size=" + size.Value;
+            if (baseUri.Query != null && baseUri.Query.Length > 1)
+                baseUri.Query = baseUri.Query.Substring(1) + "&" + queryToAppend; 
+            else
+                baseUri.Query = queryToAppend; 
+            return baseUri.Uri;
+        }
+        catch
+        {
+            return null;
         }
     }
 }

@@ -32,9 +32,12 @@ namespace CodeHub.iOS.Cells
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
+
+            ContentView.SetNeedsLayout();
+            ContentView.LayoutIfNeeded();
+
             CaptionLabel.PreferredMaxLayoutWidth = CaptionLabel.Frame.Width;
             ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
-            LayoutIfNeeded();
         }
 
         public override void AwakeFromNib()

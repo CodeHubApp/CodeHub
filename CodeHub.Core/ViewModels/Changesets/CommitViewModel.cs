@@ -66,6 +66,12 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _diffModifications.Value; }
         }
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
@@ -94,6 +100,10 @@ namespace CodeHub.Core.ViewModels.Changesets
 
             var comments = new ReactiveList<CommentModel>();
             Comments = comments.CreateDerivedCollection(x => new CommitCommentItemViewModel(x));
+
+            this.WhenAnyValue(x => x.Commit)
+                .Select(x => new GitHubAvatar(x.GenerateGravatarUrl()))
+                .ToProperty(this, x => x.Avatar, out _avatar);
 
             var files = this.WhenAnyValue(x => x.Commit.Files).IsNotNull();
 

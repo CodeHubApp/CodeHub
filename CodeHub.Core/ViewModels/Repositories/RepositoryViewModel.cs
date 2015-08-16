@@ -105,6 +105,12 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _description.Value; }
         }
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
@@ -167,10 +173,14 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             this.WhenAnyValue(x => x.RepositoryName).Subscribe(x => Title = x);
 
+            this.WhenAnyValue(x => x.Repository.Owner.AvatarUrl)
+                .Select(x => new GitHubAvatar(x))
+                .ToProperty(this, x => x.Avatar, out _avatar);
+
             this.WhenAnyValue(x => x.Repository).Subscribe(x => 
             {
-                Stargazers = x != null ? (int?)x.StargazersCount : null;
-                Watchers = x != null ? (int?)x.SubscribersCount : null;
+                Stargazers = (int?)x?.StargazersCount;
+                Watchers = (int?)x?.SubscribersCount;
             });
 
             this.WhenAnyValue(x => x.Repository.Description)

@@ -36,20 +36,20 @@ namespace CodeHub.iOS.TableViewSources
             _scrollSubject.OnNext(scrollView.ContentOffset);
         }
 
-        protected ReactiveTableViewSource(UITableView tableView, nfloat sizeHint)
+        protected ReactiveTableViewSource(UITableView tableView, nfloat height, nfloat? heightHint = null)
             : base(tableView)
         {
-            tableView.RowHeight = sizeHint;
-            tableView.EstimatedRowHeight = sizeHint;
+            tableView.RowHeight = height;
+            tableView.EstimatedRowHeight = heightHint ?? tableView.EstimatedRowHeight;
             this.WhenAnyValue(x => x.Data).IsNotNull().Select(x => x.Count == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
         protected ReactiveTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<TViewModel> collection, 
-            Foundation.NSString cellKey, nfloat sizeHint, Action<UITableViewCell> initializeCellAction = null) 
-            : base(tableView, collection, cellKey, (float)sizeHint, initializeCellAction)
+            Foundation.NSString cellKey, nfloat height, nfloat? heightHint = null, Action<UITableViewCell> initializeCellAction = null) 
+            : base(tableView, collection, cellKey, (float)height, initializeCellAction)
         {
-            tableView.RowHeight = sizeHint;
-            tableView.EstimatedRowHeight = sizeHint;
+            tableView.RowHeight = height;
+            tableView.EstimatedRowHeight = heightHint ?? tableView.EstimatedRowHeight;
             collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
             (collection as IReactiveCollection<TViewModel>).Do(x => _isEmptySubject.OnNext(!x.Any()));
         }

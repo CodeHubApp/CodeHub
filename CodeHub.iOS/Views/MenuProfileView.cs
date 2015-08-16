@@ -8,20 +8,9 @@ namespace CodeHub.iOS.Views
 {
     public class MenuProfileView : UIButton
     {
-        private string _imageUrl;
         private readonly UIImageView _imageView;
         private readonly UILabel _titleLabel;
         private readonly UILabel _subtitleLabel;
-
-        public string ImageUri
-        {
-            get { return _imageUrl; }
-            set 
-            {
-                _imageUrl = value;
-                _imageView.SetImage(new NSUrl(_imageUrl), Images.UnknownUser);
-            }
-        }
 
         public string Text
         {
@@ -59,6 +48,11 @@ namespace CodeHub.iOS.Views
             _subtitleLabel.Font = UIFont.SystemFontOfSize(12f);
             _subtitleLabel.TextColor = UIColor.LightGray;
             Add(_subtitleLabel);
+        }
+
+        public void SetImage(Uri uri, UIImage placeholder)
+        {
+            _imageView.SetImage(new NSUrl(uri.AbsoluteUri), placeholder);
         }
 
         public override void LayoutSubviews()

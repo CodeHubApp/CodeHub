@@ -10,6 +10,7 @@ using CodeHub.Core.Factories;
 using GitHubSharp;
 using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -36,11 +37,11 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
-        private Uri _imageUrl;
-        public Uri ImageUrl
+        private GitHubAvatar _avatar;
+        public GitHubAvatar Avatar
         {
-            get { return _imageUrl; }
-            private set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
+            get { return _avatar; }
+            private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
 
         public StartupViewModel(
@@ -80,10 +81,7 @@ namespace CodeHub.Core.ViewModels.App
             try
             {
                 Status = string.Format("Logging in {0}", account.Username);
-
-                Uri avatarUri;
-                if (Uri.TryCreate(account.AvatarUrl, UriKind.Absolute, out avatarUri))
-                    ImageUrl = avatarUri;
+                Avatar = new GitHubAvatar(account.AvatarUrl);
 
                 IsLoggingIn = true;
                 await _sessionService.SetSessionAccount(account);

@@ -18,12 +18,8 @@ namespace CodeHub.iOS.Cells
             ImageView.Image = Octicon.FileCode.ToImage();
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Subscribe(x => {
-                    TextLabel.Text = x.Name;
-                    DetailTextLabel.Text = x.Subtitle;
-                });
+            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
+            this.OneWayBind(ViewModel, x => x.Subtitle, x => x.DetailTextLabel.Text);
         }
     }
 }

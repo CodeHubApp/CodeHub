@@ -3,9 +3,9 @@ using Foundation;
 using UIKit;
 using CodeHub.Core.ViewModels.App;
 using ReactiveUI;
-using SDWebImage;
 using System.Reactive.Linq;
 using Humanizer;
+using SDWebImage;
 
 namespace CodeHub.iOS.Cells
 {

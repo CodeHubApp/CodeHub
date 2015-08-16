@@ -5,7 +5,6 @@ using CodeHub.iOS;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Activity;
-using Humanizer;
 using System.Collections.Generic;
 using CoreText;
 using System.Text;
@@ -104,9 +103,8 @@ namespace CodeHub.iOS.Cells
 
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull()
-                .Subscribe(x =>
-                {
-                    Time.Text = x.Created.Humanize();
+                .Subscribe(x => {
+                    Time.Text = x.CreatedString;
 
                     ActionImage.Image = _eventToImage.ContainsKey(x.Type) ? 
                         _eventToImage[x.Type].ToImage() : Octicon.Alert.ToImage();

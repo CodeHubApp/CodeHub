@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
     {
-        private readonly ReactiveList<RepositoryItemViewModel> _repositoryItems = new ReactiveList<RepositoryItemViewModel>();
+        private readonly ReactiveList<RepositoryItemViewModel> _repositoryItems = new ReactiveList<RepositoryItemViewModel>(resetChangeThreshold: 1.0);
         protected readonly ISessionService SessionService;
 
         public bool ShowRepositoryDescription

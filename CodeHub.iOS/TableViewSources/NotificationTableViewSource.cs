@@ -15,7 +15,7 @@ namespace CodeHub.iOS.TableViewSources
         private NotificationViewCell _usedForHeight;
 
         public NotificationTableViewSource(UITableView tableView)
-            : base(tableView, _hintSize)
+            : base(tableView, UITableView.AutomaticDimension, _hintSize)
         {
             tableView.RegisterClassForCellReuse(typeof(NotificationViewCell), NotificationViewCell.Key);
         }

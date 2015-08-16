@@ -4,8 +4,8 @@ using Foundation;
 using UIKit;
 using CoreGraphics;
 using System.Reactive.Linq;
-using SDWebImage;
 using ReactiveUI;
+using SDWebImage;
 
 namespace CodeHub.iOS.Cells
 {

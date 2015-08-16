@@ -46,6 +46,12 @@ namespace CodeHub.Core.ViewModels.App
             get { return _sessionService.Account; }
         }
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return new GitHubAvatar(Account.AvatarUrl); }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> DeletePinnedRepositoryCommand { get; private set; }
@@ -58,6 +64,10 @@ namespace CodeHub.Core.ViewModels.App
         public MenuViewModel(ISessionService sessionService, IAccountsRepository accountsService)
         {
             _sessionService = sessionService;
+
+            this.WhenAnyValue(x => x.Account)
+                .Select(x => new GitHubAvatar(x.AvatarUrl))
+                .ToProperty(this, x => x.Avatar, out _avatar);
 
             GoToNotificationsCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<NotificationsViewModel>();

@@ -119,13 +119,11 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 .Select(x => x.Owner != null ? () => ViewModel.GoToOwnerCommand.ExecuteIfCan() : (Action)null)
                 .SubscribeSafe(x => _ownerElement.Tapped = x);
 
-            updatedGistObservable.SubscribeSafe(x =>
-            {
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => HeaderView.SetImage(x?.ToUri(64), Images.LoginUserUnknown));
+
+            updatedGistObservable.SubscribeSafe(x => {
                 HeaderView.SubText = x.Description;
-                if (x.Owner != null) 
-                    HeaderView.ImageUri = x.Owner.AvatarUrl;
-                else
-                    HeaderView.Image = Images.LoginUserUnknown;
                 RefreshHeaderView();
             });
 

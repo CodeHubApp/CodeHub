@@ -27,13 +27,14 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
             Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });
 
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+
             this.WhenAnyValue(x => x.ViewModel.Organization)
                 .IsNotNull()
                 .Subscribe(x => {
                     followers.Text = x != null ? x.Followers.ToString() : "-";
                     following.Text = x != null ? x.Following.ToString() : "-";
-                    HeaderView.ImageUri = x.AvatarUrl;
-                    RefreshHeaderView();
                 });
 
             this.WhenAnyValue(x => x.ViewModel.CanViewTeams)

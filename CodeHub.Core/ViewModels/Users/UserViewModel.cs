@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using CodeHub.Core.Factories;
 using CodeHub.Core.ViewModels.Activity;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.ViewModels.Users
 {
@@ -52,6 +53,12 @@ namespace CodeHub.Core.ViewModels.Users
 			get { return string.Equals(Username, _applicationService.Account.Username); }
 		}
 
+        private readonly ObservableAsPropertyHelper<GitHubAvatar> _avatar;
+        public GitHubAvatar Avatar
+        {
+            get { return _avatar.Value; }
+        }
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> GoToFollowersCommand { get; private set; }
@@ -92,6 +99,10 @@ namespace CodeHub.Core.ViewModels.Users
             _hasBlog = this.WhenAnyValue(x => x.User.Blog)
                 .Select(x => !string.IsNullOrEmpty(x))
                 .ToProperty(this, x => x.HasBlog);
+
+            _avatar = this.WhenAnyValue(x => x.User.AvatarUrl)
+                .Select(x => new GitHubAvatar(x))
+                .ToProperty(this, x => x.Avatar);
 
             GoToGistsCommand = ReactiveCommand.Create();
             GoToGistsCommand

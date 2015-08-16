@@ -77,8 +77,10 @@ namespace CodeHub.iOS.ViewControllers.App
             {
                 _profileButton.Text = string.IsNullOrEmpty(x.Name) ? x.Username : x.Name;
                 _profileButton.Subtitle = x.Email;
-                _profileButton.ImageUri = x.AvatarUrl;
             });
+
+            this.WhenAnyValue(x => x.ViewModel.Avatar)
+                .Subscribe(x => _profileButton.SetImage(x.ToUri(64), Images.UnknownUser));
 
             this.WhenAnyValue(x => x.ViewModel.Notifications)
                 .Subscribe(x => _notifications.NotificationNumber = x);
@@ -192,7 +194,7 @@ namespace CodeHub.iOS.ViewControllers.App
 
 			public PinnedRepoElement(PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
                 : base(pinnedRepo.Name, 
-                    () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), 
+                    () => command.Execute(new RepositoryIdentifier(pinnedRepo.Owner, pinnedRepo.Name)), 
                     Octicon.Repo.ToImage(),
                     GetActualImage(pinnedRepo))
 			{

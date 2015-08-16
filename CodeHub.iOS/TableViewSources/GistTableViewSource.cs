@@ -13,7 +13,7 @@ namespace CodeHub.iOS.TableViewSources
         private readonly TableViewCellHeightCache<GistCellView, GistItemViewModel> _cache;
 
         public GistTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<GistItemViewModel> collection) 
-            : base(tableView, collection,  GistCellView.Key, 60.0f)
+            : base(tableView, collection, GistCellView.Key, UITableView.AutomaticDimension, 60f)
         {
             _cache = new TableViewCellHeightCache<GistCellView, GistItemViewModel>(60f, () => GistCellView.Create(true));
             tableView.RegisterNibForCellReuse(GistCellView.Nib, GistCellView.Key);

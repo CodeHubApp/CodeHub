@@ -8,7 +8,7 @@ namespace CodeHub.iOS.TableViewSources
     public class LanguageTableViewSource : ReactiveTableViewSource<LanguageItemViewModel>
     {
         public LanguageTableViewSource(UIKit.UITableView tableView, IReactiveNotifyCollectionChanged<LanguageItemViewModel> collection) 
-            : base(tableView, collection, LanguageTableViewCell.Key, 44f)
+            : base(tableView, collection, LanguageTableViewCell.Key, 44)
         {
             tableView.RegisterClassForCellReuse(typeof(LanguageTableViewCell), LanguageTableViewCell.Key);
         }

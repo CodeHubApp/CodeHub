@@ -13,14 +13,14 @@ namespace CodeHub.iOS.TableViewSources
         private readonly TableViewCellHeightCache<RepositoryCellView, RepositoryItemViewModel> _cache;
        
         public RepositoryTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<RepositoryItemViewModel> collection) 
-            : base(tableView, collection,  RepositoryCellView.Key, _estimatedHeight)
+            : base(tableView, collection,  RepositoryCellView.Key, UITableView.AutomaticDimension, _estimatedHeight)
         {
             _cache = new TableViewCellHeightCache<RepositoryCellView, RepositoryItemViewModel>(_estimatedHeight, () => RepositoryCellView.Create(true));
             tableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
         }
 
         public RepositoryTableViewSource(UITableView tableView) 
-            : base(tableView, _estimatedHeight)
+            : base(tableView, UITableView.AutomaticDimension, _estimatedHeight)
         {
             _cache = new TableViewCellHeightCache<RepositoryCellView, RepositoryItemViewModel>(_estimatedHeight, () => RepositoryCellView.Create(true));
             tableView.RegisterNibForCellReuse(RepositoryCellView.Nib, RepositoryCellView.Key);
