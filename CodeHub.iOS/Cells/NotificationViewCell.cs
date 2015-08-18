@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Cells
 
             DetailTextLabel.Font = UIFont.SystemFontOfSize(12f);
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
-            ImageView.TintColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+            ImageView.TintColor = Theme.PrimaryNavigationBarColor;
 
             this.OneWayBind(ViewModel, x => x.Title, x => x.TextLabel.Text);
             this.OneWayBind(ViewModel, x => x.UpdatedAt, x => x.DetailTextLabel.Text);

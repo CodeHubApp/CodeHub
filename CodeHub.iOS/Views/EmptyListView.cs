@@ -18,7 +18,7 @@ namespace CodeHub.iOS.Views
             Title = new UILabel();
 
             ImageView.Frame = new CGRect(0, 0, 64f, 64f);
-            ImageView.TintColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+            ImageView.TintColor = Theme.PrimaryNavigationBarColor;
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
             ImageView.Center = new CGPoint(Frame.Width / 2f, 86f);
             ImageView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleBottomMargin;
@@ -32,7 +32,7 @@ namespace CodeHub.iOS.Views
             Title.Text = emptyText;
             Title.TextAlignment = UITextAlignment.Center;
             Title.Font = UIFont.PreferredHeadline;
-            Title.TextColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+            Title.TextColor = Theme.PrimaryNavigationBarColor;
             Add(Title);
 
             BackgroundColor = UIColor.White;

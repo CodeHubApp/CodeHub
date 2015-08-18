@@ -30,10 +30,10 @@ namespace CodeHub.iOS.Cells
             : base(UITableViewCellStyle.Default, Key)
         {
             BackgroundColor = UIColor.Clear;
-            TextLabel.TextColor = Themes.Theme.Current.MenuTextColor;
-            SelectedBackgroundView = new UIView { BackgroundColor = Themes.Theme.Current.MenuSelectedBackgroundColor };
+            TextLabel.TextColor = Theme.MenuTextColor;
+            SelectedBackgroundView = new UIView { BackgroundColor = Theme.MenuSelectedBackgroundColor };
 
-            _numberView.BackgroundColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+            _numberView.BackgroundColor = Theme.PrimaryNavigationBarColor;
             _numberView.Layer.MasksToBounds = true;
             _numberView.Layer.CornerRadius = 5f;
             _numberView.TextAlignment = UITextAlignment.Center;

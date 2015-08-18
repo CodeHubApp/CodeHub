@@ -183,7 +183,6 @@
     <Compile Include="Cells\CommitedFileTableViewCell.cs" />
     <Compile Include="TableViewSources\CommitedFilesTableViewSource.cs" />
     <Compile Include="Services\Registrations.cs" />
-    <Compile Include="Themes\Theme.cs" />
     <Compile Include="TableViewSources\ReactiveTableViewSource.cs" />
     <Compile Include="Extensions\UIImageViewExtensions.cs" />
     <Compile Include="Extensions\UIApplicationDelegateExtensions.cs" />
@@ -558,14 +557,12 @@
     </BundleResource>
     <BundleResource Include="Settings.bundle\Root.plist" />
     <BundleResource Include="Settings.bundle\Acknowledgements.plist" />
-    <BundleResource Include="Themes\InvertedDefault.json" />
     <BundleResource Include="Images\forward-chevron.png" />
     <BundleResource Include="Images\forward-chevron%402x.png">
       <DependentUpon>forward-chevron.png</DependentUpon>
     </BundleResource>
     <BundleResource Include="Images\back-chevron.png" />
     <BundleResource Include="Images\back-chevron%402x.png" />
-    <BundleResource Include="Themes\Default.json" />
     <BundleResource Include="..\CodeHub\WebResources\styles\brown_papersq.png">
       <Link>WebResources\styles\brown_papersq.png</Link>
     </BundleResource>
@@ -781,7 +778,6 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
-    <Folder Include="Themes\" />
     <Folder Include="Extensions\" />
     <Folder Include="Factories\" />
     <Folder Include="DialogElements\" />

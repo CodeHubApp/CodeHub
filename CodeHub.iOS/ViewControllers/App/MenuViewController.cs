@@ -104,9 +104,9 @@ namespace CodeHub.iOS.ViewControllers.App
 
             //Add some nice looking colors and effects
             TableView.TableFooterView = new UIView(new CGRect(0, 0, View.Bounds.Width, 0));
-            TableView.BackgroundColor = Themes.Theme.Current.MenuBackgroundColor;
+            TableView.BackgroundColor = Theme.MenuBackgroundColor;
             TableView.ScrollsToTop = false;
-            TableView.SeparatorColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+            TableView.SeparatorColor = Theme.PrimaryNavigationBarColor;
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
             TableView.RowHeight = 54f;
 

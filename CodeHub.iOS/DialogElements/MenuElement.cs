@@ -58,8 +58,8 @@ namespace CodeHub.iOS.DialogElements
             cell.NotificationNumber = NotificationNumber;
             cell.TextLabel.Text = _title;
 
-            if (TintImage && Themes.Theme.Current.MenuIconColor != null)
-                cell.ImageView.TintColor = Themes.Theme.Current.MenuIconColor;
+            if (TintImage && Theme.MenuIconColor != null)
+                cell.ImageView.TintColor = Theme.MenuIconColor;
             else
                 cell.ImageView.TintColor = null;
 

@@ -2,6 +2,7 @@
 
 namespace CodeHub.Core.Utilities
 {
+    #if DEBUG
     public class DiagnosticLogger : ILogger
     {
         private LogLevel _logLevel = LogLevel.Warn;
@@ -18,5 +19,6 @@ namespace CodeHub.Core.Utilities
             set { _logLevel = value; }
         }
     }
+    #endif
 }
 

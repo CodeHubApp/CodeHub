@@ -165,7 +165,7 @@ namespace CodeHub.iOS.DialogElements
 
                 _image = new UIImageView();
                 _image.Image = image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-                _image.TintColor = Themes.Theme.Current.PrimaryNavigationBarColor;
+                _image.TintColor = Theme.PrimaryNavigationBarColor;
                 this.Add(_image);
 
                 _text = new UILabel();
@@ -176,17 +176,17 @@ namespace CodeHub.iOS.DialogElements
                 _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);
 
-                if (touched != null)
-                {
-                    this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
-                    this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
-
-                    this.TouchUpInside += (sender, e) => 
-                    {
-                        this.BackgroundColor = UIColor.White;
-                        touched();
-                    };
-                }
+//                if (touched != null)
+//                {
+//                    this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
+//                    this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
+//
+//                    this.TouchUpInside += (sender, e) => 
+//                    {
+//                        this.BackgroundColor = UIColor.White;
+//                        touched();
+//                    };
+//                }
             }
             public override void LayoutSubviews()
             {
