@@ -47,6 +47,10 @@ namespace CodeHub.iOS.Utilities
 
         public nfloat GenerateHeight(UITableView tableView, TViewModel viewModel, NSIndexPath path)
         {
+            var key = Tuple.Create(path.Section, path.Row);
+            if (_heightCache.ContainsKey(key))
+                return _heightCache[key];
+
             var cachedCell = _cachedCell.Value;
             cachedCell.ViewModel = viewModel;
             cachedCell.SetNeedsUpdateConstraints();
@@ -55,7 +59,9 @@ namespace CodeHub.iOS.Utilities
             cachedCell.SetNeedsLayout();
             cachedCell.LayoutIfNeeded();
             var height = cachedCell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height + 1;
-            return Add(path, height);
+
+            _heightCache[key] = height;
+            return height;
         }
     }
 }

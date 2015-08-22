@@ -38,7 +38,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             this.WhenAnyValue(x => x.ViewModel.Repositories)
                 .Select(x => x ?? new List<GroupedCollection<RepositoryItemViewModel>>())
-                .Select(x => x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, 64f) {
+                .Select(x => x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, (float)UITableView.AutomaticDimension) {
                     Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
                 }))
                 .Subscribe(x => source.Data = x.ToList());

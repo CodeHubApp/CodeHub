@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
     public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
     {
-        protected ReactiveList<Gist> InternalGists = new ReactiveList<Gist>(resetChangeThreshold: 1.0);
+        protected ReactiveList<Gist> InternalGists = new ReactiveList<Gist>(resetChangeThreshold: double.MaxValue);
         public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
 
         protected ISessionService SessionService { get; private set; }

@@ -28,11 +28,6 @@ namespace CodeHub.iOS.TableViewSources
                 item.GoToCommand.ExecuteIfCan();
         }
 
-        public override nfloat EstimatedHeight(UITableView tableView, NSIndexPath indexPath)
-        {
-            return _cache[indexPath];
-        }
-
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             var item = ItemAt(indexPath) as EventItemViewModel;

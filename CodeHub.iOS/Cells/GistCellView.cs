@@ -4,7 +4,6 @@ using UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Humanizer;
 
 namespace CodeHub.iOS.Cells
 {
@@ -13,30 +12,10 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("GistCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("GistCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
-        private bool _isFakeCell;
 
         public GistCellView(IntPtr handle) 
             : base(handle)
         {
-        }
-
-        public static GistCellView Create(bool isFakeCell = false)
-        {
-            var cell = Nib.Instantiate(null, null).GetValue(0) as GistCellView;
-            cell._isFakeCell = isFakeCell;
-            return cell;
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-
-            TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
-            ContentLabel.PreferredMaxLayoutWidth = ContentLabel.Frame.Width;
-            TimeLabel.PreferredMaxLayoutWidth = TimeLabel.Frame.Width;
         }
 
         public override void AwakeFromNib()
@@ -45,7 +24,6 @@ namespace CodeHub.iOS.Cells
 
             MainImageView.Layer.MasksToBounds = true;
             MainImageView.Layer.CornerRadius = MainImageView.Frame.Height / 2f;
-            ContentView.Opaque = true;
 
             SeparatorInset = new UIEdgeInsets(0, TitleLabel.Frame.Left, 0, 0);
             TitleLabel.TextColor = Theme.MainTitleColor;
@@ -64,7 +42,6 @@ namespace CodeHub.iOS.Cells
                 });
 
             this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Where(_ => !_isFakeCell)
                 .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }

@@ -4,7 +4,6 @@ using UIKit;
 using CodeHub.Core.ViewModels.App;
 using ReactiveUI;
 using System.Reactive.Linq;
-using Humanizer;
 using SDWebImage;
 
 namespace CodeHub.iOS.Cells
@@ -14,18 +13,10 @@ namespace CodeHub.iOS.Cells
         public static readonly UINib Nib = UINib.FromName("FeedbackCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("FeedbackCellView");
         private static nfloat DefaultContentConstraintSize = 0.0f;
-        private bool _isFakeCell;
 
         public FeedbackCellView(IntPtr handle) 
             : base(handle)
         {
-        }
-
-        public static FeedbackCellView Create(bool isFakeCell = false)
-        {
-            var cell = Nib.Instantiate(null, null).GetValue(0) as FeedbackCellView;
-            cell._isFakeCell = isFakeCell;
-            return cell;
         }
 
         public override void AwakeFromNib()
@@ -46,12 +37,11 @@ namespace CodeHub.iOS.Cells
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
                 .Subscribe(x => {
-                    DetailsLabel.Text = "Created " + x.Created.UtcDateTime.Humanize();
+                    DetailsLabel.Text = "Created " + x.CreatedString;
                     DetailsConstraint.Constant = string.IsNullOrEmpty(DetailsLabel.Text) ? 0f : DefaultContentConstraintSize;
                 });
 
             this.WhenAnyValue(x => x.ViewModel.ImageUrl)
-                .Where(_ => !_isFakeCell)
                 .Subscribe(x => {
                     if (string.IsNullOrEmpty(x))
                         MainImageView.Image = Images.LoginUserUnknown;

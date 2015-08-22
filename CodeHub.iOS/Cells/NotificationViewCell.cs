@@ -10,12 +10,6 @@ namespace CodeHub.iOS.Cells
 {
     public class NotificationViewCell : ReactiveTableViewCell<NotificationItemViewModel>
     {
-        private readonly Lazy<UIImage> _issueOpenedImage = new Lazy<UIImage>(() => Octicon.IssueOpened.ToImage());
-        private readonly Lazy<UIImage> _pullRequestImage = new Lazy<UIImage>(() => Octicon.GitPullRequest.ToImage());
-        private readonly Lazy<UIImage> _commitImage = new Lazy<UIImage>(() => Octicon.GitCommit.ToImage());
-        private readonly Lazy<UIImage> _tagImage = new Lazy<UIImage>(() => Octicon.Tag.ToImage());
-        private readonly Lazy<UIImage> _defaultImage = new Lazy<UIImage>(() => Octicon.Inbox.ToImage());
-
         public static NSString Key = new NSString("NotificationTableViewCell");
 
         [Export("initWithStyle:reuseIdentifier:")]
@@ -41,19 +35,19 @@ namespace CodeHub.iOS.Cells
                     switch (x.Type)
                     {
                         case NotificationItemViewModel.NotificationType.Issue:
-                            ImageView.Image = _issueOpenedImage.Value;
+                            ImageView.Image = Octicon.IssueOpened.ToImage();
                             break;
                         case NotificationItemViewModel.NotificationType.PullRequest:
-                            ImageView.Image = _pullRequestImage.Value;
+                            ImageView.Image = Octicon.GitPullRequest.ToImage();
                             break;
                         case NotificationItemViewModel.NotificationType.Commit:
-                            ImageView.Image = _commitImage.Value;
+                            ImageView.Image = Octicon.GitCommit.ToImage();
                             break;
                         case NotificationItemViewModel.NotificationType.Release:
-                            ImageView.Image = _tagImage.Value;
+                            ImageView.Image = Octicon.Tag.ToImage();
                             break;
                         default:
-                            ImageView.Image = _defaultImage.Value;
+                            ImageView.Image = Octicon.Inbox.ToImage();
                             break;
                     }
                 });

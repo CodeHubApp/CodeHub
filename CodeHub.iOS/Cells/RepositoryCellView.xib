@@ -9,18 +9,19 @@
         <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="RepositoryCellView" rowHeight="312" id="5" customClass="RepositoryCellView">
             <rect key="frame" x="0.0" y="0.0" width="320" height="373"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5" id="ho5-JP-Lze">
+            <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="5" id="ho5-JP-Lze">
                 <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a Repository" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a Repository" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6">
                         <rect key="frame" x="52" y="8" width="260" height="20"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                         <color key="textColor" red="0.0" green="0.25098040700000002" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="highlightedColor" red="0.0" green="0.25098039220000001" blue="0.50196078430000002" alpha="1" colorSpace="calibratedRGB"/>
                         <size key="shadowOffset" width="1" height="1"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="7">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="7">
                         <rect key="frame" x="52" y="352" width="12" height="12"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="12" id="EiR-ir-NOq"/>
@@ -29,8 +30,9 @@
                             <constraint firstAttribute="height" constant="12" id="qfg-0W-CE6"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="100" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="100" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8">
                         <rect key="frame" x="72" y="351" width="42" height="15"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="42" id="rxY-w3-PgW"/>
                         </constraints>
@@ -38,15 +40,16 @@
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="30">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="30">
                         <rect key="frame" x="122" y="352" width="12" height="12"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="8gb-oI-Pch"/>
                             <constraint firstAttribute="height" constant="12" id="HRp-vu-VmF"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="21" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="31">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" text="21" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="31">
                         <rect key="frame" x="142" y="351" width="42" height="15"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="42" id="ubt-3C-Tyh"/>
                         </constraints>
@@ -54,8 +57,9 @@
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="thedillonb" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="40">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" text="thedillonb" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="40">
                         <rect key="frame" x="212" y="350" width="100" height="15"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="highlightedColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -69,15 +73,16 @@
                             <constraint firstAttribute="height" constant="36" id="lY0-6B-c8f"/>
                         </constraints>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="46">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="46">
                         <rect key="frame" x="192" y="352" width="12" height="12"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="12" id="NWq-wc-KPH"/>
                             <constraint firstAttribute="height" constant="12" id="tRc-t0-aFT"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" numberOfLines="0" minimumFontSize="12" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="260" translatesAutoresizingMaskIntoConstraints="NO" id="36">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="751" verticalCompressionResistancePriority="250" lineBreakMode="tailTruncation" numberOfLines="0" minimumFontSize="12" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="36">
                         <rect key="frame" x="52" y="32" width="260" height="313"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <string key="text">DbUp is a .NET library that helps you to deploy changes to SQL Server databases. It tracks which SQL scripts have been run already, and runs the change scripts that are needed to get your database up to date.  </string>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>

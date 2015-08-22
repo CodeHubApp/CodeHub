@@ -2,7 +2,6 @@ using System;
 using Foundation;
 using UIKit;
 using ReactiveUI;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.PullRequests;
 
 namespace CodeHub.iOS.Cells
@@ -11,29 +10,10 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("PullRequestCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("PullRequestCellView");
-        private bool _isFakeCell;
 
         public PullRequestCellView(IntPtr handle) 
             : base(handle)
         {
-        }
-
-        public static PullRequestCellView Create(bool isFakeCell = false)
-        {
-            var cell = Nib.Instantiate(null, null).GetValue(0) as PullRequestCellView;
-            cell._isFakeCell = isFakeCell;
-            return cell;
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-
-            TitleLabel.PreferredMaxLayoutWidth = TitleLabel.Frame.Width;
-            TimeLabel.PreferredMaxLayoutWidth = TimeLabel.Frame.Width;
         }
 
         public override void AwakeFromNib()
@@ -52,7 +32,6 @@ namespace CodeHub.iOS.Cells
             this.OneWayBind(ViewModel, x => x.Details, x => x.TimeLabel.Text);
 
             this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Where(_ => !_isFakeCell)
                 .Subscribe(x => MainImageView.SetAvatar(x));
         }
     }
