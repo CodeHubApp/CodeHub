@@ -21,6 +21,13 @@ namespace CodeHub.Core.ViewModels.Organizations
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
+        private bool _isEmpty;
+        public bool IsEmpty 
+        { 
+            get { return _isEmpty; } 
+            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
+        }
+
         public OrganizationsViewModel(ISessionService applicationService)
         {
             Title = "Organizations";

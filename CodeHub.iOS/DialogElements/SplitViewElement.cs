@@ -176,17 +176,17 @@ namespace CodeHub.iOS.DialogElements
                 _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);
 
-//                if (touched != null)
-//                {
+                if (touched != null)
+                {
 //                    this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
 //                    this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
 //
-//                    this.TouchUpInside += (sender, e) => 
-//                    {
+                    this.TouchUpInside += (sender, e) => 
+                    {
 //                        this.BackgroundColor = UIColor.White;
-//                        touched();
-//                    };
-//                }
+                        touched();
+                    };
+                }
             }
             public override void LayoutSubviews()
             {

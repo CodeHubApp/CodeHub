@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
-    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel
+    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IProvidesEmpty
     {
         protected readonly ISessionService SessionService;
 
@@ -35,6 +35,13 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public bool ReportRepository { get; private set; }
 
+        private bool _isEmpty;
+        public bool IsEmpty 
+        { 
+            get { return _isEmpty; } 
+            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
+        }
+
         protected BaseEventsViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
@@ -47,6 +54,10 @@ namespace CodeHub.Core.ViewModels.Activity
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
                 events.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
+
+            LoadCommand.Take(1)
+                .Select(_ => events.CountChanged.StartWith(events.Count).Select(x => x == 0))
+                .Switch().Subscribe(x => IsEmpty = x);
         }
 
         private void GoToUrl(string url)

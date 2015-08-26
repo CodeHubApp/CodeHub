@@ -8,7 +8,7 @@ namespace CodeHub.iOS.TableViewSources
 {
     public class RepositoryTableViewSource : ReactiveTableViewSource<RepositoryItemViewModel>
     {
-        private readonly static nfloat _estimatedHeight = 80.0f;
+        private readonly static nfloat _estimatedHeight = 100.0f;
        
         public RepositoryTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<RepositoryItemViewModel> collection) 
             : base(tableView, collection,  RepositoryCellView.Key, UITableView.AutomaticDimension, _estimatedHeight)

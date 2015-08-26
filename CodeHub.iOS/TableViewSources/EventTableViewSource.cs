@@ -13,7 +13,7 @@ namespace CodeHub.iOS.TableViewSources
         private readonly TableViewCellHeightCache<NewsCellView, EventItemViewModel> _cache;
 
         public EventTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<EventItemViewModel> collection) 
-            : base(tableView, collection,  NewsCellView.Key, 100f)
+            : base(tableView, collection,  NewsCellView.Key, UITableView.AutomaticDimension, 100f)
         {
             _cache = new TableViewCellHeightCache<NewsCellView, EventItemViewModel>(100f, () => NewsCellView.Create(true));
             tableView.SeparatorInset = NewsCellView.EdgeInsets;

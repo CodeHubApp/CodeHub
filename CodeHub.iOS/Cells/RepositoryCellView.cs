@@ -45,8 +45,8 @@ namespace CodeHub.iOS.Cells
                 .Where(x => x != null)
                 .Subscribe(x => {
                     CaptionLabel.Text = x.Name;
-                    FollowersLabel.Text = x.Stars.ToString();
-                    ForksLabel.Text = x.Forks.ToString();
+                    FollowersLabel.Text = x.Stars;
+                    ForksLabel.Text = x.Forks;
                     ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
                     ContentLabel.Text = x.Description ?? string.Empty;
                     UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);

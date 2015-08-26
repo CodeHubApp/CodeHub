@@ -10,10 +10,9 @@ using CoreGraphics;
 
 namespace CodeHub.iOS.TableViewSources
 {
-    public abstract class ReactiveTableViewSource<TViewModel> : ReactiveUI.ReactiveTableViewSource<TViewModel>, IInformsEnd, IInformsEmpty
+    public abstract class ReactiveTableViewSource<TViewModel> : ReactiveUI.ReactiveTableViewSource<TViewModel>, IInformsEnd
     {
         private readonly ISubject<Unit> _requestMoreSubject = new Subject<Unit>();
-        private readonly ISubject<bool> _isEmptySubject = new BehaviorSubject<bool>(true);
         private readonly ISubject<CGPoint> _scrollSubject = new Subject<CGPoint>();
 
         public IObservable<CGPoint> DidScroll
@@ -26,11 +25,6 @@ namespace CodeHub.iOS.TableViewSources
             get { return _requestMoreSubject; }
         }
 
-        public IObservable<bool> IsEmpty
-        {
-            get { return _isEmptySubject; }
-        }
-
         public override void Scrolled(UIScrollView scrollView)
         {
             _scrollSubject.OnNext(scrollView.ContentOffset);
@@ -41,7 +35,6 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RowHeight = height;
             tableView.EstimatedRowHeight = heightHint ?? tableView.EstimatedRowHeight;
-            this.WhenAnyValue(x => x.Data).IsNotNull().Select(x => x.Count == 0).Subscribe(_isEmptySubject.OnNext);
         }
 
         protected ReactiveTableViewSource(UITableView tableView, IReactiveNotifyCollectionChanged<TViewModel> collection, 
@@ -50,8 +43,6 @@ namespace CodeHub.iOS.TableViewSources
         {
             tableView.RowHeight = height;
             tableView.EstimatedRowHeight = heightHint ?? tableView.EstimatedRowHeight;
-            collection.CountChanged.Select(x => x == 0).Subscribe(_isEmptySubject.OnNext);
-            (collection as IReactiveCollection<TViewModel>).Do(x => _isEmptySubject.OnNext(!x.Any()));
         }
 
         public override void WillDisplay(UITableView tableView, UITableViewCell cell, Foundation.NSIndexPath indexPath)
@@ -77,11 +68,6 @@ namespace CodeHub.iOS.TableViewSources
     public interface IInformsEnd
     {
         IObservable<Unit> RequestMore { get; }
-    }
-
-    public interface IInformsEmpty
-    {
-        IObservable<bool> IsEmpty { get; }
     }
 }
 

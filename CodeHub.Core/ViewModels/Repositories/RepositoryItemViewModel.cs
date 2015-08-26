@@ -16,9 +16,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public string Description { get; }
 
-        public int Stars { get; }
+        public string Stars { get; }
 
-        public int Forks { get; }
+        public string Forks { get; }
 
         public bool ShowOwner { get; }
 
@@ -37,8 +37,8 @@ namespace CodeHub.Core.ViewModels.Repositories
             Name = repository.Name;
             Owner = repository.Owner?.Login ?? string.Empty;
             Avatar = new GitHubAvatar(repository.Owner?.AvatarUrl);
-            Stars = repository.StargazersCount;
-            Forks = repository.ForksCount;
+            Stars = repository.StargazersCount.ToString();
+            Forks = repository.ForksCount.ToString();
             ShowOwner = showOwner;
             GoToCommand = ReactiveCommand.Create().WithSubscription(x => gotoCommand(this));
         }
