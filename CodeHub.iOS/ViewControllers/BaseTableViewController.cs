@@ -69,6 +69,7 @@ namespace CodeHub.iOS.ViewControllers
                 .OfType<IProvidesEmpty>()
                 .Select(x => x.WhenAnyValue(y => y.IsEmpty))
                 .Switch()
+                .Where(x => EmptyView != null)
                 .Subscribe(CreateEmptyHandler);
         }
 
