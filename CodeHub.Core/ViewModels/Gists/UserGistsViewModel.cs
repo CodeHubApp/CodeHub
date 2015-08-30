@@ -36,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 vm.SaveCommand
                     .Delay(TimeSpan.FromMilliseconds(200))
                     .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => InternalGists.Insert(0, x));
+                    .Subscribe(x => InternalItems.Insert(0, x));
                 NavigateTo(vm);
             });
 

@@ -11,12 +11,9 @@ using Octokit;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssuesViewModel : BaseViewModel, IProvidesSearchKeyword, IPaginatableViewModel
+    public abstract class BaseIssuesViewModel : BaseSearchableListViewModel<Issue, IssueItemViewModel>
     {
         private readonly ISessionService _sessionService;
-        protected readonly IReactiveList<Issue> IssuesBacking = new ReactiveList<Issue>(resetChangeThreshold: 1.0);
-
-        public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; private set; }
 
         private IList<IssueGroupViewModel> _groupedIssues;
         public IList<IssueGroupViewModel> GroupedIssues
@@ -25,34 +22,22 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _groupedIssues, value); }
         }
 
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public IReactiveCommand<Unit> LoadMoreCommand { get; private set; }
-
         protected BaseIssuesViewModel(ISessionService sessionService)
 	    {
             _sessionService = sessionService;
 
-            Issues = IssuesBacking.CreateDerivedCollection(
+            Items = InternalItems.CreateDerivedCollection(
                 x => CreateItemViewModel(x),
                 filter: IssueFilter, 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
-            Issues.Changed.Subscribe(_ =>
-            {
-                GroupedIssues = Issues.GroupBy(x => x.RepositoryFullName)
+            Items.Changed.Subscribe(_ => {
+                GroupedIssues = Items.GroupBy(x => x.RepositoryFullName)
                     .Select(x => new IssueGroupViewModel(x.Key, x)).ToList();
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                IssuesBacking.Reset(await RetrieveIssues());
+                InternalItems.Reset(await RetrieveIssues());
             });
 	    }
 
@@ -88,11 +73,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         private async Task UpdateIssue(Issue issue)
         {
-            var localIssue = IssuesBacking.FirstOrDefault(x => x.Url == issue.Url);
+            var localIssue = InternalItems.FirstOrDefault(x => x.Url == issue.Url);
             if (localIssue == null)
                 return;
 
-            var index = IssuesBacking.IndexOf(localIssue);
+            var index = InternalItems.IndexOf(localIssue);
             if (index < 0)
                 return;
 
@@ -100,8 +85,8 @@ namespace CodeHub.Core.ViewModels.Issues
             if (matches.Count != 1 || matches[0].Groups.Count != 3)
                 return;
 
-            IssuesBacking[index] = await _sessionService.GitHubClient.Issue.Get(matches[0].Groups[1].Value, matches[0].Groups[2].Value, issue.Number);
-            IssuesBacking.Reset();
+            InternalItems[index] = await _sessionService.GitHubClient.Issue.Get(matches[0].Groups[1].Value, matches[0].Groups[2].Value, issue.Number);
+            InternalItems.Reset();
         }
 
         private async Task<IReadOnlyList<Issue>> RetrieveIssues(int page = 1)
@@ -118,7 +103,7 @@ namespace CodeHub.Core.ViewModels.Issues
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    IssuesBacking.AddRange(await RetrieveIssues(page + 1));
+                    InternalItems.AddRange(await RetrieveIssues(page + 1));
                 });
             }
             else

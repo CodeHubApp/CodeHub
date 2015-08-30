@@ -14,7 +14,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Languages)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => {
                     var source = new LanguageTableViewSource(TableView, x);
                     source.ElementSelected.OfType<LanguageItemViewModel>().Subscribe(y => ViewModel.SelectedLanguage = y);
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             ViewModel.LoadCommand.IsExecuting.Where(x => !x).Take(1).SubscribeSafe(_ => {
                 var selectedLanguageSlug = ViewModel.SelectedLanguage.Slug;
-                var selectedLanguage = ViewModel.Languages.Select((value, index) => new { value, index })
+                var selectedLanguage = ViewModel.Items.Select((value, index) => new { value, index })
                     .Where(x => x.value.Slug == selectedLanguageSlug)
                     .Select(x => x.index + 1)
                     .FirstOrDefault() - 1;

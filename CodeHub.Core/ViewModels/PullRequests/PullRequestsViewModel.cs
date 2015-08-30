@@ -9,12 +9,9 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestsViewModel : BaseViewModel, IPaginatableViewModel
+    public class PullRequestsViewModel : BaseSearchableListViewModel<PullRequest, PullRequestItemViewModel>
     {
         private readonly ISessionService _sessionService;
-        private readonly IReactiveList<PullRequest> _pullRequests = new ReactiveList<PullRequest>();
-
-        public IReadOnlyReactiveList<PullRequestItemViewModel> PullRequests { get; private set; }
 
         public string RepositoryOwner { get; set; }
 
@@ -27,23 +24,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public IReactiveCommand<Unit> LoadMoreCommand { get; private set; }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
         public PullRequestsViewModel(ISessionService sessionService)
 		{
             _sessionService = sessionService;
             Title = "Pull Requests";
 
-            PullRequests = _pullRequests.CreateDerivedCollection(x => {
+            Items = InternalItems.CreateDerivedCollection(x => {
                     var vm = new PullRequestItemViewModel(x);
                     vm.GoToCommand.Subscribe(_ => {
                         var prViewModel = this.CreateViewModel<PullRequestViewModel>();
@@ -61,11 +47,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                _pullRequests.Reset(await RetrievePullRequests());
+                InternalItems.Reset(await RetrievePullRequests());
             });
 
             this.WhenAnyValue(x => x.SelectedFilter).Skip(1).Subscribe(_ => {
-                _pullRequests.Clear();
+                InternalItems.Clear();
                 LoadCommand.ExecuteIfCan();
             });
 		}
@@ -82,7 +68,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    _pullRequests.AddRange(await RetrievePullRequests(page + 1));
+                    InternalItems.AddRange(await RetrievePullRequests(page + 1));
                 });
             }
             else

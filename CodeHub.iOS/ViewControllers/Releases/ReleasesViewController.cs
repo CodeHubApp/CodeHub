@@ -10,17 +10,14 @@ namespace CodeHub.iOS.ViewControllers.Releases
 {
     public class ReleasesViewController : BaseTableViewController<ReleasesViewModel> 
     {
-        public ReleasesViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no releases."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Releases)
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no releases."));
+
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new ReleasesTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

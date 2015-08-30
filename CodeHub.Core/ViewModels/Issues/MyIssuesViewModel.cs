@@ -68,7 +68,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToProperty(this, x => x.SelectedFilter);
 
             this.WhenAnyValue(x => x.Filter).Skip(1).Subscribe(filter => {
-                IssuesBacking.Clear();
+                InternalItems.Clear();
                 LoadCommand.ExecuteIfCan();
                 CustomFilterEnabled = !(filter == _closedFilter || filter == _openFilter);
             });

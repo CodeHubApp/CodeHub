@@ -1,16 +1,12 @@
 ﻿using System;
 using ReactiveUI;
 using CodeHub.Core.Services;
-using System.Reactive;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
-    public class ReleasesViewModel : BaseViewModel, ILoadableViewModel
+    public class ReleasesViewModel : BaseListViewModel<Release, ReleaseItemViewModel>
     {
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public IReadOnlyReactiveList<ReleaseItemViewModel> Releases { get; private set; }
-
         public string RepositoryOwner { get; set; }
 
         public string RepositoryName { get; set; }
@@ -19,14 +15,13 @@ namespace CodeHub.Core.ViewModels.Releases
         {
             Title = "Releases";
 
-            var releases = new ReactiveList<Octokit.Release>();
-            Releases = releases.CreateDerivedCollection(CreateItemViewModel, x => !x.Draft);
+            Items = InternalItems.CreateDerivedCollection(CreateItemViewModel, x => !x.Draft);
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                releases.Reset(await applicationService.GitHubClient.Release.GetAll(RepositoryOwner, RepositoryName)));
+                InternalItems.Reset(await applicationService.GitHubClient.Release.GetAll(RepositoryOwner, RepositoryName)));
         }
 
-        private ReleaseItemViewModel CreateItemViewModel(Octokit.Release release)
+        private ReleaseItemViewModel CreateItemViewModel(Release release)
         {
             var releaseItem = new ReleaseItemViewModel(release);
             releaseItem.GoToCommand.Subscribe(_ => 

@@ -2,18 +2,14 @@ using System;
 using System.Collections.Generic;
 using CodeHub.Core.Services;
 using ReactiveUI;
-using System.Reactive;
 using Octokit;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Diagnostics;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public abstract class BaseRepositoriesViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword, IProvidesEmpty
+    public abstract class BaseRepositoriesViewModel : BaseSearchableListViewModel<RepositoryItemViewModel, RepositoryItemViewModel>
     {
-        private readonly ReactiveList<RepositoryItemViewModel> _repositoryItems = new ReactiveList<RepositoryItemViewModel>(resetChangeThreshold: 1.0);
         protected readonly ISessionService SessionService;
 
         public bool ShowRepositoryDescription
@@ -21,52 +17,23 @@ namespace CodeHub.Core.ViewModels.Repositories
 			get { return SessionService.Account.ShowRepositoryDescriptionInList; }
         }
 
-        public IReadOnlyReactiveList<RepositoryItemViewModel> Repositories { get; private set; }
-
         public bool ShowRepositoryOwner { get; protected set; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; protected set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
-        private bool _isEmpty;
-        public bool IsEmpty 
-        { 
-            get { return _isEmpty; } 
-            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
-        }
-
+      
         protected BaseRepositoriesViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
             ShowRepositoryOwner = true;
             Title = "Repositories";
 
-            Repositories = _repositoryItems.CreateDerivedCollection(
+            Items = InternalItems.CreateDerivedCollection(
                 x => x, 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 var ret = await RetrieveRepositories();
-                _repositoryItems.Reset(ret.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
+                InternalItems.Reset(ret.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
             });
-
-            LoadCommand.Take(1)
-                .Select(_ => _repositoryItems.CountChanged.StartWith(_repositoryItems.Count).Select(x => x == 0))
-                .Switch().Subscribe(x => IsEmpty = x);
         }
 
         private void GoToRepository(RepositoryItemViewModel itemViewModel)
@@ -88,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                     var loadRet = await RetrieveRepositories(page + 1);
-                    _repositoryItems.AddRange(loadRet.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
+                    InternalItems.AddRange(loadRet.Select(x => new RepositoryItemViewModel(x, ShowRepositoryOwner, GoToRepository)));
                 });
             }
             else

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
@@ -13,51 +12,26 @@ using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Changesets;
 using ReactiveUI;
 using CodeHub.Core.Utilities;
-using System.Reactive;
-using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Activity
 {
-    public abstract class BaseEventsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IProvidesEmpty
+    public abstract class BaseEventsViewModel : BaseListViewModel<EventModel, EventItemViewModel>
     {
         protected readonly ISessionService SessionService;
 
-        public IReadOnlyReactiveList<EventItemViewModel> Events { get; private set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
-
-        public IReactiveCommand<Unit> LoadCommand { get; set; }
-
         public bool ReportRepository { get; private set; }
-
-        private bool _isEmpty;
-        public bool IsEmpty 
-        { 
-            get { return _isEmpty; } 
-            private set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
-        }
 
         protected BaseEventsViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
             Title = "Events";
 
-            var events = new ReactiveList<EventModel>(resetChangeThreshold: 1.0);
-            Events = events.CreateDerivedCollection(CreateEventTextBlocks);
+            Items = InternalItems.CreateDerivedCollection(CreateEventTextBlocks);
             ReportRepository = true;
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(t =>
-                events.SimpleCollectionLoad(CreateRequest(), 
+                InternalItems.SimpleCollectionLoad(CreateRequest(), 
                     x => LoadMoreCommand = x == null ? null : ReactiveCommand.CreateAsyncTask(_ => x())));
-
-            LoadCommand.Take(1)
-                .Select(_ => events.CountChanged.StartWith(events.Count).Select(x => x == 0))
-                .Switch().Subscribe(x => IsEmpty = x);
         }
 
         private void GoToUrl(string url)

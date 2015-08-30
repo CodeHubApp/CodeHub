@@ -5,10 +5,11 @@ using UIKit;
 using System;
 using ReactiveUI;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public abstract class BaseGistsViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class, IGistsViewModel
+    public abstract class BaseGistsViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : class, IListViewModel<GistItemViewModel>
     {
         protected BaseGistsViewController()
         {
@@ -20,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
         {
             base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Gists)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new GistTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

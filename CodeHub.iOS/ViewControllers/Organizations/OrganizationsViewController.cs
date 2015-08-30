@@ -17,7 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no organizations."));
 
-            this.WhenAnyValue(x => x.ViewModel.Organizations)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new UserTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

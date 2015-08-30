@@ -11,7 +11,6 @@ using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using System.Collections.Generic;
-using CodeHub.Core.ViewModels.Activity;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -65,8 +64,8 @@ namespace CodeHub.iOS.ViewControllers
                 .Subscribe(_ => SetupLoadMore());
 
             this.Appeared.Take(1)
-                .Select(x => ViewModel)
-                .Concat(this.WhenAnyValue(x => x.ViewModel))
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
+                .Switch()
                 .OfType<IProvidesEmpty>()
                 .Select(x => x.WhenAnyValue(y => y.IsEmpty))
                 .Switch()
@@ -126,6 +125,8 @@ namespace CodeHub.iOS.ViewControllers
                 {
                     await iLoadableViewModel.LoadCommand.ExecuteAsync();
                     refreshControl.EndRefreshing();
+                    if (EmptyView.IsValueCreated && EmptyView.Value.Superview != null)
+                        TableView.BringSubviewToFront(EmptyView.Value);
                 }
             };
 
@@ -167,19 +168,19 @@ namespace CodeHub.iOS.ViewControllers
         {
             if (x)
             {
+
                 if (EmptyView.Value.Superview == null)
                 {
                     EmptyView.Value.Alpha = 0f;
                     EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
                     TableView.AddSubview(EmptyView.Value);
-                    TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
                     UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
-                        () => EmptyView.Value.Alpha = 1.0f, null);
+                        () => EmptyView.Value.Alpha = 1.0f, () => TableView.TableHeaderView.Do(y => y.Hidden = true));
                 }
             }
             else if (EmptyView.IsValueCreated)
             {
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                TableView.TableHeaderView.Do(y => y.Hidden = false);
                 EmptyView.Value.RemoveFromSuperview();
             }
         }

@@ -10,47 +10,27 @@ using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-    public abstract class BaseCommitsViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
+    public abstract class BaseCommitsViewModel : BaseSearchableListViewModel<CommitItemViewModel, CommitItemViewModel>
 	{
-        private readonly IReactiveList<CommitItemViewModel> _commits = new ReactiveList<CommitItemViewModel>(resetChangeThreshold: 1.0);
-
         protected ISessionService SessionService { get; private set; }
 
 		public string RepositoryOwner { get; private set; }
 
 		public string RepositoryName { get; private set; }
 
-        public IReadOnlyReactiveList<CommitItemViewModel> Commits { get; private set; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
         protected BaseCommitsViewModel(ISessionService sessionService)
 	    {
             SessionService = sessionService;
             Title = "Commits";
 
-            Commits = _commits.CreateDerivedCollection(
+            Items = InternalItems.CreateDerivedCollection(
                 x => x, 
                 x => x.Description.ContainsKeyword(SearchKeyword) || x.Name.ContainsKeyword(SearchKeyword), 
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 var ret = await RetrieveCommits();
-                _commits.Reset(ret.Select(x => new CommitItemViewModel(x, GoToCommit)));
+                InternalItems.Reset(ret.Select(x => new CommitItemViewModel(x, GoToCommit)));
             });
 	    }
 
@@ -73,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                     var loadMore = await RetrieveCommits(page + 1);
-                    _commits.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
+                    InternalItems.AddRange(loadMore.Select(x => new CommitItemViewModel(x, GoToCommit)));
                 });
             }
             else

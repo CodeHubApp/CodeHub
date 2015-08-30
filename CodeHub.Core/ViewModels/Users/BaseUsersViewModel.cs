@@ -2,7 +2,6 @@
 using ReactiveUI;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Organizations;
-using System.Reactive;
 using CodeHub.Core.ViewModels.Users;
 using Octokit;
 using System.Threading.Tasks;
@@ -10,35 +9,15 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Users
 {
-    public abstract class BaseUsersViewModel : BaseViewModel, IPaginatableViewModel, IProvidesSearchKeyword
+    public abstract class BaseUsersViewModel : BaseSearchableListViewModel<User, UserItemViewModel>
     {
-        private readonly ReactiveList<User> _users = new ReactiveList<User>();
-
-        public IReadOnlyReactiveList<UserItemViewModel> Users { get; private set; }
-
         protected ISessionService SessionService { get; private set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
-
-        public IReactiveCommand<Unit> LoadCommand { get; protected set; }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
 
         protected BaseUsersViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
 
-            Users = _users.CreateDerivedCollection(x => {
+            Items = InternalItems.CreateDerivedCollection(x => {
                 var isOrg = x.Type.HasValue && x.Type.Value == AccountType.Organization;
                 return new UserItemViewModel(x.Login, x.AvatarUrl, isOrg, () => {
                     if (isOrg)
@@ -59,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Users
             signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                _users.Reset(await RetrieveUsers());
+                InternalItems.Reset(await RetrieveUsers());
             });
         }
 
@@ -74,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Users
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    _users.AddRange(await RetrieveUsers(page + 1));
+                    InternalItems.AddRange(await RetrieveUsers(page + 1));
                 });
             }
             else

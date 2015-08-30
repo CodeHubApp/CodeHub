@@ -17,7 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories."));
 
-            this.WhenAnyValue(x => x.ViewModel.Repositories)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new RepositoryTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

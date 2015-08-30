@@ -20,7 +20,7 @@ namespace CodeHub.iOS.ViewControllers.Users
         {
             base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.Users)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new UserTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

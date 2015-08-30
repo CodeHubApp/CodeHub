@@ -770,7 +770,7 @@
     <BundleResource Include="Images\unknown_user%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.1\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.1\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.2\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.2\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />

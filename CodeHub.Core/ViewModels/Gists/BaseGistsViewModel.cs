@@ -2,53 +2,28 @@ using System;
 using ReactiveUI;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reactive;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public interface IGistsViewModel
+    public abstract class BaseGistsViewModel : BaseSearchableListViewModel<Gist, GistItemViewModel>
     {
-        IReadOnlyReactiveList<GistItemViewModel> Gists { get; }
-    }
-
-    public abstract class BaseGistsViewModel : BaseViewModel, IProvidesSearchKeyword, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
-    {
-        protected ReactiveList<Gist> InternalGists = new ReactiveList<Gist>(resetChangeThreshold: double.MaxValue);
-        public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
-
         protected ISessionService SessionService { get; private set; }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
 
         protected BaseGistsViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
 
-            Gists = InternalGists
+            Items = InternalItems
                 .CreateDerivedCollection(x => CreateGistItemViewModel(x))
                 .CreateDerivedCollection(x => x,
                 filter: x => x.Description.ContainsKeyword(SearchKeyword) || x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                InternalGists.Reset(await RetrieveGists());
+                InternalItems.Reset(await RetrieveGists());
             });
         }
 
@@ -84,7 +59,7 @@ namespace CodeHub.Core.ViewModels.Gists
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    InternalGists.AddRange(await RetrieveGists(page + 1));
+                    InternalItems.AddRange(await RetrieveGists(page + 1));
                 });
             }
             else

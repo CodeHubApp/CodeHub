@@ -10,18 +10,15 @@ namespace CodeHub.iOS.ViewControllers.Source
 {
     public class CommitBranchesViewController : BaseTableViewController<CommitBranchesViewModel>
     {
-        public CommitBranchesViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), "There are no branches."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), "There are no branches."));
+
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
-            var source = new ReactiveTableViewSource<BranchItemViewModel>(TableView, ViewModel.Branches, BranchCellView.Key, 44f);
+            var source = new ReactiveTableViewSource<BranchItemViewModel>(TableView, ViewModel.Items, BranchCellView.Key, 44f);
             source.ElementSelected.OfType<BranchItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
             TableView.Source = source;
         }

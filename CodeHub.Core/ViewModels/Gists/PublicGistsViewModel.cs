@@ -1,7 +1,6 @@
 ﻿using System;
 using ReactiveUI;
 using System.Linq;
-using System.Reactive;
 using CodeHub.Core.Services;
 using Octokit;
 using System.Collections.Generic;
@@ -9,20 +8,9 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class PublicGistsViewModel : BaseViewModel, ILoadableViewModel, IPaginatableViewModel, IGistsViewModel
+    public class PublicGistsViewModel : BaseListViewModel<Gist, GistItemViewModel>
     {
-        private readonly IReactiveList<Gist> _gists = new ReactiveList<Gist>();
         private readonly ISessionService _sessionService;
-        public IReadOnlyReactiveList<GistItemViewModel> Gists { get; private set; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        private IReactiveCommand<Unit> _loadMoreCommand;
-        public IReactiveCommand<Unit> LoadMoreCommand
-        {
-            get { return _loadMoreCommand; }
-            private set { this.RaiseAndSetIfChanged(ref _loadMoreCommand, value); }
-        }
 
         public PublicGistsViewModel(ISessionService sessionService)
         {
@@ -30,10 +18,10 @@ namespace CodeHub.Core.ViewModels.Gists
 
             Title = "Public Gists";
 
-            Gists = _gists.CreateDerivedCollection(x => CreateGistItemViewModel(x));
+            Items = InternalItems.CreateDerivedCollection(x => CreateGistItemViewModel(x));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                _gists.Reset(await RetrieveGists());
+                InternalItems.Reset(await RetrieveGists());
             });
         }
 
@@ -62,7 +50,7 @@ namespace CodeHub.Core.ViewModels.Gists
             if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
             {
                 LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    _gists.AddRange(await RetrieveGists(page + 1));
+                    InternalItems.AddRange(await RetrieveGists(page + 1));
                 });
             }
             else

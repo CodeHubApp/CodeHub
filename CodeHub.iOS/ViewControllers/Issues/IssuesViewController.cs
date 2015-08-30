@@ -40,7 +40,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
             });
 
             NavigationItem.TitleView = _viewSegment;
-            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Issues);
+            TableView.Source = new IssueTableViewSource(TableView, ViewModel.Items);
         }
 
         public override void ViewWillAppear(bool animated)

@@ -17,7 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Activity
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.RadioTower.ToEmptyListImage(), "There is no activity."));
 
-            this.WhenAnyValue(x => x.ViewModel.Events)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new EventTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

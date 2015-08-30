@@ -10,18 +10,15 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 {
     public class TeamsViewController : BaseTableViewController<TeamsViewModel>
     {
-        public TeamsViewController()
-        {
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
 
-            this.WhenAnyValue(x => x.ViewModel.Teams)
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
+
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(CreateSource)
                 .BindTo(TableView, x => x.Source);
         }
