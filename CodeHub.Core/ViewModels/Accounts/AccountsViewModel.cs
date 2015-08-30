@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AccountsViewModel : BaseViewModel
+    public class AccountsViewModel : BaseViewModel, IListViewModel<AccountItemViewModel>
     {
         private readonly ReactiveList<GitHubAccount> _accounts = new ReactiveList<GitHubAccount>();
         private readonly IAccountsRepository _accountsRepository;
@@ -27,7 +27,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
-        public IReadOnlyReactiveList<AccountItemViewModel> Accounts { get; private set; }
+        public IReadOnlyReactiveList<AccountItemViewModel> Items { get; private set; }
 
         public IReactiveCommand<object> GoToAddAccountCommand { get; private set; }
 
@@ -40,13 +40,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             Title = "Accounts";
 
-            Accounts = _accounts.CreateDerivedCollection(CreateAccountItem);
+            Items = _accounts.CreateDerivedCollection(CreateAccountItem);
 
             this.WhenAnyValue(x => x.ActiveAccount)
                 .Select(x => x == null ? string.Empty : x.Key)
                 .Subscribe(x =>
                 {
-                    foreach (var account in Accounts)
+                    foreach (var account in Items)
                         account.Selected = account.Id == x;
                 });
 

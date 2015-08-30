@@ -21,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 .Select(x => x.ToBarButtonItem(Images.Cancel))
                 .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
 
-            this.WhenAnyValue(x => x.ViewModel.Accounts)
+            this.WhenAnyValue(x => x.ViewModel.Items)
                 .Select(x => new AccountTableViewSource(TableView, x))
                 .BindTo(TableView, x => x.Source);
         }

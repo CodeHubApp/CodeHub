@@ -49,9 +49,17 @@ namespace CodeHub.Core.ViewModels
 
         protected BaseListViewModel()
         {
-            this.WhenAnyValue(x => x.LoadCommand).IsNotNull().Switch().Take(1)
-                .Select(_ => InternalItems.CountChanged.StartWith(InternalItems.Count).Select(x => x == 0))
-                .Switch().Subscribe(x => IsEmpty = x);
+            this.WhenAnyObservable(x => x.LoadCommand.IsExecuting)
+                .Where(x => x)
+                .Subscribe(x => IsEmpty = false);
+
+            this.WhenAnyObservable(x => x.LoadCommand.IsExecuting)
+                .Where(x => !x)
+                .Subscribe(_ => IsEmpty = InternalItems.Count == 0);
+//
+//            this.WhenAnyObservable(x => x.LoadCommand)
+//                .Select(_ => InternalItems.CountChanged.StartWith(InternalItems.Count).Select(x => x == 0))
+//                .Switch().Subscribe(x => IsEmpty = x);
         }
     }
 }

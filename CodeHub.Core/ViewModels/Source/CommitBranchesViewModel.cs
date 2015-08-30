@@ -14,18 +14,23 @@ namespace CodeHub.Core.ViewModels.Source
 
         public CommitBranchesViewModel(ISessionService applicationService)
         {
-            Title = "Commit Branch";
+            Title = "Branches";
 
             Items = InternalItems.CreateDerivedCollection(
-                x => new BranchItemViewModel(x.Name, () => {
-                    var vm = this.CreateViewModel<CommitsViewModel>();
-                    NavigateTo(vm.Init(RepositoryOwner, RepositoryName, x.Name));
-                }),
+                x => CreateItemViewModel(x),
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
                 InternalItems.Reset(await applicationService.GitHubClient.Repository.GetAllBranches(RepositoryOwner, RepositoryName)));
+        }
+
+        private BranchItemViewModel CreateItemViewModel(Branch branch)
+        {
+            return new BranchItemViewModel(branch.Name, () => {
+                var vm = this.CreateViewModel<CommitsViewModel>();
+                NavigateTo(vm.Init(RepositoryOwner, RepositoryName, branch.Name));
+            });
         }
 
         public CommitBranchesViewModel Init(string repositoryOwner, string repositoryName)

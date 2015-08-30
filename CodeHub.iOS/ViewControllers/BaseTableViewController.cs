@@ -168,20 +168,27 @@ namespace CodeHub.iOS.ViewControllers
         {
             if (x)
             {
-
-                if (EmptyView.Value.Superview == null)
+                if (!EmptyView.IsValueCreated)
                 {
                     EmptyView.Value.Alpha = 0f;
-                    EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
                     TableView.AddSubview(EmptyView.Value);
-                    UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn,
-                        () => EmptyView.Value.Alpha = 1.0f, () => TableView.TableHeaderView.Do(y => y.Hidden = true));
                 }
+
+                EmptyView.Value.UserInteractionEnabled = true;
+                EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height * 2f);
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                TableView.BringSubviewToFront(EmptyView.Value);
+                TableView.TableHeaderView.Do(y => y.Hidden = true);
+                UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 1.0f, null);
             }
             else if (EmptyView.IsValueCreated)
             {
+                EmptyView.Value.UserInteractionEnabled = false;
                 TableView.TableHeaderView.Do(y => y.Hidden = false);
-                EmptyView.Value.RemoveFromSuperview();
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                UIView.Animate(0.1f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 0f, null);
             }
         }
 
