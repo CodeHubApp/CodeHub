@@ -6,6 +6,8 @@ using CodeHub.Core.Utilities;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.Services
 {
@@ -13,14 +15,29 @@ namespace CodeHub.Core.Services
     {
         private readonly IAccountsRepository _accountsRepository;
         private readonly IAnalyticsService _analyticsService;
+        private readonly ISubject<GitHubAccount> _accountSubject = new Subject<GitHubAccount>();
 
         public Client Client { get; private set; }
 
         public IGitHubClient GitHubClient { get; private set; }
 
-        public GitHubAccount Account { get; private set; }
+        private GitHubAccount _account;
+        public GitHubAccount Account
+        {
+            get { return _account; }
+            set
+            {
+                _account = value;
+                _accountSubject.OnNext(value);
+            }
+        }
 
         public BaseViewModel StartupViewModel { get; set; }
+
+        public IObservable<GitHubAccount> AccountObservable
+        {
+            get { return _accountSubject.AsObservable(); }
+        }
 
         public SessionService(IAccountsRepository accountsRepository, IAnalyticsService analyticsService)
         {

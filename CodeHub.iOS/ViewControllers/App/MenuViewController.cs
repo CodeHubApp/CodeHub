@@ -67,9 +67,9 @@ namespace CodeHub.iOS.ViewControllers.App
             _infoSection.Add(new MenuElement("Feedback & Support", () => ViewModel.GoToFeedbackCommand.ExecuteIfCan(), Octicon.Question.ToImage()));
             _infoSection.Add(new MenuElement("Accounts", () => ViewModel.GoToAccountsCommand.ExecuteIfCan(), Octicon.Person.ToImage()));
 
-            this.WhenAnyValue(x => x.ViewModel)
+            this.WhenAnyValue(x => x.ViewModel.LoadCommand)
                 .IsNotNull()
-                .Subscribe(x => x.LoadCommand.ExecuteIfCan());
+                .Subscribe(x => x.ExecuteIfCan());
 
             this.WhenAnyValue(x => x.ViewModel.Account)
                 .IsNotNull()
@@ -106,7 +106,7 @@ namespace CodeHub.iOS.ViewControllers.App
             TableView.TableFooterView = new UIView(new CGRect(0, 0, View.Bounds.Width, 0));
             TableView.BackgroundColor = Theme.MenuBackgroundColor;
             TableView.ScrollsToTop = false;
-            TableView.SeparatorColor = Theme.PrimaryNavigationBarColor;
+            TableView.SeparatorColor = Theme.PrimaryMenuNavigationBarColor;
             TableView.Source = _dialogSource = new MenuTableViewSource(this);
             TableView.RowHeight = 54f;
 

@@ -5,6 +5,8 @@ namespace CodeHub.iOS.Views
 {
     public class EmptyListView : UIView
     {
+        public static UIColor DefaultColor;
+
         public UIImageView ImageView { get; private set; }
 
         public UILabel Title { get; private set; }
@@ -18,7 +20,7 @@ namespace CodeHub.iOS.Views
             Title = new UILabel();
 
             ImageView.Frame = new CGRect(0, 0, 64f, 64f);
-            ImageView.TintColor = Theme.PrimaryNavigationBarColor;
+            ImageView.TintColor = DefaultColor;
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
             ImageView.Center = new CGPoint(Frame.Width / 2f, 86f);
             ImageView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleBottomMargin;
@@ -32,7 +34,7 @@ namespace CodeHub.iOS.Views
             Title.Text = emptyText;
             Title.TextAlignment = UITextAlignment.Center;
             Title.Font = UIFont.PreferredHeadline;
-            Title.TextColor = Theme.PrimaryNavigationBarColor;
+            Title.TextColor = DefaultColor;
             Add(Title);
 
             BackgroundColor = UIColor.White;

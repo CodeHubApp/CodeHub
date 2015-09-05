@@ -2,14 +2,11 @@ using System;
 using UIKit;
 using Foundation;
 using SDWebImage;
-using Humanizer;
-using ReactiveUI;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class StringElement : Element 
     {
-        public static UIColor DefaultTintColor = null;
         public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
         public static UIFont  DefaultDetailFont = UIFont.PreferredSubheadline;
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
@@ -154,15 +151,18 @@ namespace CodeHub.iOS.DialogElements
         {
             cell.SelectionStyle = (Tapped != null) ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
             cell.TextLabel.Text = Caption;
+            cell.TextLabel.TextColor = TextColor;
             cell.ImageView.Image = Image;
-            cell.ImageView.TintColor = ImageTintColor ?? DefaultTintColor;
             cell.Accessory = Accessory;
 
             if (ImageUri != null)
                 cell.ImageView.SetImage(new NSUrl(ImageUri.AbsoluteUri), Image);
 
             if (cell.DetailTextLabel != null)
+            {
                 cell.DetailTextLabel.Text = Value ?? "";
+                cell.DetailTextLabel.TextColor = DetailColor;
+            }
             return cell;
         }
 

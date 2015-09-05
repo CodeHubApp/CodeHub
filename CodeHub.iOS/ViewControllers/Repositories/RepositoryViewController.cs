@@ -11,7 +11,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
-        private StringElement _ownerElement;
+//        private StringElement _ownerElement;
         private Section _sourceSection;
 
         public override void ViewDidLoad()
@@ -27,26 +27,26 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 new StringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Octicon.Code.ToImage()),
             };
 
-            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
-            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Repository)
-                .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
+//            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
+//            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
+//            this.WhenAnyValue(x => x.ViewModel.Repository)
+//                .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
 
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
             this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
                 HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
             _splitElements[0] = new SplitViewElement();
-            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage(), string.Empty);
-            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage(), string.Empty);
+            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage());
+            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage());
 
             _splitElements[1] = new SplitViewElement();
-            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Octicon.IssueOpened.ToImage(), string.Empty, () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
-            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Octicon.Organization.ToImage(), string.Empty, () => ViewModel.GoToContributors.ExecuteIfCan());
+            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Octicon.IssueOpened.ToImage(), () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
+            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Octicon.Organization.ToImage(), () => ViewModel.GoToContributors.ExecuteIfCan());
 
             _splitElements[2] = new SplitViewElement();
-            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Octicon.Tag.ToImage(), string.Empty, () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
-            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Octicon.GitBranch.ToImage(), string.Empty, () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
+            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Octicon.Tag.ToImage(), () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
+            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Octicon.GitBranch.ToImage(), () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
 
             var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
             var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
@@ -73,11 +73,11 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     });
 
             Appeared.Take(1)
-                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)))
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
                 .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
                 .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
             this.WhenAnyValue(x => x.ViewModel.RepositoryName)
@@ -88,15 +88,15 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 .Subscribe(x => NavigationItem.RightBarButtonItem = x);
 
             this.WhenAnyValue(x => x.ViewModel.Branches)
-                .Select(x => x == null ? "- Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
+                .Select(x => x == null ? "Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
                 .SubscribeSafe(x => _splitElements[2].Button2.Text = x);
 
             this.WhenAnyValue(x => x.ViewModel.Contributors)
-                .Select(x => x == null ? "- Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
+                .Select(x => x == null ? "Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
                 .SubscribeSafe(x => _splitElements[1].Button2.Text = x);
 
             this.WhenAnyValue(x => x.ViewModel.Releases)
-                .Select(x => x == null ? "- Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
+                .Select(x => x == null ? "Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
                 .SubscribeSafe(x => _splitElements[2].Button1.Text = x);
 
             this.WhenAnyValue(x => x.ViewModel.Description)
@@ -122,7 +122,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             var model = ViewModel.Repository;
             var sec1 = new Section();
             sec1.Add(_splitElements);
-            sec1.Add(_ownerElement);
+//            sec1.Add(_ownerElement);
 
             if (model.Parent != null)
             {

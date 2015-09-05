@@ -16,6 +16,14 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 {
     public class RepositoriesTrendingViewController : BaseTableViewController<RepositoriesTrendingViewModel>
     {
+        private readonly TrendingTitleButton _trendingTitleButton;
+
+        public RepositoriesTrendingViewController()
+        {
+            _trendingTitleButton = new TrendingTitleButton { Frame = new CGRect(0, 0, 200f, 32f) };
+            _trendingTitleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -23,15 +31,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no repositories."));
 
-            var titleButton = new TrendingTitleButton
-            {
-                Frame = new CGRect(0, 0, 200f, 32f),
-                TintColor = Theme.PrimaryNavigationBarTextColor
-            };
-            NavigationItem.TitleView = titleButton;
-            titleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
+            NavigationItem.TitleView = _trendingTitleButton;
             this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
-                .Subscribe(x => titleButton.Text = x.Name);
+                .Subscribe(x => _trendingTitleButton.Text = x.Name);
 
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
@@ -48,7 +50,10 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             base.ViewWillAppear(animated);
             if (NavigationController != null)
+            {
                 NavigationController.NavigationBar.ShadowImage = new UIImage();
+                _trendingTitleButton.TintColor = NavigationController.NavigationBar.TintColor;
+            }
         }
 
         public override void ViewWillDisappear(bool animated)

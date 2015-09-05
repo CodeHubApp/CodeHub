@@ -44,11 +44,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             _splitRow2.Button1 = new SplitViewElement.SplitButton(Octicon.Pencil.ToImage(), string.Empty);
             _splitRow2.Button2 = new SplitViewElement.SplitButton(Octicon.Star.ToImage(), string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
 
-            _ownerElement = new StringElement("Owner", string.Empty) 
-            { 
-                Image = Octicon.Person.ToImage(),
-                ImageTintColor = Theme.PrimaryNavigationBarColor
-            };
+            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
 
             this.WhenAnyValue(x => x.ViewModel.IsStarred)
                 .Where(x => x.HasValue)

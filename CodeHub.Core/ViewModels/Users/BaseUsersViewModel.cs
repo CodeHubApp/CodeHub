@@ -17,28 +17,31 @@ namespace CodeHub.Core.ViewModels.Users
         {
             SessionService = sessionService;
 
-            Items = InternalItems.CreateDerivedCollection(x => {
-                var isOrg = x.Type.HasValue && x.Type.Value == AccountType.Organization;
-                return new UserItemViewModel(x.Login, x.AvatarUrl, isOrg, () => {
-                    if (isOrg)
-                    {
-                        var vm = this.CreateViewModel<OrganizationViewModel>();
-                        vm.Init(x.Login);
-                        NavigateTo(vm);
-                    }
-                    else
-                    {
-                        var vm = this.CreateViewModel<UserViewModel>();
-                        vm.Init(x.Login, x);
-                        NavigateTo(vm);
-                    }
-                });
-            },
+            Items = InternalItems.CreateDerivedCollection(x => CreateItemViewModel(x),
             x => x.Login.StartsWith(SearchKeyword ?? string.Empty, StringComparison.OrdinalIgnoreCase),
             signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
                 InternalItems.Reset(await RetrieveUsers());
+            });
+        }
+
+        private UserItemViewModel CreateItemViewModel(User user)
+        {
+            var isOrg = user.Type.HasValue && user.Type.Value == AccountType.Organization;
+            return new UserItemViewModel(user.Login, user.AvatarUrl, isOrg, () => {
+                if (isOrg)
+                {
+                    var vm = this.CreateViewModel<OrganizationViewModel>();
+                    vm.Init(user.Login);
+                    NavigateTo(vm);
+                }
+                else
+                {
+                    var vm = this.CreateViewModel<UserViewModel>();
+                    vm.Init(user.Login, user);
+                    NavigateTo(vm);
+                }
             });
         }
 

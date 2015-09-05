@@ -107,6 +107,10 @@ namespace CodeHub.iOS
             viewModelViews.RegisterViewModels(typeof(SettingsViewController).Assembly);
 
             Theme.Setup();
+            Theme.SetPrimary(null);
+//
+//            Locator.Current.GetService<ISessionService>().AccountObservable.Subscribe(x => {
+//            });
 
             try
             {

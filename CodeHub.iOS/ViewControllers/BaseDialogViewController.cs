@@ -13,6 +13,7 @@ namespace CodeHub.iOS.ViewControllers
     {
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
+        private readonly UIView _backgroundHeaderView;
         private DialogTableViewSource _dialogSource;
 
         protected RootElement Root
@@ -53,6 +54,8 @@ namespace CodeHub.iOS.ViewControllers
 
             HeaderView = new ImageAndTitleHeaderView();
 
+            _backgroundHeaderView = new UIView();
+
             Appearing
                 .Where(x => ToolbarItems != null && NavigationController != null)
                 .Subscribe(x => NavigationController.SetToolbarHidden(false, x));
@@ -73,6 +76,7 @@ namespace CodeHub.iOS.ViewControllers
             HeaderView.TextColor = NavigationController.NavigationBar.TintColor;
             HeaderView.SubTextColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f);
             (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
+            _backgroundHeaderView.BackgroundColor = HeaderView.BackgroundColor;
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -115,11 +119,10 @@ namespace CodeHub.iOS.ViewControllers
 
             var frame = TableView.Bounds;
             frame.Y = -frame.Size.Height;
-            var view = new UIView(frame);
-            view.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-            view.BackgroundColor = Theme.PrimaryNavigationBarColor;
-            view.Layer.ZPosition = -1f;
-            TableView.InsertSubview(view, 0);
+            _backgroundHeaderView.Frame = frame;
+            _backgroundHeaderView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+            _backgroundHeaderView.Layer.ZPosition = -1f;
+            TableView.InsertSubview(_backgroundHeaderView, 0);
         }
     }
 }

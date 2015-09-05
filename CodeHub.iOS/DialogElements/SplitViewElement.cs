@@ -158,20 +158,24 @@ namespace CodeHub.iOS.DialogElements
                 }
             }
 
-            public SplitButton(UIImage image, string text, Action touched = null)
+            public SplitButton(UIImage image, Action touched)
+                : this (image, null, touched)
+            {
+            }
+
+            public SplitButton(UIImage image, string text = null, Action touched = null)
                 : base(UIButtonType.Custom)
             {
                 AutosizesSubviews = true;
 
                 _image = new UIImageView();
-                _image.Image = image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-                _image.TintColor = Theme.PrimaryNavigationBarColor;
+                _image.Image = image;
                 this.Add(_image);
 
                 _text = new UILabel();
                 _text.TextColor = DefaulTextColor;
                 _text.Font = TextFont;
-                _text.Text = text;
+                _text.Text = text ?? string.Empty;
                 _text.AdjustsFontSizeToFitWidth = true;
                 _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);

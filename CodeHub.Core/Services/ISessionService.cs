@@ -2,11 +2,14 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels;
+using System;
 
 namespace CodeHub.Core.Services
 {
     public interface ISessionService
     {
+        IObservable<GitHubAccount> AccountObservable { get; }
+
         GitHubAccount Account { get; }
 
         GitHubSharp.Client Client { get; }

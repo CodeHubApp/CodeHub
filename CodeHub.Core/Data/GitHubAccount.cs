@@ -51,6 +51,12 @@ namespace CodeHub.Core.Data
         public string CodeEditTheme { get; set; }
 
         /// <summary>
+        /// The application theme name
+        /// </summary>
+        /// <value>The app theme.</value>
+        public string AppTheme { get; set; }
+
+        /// <summary>
         /// Gets or sets the code hub theme.
         /// </summary>
         public string CodeHubTheme { get; set; }

@@ -36,7 +36,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = Theme.PrimaryNavigationBarColor;
+            View.BackgroundColor = UIColor.FromRGB(50, 50, 50);
 
             var pages = GetPages().Select(x => new CardPageViewController(x)).ToArray();
             var welcomePageViewController = new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);

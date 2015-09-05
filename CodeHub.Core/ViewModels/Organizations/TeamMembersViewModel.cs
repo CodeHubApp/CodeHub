@@ -15,7 +15,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         protected override System.Uri RequestUri
         {
-            get { return Octokit.ApiUrls.Teams(Id); }
+            get { return Octokit.ApiUrls.TeamMembers(Id); }
         }
 
         public TeamMembersViewModel Init(int id)

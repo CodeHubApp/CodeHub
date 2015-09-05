@@ -33,7 +33,7 @@ namespace CodeHub.iOS.Cells
             TextLabel.TextColor = Theme.MenuTextColor;
             SelectedBackgroundView = new UIView { BackgroundColor = Theme.MenuSelectedBackgroundColor };
 
-            _numberView.BackgroundColor = Theme.PrimaryNavigationBarColor;
+            _numberView.BackgroundColor = Theme.PrimaryMenuNavigationBarColor;
             _numberView.Layer.MasksToBounds = true;
             _numberView.Layer.CornerRadius = 5f;
             _numberView.TextAlignment = UITextAlignment.Center;

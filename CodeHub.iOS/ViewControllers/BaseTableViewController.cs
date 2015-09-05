@@ -126,8 +126,6 @@ namespace CodeHub.iOS.ViewControllers
                 {
                     await iLoadableViewModel.LoadCommand.ExecuteAsync();
                     refreshControl.EndRefreshing();
-                    if (EmptyView.IsValueCreated && EmptyView.Value.Superview != null)
-                        TableView.BringSubviewToFront(EmptyView.Value);
                 }
             };
 
