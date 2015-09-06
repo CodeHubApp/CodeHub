@@ -1,7 +1,7 @@
 using System;
 using CodeHub.iOS.Views.Source;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +60,7 @@ namespace CodeHub.ViewControllers
 			{
 				var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
 				var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-				Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
+				Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
 				_isLoaded = true;
 			}
 		}
@@ -113,9 +113,12 @@ namespace CodeHub.ViewControllers
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (sender, e) => {
+			sheet.Dismissed += (sender, e) => {
+				BeginInvokeOnMainThread(() =>
+					{
                 if (e.ButtonIndex == addButton)
                     ShowCommentComposer(model.PatchLine);
+					});
             };
 
             sheet.ShowInView(this.View);

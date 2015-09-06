@@ -3,6 +3,7 @@ using CodeFramework.Core.Services;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
+using Foundation;
 
 namespace CodeHub.iOS.Services
 {
@@ -61,7 +62,7 @@ namespace CodeHub.iOS.Services
             ids.Add(FeatureIds.EnterpriseSupport);
             var client = _httpClientService.Create();
             client.Timeout = new TimeSpan(0, 0, 15);
-            var response = await client.GetAsync("http://push.codehub-app.com/in-app");
+			var response = await client.GetAsync("http://push.codehub-app.com/in-app?version=" + NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString());
             var data = await response.Content.ReadAsStringAsync();
             ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
             return ids;

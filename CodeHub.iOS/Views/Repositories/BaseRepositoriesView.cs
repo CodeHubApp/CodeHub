@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Title = "Repositories".t();
             NoItemsText = "No Repositories".t(); 
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
 				(s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));  
         }
 
@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             BindCollection(ViewModel.Repositories, CreateElement);
-			TableView.SeparatorInset = new MonoTouch.UIKit.UIEdgeInsets(0, 56f, 0, 0);
+			TableView.SeparatorInset = new UIKit.UIEdgeInsets(0, 56f, 0, 0);
         }
 
         protected Element CreateElement(RepositoryModel repo)

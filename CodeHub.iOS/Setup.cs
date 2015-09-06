@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <summary>
 //    Defines the Setup type.
 // </summary>
@@ -13,7 +13,7 @@ using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Views;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.Bindings;
 
 namespace CodeHub.iOS
@@ -35,14 +35,6 @@ namespace CodeHub.iOS
         public Setup(MvxApplicationDelegate applicationDelegate, IMvxTouchViewPresenter presenter)
             : base(applicationDelegate, presenter)
         {
-        }
-
-        protected override Assembly[] GetViewAssemblies()
-        {
-            var list = new List<Assembly>();
-            list.AddRange(base.GetViewAssemblies());
-            list.Add(typeof(StartupView).Assembly);
-            return list.ToArray();
         }
 
         protected override Assembly[] GetViewModelAssemblies()
@@ -81,16 +73,6 @@ namespace CodeHub.iOS
         /// <returns>An instance of IMvxApplication</returns>
         protected override IMvxApplication CreateApp()
         {
-            this.CreatableTypes(typeof(BaseViewModel).Assembly)
-                .EndingWith("Service")
-                .AsInterfaces()
-                .RegisterAsLazySingleton();
-
-            this.CreatableTypes(typeof(TouchViewPresenter).Assembly)
-                .EndingWith("Service")
-                .AsInterfaces()
-                .RegisterAsLazySingleton();
-
             this.CreatableTypes(typeof(Core.App).Assembly)
                 .EndingWith("Service")
                 .AsInterfaces()

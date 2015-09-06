@@ -1,4 +1,4 @@
-﻿using CodeFramework.Core.ViewModels;
+using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
 using System.Linq;
@@ -124,7 +124,8 @@ namespace CodeHub.Core.ViewModels.App
 			}
 			catch (Exception e)
 			{
-                ReportException(e);
+				GetService<IAlertDialogService> ().Alert ("Unable to register for push notifications!", e.Message);
+                //ReportException(e);
 			}
             finally
             {

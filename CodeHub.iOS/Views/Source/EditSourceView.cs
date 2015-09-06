@@ -1,9 +1,9 @@
 using System;
 using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.Foundation;
+using UIKit;
+using CoreGraphics;
+using Foundation;
 using CodeFramework.iOS.Utils;
 using Cirrious.MvvmCross.Touch.Views;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace CodeHub.iOS.Views.Source
 		{
 			EdgesForExtendedLayout = UIRectEdge.None;
 			Title = "Edit";
-			_composerView = new ComposerView (ComputeComposerSize (RectangleF.Empty));
+			_composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
 
 			View.AddSubview (_composerView);
 		}
@@ -73,13 +73,13 @@ namespace CodeHub.iOS.Views.Source
 		void KeyboardWillHide (NSNotification notification)
 		{
 			UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-			_composerView.Frame = ComputeComposerSize(RectangleF.Empty), null);
+			_composerView.Frame = ComputeComposerSize(CGRect.Empty), null);
 		}
 
-		RectangleF ComputeComposerSize (RectangleF kbdBounds)
+		CGRect ComputeComposerSize (CGRect kbdBounds)
 		{
 			var view = View.Bounds;
-			return new RectangleF (0, 0, view.Width, view.Height-kbdBounds.Height);
+			return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
 		}
 
 		[Obsolete]
@@ -107,14 +107,14 @@ namespace CodeHub.iOS.Views.Source
 		{
 			internal readonly UITextView TextView;
 
-			public ComposerView (RectangleF bounds) : base (bounds)
+			public ComposerView (CGRect bounds) : base (bounds)
 			{
-				TextView = new UITextView (RectangleF.Empty) {
+				TextView = new UITextView (CGRect.Empty) {
 					Font = UIFont.SystemFontOfSize (14),
 				};
 
 				// Work around an Apple bug in the UITextView that crashes
-				if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+				if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
 					TextView.AutocorrectionType = UITextAutocorrectionType.No;
 
 				AddSubview (TextView);
@@ -131,9 +131,9 @@ namespace CodeHub.iOS.Views.Source
 				Resize (Bounds);
 			}
 
-			void Resize (RectangleF bounds)
+			void Resize (CGRect bounds)
 			{
-				TextView.Frame = new RectangleF (0, 0, bounds.Width, bounds.Height);
+				TextView.Frame = new CGRect (0, 0, bounds.Width, bounds.Height);
 			}
 
 			public string Text { 

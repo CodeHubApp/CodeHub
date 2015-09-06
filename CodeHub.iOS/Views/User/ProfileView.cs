@@ -3,7 +3,7 @@ using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.User;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Views.User
 {
@@ -53,7 +53,7 @@ namespace CodeHub.iOS.Views.User
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+			sheet.Dismissed += (s, e) => {
 				if (e.ButtonIndex == followButton)
 				{
 					ViewModel.ToggleFollowingCommand.Execute(null);

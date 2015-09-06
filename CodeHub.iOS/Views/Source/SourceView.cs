@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Views.Source
@@ -31,12 +31,15 @@ namespace CodeHub.iOS.Views.Source
 			var vm = (SourceViewModel)ViewModel;
 			var sheet = base.CreateActionSheet(title);
 			var editButton = vm.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
-			sheet.Clicked += (sender, e) =>
+			sheet.Dismissed += (sender, e) =>
 			{
+				BeginInvokeOnMainThread(() =>
+					{
 				if (e.ButtonIndex == editButton)
 				{
 					vm.GoToEditCommand.Execute(null);
 				}
+					});
 			};
 			return sheet;
 		}

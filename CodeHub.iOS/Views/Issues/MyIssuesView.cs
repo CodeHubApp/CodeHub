@@ -1,5 +1,5 @@
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Issues

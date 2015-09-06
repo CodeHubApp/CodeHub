@@ -2,7 +2,7 @@ using System;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
 using CodeHub.Core.ViewModels.Notifications;
@@ -79,7 +79,7 @@ namespace CodeHub.iOS.Views
             readonly UIButton _button;
             readonly NotificationsView _parent;
             public MarkReadSection(string text, NotificationsView parent, bool button)
-                : base(new System.Drawing.RectangleF(0, 0, 320, 28f))
+                : base(new CoreGraphics.CGRect(0, 0, 320, 28f))
             {
                 _parent = parent;
                 TextLabel.Text = text;
@@ -101,7 +101,7 @@ namespace CodeHub.iOS.Views
                 base.LayoutSubviews();
 
                 if (_button != null)
-                    _button.Frame = new System.Drawing.RectangleF(Frame.Width - 42f, 1, 26, 26);
+                    _button.Frame = new CoreGraphics.CGRect(Frame.Width - 42f, 1, 26, 26);
             }
         }
 

@@ -3,7 +3,7 @@ using System.Linq;
 using CodeFramework.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Issues

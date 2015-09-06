@@ -1,7 +1,7 @@
 using System;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Text;
 using Cirrious.CrossCore;
 using CodeFramework.Core.Services;
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.Accounts
             : base(false)
         {
             Title = "Login";
-			NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(MonoTouch.UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
             _hud = this.CreateHud();
         }
 
@@ -34,12 +34,15 @@ namespace CodeHub.iOS.Views.Accounts
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => {
+			sheet.Dismissed += (s, e) => {
 				// Pin to menu
-				if (e.ButtonIndex == basicButton)
-				{
-					ViewModel.GoToOldLoginWaysCommand.Execute(null);
-				}
+				BeginInvokeOnMainThread(() =>
+					{
+						if (e.ButtonIndex == basicButton)
+						{
+							ViewModel.GoToOldLoginWaysCommand.Execute(null);
+						}
+					});
 			};
 
 			sheet.ShowInView(this.View);
@@ -49,7 +52,7 @@ namespace CodeHub.iOS.Views.Accounts
 		{
 			base.ViewDidLoad();
 
-			if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
+            if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
 				LoadRequest();
 
             ViewModel.Bind(x => x.IsLoggingIn, x =>
@@ -95,21 +98,28 @@ namespace CodeHub.iOS.Views.Accounts
 			alert.Show();
 		}
 
-		protected override bool ShouldStartLoad(MonoTouch.Foundation.NSUrlRequest request, MonoTouch.UIKit.UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
-            //We're being redirected to our redirect URL so we must have been successful
-            if (request.Url.Host == "dillonbuchanan.com")
-            {
-                var code = request.Url.Query.Split('=')[1];
-				ViewModel.Login(code);
-                return false;
-            }
-            if (request.Url.AbsoluteString == "https://github.com/" || request.Url.AbsoluteString.StartsWith("https://github.com/join"))
-            {
-                return false;
-            }
+			try
+			{
+	            //We're being redirected to our redirect URL so we must have been successful
+	            if (request.Url.Host == "dillonbuchanan.com")
+	            {
+	                var code = request.Url.Query.Split('=')[1];
+					ViewModel.Login(code);
+	                return false;
+	            }
+	            if (request.Url.AbsoluteString == "https://github.com/" || request.Url.AbsoluteString.StartsWith("https://github.com/join"))
+	            {
+	                return false;
+	            }
 
-            return base.ShouldStartLoad(request, navigationType);
+	            return base.ShouldStartLoad(request, navigationType);
+			}
+			catch (Exception e) {
+				Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
+				return false;
+			}
         }
 
 		protected override void OnLoadError(object sender, UIWebErrorArgs e)
@@ -117,7 +127,7 @@ namespace CodeHub.iOS.Views.Accounts
 			base.OnLoadError(sender, e);
 
 			//Frame interrupted error
-			if (e.Error.Code == 102)
+            if (e.Error.Code == 102 || e.Error.Code == -999)
 				return;
 
 			if (ViewModel.IsEnterprise)
@@ -154,10 +164,10 @@ namespace CodeHub.iOS.Views.Accounts
             try
             {
                 //Remove all cookies & cache
-                foreach (var c in MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                    MonoTouch.Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-                MonoTouch.Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-    			Web.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(ViewModel.LoginUrl)));
+                foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
+                    Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
+                Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
+    			Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(ViewModel.LoginUrl)));
             }
             catch (Exception e)
             {

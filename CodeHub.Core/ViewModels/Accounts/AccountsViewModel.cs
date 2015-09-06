@@ -1,4 +1,4 @@
-﻿using CodeFramework.Core.Data;
+using CodeFramework.Core.Data;
 using CodeFramework.Core.Services;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Data;

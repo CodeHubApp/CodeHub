@@ -2,6 +2,7 @@ using CodeFramework.Elements;
 using CodeFramework.ViewControllers;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Issues;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Issues
 {

@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using CodeFramework.iOS.XCallback;
 using Cirrious.CrossCore;
 using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
 using Cirrious.MvvmCross.Plugins.Messenger;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 using CodeHub.Core.Messages;
 
 namespace CodeHub.iOS

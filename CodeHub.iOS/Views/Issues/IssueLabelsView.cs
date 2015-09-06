@@ -3,7 +3,7 @@ using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
 using System.Linq;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.Utils;
 using CodeFramework.iOS.Elements;
 

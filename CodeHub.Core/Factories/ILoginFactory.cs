@@ -1,4 +1,4 @@
-﻿using CodeHub.Core.Data;
+using CodeHub.Core.Data;
 using System.Threading.Tasks;
 
 namespace CodeHub.Core.Factories

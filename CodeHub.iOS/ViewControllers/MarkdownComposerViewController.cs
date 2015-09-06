@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using CodeFramework.iOS.ViewControllers;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeHub.Core.Utils;
-using MonoTouch.Foundation;
+using Foundation;
 using System.Net;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
 using CodeFramework.Core.Services;
 using System.Linq;
-using System.Drawing;
+using CoreGraphics;
+using MonoTouch.UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -40,13 +41,13 @@ namespace CodeHub.iOS.ViewControllers
                 CreateAccessoryButton(pictureImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("![]()");
-                    TextView.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 4, 0);
+                    TextView.SelectedRange = new Foundation.NSRange(range.Location + 4, 0);
                 }),
                 CreateAccessoryButton(photoImage, () => SelectImage()),
                 CreateAccessoryButton(linkImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("[]()");
-                    TextView.SelectedRange = new MonoTouch.Foundation.NSRange(range.Location + 1, 0);
+                    TextView.SelectedRange = new Foundation.NSRange(range.Location + 1, 0);
                 }),
                 CreateAccessoryButton("~", () => TextView.InsertText("~")),
                 CreateAccessoryButton("=", () => TextView.InsertText("=")),
@@ -219,7 +220,7 @@ namespace CodeHub.iOS.ViewControllers
                 var markdownService = Mvx.Resolve<IMarkdownService>();
                 var path = MarkdownHtmlGenerator.CreateFile(markdownService.Convert(Text));
                 var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-                _previewView.LoadRequest(new MonoTouch.Foundation.NSUrlRequest(new MonoTouch.Foundation.NSUrl(uri)));
+                _previewView.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
             }
         }
     }

@@ -4,7 +4,7 @@
 // actions made in the Xcode designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.ViewControllers
 {
@@ -12,16 +12,16 @@ namespace CodeHub.ViewControllers
 	partial class ModifyGistFileController
 	{
 		[Outlet]
-		MonoTouch.UIKit.UITextField Name { get; set; }
+		UIKit.UITextField Name { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIView NameView { get; set; }
+		UIKit.UIView NameView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIScrollView Scroll { get; set; }
+		UIKit.UIScrollView Scroll { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UITextView Text { get; set; }
+		UIKit.UITextView Text { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

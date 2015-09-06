@@ -4,7 +4,7 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -61,7 +61,7 @@ namespace CodeHub.iOS.Views.Repositories
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
+			sheet.Dismissed += (s, e) => {
                 // Pin to menu
                 if (e.ButtonIndex == pinButton)
                 {

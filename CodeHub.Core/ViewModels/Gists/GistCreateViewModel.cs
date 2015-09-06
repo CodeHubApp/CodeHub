@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CodeFramework.Core.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;

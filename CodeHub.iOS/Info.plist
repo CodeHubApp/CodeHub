@@ -15,13 +15,13 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>7.0</string>
+	<string>8.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>CodeHub</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.3.2</string>
+	<string>2.3.5</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-60@2x</string>
@@ -52,10 +52,6 @@
 	<false/>
 	<key>UIPrerenderedIcon</key>
 	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -67,7 +63,16 @@
 			</array>
 		</dict>
 	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>2.3.2</string>
+	<string>2.3.5.0</string>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch</string>
 </dict>
 </plist>

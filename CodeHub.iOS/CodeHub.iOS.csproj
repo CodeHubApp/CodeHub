@@ -4,12 +4,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProjectGuid>{B061316A-F386-4FE2-93B7-555584234FF8}</ProjectGuid>
-    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>CodeHub.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>CodeHubiOS</AssemblyName>
     <TargetFrameworkProfile />
+    <TargetFrameworkIdentifier>Xamarin.iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,6 +28,7 @@
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -40,6 +43,7 @@
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,10 +76,11 @@
     <MtouchUseThumb>true</MtouchUseThumb>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <IpaPackageName>
     </IpaPackageName>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -90,11 +95,13 @@
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
-    <MtouchUseThumb>true</MtouchUseThumb>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <DefineConstants>DEBUG</DefineConstants>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchUseThumb>true</MtouchUseThumb>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -110,9 +117,11 @@
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
     <BuildIpa>true</BuildIpa>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Images\Images.cs" />
@@ -173,9 +182,6 @@
     <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
-    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
-    <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
@@ -214,7 +220,6 @@
     <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
-    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <Compile Include="Factories\FeatureFactory.cs" />
     <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
@@ -223,70 +228,197 @@
     <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
+    <Compile Include="Bindings\UISegmentControlBinding.cs" />
+    <Compile Include="Cells\IssueCellView.cs" />
+    <Compile Include="Cells\IssueCellView.designer.cs">
+      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\NewsCellView.cs" />
+    <Compile Include="Cells\NewsCellView.designer.cs">
+      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\NewsCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\RepositoryCellView.cs" />
+    <Compile Include="Cells\RepositoryCellView.designer.cs">
+      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Elements\ChangesetElement.cs" />
+    <Compile Include="Elements\CommentElement.cs" />
+    <Compile Include="Elements\IssueElement.cs" />
+    <Compile Include="Elements\LabelElement.cs" />
+    <Compile Include="Elements\MilestoneElement.cs" />
+    <Compile Include="Elements\NewsFeedElement.cs" />
+    <Compile Include="Elements\RepositoryElement.cs" />
+    <Compile Include="Elements\UserElement.cs" />
+    <Compile Include="Elements\WebElement.cs" />
+    <Compile Include="Services\AccountPreferencesService.cs" />
+    <Compile Include="Services\AlertDialogService.cs" />
+    <Compile Include="Services\AnalyticsService.cs" />
+    <Compile Include="Services\DefaultValueService.cs" />
+    <Compile Include="Services\EnvironmentService.cs" />
+    <Compile Include="Services\HttpClientService.cs" />
+    <Compile Include="Services\ShareService.cs" />
+    <Compile Include="Services\UIThreadService.cs" />
+    <None Include="SourceBrowser\css\arta.css" />
+    <None Include="SourceBrowser\css\ascetic.css" />
+    <None Include="SourceBrowser\css\brown_paper.css" />
+    <None Include="SourceBrowser\css\brown_papersq.png" />
+    <None Include="SourceBrowser\css\dark.css" />
+    <None Include="SourceBrowser\css\default.css" />
+    <None Include="SourceBrowser\css\docco.css" />
+    <None Include="SourceBrowser\css\far.css" />
+    <None Include="SourceBrowser\css\foundation.css" />
+    <None Include="SourceBrowser\css\github.css" />
+    <None Include="SourceBrowser\css\googlecode.css" />
+    <None Include="SourceBrowser\css\idea.css" />
+    <None Include="SourceBrowser\css\ir_black.css" />
+    <None Include="SourceBrowser\css\magula.css" />
+    <None Include="SourceBrowser\css\mono-blue.css" />
+    <None Include="SourceBrowser\css\monokai.css" />
+    <None Include="SourceBrowser\css\monokai_sublime.css" />
+    <None Include="SourceBrowser\css\obsidian.css" />
+    <None Include="SourceBrowser\css\pojoaque.css" />
+    <None Include="SourceBrowser\css\pojoaque.jpg" />
+    <None Include="SourceBrowser\css\railscasts.css" />
+    <None Include="SourceBrowser\css\rainbow.css" />
+    <None Include="SourceBrowser\css\school_book.css" />
+    <None Include="SourceBrowser\css\school_book.png" />
+    <None Include="SourceBrowser\css\solarized_dark.css" />
+    <None Include="SourceBrowser\css\solarized_light.css" />
+    <None Include="SourceBrowser\css\sunburst.css" />
+    <None Include="SourceBrowser\css\tomorrow.css" />
+    <None Include="SourceBrowser\css\tomorrow-night.css" />
+    <None Include="SourceBrowser\css\tomorrow-night-blue.css" />
+    <None Include="SourceBrowser\css\tomorrow-night-bright.css" />
+    <None Include="SourceBrowser\css\tomorrow-night-eighties.css" />
+    <None Include="SourceBrowser\css\xcode.css" />
+    <None Include="SourceBrowser\css\zenburn.css" />
+    <Compile Include="TableViewCells\MilestoneTableViewCell.cs" />
+    <Compile Include="ViewControllers\BaseDialogViewController.cs" />
+    <Compile Include="ViewControllers\Composer.cs" />
+    <Compile Include="ViewControllers\FilterViewController.cs" />
+    <Compile Include="ViewControllers\LiteComposer.cs" />
+    <Compile Include="ViewControllers\MenuBaseViewController.cs" />
+    <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
+    <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
+    <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
+    <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
+    <Compile Include="Utils\Hud.cs" />
+    <Compile Include="Utils\PickerAlert.cs" />
+    <Compile Include="Utils\Translate.cs" />
+    <Compile Include="Utils\UIImageExtensions.cs" />
+    <Compile Include="Utils\Util.cs" />
+    <Compile Include="Utils\ViewControllerExtensions.cs" />
+    <Compile Include="Views\AccountsView.cs" />
+    <Compile Include="Views\AddRemoveView.cs" />
+    <Compile Include="Views\HeaderView.cs" />
+    <Compile Include="Views\MenuSectionView.cs" />
+    <Compile Include="Views\MilestoneView.cs" />
+    <Compile Include="Views\ProfileButton.cs" />
+    <Compile Include="Views\ProgressBarView.cs" />
+    <Compile Include="Views\ScrollingToolbarView.cs" />
+    <Compile Include="Views\StartupView.cs" />
+    <Compile Include="Views\TableViewSectionView.cs" />
+    <Compile Include="Views\ToolbarButton.cs" />
+    <Compile Include="Views\UILabelWithLinks.cs" />
+    <Compile Include="Views\WebBrowserView.cs" />
+    <Compile Include="Views\WebView.cs" />
+    <Compile Include="Views\App\DefaultStartupView.cs" />
+    <Compile Include="XCallback\XCallbackQuery.cs" />
+    <Compile Include="TouchViewPresenter.cs" />
+    <Compile Include="Elements\ActivityElement.cs" />
+    <Compile Include="Elements\ButtonElement.cs" />
+    <Compile Include="Elements\CustomElement.cs" />
+    <Compile Include="Elements\InputElement.cs" />
+    <Compile Include="Elements\MultilinedElement.cs" />
+    <Compile Include="Elements\MultilinedInputElement.cs" />
+    <Compile Include="Elements\MultiLineEditElement.cs" />
+    <Compile Include="Elements\MultiLineTableCell.cs" />
+    <Compile Include="Elements\NameTimeStringElement.cs" />
+    <Compile Include="Elements\NoItemsElement.cs" />
+    <Compile Include="Elements\OwnerDrawnElement.cs" />
+    <Compile Include="Elements\PaginateElement.cs" />
+    <Compile Include="Elements\SegmentElement.cs" />
+    <Compile Include="Elements\SpaceingElement.cs" />
+    <Compile Include="Elements\SplitButtonElement.cs" />
+    <Compile Include="Elements\SplitElement.cs" />
+    <Compile Include="Elements\TrueFalseElement.cs" />
+    <Compile Include="Elements\LoadMoreElement.cs" />
+    <Compile Include="Utils\Controls.cs" />
+    <Compile Include="Utils\GlassButton.cs" />
+    <Compile Include="Utils\Graphics.cs" />
+    <Compile Include="Utils\ImageLoader.cs" />
+    <Compile Include="Utils\LocalizationExtensions.cs" />
+    <Compile Include="Utils\LRUCache.cs" />
+    <Compile Include="Utils\SegmentControl.cs" />
+    <Compile Include="Utils\StringExtensions.cs" />
+    <Compile Include="ViewControllers\DialogViewController.cs" />
+    <Compile Include="Elements\Elements.cs" />
+    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
+    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
+    <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
+    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
+    <InterfaceDefinition Include="Launch.storyboard" />
+    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
+    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
+    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
+    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
-      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
-      <Name>CodeFramework.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
-      <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
-      <Name>CodeHub.Core.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation\MonoTouch.SlideoutNavigation.csproj">
-      <Project>{6D7B9B53-CFEF-46BE-A608-14A4A1381CF6}</Project>
-      <Name>MonoTouch.SlideoutNavigation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\MonoTouch.Dialog\MonoTouch.Dialog\MonoTouch.Dialog.csproj">
-      <Project>{3FFBFFF8-5560-4EDE-82E5-3FFDFBBA8A50}</Project>
-      <Name>MonoTouch.Dialog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\lib\monotouch-uservoice\UserVoice\UserVoice.csproj">
-      <Project>{3A0C5D98-D568-43C1-A877-B1BA00BA4A87}</Project>
-      <Name>UserVoice</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
-      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Cirrious.CrossCore">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.CrossCore.Touch">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Localization">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Localization.dll</HintPath>
-    </Reference>
-    <Reference Include="Cirrious.MvvmCross.Touch">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Touch.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="monotouch" />
-    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
-    <Reference Include="MTiRate">
-      <HintPath>..\lib\CodeFramework\lib\iOS\MTiRate.dll</HintPath>
-    </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="Cirrious.CrossCore.Touch">
+      <HintPath>packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.CrossCore.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
+      <HintPath>packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Binding">
+      <HintPath>packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Localization">
+      <HintPath>packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
+      <HintPath>packages\MvvmCross.HotTuna.Plugin.Messenger.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="GitHubSharp">
+      <HintPath>packages\GitHubClient.1.0.5.0\lib\portable-net45+win+wpa81\GitHubSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Touch">
+      <HintPath>packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Touch.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross">
+      <HintPath>packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
+    <Reference Include="BTProgressHUD">
+      <HintPath>packages\BTProgressHUD.1.0.0\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoTouch.TTTAttributedLabel">
+      <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="Flurry.Analytics.iOS">
+      <HintPath>..\packages\Flurry.Analytics.1.2.1\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurry.Analytics.Portable">
+      <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\anonymous%402x.png" />
@@ -388,13 +520,6 @@
     <Content Include="Images\user.png" />
     <Content Include="Images\webpage%402x.png" />
     <Content Include="Images\webpage.png" />
-    <BundleResource Include="Resources\Default-568h%402x.png" />
-    <BundleResource Include="Resources\Default-Landscape.png" />
-    <BundleResource Include="Resources\Default-Landscape%402x.png" />
-    <BundleResource Include="Resources\Default-Portrait.png" />
-    <BundleResource Include="Resources\Default-Portrait%402x.png" />
-    <BundleResource Include="Resources\Default.png" />
-    <BundleResource Include="Resources\Default%402x.png" />
     <BundleResource Include="Resources\Icon-72.png" />
     <BundleResource Include="Resources\Icon-72%402x.png" />
     <BundleResource Include="Resources\Icon-Small-50.png" />
@@ -437,8 +562,19 @@
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\login_user_unknown.png" />
     <BundleResource Include="Images\enterprise.png" />
+    <BundleResource Include="CodeHubLaunch.png" />
+    <Content Include="Diff\app.js" />
+    <Content Include="Diff\diffindex.html" />
+    <Content Include="Diff\difflib.js" />
+    <Content Include="Diff\diffview.css" />
+    <Content Include="Diff\diffview.js" />
+    <Content Include="Diff\jquery.min.js" />
+    <Content Include="SourceBrowser\css\line-numbers.css" />
+    <Content Include="SourceBrowser\css\vs.css" />
+    <Content Include="SourceBrowser\file-loader.js" />
+    <Content Include="SourceBrowser\highlight.pack.js" />
+    <Content Include="SourceBrowser\index.html" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />
@@ -449,5 +585,17 @@
     <Folder Include="Images\MarkdownComposer\" />
     <Folder Include="Factories\" />
     <Folder Include="Views\Teams\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\arrow.png">
+      <LogicalName>arrow.png</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.iOS.csproj">
+      <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
+      <Name>CodeHub.Core.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

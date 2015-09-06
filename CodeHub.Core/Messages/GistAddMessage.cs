@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GitHubSharp.Models;
 using Cirrious.MvvmCross.Plugins.Messenger;
 

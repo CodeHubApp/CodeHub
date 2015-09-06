@@ -1,7 +1,7 @@
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {

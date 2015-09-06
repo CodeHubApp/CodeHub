@@ -3,7 +3,7 @@ using Cirrious.CrossCore;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeHub.iOS.Views.Filters;
 
 namespace CodeHub.iOS.Views.Issues
@@ -97,7 +97,7 @@ namespace CodeHub.iOS.Views.Issues
                 this._multipleTouchIndex = multipleTouchIndex;
             }
 
-            public override void TouchesEnded(MonoTouch.Foundation.NSSet touches, UIEvent evt)
+            public override void TouchesEnded(Foundation.NSSet touches, UIEvent evt)
             {
                 var previousSelected = SelectedSegment;
                 base.TouchesEnded(touches, evt);

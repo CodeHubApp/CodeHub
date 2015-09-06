@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cirrious.MvvmCross.ViewModels;
 using System.Text.RegularExpressions;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CodeFramework.Core.ViewModels;
 using System.Windows.Input;
 using System.Threading.Tasks;
@@ -10,8 +10,8 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesTrendingViewModel : LoadableViewModel
     {
-        private const string LanguagesUrl = "http://codehub-trending.herokuapp.com/languages";
-        private const string TrendingUrl = "http://codehub-trending.herokuapp.com/trending";
+        private const string LanguagesUrl = "http://trending.codehub-app.com/languages";
+        private const string TrendingUrl = "http://trending.codehub-app.com/trending";
         private readonly IJsonHttpClientService _jsonHttpClient;
         private readonly TimeModel[] _times = 
         {

@@ -3,14 +3,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B7970173-9022-466B-B57A-7AB1E1F3145F}</ProjectGuid>
-    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>CodeHub.Core</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>CodeHub.Core</AssemblyName>
+    <TargetFrameworkIdentifier>Xamarin.iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -135,38 +135,88 @@
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="Messages\PullRequestEditMessage.cs" />
+    <Compile Include="Cache\CacheEntry.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\AccountCache.cs" />
+    <Compile Include="Data\AccountFilters.cs" />
+    <Compile Include="Data\AccountPinnedRepositories.cs" />
+    <Compile Include="Data\Filter.cs" />
+    <Compile Include="Data\IAccount.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Messages\CancelationMessage.cs" />
+    <Compile Include="Messages\ErrorMessage.cs" />
+    <Compile Include="Services\AccountsService.cs" />
+    <Compile Include="Services\ErrorService.cs" />
+    <Compile Include="Services\IAccountPreferencesService.cs" />
+    <Compile Include="Services\IAccountsService.cs" />
+    <Compile Include="Services\IAlertDialogService.cs" />
+    <Compile Include="Services\IAnalyticsService.cs" />
+    <Compile Include="Services\IDefaultValueService.cs" />
+    <Compile Include="Services\IEnvrionmentService.cs" />
+    <Compile Include="Services\IErrorService.cs" />
+    <Compile Include="Services\IHttpClientService.cs" />
+    <Compile Include="Services\IJsonHttpClientService.cs" />
+    <Compile Include="Services\IJsonSerializationService.cs" />
+    <Compile Include="Services\IShareService.cs" />
+    <Compile Include="Services\IUIThreadService.cs" />
+    <Compile Include="Services\IViewModelTxService.cs" />
+    <Compile Include="Services\JsonHttpClientService.cs" />
+    <Compile Include="Services\ViewModelTxService.cs" />
+    <Compile Include="Utils\CrashReporting.cs" />
+    <Compile Include="Utils\CustomObservableCollection.cs" />
+    <Compile Include="Utils\DateTimeExtensions.cs" />
+    <Compile Include="Utils\DefaultStartupViewCommand.cs" />
+    <Compile Include="Utils\EnumExtensions.cs" />
+    <Compile Include="Utils\ExceptionExtensions.cs" />
+    <Compile Include="Utils\FilterGroup.cs" />
+    <Compile Include="Utils\FireAndForgetTask.cs" />
+    <Compile Include="Utils\RepositoryIdentifier.cs" />
+    <Compile Include="Utils\SimpleJson.cs" />
+    <Compile Include="Utils\StringExtensions.cs" />
+    <Compile Include="ViewModels\App\BaseDefaultStartupViewModel.cs" />
+    <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
+    <Compile Include="ViewModels\BaseAccountsViewModel.cs" />
+    <Compile Include="ViewModels\BaseStartupViewModel.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\CollectionViewModel.cs" />
+    <Compile Include="ViewModels\FileSourceViewModel.cs" />
+    <Compile Include="ViewModels\FilterableCollectionViewModel.cs" />
+    <Compile Include="ViewModels\FilterGroup.cs" />
+    <Compile Include="ViewModels\FilterModel.cs" />
+    <Compile Include="ViewModels\IFilterableViewModel.cs" />
+    <Compile Include="ViewModels\WebBrowserViewModel.cs" />
+    <Compile Include="PresentationValues.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Flurry.Analytics.Portable">
+      <HintPath>..\CodeHub.iOS\packages\Flurry.Analytics.Portable.1.2.0\lib\portable-wp80+win80+wpa81+net45+sl50+MonoTouch10+MonoAndroid10+XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="Cirrious.CrossCore">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.CrossCore.dll</HintPath>
+      <HintPath>..\CodeHub.iOS\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\portable-win+net45+wp8+win8+wpa81\Cirrious.CrossCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Cirrious.MvvmCross.Localization">
+      <HintPath>..\CodeHub.iOS\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\portable-win+net45+wp8+win8+wpa81\Cirrious.MvvmCross.Localization.dll</HintPath>
     </Reference>
     <Reference Include="Cirrious.MvvmCross">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.dll</HintPath>
+      <HintPath>..\CodeHub.iOS\packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\portable-win+net45+wp8+win8+wpa81\Cirrious.MvvmCross.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\CodeHub.iOS\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="GitHubSharp">
+      <HintPath>..\CodeHub.iOS\packages\GitHubClient.1.0.5.0\lib\portable-net45+win+wpa81\GitHubSharp.dll</HintPath>
     </Reference>
     <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
-      <HintPath>..\lib\CodeFramework\lib\iOS\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
+      <HintPath>..\CodeHub.iOS\packages\MvvmCross.HotTuna.Plugin.Messenger.3.5.1\lib\portable-win+net45+wp8+win8+wpa81\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http" />
+    <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lib\GitHubSharp\GitHubSharp.MonoTouch.csproj">
-      <Project>{89E14828-85BB-4790-9B4E-E44DD4CE000E}</Project>
-      <Name>GitHubSharp.MonoTouch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.iOS\CodeFramework.iOS.csproj">
-      <Project>{2698B412-26A3-4269-AA01-AC3BC79A0F14}</Project>
-      <Name>CodeFramework.iOS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\lib\CodeFramework\CodeFramework.Core\CodeFramework.Core.csproj">
-      <Project>{C99FE7E3-0985-48F1-9EBB-91680A795F0F}</Project>
-      <Name>CodeFramework.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
     <Content Include="Markdown\marked.js" />
@@ -177,5 +227,10 @@
     <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
+    <Folder Include="Cache\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

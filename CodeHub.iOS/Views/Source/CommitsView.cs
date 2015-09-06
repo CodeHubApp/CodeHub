@@ -3,6 +3,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Changesets;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -23,7 +24,7 @@ namespace CodeHub.iOS.Views.Source
 				var desc = firstLine > 0 ? msg.Substring(0, firstLine) : msg;
 
 				string login;
-				var date = DateTimeOffset.MinValue;
+                var date = DateTime.MinValue;
            
                 if (x.Commit.Author != null && !string.IsNullOrEmpty(x.Commit.Author.Name))
                     login = x.Commit.Author.Name;
@@ -37,9 +38,9 @@ namespace CodeHub.iOS.Views.Source
 					login = "Unknown";
 
 				if (x.Commit.Committer != null)
-					date = x.Commit.Committer.Date;
+						date = x.Commit.Committer.Date.UtcDateTime;
 
-				var el = new NameTimeStringElement { Name = login, Time = date.ToDaysAgo(), String = desc, Lines = 4 };
+					var el = new NameTimeStringElement { Name = login, Time = date.Humanize(), String = desc, Lines = 4 };
 				el.Tapped += () => vm.GoToChangesetCommand.Execute(x);
 				return el;
 			});

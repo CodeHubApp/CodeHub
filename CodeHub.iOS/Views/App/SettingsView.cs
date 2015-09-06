@@ -66,9 +66,9 @@ namespace CodeHub.iOS.Views.App
 				application.Accounts.Update(currentAccount);
 			});
 
-			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, MonoTouch.UIKit.UITableViewCellStyle.Value1)
+			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, UIKit.UITableViewCellStyle.Value1)
 			{ 
-				Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator,
+				Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator,
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
@@ -84,7 +84,7 @@ namespace CodeHub.iOS.Views.App
             accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
 
 			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), MonoTouch.UIKit.UITableViewCellStyle.Value1);
+			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), UIKit.UITableViewCellStyle.Value1);
 			deleteCache.Tapped += () =>
 			{ 
 				vm.DeleteAllCacheCommand.Execute(null);

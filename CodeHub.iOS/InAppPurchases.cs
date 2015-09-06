@@ -1,6 +1,6 @@
 using System;
-using MonoTouch.StoreKit;
-using MonoTouch.Foundation;
+using StoreKit;
+using Foundation;
 using System.Threading.Tasks;
 
 namespace CodeHub.iOS

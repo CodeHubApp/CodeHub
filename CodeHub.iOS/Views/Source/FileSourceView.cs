@@ -1,8 +1,8 @@
 using System;
 using CodeFramework.iOS.Views;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.Core.ViewModels;
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -59,26 +59,29 @@ namespace CodeHub.iOS.Views.Source
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 			sheet.Clicked += (s, e) => 
 			{
-				try
+				BeginInvokeOnMainThread(() =>
 				{
-					if (e.ButtonIndex == openButton)
+					try
 					{
-						var ctrl = new UIDocumentInteractionController();
-						ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
-						ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+						if (e.ButtonIndex == openButton)
+						{
+							var ctrl = new UIDocumentInteractionController();
+							ctrl.Url = NSUrl.FromFilename(ViewModel.FilePath);
+							ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+						}
+						else if (e.ButtonIndex == shareButton)
+						{
+							ViewModel.ShareCommand.Execute(null);
+						}
+						else if (e.ButtonIndex == showButton)
+						{
+							ViewModel.GoToHtmlUrlCommand.Execute(null);
+						}
 					}
-					else if (e.ButtonIndex == shareButton)
+					catch
 					{
-						ViewModel.ShareCommand.Execute(null);
 					}
-					else if (e.ButtonIndex == showButton)
-					{
-						ViewModel.GoToHtmlUrlCommand.Execute(null);
-					}
-				}
-				catch
-				{
-				}
+				});
 			};
 
 			sheet.ShowInView(this.View);

@@ -1,5 +1,5 @@
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.Core.ViewModels;
 using CodeHub.Core.Filters;
@@ -93,7 +93,7 @@ namespace CodeHub.iOS.Views.Filters
                     else
                         _milestoneHolder = new IssuesFilterModel.MilestoneKeyValue { Name = title, Value = val, IsMilestone = num.HasValue };
                     RefreshMilestone();
-                    NavigationController.PopViewControllerAnimated(true);
+                    NavigationController.PopViewController(true);
                 };
                 NavigationController.PushViewController(ctrl, true);
             };

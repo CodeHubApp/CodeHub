@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, MonoTouch.UIKit.UIBarButtonItemStyle.Plain, 
+            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
                 (s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
             BindCollection(ViewModel.Content, CreateElement);
         }

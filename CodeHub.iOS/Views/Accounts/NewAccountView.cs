@@ -1,9 +1,9 @@
-using System.Drawing;
+using CoreGraphics;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MonoTouch;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.Accounts
 			: base ("NewAccountView", null)
         {
             Title = "Account";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,(s, e) => NavigationController.PopViewControllerAnimated(true));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,(s, e) => NavigationController.PopViewController(true));
         }
 
         public override void ViewDidLoad()
@@ -29,11 +29,11 @@ namespace CodeHub.iOS.Views.Accounts
             EnterpriseButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
 
             InternetButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            InternetButton.Layer.ShadowOffset = new SizeF(0, 1);
+            InternetButton.Layer.ShadowOffset = new CGSize(0, 1);
             InternetButton.Layer.ShadowOpacity = 0.3f;
 
             EnterpriseButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            EnterpriseButton.Layer.ShadowOffset = new SizeF(0, 1);
+            EnterpriseButton.Layer.ShadowOffset = new CGSize(0, 1);
             EnterpriseButton.Layer.ShadowOpacity = 0.3f;
 
             var set = this.CreateBindingSet<NewAccountView, NewAccountViewModel>();
@@ -42,7 +42,7 @@ namespace CodeHub.iOS.Views.Accounts
 
             EnterpriseButton.TouchUpInside += (object sender, System.EventArgs e) => GoToEnterprise();
 
-            ScrollView.ContentSize = new SizeF(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
+            ScrollView.ContentSize = new CGSize(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
         }
 
         private void GoToEnterprise()

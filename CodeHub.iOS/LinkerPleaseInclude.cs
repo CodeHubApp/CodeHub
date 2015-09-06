@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <summary>
 //    Defines the LinkerPleaseInclude type.
 // </summary>
@@ -9,7 +9,7 @@ namespace CodeHub.iOS
     using System.Collections.Specialized;
     using System.Windows.Input;
 
-    using MonoTouch.UIKit;
+    using UIKit;
 
     /// <summary>
     /// Defines the LinkerPleaseInclude type.
@@ -72,16 +72,6 @@ namespace CodeHub.iOS
         public void Include(UIImageView uiImageView)
         {
             uiImageView.Image = new UIImage(uiImageView.Image.CIImage);
-        }
-
-        /// <summary>
-        /// Includes the specified uiDatePicker.
-        /// </summary>
-        /// <param name="uiDatePicker">The uiDatePicker.</param>
-        public void Include(UIDatePicker uiDatePicker)
-        {
-            uiDatePicker.Date = uiDatePicker.Date.AddSeconds(1);
-            uiDatePicker.ValueChanged += (sender, args) => { uiDatePicker.Date = DateTime.MaxValue; };
         }
 
         /// <summary>

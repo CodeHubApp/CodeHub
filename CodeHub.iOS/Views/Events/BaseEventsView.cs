@@ -4,7 +4,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
 using MonoTouch;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Events
 {

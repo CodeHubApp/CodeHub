@@ -1,4 +1,4 @@
-﻿using Cirrious.MvvmCross.Plugins.Messenger;
+using Cirrious.MvvmCross.Plugins.Messenger;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.Messages

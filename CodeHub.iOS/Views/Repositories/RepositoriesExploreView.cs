@@ -2,7 +2,7 @@ using System;
 using CodeFramework.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
 

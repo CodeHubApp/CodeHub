@@ -2,7 +2,7 @@ using System;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.PullRequests

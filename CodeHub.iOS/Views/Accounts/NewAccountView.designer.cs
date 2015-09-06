@@ -5,7 +5,7 @@
 // Manual changes to this file may not be handled correctly.
 //
 
-using MonoTouch.Foundation;
+using Foundation;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -13,13 +13,13 @@ namespace CodeHub.iOS.Views.Accounts
 	partial class NewAccountView
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIButton EnterpriseButton { get; set; }
+		UIKit.UIButton EnterpriseButton { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIButton InternetButton { get; set; }
+		UIKit.UIButton InternetButton { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIScrollView ScrollView { get; set; }
+		UIKit.UIScrollView ScrollView { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

@@ -3,9 +3,11 @@ using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Linq;
 using CodeFramework.Core.Utils;
+using Cirrious.CrossCore;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -88,17 +90,7 @@ namespace CodeHub.iOS.Views.App
 
         private void PresentUserVoice()
         {
-            var config = new UserVoice.UVConfig() {
-                Key = "95D8N9Q3UT1Asn89F7d3lA",
-                Secret = "xptp5xR6RtqTPpcopKrmOFWVQ4AIJEvr2LKx6KFGgE4",
-                Site = "codehub.uservoice.com",
-                ShowContactUs = true,
-                ShowForum = true,
-                ShowPostIdea = true,
-                ShowKnowledgeBase = true,
-            };
-            UserVoice.UserVoice.Initialize(config);
-            UserVoice.UserVoice.PresentUserVoiceInterfaceForParentViewController(this);
+
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)
@@ -128,6 +120,15 @@ namespace CodeHub.iOS.Views.App
             ViewModel.Bind(x => x.Organizations, x => CreateMenuRoot());
 
             ViewModel.LoadCommand.Execute(null);
+
+			var appService = Mvx.Resolve<IApplicationService> ();
+
+			// A user has been activated!
+			if (appService.ActivationAction != null)
+			{
+				appService.ActivationAction();
+				appService.ActivationAction = null;
+			}
         }
 
 		private class PinnedRepoElement : MenuElement
@@ -188,7 +189,7 @@ namespace CodeHub.iOS.Views.App
 				_parent = dvc;
 			}
 
-			public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection == null)
 					return false;
@@ -197,14 +198,14 @@ namespace CodeHub.iOS.Views.App
 				return false;
 			}
 
-			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
 				if (_parent._favoriteRepoSection != null && _parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
 					return UITableViewCellEditingStyle.Delete;
 				return UITableViewCellEditingStyle.None;
 			}
 
-			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
 			{
 				switch (editingStyle)
 				{

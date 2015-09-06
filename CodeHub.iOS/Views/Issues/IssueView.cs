@@ -1,7 +1,7 @@
 using System;
 using CodeFramework.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Utils;
@@ -9,6 +9,7 @@ using CodeFramework.iOS.Elements;
 using System.Linq;
 using System.Collections.Generic;
 using CodeHub.iOS.ViewControllers;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -108,14 +109,14 @@ namespace CodeHub.iOS.Views.Issues
             { 
                 AvatarUrl = x.User.AvatarUrl, 
                 Login = x.User.Login, 
-                CreatedAt = x.CreatedAt,
+				CreatedAt = x.CreatedAt.UtcDateTime,
                 Body = ViewModel.ConvertToMarkdown(x.Body)
             })
                 .Concat(ViewModel.Events.Select(x => new CommentModel
             {
                 AvatarUrl = x.Actor.AvatarUrl, 
                 Login = x.Actor.Login, 
-                CreatedAt = x.CreatedAt,
+				CreatedAt = x.CreatedAt.UtcDateTime,
                 Body = CreateEventBody(x.Event, x.CommitId)
             })
                 .Where(x => !string.IsNullOrEmpty(x.Body)));
@@ -149,7 +150,7 @@ namespace CodeHub.iOS.Views.Issues
             var comments = CreateCommentList().Select(x => new {
                 avatarUrl = x.AvatarUrl,
                 login = x.Login,
-                created_at = x.CreatedAt.ToDaysAgo(),
+				created_at = x.CreatedAt.Humanize(),
                 body = x.Body
             });
             var data = s.Serialize(comments);
@@ -204,7 +205,7 @@ namespace CodeHub.iOS.Views.Issues
         {
             get
             {
-                var u = new UIView(new System.Drawing.RectangleF(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
+                var u = new UIView(new CoreGraphics.CGRect(0, 0, 320f, 27)) { BackgroundColor = UIColor.White };
                 return u;
             }
         }
@@ -224,7 +225,9 @@ namespace CodeHub.iOS.Views.Issues
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => {
+			sheet.Dismissed += (s, e) => {
+				BeginInvokeOnMainThread(() =>
+					{
                 if (e.ButtonIndex == editButton)
                     ViewModel.GoToEditCommand.Execute(null);
                 else if (e.ButtonIndex == openButton)
@@ -235,6 +238,7 @@ namespace CodeHub.iOS.Views.Issues
                     ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
                 else if (e.ButtonIndex == commentButton)
                     AddCommentTapped();
+					});
             };
 
             sheet.ShowInView(this.View);
@@ -244,7 +248,7 @@ namespace CodeHub.iOS.Views.Issues
         {
             public string AvatarUrl { get; set; }
             public string Login { get; set; }
-            public DateTimeOffset CreatedAt { get; set; }
+            public DateTime CreatedAt { get; set; }
             public string Body { get; set; }
         }
     }

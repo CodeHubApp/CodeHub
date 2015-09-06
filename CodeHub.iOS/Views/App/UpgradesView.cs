@@ -18,9 +18,9 @@ namespace CodeHub.iOS.Views.App
         {
             Title = "Upgrades";
             EnableSearch = false;
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+            Style = UIKit.UITableViewStyle.Plain;
             _features = Cirrious.CrossCore.Mvx.Resolve<IFeaturesService>();
-            NavigationItem.RightBarButtonItem = new MonoTouch.UIKit.UIBarButtonItem("Restore", MonoTouch.UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
+            NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem("Restore", UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
         }
 
         public override void ViewDidLoad()
@@ -75,11 +75,11 @@ namespace CodeHub.iOS.Views.App
                 var el = new MultilinedElement(item.Name + " (" + item.Price + ")", item.Description);
                 if (_features.IsActivated(item.Id))
                 {
-                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.Checkmark;
+                    el.Accessory = UIKit.UITableViewCellAccessory.Checkmark;
                 }
                 else
                 {
-                    el.Accessory = MonoTouch.UIKit.UITableViewCellAccessory.DisclosureIndicator;
+                    el.Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator;
                     el.Tapped += () => Tapped(item);
                 }
 

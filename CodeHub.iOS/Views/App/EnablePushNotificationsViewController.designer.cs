@@ -4,7 +4,7 @@
 // actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-using MonoTouch.Foundation;
+using Foundation;
 using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Views.App
@@ -13,19 +13,19 @@ namespace CodeHub.iOS.Views.App
 	partial class EnablePushNotificationsViewController
 	{
 		[Outlet]
-		MonoTouch.UIKit.UIButton CancelButton { get; set; }
+		UIKit.UIButton CancelButton { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIView ContainerView { get; set; }
+		UIKit.UIView ContainerView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIButton EnableButton { get; set; }
+		UIKit.UIButton EnableButton { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UIImageView ImageView { get; set; }
+		UIKit.UIImageView ImageView { get; set; }
 
 		[Outlet]
-		MonoTouch.UIKit.UILabel PushLabel { get; set; }
+		UIKit.UILabel PushLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{

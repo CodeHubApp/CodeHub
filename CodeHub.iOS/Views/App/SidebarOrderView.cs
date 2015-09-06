@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CodeFramework.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
@@ -26,7 +26,7 @@ namespace CodeHub.iOS.Views.App
 
             Root = root;
 
-            Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+            Style = UIKit.UITableViewStyle.Plain;
             this.Editing = true;
         }
 
@@ -42,12 +42,12 @@ namespace CodeHub.iOS.Views.App
             {
             }
 
-            public override bool CanEditRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override bool CanEditRow(UIKit.UITableView tableView, Foundation.NSIndexPath indexPath)
             {
                 return true;
             }
 
-            public override void MoveRow(MonoTouch.UIKit.UITableView tableView, MonoTouch.Foundation.NSIndexPath sourceIndexPath, MonoTouch.Foundation.NSIndexPath destinationIndexPath)
+            public override void MoveRow(UIKit.UITableView tableView, Foundation.NSIndexPath sourceIndexPath, Foundation.NSIndexPath destinationIndexPath)
             {
 
             }

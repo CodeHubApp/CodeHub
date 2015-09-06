@@ -36,7 +36,7 @@ namespace CodeHub.iOS.Views.Filters
         public IssueMilestonesFilterViewController(string user, string repo, bool alreadySelected)
 			: base(true)
         {
-			Style = MonoTouch.UIKit.UITableViewStyle.Plain;
+			Style = UIKit.UITableViewStyle.Plain;
 			_username = user;
 			_repository = repo;
             Title = "Milestones".t();

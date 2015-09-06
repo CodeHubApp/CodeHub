@@ -1,7 +1,7 @@
 using System;
 using CodeHub.iOS;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
 using CodeFramework.iOS.ViewControllers;
 using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Gists;
@@ -150,19 +150,19 @@ namespace CodeHub.iOS.Views.Gists
                 _parent = dvc;
             }
 
-            public override bool CanEditRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
                 return (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1));
             }
 
-            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
                 if (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1))
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }
 
-            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, MonoTouch.Foundation.NSIndexPath indexPath)
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
             {
                 switch (editingStyle)
                 {

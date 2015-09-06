@@ -1,12 +1,13 @@
-using System.Drawing;
+using CoreGraphics;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeFramework.iOS.Utils;
 using Cirrious.CrossCore;
 using Cirrious.MvvmCross.Plugins.Messenger;
+using System;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -24,7 +25,7 @@ namespace CodeHub.iOS.Views.Accounts
             : base("AddAccountView", null)
         {
             Title = "Login".t();
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
 			_hud = this.CreateHud();
         }
 
@@ -76,7 +77,7 @@ namespace CodeHub.iOS.Views.Accounts
 
             //Set some generic shadowing
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            LoginButton.Layer.ShadowOffset = new SizeF(0, 1);
+            LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
             LoginButton.Layer.ShadowOpacity = 0.3f;
 
             Domain.ShouldReturn = delegate {
@@ -95,7 +96,7 @@ namespace CodeHub.iOS.Views.Accounts
             };
 
 
-            ScrollView.ContentSize = new SizeF(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
+            ScrollView.ContentSize = new CGSize(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
         NSObject _hideNotification, _showNotification;
@@ -152,7 +153,7 @@ namespace CodeHub.iOS.Views.Accounts
         /// <param name='keyboardHeight'>
         /// Calculated height of the keyboard (width not generally needed here)
         /// </param>
-        protected virtual void OnKeyboardChanged (bool visible, float keyboardHeight)
+        protected virtual void OnKeyboardChanged (bool visible, nfloat keyboardHeight)
         {
             if (visible)
             {

@@ -1,4 +1,4 @@
-﻿using Cirrious.MvvmCross.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 using Cirrious.MvvmCross.Views;
 using CodeFramework.Core.Data;
 using CodeFramework.Core.Services;
@@ -17,12 +17,12 @@ namespace CodeHub.Core.Services
         private readonly IPushNotificationsService _pushNotifications;
         private readonly IFeaturesService _features;
         private readonly IAlertDialogService _alertDialogService;
-        private Action _activationAction;
 
         public Client Client { get; private set; }
         public GitHubAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
+		public Action ActivationAction { get; set; }
 
         public ApplicationService(IAccountsService accounts, IMvxViewDispatcher viewDispatcher, 
             IFeaturesService features, IPushNotificationsService pushNotifications,
@@ -45,6 +45,9 @@ namespace CodeHub.Core.Services
 
         public void ActivateUser(GitHubAccount account, Client client)
         {
+			Flurry.Analytics.Portable.AnalyticsApi.SetUserId(account.Username);
+			Flurry.Analytics.Portable.AnalyticsApi.LogEvent ("event:Login");
+
             Accounts.SetActiveAccount(account);
             Account = account;
             Client = client;
@@ -56,17 +59,10 @@ namespace CodeHub.Core.Services
             CheckCacheSize(account.Cache);
 
             //Assign the cache
-            Client.Cache = new GitHubCache(account);
+            //Client.Cache = new GitHubCache(account);
 
             // Show the menu & show a page on the slideout
             _viewDispatcher.ShowViewModel(new MvxViewModelRequest {ViewModelType = typeof (MenuViewModel)});
-
-            // A user has been activated!
-            if (_activationAction != null)
-            {
-                _activationAction();
-                _activationAction = null;
-            }
 
             //Activate push notifications
             PromptForPushNotifications();
@@ -77,7 +73,7 @@ namespace CodeHub.Core.Services
             if (Account != null)
                 action();
             else
-                _activationAction = action;
+				ActivationAction = action;
         }
 
         private async Task PromptForPushNotifications()
@@ -120,40 +116,40 @@ namespace CodeHub.Core.Services
             }
         }
 
-        private class GitHubCache : ICache
-        {
-            private readonly AccountCache _account;
-            public GitHubCache(Account account)
-            {
-                _account = account.Cache;
-            }
-
-            public string GetETag(string url)
-            {
-                var data = _account.GetEntry(url);
-                if (data == null)
-                    return null;
-                return data.CacheTag;
-            }
-
-            public byte[] Get(string url)
-            {
-                var data = _account.Get(url);
-                if (data == null)
-                    return null;
-
-                return data;
-            }
-
-            public void Set(string url, byte[] data, string etag)
-            {
-                _account.Set(url, data, etag);
-            }
-
-            public bool Exists(string url)
-            {
-                return _account.GetEntry(url) != null;
-            }
-        }
+//        private class GitHubCache : ICache
+//        {
+//            private readonly AccountCache _account;
+//            public GitHubCache(Account account)
+//            {
+//                _account = account.Cache;
+//            }
+//
+//            public string GetETag(string url)
+//            {
+//                var data = _account.GetEntry(url);
+//                if (data == null)
+//                    return null;
+//                return data.CacheTag;
+//            }
+//
+//            public T Get<T>(string url)
+//            {
+//                var data = _account.Get(url);
+//                if (data == null)
+//                    return null;
+//
+//                return data;
+//            }
+//
+//            public void Set<T>(string url, T data)
+//            {
+//                _account.Set(url, data, etag);
+//            }
+//
+//            public bool Exists(string url)
+//            {
+//                return _account.GetEntry(url) != null;
+//            }
+//        }
     }
 }

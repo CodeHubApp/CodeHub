@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <summary>
 //    Defines the AppDelegate type.
 // </summary>
@@ -10,8 +10,8 @@ using System;
 using Cirrious.CrossCore;
 using Cirrious.MvvmCross.Touch.Platform;
 using Cirrious.MvvmCross.ViewModels;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeFramework.Core.Utils;
 using CodeHub.Core.Services;
 using System.Threading;
@@ -20,7 +20,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
 using CodeFramework.iOS.XCallback;
-using MonoTouch.Security;
+using Security;
+using ObjCRuntime;
 
 namespace CodeHub.iOS
 {
@@ -35,13 +36,12 @@ namespace CodeHub.iOS
         /// <summary>
         /// The window.
         /// </summary>
-        private UIWindow window;
 		public string DeviceToken;
 
-        public new UIWindow Window
-        {
-            get { return this.window; }
-        }
+		public override UIWindow Window {
+			get;
+			set;
+		}
 
 		/// <summary>
 		/// This is the main entry point of the application.
@@ -62,19 +62,25 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-			var iRate = MTiRate.iRate.SharedInstance;
-			iRate.AppStoreID = 707173885;
-
-			this.window = new UIWindow(UIScreen.MainScreen.Bounds);
-            var presenter = new TouchViewPresenter(this.window);
+			this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
+			var presenter = new TouchViewPresenter(this.Window);
             var setup = new Setup(this, presenter);
             setup.Initialize();
+
+			Flurry.Analytics.FlurryAgent.StartSession("4F3YDWSN8XBB4QKTNHYS");
+
+			if (Runtime.Arch != Arch.SIMULATOR)
+			    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
+
 
             Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             // Setup theme
             Theme.Setup();
-
+//
+//			options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
+//				new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
+//
             if (options != null)
             {
                 if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
@@ -89,31 +95,9 @@ namespace CodeHub.iOS
             var startup = Mvx.Resolve<IMvxAppStart>();
 			startup.Start();
 
-            this.window.MakeKeyAndVisible();
+			this.Window.MakeKeyAndVisible();
 
-            // Record the date this application was installed (or the date that we started recording installation date).
-            try
-            {
-                var query = new SecRecord(SecKind.GenericPassword) { Generic = NSData.FromString("codehub_install_date") };
-                SecStatusCode secStatusCode;
-                var rec = SecKeyChain.QueryAsRecord(query, out secStatusCode);
-                if (secStatusCode != SecStatusCode.Success)
-                {
-                    var newRec = new SecRecord(SecKind.GenericPassword)
-                    {
-                        Label = "CodeHub Install Date",
-                        Description = "The first date CodeHub was installed",
-                        ValueData = NSData.FromString(DateTime.UtcNow.ToString()),
-                        Generic = NSData.FromString("codehub_install_date")
-                    };
-
-                    SecKeyChain.Add(newRec);
-                }
-            }
-            catch
-            {
-                // Do nothing...
-            }
+			this.StampInstallDate("CodeHub", DateTime.Now.ToString());
 
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
@@ -127,10 +111,10 @@ namespace CodeHub.iOS
 
 
 			// Notifications don't work on teh simulator so don't bother
-            if (MonoTouch.ObjCRuntime.Runtime.Arch != MonoTouch.ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
+            if (ObjCRuntime.Runtime.Arch != ObjCRuntime.Arch.SIMULATOR && features.IsPushNotificationsActivated)
 			{
-				const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-				UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+				var notificationTypes = UIUserNotificationSettings.GetSettingsForTypes (UIUserNotificationType.Alert | UIUserNotificationType.Sound, null);
+				UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
 			}
 
             return true;
@@ -148,8 +132,9 @@ namespace CodeHub.iOS
 
             if (string.Equals(e, FeatureIds.PushNotifications))
             {
-                const UIRemoteNotificationType notificationTypes = UIRemoteNotificationType.Alert | UIRemoteNotificationType.Badge;
-                UIApplication.SharedApplication.RegisterForRemoteNotificationTypes(notificationTypes);
+				Flurry.Analytics.FlurryAgent.LogEvent ("event:Purchased Push Notifications");
+				var notificationTypes = UIUserNotificationSettings.GetSettingsForTypes (UIUserNotificationType.Alert | UIUserNotificationType.Sound, null);
+				UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
             }
         }
 
@@ -224,6 +209,11 @@ namespace CodeHub.iOS
 			}
 		}
 
+		public override void DidRegisterUserNotificationSettings (UIApplication application, UIUserNotificationSettings notificationSettings)
+		{
+			application.RegisterForRemoteNotifications ();
+		}
+
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
 			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
@@ -267,4 +257,49 @@ namespace CodeHub.iOS
             }
         }
     }
+
+	public static class UIApplicationDelegateExtensions
+	{
+		/// <summary>
+		/// Record the date this application was installed (or the date that we started recording installation date).
+		/// </summary>
+		public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name, string key)
+		{
+			try
+			{
+				var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = key };
+
+				SecStatusCode secStatusCode;
+				var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
+				if (secStatusCode != SecStatusCode.Success)
+				{
+					queriedRecord = new SecRecord(SecKind.GenericPassword)
+					{
+						Label = name + " Install Date",
+						Service = name,
+						Account = key,
+						Description = string.Format("The first date {0} was installed", name),
+						Generic = NSData.FromString(DateTime.UtcNow.ToString())
+					};
+
+					var err = SecKeyChain.Add(queriedRecord);
+					if (err != SecStatusCode.Success)
+						System.Diagnostics.Debug.WriteLine("Unable to save stamp date!");
+				}
+				else
+				{
+					DateTime time;
+					if (!DateTime.TryParse(queriedRecord.Generic.ToString(), out time))
+						SecKeyChain.Remove(query);
+				}
+
+				return DateTime.Parse(NSString.FromData(queriedRecord.Generic, NSStringEncoding.UTF8));
+			}
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine(e.Message);
+				return DateTime.Now;
+			}
+		}
+	}
 }

@@ -5,8 +5,8 @@ using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeFramework.iOS.Utils;
 
 namespace CodeHub.iOS.Views.Gists
@@ -115,8 +115,10 @@ namespace CodeHub.iOS.Views.Gists
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Clicked += (s, e) => 
+			sheet.Dismissed += (s, e) => 
 			{
+				BeginInvokeOnMainThread(() =>
+					{
 				try
 				{
 	                if (e.ButtonIndex == shareButton)
@@ -131,6 +133,7 @@ namespace CodeHub.iOS.Views.Gists
 				catch
 				{
 				}
+					});
             };
 
             sheet.ShowFrom(_shareButton, true);

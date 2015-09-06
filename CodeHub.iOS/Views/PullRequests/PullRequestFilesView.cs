@@ -2,7 +2,8 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.ViewControllers;
 using MonoTouch.Dialog;
-using MonoTouch.UIKit;
+using UIKit;
+using System;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -39,7 +40,7 @@ namespace CodeHub.iOS.Views.PullRequests
             {
             }
 
-			public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, int section)
+			public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, nint section)
 			{
 				var x = headerView as UITableViewHeaderFooterView;
 				if (x != null)

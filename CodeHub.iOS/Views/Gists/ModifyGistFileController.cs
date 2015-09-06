@@ -1,9 +1,9 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using CodeFramework.iOS.Views;
 using CodeHub.iOS;
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using CodeFramework.Views;
 
 namespace CodeHub.ViewControllers
@@ -22,7 +22,7 @@ namespace CodeHub.ViewControllers
             _content = content;
 
             Title = "New File";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewControllerAnimated(true));
+			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 
                 var newName = Name.Text;
@@ -38,7 +38,7 @@ namespace CodeHub.ViewControllers
                 {
                     if (Save != null)
                         Save(newName, newContent);
-                    NavigationController.PopViewControllerAnimated(true);
+                    NavigationController.PopViewController(true);
                 }
 				catch (Exception ex)
                 {
@@ -84,12 +84,12 @@ namespace CodeHub.ViewControllers
 
         void UpdateScrollContentSize()
         {
-            Scroll.ContentSize = new SizeF(View.Bounds.Width, Text.ContentSize.Height + offsetSize);
+            Scroll.ContentSize = new CGSize(View.Bounds.Width, Text.ContentSize.Height + offsetSize);
             var f = Text.Frame;
             var newHeight = Text.ContentSize.Height;
             if (newHeight < (Scroll.Frame.Height - offsetSize))
                 newHeight = Scroll.Frame.Height - offsetSize;
-            Text.Frame = new RectangleF(f.X, f.Y, f.Width, newHeight);
+            Text.Frame = new CGRect(f.X, f.Y, f.Width, newHeight);
         }
 
         void KeyboardWillShow (NSNotification notification)
@@ -100,10 +100,10 @@ namespace CodeHub.ViewControllers
             Scroll.Frame = ComputeComposerSize (kbdBounds);
         }
 
-        RectangleF ComputeComposerSize (RectangleF kbdBounds)
+        CGRect ComputeComposerSize (CGRect kbdBounds)
         {
             var view = View.Bounds;
-            return new RectangleF (0, 0, view.Width, view.Height-kbdBounds.Height);
+            return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
 
         public override void ViewWillAppear(bool animated)

@@ -1,5 +1,5 @@
-using MonoTouch.JavaScriptCore;
-using MonoTouch.Foundation;
+using JavaScriptCore;
+using Foundation;
 using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 

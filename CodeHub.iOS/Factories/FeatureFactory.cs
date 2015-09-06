@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using CodeHub.Core.Factories;
 using CodeHub.iOS.Views.App;
 using System.Threading.Tasks;
-using MonoTouch.UIKit;
+using UIKit;
 
 namespace CodeHub.iOS.Factory
 {

@@ -1,4 +1,4 @@
-﻿using Cirrious.MvvmCross.ViewModels;
+using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.App;
 using CodeFramework.Core.Services;
 using Cirrious.CrossCore;
