@@ -12,7 +12,7 @@ namespace CodeFramework.iOS.Services
                 throw new Exception("Value for key '" + key + "' does not exist!");
 
             if (typeof(T) == typeof(int))
-                return (T)(object)Utilities.Defaults.IntForKey(key);
+                return (T)(object)(int)Utilities.Defaults.IntForKey(key);
             if (typeof(T) == typeof(bool))
                 return (T)(object)Utilities.Defaults.BoolForKey(key);
             if (typeof (T) == typeof (string))

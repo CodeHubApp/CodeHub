@@ -22,6 +22,7 @@ using System.Text;
 using CodeFramework.iOS.XCallback;
 using Security;
 using ObjCRuntime;
+using System.Net;
 
 namespace CodeHub.iOS
 {

@@ -24,6 +24,7 @@ namespace CodeFramework.iOS.Views
 
         public AccountsView() : base(true)
         {
+            Style = UITableViewStyle.Plain;
         }
 
 		public override void ViewDidLoad()

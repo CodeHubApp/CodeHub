@@ -14,7 +14,6 @@ using CodeFramework.iOS;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Views;
 using UIKit;
-using CodeFramework.iOS.Bindings;
 
 namespace CodeHub.iOS
 {
@@ -60,12 +59,6 @@ namespace CodeHub.iOS
 			obj.AddOrOverwrite(typeof(StyledStringElement), "Tapped");
 			obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
         }
-
-		protected override void FillTargetFactories(Cirrious.MvvmCross.Binding.Bindings.Target.Construction.IMvxTargetBindingFactoryRegistry registry)
-		{
-			base.FillTargetFactories(registry);
-			registry.RegisterFactory(new Cirrious.MvvmCross.Binding.Bindings.Target.Construction.MvxCustomBindingFactory<UISegmentedControl>("ValueChanged", x => new UISegmentControlBinding(x)));
-		}
 
         /// <summary>
         /// Creates the app.

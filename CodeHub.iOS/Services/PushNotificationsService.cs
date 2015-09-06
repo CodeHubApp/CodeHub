@@ -11,8 +11,8 @@ namespace CodeHub.iOS.Services
 {
 	public class PushNotificationsService : IPushNotificationsService
     {
-        private const string RegisterUri = "http://162.243.15.10/register";
-        private const string DeregisterUri = "http://162.243.15.10/unregister";
+        private const string RegisterUri = "https://push.codehub-app.com/register";
+        private const string DeregisterUri = "https://push.codehub-app.com/unregister";
 
         public async Task Register()
 		{

@@ -20,6 +20,11 @@ namespace CodeHub.iOS.Views.Repositories
             Title = "Explore".t();
         }
 
+        protected override IUISearchBarDelegate CreateSearchDelegate()
+        {
+            return null;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

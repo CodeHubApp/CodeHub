@@ -72,8 +72,6 @@ namespace CodeHub.iOS.Views.App
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
-            var sidebarOrder = new StyledStringElement("Sidebar Order", () => vm.GoToSidebarOrderCommand.Execute(null));
-
             var largeFonts = new TrueFalseElement("Large Fonts", vm.LargeFonts, x =>
             {
                 vm.LargeFonts = x.Value;
@@ -92,13 +90,11 @@ namespace CodeHub.iOS.Views.App
 				ReloadData();
 			};
 
-			var usage = new TrueFalseElement("Send Anonymous Usage".t(), vm.AnalyticsEnabled, e => vm.AnalyticsEnabled = e.Value);
-
 			//Assign the root
 			var root = new RootElement(Title);
             root.Add(accountSection);
             root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView, largeFonts });
-			root.Add(new Section ("Internal") { deleteCache, usage });
+			root.Add(new Section ("Internal") { deleteCache });
 			Root = root;
 
 		}

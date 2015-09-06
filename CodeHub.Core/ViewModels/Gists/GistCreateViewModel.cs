@@ -91,7 +91,7 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 var createGist = new GistCreateModel()
                 {
-                    Description = Description,
+                    Description = Description ?? string.Empty,
                     Public = Public,
                     Files = Files.ToDictionary(x => x.Key, x => new GistCreateModel.File { Content = x.Value })
                 };

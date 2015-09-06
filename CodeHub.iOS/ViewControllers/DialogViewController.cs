@@ -271,7 +271,7 @@ namespace MonoTouch.Dialog
 			searchBar.ResignFirstResponder();
 		}
 
-		class SearchDelegate : UISearchBarDelegate {
+		protected class SearchDelegate : UISearchBarDelegate {
 			DialogViewController container;
 
 			public SearchDelegate (DialogViewController container)
@@ -493,11 +493,16 @@ namespace MonoTouch.Dialog
 				PresentModalViewController (controller, true);
 		}
 
+        protected virtual IUISearchBarDelegate CreateSearchDelegate()
+        {
+            return new SearchDelegate(this);
+        }
+
 		void SetupSearch ()
 		{
 			if (enableSearch){
 				searchBar = new UISearchBar (new CGRect (0, 0, tableView.Bounds.Width, 44)) {
-					Delegate = new SearchDelegate (this)
+                    Delegate = CreateSearchDelegate()
 				};
 				if (SearchPlaceholder != null)
 					searchBar.Placeholder = this.SearchPlaceholder;

@@ -229,7 +229,6 @@
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
     <None Include="packages.config" />
-    <Compile Include="Bindings\UISegmentControlBinding.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\IssueCellView.designer.cs">
       <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
@@ -418,6 +417,9 @@
     </Reference>
     <Reference Include="Flurry.Analytics.Portable">
       <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="ModernHttpClient">
+      <HintPath>..\packages\modernhttpclient.2.4.2\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
