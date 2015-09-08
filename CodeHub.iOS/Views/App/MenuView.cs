@@ -90,7 +90,7 @@ namespace CodeHub.iOS.Views.App
 
         private void PresentUserVoice()
         {
-
+            ViewModel.GoToSupport.Execute(null);
         }
 
         protected override void ProfileButtonClicked(object sender, System.EventArgs e)

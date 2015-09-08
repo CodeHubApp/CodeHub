@@ -15,6 +15,7 @@ using CodeFramework.Core.ViewModels.App;
 using CodeHub.Core.Messages;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.ViewModels.Notifications;
+using CodeFramework.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -151,6 +152,11 @@ namespace CodeHub.Core.ViewModels.App
 		{
 			get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
 		}
+
+        public ICommand GoToSupport
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = "https://codehub.uservoice.com/" })); }
+        }
 
 		public ICommand GoToRepositoryCommand
 		{

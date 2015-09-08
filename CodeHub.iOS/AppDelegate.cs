@@ -70,10 +70,6 @@ namespace CodeHub.iOS
 
 			Flurry.Analytics.FlurryAgent.StartSession("4F3YDWSN8XBB4QKTNHYS");
 
-			if (Runtime.Arch != Arch.SIMULATOR)
-			    Flurry.Analytics.FlurryAgent.SetCrashReportingEnabled(true);
-
-
             Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
 
             // Setup theme
@@ -98,7 +94,13 @@ namespace CodeHub.iOS
 
 			this.Window.MakeKeyAndVisible();
 
-			this.StampInstallDate("CodeHub", DateTime.Now.ToString());
+            try
+            {
+                this.StampInstallDate("CodeHub", DateTime.UtcNow.ToString());
+            }
+            catch
+            {
+            }
 
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
@@ -144,12 +146,12 @@ namespace CodeHub.iOS
             MonoTouch.Utilities.ShowAlert("Unable to make purchase", e.Message);
         }
 
-		public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, System.Action<UIBackgroundFetchResult> completionHandler)
-		{
-			if (application.ApplicationState == UIApplicationState.Active)
-				return;
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            if (application.ApplicationState == UIApplicationState.Active)
+                return;
             HandleNotification(userInfo, false);
-		}
+        }
 
         private void HandleNotification(NSDictionary data, bool fromBootup)
 		{
