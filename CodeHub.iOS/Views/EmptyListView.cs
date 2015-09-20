@@ -5,7 +5,7 @@ namespace CodeHub.iOS.Views
 {
     public class EmptyListView : UIView
     {
-        public static UIColor DefaultColor;
+        public static UIColor DefaultColor = UIColor.Black;
 
         public UIImageView ImageView { get; private set; }
 
@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views
             ImageView.Frame = new CGRect(0, 0, 64f, 64f);
             ImageView.TintColor = DefaultColor;
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
-            ImageView.Center = new CGPoint(Frame.Width / 2f, 86f);
+            ImageView.Center = new CGPoint(Frame.Width / 2f, (Frame.Height / 4f) - (ImageView.Frame.Height / 2f));
             ImageView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleBottomMargin;
             ImageView.Image = image;
             Add(ImageView);

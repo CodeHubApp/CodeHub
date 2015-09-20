@@ -7,11 +7,6 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.DialogElements
 {
-	public interface IColorizeBackground {
-		void WillDisplay (UITableView tableView, UITableViewCell cell, NSIndexPath indexPath);
-	}
-	
-
 	public class EntryElement : Element {
 		/// <summary>
 		///   The value of the EntryElement

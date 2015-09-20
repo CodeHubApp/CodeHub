@@ -2,6 +2,7 @@
 using ReactiveUI;
 using CodeHub.Core.Services;
 using Octokit;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
@@ -14,9 +15,7 @@ namespace CodeHub.Core.ViewModels.Releases
         public ReleasesViewModel(ISessionService applicationService)
         {
             Title = "Releases";
-
             Items = InternalItems.CreateDerivedCollection(CreateItemViewModel, x => !x.Draft);
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
                 InternalItems.Reset(await applicationService.GitHubClient.Release.GetAll(RepositoryOwner, RepositoryName)));
         }

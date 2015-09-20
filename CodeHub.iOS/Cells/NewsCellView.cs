@@ -15,9 +15,8 @@ namespace CodeHub.iOS.Cells
     {
         public static readonly UINib Nib = UINib.FromName("NewsCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("NewsCellView");
-        public static readonly UIEdgeInsets EdgeInsets = new UIEdgeInsets(0, 48f, 0, 0);
         public static UIColor LinkColor = Theme.MainTitleColor;
-        private bool _isFakeCell;
+        private static nfloat DefaultContentConstraint = 0f;
 
         public static UIFont LinkFont = UIFont.FromDescriptor(
             UIFont.PreferredSubheadline.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold), 
@@ -51,13 +50,6 @@ namespace CodeHub.iOS.Cells
             public int Id;
         }
 
-        public static NewsCellView Create(bool isFakeCell = false)
-        {
-            var cell = Nib.Instantiate(null, null).GetValue(0) as NewsCellView;
-            cell._isFakeCell = isFakeCell;
-            return cell;
-        }
-
         public NewsCellView(IntPtr handle) 
             : base(handle)
         {
@@ -70,14 +62,12 @@ namespace CodeHub.iOS.Cells
             Image.Layer.MasksToBounds = true;
             Image.Layer.CornerRadius = Image.Bounds.Height / 2f;
             ContentView.Opaque = true;
-            SeparatorInset = EdgeInsets;
             ActionImage.TintColor = Time.TextColor;
+
+            DefaultContentConstraint = ContentConstraint.Constant;
 
             Header.TextColor = UIColor.FromRGB(41, 41, 41);
             Body.TextColor = UIColor.FromRGB(90, 90, 90);
-
-//            Header.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
-//            Body.EnabledTextCheckingTypes = MonoTouch.TTTAttributedLabel.NSTextCheckingTypes.NSTextCheckingTypeLink;
 
             Header.LinkAttributes = new CTStringAttributes {
                 Font = new CTFont(LinkFont.Name, LinkFont.PointSize),
@@ -116,6 +106,8 @@ namespace CodeHub.iOS.Cells
                     List<NewsCellView.Link> bodyLinks;
                     Body.Text = CreateAttributedStringFromBlocks(x.BodyBlocks, out bodyLinks);
                     Body.Delegate = new LabelDelegate(bodyLinks, w => {});
+                    Body.Hidden = x.BodyBlocks.Count == 0;
+                    ContentConstraint.Constant = Body.Hidden ? 0 : DefaultContentConstraint;
 
                     foreach (var b in headerLinks)
                         Header.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
@@ -125,17 +117,7 @@ namespace CodeHub.iOS.Cells
                 });
 
             this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Where(_ => !_isFakeCell)
                 .Subscribe(x => Image.SetAvatar(x));
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-            ContentView.SetNeedsLayout();
-            ContentView.LayoutIfNeeded();
-            Header.PreferredMaxLayoutWidth = Header.Frame.Width;
-            Body.PreferredMaxLayoutWidth = Body.Frame.Width;
         }
 
         class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate

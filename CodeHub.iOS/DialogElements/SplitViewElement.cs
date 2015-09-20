@@ -164,7 +164,6 @@ namespace CodeHub.iOS.DialogElements
             }
 
             public SplitButton(UIImage image, string text = null, Action touched = null)
-                : base(UIButtonType.Custom)
             {
                 AutosizesSubviews = true;
 

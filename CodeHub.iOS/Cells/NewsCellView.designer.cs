@@ -6,7 +6,6 @@
 //
 using Foundation;
 using System.CodeDom.Compiler;
-using MonoTouch.TTTAttributedLabel;
 
 namespace CodeHub.iOS.Cells
 {
@@ -17,10 +16,13 @@ namespace CodeHub.iOS.Cells
 		UIKit.UIImageView ActionImage { get; set; }
 
 		[Outlet]
-        TTTAttributedLabel Body { get; set; }
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
 
 		[Outlet]
-        TTTAttributedLabel Header { get; set; }
+		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+
+		[Outlet]
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
 
 		[Outlet]
 		UIKit.UIImageView Image { get; set; }
@@ -30,6 +32,26 @@ namespace CodeHub.iOS.Cells
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ContentConstraint != null) {
+				ContentConstraint.Dispose ();
+				ContentConstraint = null;
+			}
+
+			if (ActionImage != null) {
+				ActionImage.Dispose ();
+				ActionImage = null;
+			}
+
+			if (Body != null) {
+				Body.Dispose ();
+				Body = null;
+			}
+
+			if (Header != null) {
+				Header.Dispose ();
+				Header = null;
+			}
+
 			if (Image != null) {
 				Image.Dispose ();
 				Image = null;
@@ -38,11 +60,6 @@ namespace CodeHub.iOS.Cells
 			if (Time != null) {
 				Time.Dispose ();
 				Time = null;
-			}
-
-			if (ActionImage != null) {
-				ActionImage.Dispose ();
-				ActionImage = null;
 			}
 		}
 	}

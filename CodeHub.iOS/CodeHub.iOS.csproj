@@ -234,7 +234,6 @@
     <Compile Include="Cells\IssueAssigneeTableViewCell.cs" />
     <Compile Include="OcticonExtensions.cs" />
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
-    <Compile Include="Utilities\TableViewCellHeightCache.cs" />
     <Compile Include="Cells\UserTableViewCell.cs" />
     <Compile Include="Services\IInAppPurchaseService.cs" />
     <Compile Include="Services\InAppPurchaseNetworkDecorator.cs" />
@@ -490,9 +489,6 @@
     <Reference Include="Analytics.NET">
       <HintPath>..\packages\Analytics.2.0.1\lib\Analytics.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.14.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
@@ -501,6 +497,9 @@
     </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.16.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

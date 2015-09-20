@@ -123,7 +123,7 @@ namespace CodeHub.iOS
 
         public readonly static ThemeColors Default = new ThemeColors(
             UIColor.FromRGB(50, 50, 50), 
-            UIColor.FromRGB(100, 100, 100), 
+            UIColor.FromRGB(0x5B, 0x61, 0x65), 
             UIColor.FromRGB(0x41, 0x83, 0xc4));
 
 //        public static readonly IDictionary<string, ThemeColors> Themes = new Dictionary<string, ThemeColors>(StringComparer.OrdinalIgnoreCase)
@@ -166,6 +166,7 @@ namespace CodeHub.iOS
             UISwitch.Appearance.OnTintColor = secondaryColor;
             UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MainNavigationController)).TintColor = iconColor;
             LoadingIndicatorView.DefaultColor = primaryColor;
+            EmptyListView.DefaultColor = primaryColor;
         }
     }
 }

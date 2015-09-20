@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -21,7 +21,7 @@
                             <constraint firstAttribute="height" constant="32" id="Cuo-ID-s9N"/>
                         </constraints>
                     </imageView>
-                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="3 years ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hu1-pJ-zF3">
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="3 years ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hu1-pJ-zF3">
                         <rect key="frame" x="48" y="8" width="264" height="16"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
@@ -58,13 +58,12 @@
                     <constraint firstItem="QTS-HF-RsJ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="UoJ-D7-3PN" secondAttribute="topMargin" id="4TY-bK-Y7c"/>
                     <constraint firstItem="QTS-HF-RsJ" firstAttribute="leading" secondItem="UoJ-D7-3PN" secondAttribute="leadingMargin" constant="16" id="CCK-jC-FGs"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="CuW-d9-uq1"/>
-                    <constraint firstItem="R9K-I1-WdV" firstAttribute="trailing" secondItem="QpW-3s-LgQ" secondAttribute="trailing" id="Ga3-6e-Lzr"/>
-                    <constraint firstItem="R9K-I1-WdV" firstAttribute="trailing" secondItem="hu1-pJ-zF3" secondAttribute="trailing" id="HUZ-mx-LTR"/>
+                    <constraint firstItem="R9K-I1-WdV" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="HoQ-2C-NzU"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="leading" secondItem="QpW-3s-LgQ" secondAttribute="leading" id="KAf-X6-Lty"/>
                     <constraint firstItem="R9K-I1-WdV" firstAttribute="leading" secondItem="QpW-3s-LgQ" secondAttribute="leading" id="NFg-Zx-4Xk"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="leading" secondItem="QTS-HF-RsJ" secondAttribute="trailing" constant="8" id="Nvh-FG-QM9"/>
+                    <constraint firstItem="QpW-3s-LgQ" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="TQ6-jz-zVK"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="centerY" secondItem="QTS-HF-RsJ" secondAttribute="centerY" id="UAS-w6-Rhy"/>
-                    <constraint firstItem="hu1-pJ-zF3" firstAttribute="centerY" secondItem="QTS-HF-RsJ" secondAttribute="centerY" id="XzJ-y6-yUF"/>
                     <constraint firstAttribute="bottomMargin" secondItem="R9K-I1-WdV" secondAttribute="bottom" id="c98-XY-eLq"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="top" secondItem="UoJ-D7-3PN" secondAttribute="topMargin" id="jHG-95-K9H"/>
                     <constraint firstItem="NX7-8T-3y3" firstAttribute="leading" secondItem="UoJ-D7-3PN" secondAttribute="leadingMargin" id="nTs-h9-gP5"/>
@@ -74,9 +73,11 @@
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <inset key="separatorInset" minX="48" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
                 <outlet property="ActionImage" destination="QTS-HF-RsJ" id="RPu-pv-Guc"/>
                 <outlet property="Body" destination="R9K-I1-WdV" id="5oS-Qe-kB2"/>
+                <outlet property="ContentConstraint" destination="zsO-Dz-Vuz" id="urF-KV-Bk2"/>
                 <outlet property="Header" destination="QpW-3s-LgQ" id="RKL-Jo-IRj"/>
                 <outlet property="Image" destination="NX7-8T-3y3" id="CL0-mM-tM2"/>
                 <outlet property="Time" destination="hu1-pJ-zF3" id="Htj-F1-Fff"/>
