@@ -9,22 +9,13 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
     {
         public event Action WantsToDimiss;
 
-        protected void OnWantsToDismiss()
-        {
-            var e = WantsToDimiss;
-            if (e != null)
-                e();
-        }
+        protected void OnWantsToDismiss() => WantsToDimiss?.Invoke();
 
         private IEnumerable<UIViewController> GetPages()
         {
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            var isPro = appDelegate?.IsPro ?? false;
-
             yield return new AboutViewController();
             yield return new PromoteView();
-            if (!isPro)
-                yield return new GoProViewController();
+            yield return new GoProViewController();
             yield return new FeedbackViewController();
 
             var welcomeViewController = new WelcomeViewController();
@@ -36,7 +27,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = UIColor.FromRGB(50, 50, 50);
+            View.BackgroundColor = Theme.PrimaryMenuNavigationBarColor;
 
             var pages = GetPages().Select(x => new CardPageViewController(x)).ToArray();
             var welcomePageViewController = new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);

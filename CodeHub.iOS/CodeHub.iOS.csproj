@@ -253,13 +253,6 @@
     <InterfaceDefinition Include="Cells\MultilinedCellView.xib" />
     <Compile Include="DialogElements\ElementExtensions.cs" />
     <Compile Include="Services\PushNotificationRegistrationService.cs" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\AboutViewController.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\CardPageViewController~ipad.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\CardPageViewController~iphone.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\FeedbackViewController.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\GoProViewController.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\PromoteView.xib" />
-    <InterfaceDefinition Include="Resources\ViewControllers\Walkthrough\WelcomeViewController.xib" />
     <Compile Include="ViewControllers\App\MenuViewController.cs" />
     <Compile Include="ViewControllers\Gists\PublicGistsViewController.cs" />
     <Compile Include="ViewControllers\Gists\StarredGistsViewController.cs" />

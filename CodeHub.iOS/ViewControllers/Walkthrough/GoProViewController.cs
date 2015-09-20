@@ -23,6 +23,15 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
                     (s, e) => DismissViewController(true, null));
                 PresentViewController(new ThemedNavigationController(view), true, null);
             };
+
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            var isPro = appDelegate?.IsPro ?? false;
+
+            if (isPro)
+            {
+                TitleLabel.Text = "Pro Enabled!";
+                DescriptionLabel.Text = "Thanks for your continued support! The following Pro features have been activated for your device:\n\n• Private Repositories\n• Enterprise Support\n• Push Notifications";
+            }
         }
     }
 }

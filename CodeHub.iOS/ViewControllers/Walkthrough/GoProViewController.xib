@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GoProViewController">
             <connections>
+                <outlet property="DescriptionLabel" destination="Ty1-92-mG8" id="MeY-3k-Aix"/>
                 <outlet property="TellMeMoreButton" destination="iIP-BS-WFU" id="SOp-Nd-kBt"/>
+                <outlet property="TitleLabel" destination="s3B-Is-I3O" id="iLM-FD-5Id"/>
                 <outlet property="view" destination="iN0-l3-epB" id="kCW-yf-GMq"/>
             </connections>
         </placeholder>
@@ -16,14 +18,14 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" image="Briefcase.png" translatesAutoresizingMaskIntoConstraints="NO" id="t2i-oA-TFo">
-                    <rect key="frame" x="56" y="124" width="208" height="209"/>
+                    <rect key="frame" x="56" y="111" width="208" height="222"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="208" id="0U8-Z1-An9"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Go Pro!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s3B-Is-I3O">
-                    <rect key="frame" x="26" y="44" width="268" height="62"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="52"/>
+                    <rect key="frame" x="26" y="36" width="268" height="57"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="48"/>
                     <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
@@ -57,7 +59,7 @@
                 <constraint firstItem="s3B-Is-I3O" firstAttribute="leading" secondItem="t2i-oA-TFo" secondAttribute="leading" constant="-30" id="6IE-eo-asm"/>
                 <constraint firstAttribute="centerX" secondItem="s3B-Is-I3O" secondAttribute="centerX" id="9VS-Ea-fCh"/>
                 <constraint firstItem="Ty1-92-mG8" firstAttribute="top" secondItem="t2i-oA-TFo" secondAttribute="bottom" constant="30" id="L4L-0y-T63"/>
-                <constraint firstItem="s3B-Is-I3O" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="44" id="N2Z-l5-8At"/>
+                <constraint firstItem="s3B-Is-I3O" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="36" id="N2Z-l5-8At"/>
                 <constraint firstItem="t2i-oA-TFo" firstAttribute="trailing" secondItem="Ty1-92-mG8" secondAttribute="trailing" constant="-30" id="PYA-EK-jRN"/>
                 <constraint firstItem="t2i-oA-TFo" firstAttribute="top" secondItem="s3B-Is-I3O" secondAttribute="bottom" constant="18" id="XPl-KB-6QL"/>
                 <constraint firstAttribute="bottom" secondItem="iIP-BS-WFU" secondAttribute="bottom" constant="14" id="fi0-GP-LAS"/>

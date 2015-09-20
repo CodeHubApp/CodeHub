@@ -13,10 +13,26 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 	partial class GoProViewController
 	{
 		[Outlet]
+		UIKit.UILabel DescriptionLabel { get; set; }
+
+		[Outlet]
 		UIKit.UIButton TellMeMoreButton { get; set; }
+
+		[Outlet]
+		UIKit.UILabel TitleLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (DescriptionLabel != null) {
+				DescriptionLabel.Dispose ();
+				DescriptionLabel = null;
+			}
+
+			if (TitleLabel != null) {
+				TitleLabel.Dispose ();
+				TitleLabel = null;
+			}
+
 			if (TellMeMoreButton != null) {
 				TellMeMoreButton.Dispose ();
 				TellMeMoreButton = null;
