@@ -1,115 +1,111 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <summary>
-//    Defines the LinkerPleaseInclude type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Specialized;
+using System.Windows.Input;
+using Cirrious.MvvmCross.Touch.Views;
+using Foundation;
+using UIKit;
+
 namespace CodeHub.iOS
 {
-    using System;
-    using System.Collections.Specialized;
-    using System.Windows.Input;
-
-    using UIKit;
-
-    /// <summary>
-    /// Defines the LinkerPleaseInclude type.
-    /// This class is never actually executed, but when Xamarin linking is enabled it does how to 
-    /// ensure types and properties are preserved in the deployed app. 
-    /// </summary>
+    // This class is never actually executed, but when Xamarin linking is enabled it does ensure types and properties
+    // are preserved in the deployed app
+    [Preserve(AllMembers = true)]
     public class LinkerPleaseInclude
     {
-        /// <summary>
-        /// Includes the specified UI button.
-        /// </summary>
-        /// <param name="uiButton">The UI button.</param>
         public void Include(UIButton uiButton)
         {
-            uiButton.TouchUpInside += (s, e) => uiButton.SetTitle(uiButton.Title(UIControlState.Normal), UIControlState.Normal);
+            uiButton.TouchUpInside += (s, e) =>
+                                      uiButton.SetTitle(uiButton.Title(UIControlState.Normal), UIControlState.Normal);
         }
 
-        /// <summary>
-        /// Includes the specified bar button.
-        /// </summary>
-        /// <param name="barButton">The bar button.</param>
         public void Include(UIBarButtonItem barButton)
         {
-            barButton.Clicked += (s, e) => barButton.Title = barButton.Title + string.Empty;
+            barButton.Clicked += (s, e) =>
+                                 barButton.Title = barButton.Title + "";
         }
 
-        /// <summary>
-        /// Includes the specified text field.
-        /// </summary>
-        /// <param name="textField">The text field.</param>
         public void Include(UITextField textField)
         {
-            textField.Text = textField.Text + string.Empty;
-            textField.EditingChanged += (sender, args) => { textField.Text = string.Empty; };
+            textField.Text = textField.Text + "";
+            textField.EditingChanged += (sender, args) => { textField.Text = ""; };
         }
 
-        /// <summary>
-        /// Includes the specified text view.
-        /// </summary>
-        /// <param name="uiTextView">The text view.</param>
-        public void Include(UITextView uiTextView)
+        public void Include(UITextView textView)
         {
-            uiTextView.Text = uiTextView.Text + string.Empty;
-            uiTextView.Changed += (sender, args) => { uiTextView.Text = string.Empty; };
+            textView.Text = textView.Text + "";
+            textView.Changed += (sender, args) => { textView.Text = ""; };
         }
 
-        /// <summary>
-        /// Includes the specified uiLabel.
-        /// </summary>
-        /// <param name="uiLabel">The uiLabel.</param>
-        public void Include(UILabel uiLabel)
+        public void Include(UILabel label)
         {
-            uiLabel.Text = string.Format("{0}", uiLabel.Text);
+            label.Text = label.Text + "";
+            label.AttributedText = new NSAttributedString(label.AttributedText.ToString() + "");
         }
 
-        /// <summary>
-        /// Includes the specified image view.
-        /// </summary>
-        /// <param name="uiImageView">The image view.</param>
-        public void Include(UIImageView uiImageView)
+        public void Include(UIImageView imageView)
         {
-            uiImageView.Image = new UIImage(uiImageView.Image.CIImage);
+            imageView.Image = new UIImage(imageView.Image.CGImage);
         }
 
-        /// <summary>
-        /// Includes the specified uiSlider.
-        /// </summary>
-        /// <param name="uiSlider">The uiSlider.</param>
-        public void Include(UISlider uiSlider)
+        public void Include(UIDatePicker date)
         {
-            uiSlider.Value = uiSlider.Value + 1;
-            uiSlider.ValueChanged += (sender, args) => { uiSlider.Value = 1; };
+            date.Date = date.Date.AddSeconds(1);
+            date.ValueChanged += (sender, args) => { date.Date = NSDate.DistantFuture; };
         }
 
-        /// <summary>
-        /// Includes the specified UI switch.
-        /// </summary>
-        /// <param name="uiSwitch">The UI switch.</param>
-        public void Include(UISwitch uiSwitch)
+        public void Include(UISlider slider)
         {
-            uiSwitch.On = !uiSwitch.On;
-            uiSwitch.ValueChanged += (sender, args) => { uiSwitch.On = false; };
+            slider.Value = slider.Value + 1;
+            slider.ValueChanged += (sender, args) => { slider.Value = 1; };
         }
 
-        /// <summary>
-        /// Includes the specified changed.
-        /// </summary>
-        /// <param name="changed">The changed.</param>
+        public void Include(UIProgressView progress)
+        {
+            progress.Progress = progress.Progress + 1;
+        }
+
+        public void Include(UISwitch sw)
+        {
+            sw.On = !sw.On;
+            sw.ValueChanged += (sender, args) => { sw.On = false; };
+        }
+
+        public void Include(MvxViewController vc)
+        {
+            vc.Title = vc.Title + "";
+        }
+
+        public void Include(UIStepper s)
+        {
+            s.Value = s.Value + 1;
+            s.ValueChanged += (sender, args) => { s.Value = 0; };
+        }
+
+        public void Include(UIPageControl s)
+        {
+            s.Pages = s.Pages + 1;
+            s.ValueChanged += (sender, args) => { s.Pages = 0; };
+        }
+
         public void Include(INotifyCollectionChanged changed)
         {
-            changed.CollectionChanged += (s, e) => { string test = string.Format("{0}{1}{2}{3}{4}", e.Action, e.NewItems, e.NewStartingIndex, e.OldItems, e.OldStartingIndex); };
+            changed.CollectionChanged += (s, e) => { var test = string.Format("{0}{1}{2}{3}{4}", e.Action,e.NewItems, e.NewStartingIndex, e.OldItems, e.OldStartingIndex); } ;
         }
-
-        /// <summary>
-        /// Includes the specified command.
-        /// </summary>
-        /// <param name="command">The command.</param>
+		
         public void Include(ICommand command)
         {
-            command.CanExecuteChanged += (s, e) => { if (command.CanExecute(null)) command.Execute(null); };
+           command.CanExecuteChanged += (s, e) => { if (command.CanExecute(null)) command.Execute(null); };
         }
-    }
+
+		public void Include(Cirrious.CrossCore.IoC.MvxPropertyInjector injector)
+		{
+			injector = new Cirrious.CrossCore.IoC.MvxPropertyInjector();
+		} 
+
+		public void Include(System.ComponentModel.INotifyPropertyChanged changed)
+		{
+			changed.PropertyChanged += (sender, e) => { var test = e.PropertyName; };
+		}
+	}
 }
+
