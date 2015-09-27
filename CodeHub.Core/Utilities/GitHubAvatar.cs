@@ -19,7 +19,7 @@ namespace CodeHub.Core.Utilities
 
         public GitHubAvatar(Uri avatarUri)
         {
-            AvatarUrl = avatarUri.AbsoluteUri;
+            AvatarUrl = avatarUri?.AbsoluteUri;
         }
     }
 }

@@ -276,12 +276,6 @@
     <Reference Include="Akavache">
       <HintPath>..\packages\akavache.core.4.1.1\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.dll</HintPath>
     </Reference>
-    <Reference Include="Fusillade">
-      <HintPath>..\packages\fusillade.0.6.0\lib\Portable-net45+win+wpa81+wp80\Fusillade.dll</HintPath>
-    </Reference>
-    <Reference Include="Punchclock">
-      <HintPath>..\packages\Punchclock.1.2.0\lib\Portable-net45+win+wpa81+wp80\Punchclock.dll</HintPath>
-    </Reference>
     <Reference Include="Flurry.Analytics.Portable">
       <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\portable-wp80+win80+wpa81+net45+sl50+MonoTouch10+MonoAndroid10+XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
     </Reference>

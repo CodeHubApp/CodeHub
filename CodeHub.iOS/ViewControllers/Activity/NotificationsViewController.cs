@@ -24,43 +24,27 @@ namespace CodeHub.iOS.ViewControllers.Activity
                 new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
 
             _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
-
             _markToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _markButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-
             _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => StartEditing());
             _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) => StopEditing());
 
-            var groupedNotificationsObservable = this.WhenAnyValue(x => x.ViewModel.GroupedNotifications).IsNotNull();
+            this.WhenAnyObservable(x => x.ViewModel.Notifications.ItemChanged)
+                .Select(_ => ViewModel.Notifications.Count)
+                .Subscribe(x => {
+                    _editButton.Enabled = x > 0;
+                    if (x == 0 && TableView.Editing)
+                        StopEditing();
+                });
 
-            this.WhenActivated(d => {
-                
-                d(groupedNotificationsObservable
-                    .SelectMany(x => x)
-                    .SelectMany(x => x.Notifications)
-                    .Select(x => x.WhenAnyValue(y => y.IsSelected))
-                    .Merge()
-                    .Select(_ => ViewModel.GroupedNotifications.SelectMany(x => x.Notifications).Any(x => x.IsSelected))
-                    .Where(x => TableView.Editing)
-                    .Subscribe(x =>
-                    {
-                        _markButton.Title = x ? "Mark Selected as Read" : "Read All as Read";
-                    }));
+            this.WhenAnyValue(x => x.ViewModel.ShowEditButton)
+                .Subscribe(x => NavigationItem.SetRightBarButtonItem(x ? _editButton : null, true));
 
-                d(groupedNotificationsObservable
-                    .Where(x => x.Count == 0 && TableView.Editing)
-                    .Subscribe(_ => StopEditing()));
+            this.WhenAnyValue(x => x.ViewModel.ActiveFilter)
+                .Subscribe(x => _viewSegment.SelectedSegment = x);
 
-                d(groupedNotificationsObservable
-                    .Subscribe(x => _editButton.Enabled = x.Count > 0));
-
-                d(this.WhenAnyValue(x => x.ViewModel.ActiveFilter)
-                    .Subscribe(x => 
-                    {
-                        _viewSegment.SelectedSegment = x;
-                        NavigationItem.SetRightBarButtonItem((_viewSegment.SelectedSegment != 2) ? _editButton : null, true);
-                    }));
-            });
-
+            this.WhenAnyValue(x => x.ViewModel.IsAnyItemsSelected)
+                .Subscribe(x => _markButton.Title = x ? "Mark Selected as Read" : "Mark All as Read");
+ 
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
             {
                 NavigationItem.TitleView = _viewSegment;
@@ -118,12 +102,8 @@ namespace CodeHub.iOS.ViewControllers.Activity
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            var notificationSource = new NotificationTableViewSource(TableView);
             TableView.AllowsMultipleSelectionDuringEditing = true;
-            ViewModel.WhenAnyValue(x => x.GroupedNotifications).Where(x => x != null).Subscribe(notificationSource.SetData);
-            TableView.Source = notificationSource;
-
+            TableView.Source = new NotificationTableViewSource(TableView, ViewModel.GroupedNotifications, () => ViewModel.ActiveFilter != NotificationsViewModel.AllFilter);
             _viewSegment.ValueChanged += (sender, args) => ViewModel.ActiveFilter = (int)_viewSegment.SelectedSegment;
         }
     }

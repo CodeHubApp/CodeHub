@@ -6,12 +6,12 @@ namespace CodeHub.Core
     {
         public static string GithubOAuthId
         {
-            get { throw new NotImplementedException("You need to specify the OAuth Client Id"); }
+            get { return "72f4fb74bdba774b759d"; }
         }
 
         public static string GithubOAuthSecret
         {
-            get { throw new NotImplementedException("You need to specify the OAuth Client Secret"); }
+            get { return "9253ab615f8c00738fff5d1c665ca81e581875cb"; }
         }
     }
 }

@@ -20,8 +20,11 @@ namespace Octokit
             return x.Committer != null ? x.Committer.Login : "Unknown";
         }
 
-        public static Uri GenerateGravatarUrl(this Octokit.GitHubCommit x)
+        public static Uri GenerateGravatarUrl(this GitHubCommit x)
         {
+            if (x == null)
+                return null;
+            
             try
             {
                 if (x.Author != null && !string.IsNullOrEmpty(x.Author.AvatarUrl))

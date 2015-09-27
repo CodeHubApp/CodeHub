@@ -159,7 +159,6 @@
     <Compile Include="Cells\TeamCellView.cs" />
     <Compile Include="Cells\BranchCellView.cs" />
     <Compile Include="Cells\TagCellView.cs" />
-    <Compile Include="Cells\NotificationViewCell.cs" />
     <Compile Include="Cells\CommitCellView.cs" />
     <Compile Include="Cells\CommitCellView.designer.cs" />
     <Compile Include="TableViewSources\CommitTableViewSource.cs" />
@@ -424,6 +423,11 @@
     <Compile Include="ViewControllers\App\EnterpriseSupportViewController.cs" />
     <Compile Include="Views\LoadingIndicatorView.cs" />
     <Compile Include="LinkerOverride.cs" />
+    <Compile Include="Cells\NotificationTableViewCell.cs" />
+    <Compile Include="Cells\NotificationTableViewCell.designer.cs">
+      <DependentUpon>NotificationTableViewCell.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Cells\NotificationTableViewCell.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -447,9 +451,6 @@
     <Reference Include="Xamarin.iOS" />
     <Reference Include="BTProgressHUD">
       <HintPath>lib\BTProgressHUD.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\packages\MonoTouch.SlideoutNavigation.0.1.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
     </Reference>
     <Reference Include="MonoTouch.TTTAttributedLabel">
       <HintPath>lib\MonoTouch.TTTAttributedLabel.dll</HintPath>
@@ -488,11 +489,14 @@
     <Reference Include="CommonMark">
       <HintPath>..\packages\CommonMark.NET.0.9.1\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
     </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.16.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.16.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    <Reference Include="MonoTouch.Slideout">
+      <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.0\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

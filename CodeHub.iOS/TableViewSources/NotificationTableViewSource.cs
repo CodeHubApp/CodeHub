@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using CodeHub.Core.ViewModels.Activity;
 using Foundation;
 using UIKit;
@@ -11,35 +9,25 @@ namespace CodeHub.iOS.TableViewSources
 {
     public class NotificationTableViewSource : ReactiveTableViewSource<NotificationItemViewModel>
     {
-        private static readonly nfloat _hintSize = 64f;
-        private NotificationViewCell _usedForHeight;
+        private readonly Func<bool> _canEdit;
 
-        public NotificationTableViewSource(UITableView tableView)
-            : base(tableView, UITableView.AutomaticDimension, _hintSize)
+        public NotificationTableViewSource(UITableView tableView, IReadOnlyReactiveList<NotificationGroupViewModel> collections, Func<bool> canEdit)
+            : base(tableView, UITableView.AutomaticDimension, 64f)
         {
-            tableView.RegisterClassForCellReuse(typeof(NotificationViewCell), NotificationViewCell.Key);
-        }
-
-        public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
-        {
-            if (_usedForHeight == null)
-                _usedForHeight = NotificationViewCell.Create();
-
-            var item = ItemAt(indexPath) as NotificationItemViewModel;
-            if (item == null) 
-                return base.GetHeightForRow(tableView, indexPath);
-
-            _usedForHeight.ViewModel = item;
-            return _usedForHeight.GetHeight(tableView.Bounds.Size);
-        }
-
-        public void SetData(IEnumerable<NotificationGroupViewModel> collections)
-        {
-            Data = collections.Select(x => 
-                new TableSectionInformation<NotificationItemViewModel, NotificationViewCell>(x.Notifications, NotificationViewCell.Key, (float)_hintSize)
+            _canEdit = canEdit;
+            tableView.RegisterNibForCellReuse(NotificationTableViewCell.Nib, NotificationTableViewCell.Key);
+            Data = collections.CreateDerivedCollection(x => 
+                new TableSectionInformation<NotificationItemViewModel, NotificationTableViewCell>(x.Notifications, NotificationTableViewCell.Key, (float)UITableView.AutomaticDimension)
                 {
                     Header = new TableSectionHeader(x.Name)
-                }).ToList();
+                },
+                filter: x => x.IsVisible,
+                signalReset: collections.Changed);
+        }
+
+        public override string TitleForDeleteConfirmation(UITableView tableView, NSIndexPath indexPath)
+        {
+            return "Mark As Read";
         }
 
         public override void RowDeselected(UITableView tableView, NSIndexPath indexPath)
@@ -64,9 +52,25 @@ namespace CodeHub.iOS.TableViewSources
             }
         }
 
+        public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return UITableViewCellEditingStyle.Delete;
+        }
+
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+        {
+            switch (editingStyle)
+            {
+                case UITableViewCellEditingStyle.Delete:
+                    var item = ItemAt(indexPath) as NotificationItemViewModel;
+                    item?.RemoveCommand.ExecuteIfCan();
+                    break;
+            }
+        }
+
         public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
         {
-            return true;
+            return _canEdit();
         }
     }
 }

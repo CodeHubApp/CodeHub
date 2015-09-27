@@ -15,6 +15,8 @@ namespace CodeHub.Core.ViewModels.Activity
 
         public IReactiveCommand<object> GoToCommand { get; private set; }
 
+        public IReactiveCommand<object> RemoveCommand { get; private set; }
+
         public string Id { get; private set; }
 
         private bool _isSelected;
@@ -26,13 +28,14 @@ namespace CodeHub.Core.ViewModels.Activity
 
         internal Notification Notification { get; private set; }
 
-        internal NotificationItemViewModel(Notification notification, Action<NotificationItemViewModel> gotoAction)
+        internal NotificationItemViewModel(Notification notification, Action<NotificationItemViewModel> gotoAction, Action<NotificationItemViewModel> deleteAction)
         {
             Notification = notification;
             Title = notification.Subject.Title;
             Id = notification.Id;
 
             GoToCommand = ReactiveCommand.Create().WithSubscription(_ => gotoAction(this));
+            RemoveCommand = ReactiveCommand.Create().WithSubscription(_ => deleteAction(this));
 
             var subject = notification.Subject.Type.ToLower();
             if (subject.Equals("issue"))

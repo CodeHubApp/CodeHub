@@ -16,20 +16,17 @@ namespace CodeHub.Core.ViewModels.Activity
 {
     public class NotificationsViewModel : BaseViewModel, ILoadableViewModel
     {
-        private const int UnreadFilter = 0;
-        private const int ParticipatingFilter = 1;
-        private const int AllFilter = 2;
+        public const int UnreadFilter = 0;
+        public const int ParticipatingFilter = 1;
+        public const int AllFilter = 2;
 
         private readonly ReactiveList<Octokit.Notification> _notifications = new ReactiveList<Octokit.Notification>();
         private readonly ISubject<int> _notificationCount = new Subject<int>();
         private readonly ISessionService _applicationService;
 
-        private IList<NotificationGroupViewModel> _groupedNotifications;
-        public IList<NotificationGroupViewModel> GroupedNotifications
-        {
-            get { return _groupedNotifications; }
-            private set { this.RaiseAndSetIfChanged(ref _groupedNotifications, value); }
-        }
+        public IReadOnlyReactiveList<NotificationItemViewModel> Notifications { get; }
+
+        public IReadOnlyReactiveList<NotificationGroupViewModel> GroupedNotifications { get; }
 
         private int _activeFilter;
         public int ActiveFilter
@@ -43,6 +40,19 @@ namespace CodeHub.Core.ViewModels.Activity
             get { return _notificationCount.AsObservable(); }
         }
 
+        private readonly ObservableAsPropertyHelper<bool> _showEditButton;
+        public bool ShowEditButton
+        {
+            get { return _showEditButton.Value; }
+        }
+
+        private readonly ObservableAsPropertyHelper<bool> _anyItemsSelected;
+        public bool IsAnyItemsSelected
+        {
+            get { return _anyItemsSelected.Value; }
+        }
+
+
         public IReactiveCommand<Unit> LoadCommand { get; private set; }
 
         public IReactiveCommand<object> ReadSelectedCommand { get; private set; }
@@ -51,6 +61,28 @@ namespace CodeHub.Core.ViewModels.Activity
         {
             _applicationService = applicationService;
             Title = "Notifications";
+
+            _showEditButton = this.WhenAnyValue(x => x.ActiveFilter)
+                .Select(x => x != AllFilter)
+                .ToProperty(this, x => x.ShowEditButton);
+
+            var groupedNotifications = new ReactiveList<NotificationGroupViewModel>();
+            GroupedNotifications = groupedNotifications;
+
+            Notifications = _notifications.CreateDerivedCollection(y => new NotificationItemViewModel(y, GoToNotification, DeleteNotification));
+            Notifications.Changed.Where(x => x.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Reset)
+                .Select(_ => Notifications)
+                .Subscribe(notifications => groupedNotifications.Reset(notifications.GroupBy(x => x.Notification.Repository.FullName).Select(x => {
+                var items = notifications.CreateDerivedCollection(y => y, filter: y => y.Notification.Repository.FullName == x.Key);
+                return new NotificationGroupViewModel(x.Key, items);
+            })));
+
+            _anyItemsSelected = Notifications.Changed
+                .SelectMany(x => Notifications)
+                .Select(x => x.WhenAnyValue(y => y.IsSelected))
+                .Merge()
+                .Select(x => Notifications.Select(y => y.IsSelected).Any(y => y))
+                .ToProperty(this, x => x.IsAnyItemsSelected);
   
             ReadSelectedCommand = ReactiveCommand.Create().WithSubscription(_ =>
             {
@@ -74,25 +106,11 @@ namespace CodeHub.Core.ViewModels.Activity
                 }
             });
 
-            _notifications.Changed.Select(_ => Unit.Default)
-                .Merge(_notifications.ItemChanged.Select(_ => Unit.Default))
-                .Subscribe(_ =>
-                {
-                    GroupedNotifications = _notifications.GroupBy(x => x.Repository.FullName).Select(x => 
-                    {
-                        var items = x.Select(y => new NotificationItemViewModel(y, GoToNotification));
-                        var notifications = new ReactiveList<NotificationItemViewModel>(items);
-                        return new NotificationGroupViewModel(x.Key, notifications);
-                    }).ToList();
-                });
-
-
             LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
                 var all = ActiveFilter == AllFilter;
                 var participating = ActiveFilter == ParticipatingFilter;
                 var req = new Octokit.NotificationsRequest { All = all, Participating = participating, Since = DateTimeOffset.Now.Subtract(TimeSpan.FromDays(365)) };
-                var notifications = await applicationService.GitHubClient.Notification.GetAllForCurrent(req);
-                _notifications.Reset(notifications);
+                _notifications.Reset(await applicationService.GitHubClient.Notification.GetAllForCurrent(req));
             });
 
             _notifications.CountChanged
@@ -111,6 +129,12 @@ namespace CodeHub.Core.ViewModels.Activity
             if (notification == null || !notification.Unread) return;
             await _applicationService.GitHubClient.Notification.MarkAsRead(int.Parse(notification.Id));
             _notifications.Remove(notification);
+        }
+
+        private void DeleteNotification(NotificationItemViewModel item)
+        {
+            _notifications.Remove(item.Notification);
+            ReadNotification(item.Notification).ToBackground();
         }
 
         private void GoToNotification(NotificationItemViewModel item)

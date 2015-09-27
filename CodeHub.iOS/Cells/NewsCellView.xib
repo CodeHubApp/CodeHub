@@ -15,21 +15,21 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="NX7-8T-3y3">
-                        <rect key="frame" x="8" y="36" width="32" height="32"/>
+                        <rect key="frame" x="8" y="35" width="32" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="32" id="2rL-uL-ZFr"/>
                             <constraint firstAttribute="height" constant="32" id="Cuo-ID-s9N"/>
                         </constraints>
                     </imageView>
                     <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="3 years ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hu1-pJ-zF3">
-                        <rect key="frame" x="48" y="8" width="264" height="16"/>
+                        <rect key="frame" x="48" y="8" width="264" height="15"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9K-I1-WdV" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="48" y="78" width="264" height="102"/>
+                        <rect key="frame" x="48" y="77" width="264" height="103"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
@@ -43,7 +43,7 @@
                         </constraints>
                     </imageView>
                     <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a really long label. I wonder what will happen when it's put into full effect" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QpW-3s-LgQ" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="48" y="31" width="264" height="41"/>
+                        <rect key="frame" x="48" y="30" width="264" height="41"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="LLm-dU-4Xt"/>
@@ -55,7 +55,6 @@
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 <constraints>
                     <constraint firstItem="QpW-3s-LgQ" firstAttribute="leading" secondItem="NX7-8T-3y3" secondAttribute="trailing" constant="8" id="20H-rA-cB9"/>
-                    <constraint firstItem="QTS-HF-RsJ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="UoJ-D7-3PN" secondAttribute="topMargin" id="4TY-bK-Y7c"/>
                     <constraint firstItem="QTS-HF-RsJ" firstAttribute="leading" secondItem="UoJ-D7-3PN" secondAttribute="leadingMargin" constant="16" id="CCK-jC-FGs"/>
                     <constraint firstItem="hu1-pJ-zF3" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="CuW-d9-uq1"/>
                     <constraint firstItem="R9K-I1-WdV" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="HoQ-2C-NzU"/>
