@@ -73,5 +73,10 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

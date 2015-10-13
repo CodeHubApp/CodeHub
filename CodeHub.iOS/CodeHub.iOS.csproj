@@ -480,9 +480,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Analytics.NET">
-      <HintPath>..\packages\Analytics.2.0.1\lib\Analytics.NET.dll</HintPath>
-    </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
@@ -497,6 +494,9 @@
     </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.0\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
+    </Reference>
+    <Reference Include="Analytics.NET">
+      <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
