@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.User
 
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet(ViewModel.Username);
+            var sheet = new UIActionSheet();
 			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
@@ -58,6 +58,8 @@ namespace CodeHub.iOS.Views.User
 				{
 					ViewModel.ToggleFollowingCommand.Execute(null);
 				}
+
+                sheet.Dispose();
 			};
 
 			sheet.ShowInView(this.View);

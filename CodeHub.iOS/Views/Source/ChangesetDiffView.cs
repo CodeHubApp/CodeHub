@@ -71,7 +71,7 @@ namespace CodeHub.ViewControllers
             public int FileLine { get; set; }
         }
 
-        protected override bool ShouldStartLoad(NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
             var url = request.Url;
             if(url.Scheme.Equals("app")) {
@@ -92,7 +92,7 @@ namespace CodeHub.ViewControllers
 				return false;
             }
 
-            return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, request, navigationType);
         }
 
 		private void ExecuteJavascript(string data)
@@ -108,17 +108,20 @@ namespace CodeHub.ViewControllers
             string title = string.Empty;
             title = "Line ".t() + model.FileLine;
 
-            var sheet = MonoTouch.Utilities.GetSheet(title);
+            var sheet = new UIActionSheet(title);
             var addButton = sheet.AddButton("Add Comment".t());
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Dismissed += (sender, e) => {
-				BeginInvokeOnMainThread(() =>
-					{
-                if (e.ButtonIndex == addButton)
-                    ShowCommentComposer(model.PatchLine);
-					});
+            sheet.Dismissed += (sender, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    if (e.ButtonIndex == addButton)
+                        ShowCommentComposer(model.PatchLine);
+                });
+
+                sheet.Dispose();
             };
 
             sheet.ShowInView(this.View);

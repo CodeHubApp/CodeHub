@@ -285,7 +285,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             try
             {
-                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge());
+                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge(string.Empty));
                 if (!response.Data.Merged)
                     throw new Exception(response.Data.Message);
 

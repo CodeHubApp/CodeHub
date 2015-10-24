@@ -29,21 +29,24 @@ namespace CodeHub.iOS.Views.Accounts
 
 		private void ShowExtraMenu()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet("Login");
+            var sheet = new UIActionSheet();
 			var basicButton = sheet.AddButton("Login via BASIC");
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Dismissed += (s, e) => {
-				// Pin to menu
-				BeginInvokeOnMainThread(() =>
-					{
-						if (e.ButtonIndex == basicButton)
-						{
-							ViewModel.GoToOldLoginWaysCommand.Execute(null);
-						}
-					});
-			};
+            sheet.Dismissed += (s, e) =>
+            {
+                // Pin to menu
+                BeginInvokeOnMainThread(() =>
+                {
+                    if (e.ButtonIndex == basicButton)
+                    {
+                        ViewModel.GoToOldLoginWaysCommand.Execute(null);
+                    }
+                });
+
+                sheet.Dispose();
+            };
 
 			sheet.ShowInView(this.View);
 		}
@@ -98,7 +101,7 @@ namespace CodeHub.iOS.Views.Accounts
 			alert.Show();
 		}
 
-		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(UIWebView webView, Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
         {
 			try
 			{
@@ -114,7 +117,7 @@ namespace CodeHub.iOS.Views.Accounts
 	                return false;
 	            }
 
-	            return base.ShouldStartLoad(request, navigationType);
+                return base.ShouldStartLoad(webView, request, navigationType);
 			}
 			catch (Exception e) {
 				Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");

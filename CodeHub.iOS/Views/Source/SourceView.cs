@@ -28,19 +28,20 @@ namespace CodeHub.iOS.Views.Source
 
 		protected override UIActionSheet CreateActionSheet(string title)
 		{
-			var vm = (SourceViewModel)ViewModel;
+            var editCommand = ((SourceViewModel)ViewModel).GoToEditCommand;
 			var sheet = base.CreateActionSheet(title);
-			var editButton = vm.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
-			sheet.Dismissed += (sender, e) =>
-			{
-				BeginInvokeOnMainThread(() =>
-					{
-				if (e.ButtonIndex == editButton)
-				{
-					vm.GoToEditCommand.Execute(null);
-				}
-					});
-			};
+            var editButton = editCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
+            sheet.Dismissed += (sender, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    if (e.ButtonIndex == editButton)
+                    {
+                        editCommand.Execute(null);
+                        editCommand = null;
+                    }
+                });
+            };
 			return sheet;
 		}
     }

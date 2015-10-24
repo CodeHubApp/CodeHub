@@ -99,7 +99,7 @@ namespace CodeFramework.iOS
             {
                 if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
                 {
-                    var mainNavigationController = new MainNavigationController(uiView, _slideoutController, new UIBarButtonItem(Theme.CurrentTheme.ThreeLinesButton, UIBarButtonItemStyle.Plain, (s, e) => _slideoutController.Open(true)));
+                    var mainNavigationController = new MainNavigationController(uiView, _slideoutController);
                     _generalNavigationController = mainNavigationController;
                     _slideoutController.SetMainViewController(mainNavigationController, true);
 

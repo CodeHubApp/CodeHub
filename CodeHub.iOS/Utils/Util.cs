@@ -79,13 +79,6 @@ namespace MonoTouch
 			//Analytics.TrackException(false, e.Message + " - " + e.StackTrace);
         }
 
-        static UIActionSheet _sheet;
-        public static UIActionSheet GetSheet (string title)
-        {
-            _sheet = new UIActionSheet ();
-            return _sheet;
-        }
-
         static CultureInfo _americanCulture;
         public static CultureInfo AmericanCulture {
             get { return _americanCulture ?? (_americanCulture = new CultureInfo("en-US")); }

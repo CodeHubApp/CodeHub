@@ -108,32 +108,33 @@ namespace CodeHub.iOS.Views.Gists
             if (ViewModel.Gist == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet("Gist");
-
+            var sheet = new UIActionSheet();
             var shareButton = sheet.AddButton("Share".t());
             var showButton = sheet.AddButton("Show in GitHub".t());
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Dismissed += (s, e) => 
-			{
-				BeginInvokeOnMainThread(() =>
-					{
-				try
-				{
-	                if (e.ButtonIndex == shareButton)
-	                {
-						ViewModel.ShareCommand.Execute(null);
-	                }
-	                else if (e.ButtonIndex == showButton)
-					{
-						ViewModel.GoToHtmlUrlCommand.Execute(null);
-	                }
-				}
-				catch
-				{
-				}
-					});
+            sheet.Dismissed += (s, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        if (e.ButtonIndex == shareButton)
+                        {
+                            ViewModel.ShareCommand.Execute(null);
+                        }
+                        else if (e.ButtonIndex == showButton)
+                        {
+                            ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                });
+
+                sheet.Dispose();
             };
 
             sheet.ShowFrom(_shareButton, true);

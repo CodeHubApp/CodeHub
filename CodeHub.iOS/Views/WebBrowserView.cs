@@ -4,9 +4,14 @@ namespace CodeFramework.iOS.Views
 {
 	public class WebBrowserView : WebView
     {
+        public WebBrowserView()
+            : base(true, true)
+        {
+            Title = "Web";
+        }
+
 		public override void ViewDidLoad()
 		{
-			Title = "Web";
 
 			base.ViewDidLoad();
 			var vm = (CodeFramework.Core.ViewModels.WebBrowserViewModel)ViewModel;

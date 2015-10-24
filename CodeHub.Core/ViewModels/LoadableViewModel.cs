@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels
         private readonly ICommand _loadCommand;
         private bool _isLoading;
 
-        public ICommand LoadCommand
+            public ICommand LoadCommand
         {
             get { return _loadCommand; }
         }

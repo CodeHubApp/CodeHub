@@ -163,7 +163,7 @@ namespace CodeHub.iOS.Views.Source
 			if (changeset == null)
 				return;
 
-			var sheet = MonoTouch.Utilities.GetSheet(Title);
+            var sheet = new UIActionSheet();
 			var addComment = sheet.AddButton("Add Comment".t());
 			var copySha = sheet.AddButton("Copy Sha".t());
 			var shareButton = sheet.AddButton("Share".t());
@@ -171,39 +171,41 @@ namespace CodeHub.iOS.Views.Source
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Dismissed += (s, e) => 
-			{
-				BeginInvokeOnMainThread(() =>
-					{
-				try
-				{
-					// Pin to menu
-					if (e.ButtonIndex == addComment)
-					{
-						AddCommentTapped();
-					}
-					else if (e.ButtonIndex == copySha)
-					{
-						UIPasteboard.General.String = ViewModel.Changeset.Sha;
-					}
-					else if (e.ButtonIndex == shareButton)
-					{
-						var item = new NSUrl(ViewModel.Changeset.Url);
-						var activityItems = new Foundation.NSObject[] { item };
-						UIActivity[] applicationActivities = null;
-						var activityController = new UIActivityViewController (activityItems, applicationActivities);
-						PresentViewController (activityController, true, null);
-					}
-	//				else if (e.ButtonIndex == showButton)
-	//				{
-	//					ViewModel.GoToHtmlUrlCommand.Execute(null);
-	//				}
-				}
-				catch
-				{
-				}
-					});
-			};
+            sheet.Dismissed += (s, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        // Pin to menu
+                        if (e.ButtonIndex == addComment)
+                        {
+                            AddCommentTapped();
+                        }
+                        else if (e.ButtonIndex == copySha)
+                        {
+                            UIPasteboard.General.String = ViewModel.Changeset.Sha;
+                        }
+                        else if (e.ButtonIndex == shareButton)
+                        {
+                            var item = new NSUrl(ViewModel.Changeset.Url);
+                            var activityItems = new Foundation.NSObject[] { item };
+                            UIActivity[] applicationActivities = null;
+                            var activityController = new UIActivityViewController(activityItems, applicationActivities);
+                            PresentViewController(activityController, true, null);
+                        }
+                        //				else if (e.ButtonIndex == showButton)
+                        //				{
+                        //					ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        //				}
+                    }
+                    catch
+                    {
+                    }
+                });
+
+                sheet.Dispose();
+            };
 
 			sheet.ShowInView(this.View);
 		}

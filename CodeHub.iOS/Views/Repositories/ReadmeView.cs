@@ -1,10 +1,13 @@
 using CodeHub.Core.ViewModels.Repositories;
 using CodeFramework.iOS.Views;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class ReadmeView : WebView
     {
+        private readonly UIBarButtonItem _actionButton;
+
         public new ReadmeViewModel ViewModel
         {
             get { return (ReadmeViewModel) base.ViewModel; }
@@ -15,17 +18,17 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Title = "Readme";
             Web.ScalesPageToFit = true;
+            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             ViewModel.Bind(x => x.Path, x => LoadFile(x));
-			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
 			ViewModel.LoadCommand.Execute(false);
         }
 
-		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+		protected override bool ShouldStartLoad(UIWebView webView, Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
 		{
 			if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
 			{
@@ -33,30 +36,44 @@ namespace CodeHub.iOS.Views.Repositories
 				return false;
 			}
 
-			return base.ShouldStartLoad(request, navigationType);
+            return base.ShouldStartLoad(webView, request, navigationType);
 		}
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _actionButton;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
 
 		private void ShareButtonPress()
 		{
-			var sheet = MonoTouch.Utilities.GetSheet("Readme");
+            var sheet = new UIActionSheet();
 			var shareButton = sheet.AddButton("Share".t());
 			var showButton = sheet.AddButton("Show in GitHub".t());
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 
+            sheet.Dismissed += (sender, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    if (e.ButtonIndex == showButton)
+                        ViewModel.GoToGitHubCommand.Execute(null);
+                    else if (e.ButtonIndex == shareButton)
+                        ViewModel.ShareCommand.Execute(null);
+                });
 
-			sheet.Dismissed += (sender, e) => {
-				BeginInvokeOnMainThread(() =>
-					{
-						if (e.ButtonIndex == showButton)
-							ViewModel.GoToGitHubCommand.Execute(null);
-						else if (e.ButtonIndex == shareButton)
-							ViewModel.ShareCommand.Execute(null);
-					});
-			};
+                sheet.Dispose();
+            };
 
-			sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            sheet.ShowFrom(_actionButton, true);
 		}
     }
 }

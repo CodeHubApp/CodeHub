@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Cirrious.MvvmCross.ViewModels;
-using GitHubSharp.Models;
 using System;
 using CodeFramework.Core.ViewModels;
 using Cirrious.MvvmCross.Plugins.Messenger;
@@ -11,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Source
 {
 	public class SourceViewModel : FileSourceViewModel
     {
-		private MvxSubscriptionToken _editToken;
+		private readonly MvxSubscriptionToken _editToken;
 
 		private string _path;
 		private string _name;
@@ -54,6 +53,18 @@ namespace CodeHub.Core.ViewModels.Source
             get { return new MvxCommand(() => ShowViewModel<EditSourceViewModel>(new EditSourceViewModel.NavObject { Path = _path, Branch = Branch, Username = Username, Repository = Repository }), () => ContentPath != null && TrueBranch); }
 		}
 
+        public SourceViewModel()
+        {
+            _editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
+            {
+                if (x.OldSha == null || x.Update == null)
+                    return;
+                _gitUrl = x.Update.Content.GitUrl;
+                if (LoadCommand.CanExecute(null))
+                    LoadCommand.Execute(true);
+            });
+        }
+
 		public void Init(NavObject navObject)
 		{
 			_path = navObject.Path;
@@ -73,14 +84,6 @@ namespace CodeHub.Core.ViewModels.Source
 
 			//Create the temp file path
 			Title = fileName;
-
-			_editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
-			{
-				if (x.OldSha == null || x.Update == null)
-					return;
-				_gitUrl = x.Update.Content.GitUrl;
-				LoadCommand.Execute(true);
-			});
 		}
 
 		public class NavObject

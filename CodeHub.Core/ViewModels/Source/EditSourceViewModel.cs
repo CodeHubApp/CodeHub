@@ -1,9 +1,6 @@
 using System;
-using CodeFramework.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
-using Cirrious.MvvmCross.ViewModels;
-using System.Windows.Input;
 
 namespace CodeHub.Core.ViewModels.Source
 {

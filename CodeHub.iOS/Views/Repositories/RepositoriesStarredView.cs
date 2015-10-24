@@ -1,3 +1,5 @@
+using System;
+
 namespace CodeHub.iOS.Views.Repositories
 {
 	public class RepositoriesStarredView : BaseRepositoriesView

@@ -1,6 +1,5 @@
 using CodeFramework.iOS.ViewControllers;
 using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using UIKit;
@@ -8,6 +7,7 @@ using System.Linq;
 using CodeFramework.Core.Utils;
 using Cirrious.CrossCore;
 using CodeHub.Core.Services;
+using System;
 
 namespace CodeHub.iOS.Views.App
 {

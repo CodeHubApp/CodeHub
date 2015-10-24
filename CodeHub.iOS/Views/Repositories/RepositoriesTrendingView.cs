@@ -10,6 +10,10 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesTrendingView : ViewModelCollectionDrivenDialogViewController
     {
+        private UIBarButtonItem _timeButton;
+        private UIBarButtonItem _languageButton;
+
+
         public RepositoriesTrendingView()
         {
             EnableSearch = false;
@@ -31,7 +35,7 @@ namespace CodeHub.iOS.Views.Repositories
                 return sse;
             });
 
-            var button = new UIBarButtonItem("Time", UIBarButtonItemStyle.Plain, (s, e) =>
+            _timeButton = new UIBarButtonItem("Time", UIBarButtonItemStyle.Plain, (s, e) =>
             {
                 var index = vm.SelectedTime == null ? 0 : vm.Times.ToList().IndexOf(vm.SelectedTime);
                 if (index < 0) index = 0;
@@ -43,7 +47,7 @@ namespace CodeHub.iOS.Views.Repositories
                 }).Show();
             });
 
-            var button2 = new UIBarButtonItem("Language", UIBarButtonItemStyle.Plain, (s, e) =>
+            _languageButton = new UIBarButtonItem("Language", UIBarButtonItemStyle.Plain, (s, e) =>
             {
                 var index = vm.SelectedLanguage == null ? 0 : vm.Languages.ToList().IndexOf(vm.SelectedLanguage);
                 if (index < 0) index = 0;
@@ -55,31 +59,34 @@ namespace CodeHub.iOS.Views.Repositories
                 }).Show();
             });
 
-            vm.Bind(x => x.SelectedTime, x => button.Title = x.Name, true);
-            vm.Bind(x => x.SelectedLanguage, x => button2.Title = x.Name, true);
+            vm.Bind(x => x.SelectedTime, x => _timeButton.Title = x.Name, true);
+            vm.Bind(x => x.SelectedLanguage, x => _languageButton.Title = x.Name, true);
 
-            ToolbarItems = new UIBarButtonItem[]
-            {
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                button2,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                button,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)
-            };
+
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
+
+            ToolbarItems = new []
+            {
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                _languageButton,
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                _timeButton,
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)
+            };
+
+            NavigationController.SetToolbarHidden(false, animated);
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
+
+            ToolbarItems = new UIBarButtonItem[0];
+            NavigationController.SetToolbarHidden(true, animated);
         }
     }
 }

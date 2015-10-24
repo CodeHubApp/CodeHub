@@ -2,7 +2,6 @@ using System;
 using Cirrious.MvvmCross.Touch.Views;
 using UIKit;
 using Foundation;
-using CodeFramework.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 
 namespace CodeFramework.iOS.Views
@@ -13,8 +12,9 @@ namespace CodeFramework.iOS.Views
         protected UIBarButtonItem RefreshButton;
         protected UIBarButtonItem ForwardButton;
 
-        public UIWebView Web { get; private set; }
+        public UIWebView Web { get; }
         private readonly bool _navigationToolbar;
+        private readonly  bool _showPageAsTitle;
 
 		bool _appeared;
 		public override void ViewDidAppear (bool animated)
@@ -51,70 +51,56 @@ namespace CodeFramework.iOS.Views
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem() { Title = "" };
             Web = new UIWebView {ScalesPageToFit = true};
-            Web.LoadFinished += OnLoadFinished;
-            Web.LoadStarted += OnLoadStarted;
-            Web.LoadError += OnLoadError;
-            Web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
-
-			if (showPageAsTitle)
-			{
-				Web.LoadFinished += (sender, e) =>
-				{
-					Title = Web.EvaluateJavascript("document.title");
-				};
-			}
+            Web.LoadFinished += (sender, e) => MonoTouch.Utilities.PopNetworkActive();
+            Web.LoadStarted += (sender, e) => MonoTouch.Utilities.PushNetworkActive();
+            Web.LoadError += (sender, e) => MonoTouch.Utilities.PopNetworkActive();
 
             _navigationToolbar = navigationToolbar;
+            _showPageAsTitle = showPageAsTitle;
 
             if (_navigationToolbar)
             {
-                ToolbarItems = new [] { 
-                    (BackButton = new UIBarButtonItem(Theme.CurrentTheme.WebBackButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false }),
-                    new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                    (ForwardButton = new UIBarButtonItem(Theme.CurrentTheme.WebFowardButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false }),
-                    new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                    (RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()))
-                };
+                BackButton = new UIBarButtonItem(Theme.CurrentTheme.WebBackButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false };
+                ForwardButton = new UIBarButtonItem(Theme.CurrentTheme.WebFowardButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false };
+                RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()) { Enabled = false };
 
                 BackButton.TintColor = Theme.CurrentTheme.WebButtonTint;
                 ForwardButton.TintColor = Theme.CurrentTheme.WebButtonTint;
                 RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
-
-                BackButton.Enabled = false;
-                ForwardButton.Enabled = false;
-                RefreshButton.Enabled = false;
             }
 
 			EdgesForExtendedLayout = UIRectEdge.None;
         }
 
-        protected virtual bool ShouldStartLoad (Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected virtual bool ShouldStartLoad (UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navigationType)
         {
             return true;
         }
 
         protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
         {
-            MonoTouch.Utilities.PopNetworkActive();
             if (RefreshButton != null)
                 RefreshButton.Enabled = true;
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            MonoTouch.Utilities.PushNetworkActive();
             if (RefreshButton != null)
                 RefreshButton.Enabled = false;
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            MonoTouch.Utilities.PopNetworkActive();
             if (BackButton != null)
             {
                 BackButton.Enabled = Web.CanGoBack;
                 ForwardButton.Enabled = Web.CanGoForward;
                 RefreshButton.Enabled = true;
+            }
+
+            if (_showPageAsTitle)
+            {
+                Title = Web.EvaluateJavascript("document.title");
             }
         }
         
@@ -175,13 +161,54 @@ namespace CodeFramework.iOS.Views
         
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
+
             var bounds = View.Bounds;
             if (_navigationToolbar)
                 bounds.Height -= NavigationController.Toolbar.Frame.Height;
             Web.Frame = bounds;
+
+            if (_navigationToolbar)
+            {
+                ToolbarItems = new []
+                { 
+                    BackButton,
+                    new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
+                    ForwardButton,
+                    new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                    RefreshButton
+                };
+
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
+                RefreshButton.Enabled = !Web.IsLoading;
+            }   
+
+            if (_showPageAsTitle)
+            {
+                Title = Web.EvaluateJavascript("document.title");
+            }
+
+            Web.LoadFinished += OnLoadFinished;
+            Web.LoadStarted += OnLoadStarted;
+            Web.LoadError += OnLoadError;
+            Web.ShouldStartLoad += ShouldStartLoad;
+
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(false, animated);
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+
+            Web.LoadFinished -= OnLoadFinished;
+            Web.LoadStarted -= OnLoadStarted;
+            Web.LoadError -= OnLoadError;
+            Web.ShouldStartLoad -= ShouldStartLoad;
+
+            if (_navigationToolbar)
+                ToolbarItems = new UIBarButtonItem[0];
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

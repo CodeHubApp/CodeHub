@@ -8,6 +8,7 @@ namespace CodeHub.iOS.Views.Source
 {
 	public abstract class FileSourceView : WebView
     {
+        private readonly UIBarButtonItem _actionButton;
 		private bool _loaded = false;
 
 		public new FileSourceViewModel ViewModel
@@ -19,19 +20,20 @@ namespace CodeHub.iOS.Views.Source
 		protected FileSourceView()
 			: base(false)
 		{
+            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()) { Enabled = false };
 		}
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-			NavigationItem.RightBarButtonItem.Enabled = false;
-			ViewModel.Bind(x => x.IsLoading, x => NavigationItem.RightBarButtonItem.Enabled = !x);
+            ViewModel.Bind(x => x.IsLoading, x => _actionButton.Enabled = !x);
 		}
 
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
+
+            NavigationItem.RightBarButtonItem = _actionButton;
 
 			//Stupid but I can't put this in the ViewDidLoad...
 			if (!_loaded)
@@ -43,21 +45,28 @@ namespace CodeHub.iOS.Views.Source
 			Title = ViewModel.Title;
 		}
 
+        public override void ViewDidDisappear(bool animated)
+        {
+            NavigationItem.RightBarButtonItem = null;
+            base.ViewDidDisappear(animated);
+        }
+
 		protected virtual UIActionSheet CreateActionSheet(string title)
 		{
-			return MonoTouch.Utilities.GetSheet(title);
+            return new UIActionSheet();
 		}
 
 		private void ShowExtraMenu()
 		{
 			var sheet = CreateActionSheet(Title);
+            var vm = ViewModel;
 			var openButton = !string.IsNullOrEmpty(ViewModel.FilePath) ? sheet.AddButton("Open In".t()) : -1;
 			var shareButton = !string.IsNullOrEmpty(ViewModel.HtmlUrl) ? sheet.AddButton("Share".t()) : -1;
 			var showButton = ViewModel.GoToHtmlUrlCommand.CanExecute(null) ? sheet.AddButton("Show in GitHub".t()) : -1;
 			var cancelButton = sheet.AddButton("Cancel".t());
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Clicked += (s, e) => 
+            sheet.Dismissed += (s, e) => 
 			{
 				BeginInvokeOnMainThread(() =>
 				{
@@ -71,20 +80,21 @@ namespace CodeHub.iOS.Views.Source
 						}
 						else if (e.ButtonIndex == shareButton)
 						{
-							ViewModel.ShareCommand.Execute(null);
+                            vm.ShareCommand.Execute(null);
 						}
 						else if (e.ButtonIndex == showButton)
 						{
-							ViewModel.GoToHtmlUrlCommand.Execute(null);
+                            vm.GoToHtmlUrlCommand.Execute(null);
 						}
 					}
 					catch
 					{
 					}
 				});
-			};
 
-			sheet.ShowInView(this.View);
+                sheet.Dispose();
+			};
+            sheet.ShowFrom(_actionButton, true);
 		}
     }
 }

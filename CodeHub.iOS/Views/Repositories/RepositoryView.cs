@@ -10,6 +10,7 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoryView : ViewModelDrivenDialogViewController
     {
+        private readonly UIBarButtonItem _actionButton;
 		private readonly HeaderView _header = new HeaderView();
 
         public new RepositoryViewModel ViewModel
@@ -18,17 +19,20 @@ namespace CodeHub.iOS.Views.Repositories
             protected set { base.ViewModel = value; }
         }
 
+        public RepositoryView()
+        {
+            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()) { Enabled = false };
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.Enabled = false;
 
             ViewModel.Bind(x => x.Repository, x =>
             {
 				ViewModel.ImageUrl = (x.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl).AbsoluteUri;
-                NavigationItem.RightBarButtonItem.Enabled = true;
+                _actionButton.Enabled = true;
                 Render(x);
             });
 
@@ -44,7 +48,14 @@ namespace CodeHub.iOS.Views.Repositories
 		{
 			base.ViewWillAppear(animated);
 			Title = _header.Title = ViewModel.RepositoryName;
+            NavigationItem.RightBarButtonItem = _actionButton;
 		}
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
 
         private void ShowExtraMenu()
         {
@@ -52,7 +63,7 @@ namespace CodeHub.iOS.Views.Repositories
             if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet(repoModel.Name);
+            var sheet = new UIActionSheet();
 			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu".t() : "Pin to Slideout Menu".t());
             var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo".t() : "Star This Repo".t());
             var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo".t() : "Watch This Repo".t());
@@ -85,6 +96,8 @@ namespace CodeHub.iOS.Views.Repositories
                 {
 					ViewModel.GoToHtmlUrlCommand.Execute(null);
                 }
+
+                sheet.Dispose();
             };
 
             sheet.ShowInView(this.View);

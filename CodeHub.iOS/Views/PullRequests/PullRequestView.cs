@@ -227,7 +227,7 @@ namespace CodeHub.iOS.Views.PullRequests
             if (ViewModel.PullRequest == null)
                 return;
 
-            var sheet = MonoTouch.Utilities.GetSheet(Title);
+            var sheet = new UIActionSheet();
             var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit".t()) : -1;
             var openButton = sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close".t() : "Open".t());
             var commentButton = sheet.AddButton("Comment".t());
@@ -236,21 +236,23 @@ namespace CodeHub.iOS.Views.PullRequests
             var cancelButton = sheet.AddButton("Cancel".t());
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
-			sheet.Dismissed += (s, e) =>
+            sheet.Dismissed += (s, e) =>
             {
-				BeginInvokeOnMainThread(() =>
-					{
-                if (e.ButtonIndex == editButton)
-                    ViewModel.GoToEditCommand.Execute(null);
-                else if (e.ButtonIndex == openButton)
-                    ViewModel.ToggleStateCommand.Execute(null);
-                else if (e.ButtonIndex == shareButton)
-                    ViewModel.ShareCommand.Execute(null);
-                else if (e.ButtonIndex == showButton)
-                    ViewModel.GoToUrlCommand.Execute(ViewModel.PullRequest.HtmlUrl);
-                else if (e.ButtonIndex == commentButton)
-                    AddCommentTapped();
-					});
+                BeginInvokeOnMainThread(() =>
+                {
+                    if (e.ButtonIndex == editButton)
+                        ViewModel.GoToEditCommand.Execute(null);
+                    else if (e.ButtonIndex == openButton)
+                        ViewModel.ToggleStateCommand.Execute(null);
+                    else if (e.ButtonIndex == shareButton)
+                        ViewModel.ShareCommand.Execute(null);
+                    else if (e.ButtonIndex == showButton)
+                        ViewModel.GoToUrlCommand.Execute(ViewModel.PullRequest.HtmlUrl);
+                    else if (e.ButtonIndex == commentButton)
+                        AddCommentTapped();
+                });
+
+                sheet.Dispose();
             };
 
             sheet.ShowInView(View);
