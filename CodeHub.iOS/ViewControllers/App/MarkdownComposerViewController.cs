@@ -16,43 +16,43 @@ namespace CodeHub.iOS.ViewControllers.App
         protected MarkdownComposerViewController(IMarkdownService markdownService)
         {
             TextView.Font = UIFont.PreferredBody;
-            TextView.Changed += (sender, e) => ViewModel.Text = TextView.Text;
             TextView.InputAccessoryView = new MarkdownAccessoryView(TextView);
-
-            this.WhenAnyValue(x => x.ViewModel.Text)
-                .Subscribe(x => Text = x);
 
             var viewSegment = new UISegmentedControl(new [] { "Compose", "Preview" });
             viewSegment.SelectedSegment = 0;
             NavigationItem.TitleView = viewSegment;
-            viewSegment.ValueChanged += (sender, e) => 
-            {
-                if (viewSegment.SelectedSegment == 0)
-                {
-                    if (_previewView != null)
+
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.Text).Subscribe(x => Text = x));
+                d(TextView.GetChangedObservable().Subscribe(x => ViewModel.Text = x));
+                d(viewSegment.GetChangedObservable().Subscribe(x => {
+                    if (x == 0)
                     {
-                        _previewView.RemoveFromSuperview();
-                        _previewView.Dispose();
-                        _previewView = null;
+                        if (_previewView != null)
+                        {
+                            _previewView.RemoveFromSuperview();
+                            _previewView.Dispose();
+                            _previewView = null;
+                        }
+
+                        Add(TextView);
+                        TextView.BecomeFirstResponder();
                     }
+                    else
+                    {
+                        if (_previewView == null)
+                            _previewView = new UIWebView(this.View.Bounds);
 
-                    Add(TextView);
-                    TextView.BecomeFirstResponder();
-                }
-                else
-                {
-                    if (_previewView == null)
-                        _previewView = new UIWebView(this.View.Bounds);
+                        TextView.RemoveFromSuperview();
+                        Add(_previewView);
 
-                    TextView.RemoveFromSuperview();
-                    Add(_previewView);
-
-                    var markdown = markdownService.Convert(TextView.Text);
-                    var model = new DescriptionModel(markdown, (int)UIFont.PreferredSubheadline.PointSize);
-                    var markdownView = new MarkdownView { Model = model };
-                    _previewView.LoadHtmlString(markdownView.GenerateString(), null);
-                }
-            };
+                        var markdown = markdownService.Convert(TextView.Text);
+                        var model = new DescriptionModel(markdown, (int)UIFont.PreferredSubheadline.PointSize);
+                        var markdownView = new MarkdownView { Model = model };
+                        _previewView.LoadHtmlString(markdownView.GenerateString(), null);
+                    }
+                }));
+            });
         }
     }
 }

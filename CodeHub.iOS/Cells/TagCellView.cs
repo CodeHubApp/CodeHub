@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
         public TagCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel.Name).Subscribe(x => TextLabel.Text = x);
+            this.WhenActivated(d => d(this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text)));
         }
     }
 }

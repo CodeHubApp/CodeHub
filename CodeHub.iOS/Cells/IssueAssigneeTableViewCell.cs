@@ -23,16 +23,15 @@ namespace CodeHub.iOS.Cells
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
             ContentView.Opaque = true;
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Subscribe(x =>
-                {
+            this.WhenActivated(d => {
+                d(this.WhenAnyValue(x => x.ViewModel).IsNotNull().Subscribe(x => {
                     TextLabel.Text = x.Name;
                     ImageView.SetAvatar(x.Avatar);
-                });
+                }));
 
-            this.WhenAnyValue(x => x.ViewModel.IsSelected)
-                .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
+                d(this.WhenAnyValue(x => x.ViewModel.IsSelected)
+                    .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None));
+            });
         }
 
         public override void LayoutSubviews()

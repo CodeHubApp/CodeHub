@@ -38,7 +38,6 @@ namespace CodeHub.iOS.ViewControllers.Gists
             var footerButton = new TableFooterButton("Add Comment");
             var commentsSection = new Section(null, footerButton);
             var commentsElement = new HtmlElement("comments");
-            commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
 
             var detailsSection = new Section { _splitRow1, _splitRow2 };
@@ -128,6 +127,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             OnActivation(d => {
                 d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
                 d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
+                d(commentsElement.UrlRequested.InvokeCommand(ViewModel.GoToUrlCommand));
 
                 d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));

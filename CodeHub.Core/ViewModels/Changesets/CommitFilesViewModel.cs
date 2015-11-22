@@ -1,30 +1,29 @@
 ﻿using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
 using System.Collections.Generic;
-using System.Linq;
-using System.Collections.ObjectModel;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
     public class CommitFilesViewModel : BaseViewModel
     {
-        private IReadOnlyList<CommitedFileItemViewModel> _files;
-        public IReadOnlyList<CommitedFileItemViewModel> Files
-        {
-            get { return _files; }
-            set { this.RaiseAndSetIfChanged(ref _files, value); }
-        }
+        private readonly IReactiveList<Octokit.GitHubCommitFile> _files = new ReactiveList<Octokit.GitHubCommitFile>();
 
-        internal CommitFilesViewModel Init(string repoOwner, string repoName, string commitSha, string title, IEnumerable<Octokit.GitHubCommitFile> commitFiles)
-        {
-            Title = title;
+        public IReadOnlyReactiveList<CommitedFileItemViewModel> Files { get; }
 
-            var files = commitFiles.Select(x => new CommitedFileItemViewModel(x, y => {
+        public string RepositoryName { get; private set; }
+
+        public string RepositoryOwner { get; private set; }
+
+        public string CommitSha { get; private set; }
+
+        public CommitFilesViewModel()
+        {
+            Files = _files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, y => {
                 if (x.Patch == null)
                 {
                     var vm = this.CreateViewModel<SourceViewModel>();
-                    vm.RepositoryOwner = repoOwner;
-                    vm.RepositoryName = repoName;
+                    vm.RepositoryOwner = RepositoryOwner;
+                    vm.RepositoryName = RepositoryName;
                     vm.Branch = y.Ref;
                     vm.Name = y.Name;
                     vm.Path = x.Filename;
@@ -36,15 +35,22 @@ namespace CodeHub.Core.ViewModels.Changesets
                 else
                 {
                     var vm = this.CreateViewModel<ChangesetDiffViewModel>();
-                    vm.Username = repoOwner;
-                    vm.Repository = repoName;
-                    vm.Branch = commitSha;
+                    vm.Username = RepositoryOwner;
+                    vm.Repository = RepositoryName;
+                    vm.Branch = CommitSha;
                     vm.Filename = x.Filename;
                     NavigateTo(vm);
                 }
-            })).ToList();
+            }));
+        }
 
-            Files = new ReadOnlyCollection<CommitedFileItemViewModel>(files);
+        internal CommitFilesViewModel Init(string repoOwner, string repoName, string commitSha, string title, IEnumerable<Octokit.GitHubCommitFile> files)
+        {
+            Title = title;
+            RepositoryOwner = repoOwner;
+            RepositoryName = repoName;
+            CommitSha = commitSha;
+            _files.Reset(files);
             return this;
         }
     }

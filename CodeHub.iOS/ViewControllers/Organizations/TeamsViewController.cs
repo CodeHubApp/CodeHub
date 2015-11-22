@@ -21,8 +21,9 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
             var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Items, TeamCellView.Key, (float)UITableView.AutomaticDimension);
-            source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
             TableView.Source = source;
+
+            this.WhenActivated(d => d(source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan())));
         }
     }
 }

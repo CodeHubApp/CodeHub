@@ -53,7 +53,7 @@ namespace CodeHub.iOS.ViewControllers.Contents
 
             viewController.OnActivation(d => {
                 d(this.WhenAnyValue(x => x.ViewModel.CommitMessage).Subscribe(x => viewController.TextView.Text = x));
-                d(viewController.Changed.Subscribe(x => ViewModel.CommitMessage = x));
+                d(viewController.TextView.GetChangedObservable().Subscribe(x => ViewModel.CommitMessage = x));
                 d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Save, x => viewController.NavigationItem.RightBarButtonItem = x));
             });

@@ -19,6 +19,11 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.EditingChanged += t, t => @this.EditingChanged -= t).Select(_ => @this.Text);
         }
 
+        public static IObservable<string> GetChangedObservable(this UITextView @this)
+        {
+            return Observable.FromEventPattern(t => @this.Changed += t, t => @this.Changed -= t).Select(_ => @this.Text);
+        }
+
         public static IObservable<Unit> GetClickedObservable(this UIButton @this)
         {
             return Observable.FromEventPattern(t => @this.TouchUpInside += t, t => @this.TouchUpInside -= t).Select(_ => Unit.Default);

@@ -91,10 +91,10 @@ namespace CodeHub.iOS.Cells
                 UnderlineStyle = CTUnderlineStyle.Single
             }.Dictionary;
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Subscribe(x => {
+            this.WhenActivated(d => {
+                d(this.WhenAnyValue(x => x.ViewModel).IsNotNull().Subscribe(x => {
                     Time.Text = x.CreatedString;
+                    Image.SetAvatar(x.Avatar);
 
                     ActionImage.Image = _eventToImage.ContainsKey(x.Type) ? 
                         _eventToImage[x.Type].ToImage() : Octicon.Alert.ToImage();
@@ -114,10 +114,8 @@ namespace CodeHub.iOS.Cells
 
                     foreach (var b in bodyLinks)
                         Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
-                });
-
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => Image.SetAvatar(x));
+                }));
+            });
         }
 
         class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate

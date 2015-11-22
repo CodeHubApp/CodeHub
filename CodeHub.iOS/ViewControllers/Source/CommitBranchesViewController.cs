@@ -19,7 +19,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             var source = new ReactiveTableViewSource<BranchItemViewModel>(TableView, ViewModel.Items, BranchCellView.Key, 44f);
-            source.ElementSelected.OfType<BranchItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan());
+            this.WhenActivated(d => d(source.ElementSelected.OfType<BranchItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan())));
             TableView.Source = source;
         }
     }

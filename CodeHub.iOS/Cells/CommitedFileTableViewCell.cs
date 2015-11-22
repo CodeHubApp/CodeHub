@@ -1,8 +1,6 @@
-using System;
 using Foundation;
 using UIKit;
 using ReactiveUI;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.iOS.Cells
@@ -18,8 +16,10 @@ namespace CodeHub.iOS.Cells
             ImageView.Image = Octicon.FileCode.ToImage();
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Subtitle, x => x.DetailTextLabel.Text);
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text));
+                d(this.OneWayBind(ViewModel, x => x.Subtitle, x => x.DetailTextLabel.Text));
+            });
         }
     }
 }

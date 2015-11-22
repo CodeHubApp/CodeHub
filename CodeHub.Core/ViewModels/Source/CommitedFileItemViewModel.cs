@@ -7,17 +7,17 @@ namespace CodeHub.Core.ViewModels.Source
 {
     public class CommitedFileItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string RootPath { get; private set; }
+        public string RootPath { get; }
 
-        public string Ref { get; private set; }
+        public string Ref { get; }
 
-        public string Subtitle { get; private set; }
+        public string Subtitle { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; }
 
-        private void CalculateSubtitle(int additions, int deletions, int changes, int comments = 0)
+        private static string CalculateSubtitle(int additions, int deletions, int changes, int comments = 0)
         {
             var subtitle = string.Empty;
 
@@ -39,10 +39,10 @@ namespace CodeHub.Core.ViewModels.Source
                 subtitle = string.Format("{0}, {1}", subtitle, "comments".ToQuantity(comments));
             }
 
-            Subtitle = subtitle;
+            return subtitle;
         }
 
-        private void CalculateRef(string contentsUrl)
+        private static string CalculateRef(string contentsUrl)
         {
             try
             {
@@ -50,10 +50,11 @@ namespace CodeHub.Core.ViewModels.Source
                 var args = queryString.Split('#')
                     .Select(x => x.Split('='))
                     .ToDictionary(x => x[0].ToLower(), x => x[1]);
-                Ref = args["ref"];
+                return args["ref"];
             }
             catch
             {
+                return null;
             }
         }
 
@@ -67,8 +68,8 @@ namespace CodeHub.Core.ViewModels.Source
         {
             Name = System.IO.Path.GetFileName(file.FileName);
             RootPath = file.FileName.Substring(0, file.FileName.Length - Name.Length);
-            CalculateSubtitle(file.Additions, file.Deletions, file.Changes, comments);
-            CalculateRef(file.ContentsUrl.AbsoluteUri);
+            Subtitle = CalculateSubtitle(file.Additions, file.Deletions, file.Changes, comments);
+            Ref = CalculateRef(file.ContentsUrl.AbsoluteUri);
         }
 
         internal CommitedFileItemViewModel(Octokit.GitHubCommitFile file, Action<CommitedFileItemViewModel> gotoAction)
@@ -76,8 +77,8 @@ namespace CodeHub.Core.ViewModels.Source
         {
             Name = System.IO.Path.GetFileName(file.Filename);
             RootPath = file.Filename.Substring(0, file.Filename.Length - Name.Length);
-            CalculateSubtitle(file.Additions, file.Deletions, file.Changes);
-            CalculateRef(file.ContentsUrl);
+            Subtitle = CalculateSubtitle(file.Additions, file.Deletions, file.Changes);
+            Ref = CalculateRef(file.ContentsUrl);
         }
     }
 }

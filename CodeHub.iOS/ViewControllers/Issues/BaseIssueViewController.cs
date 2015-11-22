@@ -26,21 +26,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
         protected BaseIssueViewController()
         {
             CommentsElement = new HtmlElement("comments");
-            this.WhenAnyValue(x => x.ViewModel.GoToUrlCommand)
-                .Subscribe(x => CommentsElement.UrlRequested = x.ExecuteIfCan);
-
             DescriptionElement = new HtmlElement("description");
-            this.WhenAnyValue(x => x.ViewModel.GoToUrlCommand)
-                .Subscribe(x => DescriptionElement.UrlRequested = x.ExecuteIfCan);
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
-                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
-                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
-                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
 
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
@@ -168,6 +154,18 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
                 d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+
+                d(CommentsElement.UrlRequested.InvokeCommand(ViewModel.GoToUrlCommand));
+                d(DescriptionElement.UrlRequested.InvokeCommand(ViewModel.GoToUrlCommand));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
+                    .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
+                    .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
+                    .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel())));
             });
         }
 

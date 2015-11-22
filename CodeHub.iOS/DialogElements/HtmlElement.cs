@@ -2,18 +2,24 @@ using System;
 using UIKit;
 using Foundation;
 using CoreGraphics;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class HtmlElement : Element, IElementSizing, IDisposable
     {
+        private readonly ISubject<string> _urlSubject = new Subject<string>();
         protected UIWebView WebView;
         private nfloat _height;
         protected readonly NSString Key;
 
         public Action<nfloat> HeightChanged;
 
-        public Action<string> UrlRequested;
+        public IObservable<string> UrlRequested
+        {
+            get { return _urlSubject.AsObservable(); }
+        }
 
         public nfloat Height
         {
@@ -55,7 +61,7 @@ namespace CodeHub.iOS.DialogElements
             if (!request.Url.AbsoluteString.StartsWith("file://"))
             {
                 if (UrlRequested != null)
-                    UrlRequested(request.Url.AbsoluteString);
+                    _urlSubject.OnNext(request.Url.AbsoluteString);
                 return false;
             }
 

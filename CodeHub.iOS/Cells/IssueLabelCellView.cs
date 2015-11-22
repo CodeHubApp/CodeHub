@@ -15,15 +15,15 @@ namespace CodeHub.iOS.Cells
         public IssueLabelCellView(IntPtr handle)
             : base(handle)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Subscribe(x => {
+            this.WhenActivated(d => {
+                d(this.WhenAnyValue(x => x.ViewModel).IsNotNull().Subscribe(x => {
                     TextLabel.Text = x.Name;
                     ImageView.Image = Graphics.CreateLabelImage(x.Color);
-                });
+                }));
 
-            this.WhenAnyValue(x => x.ViewModel.IsSelected).Subscribe(x => {
-                Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                d(this.WhenAnyValue(x => x.ViewModel.IsSelected).Subscribe(x => {
+                    Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                }));
             });
         }
     }

@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 enterpriseButton.Frame.Right == View.Frame.Right &&
                 enterpriseButton.Frame.Bottom == View.Frame.Bottom);
 
-            OnActivation(d => {
+            this.WhenActivated(d => {
                 d(enterpriseButton.GetClickedObservable().InvokeCommand(ViewModel.GoToEnterpriseLoginCommand));
                 d(dotComButton.GetClickedObservable().InvokeCommand(ViewModel.GoToDotComLoginCommand));
             });

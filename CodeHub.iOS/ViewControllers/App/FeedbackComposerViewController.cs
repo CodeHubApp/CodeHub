@@ -6,6 +6,7 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.App
 {
@@ -25,17 +26,10 @@ namespace CodeHub.iOS.ViewControllers.App
             descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
             var titleElement = new DummyInputElement("Title");
 
-            this.WhenAnyValue(x => x.ViewModel.SubmitCommand).Subscribe(x => {
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
-                    ResignFirstResponder();
-                    x.ExecuteIfCan();
-                });
-
-                x.CanExecuteObservable.Subscribe(y => NavigationItem.RightBarButtonItem.Enabled = y);
-            });
-
-            var cancelButton = new UIBarButtonItem() { Image = Images.Cancel };
+            var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
+            var cancelButton = new UIBarButtonItem { Image = Images.Cancel };
             NavigationItem.LeftBarButtonItem = cancelButton;
+            NavigationItem.RightBarButtonItem = saveButton;
 
             var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { titleElement, descriptionElement });
@@ -49,6 +43,13 @@ namespace CodeHub.iOS.ViewControllers.App
                 d(titleElement.Changed.Subscribe(x => ViewModel.Subject = x));
                 d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
                     .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+
+                d(saveButton.GetClickedObservable()
+                    .Do<Unit>(x => ResignFirstResponder())
+                    .InvokeCommand(ViewModel.SubmitCommand));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.SubmitCommand.CanExecuteObservable)
+                    .Subscribe(x => saveButton.Enabled = x));
             });
         }
     }

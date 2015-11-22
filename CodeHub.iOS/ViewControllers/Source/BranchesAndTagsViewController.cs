@@ -17,13 +17,11 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             NavigationItem.TitleView = _viewSegment;
 
-            var changedObservable = Observable.FromEventPattern(t => _viewSegment.ValueChanged += t, t => _viewSegment.ValueChanged -= t);
-
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             TableView.RegisterClassForCellReuse(typeof(TagCellView), TagCellView.Key);
 
             this.OnActivation(d => {
-                d(changedObservable.Subscribe(_ => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) (int)_viewSegment.SelectedSegment));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex)x));
                 d(this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => {
                     _viewSegment.SelectedSegment = (int)x;
 

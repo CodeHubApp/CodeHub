@@ -1,11 +1,8 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
-using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
-using System.Reactive.Linq;
 using UIKit;
 using CodeHub.iOS.Views;
-using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.PullRequests
 {
@@ -20,13 +17,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            var notificationSource = new CommitedFilesTableViewSource(TableView);
-            this.WhenAnyObservable(x => x.ViewModel.Files.Changed)
-                .Select(_ => Unit.Default)
-                .StartWith(Unit.Default)
-                .Select(_ => ViewModel.Files)
-                .Subscribe(notificationSource.SetData);
-            TableView.Source = notificationSource;
+            TableView.Source = new CommitedFilesTableViewSource(TableView, ViewModel.Files);
         }
     }
 }

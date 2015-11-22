@@ -72,27 +72,27 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _avatar.Value; }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToRepositoryCommand { get; private set; }
+        public IReactiveCommand<object> GoToRepositoryCommand { get; }
 
-        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
 
-        public IReactiveCommand<object> GoToAddedFiles { get; private set; }
+        public IReactiveCommand<object> GoToAddedFiles { get; }
 
-        public IReactiveCommand<object> GoToRemovedFiles { get; private set; }
+        public IReactiveCommand<object> GoToRemovedFiles { get; }
 
-        public IReactiveCommand<object> GoToModifiedFiles { get; private set; }
+        public IReactiveCommand<object> GoToModifiedFiles { get; }
 
-        public IReactiveCommand<object> GoToAllFiles { get; private set; }
+        public IReactiveCommand<object> GoToAllFiles { get; }
 
-        public IReactiveCommand AddCommentCommand { get; private set; }
+        public IReactiveCommand<object> AddCommentCommand { get; }
 
-        public IReadOnlyReactiveList<CommitCommentItemViewModel> Comments { get; private set; }
+        public IReadOnlyReactiveList<CommitCommentItemViewModel> Comments { get; }
 
-        public IReactiveCommand GoToUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToUrlCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
         
         public CommitViewModel(ISessionService applicationService, IActionMenuFactory actionMenuService, IAlertDialogFactory alertDialogFactory)
         {
@@ -179,6 +179,11 @@ namespace CodeHub.Core.ViewModels.Changesets
                 }, alertDialogFactory);
                 NavigateTo(vm);
             });
+
+            GoToUrlCommand = ReactiveCommand.Create();
+            GoToUrlCommand.OfType<string>()
+                .Select(x => this.CreateViewModel<WebBrowserViewModel>().Init(x))
+                .Subscribe(NavigateTo);
 
             var validCommitObservable = this.WhenAnyValue(x => x.Commit).Select(x => x != null);
 

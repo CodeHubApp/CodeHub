@@ -3,8 +3,6 @@ using CodeHub.iOS.Views;
 using UIKit;
 using System;
 using CodeHub.iOS.TableViewSources;
-using ReactiveUI;
-using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Issues
 {
@@ -19,10 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.Milestones)
-                .Select(x => new IssueMilestoneTableViewSource(TableView, x))
-                .BindTo(TableView, x => x.Source);
+            TableView.Source = new IssueMilestoneTableViewSource(TableView, ViewModel.Milestones);
         }
 
         public static void Show(UIViewController parent, IssueMilestonesViewModel viewModel)

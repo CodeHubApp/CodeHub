@@ -5,28 +5,24 @@ namespace CodeHub.iOS.DialogElements
 {
     public static class ElementExtensions
     {
-        public static StringElement BindCommand(this StringElement stringElement, IReactiveCommand cmd)
+        public static IDisposable BindCommand(this StringElement stringElement, IReactiveCommand<object> cmd)
         {
-            stringElement.Clicked.InvokeCommand(cmd);
-            return stringElement;
+            return stringElement.Clicked.InvokeCommand(cmd);
         }
 
-        public static T BindCaption<T>(this T stringElement, IObservable<string> caption) where T : Element
+        public static IDisposable BindCaption(this Element stringElement, IObservable<string> caption)
         {
-            caption.Subscribe(x => stringElement.Caption = x);
-            return stringElement;
+            return caption.Subscribe(x => stringElement.Caption = x);
         }
 
-        public static StringElement BindValue(this StringElement stringElement, IObservable<string> value)
+        public static IDisposable BindValue(this StringElement stringElement, IObservable<string> value)
         {
-            value.Subscribe(x => stringElement.Value = x);
-            return stringElement;
+            return value.Subscribe(x => stringElement.Value = x);
         }
 
-        public static StringElement BindDisclosure(this StringElement stringElement, IObservable<bool> value)
+        public static IDisposable BindDisclosure(this StringElement stringElement, IObservable<bool> value)
         {
-            value.Subscribe(x => stringElement.Accessory = x ? UIKit.UITableViewCellAccessory.DisclosureIndicator : UIKit.UITableViewCellAccessory.None);
-            return stringElement;
+            return value.Subscribe(x => stringElement.Accessory = x ? UIKit.UITableViewCellAccessory.DisclosureIndicator : UIKit.UITableViewCellAccessory.None);
         }
     }
 }

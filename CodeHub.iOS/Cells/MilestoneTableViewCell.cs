@@ -20,14 +20,15 @@ namespace CodeHub.iOS.Cells
             _milestoneView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
             ContentView.Add(_milestoneView);
 
-            this.OneWayBind(ViewModel, x => x.Title, x => x._milestoneView.Title);
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Title, x => x._milestoneView.Title));
+                d(this.WhenAnyValue(x => x.ViewModel.IsSelected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None));
+                d(this.WhenAnyValue(x => x.ViewModel.DueDate).Subscribe(x => _milestoneView.DueDate = x));
+                d(this.WhenAnyValue(x => x.ViewModel.OpenIssues, x => x.ViewModel.ClosedIssues)
+                    .Subscribe(x => _milestoneView.OpenClosedIssues = new Tuple<int, int>(x.Item1, x.Item2)));
+            });
 
-            this.WhenAnyValue(x => x.ViewModel.IsSelected)
-                .Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
-            this.WhenAnyValue(x => x.ViewModel.DueDate)
-                .Subscribe(x => _milestoneView.DueDate = x);
-            this.WhenAnyValue(x => x.ViewModel.OpenIssues, x => x.ViewModel.ClosedIssues)
-                .Subscribe(x => _milestoneView.OpenClosedIssues = new Tuple<int, int>(x.Item1, x.Item2));
+
         }
     }
 }

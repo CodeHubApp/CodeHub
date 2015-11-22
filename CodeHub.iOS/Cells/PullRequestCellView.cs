@@ -28,11 +28,11 @@ namespace CodeHub.iOS.Cells
             TitleLabel.TextColor = Theme.MainTitleColor;
             TimeLabel.TextColor = Theme.MainTextColor;
 
-            this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Details, x => x.TimeLabel.Text);
-
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => MainImageView.SetAvatar(x));
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text));
+                d(this.OneWayBind(ViewModel, x => x.Details, x => x.TimeLabel.Text));
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar).Subscribe(x => MainImageView.SetAvatar(x)));
+            });
         }
 
         protected override void Dispose(bool disposing)

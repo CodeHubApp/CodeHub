@@ -39,15 +39,7 @@ namespace CodeHub.iOS.ViewControllers
         private NSObject _keyboardHideObserver;
         private NSObject _keyboardShowObserver;
 
-        public ExtendedUITextView TextView { get; private set; }
-
-        public new IObservable<string> Changed
-        {
-            get {
-                return Observable.FromEventPattern(t => TextView.Changed += t, t => TextView.Changed -= t)
-                    .Select(_ => TextView.Text);
-            }
-        }
+        public ExtendedUITextView TextView { get; }
 
         public MessageComposerViewController()
         {

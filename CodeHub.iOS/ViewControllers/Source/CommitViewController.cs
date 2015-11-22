@@ -10,7 +10,6 @@ using CodeHub.WebViews;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views;
-using Octokit;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -29,6 +28,11 @@ namespace CodeHub.iOS.ViewControllers.Source
             var footerButton = new TableFooterButton("Add Comment");
             var commentsSection = new Section(null, footerButton);
 
+            var diffButton = new StringElement(Octicon.DiffAdded.ToImage());
+            var removedButton = new StringElement(Octicon.DiffRemoved.ToImage());
+            var modifiedButton = new StringElement(Octicon.DiffModified.ToImage());
+            detailsSection.Add(new [] { diffButton, removedButton, modifiedButton });
+
             var additions = split.AddButton("Additions");
             var deletions = split.AddButton("Deletions");
             var parents = split.AddButton("Parents");
@@ -39,29 +43,10 @@ namespace CodeHub.iOS.ViewControllers.Source
                 Image = Octicon.Repo.ToImage()
             };
 
-            detailsSection.Add(
-                new StringElement(Octicon.DiffAdded.ToImage())
-                .BindCommand(ViewModel.GoToAddedFiles)
-                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).Select(x => x > 0))
-                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).StartWith(0).Select(x => string.Format("{0} added", x))));
-
-            detailsSection.Add(
-                new StringElement(Octicon.DiffRemoved.ToImage())
-                .BindCommand(ViewModel.GoToRemovedFiles)
-                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).Select(x => x > 0))
-                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).StartWith(0).Select(x => string.Format("{0} removed", x))));
-
-            detailsSection.Add(
-                new StringElement(Octicon.DiffModified.ToImage())
-                .BindCommand(ViewModel.GoToModifiedFiles)
-                .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffModifications).Select(x => x > 0))
-                .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffModifications).StartWith(0).Select(x => string.Format("{0} modified", x))));
-
             var allChangesButton = new StringElement("All Changes", Octicon.Diff.ToImage());
             detailsSection.Add(allChangesButton);
 
             var commentsElement = new HtmlElement("comments");
-            commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
 
             ViewModel.Comments.Changed
                 .Select(_ => new Unit())
@@ -92,52 +77,63 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Take(1)
                 .Subscribe(_ => detailsSection.Insert(0, UITableViewRowAnimation.Automatic, descriptionElement));
 
-            this.WhenAnyValue(x => x.ViewModel.CommiterName)
-                .Subscribe(x => descriptionElement.Caption = x ?? string.Empty);
-
-            this.WhenAnyValue(x => x.ViewModel.CommitMessage)
-                .Subscribe(x => descriptionElement.Details = x ?? string.Empty);
-
-            this.WhenAnyValue(x => x.ViewModel.RepositoryName)
-                .Subscribe(x => gotoRepositoryElement.Caption = x);
-
             this.WhenAnyValue(x => x.ViewModel.ShowRepository)
                 .StartWith(false)
                 .Where(x => x)
                 .Take(1)
                 .Subscribe(x => detailsSection.Add(gotoRepositoryElement));
 
-            this.WhenAnyValue(x => x.ViewModel.Commit)
-                .SubscribeSafe(x =>
-                    {
-                        additions.Text = x != null ? x.Stats.Additions.ToString() : "-";
-                        deletions.Text = x != null ? x.Stats.Deletions.ToString() : "-";
-                        parents.Text = x != null ? x.Parents.Count.ToString() : "-";
-                    });
-
-            this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary)
-                .Subscribe(x => {
-                    HeaderView.Text = x;
-                    RefreshHeaderView();
-                });
-
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
-
-            this.WhenAnyValue(x => x.ViewModel.Commit)
-                .IsNotNull()
-                .Subscribe(x => {
-                    HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
-                    RefreshHeaderView();
-                });
-
             OnActivation(d => {
-                d(allChangesButton.Clicked.InvokeCommand(ViewModel.GoToAllFiles));
-                d(gotoRepositoryElement.Clicked.InvokeCommand(ViewModel.GoToRepositoryCommand));
+                d(allChangesButton.BindCommand(ViewModel.GoToAllFiles));
+                d(gotoRepositoryElement.BindCommand(ViewModel.GoToRepositoryCommand));
                 d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar)
+                    .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
+
+                d(this.WhenAnyValue(x => x.ViewModel.CommitMessage)
+                    .Subscribe(x => descriptionElement.Details = x ?? string.Empty));
+                
+                d(descriptionElement.BindCaption(this.WhenAnyValue(x => x.ViewModel.CommiterName)));
+                d(gotoRepositoryElement.BindCaption(this.WhenAnyValue(x => x.ViewModel.RepositoryName)));
+
+                d(diffButton.BindCommand(ViewModel.GoToAddedFiles));
+                d(diffButton.BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).Select(x => x > 0)));
+                d(diffButton.BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).StartWith(0).Select(x => string.Format("{0} added", x))));
+
+                d(removedButton.BindCommand(ViewModel.GoToRemovedFiles));
+                d(removedButton.BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).Select(x => x > 0)));
+                d(removedButton.BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).StartWith(0).Select(x => string.Format("{0} removed", x))));
+
+                d(modifiedButton.BindCommand(ViewModel.GoToModifiedFiles));
+                d(modifiedButton.BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffModifications).Select(x => x > 0)));
+                d(modifiedButton.BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffModifications).StartWith(0).Select(x => string.Format("{0} modified", x))));
+
+                d(allChangesButton.BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions, x => x.ViewModel.DiffDeletions, x => x.ViewModel.DiffModifications)
+                    .Select(x => x.Item1 + x.Item2 + x.Item3 > 0)));
+
+                d(commentsElement.UrlRequested.InvokeCommand(ViewModel.GoToUrlCommand));
 
                 d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary).Subscribe(x => {
+                    HeaderView.Text = x;
+                    RefreshHeaderView();
+                }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Commit).IsNotNull().Subscribe(x => {
+                    HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
+                    RefreshHeaderView();
+                }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Commit.Stats).SubscribeSafe(x => {
+                    additions.Text = x != null ? x.Additions.ToString() : "-";
+                    deletions.Text = x != null ? x.Deletions.ToString() : "-";
+                }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Commit.Parents)
+                    .Subscribe(x => parents.Text = x != null ? x.Count.ToString() : "-"));
             });
         }
     }
