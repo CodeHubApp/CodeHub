@@ -2,6 +2,8 @@ using UIKit;
 using CoreGraphics;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive;
 using ReactiveUI;
 
 namespace CodeHub.iOS.DialogElements
@@ -14,19 +16,9 @@ namespace CodeHub.iOS.DialogElements
         public static UIFont TextFont = UIFont.BoldSystemFontOfSize(14f);
         private readonly List<SplitButton> _buttons = new List<SplitButton>();
 
-        public SplitButton AddButton(string caption, string text, IReactiveCommand tapped)
-        {
-            return AddButton(caption, text, () => tapped.ExecuteIfCan());
-        }
-
-        public SplitButton AddButton(string caption, string text = null, Action tapped = null)
+        public SplitButton AddButton(string caption, string text = null)
         {
             var btn = new SplitButton(caption, text);
-            if (tapped != null)
-                btn.TouchUpInside += (sender, e) => tapped();
-            else
-                btn.UserInteractionEnabled = false;
-
             _buttons.Add(btn);
             return btn;
         }
@@ -119,6 +111,13 @@ namespace CodeHub.iOS.DialogElements
                 }
             }
 
+            public IObservable<EventPattern<object>> Clicked
+            {
+                get {
+                    return Observable.FromEventPattern(t => this.TouchUpInside += t, t => this.TouchUpInside -= t);
+                }
+            }
+
             public SplitButton(string caption, string text)
             {
                 AutosizesSubviews = true;
@@ -141,6 +140,7 @@ namespace CodeHub.iOS.DialogElements
                 this.TouchUpInside += (sender, e) => this.BackgroundColor = UIColor.White;
                 this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
             }
+
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();

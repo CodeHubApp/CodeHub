@@ -5,8 +5,14 @@ using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-    public class WelcomePageViewController : UIViewController
+    public class WelcomePageViewController : BaseViewController
     {
+        private readonly CardPageViewController[] _pages;
+        private readonly UIButton _nextButton = new UIButton(UIButtonType.Custom);
+        private readonly WelcomeViewController _welcomeViewController = new WelcomeViewController();
+        private readonly UIPageViewController _welcomePageController = 
+            new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);
+        
         public event Action WantsToDimiss;
 
         protected void OnWantsToDismiss() => WantsToDimiss?.Invoke();
@@ -17,10 +23,12 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             yield return new PromoteView();
             yield return new GoProViewController();
             yield return new FeedbackViewController();
+            yield return _welcomeViewController;
+        }
 
-            var welcomeViewController = new WelcomeViewController();
-            welcomeViewController.WantsToDimiss += OnWantsToDismiss;
-            yield return welcomeViewController;
+        public WelcomePageViewController()
+        {
+            _pages = GetPages().Select(x => new CardPageViewController(x)).ToArray();
         }
 
         public override void ViewDidLoad()
@@ -29,45 +37,64 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 
             View.BackgroundColor = Theme.PrimaryMenuNavigationBarColor;
 
-            var pages = GetPages().Select(x => new CardPageViewController(x)).ToArray();
-            var welcomePageViewController = new UIPageViewController(UIPageViewControllerTransitionStyle.Scroll, UIPageViewControllerNavigationOrientation.Horizontal);
-            welcomePageViewController.DataSource = new PageDataSource(pages);
-            welcomePageViewController.SetViewControllers(new [] { pages[0] }, UIPageViewControllerNavigationDirection.Forward, true, null);
-            welcomePageViewController.View.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
-            welcomePageViewController.View.AutoresizingMask = UIViewAutoresizing.All;
-            AddChildViewController(welcomePageViewController);
-            Add(welcomePageViewController.View);
+            _welcomePageController.DataSource = new PageDataSource(_pages);
+            _welcomePageController.SetViewControllers(new [] { _pages[0] }, UIPageViewControllerNavigationDirection.Forward, true, null);
+            _welcomePageController.View.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
+            _welcomePageController.View.AutoresizingMask = UIViewAutoresizing.All;
+            AddChildViewController(_welcomePageController);
+            Add(_welcomePageController.View);
 
-            var nextButton = new UIButton(UIButtonType.Custom);
-            nextButton.SetTitle("Next", UIControlState.Normal);
-            nextButton.TintColor = UIColor.White;
-            nextButton.TitleLabel.Font = UIFont.SystemFontOfSize(14f);
-            nextButton.Frame = new CoreGraphics.CGRect(View.Frame.Width - 50f, View.Frame.Height - 28f, 40f, 20f);
-            nextButton.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleTopMargin;
-            Add(nextButton);
+            _nextButton.SetTitle("Next", UIControlState.Normal);
+            _nextButton.TintColor = UIColor.White;
+            _nextButton.TitleLabel.Font = UIFont.SystemFontOfSize(14f);
+            _nextButton.Frame = new CoreGraphics.CGRect(View.Frame.Width - 50f, View.Frame.Height - 28f, 40f, 20f);
+            _nextButton.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleTopMargin;
+            Add(_nextButton);
+        }
 
-            var transitionAction = new Action<UIViewController>(e => {
-                var isLast = pages.Last() == e;
-                //nextButton.Enabled = !isLast;
-                UIView.Transition(nextButton, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, 
-                    () => nextButton.SetTitle(isLast ? "Done" : "Next", UIControlState.Normal), null);
-            });
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            _nextButton.TouchUpInside += GoToNext;
+            _welcomePageController.WillTransition += WillTransition;
+            _welcomeViewController.WantsToDimiss += OnWantsToDismiss;
 
-            welcomePageViewController.WillTransition += (sender, e) => transitionAction(e.PendingViewControllers[0]);
+        }
 
-            nextButton.TouchUpInside += (sender, e) => {
-                var currentViewController = welcomePageViewController.ViewControllers[0];
-                var nextViewController = welcomePageViewController.DataSource.GetNextViewController(welcomePageViewController, currentViewController);
-                if (nextViewController != null)
-                {
-                    transitionAction(nextViewController);
-                    welcomePageViewController.SetViewControllers(new [] { nextViewController }, UIPageViewControllerNavigationDirection.Forward, true, null);
-                }
-                else
-                {
-                    OnWantsToDismiss();
-                }
-            };
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _nextButton.TouchUpInside -= GoToNext;
+            _welcomePageController.WillTransition -= WillTransition;
+            _welcomeViewController.WantsToDimiss -= OnWantsToDismiss;
+        }
+
+        private void Transition(UIViewController e)
+        {
+            var isLast = _pages.Last() == e;
+            //nextButton.Enabled = !isLast;
+            UIView.Transition(_nextButton, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, 
+                () => _nextButton.SetTitle(isLast ? "Done" : "Next", UIControlState.Normal), null);
+        }
+
+        private void WillTransition(object sender, UIPageViewControllerTransitionEventArgs args)
+        {
+            Transition(args.PendingViewControllers[0]);
+        }
+
+        private void GoToNext(object sender, EventArgs args)
+        {
+            var currentViewController = _welcomePageController.ViewControllers[0];
+            var nextViewController = _welcomePageController.DataSource.GetNextViewController(_welcomePageController, currentViewController);
+            if (nextViewController != null)
+            {
+                Transition(nextViewController);
+                _welcomePageController.SetViewControllers(new [] { nextViewController }, UIPageViewControllerNavigationDirection.Forward, true, null);
+            }
+            else
+            {
+                OnWantsToDismiss();
+            }
         }
 
         public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()

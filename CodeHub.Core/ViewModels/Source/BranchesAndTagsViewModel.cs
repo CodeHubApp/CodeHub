@@ -36,13 +36,9 @@ namespace CodeHub.Core.ViewModels.Source
 		{
             var branches = new ReactiveList<Octokit.Branch>();
             Branches = branches.CreateDerivedCollection(
-                x => new BranchItemViewModel(x.Name, () =>
-                {
+                x => new BranchItemViewModel(x.Name, () => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = x.Name;
-                    vm.TrueBranch = true;
+                    vm.Init(RepositoryOwner, RepositoryName, x.Name);
                     NavigateTo(vm);
                 }), 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
@@ -50,12 +46,9 @@ namespace CodeHub.Core.ViewModels.Source
 
             var tags = new ReactiveList<Octokit.RepositoryTag>();
             Tags = tags.CreateDerivedCollection(
-                x => new TagItemViewModel(x.Name, () =>
-                {
+                x => new TagItemViewModel(x.Name, () => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = x.Commit.Sha;
+                    vm.Init(RepositoryOwner, RepositoryName, x.Commit.Sha, trueBranch: false);
                     NavigateTo(vm);
                 }), 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword), 

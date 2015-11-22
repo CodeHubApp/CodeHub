@@ -3,6 +3,8 @@ using UIKit;
 using CoreGraphics;
 using SDWebImage;
 using Foundation;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
 {
@@ -24,7 +26,10 @@ namespace CodeHub.iOS.Views
             get { return _subImageView; }
         }
 
-        public Action ImageButtonAction { get; set; }
+        public IObservable<Unit> Clicked
+        {
+            get { return ImageButton.GetClickedObservable(); }
+        }
 
         public UIImage Image
         {
@@ -127,10 +132,6 @@ namespace CodeHub.iOS.Views
         {
             ImageButton = new UIButton(UIButtonType.Custom);
             ImageButton.Frame = new CGRect(0, 0, 80, 80);
-            ImageButton.TouchUpInside += (sender, e) => {
-                if (ImageButtonAction != null)
-                    ImageButtonAction();
-            };
             Add(ImageButton);
 
             _imageView = new UIImageView();

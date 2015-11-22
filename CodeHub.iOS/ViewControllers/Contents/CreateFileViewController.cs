@@ -11,22 +11,6 @@ namespace CodeHub.iOS.ViewControllers.Contents
 {
     public class CreateFileViewController : BaseTableViewController<CreateFileViewModel>, IModalViewController
     {
-        private readonly Lazy<MessageComposerViewController> _messageViewController;
-
-        public CreateFileViewController()
-        {
-            _messageViewController = new Lazy<MessageComposerViewController>(() => {
-                var viewController = new MessageComposerViewController();
-                viewController.Title = "Commit Message";
-                this.WhenAnyValue(x => x.ViewModel.CommitMessage)
-                    .Subscribe(x => viewController.TextView.Text = x);
-                this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                    .Subscribe(x => viewController.NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Save));
-                viewController.TextView.Changed += (s, e) => ViewModel.CommitMessage = viewController.TextView.Text;
-                return viewController;
-            });
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -38,29 +22,43 @@ namespace CodeHub.iOS.ViewControllers.Contents
             descriptionElement.Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize);
             descriptionElement.SpellChecking = false;
 
-            this.WhenAnyValue(x => x.ViewModel.Name)
-                .Subscribe(x => titleElement.Value = x);
-            titleElement.Changed += (sender, e) => ViewModel.Name = titleElement.Value;
-
-            this.WhenAnyValue(x => x.ViewModel.Content)
-                .Subscribe(x => descriptionElement.Value = x);
-            descriptionElement.ValueChanged += (sender, e) => ViewModel.Content = descriptionElement.Value;
-
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
-                ResignFirstResponder();
-                NavigationController.PushViewController(_messageViewController.Value, true);
-            });
-            this.WhenAnyValue(x => x.ViewModel.CanCommit)
-                .Subscribe(x => NavigationItem.RightBarButtonItem.Enabled = x);
-
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
-
             var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { titleElement, descriptionElement });
             TableView.Source = source;
             TableView.TableFooterView = new UIView();
+
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.Name).Subscribe(x => titleElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Content).Subscribe(x => descriptionElement.Value = x));
+
+                d(titleElement.Changed.Subscribe(x => ViewModel.Name = x));
+                d(descriptionElement.Changed.Subscribe(x => ViewModel.Content = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.GoToCommitMessageCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToCommitMessageCommand).Subscribe(_ => GoToMessage()));
+
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+            });
+        }
+
+        private void GoToMessage()
+        {
+            ResignFirstResponder();
+
+            var viewController = new MessageComposerViewController();
+            viewController.Title = "Commit Message";
+
+            viewController.OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.CommitMessage).Subscribe(x => viewController.TextView.Text = x));
+                d(viewController.Changed.Subscribe(x => ViewModel.CommitMessage = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => viewController.NavigationItem.RightBarButtonItem = x));
+            });
+
+            NavigationController.PushViewController(viewController, true);
         }
     }
 }

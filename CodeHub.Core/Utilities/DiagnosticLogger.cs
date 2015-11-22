@@ -5,7 +5,7 @@ namespace CodeHub.Core.Utilities
     #if DEBUG
     public class DiagnosticLogger : ILogger
     {
-        private LogLevel _logLevel = LogLevel.Warn;
+        private LogLevel _logLevel = LogLevel.Fatal;
 
         public void Write(string message, LogLevel logLevel)
         {

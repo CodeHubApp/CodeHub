@@ -95,7 +95,7 @@ namespace CodeHub.iOS.DialogElements
                 return;
 
             _elements.Add (element);
-            element.Section = this;
+            element.SetSection(this);
 
             if (Root != null)
                 InsertVisual (_elements.Count-1, UITableViewRowAnimation.None, 1);
@@ -144,7 +144,7 @@ namespace CodeHub.iOS.DialogElements
             foreach (var e in newElements)
             {
                 _elements.Insert (pos++, e);
-                e.Section = this;
+                e.SetSection(this);
             }
 
             if (Root != null && Root.TableView != null)
@@ -166,7 +166,7 @@ namespace CodeHub.iOS.DialogElements
             foreach (var e in newElements)
             {
                 _elements.Insert (pos++, e);
-                e.Section = this;
+                e.SetSection(this);
                 count++;
             }
 
@@ -208,7 +208,7 @@ namespace CodeHub.iOS.DialogElements
                 if (_elements [i] == e)
                 {
                     RemoveRange (i, 1, animation);
-                    e.Section = null;
+                    e.SetSection(null);
                     return;
                 }
             }
@@ -278,7 +278,7 @@ namespace CodeHub.iOS.DialogElements
         public void Clear ()
         {
             foreach (var e in _elements)
-                e.Section = null;
+                e.SetSection(null);
             _elements.Clear();
             if (Root != null && Root.TableView != null)
                 Root.TableView.ReloadData ();
@@ -289,7 +289,7 @@ namespace CodeHub.iOS.DialogElements
             _elements.Clear();
             _elements.AddRange(elements);
             foreach (var e in _elements)
-                e.Section = this;
+                e.SetSection(this);
             if (Root != null && Root.TableView != null)
                 Root.TableView.ReloadData();
         }

@@ -108,20 +108,27 @@ namespace CodeHub.Core.ViewModels.App
             }
         }
 
-        private async Task StarOrWatch()
+        private void StarOrWatch()
         {
-            bool shouldStar;
-            if (_defaultValueService.TryGet<bool>("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
+            try
             {
-                _defaultValueService.Set("SHOULD_STAR_CODEHUB", false);
-                await _sessionService.GitHubClient.Activity.Starring.StarRepo("thedillonb", "codehub");
-            }
+                bool shouldStar;
+                if (_defaultValueService.TryGet<bool>("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
+                {
+                    _defaultValueService.Set("SHOULD_STAR_CODEHUB", false);
+                    _sessionService.GitHubClient.Activity.Starring.StarRepo("thedillonb", "codehub").ToBackground();
+                }
 
-            bool shouldWatch;
-            if (_defaultValueService.TryGet<bool>("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
+                bool shouldWatch;
+                if (_defaultValueService.TryGet<bool>("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
+                {
+                    _defaultValueService.Set("SHOULD_WATCH_CODEHUB", false);
+                    var subscription = new Octokit.NewSubscription { Subscribed = true };
+                    _sessionService.GitHubClient.Activity.Watching.WatchRepo("thedillonb", "codehub", subscription).ToBackground();
+                }
+            }
+            catch
             {
-                _defaultValueService.Set("SHOULD_WATCH_CODEHUB", false);
-                await _sessionService.GitHubClient.Activity.Watching.WatchRepo("thedillonb", "codehub", new Octokit.NewSubscription { Subscribed = true });
             }
         }
     }

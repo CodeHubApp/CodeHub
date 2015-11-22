@@ -4,33 +4,28 @@ using UIKit;
 using CoreGraphics;
 using Foundation;
 using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace CodeHub.iOS.DialogElements
 {
-	public class EntryElement : Element {
+	public class EntryElement : Element 
+    {
+        private string _currentValue;
+
 		/// <summary>
 		///   The value of the EntryElement
 		/// </summary>
-		public string Value { 
-			get {
-				if (entry == null)
-					return val;
-				var newValue = entry.Text;
-				if (newValue == val)
-					return val;
-				val = newValue;
-
-				if (Changed != null)
-					Changed (this, EventArgs.Empty);
-				return val;
-			}
+		public string Value 
+        { 
+			get { return _currentValue; }
 			set {
-				val = value;
+                _currentValue = value;
 				if (entry != null)
 					entry.Text = value;
+                _changedSubject.OnNext(value);
 			}
 		}
-		protected string val;
 
 		public UIKeyboardType KeyboardType {
 			get {
@@ -112,14 +107,17 @@ namespace CodeHub.iOS.DialogElements
 		bool isPassword, becomeResponder;
 		UITextField entry;
 		string placeholder;
+        private readonly Subject<string> _changedSubject = new Subject<string>();
 
-		public event EventHandler Changed;
 		public event Func<bool> ShouldReturn;
-		public EventHandler EntryStarted {get;set;}
-		public EventHandler EntryEnded {get;set;}
         public UIFont TitleFont { get; set; }
         public UIFont EntryFont { get; set; }
         public UIColor TitleColor { get; set; }
+
+        public IObservable<string> Changed
+        {
+            get { return _changedSubject.AsObservable(); }
+        }
 
 		public EntryElement (string caption, string placeholder, string value)
 		{ 
@@ -208,18 +206,10 @@ namespace CodeHub.iOS.DialogElements
 
 			if (entry == null) {
 				entry = CreateTextField (entryFrame);
-				entry.ValueChanged += delegate {
-					FetchValue ();
-				};
-                entry.EditingChanged += delegate {
-                    FetchValue ();
-                };
-				entry.Ended += delegate {                                        
-					FetchValue ();
-					if (EntryEnded != null) {
-						EntryEnded (this, null);
-					}
-				};
+                entry.ValueChanged += (sender, e) => Value = entry.Text;
+                entry.EditingChanged += (sender, e) => Value = entry.Text;
+                entry.Ended += (sender, e) => Value = entry.Text;
+                entry.AllEditingEvents += (sender, e) => Value = entry.Text;
 				entry.ShouldReturn += delegate {
 
 					if (ShouldReturn != null)
@@ -255,10 +245,6 @@ namespace CodeHub.iOS.DialogElements
 				entry.Started += delegate {
 					EntryElement self = null;
 
-					if (EntryStarted != null) {
-						EntryStarted (this, null);
-					}
-
 					if (!returnKeyType.HasValue) {
 						var returnType = UIReturnKeyType.Default;
 
@@ -292,26 +278,6 @@ namespace CodeHub.iOS.DialogElements
 
 			return cell;
 		}
-		
-		/// <summary>
-		///  Copies the value from the UITextField in the EntryElement to the
-		//   Value property and raises the Changed event if necessary.
-		/// </summary>
-		public void FetchValue ()
-		{
-			if (entry == null)
-				return;
-
-			var newValue = entry.Text;
-			if (newValue == Value)
-				return;
-			
-			Value = newValue;
-			
-			if (Changed != null)
-				Changed (this, EventArgs.Empty);
-		}
-
 
 		public override void Selected (UITableView tableView, NSIndexPath indexPath)
 		{
@@ -354,19 +320,4 @@ namespace CodeHub.iOS.DialogElements
 				entry.ResignFirstResponder ();
 		}
 	}
-
-    public static class EntryElementExtensions
-    {
-        public static EntryElement Bind<T>(this EntryElement entryElement, IViewFor<T> view, System.Linq.Expressions.Expression<Func<T, string>> bindMember)
-            where T : ReactiveObject
-        {
-//            view.Bind(view.ViewModel, 
-
-
-//            var bindDelegate = bindMember.Compile();
-//            entryElement.Changed += (sender, e) => bindDelegate(;
-//            viewModel.WhenAnyValue(bindMember).Subscribe(x => entryElement.Value = x);
-            return entryElement;
-        }
-    }
 }

@@ -21,47 +21,50 @@ namespace CodeHub.iOS.ViewControllers.Gists
         {
             base.ViewDidLoad();
 
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.Files)
-                .Select(x => x.Changed.Select(_ => Unit.Default).StartWith(Unit.Default))
-                .Switch()
-                .Select(_ => ViewModel.Files.Select(x => new FileElement(x)))
-                .Subscribe(x => _fileSection.Reset(x));
-
-            var addFileElement = new StringElement("Add File");
-            addFileElement.Image = Octicon.Plus.ToImage();
-            addFileElement.Tapped = () => ViewModel.AddGistFileCommand.ExecuteIfCan();
-
+            var addFileElement = new StringElement("Add File", Octicon.Plus.ToImage());
             var descriptionElement = new ExpandingInputElement("Description (Optional)");
-            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x);
-            descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = descriptionElement.Value;
 
             Source = new EditSource(this);
             Source.Root.Add(_fileSection, new Section { addFileElement }, new Section("Details") { descriptionElement });
 
             TableView.Source = Source;
             TableView.TableFooterView = new UIView();
+
+            OnActivation(d => {
+                d(addFileElement.Clicked.InvokeCommand(ViewModel.AddGistFileCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x));
+                d(descriptionElement.Changed.Subscribe(x => ViewModel.Description = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(Images.SaveButton, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Files)
+                    .Select(x => x.Changed.Select(_ => Unit.Default).StartWith(Unit.Default))
+                    .Switch()
+                    .Select(_ => ViewModel.Files.Select(x => new FileElement(x)))
+                    .Subscribe(x => _fileSection.Reset(x)));
+            });
         }
 
         private class EditSource : DialogTableViewSource
         {
-            private readonly GistModifyViewController<TViewModel> _parent;
+            private readonly WeakReference<GistModifyViewController<TViewModel>> _parent;
             public EditSource(GistModifyViewController<TViewModel> dvc) 
                 : base (dvc.TableView)
             {
-                _parent = dvc;
+                _parent = new WeakReference<GistModifyViewController<TViewModel>>(dvc);
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                return Root.IndexOf(_parent._fileSection) == indexPath.Section;
+                GistModifyViewController<TViewModel> parent;
+                if (_parent.TryGetTarget(out parent))
+                    return Root.IndexOf(parent._fileSection) == indexPath.Section;
+                return false;
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
@@ -91,7 +94,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 : base(vm.Name)
             {
                 Image = Octicon.FileCode.ToImage();
-                Tapped = () => vm.EditCommand.ExecuteIfCan();
+                Clicked.InvokeCommand(vm.EditCommand);
                 ViewModel = vm;
             }
         }

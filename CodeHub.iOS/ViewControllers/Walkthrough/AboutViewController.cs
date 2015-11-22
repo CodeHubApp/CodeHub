@@ -1,8 +1,6 @@
-﻿using UIKit;
-
-namespace CodeHub.iOS.ViewControllers.Walkthrough
+﻿namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-    public partial class AboutViewController : UIViewController
+    public partial class AboutViewController : BaseViewController
     {
         public AboutViewController()
             : base("AboutViewController", null)

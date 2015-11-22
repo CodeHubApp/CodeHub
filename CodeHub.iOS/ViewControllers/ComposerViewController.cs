@@ -1,9 +1,7 @@
 using CodeHub.iOS.ViewControllers.App;
 using ReactiveUI;
 using UIKit;
-using System;
 using CodeHub.Core.Services;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers
@@ -13,13 +11,12 @@ namespace CodeHub.iOS.ViewControllers
         public ComposerViewController(IMarkdownService markdownService) 
             : base(markdownService)
         {
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => NavigationItem.RightBarButtonItem = x));
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+            });
         }
     }
 }

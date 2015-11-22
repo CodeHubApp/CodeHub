@@ -9,27 +9,11 @@ namespace CodeHub.iOS.ViewControllers
 {
     public class WebBrowserViewController : BaseViewController<WebBrowserViewModel>, IModalViewController
     {
-        protected UIBarButtonItem BackButton;
-        protected UIBarButtonItem RefreshButton;
-        protected UIBarButtonItem ForwardButton;
-
-        public UIWebView Web { get; private set; }
-        private readonly bool _navigationToolbar;
-
-        protected virtual void GoBack()
-        {
-            Web.GoBack();
-        }
-
-        protected virtual void Refresh()
-        {
-            Web.Reload();
-        }
-
-        protected virtual void GoForward()
-        {
-            Web.GoForward();
-        }
+        private readonly UIBarButtonItem _closeButton = new UIBarButtonItem { Image = Images.Cancel };
+        private readonly UIBarButtonItem _backButton = new UIBarButtonItem { Image = Images.BackChevron, Enabled = false };
+        private readonly UIBarButtonItem _refreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh) { Enabled = false };
+        private readonly UIBarButtonItem _forwardButton = new UIBarButtonItem { Image = Images.ForwardChevron, Enabled = false };
+        private readonly UIWebView _web;
 
         public WebBrowserViewController()
             : this(true, true)
@@ -39,70 +23,52 @@ namespace CodeHub.iOS.ViewControllers
         public WebBrowserViewController(bool navigationToolbar, bool showPageAsTitle = false)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
+            NavigationItem.LeftBarButtonItem = _closeButton;
 
-            Web = new UIWebView {ScalesPageToFit = true};
-            Web.LoadFinished += OnLoadFinished;
-            Web.LoadStarted += OnLoadStarted;
-            Web.LoadError += OnLoadError;
-            Web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
+            _web = new UIWebView {ScalesPageToFit = true};
+            _web.ShouldStartLoad = (w, r, n) => true;
 
-            if (showPageAsTitle)
-            {
-                Web.LoadFinished += (sender, e) =>
-                {
-                    Title = Web.EvaluateJavascript("document.title");
-                };
-            }
+            _web.LoadStarted += (sender, e) => {
+                NetworkActivityService.Instance.PushNetworkActive();
+                _refreshButton.Enabled = false;
+            };
 
-            _navigationToolbar = navigationToolbar;
+            _web.LoadError += (sender, e) => {
+                _refreshButton.Enabled = true;
+            };
 
-            if (_navigationToolbar)
+            _web.LoadFinished += (sender, e) => {
+                NetworkActivityService.Instance.PopNetworkActive();
+                _backButton.Enabled = _web.CanGoBack;
+                _forwardButton.Enabled = _web.CanGoForward;
+                _refreshButton.Enabled = true;
+
+                if (showPageAsTitle)
+                    Title = _web.EvaluateJavascript("document.title");
+            };
+
+            if (navigationToolbar)
             {
                 ToolbarItems = new [] { 
-                    (BackButton = new UIBarButtonItem(Images.BackChevron, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false }),
+                    _backButton,
                     new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                    (ForwardButton = new UIBarButtonItem(Images.ForwardChevron, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false }),
+                    _forwardButton,
                     new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                    (RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()))
+                    _refreshButton
                 };
-
-                BackButton.Enabled = false;
-                ForwardButton.Enabled = false;
-                RefreshButton.Enabled = false;
             }
 
             EdgesForExtendedLayout = UIRectEdge.None;
-        }
 
-        protected virtual bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
-        {
-            return true;
-        }
+            this.WhenAnyValue(x => x.ViewModel.Uri)
+                .SubscribeSafe(x => _web.LoadRequest(new NSUrlRequest(new NSUrl(x.AbsoluteUri))));
 
-        protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
-        {
-            NetworkActivityService.Instance.PopNetworkActive();
-            if (RefreshButton != null)
-                RefreshButton.Enabled = true;
-        }
-
-        protected virtual void OnLoadStarted (object sender, EventArgs e)
-        {
-            NetworkActivityService.Instance.PushNetworkActive();
-            if (RefreshButton != null)
-                RefreshButton.Enabled = false;
-        }
-
-        protected virtual void OnLoadFinished(object sender, EventArgs e)
-        {
-            NetworkActivityService.Instance.PopNetworkActive();
-            if (BackButton != null)
-            {
-                BackButton.Enabled = Web.CanGoBack;
-                ForwardButton.Enabled = Web.CanGoForward;
-                RefreshButton.Enabled = true;
-            }
+            OnActivation(d => {
+                d(_backButton.GetClickedObservable().Subscribe(_ => _web.GoBack()));
+                d(_forwardButton.GetClickedObservable().Subscribe(_ => _web.GoForward()));
+                d(_refreshButton.GetClickedObservable().Subscribe(_ => _web.Reload()));
+                d(_closeButton.GetClickedObservable().Subscribe(_ => DismissViewController(true, null)));
+            });
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -112,48 +78,10 @@ namespace CodeHub.iOS.ViewControllers
                 NavigationController.SetToolbarHidden(true, animated);
         }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            Add(Web);
-            ViewModel.WhenAnyValue(x => x.Uri).SubscribeSafe(x => GoUrl(new NSUrl(x.AbsoluteUri)));
-        }
-
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
-            Web.Frame = View.Bounds;
-        }
-
-        protected static string JavaScriptStringEncode(string data)
-        {
-            return System.Web.HttpUtility.JavaScriptStringEncode(data);
-        }
-
-        protected static string UrlDecode(string data)
-        {
-            return System.Web.HttpUtility.UrlDecode(data);
-        }
-
-        protected string LoadFile(string path)
-        {
-            if (path == null)
-                return string.Empty;
-
-            var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-            InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
-            return uri;
-        }
-
-        protected void LoadContent(string content, string contextPath)
-        {
-            contextPath = contextPath.Replace("/", "//").Replace(" ", "%20");
-            Web.LoadHtmlString(content, NSUrl.FromString("file:/" + contextPath + "//"));
-        }
-
-        public void GoUrl(NSUrl url)
-        {
-            Web.LoadRequest(new NSUrlRequest(url));
+            _web.Frame = View.Bounds;
         }
 
         public override void ViewWillAppear(bool animated)
@@ -162,15 +90,23 @@ namespace CodeHub.iOS.ViewControllers
                 NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
             var bounds = View.Bounds;
-            if (_navigationToolbar)
+            if (ToolbarItems != null)
                 bounds.Height -= NavigationController.Toolbar.Frame.Height;
-            Web.Frame = bounds;
+
+            Add(_web);
+            _web.Frame = bounds;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _web.RemoveFromSuperview();
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);
-            Web.Frame = View.Bounds;
+            _web.Frame = View.Bounds;
         }
     }
 }

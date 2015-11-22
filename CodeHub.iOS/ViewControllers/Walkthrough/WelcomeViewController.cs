@@ -3,15 +3,13 @@ using System;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-    public partial class WelcomeViewController : UIViewController
+    public partial class WelcomeViewController : BaseViewController
     {
         public event Action WantsToDimiss;
 
-        protected void OnWantsToDismiss()
+        protected void OnWantsToDismiss(object sender, EventArgs args)
         {
-            var e = WantsToDimiss;
-            if (e != null)
-                e();
+            WantsToDimiss?.Invoke();
         }
 
         public WelcomeViewController()
@@ -22,11 +20,21 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            
             GoButton.BackgroundColor = UIColor.FromRGB(0x29, 0x80, 0xb9);
             GoButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             GoButton.Layer.CornerRadius = 6f;
-            GoButton.TouchUpInside += (sender, e) => OnWantsToDismiss();
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            GoButton.TouchUpInside += OnWantsToDismiss;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            GoButton.TouchUpInside -= OnWantsToDismiss;
         }
     }
 }

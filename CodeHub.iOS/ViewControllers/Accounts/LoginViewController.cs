@@ -24,10 +24,6 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         {
             _alertDialogService = alertDialogService;
 
-            this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
             this.Appearing
                 .Take(1)
                 .Select(_ => this.WhenAnyValue(x => x.ViewModel.LoginUrl))
@@ -40,10 +36,15 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 hasSeenWelcome = false;
 
             this.Appeared
-                .Where(_ => !hasSeenWelcome)
+//                .Where(_ => !hasSeenWelcome)
                 .Take(1)
                 .Subscribe(_ => 
                     BlurredAlertView.Display(OAuthWelcome, () => defaultValueService.Set(HasSeenWelcomeKey, true)));
+
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+            });
         }
 
 		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
@@ -90,8 +91,8 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             script.Append("$('.brand-logo-wordmark').click(function(e) { e.preventDefault(); });");
 
             //Inject some Javascript so we can set the username if there is an attempted account
-            ViewModel.AttemptedAccount.Do(x => 
-                script.Append("$('input[name=\"login\"]').val('" + x.Username + "').attr('readonly', 'readonly');"));
+            if (ViewModel.AttemptedAccount != null)
+                script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
 
             Web.EvaluateJavascript("(function(){setTimeout(function(){" + script +"}, 100); })();");
         }

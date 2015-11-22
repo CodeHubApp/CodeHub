@@ -1,6 +1,7 @@
 ﻿using System;
 using UIKit;
 using CoreGraphics;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
 {
@@ -9,7 +10,7 @@ namespace CodeHub.iOS.Views
         private readonly UILabel _label;
         private readonly UIButton _button;
 
-        public static UIView Display(string text, Action dismissed)
+        public static void Display(string text, Action dismissed)
         {
             var window = ((AppDelegate)UIApplication.SharedApplication.Delegate).Window;
 
@@ -26,14 +27,13 @@ namespace CodeHub.iOS.Views
 
             UIView.Animate(0.3, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 1, null);
 
-            alertView._button.TouchUpInside += (sender, e) =>
+            alertView._button.GetClickedObservable().Take(1).Subscribe(_ => {
                 UIView.Animate(0.3, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 0, () => {
                     blurView.RemoveFromSuperview();
                     alertView.View.RemoveFromSuperview();
                     dismissed();
                 });
-
-            return null;
+            });
         }
 
         private BlurredAlertView(string text)

@@ -9,33 +9,11 @@ namespace CodeHub.iOS.ViewControllers.Contents
 {
     public class EditFileViewController : MessageComposerViewController<EditFileViewModel>, IModalViewController
     {
-        private readonly Lazy<MessageComposerViewController> _messageViewController;
-
-        public EditFileViewController()
-        {
-            _messageViewController = new Lazy<MessageComposerViewController>(() => {
-                var viewController = new MessageComposerViewController();
-                viewController.Title = "Commit Message";
-                this.WhenAnyValue(x => x.ViewModel.CommitMessage)
-                    .Subscribe(x => viewController.TextView.Text = x);
-                this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                    .Subscribe(x => viewController.NavigationItem.RightBarButtonItem = x.ToBarButtonItem(UIBarButtonSystemItem.Save));
-                viewController.TextView.Changed += (s, e) => ViewModel.CommitMessage = viewController.TextView.Text;
-                return viewController;
-            });
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Images.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
-                ResignFirstResponder();
-                NavigationController.PushViewController(_messageViewController.Value, true);
-            });
-
             TextView.Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize);
-            TextView.Changed += (sender, e) => ViewModel.Text = Text;
 
             this.WhenAnyValue(x => x.ViewModel.Text)
                 .IsNotNull()
@@ -48,9 +26,35 @@ namespace CodeHub.iOS.ViewControllers.Contents
                 .Where(x => !string.Equals(x, TextView.Text))
                 .Subscribe(x => TextView.Text = x);
 
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.GoToCommitMessageCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToCommitMessageCommand)
+                    .Subscribe(_ => GoToMessage()));
+
+                d(Changed.Subscribe(x => ViewModel.Text = x));
+            });
+        }
+
+        private void GoToMessage()
+        {
+            ResignFirstResponder();
+
+            var viewController = new MessageComposerViewController();
+            viewController.Title = "Commit Message";
+
+            viewController.OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.CommitMessage).Subscribe(x => viewController.TextView.Text = x));
+                d(viewController.Changed.Subscribe(x => ViewModel.CommitMessage = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => viewController.NavigationItem.RightBarButtonItem = x));
+            });
+
+            NavigationController.PushViewController(viewController, true);
         }
     }
 }

@@ -4,16 +4,17 @@ using Foundation;
 using CoreGraphics;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
+using System.Reactive.Subjects;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class ExpandingInputElement : Element, IElementSizing
     {
         private string _val;
-        public event EventHandler ValueChanged;
         private readonly string _description;
         private IDisposable _textEditEnded;
         private IDisposable _textEditChanged;
+        private readonly Subject<string> _changedSubject = new Subject<string>();
 
         public string Value
         {
@@ -24,9 +25,13 @@ namespace CodeHub.iOS.DialogElements
                     return;
 
                 _val = value;
-                if (ValueChanged != null)
-                    ValueChanged(this, EventArgs.Empty);
+                _changedSubject.OnNext(value);
             }
+        }
+
+        public IObservable<string> Changed
+        {
+            get { return _changedSubject.AsObservable(); }
         }
 
         public UIFont Font { get; set; }

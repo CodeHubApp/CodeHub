@@ -22,47 +22,49 @@ namespace CodeHub.iOS.ViewControllers.Issues
         protected IssueModifyViewController()
         {
             _descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
-                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
-                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
-
-            this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
-                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
-
-            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x);
-            _titleElement.Changed += (sender, e) => ViewModel.Subject = _titleElement.Value;
-
-            this.WhenAnyValue(x => x.ViewModel.Content).Subscribe(x => _descriptionElement.Value = x);
-            _descriptionElement.ValueChanged += (sender, e) => ViewModel.Content = _descriptionElement.Value;
-
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Save))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
             _milestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1);
-            _milestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Milestone)
-                .Select(x => x == null ? "No Milestone" : x.Title)
-                .Subscribe(x => _milestoneElement.Value = x);
-
             _assigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1);
-            _assigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Assignee)
-                .Select(x => x == null ? "Unassigned" : x.Login)
-                .Subscribe(x => _assigneeElement.Value = x);
-
             _labelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
-            _labelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
-            this.WhenAnyValue(x => x.ViewModel.Labels)
-                .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
-                .Subscribe(x => _labelsElement.Value = x);
 
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+            OnActivation(d => {
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
+                    .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToMilestonesCommand)
+                    .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
+                    .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel())));
+
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(Images.SaveButton, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+
+                d(_milestoneElement.Clicked.InvokeCommand(ViewModel.GoToMilestonesCommand));
+                d(_assigneeElement.Clicked.InvokeCommand(ViewModel.GoToAssigneesCommand));
+                d(_labelsElement.Clicked.InvokeCommand(ViewModel.GoToLabelsCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => _titleElement.Value = x));
+                d(_titleElement.Changed.Subscribe(x => ViewModel.Subject = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Content).Subscribe(x => _descriptionElement.Value = x));
+                d(_descriptionElement.Changed.Subscribe(x => ViewModel.Content = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Milestone)
+                    .Select(x => x == null ? "No Milestone" : x.Title)
+                    .Subscribe(x => _milestoneElement.Value = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Assignee)
+                    .Select(x => x == null ? "Unassigned" : x.Login)
+                    .Subscribe(x => _assigneeElement.Value = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Labels)
+                    .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
+                    .Subscribe(x => _labelsElement.Value = x));
+            });
         }
 
         protected override void LoadViewModel()

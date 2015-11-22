@@ -17,7 +17,6 @@ namespace CodeHub.iOS.DialogElements
         protected override UITextField CreateTextField(CGRect frame)
         {
             var txt = base.CreateTextField(frame);
-            txt.AllEditingEvents += (sender, e) => FetchValue();
             txt.AutocorrectionType = SpellChecking ? UITextAutocorrectionType.Default : UITextAutocorrectionType.No;
             txt.SpellCheckingType = SpellChecking ? UITextSpellCheckingType.Default : UITextSpellCheckingType.No;
             txt.AutocapitalizationType = SpellChecking ? txt.AutocapitalizationType : UITextAutocapitalizationType.None;

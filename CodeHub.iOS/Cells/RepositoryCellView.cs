@@ -42,7 +42,7 @@ namespace CodeHub.iOS.Cells
             DefaultConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
+                .IsNotNull()
                 .Subscribe(x => {
                     CaptionLabel.Text = x.Name;
                     FollowersLabel.Text = x.Stars;
@@ -53,10 +53,14 @@ namespace CodeHub.iOS.Cells
                     UserImageView.Hidden = UserLabel.Hidden;
                     UserLabel.Text = x.Owner ?? string.Empty;
                     ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
+                    OwnerImageView.SetAvatar(x.Avatar);
                 });
+        }
 
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => OwnerImageView.SetAvatar(x));
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
         }
     }
 }

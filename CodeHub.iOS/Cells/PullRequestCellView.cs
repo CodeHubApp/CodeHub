@@ -34,6 +34,12 @@ namespace CodeHub.iOS.Cells
             this.WhenAnyValue(x => x.ViewModel.Avatar)
                 .Subscribe(x => MainImageView.SetAvatar(x));
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
+        }
     }
 }
 

@@ -5,9 +5,9 @@ namespace CodeHub.iOS.DialogElements
 {
     public static class ElementExtensions
     {
-        public static StringElement BindCommand(this StringElement stringElement, Func<IReactiveCommand> cmd)
+        public static StringElement BindCommand(this StringElement stringElement, IReactiveCommand cmd)
         {
-            stringElement.Tapped = () => cmd().ExecuteIfCan();
+            stringElement.Clicked.InvokeCommand(cmd);
             return stringElement;
         }
 

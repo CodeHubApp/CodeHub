@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
         public BranchCellView(IntPtr handle)
             : base(handle)
         {
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
+            this.WhenAnyValue(x => x.ViewModel.Name).Subscribe(x => TextLabel.Text = x);
         }
     }
 }

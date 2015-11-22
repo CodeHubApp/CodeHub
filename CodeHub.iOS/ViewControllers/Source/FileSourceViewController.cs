@@ -18,22 +18,22 @@ namespace CodeHub.iOS.ViewControllers.Source
         {
             _alertDialogFactory = alertDialogFactory;
 
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
 
-            this.WhenAnyValue(x => x.ViewModel.OpenWithCommand)
-                .Switch()
-                .SubscribeSafe(_ =>
-                {
-                    UIDocumentInteractionController ctrl = UIDocumentInteractionController.FromUrl(new NSUrl(ViewModel.SourceItem.FileUri.AbsoluteUri));
-                    ctrl.Delegate = new UIDocumentInteractionControllerDelegate();
-                    var couldOpen = ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
-                    if (!couldOpen)
-                    {
-                        alertDialogFactory.ShowError("Nothing to open with");
-                    }
-                });
+                d(this.WhenAnyValue(x => x.ViewModel.OpenWithCommand)
+                    .Switch()
+                    .SubscribeSafe(_ => {
+                        UIDocumentInteractionController ctrl = UIDocumentInteractionController.FromUrl(new NSUrl(ViewModel.SourceItem.FileUri.AbsoluteUri));
+                        ctrl.Delegate = new UIDocumentInteractionControllerDelegate();
+                        var couldOpen = ctrl.PresentOpenInMenu(NavigationItem.RightBarButtonItem, true);
+                        if (!couldOpen)
+                        {
+                            alertDialogFactory.ShowError("Nothing to open with");
+                        }
+                    }));
+            });
         }
 
         protected override void OnLoadError(object sender, UIWebErrorArgs e)

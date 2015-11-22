@@ -23,13 +23,7 @@ namespace CodeHub.iOS.ViewControllers.App
 
             var descriptionElement = new ExpandingInputElement("Description");
             descriptionElement.AccessoryView = x => new MarkdownAccessoryView(x);
-
             var titleElement = new DummyInputElement("Title");
-            this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => titleElement.Value = x);
-            titleElement.Changed += (sender, e) => ViewModel.Subject = titleElement.Value;
-
-            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x);
-            descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = descriptionElement.Value;
 
             this.WhenAnyValue(x => x.ViewModel.SubmitCommand).Subscribe(x => {
                 NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
@@ -40,14 +34,22 @@ namespace CodeHub.iOS.ViewControllers.App
                 x.CanExecuteObservable.Subscribe(y => NavigationItem.RightBarButtonItem.Enabled = y);
             });
 
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
+            var cancelButton = new UIBarButtonItem() { Image = Images.Cancel };
+            NavigationItem.LeftBarButtonItem = cancelButton;
 
             var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { titleElement, descriptionElement });
             TableView.Source = source;
             TableView.TableFooterView = new UIView();
+
+            OnActivation(d => {
+                d(descriptionElement.Changed.Subscribe(x => ViewModel.Description = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Subject).Subscribe(x => titleElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x));
+                d(titleElement.Changed.Subscribe(x => ViewModel.Subject = x));
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+            });
         }
     }
 }

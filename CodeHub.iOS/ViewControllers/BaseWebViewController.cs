@@ -102,26 +102,10 @@ namespace CodeHub.iOS.ViewControllers
                 NavigationController.SetToolbarHidden(true, animated);
         }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            Add(Web);
-        }
-
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
             Web.Frame = View.Bounds;
-        }
-
-        protected static string JavaScriptStringEncode(string data)
-        {
-            return System.Web.HttpUtility.JavaScriptStringEncode(data);
-        }
-
-        protected static string UrlDecode(string data)
-        {
-            return System.Web.HttpUtility.UrlDecode(data);
         }
 
         protected void LoadFile(Uri uri)
@@ -160,8 +144,16 @@ namespace CodeHub.iOS.ViewControllers
             if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
+
+            Add(Web);
             var bounds = View.Bounds;
             Web.Frame = bounds;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            Web.RemoveFromSuperview();
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

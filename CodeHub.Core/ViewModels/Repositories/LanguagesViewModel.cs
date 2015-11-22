@@ -16,9 +16,14 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _selectedLanguage, value); }
         }
 
+        public IReactiveCommand<object> DismissCommand { get; }
+
         public LanguagesViewModel()
         {
             Title = "Languages";
+
+            DismissCommand = ReactiveCommand.Create();
+            DismissCommand.Subscribe(_ => this.Dismiss());
 
             Items = InternalItems.CreateDerivedCollection(
                 x => new LanguageItemViewModel(x.Name, x.Slug), 

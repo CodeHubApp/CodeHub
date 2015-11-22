@@ -16,34 +16,45 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             HeaderView.Image = Images.LoginUserUnknown;
 
             var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.ExecuteIfCan());
-            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.ExecuteIfCan());
-            var members = new StringElement("Members", () => ViewModel.GoToMembersCommand.ExecuteIfCan(), Octicon.Person.ToImage());
-            var teams = new StringElement("Teams", () => ViewModel.GoToTeamsCommand.ExecuteIfCan(), Octicon.Organization.ToImage());
-            var events = new StringElement("Events", () => ViewModel.GoToEventsCommand.ExecuteIfCan(), Octicon.Rss.ToImage());
-            var repos = new StringElement("Repositories", () => ViewModel.GoToRepositoriesCommand.ExecuteIfCan(), Octicon.Repo.ToImage());
-            var gists = new StringElement("Gists", () => ViewModel.GoToGistsCommand.ExecuteIfCan(), Octicon.Gist.ToImage());
+            var followers = split.AddButton("Followers", "-");
+            var following = split.AddButton("Following", "-");
+            var members = new StringElement("Members", Octicon.Person.ToImage());
+            var teams = new StringElement("Teams", Octicon.Organization.ToImage());
+            var events = new StringElement("Events", Octicon.Rss.ToImage());
+            var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", Octicon.Gist.ToImage());
             var membersAndTeams = new Section { members };
 
             Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });
 
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+            OnActivation(d => {
+                d(followers.Clicked.InvokeCommand(ViewModel.GoToFollowersCommand));
+                d(following.Clicked.InvokeCommand(ViewModel.GoToFollowingCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.Organization)
-                .IsNotNull()
-                .Subscribe(x => {
-                    followers.Text = x != null ? x.Followers.ToString() : "-";
-                    following.Text = x != null ? x.Following.ToString() : "-";
-                });
+                d(members.Clicked.InvokeCommand(ViewModel.GoToMembersCommand));
+                d(teams.Clicked.InvokeCommand(ViewModel.GoToTeamsCommand));
+                d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));
+                d(repos.Clicked.InvokeCommand(ViewModel.GoToRepositoriesCommand));
+                d(gists.Clicked.InvokeCommand(ViewModel.GoToGistsCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
-                .Where(x => x && teams.Section == null)
-                .Subscribe(x => membersAndTeams.Add(teams));
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar)
+                    .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
 
-            this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
-                .Where(x => !x)
-                .Subscribe(x => membersAndTeams.Remove(teams));
+                d(this.WhenAnyValue(x => x.ViewModel.Organization)
+                    .IsNotNull()
+                    .Subscribe(x => {
+                        followers.Text = x != null ? x.Followers.ToString() : "-";
+                        following.Text = x != null ? x.Following.ToString() : "-";
+                    }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
+                    .Where(x => x && teams.Section == null)
+                    .Subscribe(x => membersAndTeams.Add(teams)));
+
+                d(this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
+                    .Where(x => !x)
+                    .Subscribe(x => membersAndTeams.Remove(teams)));
+            });
         }
     }
 }

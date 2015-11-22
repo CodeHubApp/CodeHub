@@ -2,6 +2,8 @@ using System;
 using UIKit;
 using System.Collections.Generic;
 using CoreGraphics;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -10,9 +12,15 @@ namespace CodeHub.iOS.DialogElements
         public static UIColor DefaulTextColor = UIColor.FromWhiteAlpha(0.1f, 1.0f);
         public static UIFont TextFont = UIFont.SystemFontOfSize(14f);
 
-        public SplitButton Button1 { get; set; }
+        public SplitButton Button1 { get; }
 
-        public SplitButton Button2 { get; set; }
+        public SplitButton Button2 { get; }
+
+        public SplitViewElement(UIImage image1, UIImage image2, string text1 = null, string text2 = null)
+        {
+            Button1 = new SplitButton(image1, text1);
+            Button2 = new SplitButton(image2, text2);
+        }
 
         public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
         {
@@ -158,12 +166,19 @@ namespace CodeHub.iOS.DialogElements
                 }
             }
 
-            public SplitButton(UIImage image, Action touched)
-                : this (image, null, touched)
+            public IObservable<EventPattern<object>> Clicked
+            {
+                get {
+                    return Observable.FromEventPattern(t => this.TouchUpInside += t, t => this.TouchUpInside -= t);
+                }
+            }
+
+            public SplitButton(UIImage image)
+                : this (image, null)
             {
             }
 
-            public SplitButton(UIImage image, string text = null, Action touched = null)
+            public SplitButton(UIImage image, string text = null)
             {
                 AutosizesSubviews = true;
 
@@ -178,18 +193,6 @@ namespace CodeHub.iOS.DialogElements
                 _text.AdjustsFontSizeToFitWidth = true;
                 _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);
-
-                if (touched != null)
-                {
-//                    this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
-//                    this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
-//
-                    this.TouchUpInside += (sender, e) => 
-                    {
-//                        this.BackgroundColor = UIColor.White;
-                        touched();
-                    };
-                }
             }
             public override void LayoutSubviews()
             {

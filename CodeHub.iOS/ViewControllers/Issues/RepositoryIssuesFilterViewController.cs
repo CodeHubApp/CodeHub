@@ -17,14 +17,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
                 ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
-
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Select(x => x.ToBarButtonItem(Images.Search))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()
@@ -34,57 +26,63 @@ namespace CodeHub.iOS.ViewControllers.Issues
             var source = new DialogTableViewSource(TableView);
             TableView.Source = source;
 
-            var stateElement = new StringElement("State", () => ViewModel.SelectStateCommand.ExecuteIfCan());
-            stateElement.Style = UITableViewCellStyle.Value1;
-
-            var cmd = ViewModel.SelectLabelsCommand;
-            var labelElement = new StringElement("Labels", () => cmd.ExecuteIfCan());
-            labelElement.Style = UITableViewCellStyle.Value1;
-
             var mentionedElement = new EntryElement("Mentioned", "username", string.Empty) {
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
-            mentionedElement.Changed += (sender, e) => ViewModel.Mentioned = mentionedElement.Value;
 
             var creatorElement = new EntryElement("Creator", "username", string.Empty) {
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
-            creatorElement.Changed += (sender, e) => ViewModel.Creator = creatorElement.Value;
 
-            var assigneeElement = new StringElement("Assignee", () => ViewModel.SelectAssigneeCommand.ExecuteIfCan());
-            assigneeElement.Style = UITableViewCellStyle.Value1;
-
-            var milestoneElement = new StringElement("Milestone", () => ViewModel.SelectMilestoneCommand.ExecuteIfCan());
-            milestoneElement.Style = UITableViewCellStyle.Value1;
-
-            var fieldElement = new StringElement("Field", () => ViewModel.SelectSortCommand.ExecuteIfCan());
-            fieldElement.Style = UITableViewCellStyle.Value1;
-
-            var ascElement = new BooleanElement("Ascending", false, x => ViewModel.Ascending = x.Value);
+            var stateElement = new StringElement("State", string.Empty, UITableViewCellStyle.Value1);
+            var labelElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
+            var assigneeElement = new StringElement("Assignee", string.Empty, UITableViewCellStyle.Value1);
+            var milestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1);
+            var fieldElement = new StringElement("Field", string.Empty, UITableViewCellStyle.Value1);
+            var ascElement = new BooleanElement("Ascending", false);
 
             var filterSection = new Section("Filter") { stateElement, mentionedElement, creatorElement, labelElement, assigneeElement, milestoneElement };
             var orderSection = new Section("Order By") { fieldElement, ascElement };
             var searchSection = new Section();
-            searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
+            var footerButton = new TableFooterButton("Search!");
+            searchSection.FooterView = footerButton;
             source.Root.Add(filterSection, orderSection, searchSection);
 
-            this.WhenAnyObservable(x => x.ViewModel.SelectAssigneeCommand)
-                .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
+            OnActivation(d => {
+                d(assigneeElement.Clicked.InvokeCommand(ViewModel.SelectAssigneeCommand));
+                d(milestoneElement.Clicked.InvokeCommand(ViewModel.SelectMilestoneCommand));
+                d(fieldElement.Clicked.InvokeCommand(ViewModel.SelectSortCommand));
+                d(stateElement.Clicked.InvokeCommand(ViewModel.SelectStateCommand));
+                d(labelElement.Clicked.InvokeCommand(ViewModel.SelectLabelsCommand));
+                d(footerButton.Clicked.InvokeCommand(ViewModel.SaveCommand));
+                d(ascElement.Changed.Subscribe(x => ViewModel.Ascending = x));
+                d(mentionedElement.Changed.Subscribe(x => ViewModel.Mentioned = x));
+                d(creatorElement.Changed.Subscribe(x => ViewModel.Creator = x));
 
-            this.WhenAnyObservable(x => x.ViewModel.SelectMilestoneCommand)
-                .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel()));
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
 
-            this.WhenAnyObservable(x => x.ViewModel.SelectLabelsCommand)
-                .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(Images.Search, x => NavigationItem.RightBarButtonItem = x));
 
-            this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize());
-            this.WhenAnyValue(x => x.ViewModel.LabelsString).Subscribe(x => labelElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.Mentioned).Subscribe(x => mentionedElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.Creator).Subscribe(x => creatorElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.AssigneeString).Subscribe(x => assigneeElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.MilestoneString).Subscribe(x => milestoneElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize());
-            this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x);
+                d(this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.LabelsString).Subscribe(x => labelElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Mentioned).Subscribe(x => mentionedElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Creator).Subscribe(x => creatorElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.AssigneeString).Subscribe(x => assigneeElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.MilestoneString).Subscribe(x => milestoneElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.SelectAssigneeCommand)
+                    .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.SelectMilestoneCommand)
+                    .Subscribe(_ => IssueMilestonesViewController.Show(this, ViewModel.CreateMilestonesViewModel())));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.SelectLabelsCommand)
+                    .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel())));
+            });
         }
     }
 }

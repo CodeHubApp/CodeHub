@@ -1,10 +1,24 @@
 using System;
 using ReactiveUI;
+using System.Reactive.Subjects;
+using System.Reactive;
 
 namespace CodeHub.iOS.Cells
 {
     public abstract class ReactiveTableViewCell<TViewModel> : ReactiveTableViewCell, IViewFor<TViewModel> where TViewModel : class
     {
+        private readonly ISubject<Unit> _appearingSubject = new Subject<Unit>();
+
+        ~ReactiveTableViewCell()
+        {
+            Console.WriteLine("Goodbye " + this.GetType().Name);
+        }
+
+        public IObservable<Unit> Appearing
+        {
+            get { return _appearingSubject; }
+        }
+
         protected ReactiveTableViewCell()
         {
         }

@@ -18,8 +18,10 @@ namespace CodeHub.iOS.Cells
             DetailTextLabel.Font = UIFont.PreferredFootnote;
             DetailTextLabel.TextColor = Theme.MainSubtitleColor;
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Created, x => x.DetailTextLabel.Text);
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text));
+                d(this.OneWayBind(ViewModel, x => x.Created, x => x.DetailTextLabel.Text));
+            });
         }
     }
 }

@@ -15,58 +15,9 @@ namespace CodeHub.iOS.ViewControllers.Gists
 {
     public class GistViewController : BaseDialogViewController<GistViewModel>
     {
-        private readonly SplitViewElement _splitRow1;
-        private readonly SplitViewElement _splitRow2;
-        private readonly StringElement _ownerElement;
-
-        public GistViewController()
-        {
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand)
-                .Select(x => x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null)
-                .Subscribe(x => HeaderView.ImageButtonAction = x);
-
-            Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
-                .Switch()
-                .Select(x => x.Value ? Octicon.Star.ToImage() : null)
-                .Subscribe(HeaderView.SetSubImage);
-
-            _splitRow1 = new SplitViewElement();
-            _splitRow1.Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage(), string.Empty);
-            _splitRow1.Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage(), string.Empty);
-
-            _splitRow2 = new SplitViewElement();
-            _splitRow2.Button1 = new SplitViewElement.SplitButton(Octicon.Pencil.ToImage(), string.Empty);
-            _splitRow2.Button2 = new SplitViewElement.SplitButton(Octicon.Star.ToImage(), string.Empty, () => ViewModel.ToggleStarCommand.ExecuteIfCan());
-
-            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
-
-            this.WhenAnyValue(x => x.ViewModel.IsStarred)
-                .Where(x => x.HasValue)
-                .Select(x => x.Value ? "Starred!" : "Unstarred")
-                .Subscribe(x => _splitRow2.Button2.Text = x);
-
-            this.WhenAnyValue(x => x.ViewModel.Gist)
-                .IsNotNull()
-                .SubscribeSafe(x =>
-                {
-                    var revisionCount = x.History == null ? 0 : x.History.Count;
-
-                    _splitRow1.Button1.Text = x.Public ? "Public" : "Private";
-                    _splitRow1.Button2.Text = revisionCount + " Revisions";
-
-                    var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
-                    if (delta.Days <= 0)
-                        _splitRow2.Button1.Text = "Created Today";
-                    else
-                        _splitRow2.Button1.Text = string.Format("{0} Days Old", delta.Days);
-                });
-        }
+        private readonly SplitViewElement _splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+        private readonly SplitViewElement _splitRow2 = new SplitViewElement(Octicon.Pencil.ToImage(), Octicon.Star.ToImage());
+        private readonly StringElement _ownerElement = new StringElement("Owner", Octicon.Person.ToImage());
 
         public override void ViewDidLoad()
         {
@@ -84,7 +35,8 @@ namespace CodeHub.iOS.ViewControllers.Gists
             var forks = split.AddButton("Forks", "-");
             headerSection.Add(split);
 
-            var commentsSection = new Section() { FooterView = new TableFooterButton("Add Comment", ViewModel.AddCommentCommand.ExecuteIfCan) };
+            var footerButton = new TableFooterButton("Add Comment");
+            var commentsSection = new Section(null, footerButton);
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
             commentsSection.Add(commentsElement);
@@ -92,6 +44,13 @@ namespace CodeHub.iOS.ViewControllers.Gists
             var detailsSection = new Section { _splitRow1, _splitRow2 };
 
             Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
+
+            Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
+                .Switch()
+                .Select(x => x.Value ? Octicon.Star.ToImage() : null)
+                .Subscribe(HeaderView.SetSubImage);
 
             var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
 
@@ -111,9 +70,9 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 .Select(x => x?.Owner?.Login ?? "Anonymous")
                 .Subscribe(x => _ownerElement.Value = x);
 
-            updatedGistObservable
-                .Select(x => x.Owner != null ? () => ViewModel.GoToOwnerCommand.ExecuteIfCan() : (Action)null)
-                .SubscribeSafe(x => _ownerElement.Tapped = x);
+//            updatedGistObservable
+//                .Select(x => x.Owner != null ? () => ViewModel.GoToOwnerCommand.ExecuteIfCan() : (Action)null)
+//                .SubscribeSafe(x => _ownerElement.Tapped = x);
 
             this.WhenAnyValue(x => x.ViewModel.Avatar)
                 .Subscribe(x => HeaderView.SetImage(x?.ToUri(64), Images.LoginUserUnknown));
@@ -134,7 +93,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 {
                     var sse = new StringElement(file);
                     sse.Image = Octicon.FileCode.ToImage();
-                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
+//                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
                     elements.Add(sse);
                 }
 
@@ -164,6 +123,37 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 {
                     commentsSection.Remove(commentsElement);
                 }
+            });
+
+            OnActivation(d => {
+                d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
+                d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+
+                d(_splitRow1.Button2.Clicked.InvokeCommand(ViewModel.ToggleStarCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.IsStarred)
+                    .Where(x => x.HasValue)
+                    .Select(x => x.Value ? "Starred!" : "Unstarred")
+                    .Subscribe(x => _splitRow2.Button2.Text = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Gist)
+                    .IsNotNull()
+                    .SubscribeSafe(x =>
+                        {
+                            var revisionCount = x.History == null ? 0 : x.History.Count;
+
+                            _splitRow1.Button1.Text = x.Public ? "Public" : "Private";
+                            _splitRow1.Button2.Text = revisionCount + " Revisions";
+
+                            var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
+                            if (delta.Days <= 0)
+                                _splitRow2.Button1.Text = "Created Today";
+                            else
+                                _splitRow2.Button1.Text = string.Format("{0} Days Old", delta.Days);
+                        }));
             });
         }
     }

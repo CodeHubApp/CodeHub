@@ -1,7 +1,7 @@
 using UIKit;
 using CoreGraphics;
 
-namespace RepositoryStumble.Transitions
+namespace CodeHub.iOS.Transitions
 {
     public class SlideDownTransition : UIViewControllerTransitioningDelegate
     {

@@ -17,20 +17,14 @@ namespace CodeHub.iOS.Cells
         {
             this.WhenAnyValue(x => x.ViewModel)
                 .IsNotNull()
-                .Subscribe(x =>
-                {
+                .Subscribe(x => {
                     TextLabel.Text = x.Name;
                     ImageView.Image = Graphics.CreateLabelImage(x.Color);
                 });
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Select(x => x.WhenAnyValue(y => y.IsSelected))
-                .Switch()
-                .Subscribe(x =>
-                {
-                    Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                });
+            this.WhenAnyValue(x => x.ViewModel.IsSelected).Subscribe(x => {
+                Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+            });
         }
     }
 }

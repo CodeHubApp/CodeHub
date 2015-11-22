@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Cells
         public TeamCellView(IntPtr handle)
             : base(handle)
         {
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
+            this.WhenActivated(d => d(this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text)));
         }
     }
 }

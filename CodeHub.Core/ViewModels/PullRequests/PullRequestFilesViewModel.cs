@@ -5,7 +5,6 @@ using System.Reactive;
 using Octokit;
 using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 
@@ -20,9 +19,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _commentCreatedObservable.AsObservable(); }
         }
 
-        public IReadOnlyReactiveList<CommitedFileItemViewModel> Files { get; private set; }
+        public IReadOnlyReactiveList<CommitedFileItemViewModel> Files { get; }
 
-        public IReadOnlyReactiveList<PullRequestReviewComment> Comments { get; private set; }
+        public IReadOnlyReactiveList<PullRequestReviewComment> Comments { get; }
 
         public int PullRequestId { get; private set; }
 

@@ -32,22 +32,16 @@ namespace CodeHub.iOS.Cells
             DetailsLabel.TextColor = UIColor.Gray;
             DefaultContentConstraintSize = DetailsConstraint.Constant;
 
-            this.OneWayBind(ViewModel, x => x.Title, x => x.TitleLabel.Text);
+            this.WhenAnyValue(x => x.ViewModel).IsNotNull().SubscribeSafe(x => {
+                TitleLabel.Text = x.Title;
+                DetailsLabel.Text = "Created " + x.CreatedString;
+                DetailsConstraint.Constant = string.IsNullOrEmpty(DetailsLabel.Text) ? 0f : DefaultContentConstraintSize;
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x => {
-                    DetailsLabel.Text = "Created " + x.CreatedString;
-                    DetailsConstraint.Constant = string.IsNullOrEmpty(DetailsLabel.Text) ? 0f : DefaultContentConstraintSize;
-                });
-
-            this.WhenAnyValue(x => x.ViewModel.ImageUrl)
-                .Subscribe(x => {
-                    if (string.IsNullOrEmpty(x))
-                        MainImageView.Image = Images.LoginUserUnknown;
-                    else
-                        MainImageView.SetImage(new NSUrl(x), Images.LoginUserUnknown);
-                });
+                if (string.IsNullOrEmpty(x.ImageUrl))
+                    MainImageView.Image = Images.LoginUserUnknown;
+                else
+                    MainImageView.SetImage(new NSUrl(x.ImageUrl), Images.LoginUserUnknown);
+            });
         }
     }
 }

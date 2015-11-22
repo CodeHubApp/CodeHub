@@ -4,6 +4,7 @@ using CodeHub.iOS.DialogElements;
 using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using UIKit;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
@@ -12,28 +13,33 @@ namespace CodeHub.iOS.ViewControllers.Gists
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Subscribe(x => {
-                    NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
-                        ResignFirstResponder();
-                        x.ExecuteIfCan();
-                    });
-                    NavigationItem.RightBarButtonItem.EnableIfExecutable(x);
-                });
-
+   
             var titleElement = new DummyInputElement("Title");
-            this.WhenAnyValue(x => x.ViewModel.Filename).Subscribe(x => titleElement.Value = x);
-            titleElement.Changed += (sender, e) => ViewModel.Filename = titleElement.Value;
-
             var descriptionElement = new ExpandingInputElement("Description");
-            this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x);
-            descriptionElement.ValueChanged += (sender, e) => ViewModel.Description = descriptionElement.Value;
 
             var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { titleElement, descriptionElement });
             TableView.Source = source;
             TableView.TableFooterView = new UIView();
+
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.Filename).Subscribe(x => titleElement.Value = x));
+                d(titleElement.Changed.Subscribe(x => ViewModel.Filename = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x));
+                d(descriptionElement.Changed.Subscribe(x => ViewModel.Description = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(Save));
+            });
+        }
+
+        private void Save(IReactiveCommand x)
+        {
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
+                ResignFirstResponder();
+                x.ExecuteIfCan();
+            });
+            NavigationItem.RightBarButtonItem.EnableIfExecutable(x);
         }
     }
 }

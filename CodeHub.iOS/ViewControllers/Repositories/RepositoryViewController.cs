@@ -19,135 +19,156 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             base.ViewDidLoad();
 
             HeaderView.Image = Images.LoginUserUnknown;
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
 
-            _sourceSection = new Section
-            {
-                new StringElement("Commits", () => ViewModel.GoToCommitsCommand.ExecuteIfCan(), Octicon.GitCommit.ToImage()),
-                new StringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.ExecuteIfCan(), Octicon.GitPullRequest.ToImage()),
-                new StringElement("Source", () => ViewModel.GoToSourceCommand.ExecuteIfCan(), Octicon.Code.ToImage()),
-            };
+            var events = new StringElement("Events", Octicon.Rss.ToImage());
+            var issuesElement = new StringElement("Issues", Octicon.IssueOpened.ToImage());
+            var commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage());
+            var pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
+            var sourceElement = new StringElement("Source", Octicon.Code.ToImage());
+            var websiteElement = new StringElement("Website", Octicon.Globe.ToImage());
+            var forkedElement = new StringElement("Forked From", Octicon.RepoForked.ToImage());
+            var readmeElement = new StringElement("Readme", Octicon.Book.ToImage());
+
 
 //            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
 //            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
 //            this.WhenAnyValue(x => x.ViewModel.Repository)
 //                .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
 
-            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
-            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
-                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
+//            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
+//                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
-            _splitElements[0] = new SplitViewElement();
-            _splitElements[0].Button1 = new SplitViewElement.SplitButton(Octicon.Lock.ToImage());
-            _splitElements[0].Button2 = new SplitViewElement.SplitButton(Octicon.Package.ToImage());
+            _splitElements[0] = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+            _splitElements[1] = new SplitViewElement(Octicon.IssueOpened.ToImage(), Octicon.Organization.ToImage());
+            _splitElements[2] = new SplitViewElement(Octicon.Tag.ToImage(), Octicon.GitBranch.ToImage());
 
-            _splitElements[1] = new SplitViewElement();
-            _splitElements[1].Button1 = new SplitViewElement.SplitButton(Octicon.IssueOpened.ToImage(), () => ViewModel.GoToIssuesCommand.ExecuteIfCan());
-            _splitElements[1].Button2 = new SplitViewElement.SplitButton(Octicon.Organization.ToImage(), () => ViewModel.GoToContributors.ExecuteIfCan());
+            var stargazers = _split.AddButton("Stargazers", "-");
+            var watchers = _split.AddButton("Watchers", "-");
+            var forks = _split.AddButton("Forks", "-");
 
-            _splitElements[2] = new SplitViewElement();
-            _splitElements[2].Button1 = new SplitViewElement.SplitButton(Octicon.Tag.ToImage(), () => ViewModel.GoToReleasesCommand.ExecuteIfCan());
-            _splitElements[2].Button2 = new SplitViewElement.SplitButton(Octicon.GitBranch.ToImage(), () => ViewModel.GoToBranchesCommand.ExecuteIfCan());
+            var renderFunc = new Action(() => {
+                var model = ViewModel.Repository;
+                var sec1 = new Section();
+                sec1.Add(_splitElements);
+                //            sec1.Add(_ownerElement);
 
-            var stargazers = _split.AddButton("Stargazers", "-", () => ViewModel.GoToStargazersCommand.ExecuteIfCan());
-            var watchers = _split.AddButton("Watchers", "-", () => ViewModel.GoToWatchersCommand.ExecuteIfCan());
-            var forks = _split.AddButton("Forks", "-", () => ViewModel.GoToForksCommand.ExecuteIfCan());
+                if (model.Parent != null)
+                {
+                    forkedElement.Value = model.Parent.FullName;
+                    sec1.Add(forkedElement);
+                }
 
-            this.WhenAnyValue(x => x.ViewModel.Stargazers)
-                .Select(x => x != null ? x.ToString() : "-")
-                .Subscribe(x => stargazers.Text = x);
+                var sec2 = new Section { events };
 
-            this.WhenAnyValue(x => x.ViewModel.Watchers)
-                .Select(x => x != null ? x.ToString() : "-")
-                .Subscribe(x => watchers.Text = x);
+                if (model.HasIssues)
+                    sec2.Add(issuesElement);
 
-            this.WhenAnyValue(x => x.ViewModel.Repository.ForksCount)
-                .Subscribe(x => forks.Text = x.ToString());
+                if (ViewModel.Readme != null)
+                    sec2.Add(readmeElement);
 
-            this.WhenAnyValue(x => x.ViewModel.Repository)
-                .IsNotNull()
-                .Subscribe(x =>
-                    {
-                        _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
-                        _splitElements[0].Button2.Text = x.Language ?? "N/A";
-                        _splitElements[1].Button1.Text = x.OpenIssuesCount + (x.OpenIssuesCount == 1 ? " Issue" : " Issues");
-                    });
+                Root.Reset(new Section { _split }, sec1, sec2, new Section { commitsElement, pullRequestsElement, sourceElement });
 
-            Appeared.Take(1)
-                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
-                .Switch()
-                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
-                .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
+                if (!string.IsNullOrEmpty(model.Homepage))
+                {
+                    Root.Add(new Section { websiteElement });
+                }
+            });
 
-            this.WhenAnyValue(x => x.ViewModel.RepositoryName)
-                .Subscribe(x => HeaderView.Text = x);
+            OnActivation(d => {
 
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+                d(_splitElements[1].Button1.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
+                d(_splitElements[1].Button2.Clicked.InvokeCommand(ViewModel.GoToContributors));
+                d(_splitElements[2].Button1.Clicked.InvokeCommand(ViewModel.GoToReleasesCommand));
+                d(_splitElements[2].Button2.Clicked.InvokeCommand(ViewModel.GoToBranchesCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.Branches)
-                .Select(x => x == null ? "Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
-                .SubscribeSafe(x => _splitElements[2].Button2.Text = x);
+                d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));
+                d(issuesElement.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
+                d(websiteElement.Clicked.InvokeCommand(ViewModel.GoToHomepageCommand));
+                d(forkedElement.Clicked.InvokeCommand(ViewModel.GoToForkParentCommand));
+                d(readmeElement.Clicked.InvokeCommand(ViewModel.GoToReadmeCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.Contributors)
-                .Select(x => x == null ? "Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
-                .SubscribeSafe(x => _splitElements[1].Button2.Text = x);
+                d(stargazers.Clicked.InvokeCommand(ViewModel.GoToStargazersCommand));
+                d(watchers.Clicked.InvokeCommand(ViewModel.GoToWatchersCommand));
+                d(forks.Clicked.InvokeCommand(ViewModel.GoToForksCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.Releases)
-                .Select(x => x == null ? "Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
-                .SubscribeSafe(x => _splitElements[2].Button1.Text = x);
+                d(commitsElement.Clicked.InvokeCommand(ViewModel.GoToCommitsCommand));
+                d(pullRequestsElement.Clicked.InvokeCommand(ViewModel.GoToPullRequestsCommand));
+                d(sourceElement.Clicked.InvokeCommand(ViewModel.GoToSourceCommand));
 
-            this.WhenAnyValue(x => x.ViewModel.Description)
-                .Subscribe(x => {
-                    HeaderView.SubText = x;
-                    RefreshHeaderView();
-                });
 
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown));
+                d(this.WhenAnyValue(x => x.ViewModel.Stargazers)
+                    .Select(x => x != null ? x.ToString() : "-")
+                    .Subscribe(x => stargazers.Text = x));
 
-            this.WhenAnyValue(x => x.ViewModel.Repository)
-                .IsNotNull()
-                .Subscribe(_ => Render());
+                d(this.WhenAnyValue(x => x.ViewModel.Watchers)
+                    .Select(x => x != null ? x.ToString() : "-")
+                    .Subscribe(x => watchers.Text = x));
 
-            this.WhenAnyValue(x => x.ViewModel.Readme)
-                .Where(x => x != null && ViewModel.Repository != null)
-                .Subscribe(_ => Render());
+                d(this.WhenAnyValue(x => x.ViewModel.Repository.ForksCount)
+                    .Subscribe(x => forks.Text = x.ToString()));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Repository)
+                    .IsNotNull()
+                    .Subscribe(x =>
+                        {
+                            _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
+                            _splitElements[0].Button2.Text = x.Language ?? "N/A";
+                            _splitElements[1].Button1.Text = x.OpenIssuesCount + (x.OpenIssuesCount == 1 ? " Issue" : " Issues");
+                        }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.RepositoryName)
+                    .Subscribe(x => HeaderView.Text = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Branches)
+                    .Select(x => x == null ? "Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
+                    .SubscribeSafe(x => _splitElements[2].Button2.Text = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Contributors)
+                    .Select(x => x == null ? "Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
+                    .SubscribeSafe(x => _splitElements[1].Button2.Text = x));
+                
+                d(this.WhenAnyValue(x => x.ViewModel.Releases)
+                    .Select(x => x == null ? "Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
+                    .SubscribeSafe(x => _splitElements[2].Button1.Text = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Description)
+                    .Subscribe(x => {
+                        HeaderView.SubText = x;
+                        RefreshHeaderView();
+                    }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar)
+                    .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Repository)
+                    .IsNotNull()
+                    .Subscribe(_ => renderFunc()));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Readme)
+                    .Where(x => x != null && ViewModel.Repository != null)
+                    .Subscribe(_ => renderFunc()));
+                
+            });
+
+//
+//
+//            Appeared.Take(1)
+//                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
+//                .Switch()
+//                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
+//                .Switch()
+//                .ObserveOn(RxApp.MainThreadScheduler)
+//                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
         }
 
-        private void Render()
+        public override void ViewDidDisappear(bool animated)
         {
-            var model = ViewModel.Repository;
-            var sec1 = new Section();
-            sec1.Add(_splitElements);
-//            sec1.Add(_ownerElement);
-
-            if (model.Parent != null)
-            {
-                var parent = new StringElement("Forked From", model.Parent.FullName) { Image = Octicon.RepoForked.ToImage() };
-                parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
-                sec1.Add(parent);
-            }
-
-            var events = new StringElement("Events", ViewModel.GoToEventsCommand.ExecuteIfCan, Octicon.Rss.ToImage());
-            var sec2 = new Section { events };
-
-            if (model.HasIssues)
-                sec2.Add(new StringElement("Issues", ViewModel.GoToIssuesCommand.ExecuteIfCan, Octicon.IssueOpened.ToImage()));
-
-            if (ViewModel.Readme != null)
-                sec2.Add(new StringElement("Readme", ViewModel.GoToReadmeCommand.ExecuteIfCan, Octicon.Book.ToImage()));
-
-            Root.Reset(new Section { _split }, sec1, sec2, _sourceSection);
-
-            if (!string.IsNullOrEmpty(model.Homepage))
-            {
-                Root.Add(new Section { 
-                    new StringElement("Website", ViewModel.GoToHomepageCommand.ExecuteIfCan, Octicon.Globe.ToImage())
-                });
-            }
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

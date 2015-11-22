@@ -1,4 +1,3 @@
-using System;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
 using ReactiveUI;
@@ -10,11 +9,11 @@ namespace CodeHub.iOS.ViewControllers.Gists
     {
         public UserGistsViewController()
         {
-            this.WhenAnyValue(x => x.ViewModel.IsMine)
-                .Select(x => x ? ViewModel.GoToCreateGistCommand.ToBarButtonItem(UIBarButtonSystemItem.Add) : null)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+            OnActivation(d => 
+                d(this.WhenAnyValue(x => x.ViewModel.IsMine)
+                .Select(_ => ViewModel.GoToCreateGistCommand)
+                .ToBarButtonItem(UIBarButtonSystemItem.Add, x => NavigationItem.RightBarButtonItem = x)));
         }
-
     }
 }
 

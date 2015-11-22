@@ -8,42 +8,45 @@ using CodeHub.iOS.Cells;
 using CodeHub.iOS.TableViewSources;
 using CoreGraphics;
 using System.Collections.Generic;
-using RepositoryStumble.Transitions;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
+using CodeHub.iOS.Transitions;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
     public class RepositoriesTrendingViewController : BaseTableViewController<RepositoriesTrendingViewModel>
     {
-        private readonly TrendingTitleButton _trendingTitleButton;
+        private readonly TrendingTitleButton _trendingTitleButton = new TrendingTitleButton { Frame = new CGRect(0, 0, 200f, 32f) };
 
         public RepositoriesTrendingViewController()
         {
-            _trendingTitleButton = new TrendingTitleButton { Frame = new CGRect(0, 0, 200f, 32f) };
-            _trendingTitleButton.TouchUpInside += (sender, e) => ViewModel.GoToLanguages.ExecuteIfCan();
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no repositories."));
+
+            NavigationItem.TitleView = _trendingTitleButton;
+
+            OnActivation(d => {
+                d(_trendingTitleButton.GetClickedObservable().InvokeCommand(ViewModel.GoToLanguages));
+                d(this.WhenAnyValue(x => x.ViewModel.SelectedLanguage)
+                    .Select(x => x?.Name ?? "Languages")
+                    .BindTo(_trendingTitleButton, x => x.Text));
+            });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Pulse.ToEmptyListImage(), "There are no repositories."));
-
-            NavigationItem.TitleView = _trendingTitleButton;
-            this.WhenAnyValue(x => x.ViewModel.SelectedLanguage).IsNotNull()
-                .Subscribe(x => _trendingTitleButton.Text = x.Name);
-
+  
             var source = new RepositoryTableViewSource(TableView);
             TableView.Source = source;
 
-            this.WhenAnyValue(x => x.ViewModel.Repositories)
+            OnActivation(d => 
+                d(this.WhenAnyValue(x => x.ViewModel.Repositories)
                 .Select(x => x ?? new List<GroupedCollection<RepositoryItemViewModel>>())
                 .Select(x => x.Select(g => new TableSectionInformation<RepositoryItemViewModel, RepositoryCellView>(g.Items, RepositoryCellView.Key, (float)UITableView.AutomaticDimension) {
                     Header = new TableSectionHeader(() => CreateHeaderView(g.Name), 26f)
                 }))
-                .Subscribe(x => source.Data = x.ToList());
+                .Subscribe(x => source.Data = x.ToList())));
         }
 
         public override void ViewWillAppear(bool animated)
@@ -70,7 +73,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 var ctrlToPresent = new ThemedNavigationController(view);
                 ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
                 PresentViewController(ctrlToPresent, true, null);
-                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Done, (s, e) => DismissViewController(true, null));
                 viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
             }
             else

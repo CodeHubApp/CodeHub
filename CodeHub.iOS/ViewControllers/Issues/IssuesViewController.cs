@@ -11,7 +11,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
 {
     public class IssuesViewController : BaseTableViewController<IssuesViewModel>
     {
-        private UISegmentedControl _viewSegment;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new [] { "Open", "Closed", "Mine" });
 
         public IssuesViewController()
         {
@@ -23,20 +23,19 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             base.ViewDidLoad();
 
-            _viewSegment = new UISegmentedControl(new [] { "Open", "Closed", "Mine" });
+            var filterBarButtonItem = new UIBarButtonItem { Image = Images.Filter };
+            var addBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add);
 
-            var filterBarButtonItem = new UIBarButtonItem(Images.Filter, UIBarButtonItemStyle.Plain, 
-                (s, e) => ViewModel.GoToFilterCommand.ExecuteIfCan());
-
-            this.WhenAnyValue(x => x.ViewModel.GoToNewIssueCommand, x => x.ViewModel.GoToFilterCommand)
-                .Select(x => new [] { x.Item1.ToBarButtonItem(UIBarButtonSystemItem.Add), filterBarButtonItem })
-                .Subscribe(x => NavigationItem.RightBarButtonItems = x);
-
-            this.WhenAnyValue(x => x.ViewModel.FilterSelection)
-                .Select(x => x == IssuesViewModel.IssueFilterSelection.Custom)
-                .Subscribe(x => {
-                    filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter;
-                    if (x) _viewSegment.SelectedSegment = -1;
+            OnActivation(d => {
+                d(filterBarButtonItem.GetClickedObservable().InvokeCommand(ViewModel.GoToFilterCommand));
+                d(addBarButtonItem.GetClickedObservable().InvokeCommand(ViewModel.GoToNewIssueCommand));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => ViewModel.FilterSelection = (IssuesViewModel.IssueFilterSelection)x));
+                d(this.WhenAnyValue(x => x.ViewModel.FilterSelection)
+                    .Select(x => x == IssuesViewModel.IssueFilterSelection.Custom)
+                    .Subscribe(x => {
+                        filterBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter;
+                        if (x) _viewSegment.SelectedSegment = -1;
+                    }));
             });
 
             NavigationItem.TitleView = _viewSegment;
@@ -46,27 +45,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-
-            //Before we select which one, make sure we detach the event handler or silly things will happen
-            _viewSegment.ValueChanged -= SegmentValueChanged;
             _viewSegment.SelectedSegment = (int)ViewModel.FilterSelection;
-            _viewSegment.ValueChanged += SegmentValueChanged;
-        }
-
-        void SegmentValueChanged (object sender, EventArgs e)
-        {
-            switch (_viewSegment.SelectedSegment)
-            {
-                case 0:
-                    ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Open;
-                    break;
-                case 1:
-                    ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Closed;
-                    break;
-                case 2:
-                    ViewModel.FilterSelection = IssuesViewModel.IssueFilterSelection.Mine;
-                    break;
-            }
         }
     }
 }

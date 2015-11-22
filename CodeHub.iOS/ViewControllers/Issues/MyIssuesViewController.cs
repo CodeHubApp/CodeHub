@@ -19,23 +19,24 @@ namespace CodeHub.iOS.ViewControllers.Issues
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no issues."));
 
-            this.WhenAnyValue(x => x.ViewModel.GoToFilterCommand)
-                .Select(x => x.ToBarButtonItem(Images.Filter))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.GoToFilterCommand)
+                    .ToBarButtonItem(Images.Filter, x => NavigationItem.RightBarButtonItem = x));
 
-            this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
-                .Where(_ => NavigationItem.RightBarButtonItem != null)
-                .Subscribe(x => NavigationItem.RightBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter);
-            
-            var valueChanged = Observable.FromEventPattern(x => _viewSegment.ValueChanged += x, x => _viewSegment.ValueChanged -= x);
-            valueChanged.Subscribe(_ => ViewModel.SelectedFilter = (int)_viewSegment.SelectedSegment);
+                d(this.WhenAnyValue(x => x.ViewModel.CustomFilterEnabled)
+                    .Where(_ => NavigationItem.RightBarButtonItem != null)
+                    .Subscribe(x => NavigationItem.RightBarButtonItem.Image = x ? Images.FilterFilled : Images.Filter));
 
-            // Only attach once.
-            this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = x);
+                d(_viewSegment.GetChangedObservable().Subscribe(x => ViewModel.SelectedFilter = x));
 
-            this.WhenAnyValue(x => x.ViewModel.GroupedIssues).IsNotNull().Subscribe(x => {
-                var source = TableView.Source as IssueTableViewSource;
-                if (source != null) source.SetData(x);
+                d(this.WhenAnyValue(x => x.ViewModel.GroupedIssues).IsNotNull().Subscribe(x => {
+                    var source = TableView.Source as IssueTableViewSource;
+                    if (source != null) source.SetData(x);
+                }));
+
+                d(this.WhenAnyValue(x => x.ViewModel.SelectedFilter)
+                    .Select(x => ViewModel.CustomFilterEnabled ? -1 : x)
+                    .Subscribe(x => _viewSegment.SelectedSegment = x));
             });
         }
 

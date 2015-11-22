@@ -5,7 +5,6 @@ using CodeHub.Core.ViewModels.Issues;
 using ReactiveUI;
 using Humanizer;
 using CodeHub.iOS.TableViewSources;
-using System.Reactive.Linq;
 using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Issues
@@ -17,50 +16,50 @@ namespace CodeHub.iOS.ViewControllers.Issues
         {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
                 ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
-
-            this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                .Select(x => x.ToBarButtonItem(Images.Cancel))
-                .Subscribe(x => NavigationItem.LeftBarButtonItem = x);
-
-            this.WhenAnyValue(x => x.ViewModel.SaveCommand)
-                .Select(x => x.ToBarButtonItem(Images.Search))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var typeElement = new StringElement("Type", () => ViewModel.SelectFilterTypeCommand.ExecuteIfCan());
-            typeElement.Style = UITableViewCellStyle.Value1;
-
-            var stateElement = new StringElement("State", () => ViewModel.SelectStateCommand.ExecuteIfCan());
-            stateElement.Style = UITableViewCellStyle.Value1;
-
+            var typeElement = new StringElement("Type", string.Empty, UITableViewCellStyle.Value1);
+            var stateElement = new StringElement("State", string.Empty, UITableViewCellStyle.Value1);
+            var fieldElement = new StringElement("Field", string.Empty, UITableViewCellStyle.Value1);
+            var ascElement = new BooleanElement("Ascending", false);
             var labelElement = new EntryElement("Labels", "bug,ui,@user", string.Empty) {
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
-            labelElement.Changed += (sender, e) => ViewModel.Labels = labelElement.Value;
-
-            var fieldElement = new StringElement("Field", () => ViewModel.SelectSortCommand.ExecuteIfCan());
-            fieldElement.Style = UITableViewCellStyle.Value1;
-
-            var ascElement = new BooleanElement("Ascending", false, x => ViewModel.Ascending = x.Value);
 
             var filterSection = new Section("Filter") { typeElement, stateElement, labelElement };
             var orderSection = new Section("Order By") { fieldElement, ascElement };
             var searchSection = new Section();
-            searchSection.FooterView = new TableFooterButton("Search!", () => ViewModel.SaveCommand.ExecuteIfCan());
+            var footerButton = new TableFooterButton("Search!");
+            searchSection.FooterView = footerButton;
 
             var source = new DialogTableViewSource(TableView);
             TableView.Source = source;
             source.Root.Add(filterSection, orderSection, searchSection);
 
-            this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize());
-            this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize());
-            this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x);
-            this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize());
-            this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x);
+            OnActivation(d => {
+                d(typeElement.Clicked.InvokeCommand(ViewModel.SelectFilterTypeCommand));
+                d(stateElement.Clicked.InvokeCommand(ViewModel.SelectStateCommand));
+                d(fieldElement.Clicked.InvokeCommand(ViewModel.SelectSortCommand));
+                d(footerButton.Clicked.InvokeCommand(ViewModel.SaveCommand));
+                d(ascElement.Changed.Subscribe(x => ViewModel.Ascending = x));
+                d(labelElement.Changed.Subscribe(x => ViewModel.Labels = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.FilterType).Subscribe(x => typeElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.State).Subscribe(x => stateElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.Labels).Subscribe(x => labelElement.Value = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SortType).Subscribe(x => fieldElement.Value = x.Humanize()));
+                d(this.WhenAnyValue(x => x.ViewModel.Ascending).Subscribe(x => ascElement.Value = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
+                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
+                
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .ToBarButtonItem(Images.Search, x => NavigationItem.RightBarButtonItem = x));
+            });
         }
     }
 }

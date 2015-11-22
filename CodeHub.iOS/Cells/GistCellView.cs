@@ -31,18 +31,19 @@ namespace CodeHub.iOS.Cells
             ContentLabel.TextColor = Theme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    TitleLabel.Text = x.Title;
-                    ContentLabel.Text = x.Description;
-                    TimeLabel.Text = x.UpdatedString;
-                    ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
-                });
+            this.WhenAnyValue(x => x.ViewModel).IsNotNull().Subscribe(x => {
+                TitleLabel.Text = x.Title;
+                ContentLabel.Text = x.Description;
+                TimeLabel.Text = x.UpdatedString;
+                ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
+                MainImageView.SetAvatar(x.Avatar);
+            });
+        }
 
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => MainImageView.SetAvatar(x));
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
         }
     }
 }

@@ -3,7 +3,6 @@ using Foundation;
 using UIKit;
 using CodeHub.Core.ViewModels.Users;
 using ReactiveUI;
-using System.Reactive.Linq;
 using CoreGraphics;
 
 namespace CodeHub.iOS.Cells
@@ -25,12 +24,10 @@ namespace CodeHub.iOS.Cells
 
             SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.X, 0, 0);
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
-                .Select(x => x.Avatar)
-                .Subscribe(x => ImageView.SetAvatar(x));
+            this.WhenActivated(d => {
+                d(this.WhenAnyValue(x => x.ViewModel.Name).Subscribe(x => TextLabel.Text = x));
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar).Subscribe(x => ImageView.SetAvatar(x)));
+            });
         }
 
         public override void LayoutSubviews()

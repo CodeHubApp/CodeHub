@@ -16,8 +16,7 @@ namespace CodeHub.iOS.ViewControllers
         private readonly UIView _backgroundHeaderView;
         private DialogTableViewSource _dialogSource;
 
-        protected RootElement Root
-        {
+        protected RootElement Root{
             get { return _dialogSource.Root; }
         }
 
@@ -51,9 +50,7 @@ namespace CodeHub.iOS.ViewControllers
         {
             SlideUpTitle = new SlideUpTitleView(44f) { Offset = 100f };
             NavigationItem.TitleView = SlideUpTitle;
-
             HeaderView = new ImageAndTitleHeaderView();
-
             _backgroundHeaderView = new UIView();
 
             Appearing
@@ -70,13 +67,19 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            NavigationController.NavigationBar.ShadowImage = new UIImage();
-
             HeaderView.BackgroundColor = NavigationController.NavigationBar.BackgroundColor;
             HeaderView.TextColor = NavigationController.NavigationBar.TintColor;
             HeaderView.SubTextColor = NavigationController.NavigationBar.TintColor.ColorWithAlpha(0.8f);
             (SlideUpTitle.Subviews[0] as UILabel).TextColor = HeaderView.TextColor;
             _backgroundHeaderView.BackgroundColor = HeaderView.BackgroundColor;
+            TableView.TableHeaderView = HeaderView;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            TableView.TableHeaderView = null;
+//            TableView.Source = null;
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -104,16 +107,6 @@ namespace CodeHub.iOS.ViewControllers
 
             _dialogSource = CreateTableViewSource();
 
-            _dialogSource.ScrolledObservable.Where(x => x.Y > 0)
-                .Where(_ => NavigationController != null)
-                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null);
-            _dialogSource.ScrolledObservable.Where(x => x.Y <= 0)
-                .Where(_ => NavigationController != null)
-                .Where(_ => NavigationController.NavigationBar.ShadowImage == null)
-                .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage());
-            _dialogSource.ScrolledObservable.Where(_ => SlideUpTitle != null).Subscribe(x => SlideUpTitle.Offset = 108 + 28f - x.Y);
-
-            TableView.TableHeaderView = HeaderView;
             TableView.SectionHeaderHeight = 0;
             TableView.Source = _dialogSource;
 
@@ -123,6 +116,26 @@ namespace CodeHub.iOS.ViewControllers
             _backgroundHeaderView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             _backgroundHeaderView.Layer.ZPosition = -1f;
             TableView.InsertSubview(_backgroundHeaderView, 0);
+
+            OnActivation(d => {
+                var scrollingObservable = _dialogSource.ScrolledObservable
+                    .Select(x => x.Y).StartWith(TableView.ContentOffset.Y);
+
+                d(scrollingObservable
+                    .Where(x => x > 0)
+                    .Where(_ => NavigationController != null)
+                    .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null));
+                
+                d(scrollingObservable
+                    .Where(x => x <= 0)
+                    .Where(_ => NavigationController != null)
+                    .Where(_ => NavigationController.NavigationBar.ShadowImage == null)
+                    .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage()));
+                
+                d(scrollingObservable
+                    .Where(_ => SlideUpTitle != null)
+                    .Subscribe(x => SlideUpTitle.Offset = 108 + 28f - x));
+            });
         }
     }
 }

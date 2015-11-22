@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views
             label.Font =  UIFont.BoldSystemFontOfSize(12.5f);
             label.Frame = new CGRect(8,1,200,23); 
             label.Text = caption; 
-            this.AddSubview(label); 
+            Add(label); 
         }
     }
 }

@@ -3,8 +3,6 @@ using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.Views;
 using UIKit;
 using System;
-using ReactiveUI;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.ViewControllers.Gists
@@ -20,10 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.Items)
-                .Select(x => new GistTableViewSource(TableView, x))
-                .BindTo(TableView, x => x.Source);
+            TableView.Source = new GistTableViewSource(TableView, ViewModel.Items);
         }
     }
 }

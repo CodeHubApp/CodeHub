@@ -33,10 +33,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
             this.WhenAnyValue(x => x.ViewModel.GoToUrlCommand)
                 .Subscribe(x => DescriptionElement.UrlRequested = x.ExecuteIfCan);
 
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
             this.WhenAnyObservable(x => x.ViewModel.GoToAssigneesCommand)
                 .Subscribe(_ => IssueAssigneeViewController.Show(this, ViewModel.CreateAssigneeViewModel()));
 
@@ -45,9 +41,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
             this.WhenAnyObservable(x => x.ViewModel.GoToLabelsCommand)
                 .Subscribe(_ => IssueLabelsViewController.Show(this, ViewModel.CreateLabelsViewModel()));
-
-            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand)
-                .Subscribe(x => HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
 
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
@@ -62,19 +55,16 @@ namespace CodeHub.iOS.ViewControllers.Issues
                 });
 
             MilestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage()};
-            MilestoneElement.Tapped = () => ViewModel.GoToMilestonesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => MilestoneElement.Value = x);
 
             AssigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage()};
-            AssigneeElement.Tapped = () => ViewModel.GoToAssigneesCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedUser)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => AssigneeElement.Value = x);
 
             LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage()};
-            LabelsElement.Tapped = () => ViewModel.GoToLabelsCommand.ExecuteIfCan();
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => LabelsElement.Value = x);
@@ -119,7 +109,8 @@ namespace CodeHub.iOS.ViewControllers.Issues
                     }
                 });
 
-            CommentsSection.FooterView = new TableFooterButton("Add Comment", () => ViewModel.AddCommentCommand.ExecuteIfCan());
+            var footerButton = new TableFooterButton("Add Comment");
+            CommentsSection.FooterView = footerButton;
 
             this.WhenAnyValue(x => x.ViewModel.Events)
                 .Select(x => x.Changed)
@@ -167,6 +158,17 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
             this.WhenAnyValue(x => x.ViewModel.Participants)
                 .Subscribe(x => participantsButton.Text = x.ToString());
+
+            OnActivation(d => {
+                d(MilestoneElement.Clicked.InvokeCommand(ViewModel.GoToMilestonesCommand));
+                d(AssigneeElement.Clicked.InvokeCommand(ViewModel.GoToAssigneesCommand));
+                d(LabelsElement.Clicked.InvokeCommand(ViewModel.GoToLabelsCommand));
+                d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
+                d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+            });
         }
 
         public override void ViewDidLoad()

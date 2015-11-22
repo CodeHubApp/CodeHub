@@ -26,7 +26,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             var headerSection = new Section { split };
             var descriptionElement = new MultilinedElement();
             var detailsSection = new Section();
-            var commentsSection = new Section(null, new TableFooterButton("Add Comment", () => ViewModel.AddCommentCommand.ExecuteIfCan()));
+            var footerButton = new TableFooterButton("Add Comment");
+            var commentsSection = new Section(null, footerButton);
 
             var additions = split.AddButton("Additions");
             var deletions = split.AddButton("Deletions");
@@ -37,27 +38,27 @@ namespace CodeHub.iOS.ViewControllers.Source
                 TextColor = StringElement.DefaultDetailColor,
                 Image = Octicon.Repo.ToImage()
             };
-            gotoRepositoryElement.Tapped += () => ViewModel.GoToRepositoryCommand.ExecuteIfCan();
 
             detailsSection.Add(
                 new StringElement(Octicon.DiffAdded.ToImage())
-                .BindCommand(() => ViewModel.GoToAddedFiles)
+                .BindCommand(ViewModel.GoToAddedFiles)
                 .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).Select(x => x > 0))
                 .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).StartWith(0).Select(x => string.Format("{0} added", x))));
 
             detailsSection.Add(
                 new StringElement(Octicon.DiffRemoved.ToImage())
-                .BindCommand(() => ViewModel.GoToRemovedFiles)
+                .BindCommand(ViewModel.GoToRemovedFiles)
                 .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).Select(x => x > 0))
                 .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffDeletions).StartWith(0).Select(x => string.Format("{0} removed", x))));
 
             detailsSection.Add(
                 new StringElement(Octicon.DiffModified.ToImage())
-                .BindCommand(() => ViewModel.GoToModifiedFiles)
+                .BindCommand(ViewModel.GoToModifiedFiles)
                 .BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffModifications).Select(x => x > 0))
                 .BindCaption(this.WhenAnyValue(x => x.ViewModel.DiffModifications).StartWith(0).Select(x => string.Format("{0} modified", x))));
 
-            detailsSection.Add(new StringElement("All Changes", () => ViewModel.GoToAllFiles.ExecuteIfCan(), Octicon.Diff.ToImage()));
+            var allChangesButton = new StringElement("All Changes", Octicon.Diff.ToImage());
+            detailsSection.Add(allChangesButton);
 
             var commentsElement = new HtmlElement("comments");
             commentsElement.UrlRequested = ViewModel.GoToUrlCommand.ExecuteIfCan;
@@ -96,7 +97,6 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             this.WhenAnyValue(x => x.ViewModel.CommitMessage)
                 .Subscribe(x => descriptionElement.Details = x ?? string.Empty);
-            
 
             this.WhenAnyValue(x => x.ViewModel.RepositoryName)
                 .Subscribe(x => gotoRepositoryElement.Caption = x);
@@ -115,10 +115,6 @@ namespace CodeHub.iOS.ViewControllers.Source
                         parents.Text = x != null ? x.Parents.Count.ToString() : "-";
                     });
 
-            this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
-                .Select(x => x.ToBarButtonItem(UIBarButtonSystemItem.Action))
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
-
             this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary)
                 .Subscribe(x => {
                     HeaderView.Text = x;
@@ -134,6 +130,15 @@ namespace CodeHub.iOS.ViewControllers.Source
                     HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
                     RefreshHeaderView();
                 });
+
+            OnActivation(d => {
+                d(allChangesButton.Clicked.InvokeCommand(ViewModel.GoToAllFiles));
+                d(gotoRepositoryElement.Clicked.InvokeCommand(ViewModel.GoToRepositoryCommand));
+                d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
+                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
+            });
         }
     }
 }

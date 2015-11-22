@@ -1,5 +1,4 @@
 using System;
-using System.Reactive.Linq;
 using Foundation;
 using CodeHub.Core.ViewModels.Source;
 using ReactiveUI;
@@ -19,18 +18,17 @@ namespace CodeHub.iOS.Cells
             var dirImage = new Lazy<UIImage>(() => Octicon.FileDirectory.ToImage());
             var subImage = new Lazy<UIImage>(() => Octicon.FileSubmodule.ToImage());
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text);
-
-            this.WhenAnyValue(x => x.ViewModel.Type)
-                .Subscribe(x =>
-                {
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Name, x => x.TextLabel.Text));
+                d(this.WhenAnyValue(x => x.ViewModel.Type).Subscribe(x => {
                     if (x == SourceItemType.Directory)
                         ImageView.Image = dirImage.Value;
                     else if (x == SourceItemType.Submodule)
                         ImageView.Image = subImage.Value;
                     else
                         ImageView.Image = fileImage.Value;
-                });
+                }));
+            });
         }
     }
 }

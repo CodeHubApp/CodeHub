@@ -9,27 +9,26 @@ namespace CodeHub.iOS.ViewControllers.Source
 {
     public class BranchesAndTagsViewController : BaseTableViewController<BranchesAndTagsViewModel>
 	{
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
+
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-            var viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
-            NavigationItem.TitleView = viewSegment;
+            NavigationItem.TitleView = _viewSegment;
 
-            viewSegment.ValueChanged += (sender, args) => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) (int)viewSegment.SelectedSegment;
-            ViewModel.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => viewSegment.SelectedSegment = (int)x);
+            var changedObservable = Observable.FromEventPattern(t => _viewSegment.ValueChanged += t, t => _viewSegment.ValueChanged -= t);
 
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             TableView.RegisterClassForCellReuse(typeof(TagCellView), TagCellView.Key);
- 
-            ViewModel.WhenAnyValue(x => x.SelectedFilter)
-                .Subscribe(x =>
-                {
-                    if (TableView.Source != null)
-                    {
-                        TableView.Source.Dispose();
-                        TableView.Source = null;
-                    }
+
+            this.OnActivation(d => {
+                d(changedObservable.Subscribe(_ => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex) (int)_viewSegment.SelectedSegment));
+                d(this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => {
+                    _viewSegment.SelectedSegment = (int)x;
+
+                    TableView.Source?.Dispose();
+                    TableView.Source = null;
 
                     if (x == BranchesAndTagsViewModel.ShowIndex.Branches)
                     {
@@ -43,7 +42,10 @@ namespace CodeHub.iOS.ViewControllers.Source
                         source.ElementSelected.OfType<TagItemViewModel>().Subscribe(y => y.GoToCommand.ExecuteIfCan());
                         TableView.Source = source;
                     }
-                });
+                }));
+            });
+
+      
 		}
 	}
 }

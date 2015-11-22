@@ -189,12 +189,9 @@ namespace CodeHub.Core.ViewModels.Changesets
                 .WithSubscription(sender => actionMenuService.ShareUrl(sender, this.Commit.HtmlUrl));
 
             var browseCodeCommand = ReactiveCommand.Create(validCommitObservable)
-                .WithSubscription(x => 
-                {
+                .WithSubscription(x => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.RepositoryName = RepositoryName;
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.Branch = this.Commit.Sha;
+                    vm.Init(RepositoryOwner, RepositoryName, Commit.Sha);
                     NavigateTo(vm);
                 });
 

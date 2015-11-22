@@ -4,6 +4,7 @@ using CodeHub.Core.ViewModels.Accounts;
 using ReactiveUI;
 using CoreGraphics;
 using CodeHub.Core.Utilities;
+using System.Reactive.Disposables;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -30,17 +31,10 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             TokenText.AttributedPlaceholder = new Foundation.NSAttributedString("Token", foregroundColor: ComponentPlaceholderColor);
             TokenText.BackgroundColor = ComponentBackgroundColor;
             TokenText.TextColor = ComponentTextColor;
-            TokenText.EditingChanged += (sender, args) => ViewModel.Token = TokenText.Text;
-            ViewModel.WhenAnyValue(x => x.Token).Subscribe(x => TokenText.Text = x);
 
             DomainText.AttributedPlaceholder = new Foundation.NSAttributedString("Domain", foregroundColor: ComponentPlaceholderColor);
             DomainText.BackgroundColor = ComponentBackgroundColor;
             DomainText.TextColor = ComponentTextColor;
-            DomainText.EditingChanged += (sender, args) => ViewModel.Domain = DomainText.Text;
-            ViewModel.WhenAnyValue(x => x.Domain).Subscribe(x => DomainText.Text = x);
-
-            LoginButton.TouchUpInside += (sender, args) => ViewModel.LoginCommand.ExecuteIfCan();
-            ViewModel.LoginCommand.CanExecuteObservable.Subscribe(x => LoginButton.Enabled = x);
 
             View.BackgroundColor = BackgroundColor;
             LogoImageView.Image = Images.Logos.Enterprise;
@@ -52,21 +46,37 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
             LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
             LoginButton.Layer.ShadowOpacity = 0.2f;
-
-            DomainText.ShouldReturn = delegate {
-                TokenText.BecomeFirstResponder();
-                return true;
-            };
-
-            TokenText.ShouldReturn = delegate {
-                TokenText.ResignFirstResponder();
-                LoginButton.SendActionForControlEvents(UIControlEvent.TouchUpInside);
-                return true;
-            };
-
+   
             this.ViewportObservable().Subscribe(x => ScrollView.Frame = x);
 
             ImageHeight.Constant = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad ? 192 : 86;
+
+            OnActivation(d => {
+                d(TokenText.GetChangedObservable().Subscribe(x => ViewModel.Token = x));
+                d(ViewModel.WhenAnyValue(x => x.Token).Subscribe(x => TokenText.Text = x));
+
+                d(DomainText.GetChangedObservable().Subscribe(x => ViewModel.Domain = x));
+                d(ViewModel.WhenAnyValue(x => x.Domain).Subscribe(x => DomainText.Text = x));
+
+                d(LoginButton.GetClickedObservable().InvokeCommand(ViewModel.LoginCommand));
+                d(ViewModel.LoginCommand.CanExecuteObservable.Subscribe(x => LoginButton.Enabled = x));
+
+                DomainText.ShouldReturn = delegate {
+                    TokenText.BecomeFirstResponder();
+                    return true;
+                };
+
+                TokenText.ShouldReturn = delegate {
+                    TokenText.ResignFirstResponder();
+                    LoginButton.SendActionForControlEvents(UIControlEvent.TouchUpInside);
+                    return true;
+                };
+
+                d(Disposable.Create(() => {
+                    DomainText.ShouldReturn = null;
+                    TokenText.ShouldReturn = null;
+                }));
+            });
         }
     }
 }

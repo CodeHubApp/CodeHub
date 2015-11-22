@@ -15,18 +15,17 @@ namespace CodeHub.iOS.ViewControllers.Source
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.FileDirectory.ToEmptyListImage(), "This directory is empty."));
 
-            this.WhenAnyValue(x => x.ViewModel.CanAddFile)
-                .Select(x => x ? ViewModel.GoToAddFileCommand.ToBarButtonItem(UIBarButtonSystemItem.Add) : null)
-                .Subscribe(x => NavigationItem.RightBarButtonItem = x);
+            OnActivation(d => 
+                d(this.WhenAnyValue(x => x.ViewModel.CanAddFile, x => x.ViewModel.GoToAddFileCommand)
+                .Where(x => x.Item1)
+                .Select(x => x.Item2)
+                .ToBarButtonItem(UIBarButtonSystemItem.Add, x => NavigationItem.RightBarButtonItem = x)));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            this.WhenAnyValue(x => x.ViewModel.Content)
-                .Select(x => new SourceContentTableViewSource(TableView, x))
-                .BindTo(TableView, x => x.Source);
+            TableView.Source = new SourceContentTableViewSource(TableView, ViewModel.Content);
         }
     }
 }

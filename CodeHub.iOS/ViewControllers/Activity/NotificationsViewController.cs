@@ -23,28 +23,11 @@ namespace CodeHub.iOS.ViewControllers.Activity
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
 
-            _markButton = new UIBarButtonItem(string.Empty, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.ReadSelectedCommand.ExecuteIfCan());
+            _markButton = new UIBarButtonItem();
             _markToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _markButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit, (s, e) => StartEditing());
-            _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel, (s, e) => StopEditing());
+            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Edit);
+            _cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
 
-            this.WhenAnyObservable(x => x.ViewModel.Notifications.ItemChanged)
-                .Select(_ => ViewModel.Notifications.Count)
-                .Subscribe(x => {
-                    _editButton.Enabled = x > 0;
-                    if (x == 0 && TableView.Editing)
-                        StopEditing();
-                });
-
-            this.WhenAnyValue(x => x.ViewModel.ShowEditButton)
-                .Subscribe(x => NavigationItem.SetRightBarButtonItem(x ? _editButton : null, true));
-
-            this.WhenAnyValue(x => x.ViewModel.ActiveFilter)
-                .Subscribe(x => _viewSegment.SelectedSegment = x);
-
-            this.WhenAnyValue(x => x.ViewModel.IsAnyItemsSelected)
-                .Subscribe(x => _markButton.Title = x ? "Mark Selected as Read" : "Mark All as Read");
- 
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
             {
                 NavigationItem.TitleView = _viewSegment;
@@ -55,6 +38,30 @@ namespace CodeHub.iOS.ViewControllers.Activity
                 _segmentToolbar = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), new UIBarButtonItem(_viewSegment), new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
                 ToolbarItems = _segmentToolbar;
             }
+
+            OnActivation(d => {
+                d(_editButton.GetClickedObservable().Subscribe(_ => StartEditing()));
+                d(_cancelButton.GetClickedObservable().Subscribe(_ => StopEditing()));
+                d(_markButton.GetClickedObservable().InvokeCommand(ViewModel.ReadSelectedCommand));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => ViewModel.ActiveFilter = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ShowEditButton)
+                    .Subscribe(x => NavigationItem.SetRightBarButtonItem(x ? _editButton : null, true)));
+
+                d(this.WhenAnyValue(x => x.ViewModel.ActiveFilter)
+                    .Subscribe(x => _viewSegment.SelectedSegment = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.IsAnyItemsSelected)
+                    .Subscribe(x => _markButton.Title = x ? "Mark Selected as Read" : "Mark All as Read"));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.Notifications.ItemChanged)
+                    .Select(_ => ViewModel.Notifications.Count)
+                    .Subscribe(x => {
+                        _editButton.Enabled = x > 0;
+                        if (x == 0 && TableView.Editing)
+                            StopEditing();
+                    }));
+            });
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -102,9 +109,10 @@ namespace CodeHub.iOS.ViewControllers.Activity
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            var viewModel = ViewModel;
             TableView.AllowsMultipleSelectionDuringEditing = true;
-            TableView.Source = new NotificationTableViewSource(TableView, ViewModel.GroupedNotifications, () => ViewModel.ActiveFilter != NotificationsViewModel.AllFilter);
-            _viewSegment.ValueChanged += (sender, args) => ViewModel.ActiveFilter = (int)_viewSegment.SelectedSegment;
+            TableView.Source = new NotificationTableViewSource(TableView, viewModel.GroupedNotifications, () => viewModel.ActiveFilter != NotificationsViewModel.AllFilter);
         }
     }
 }

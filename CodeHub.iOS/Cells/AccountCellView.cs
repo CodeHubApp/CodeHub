@@ -36,12 +36,13 @@ namespace CodeHub.iOS.Cells
             ContentView.Add(TitleLabel);
             ContentView.Add(SubtitleLabel);
 
-            this.OneWayBind(ViewModel, x => x.Username, x => x.TitleLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Domain, x => x.SubtitleLabel.Text);
-
-            this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => !string.IsNullOrEmpty(x)).Subscribe(x => ImageView.SetImage(new NSUrl(x), Images.UnknownUser));
-            this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => string.IsNullOrEmpty(x)).Subscribe(_ => ImageView.Image = Images.UnknownUser);
-            this.WhenAnyValue(x => x.ViewModel.Selected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None);
+            this.WhenActivated(d => {
+                d(this.OneWayBind(ViewModel, x => x.Username, x => x.TitleLabel.Text));
+                d(this.OneWayBind(ViewModel, x => x.Domain, x => x.SubtitleLabel.Text));
+                d(this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => !string.IsNullOrEmpty(x)).Subscribe(x => ImageView.SetImage(new NSUrl(x), Images.UnknownUser)));
+                d(this.WhenAnyValue(x => x.ViewModel.AvatarUrl).Where(x => string.IsNullOrEmpty(x)).Subscribe(_ => ImageView.Image = Images.UnknownUser));
+                d(this.WhenAnyValue(x => x.ViewModel.Selected).Subscribe(x => Accessory = x ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None));
+            });
         }
 
         public override void LayoutSubviews()

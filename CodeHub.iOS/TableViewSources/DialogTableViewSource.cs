@@ -4,6 +4,7 @@ using System;
 using System.Reactive.Subjects;
 using CoreGraphics;
 using CodeHub.iOS.DialogElements;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -11,26 +12,26 @@ namespace CodeHub.iOS.TableViewSources
     {
         private readonly RootElement _root;
         private readonly Subject<CGPoint> _scrolledSubject = new Subject<CGPoint>();
+        private readonly Subject<Element> _selectedSubject = new Subject<Element>();
 
-        public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject; } }
+        public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject.AsObservable(); } }
+
+        public IObservable<Element> SelectedObservable { get { return _selectedSubject.AsObservable(); } }
 
         public RootElement Root
         {
             get { return _root; }
         }
 
+        ~DialogTableViewSource()
+        {
+            Console.WriteLine("Goodbye DialogTableViewSource");
+        }
+
         public DialogTableViewSource(UITableView container)
         {
             container.RowHeight = UITableView.AutomaticDimension;
             _root = new RootElement(container);
-        }
-
-        public override void AccessoryButtonTapped(UITableView tableView, NSIndexPath indexPath)
-        {
-            var section = Root[indexPath.Section];
-            var element = (section[indexPath.Row] as StringElement);
-            if (element != null)
-                element.AccessoryTap();
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)
@@ -74,6 +75,7 @@ namespace CodeHub.iOS.TableViewSources
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
             element.Selected(tableView, indexPath);
+            _selectedSubject.OnNext(element);
         }
 
         public override UIView GetViewForHeader(UITableView tableView, nint sectionIdx)

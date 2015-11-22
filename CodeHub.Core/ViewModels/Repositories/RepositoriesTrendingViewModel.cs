@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         public IReadOnlyList<GroupedCollection<RepositoryItemViewModel>> Repositories 
         {
             get { return _repositories; }
-            set { this.RaiseAndSetIfChanged(ref _repositories, value); }
+            private set { this.RaiseAndSetIfChanged(ref _repositories, value); }
         }
 
         private LanguageItemViewModel _selectedLanguage;
@@ -33,11 +33,11 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { this.RaiseAndSetIfChanged(ref _selectedLanguage, value); }
         }
 
-        public bool ShowRepositoryDescription { get; private set; }
+        public bool ShowRepositoryDescription { get; }
 
-        public IReactiveCommand GoToLanguages { get; private set; }
+        public IReactiveCommand GoToLanguages { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public RepositoriesTrendingViewModel(ISessionService applicationService, ITrendingRepository trendingRepository)
         {

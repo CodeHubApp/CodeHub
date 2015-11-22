@@ -6,7 +6,20 @@ namespace CodeHub.iOS.DialogElements
 {
     public abstract class Element 
     {
-        internal Section Section;
+        private WeakReference<Section> _weakSection;
+        public Section Section
+        {
+            get
+            {
+                Section sec = null;
+                return (_weakSection?.TryGetTarget(out sec) ?? false) ? sec : null;
+            }
+        }
+
+        internal void SetSection(Section section)
+        {
+            _weakSection = new WeakReference<Section>(section);
+        }
 
         private string _caption;
         public string Caption

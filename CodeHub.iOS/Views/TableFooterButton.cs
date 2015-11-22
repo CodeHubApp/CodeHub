@@ -1,6 +1,7 @@
 using System;
 using UIKit;
 using CoreGraphics;
+using System.Reactive;
 
 namespace CodeHub.iOS.Views
 {
@@ -8,19 +9,21 @@ namespace CodeHub.iOS.Views
     {
         private readonly UIButton _button;
 
-        public event Action ButtonTapped;
-
         public string Title
         {
             get { return _button.Title(UIControlState.Normal); }
             set { _button.SetTitle(value, UIControlState.Normal); }
         }
 
-        public TableFooterButton(string title, Action tapped, UIImage buttonImage = null)
+        public TableFooterButton(string title, UIImage buttonImage = null)
             : this(buttonImage)
         {
             Title = title;
-            ButtonTapped += tapped;
+        }
+
+        public IObservable<Unit> Clicked
+        {
+            get { return _button.GetClickedObservable(); }
         }
 
         public TableFooterButton(UIImage buttonImage = null)
@@ -33,7 +36,6 @@ namespace CodeHub.iOS.Views
             _button.Layer.ShadowColor = UIColor.Black.CGColor;
             _button.Layer.ShadowOffset = new CGSize(0, 1);
             _button.Layer.ShadowOpacity = 0.1f;
-            _button.TouchUpInside += (sender, e) => ButtonTapped();
             _button.SetTitleColor(UIColor.DarkGray, UIControlState.Normal);
             Add(_button);
         }

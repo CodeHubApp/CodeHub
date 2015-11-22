@@ -140,12 +140,20 @@
     <Compile Include="Cells\RepositoryCellView.cs" />
     <Compile Include="Cells\IssueCellView.cs" />
     <Compile Include="Cells\NewsCellView.cs" />
-    <Compile Include="Cells\NewsCellView.designer.cs" />
-    <Compile Include="Cells\IssueCellView.designer.cs" />
-    <Compile Include="Cells\RepositoryCellView.designer.cs" />
+    <Compile Include="Cells\NewsCellView.designer.cs">
+      <DependentUpon>NewsCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
     <None Include="packages.config" />
     <Compile Include="Cells\GistCellView.cs" />
-    <Compile Include="Cells\GistCellView.designer.cs" />
+    <Compile Include="Cells\GistCellView.designer.cs">
+      <DependentUpon>GistCellView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
     <Compile Include="Transitions\SlideDownTransition.cs" />
@@ -160,10 +168,14 @@
     <Compile Include="Cells\BranchCellView.cs" />
     <Compile Include="Cells\TagCellView.cs" />
     <Compile Include="Cells\CommitCellView.cs" />
-    <Compile Include="Cells\CommitCellView.designer.cs" />
+    <Compile Include="Cells\CommitCellView.designer.cs">
+      <DependentUpon>CommitCellView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TableViewSources\CommitTableViewSource.cs" />
     <Compile Include="Cells\PullRequestCellView.cs" />
-    <Compile Include="Cells\PullRequestCellView.designer.cs" />
+    <Compile Include="Cells\PullRequestCellView.designer.cs">
+      <DependentUpon>PullRequestCellView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TableViewSources\PullRequestTableViewSource.cs" />
     <Compile Include="Cells\IssueLabelCellView.cs" />
     <Compile Include="TableViewSources\IssueLabelTableViewSource.cs" />
@@ -428,6 +440,8 @@
       <DependentUpon>NotificationTableViewCell.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="Cells\NotificationTableViewCell.xib" />
+    <Compile Include="Extensions\UIViewExtensions.cs" />
+    <Compile Include="Extensions\UIKitExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -465,12 +479,6 @@
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.1.1\lib\Xamarin.iOS10\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.1.1\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
-    </Reference>
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
@@ -483,20 +491,26 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="CommonMark">
-      <HintPath>..\packages\CommonMark.NET.0.9.1\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
-    </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.16.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Analytics.NET">
+      <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
     </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
     </Reference>
     <Reference Include="MonoTouch.Slideout">
-      <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.0\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
+      <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
     </Reference>
-    <Reference Include="Analytics.NET">
-      <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
+    <Reference Include="CommonMark">
+      <HintPath>..\packages\CommonMark.NET.0.10.0\lib\portable-net40+sl50+wp80+win+wpa81+MonoAndroid10+MonoTouch10\CommonMark.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.1.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

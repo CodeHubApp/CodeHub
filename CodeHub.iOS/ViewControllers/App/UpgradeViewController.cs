@@ -48,9 +48,20 @@ namespace CodeHub.iOS.ViewControllers.App
             _web.LoadError += (sender, e) => _networkActivityService.PopNetworkActive();
             _web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
             _web.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
-            Add(_web);
 
             Load().ToBackground();
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            Add(_web);
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _web.RemoveFromSuperview();
         }
 
         private async Task Load()
@@ -62,20 +73,25 @@ namespace CodeHub.iOS.ViewControllers.App
             _activityView.StartAnimating();
             View.Add(_activityView);
 
-            var productData = (await _inAppPurchaseService.RequestProductData(FeaturesService.ProEdition)).Products.FirstOrDefault();
-            var enabled = _featuresService.IsProEnabled;
-            var model = new UpgradeDetailsModel(productData != null ? productData.LocalizedPrice() : null, enabled);
+            try
+            {
+                var productData = (await _inAppPurchaseService.RequestProductData(FeaturesService.ProEdition)).Products.FirstOrDefault();
+                var enabled = _featuresService.IsProEnabled;
+                var model = new UpgradeDetailsModel(productData != null ? productData.LocalizedPrice() : null, enabled);
 
-            var content = new UpgradeDetailsRazorView { Model = model }.GenerateString();
-            _web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
-            _web.UserInteractionEnabled = true;
-
-            UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
-                () => _activityView.Alpha = 0, () =>
-                {
-                    _activityView.RemoveFromSuperview();
-                    _activityView.StopAnimating();
-                });
+                var content = new UpgradeDetailsRazorView { Model = model }.GenerateString();
+                _web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
+                _web.UserInteractionEnabled = true;
+            }
+            finally
+            {
+                UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
+                    () => _activityView.Alpha = 0, () =>
+                    {
+                        _activityView.RemoveFromSuperview();
+                        _activityView.StopAnimating();
+                    });
+            }
         }
 
         protected virtual bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)

@@ -2,6 +2,8 @@ using System;
 using UIKit;
 using Foundation;
 using SDWebImage;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -24,8 +26,12 @@ namespace CodeHub.iOS.DialogElements
         private Uri _imageUri;
         private string _value;
         private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
-        private Action _tapped;
-        public Action AccessoryTapped;
+        private readonly Subject<object> _tapped = new Subject<object>();
+
+        public IObservable<object> Clicked
+        {
+            get { return _tapped.AsObservable(); }
+        }
 
         public string Value
         {
@@ -36,16 +42,6 @@ namespace CodeHub.iOS.DialogElements
                 var cell = GetActiveCell();
                 if (cell != null && cell.DetailTextLabel != null)
                     cell.DetailTextLabel.Text = value ?? string.Empty;
-            }
-        }
-
-        public Action Tapped
-        {
-            get { return _tapped; }
-            set
-            {
-                _tapped = value;
-                Accessory = (value == null ? UITableViewCellAccessory.None : UITableViewCellAccessory.DisclosureIndicator);
             }
         }
 
@@ -83,14 +79,8 @@ namespace CodeHub.iOS.DialogElements
             Caption = caption;
         }
 
-        public StringElement (string caption, Action tapped) 
-            : this(caption)
-        {
-            Tapped = tapped;
-        }
-
-        public StringElement (string caption, Action tapped, UIImage image) 
-            : this (caption, tapped) 
+        public StringElement (string caption, UIImage image) 
+            : this (caption) 
         {
             Image = image;
         }
@@ -149,7 +139,7 @@ namespace CodeHub.iOS.DialogElements
 
         protected virtual UITableViewCell InitializeCell(UITableViewCell cell)
         {
-            cell.SelectionStyle = (Tapped != null) ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
+            cell.SelectionStyle = _tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
             cell.TextLabel.Text = Caption;
             cell.TextLabel.TextColor = TextColor;
             cell.ImageView.Image = Image;
@@ -166,18 +156,10 @@ namespace CodeHub.iOS.DialogElements
             return cell;
         }
 
-        internal void AccessoryTap ()
-        {
-            var tapped = AccessoryTapped;
-            if (tapped != null)
-                tapped ();
-        }
-
         public override void Selected (UITableView tableView, NSIndexPath indexPath)
         {
             base.Selected(tableView, indexPath);
-            if (Tapped != null)
-                Tapped ();
+            _tapped.OnNext(this);
         }
 
         public override bool Matches (string text)

@@ -103,10 +103,9 @@ namespace CodeHub.Core.ViewModels.Organizations
                 .Select(x => x.Init(Username))
                 .Subscribe(NavigateTo);
 
-            GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToRepositoriesCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<OrganizationRepositoriesViewModel>();
-                vm.Name = Username;
+                vm.Init(Username);
                 NavigateTo(vm);
             });
 

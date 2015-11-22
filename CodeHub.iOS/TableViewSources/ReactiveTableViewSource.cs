@@ -12,8 +12,8 @@ namespace CodeHub.iOS.TableViewSources
 {
     public abstract class ReactiveTableViewSource<TViewModel> : ReactiveUI.ReactiveTableViewSource<TViewModel>, IInformsEnd
     {
-        private readonly ISubject<Unit> _requestMoreSubject = new Subject<Unit>();
-        private readonly ISubject<CGPoint> _scrollSubject = new Subject<CGPoint>();
+        private readonly Subject<Unit> _requestMoreSubject = new Subject<Unit>();
+        private readonly Subject<CGPoint> _scrollSubject = new Subject<CGPoint>();
 
         public IObservable<CGPoint> DidScroll
         {
@@ -28,6 +28,11 @@ namespace CodeHub.iOS.TableViewSources
         public override void Scrolled(UIScrollView scrollView)
         {
             _scrollSubject.OnNext(scrollView.ContentOffset);
+        }
+
+        ~ReactiveTableViewSource()
+        {
+            Console.WriteLine("Destorying " + GetType().Name);
         }
 
         protected ReactiveTableViewSource(UITableView tableView, nfloat height, nfloat? heightHint = null)
@@ -62,6 +67,13 @@ namespace CodeHub.iOS.TableViewSources
                 item.GoToCommand.ExecuteIfCan();
 
             base.RowSelected(tableView, indexPath);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _requestMoreSubject.Dispose();
+            _scrollSubject.Dispose();
+            base.Dispose(disposing);
         }
     }
 

@@ -1,15 +1,21 @@
 using System;
 using UIKit;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class BooleanElement : Element 
     {
-        private UISwitch _switch;
+        private readonly Subject<bool> _changedSubject = new Subject<bool>();
         private bool _value;
         private UIImage _image;
 
-        public event EventHandler ValueChanged;
+        public IObservable<bool> Changed
+        {
+            get { return _changedSubject.AsObservable(); }
+        }
 
         public bool Value 
         {
@@ -19,12 +25,11 @@ namespace CodeHub.iOS.DialogElements
             }
             set 
             {
-                bool emit = _value != value;
                 _value = value;
-                if (_switch != null)
-                    _switch.On = value;
-                if (emit && ValueChanged != null)
-                    ValueChanged (this, EventArgs.Empty);
+                _changedSubject.OnNext(value);
+                var cell = GetActiveCell() as BooleanCellView;
+                if (cell != null)
+                    cell.Switch.On = value;
             }
         }
 
@@ -39,48 +44,54 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
-        public BooleanElement (string caption, bool value, Action<BooleanElement> changeAction = null) 
+        public BooleanElement (string caption, bool value) 
         {  
             Caption = caption;
             _value = value;
-
-            if (changeAction != null)
-                this.ValueChanged += (sender, e) => changeAction(this);
         }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
-            if (_switch == null)
-            {
-                _switch = new UISwitch
-                {
-                    BackgroundColor = UIColor.Clear,
-                    Tag = 1,
-                    On = Value
-                };
-                _switch.AddTarget(delegate
-                {
-                    Value = _switch.On;
-                }, UIControlEvent.ValueChanged);
-            }
-            else
-            {
-                _switch.On = Value;
-            }
-
-            var cell = tv.DequeueReusableCell ("boolean_element");
-            if (cell == null){
-                cell = new UITableViewCell (UITableViewCellStyle.Default, "boolean_element");
-                cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-            }
-
+            var cell = tv.DequeueReusableCell("boolean_element") as BooleanCellView ?? new BooleanCellView();
+            cell.Switch.On = Value;
             cell.BackgroundColor = StringElement.BgColor;
             cell.TextLabel.Font = StringElement.DefaultTitleFont.WithSize(StringElement.DefaultTitleFont.PointSize);
             cell.TextLabel.TextColor = StringElement.DefaultTitleColor;
             cell.TextLabel.Text = Caption;
-            cell.AccessoryView = _switch;
             cell.ImageView.Image = _image;
+
+            var weakThis = new WeakReference<BooleanElement>(this);
+            cell.Switch.ValueChanged += UpdateValueChanged(weakThis);
+
             return cell;
+        }
+
+        private static EventHandler UpdateValueChanged(WeakReference<BooleanElement> weakThis)
+        {
+            return new EventHandler((s, _) => {
+                BooleanElement parent;
+                if (weakThis.TryGetTarget(out parent))
+                    parent.Value = ((UISwitch)s).On;
+            });
+        }
+
+        private class BooleanCellView : UITableViewCell
+        {
+            public UISwitch Switch { get; }
+
+            public BooleanCellView()
+                : base(UITableViewCellStyle.Default, "boolean_element")
+            {
+                Switch = new UISwitch();
+                Switch.BackgroundColor = UIColor.Clear;
+                SelectionStyle = UITableViewCellSelectionStyle.None;
+            }
+
+            public override void WillMoveToSuperview(UIView newsuper)
+            {
+                base.WillMoveToSuperview(newsuper);
+                AccessoryView = newsuper == null ? null : Switch;
+            }
         }
     }
 }

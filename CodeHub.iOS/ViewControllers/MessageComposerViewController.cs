@@ -26,18 +26,28 @@ namespace CodeHub.iOS.ViewControllers
 
         protected MessageComposerViewController()
         {
-            this.WhenAnyValue(x => x.ViewModel)
+            OnActivation(d => d(this.WhenAnyValue(x => x.ViewModel)
                 .OfType<IProvidesTitle>()
                 .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch().Subscribe(x => Title = x ?? string.Empty);
+                .Switch().Subscribe(x => Title = x ?? string.Empty)));
         }
     }
 
     public class MessageComposerViewController : BaseViewController, IActivatable
     {
         private CGRect _keyboardBounds = CGRect.Empty;
+        private NSObject _keyboardHideObserver;
+        private NSObject _keyboardShowObserver;
 
         public ExtendedUITextView TextView { get; private set; }
+
+        public new IObservable<string> Changed
+        {
+            get {
+                return Observable.FromEventPattern(t => TextView.Changed += t, t => TextView.Changed -= t)
+                    .Select(_ => TextView.Text);
+            }
+        }
 
         public MessageComposerViewController()
         {
@@ -69,7 +79,6 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidLoad();
             View.BackgroundColor = UIColor.White;
-            Add(TextView);
         }
 
         public override void ViewDidLayoutSubviews()
@@ -100,21 +109,23 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+            _keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _keyboardHideObserver = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
             ResizeTextView();
+            Add(TextView);
         }
 
-        public override void ViewWillDisappear(bool animated)
+        public override void ViewDidDisappear(bool animated)
         {
-            base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+            base.ViewDidDisappear(animated);
+            NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardHideObserver);
+            NSNotificationCenter.DefaultCenter.RemoveObserver(_keyboardShowObserver);
+            TextView.RemoveFromSuperview();
         }
 
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-
             TextView.BecomeFirstResponder();
         }
 

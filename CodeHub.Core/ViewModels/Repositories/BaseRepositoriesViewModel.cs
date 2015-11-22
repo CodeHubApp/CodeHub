@@ -12,16 +12,14 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         protected readonly ISessionService SessionService;
 
-        public bool ShowRepositoryDescription
-        {
-			get { return SessionService.Account.ShowRepositoryDescriptionInList; }
-        }
+        public bool ShowRepositoryDescription { get; private set; }
 
         public bool ShowRepositoryOwner { get; protected set; }
       
         protected BaseRepositoriesViewModel(ISessionService sessionService)
         {
             SessionService = sessionService;
+            ShowRepositoryDescription = sessionService.Account.ShowRepositoryDescriptionInList;
             ShowRepositoryOwner = true;
             Title = "Repositories";
 

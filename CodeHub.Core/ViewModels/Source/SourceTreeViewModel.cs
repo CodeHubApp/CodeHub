@@ -15,29 +15,29 @@ namespace CodeHub.Core.ViewModels.Source
     {
         public IReadOnlyReactiveList<SourceItemViewModel> Content { get; private set; }
 
-		public string RepositoryOwner { get; set; }
+		public string RepositoryOwner { get; private set; }
+
+        private string _repositoryName;
+        public string RepositoryName 
+        {
+            get { return _repositoryName; }
+            private set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
+        }
+
+        public string Branch { get; private set; }
 
         private string _path;
 		public string Path
         {
             get { return _path; }
-            set { this.RaiseAndSetIfChanged(ref _path, value); }
+            private set { this.RaiseAndSetIfChanged(ref _path, value); }
         }
-
-		public string Branch { get; set; }
 
         private bool _trueBranch;
         public bool TrueBranch
         {
             get { return _trueBranch; }
-            set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
-        }
-
-        private string _repositoryName;
-		public string RepositoryName 
-        {
-            get { return _repositoryName; }
-            set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
+            private set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
         }
 
         private string _searchKeyword;
@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Source
         public bool? PushAccess
         {
             get { return _pushAccess; }
-            set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
+            private set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
         }
 
         private readonly ObservableAsPropertyHelper<bool> _canAddFile;
@@ -60,11 +60,11 @@ namespace CodeHub.Core.ViewModels.Source
             get { return _canAddFile.Value; }
         }
 
-        public IReactiveCommand<object> GoToSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToSourceCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToAddFileCommand { get; private set; }
+        public IReactiveCommand<object> GoToAddFileCommand { get; }
 
         public SourceTreeViewModel(ISessionService applicationService)
         {
@@ -127,6 +127,17 @@ namespace CodeHub.Core.ViewModels.Source
                 }
                 content.Reset(data.OrderBy(y => y.Type).ThenBy(y => y.Name));
             });
+        }
+
+        public SourceTreeViewModel Init(string repositoryOwner, string repositoryName, string branch, string path = null, bool trueBranch = true, bool? pushAccess = null)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Branch = branch;
+            Path = path ?? string.Empty;
+            PushAccess = pushAccess;
+            TrueBranch = trueBranch;
+            return this;
         }
 
         private SourceItemViewModel CreateSourceItemViewModel(ContentModel content)

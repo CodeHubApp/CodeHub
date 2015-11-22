@@ -7,9 +7,9 @@ namespace CodeHub.iOS.Views
     {
         public static UIColor DefaultColor = UIColor.Black;
 
-        public UIImageView ImageView { get; private set; }
+        public UIImageView ImageView { get; }
 
-        public UILabel Title { get; private set; }
+        public UILabel Title { get; }
 
         public EmptyListView(UIImage image, string emptyText)
             : base(new CGRect(0, 0, 320f, 480f * 2f))

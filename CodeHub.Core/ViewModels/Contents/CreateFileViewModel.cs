@@ -37,13 +37,9 @@ namespace CodeHub.Core.ViewModels.Contents
             set { this.RaiseAndSetIfChanged(ref _commitMessage, value); }
         }
 
-        private readonly ObservableAsPropertyHelper<bool> _canCommit;
-        public bool CanCommit
-        {
-            get { return _canCommit.Value; }
-        }
-
         public IReactiveCommand<Octokit.RepositoryContentChangeSet> SaveCommand { get; }
+
+        public IReactiveCommand<object> GoToCommitMessageCommand { get; }
 
         public IReactiveCommand<bool> DismissCommand { get; }
 
@@ -54,9 +50,8 @@ namespace CodeHub.Core.ViewModels.Contents
             this.WhenAnyValue(x => x.Name)
                 .Subscribe(x => CommitMessage = "Created " + x);
 
-            _canCommit = this.WhenAnyValue(x => x.Name)
-                .Select(x => !string.IsNullOrEmpty(x))
-                .ToProperty(this, x => x.CanCommit);
+            GoToCommitMessageCommand = ReactiveCommand.Create(
+                this.WhenAnyValue(x => x.Name, x => !string.IsNullOrEmpty(x)));
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.Name).Select(x => !string.IsNullOrEmpty(x)), async _ => {

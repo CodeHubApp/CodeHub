@@ -51,6 +51,12 @@ namespace CodeHub.iOS.Cells
                         }
                     });
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
+        }
     }
 }
 

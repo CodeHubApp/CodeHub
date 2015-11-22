@@ -31,16 +31,21 @@ namespace CodeHub.iOS.Cells
             ContentLabel.TextColor = Theme.MainTextColor;
             DefaultContentConstraintSize = ContentConstraint.Constant;
 
-            this.OneWayBind(ViewModel, x => x.Name, x => x.TitleLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Description, x => x.ContentLabel.Text);
-            this.OneWayBind(ViewModel, x => x.Time, x => x.TimeLabel.Text);
-
             this.WhenAnyValue(x => x.ViewModel)
                 .Where(x => x != null)
-                .SubscribeSafe(x => ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize);
+                .SubscribeSafe(x => {
+                    ContentConstraint.Constant = string.IsNullOrEmpty(x.Description) ? 0f : DefaultContentConstraintSize;
+                    TitleLabel.Text = x.Name;
+                    ContentLabel.Text = x.Description;
+                    TimeLabel.Text = x.Time;
+                    MainImageView.SetAvatar(x.Avatar);
+                });
+        }
 
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => MainImageView.SetAvatar(x));
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
         }
     }
 }

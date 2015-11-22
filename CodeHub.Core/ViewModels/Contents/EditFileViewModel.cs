@@ -46,6 +46,8 @@ namespace CodeHub.Core.ViewModels.Contents
 
         public IReactiveCommand<bool> DismissCommand { get; }
 
+        public IReactiveCommand<object> GoToCommitMessageCommand { get; }
+
         public EditFileViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
 	    {
             Title = "Edit";
@@ -70,6 +72,8 @@ namespace CodeHub.Core.ViewModels.Contents
                 Text = System.Text.Encoding.UTF8.GetString(content, 0, content.Length) ?? string.Empty;
                 _lastLoad = DateTime.Now;
 	        });
+
+            GoToCommitMessageCommand = ReactiveCommand.Create();
 
             SaveCommand = ReactiveCommand.CreateAsyncTask(
                 this.WhenAnyValue(x => x.CommitMessage).Select(x => !string.IsNullOrEmpty(x)), async _ => {

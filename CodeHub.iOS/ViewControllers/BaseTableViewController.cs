@@ -11,6 +11,8 @@ using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using System.Collections.Generic;
+using System.Linq;
+using CodeHub.iOS.Cells;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -41,36 +43,38 @@ namespace CodeHub.iOS.ViewControllers
         protected BaseTableViewController(UITableViewStyle style)
             : base(style)
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesTitle>()
-                .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch().Subscribe(x => Title = x ?? string.Empty);
+            this.OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IProvidesTitle>()
+                    .Select(x => x.WhenAnyValue(y => y.Title))
+                    .Switch().Subscribe(x => Title = x ?? string.Empty));
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IRoutingViewModel>()
-                .Select(x => x.RequestNavigation)
-                .Switch()
-                .Subscribe(x => {
-                    var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
-                    var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                    var viewType = viewModelViewService.GetViewFor(x.GetType());
-                    var view = (IViewFor)serviceConstructor.Construct(viewType);
-                    view.ViewModel = x;
-                    HandleNavigation(x, view as UIViewController);
-                });
+                d(this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IRoutingViewModel>()
+                    .Select(x => x.RequestNavigation)
+                    .Switch()
+                    .Subscribe(x => {
+                        var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
+                        var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                        var viewType = viewModelViewService.GetViewFor(x.GetType());
+                        var view = (IViewFor)serviceConstructor.Construct(viewType);
+                        view.ViewModel = x;
+                        HandleNavigation(x, view as UIViewController);
+                    }));
+            });
 
-            this.Appearing
-                .Take(1)
-                .Subscribe(_ => SetupLoadMore());
-
-            this.Appeared.Take(1)
-                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
-                .Switch()
-                .OfType<IProvidesEmpty>()
-                .Select(x => x.WhenAnyValue(y => y.IsEmpty))
-                .Switch()
-                .Where(x => EmptyView != null)
-                .Subscribe(CreateEmptyHandler);
+//            this.Appearing
+//                .Take(1)
+//                .Subscribe(_ => SetupLoadMore());
+//
+//            this.Appeared.Take(1)
+//                .Select(_ => this.WhenAnyValue(x => x.ViewModel))
+//                .Switch()
+//                .OfType<IProvidesEmpty>()
+//                .Select(x => x.WhenAnyValue(y => y.IsEmpty))
+//                .Switch()
+//                .Where(x => EmptyView != null)
+//                .Subscribe(CreateEmptyHandler);
         }
 
         protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
@@ -83,7 +87,12 @@ namespace CodeHub.iOS.ViewControllers
             else
             {
                 NavigationController.PushViewController(view, true);
-                viewModel.RequestDismiss.Subscribe(_ => NavigationController.PopToViewController(this, true));
+//                var navigationController = NavigationController;
+//                var indexInNavController = Array.IndexOf(navigationController.ViewControllers, this);
+//                viewModel.RequestDismiss.Subscribe(_ => {
+//                    var vc = navigationController.ViewControllers[indexInNavController];
+//                    navigationController.PopToViewController(vc, true);
+//                });
             }
         }
 
@@ -96,71 +105,71 @@ namespace CodeHub.iOS.ViewControllers
 
         private void SetupLoadMore()
         {
-            var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
-            var iSourceInformsEnd = TableView.Source as IInformsEnd;
-
-            if (iPaginatableViewModel != null && iSourceInformsEnd != null)
-            {
-                iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x => {
-                    _loadingActivityView.Value.StartAnimating();
-                    TableView.TableFooterView = _loadingActivityView.Value;
-
-                    await x.ExecuteAsync();
-
-                    TableView.TableFooterView = null;
-                    _loadingActivityView.Value.StopAnimating();
-                });
-            }
+//            var iPaginatableViewModel = ViewModel as IPaginatableViewModel;
+//            var iSourceInformsEnd = TableView.Source as IInformsEnd;
+//
+//            if (iPaginatableViewModel != null && iSourceInformsEnd != null)
+//            {
+//                iSourceInformsEnd.RequestMore.Select(__ => iPaginatableViewModel.LoadMoreCommand).IsNotNull().Subscribe(async x => {
+//                    _loadingActivityView.Value.StartAnimating();
+//                    TableView.TableFooterView = _loadingActivityView.Value;
+//
+//                    await x.ExecuteAsync();
+//
+//                    TableView.TableFooterView = null;
+//                    _loadingActivityView.Value.StopAnimating();
+//                });
+//            }
         }
 
         protected virtual void LoadViewModel()
         {
-            var iLoadableViewModel = ViewModel as ILoadableViewModel;
-
-            if (iLoadableViewModel == null)
-                return;
-
-            var refreshControl = new UIRefreshControl();
-            refreshControl.ValueChanged += async (sender, e) => {
-                if (iLoadableViewModel.LoadCommand.CanExecute(null))
-                {
-                    await iLoadableViewModel.LoadCommand.ExecuteAsync();
-                    refreshControl.EndRefreshing();
-                }
-            };
-
-            iLoadableViewModel.LoadCommand.IsExecuting
-                .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
-                    {
-                        nint rows = 0;
-                        if (TableView.Source != null)
-                        {
-                            for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
-                                rows += TableView.Source.RowsInSection(TableView, i);
-                        }
-
-                        if (rows == 0)
-                        {
-                            _loadingActivityView.Value.StartAnimating();
-                            TableView.TableFooterView = _loadingActivityView.Value;
-                            RefreshControl.Do(x => x.EndRefreshing());
-                            RefreshControl = null;
-                        }
-                    });
-
-            iLoadableViewModel.LoadCommand.IsExecuting
-                .Where(x => !x).Subscribe(_ =>
-                    {
-                        _loadingActivityView.Value.StopAnimating();
-                        if (TableView.TableFooterView != null)
-                        {
-                            TableView.TableFooterView = null;
-                            TableView.ReloadData();
-                        }
-
-                        if (RefreshControl == null)
-                            RefreshControl = refreshControl;
-                    });
+//            var iLoadableViewModel = ViewModel as ILoadableViewModel;
+//
+//            if (iLoadableViewModel == null)
+//                return;
+//
+//            var refreshControl = new UIRefreshControl();
+//            refreshControl.ValueChanged += async (sender, e) => {
+//                if (iLoadableViewModel.LoadCommand.CanExecute(null))
+//                {
+//                    await iLoadableViewModel.LoadCommand.ExecuteAsync();
+//                    refreshControl.EndRefreshing();
+//                }
+//            };
+//
+//            iLoadableViewModel.LoadCommand.IsExecuting
+//                .Where(x => x && !refreshControl.Refreshing).Subscribe(_ =>
+//                    {
+//                        nint rows = 0;
+//                        if (TableView.Source != null)
+//                        {
+//                            for (var i = 0; i < TableView.Source.NumberOfSections(TableView); i++)
+//                                rows += TableView.Source.RowsInSection(TableView, i);
+//                        }
+//
+//                        if (rows == 0)
+//                        {
+//                            _loadingActivityView.Value.StartAnimating();
+//                            TableView.TableFooterView = _loadingActivityView.Value;
+//                            RefreshControl.Do(x => x.EndRefreshing());
+//                            RefreshControl = null;
+//                        }
+//                    });
+//
+//            iLoadableViewModel.LoadCommand.IsExecuting
+//                .Where(x => !x).Subscribe(_ =>
+//                    {
+//                        _loadingActivityView.Value.StopAnimating();
+//                        if (TableView.TableFooterView != null)
+//                        {
+//                            TableView.TableFooterView = null;
+//                            TableView.ReloadData();
+//                        }
+//
+//                        if (RefreshControl == null)
+//                            RefreshControl = refreshControl;
+//                    });
         }
 
         private void CreateEmptyHandler(bool x)
@@ -194,12 +203,12 @@ namespace CodeHub.iOS.ViewControllers
 
         protected virtual void CreateSearchBar()
         {
-            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
-            if (searchableViewModel != null)
-                this.AddSearchBar(x => searchableViewModel.SearchKeyword = x);
+//            var searchableViewModel = ViewModel as IProvidesSearchKeyword;
+//            if (searchableViewModel != null)
+//                this.AddSearchBar(x => searchableViewModel.SearchKeyword = x);
         }
     }
-
+        
     public class BaseTableViewController : ReactiveTableViewController, IActivatable
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();
@@ -207,6 +216,11 @@ namespace CodeHub.iOS.ViewControllers
         private readonly ISubject<bool> _disappearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
         private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
+
+        ~BaseTableViewController()
+        {
+            Console.WriteLine("All done with " + GetType().Name);
+        }
 
         public IObservable<bool> Appearing
         {
@@ -230,7 +244,7 @@ namespace CodeHub.iOS.ViewControllers
 
         public void OnActivation(Action<Action<IDisposable>> d)
         {
-            Appearing.Take(1).Subscribe(_ => d(x => _activations.Add(x)));
+            Appearing.Subscribe(_ => d(x => _activations.Add(x)));
         }
 
         public BaseTableViewController(UITableViewStyle style)
@@ -264,6 +278,12 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidAppear(animated);
             _appearedSubject.OnNext(animated);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            InvokeOnMainThread(() => TableView.DisposeEx());
+            base.Dispose(disposing);
         }
 
         public override void ViewWillDisappear(bool animated)

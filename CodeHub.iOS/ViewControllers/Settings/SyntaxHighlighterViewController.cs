@@ -26,25 +26,27 @@ namespace CodeHub.iOS.ViewControllers.Settings
             _pickerView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
             _pickerView.ShowSelectionIndicator = true;
             _pickerView.BackgroundColor = UIColor.FromRGB(244, 244, 244);
-
-            Disappearing.Subscribe(_ => ViewModel.SaveCommand.ExecuteIfCan());
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
+            Disappearing.InvokeCommand(ViewModel.SaveCommand);
+
             var themes = ViewModel.Themes.ToArray();
             var model = new PickerModel(themes);
             _pickerView.Model = model;
-            Add(_pickerView);
 
             var selectedIndex = Array.IndexOf(themes, ViewModel.SelectedTheme);
             if (selectedIndex >= 0 && selectedIndex < themes.Length)
                 _pickerView.Select(selectedIndex, 0, false);
+            Add(_pickerView);
 
-            model.SelectedObservable.Subscribe(x => ViewModel.SelectedTheme = x);
-            this.WhenAnyValue(x => x.ViewModel.SelectedTheme).Subscribe(LoadContent);
+            OnActivation(d => {
+                d(model.SelectedObservable.Subscribe(x => ViewModel.SelectedTheme = x));
+                d(this.WhenAnyValue(x => x.ViewModel.SelectedTheme).Subscribe(LoadContent));
+            });
         }
 
         private new void LoadContent(string theme)
@@ -106,7 +108,6 @@ namespace CodeHub.iOS.ViewControllers.Settings
 
             public override string GetTitle(UIPickerView picker, nint row, nint component)
             {
-
                 return _values[row];
             }
         }

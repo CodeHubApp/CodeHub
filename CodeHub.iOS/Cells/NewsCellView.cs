@@ -177,6 +177,12 @@ namespace CodeHub.iOS.Cells
 
             return new NSString(sb.ToString());
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
+        }
     }
 }
 

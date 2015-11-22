@@ -52,17 +52,21 @@ namespace CodeHub.iOS.Cells
             Label4.Font = Label4.Font.WithSize(Label4.Font.PointSize * fontRatio);
             IssueType.Font = IssueType.Font.WithSize(IssueType.Font.PointSize * fontRatio);
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x => {
-                    Caption.Text = x.Title;
-                    Label1.Text = x.State;
-                    Label2.Text = x.Comments == 1 ? "1 comment" : x.Comments + " comments";
-                    Label3.Text = x.Assignee;
-                    Label4.Text = x.UpdatedAt.Humanize();
-                    Number.Text = "#" + x.Number;
-                    IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
-                });
+            this.WhenAnyValue(x => x.ViewModel).IsNotNull().Subscribe(x => {
+                Caption.Text = x.Title;
+                Label1.Text = x.State;
+                Label2.Text = x.Comments == 1 ? "1 comment" : x.Comments + " comments";
+                Label3.Text = x.Assignee;
+                Label4.Text = x.UpdatedAt.Humanize();
+                Number.Text = "#" + x.Number;
+                IssueType.Text = x.IsPullRequest ? "Pull" : "Issue";
+            });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
         }
 
         private class SeperatorIssues : UIView

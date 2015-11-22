@@ -40,23 +40,25 @@ namespace CodeHub.iOS.ViewControllers
 
         private void SetupRx()
         {
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IProvidesTitle>()
-                .Select(x => x.WhenAnyValue(y => y.Title))
-                .Switch().Subscribe(x => Title = x ?? string.Empty);
+            OnActivation(d => {
+                d(this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IProvidesTitle>()
+                    .Select(x => x.WhenAnyValue(y => y.Title))
+                    .Switch().Subscribe(x => Title = x ?? string.Empty));
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<IRoutingViewModel>()
-                .Select(x => x.RequestNavigation)
-                .Switch()
-                .Subscribe(x => {
-                    var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
-                    var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                    var viewType = viewModelViewService.GetViewFor(x.GetType());
-                    var view = (IViewFor)serviceConstructor.Construct(viewType);
-                    view.ViewModel = x;
-                    HandleNavigation(x, view as UIViewController);
-                });
+                d(this.WhenAnyValue(x => x.ViewModel)
+                    .OfType<IRoutingViewModel>()
+                    .Select(x => x.RequestNavigation)
+                    .Switch()
+                    .Subscribe(x => {
+                        var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
+                        var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                        var viewType = viewModelViewService.GetViewFor(x.GetType());
+                        var view = (IViewFor)serviceConstructor.Construct(viewType);
+                        view.ViewModel = x;
+                        HandleNavigation(x, view as UIViewController);
+                    }));
+            });
         }
 
         protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
@@ -82,6 +84,11 @@ namespace CodeHub.iOS.ViewControllers
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
         private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
 
+        ~BaseViewController()
+        {
+            Console.WriteLine("All done with " + GetType().Name);
+        }
+
         public IObservable<bool> Appearing
         {
             get { return _appearingSubject.AsObservable(); }
@@ -102,7 +109,7 @@ namespace CodeHub.iOS.ViewControllers
             get { return _disappearedSubject.AsObservable(); }
         }
 
-        protected void OnActivation(Action<Action<IDisposable>> d)
+        public void OnActivation(Action<Action<IDisposable>> d)
         {
             Appearing.Subscribe(_ => d(x => _activations.Add(x)));
         }
@@ -121,7 +128,6 @@ namespace CodeHub.iOS.ViewControllers
         private void CommonConstructor()
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
-            Appeared.Take(1).Subscribe(_ => this.TrackScreen());
             Disappeared.Subscribe(_ => {
                 foreach (var a in _activations)
                     a.Dispose();

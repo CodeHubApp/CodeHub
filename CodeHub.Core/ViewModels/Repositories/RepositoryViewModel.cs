@@ -213,7 +213,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             PinCommand.Subscribe(x => PinRepository());
 
             GoToForkParentCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Repository, x => x != null && x.Fork && x.Parent != null));
-            GoToForkParentCommand.Subscribe(x =>
+            GoToForkParentCommand.Subscribe(_ =>
             {
                 var vm = this.CreateViewModel<RepositoryViewModel>();
                 vm.RepositoryOwner = Repository.Parent.Owner.Login;

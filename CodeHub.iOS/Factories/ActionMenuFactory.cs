@@ -78,16 +78,20 @@ namespace CodeHub.iOS.Factories
             {
                 var a = new TaskCompletionSource<object>();
                 var sheet =  UIAlertController.Create(_title, null, UIAlertControllerStyle.ActionSheet);
+                var cleanup = new Action<UIAlertAction>(y => {
+                    a.SetResult(true);
+                    sheet.Dispose();
+                });
 
                 foreach (var b in _buttonActions)
                 {
                     sheet.AddAction(UIAlertAction.Create(b.Item1, UIAlertActionStyle.Default, x => {
                         b.Item2.ExecuteIfCan(sender);
-                        a.SetResult(true);
+                        cleanup(x);
                     }));
                 }
 
-                sheet.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, x => a.SetResult(true)));
+                sheet.AddAction(UIAlertAction.Create("Cancel", UIAlertActionStyle.Cancel, cleanup));
 
                 var viewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
 

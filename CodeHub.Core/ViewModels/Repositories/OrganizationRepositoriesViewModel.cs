@@ -1,23 +1,23 @@
 using System;
 using CodeHub.Core.Services;
-using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
     {
-        private string _name;
-        public string Name
-        {
-            get { return _name; }
-            set { this.RaiseAndSetIfChanged(ref _name, value); }
-        }
+        public string Name { get; private set; }
 
         public OrganizationRepositoriesViewModel(ISessionService applicationService)
             : base(applicationService)
         {
-            this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? "Repositories");
             ShowRepositoryOwner = false;
+        }
+
+        public OrganizationRepositoriesViewModel Init(string name)
+        {
+            Name = name;
+            Title = name ?? "Repositories";
+            return this;
         }
 
         protected override Uri RepositoryUri

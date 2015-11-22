@@ -9,8 +9,6 @@ namespace CodeHub.Core.ViewModels
 {
     public class ComposerViewModel : BaseViewModel, IComposerViewModel
     {
-        public string Id { get; set; }
-
         private string _text;
         public string Text
         {

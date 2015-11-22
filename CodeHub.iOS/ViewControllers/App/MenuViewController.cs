@@ -98,6 +98,16 @@ namespace CodeHub.iOS.ViewControllers.App
                 .Subscribe(_ => ViewModel.ActivateCommand.ExecuteIfCan());
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

@@ -4,9 +4,9 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class LanguageItemViewModel : ReactiveObject
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public string Slug { get; private set; }
+        public string Slug { get; }
 
         private bool _selected;
         public bool Selected
