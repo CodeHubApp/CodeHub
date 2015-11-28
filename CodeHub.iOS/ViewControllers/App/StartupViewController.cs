@@ -3,7 +3,6 @@ using UIKit;
 using ReactiveUI;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
-using Foundation;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers;
 using Akavache;

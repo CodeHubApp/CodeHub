@@ -129,7 +129,7 @@ namespace CodeHub.Core.ViewModels.Source
             });
         }
 
-        public SourceTreeViewModel Init(string repositoryOwner, string repositoryName, string branch, string path = null, bool trueBranch = true, bool? pushAccess = null)
+        public SourceTreeViewModel Init(string repositoryOwner, string repositoryName, string branch, string path = null, bool trueBranch = false, bool? pushAccess = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;

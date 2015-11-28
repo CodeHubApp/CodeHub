@@ -21,8 +21,6 @@ namespace CodeHub.Core.ViewModels.Changesets
 
 		public string RepositoryName { get; private set; }
 
-        public bool ShowRepository { get; private set; }
-
         private GitHubCommit _commitModel;
         public GitHubCommit Commit
         {
@@ -196,7 +194,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             var browseCodeCommand = ReactiveCommand.Create(validCommitObservable)
                 .WithSubscription(x => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.Init(RepositoryOwner, RepositoryName, Commit.Sha);
+                    vm.Init(RepositoryOwner, RepositoryName, Commit.Sha, trueBranch: false);
                     NavigateTo(vm);
                 });
 
@@ -205,6 +203,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 menu.AddButton("Add Comment", AddCommentCommand);
                 menu.AddButton("Copy SHA", copyShaCommand);
                 menu.AddButton("Browse Code", browseCodeCommand);
+                menu.AddButton("Goto Repository", GoToRepositoryCommand);
                 menu.AddButton("Share", shareCommand);
                 menu.AddButton("Show in GitHub", GoToHtmlUrlCommand);
                 return menu.Show(sender);
@@ -217,13 +216,12 @@ namespace CodeHub.Core.ViewModels.Changesets
             });
         }
 
-        public CommitViewModel Init(string repositoryOwner, string repositoryName, string node, GitHubCommit commit = null, bool showRepository = false)
+        public CommitViewModel Init(string repositoryOwner, string repositoryName, string node, GitHubCommit commit = null)
         {
             RepositoryOwner = repositoryOwner;
             RepositoryName = repositoryName;
             Commit = commit;
             Node = node;
-            ShowRepository = showRepository;
             return this;
         }
     }

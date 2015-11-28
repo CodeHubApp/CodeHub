@@ -145,10 +145,22 @@ namespace CodeHub.iOS.ViewControllers.Issues
             this.WhenAnyValue(x => x.ViewModel.Participants)
                 .Subscribe(x => participantsButton.Text = x.ToString());
 
+            this.WhenAnyObservable(x => x.ViewModel.CommentAdded)
+                .Select(_ => Appeared.Take(1))
+                .Switch()
+                .Delay(TimeSpan.FromMilliseconds(50), RxApp.MainThreadScheduler)
+                .SubscribeSafe(_ => TableView.SetContentOffset(new CoreGraphics.CGPoint(0, TableView.ContentSize.Height - TableView.Bounds.Height), true));
+
             OnActivation(d => {
-                d(MilestoneElement.Clicked.InvokeCommand(ViewModel.GoToMilestonesCommand));
-                d(AssigneeElement.Clicked.InvokeCommand(ViewModel.GoToAssigneesCommand));
-                d(LabelsElement.Clicked.InvokeCommand(ViewModel.GoToLabelsCommand));
+                d(MilestoneElement.BindCommand(ViewModel.GoToMilestonesCommand));
+                d(AssigneeElement.BindCommand(ViewModel.GoToAssigneesCommand));
+                d(LabelsElement.BindCommand(ViewModel.GoToLabelsCommand));
+
+                var canModify = this.WhenAnyValue(x => x.ViewModel.CanModify);
+                d(MilestoneElement.BindDisclosure(canModify));
+                d(AssigneeElement.BindDisclosure(canModify));
+                d(LabelsElement.BindDisclosure(canModify));
+
                 d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
                 d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
 
@@ -182,7 +194,6 @@ namespace CodeHub.iOS.ViewControllers.Issues
             CommentsElement.CheckHeight();
             DescriptionElement.CheckHeight();
         }
-
 
         protected static string CreateEventBody(Octokit.EventInfo eventInfo, string commitId)
         {

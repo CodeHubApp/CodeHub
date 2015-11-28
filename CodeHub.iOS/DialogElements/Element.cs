@@ -43,14 +43,9 @@ namespace CodeHub.iOS.DialogElements
             {
                 if (value != _hidden)
                 {
-                    var root = GetRootElement();
-                    if (root != null)
-                    {
-                        root.Reload(this);
-                    }
+                    _hidden = value;
+                    GetRootElement()?.Reload(this);
                 }
-
-                _hidden = value;
             }
         }
 

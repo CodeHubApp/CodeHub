@@ -139,7 +139,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 NavigateTo(vm);
             });
 
-            GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist).Select(x => x != null && x.Owner != null));
+            GoToOwnerCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.Gist.Owner).Select(x => x != null));
             GoToOwnerCommand
                 .Select(_ => this.CreateViewModel<UserViewModel>())
                 .Select(x => x.Init(Gist.Owner.Login))

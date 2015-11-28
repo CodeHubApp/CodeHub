@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueGroupViewModel : ReactiveObject
+    public class IssueGroupViewModel
     {
-        public string Name { get; private set; }
+        public string Name { get; }
 
-        public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; private set; }
+        public IReadOnlyReactiveList<IssueItemViewModel> Issues { get; }
 
         public IssueGroupViewModel(string name, IEnumerable<IssueItemViewModel> issues)
         {

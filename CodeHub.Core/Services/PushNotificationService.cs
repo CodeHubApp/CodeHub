@@ -28,7 +28,7 @@ namespace CodeHub.Core.Services
                 {
                     baseViewModel = _serviceConstructor
                         .Construct<CommitViewModel>()
-                        .Init(repoId.Owner, repoId.Name, data["c"], showRepository: true);
+                        .Init(repoId.Owner, repoId.Name, data["c"]);
                 }
                 else if (data.ContainsKey("i"))
                 {

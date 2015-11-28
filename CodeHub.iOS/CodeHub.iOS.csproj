@@ -99,15 +99,13 @@
     <BuildIpa>True</BuildIpa>
     <IpaPackageName>
     </IpaPackageName>
-    <MtouchI18n>
-    </MtouchI18n>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <MtouchArch>ARMv7s, ARM64</MtouchArch>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <DefineConstants>DEBUG</DefineConstants>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseSGen>true</MtouchUseSGen>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchFloat32>true</MtouchFloat32>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -358,7 +356,6 @@
       <DependentUpon>AddEnterpriseAccountView.cs</DependentUpon>
     </Compile>
     <InterfaceDefinition Include="ViewControllers\Accounts\AddEnterpriseAccountView.xib" />
-    <Compile Include="ViewControllers\BaseTableViewControllerExtensions.cs" />
     <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginView.cs" />
     <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginView.designer.cs">
       <DependentUpon>EnterpriseOAuthTokenLoginView.cs</DependentUpon>
@@ -780,7 +777,7 @@
     <BundleResource Include="Images\unknown_user%402x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.2\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.2\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
     <ITunesArtwork Include="iTunesArtwork%402x" />

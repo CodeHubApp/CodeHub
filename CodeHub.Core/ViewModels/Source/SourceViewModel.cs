@@ -55,11 +55,11 @@ namespace CodeHub.Core.ViewModels.Source
             set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
         }
 
-        public IReactiveCommand<object> GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToEditCommand { get; }
 
-        public IReactiveCommand<object> OpenInGitHubCommand { get; private set; }
+        public IReactiveCommand<object> OpenInGitHubCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
         public SourceViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory,
             IFilesystemService filesystemService)

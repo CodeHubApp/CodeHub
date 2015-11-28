@@ -40,12 +40,9 @@ namespace CodeHub.iOS.ViewControllers.Organizations
                 d(this.WhenAnyValue(x => x.ViewModel.Avatar)
                     .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Organization)
-                    .IsNotNull()
-                    .Subscribe(x => {
-                        followers.Text = x != null ? x.Followers.ToString() : "-";
-                        following.Text = x != null ? x.Following.ToString() : "-";
-                    }));
+                var orgObs = this.WhenAnyValue(x => x.ViewModel.Organization);
+                d(followers.BindText(orgObs.Select(x => x != null ? x.Followers.ToString() : "-")));
+                d(following.BindText(orgObs.Select(x => x != null ? x.Following.ToString() : "-")));
 
                 d(this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
                     .Where(x => x && teams.Section == null)

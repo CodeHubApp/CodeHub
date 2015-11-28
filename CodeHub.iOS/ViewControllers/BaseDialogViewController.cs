@@ -16,6 +16,11 @@ namespace CodeHub.iOS.ViewControllers
         private readonly UIView _backgroundHeaderView;
         private DialogTableViewSource _dialogSource;
 
+        protected DialogTableViewSource DialogSource
+        {
+            get { return _dialogSource; }
+        }
+
         protected RootElement Root{
             get { return _dialogSource.Root; }
         }
@@ -79,7 +84,6 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidDisappear(animated);
             TableView.TableHeaderView = null;
-//            TableView.Source = null;
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
@@ -95,8 +99,10 @@ namespace CodeHub.iOS.ViewControllers
             return new DialogTableViewSource(TableView);
         }
 
-        protected void RefreshHeaderView()
+        protected void RefreshHeaderView(string text = null, string subtext = null)
         {
+            HeaderView.Text = text ?? HeaderView.Text;
+            HeaderView.SubText = subtext ?? HeaderView.SubText;
             TableView.TableHeaderView = HeaderView;
             TableView.ReloadData();
         }

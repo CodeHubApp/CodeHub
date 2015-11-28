@@ -5,6 +5,7 @@ using ReactiveUI;
 using CodeHub.iOS.TableViewSources;
 using UIKit;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
@@ -29,17 +30,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => descriptionElement.Value = x));
                 d(descriptionElement.Changed.Subscribe(x => ViewModel.Description = x));
 
-                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand).Subscribe(Save));
+                d(this.WhenAnyValue(x => x.ViewModel.SaveCommand)
+                    .Do((IReactiveCommand<Unit> _) => ResignFirstResponder())
+                    .ToBarButtonItem(UIBarButtonSystemItem.Save, x => NavigationItem.RightBarButtonItem = x));
             });
-        }
-
-        private void Save(IReactiveCommand x)
-        {
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, (s, e) => {
-                ResignFirstResponder();
-                x.ExecuteIfCan();
-            });
-            NavigationItem.RightBarButtonItem.EnableIfExecutable(x);
         }
     }
 }

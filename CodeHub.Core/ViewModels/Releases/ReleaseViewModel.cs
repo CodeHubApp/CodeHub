@@ -10,11 +10,11 @@ namespace CodeHub.Core.ViewModels.Releases
 {
     public class ReleaseViewModel : BaseViewModel, ILoadableViewModel
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
-        public long ReleaseId { get; set; }
+        public long ReleaseId { get; private set; }
 
         private readonly ObservableAsPropertyHelper<string> _contentText;
         public string ContentText 
@@ -29,15 +29,17 @@ namespace CodeHub.Core.ViewModels.Releases
             private set { this.RaiseAndSetIfChanged(ref _releaseModel, value); }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToLinkCommand { get; private set; }
+        public IReactiveCommand<object> GoToLinkCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
 
         public ReleaseViewModel(ISessionService applicationService,
             IUrlRouterService urlRouterService, IActionMenuFactory actionMenuService)
         {
+            Title = "Release";
+
             this.WhenAnyValue(x => x.ReleaseModel)
                 .Select(x => 
                 {
@@ -85,6 +87,14 @@ namespace CodeHub.Core.ViewModels.Releases
                 var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetRelease(ReleaseId);
                 ReleaseModel = (await applicationService.Client.ExecuteAsync(request)).Data;
             });
+        }
+
+        public ReleaseViewModel Init(string repositoryOwner, string repositoryName, long id)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            ReleaseId = id;
+            return this;
         }
     }
 }

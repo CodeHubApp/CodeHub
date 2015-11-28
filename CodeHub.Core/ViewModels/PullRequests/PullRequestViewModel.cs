@@ -57,11 +57,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _comments, value); }
         }
 
-        public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommitsCommand { get; }
 
-        public IReactiveCommand<object> GoToFilesCommand { get; private set; }
+        public IReactiveCommand<object> GoToFilesCommand { get; }
 
-        public IReactiveCommand<Unit> MergeCommand { get; private set; }
+        public IReactiveCommand<Unit> MergeCommand { get; }
 
         public PullRequestViewModel(
             ISessionService applicationService, 
@@ -97,13 +97,14 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 }
             });
 
-            GoToCommitsCommand = ReactiveCommand.Create();
+            var canGoToCommits = this.WhenAnyValue(x => x.PullRequest.Commits).Select(x => x > 0);
+            GoToCommitsCommand = ReactiveCommand.Create(canGoToCommits);
             GoToCommitsCommand
                 .Select(x => this.CreateViewModel<PullRequestCommitsViewModel>())
                 .Select(x => x.Init(RepositoryOwner, RepositoryName, Id))
                 .Subscribe(NavigateTo);
 
-            var canGoToFiles = this.WhenAnyValue(x => x.PullRequest).Select(x => x != null);
+                var canGoToFiles = this.WhenAnyValue(x => x.PullRequest.ChangedFiles).Select(x => x > 0);
             GoToFilesCommand = ReactiveCommand.Create(canGoToFiles);
             GoToFilesCommand
                 .Select(x => this.CreateViewModel<PullRequestFilesViewModel>())

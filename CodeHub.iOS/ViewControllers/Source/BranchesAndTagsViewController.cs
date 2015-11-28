@@ -20,7 +20,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             TableView.RegisterClassForCellReuse(typeof(BranchCellView), BranchCellView.Key);
             TableView.RegisterClassForCellReuse(typeof(TagCellView), TagCellView.Key);
 
-            this.OnActivation(d => {
+            OnActivation(d => {
                 d(_viewSegment.GetChangedObservable().Subscribe(x => ViewModel.SelectedFilter = (BranchesAndTagsViewModel.ShowIndex)x));
                 d(this.WhenAnyValue(x => x.ViewModel.SelectedFilter).Subscribe(x => {
                     _viewSegment.SelectedSegment = (int)x;
@@ -42,8 +42,6 @@ namespace CodeHub.iOS.ViewControllers.Source
                     }
                 }));
             });
-
-      
 		}
 	}
 }

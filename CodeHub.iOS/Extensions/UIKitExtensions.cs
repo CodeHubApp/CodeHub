@@ -33,6 +33,13 @@ namespace UIKit
         {
             return Observable.FromEventPattern(t => @this.Clicked += t, t => @this.Clicked -= t).Select(_ => Unit.Default);
         }
+
+        public static IObservable<Unit> GetChangedObservable(this UIRefreshControl @this)
+        {
+            return Observable.FromEventPattern(t => @this.ValueChanged += t, t => @this.ValueChanged -= t).Select(_ => Unit.Default);
+        }
+
+
     }
 }
 

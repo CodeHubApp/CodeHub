@@ -7,11 +7,6 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
     {
         public event Action WantsToDimiss;
 
-        protected void OnWantsToDismiss(object sender, EventArgs args)
-        {
-            WantsToDimiss?.Invoke();
-        }
-
         public WelcomeViewController()
             : base("WelcomeViewController", null)
         {
@@ -23,18 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             GoButton.BackgroundColor = UIColor.FromRGB(0x29, 0x80, 0xb9);
             GoButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             GoButton.Layer.CornerRadius = 6f;
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            GoButton.TouchUpInside += OnWantsToDismiss;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            GoButton.TouchUpInside -= OnWantsToDismiss;
+            OnActivation(d => d(GoButton.GetClickedObservable().Subscribe(_ => WantsToDimiss?.Invoke())));
         }
     }
 }

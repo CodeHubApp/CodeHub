@@ -22,6 +22,8 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             var isPro = appDelegate?.IsPro ?? false;
 
+            OnActivation(d => d(TellMeMoreButton.GetClickedObservable().Subscribe(_ => TellMeMore())));
+
             if (isPro)
             {
                 TitleLabel.Text = "Pro Enabled!";
@@ -29,19 +31,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             }
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            TellMeMoreButton.TouchUpInside += TellMeMore;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            TellMeMoreButton.TouchUpInside -= TellMeMore;
-        }
-
-        private void TellMeMore(object sender, EventArgs args)
+        private void TellMeMore()
         {
             var view = new UpgradeViewController();
             view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Cancel };

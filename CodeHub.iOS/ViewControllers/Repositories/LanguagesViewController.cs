@@ -15,22 +15,19 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             base.ViewDidLoad();
 
+            var source = new LanguageTableViewSource(TableView, ViewModel.Items);
+            TableView.Source = source;
+
             OnActivation(d => {
                 d(this.WhenAnyObservable(x => x.ViewModel.LoadCommand.IsExecuting)
                     .Where(x => !x).Take(1).SubscribeSafe(_ => ScrollToSelected()));
+
+                d(source.ElementSelected.OfType<LanguageItemViewModel>()
+                    .Subscribe(y => ViewModel.SelectedLanguage = y));
                 
                 d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Done, x => NavigationItem.LeftBarButtonItem = x));
             });
-
-            TableView.Source = CreateSource(TableView, ViewModel);
-        }
-
-        private static UITableViewSource CreateSource(UITableView tableView, LanguagesViewModel viewModel)
-        {
-            var source = new LanguageTableViewSource(tableView, viewModel.Items);
-            source.ElementSelected.OfType<LanguageItemViewModel>().Subscribe(y => viewModel.SelectedLanguage = y);
-            return source;
         }
 
         private void ScrollToSelected()

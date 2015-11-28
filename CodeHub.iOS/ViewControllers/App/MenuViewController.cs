@@ -102,10 +102,12 @@ namespace CodeHub.iOS.ViewControllers.App
         {
             base.ViewWillAppear(animated);
 
+            #if DEBUG
             GC.Collect();
             GC.Collect();
             GC.Collect();
             GC.Collect();
+            #endif
         }
 
         public override void ViewDidLoad()
@@ -130,7 +132,7 @@ namespace CodeHub.iOS.ViewControllers.App
             {
                 var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
                 var rootNav = (UINavigationController)appDelegate.Window.RootViewController;
-                viewModel.RequestDismiss.Subscribe(_ => view.DismissViewController(true, null));
+                viewModel.RequestDismiss.Subscribe(_ => rootNav.DismissViewController(true, null));
                 rootNav.PresentViewController(new ThemedNavigationController(view), true, null);
             }
             else

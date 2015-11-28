@@ -15,10 +15,6 @@ namespace CodeHub.iOS.ViewControllers.Gists
 {
     public class GistViewController : BaseDialogViewController<GistViewModel>
     {
-        private readonly SplitViewElement _splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
-        private readonly SplitViewElement _splitRow2 = new SplitViewElement(Octicon.Pencil.ToImage(), Octicon.Star.ToImage());
-        private readonly StringElement _ownerElement = new StringElement("Owner", Octicon.Person.ToImage());
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -40,8 +36,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
             var commentsElement = new HtmlElement("comments");
             commentsSection.Add(commentsElement);
 
-            var detailsSection = new Section { _splitRow1, _splitRow2 };
-
+            var splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+            var splitRow2 = new SplitViewElement(Octicon.Pencil.ToImage(), Octicon.Star.ToImage());
+            var ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
+            var detailsSection = new Section { splitRow1, splitRow2, ownerElement };
             Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 
             Appeared.Take(1).Delay(TimeSpan.FromSeconds(0.35f))
@@ -50,55 +48,6 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 .Switch()
                 .Select(x => x.Value ? Octicon.Star.ToImage() : null)
                 .Subscribe(HeaderView.SetSubImage);
-
-            var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
-
-            ViewModel.WhenAnyValue(x => x.Gist)
-                .IsNotNull()
-                .Select(x => x.Owner)
-                .Subscribe(x =>
-                {
-                    if (x == null)
-                        detailsSection.Remove(_ownerElement);
-                    else if (x != null && !detailsSection.Contains(_ownerElement))
-                        detailsSection.Add(_ownerElement);
-                });
-
-
-            updatedGistObservable
-                .Select(x => x?.Owner?.Login ?? "Anonymous")
-                .Subscribe(x => _ownerElement.Value = x);
-
-//            updatedGistObservable
-//                .Select(x => x.Owner != null ? () => ViewModel.GoToOwnerCommand.ExecuteIfCan() : (Action)null)
-//                .SubscribeSafe(x => _ownerElement.Tapped = x);
-
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Subscribe(x => HeaderView.SetImage(x?.ToUri(64), Images.LoginUserUnknown));
-
-            updatedGistObservable.SubscribeSafe(x => {
-                HeaderView.SubText = x.Description;
-                RefreshHeaderView();
-            });
-
-            updatedGistObservable.Select(x => x.Files == null ? 0 : x.Files.Count()).SubscribeSafe(x => files.Text = x.ToString());
-            updatedGistObservable.SubscribeSafe(x => comments.Text = x.Comments.ToString());
-            updatedGistObservable.Select(x => x.Forks == null ? 0 : x.Forks.Count()).SubscribeSafe(x => forks.Text = x.ToString());
-
-            updatedGistObservable.Subscribe(x =>
-            {
-                var elements = new List<Element>();
-                foreach (var file in x.Files.Keys)
-                {
-                    var sse = new StringElement(file);
-                    sse.Image = Octicon.FileCode.ToImage();
-//                    sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(x.Files[file]);
-                    elements.Add(sse);
-                }
-
-                filesSection.Reset(elements);
-            });
-
 
             ViewModel.Comments.Changed.Subscribe(_ => {
                 var commentModels = ViewModel.Comments
@@ -128,33 +77,50 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
                 d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
                 d(commentsElement.UrlRequested.InvokeCommand(ViewModel.GoToUrlCommand));
+                d(splitRow2.Button2.Clicked.InvokeCommand(ViewModel.ToggleStarCommand));
+                d(ownerElement.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
+                d(DialogSource.SelectedObservable.OfType<FileElement>().Select(x => x.File).InvokeCommand(ViewModel.GoToFileSourceCommand));
+
+                var updatedGistObservable = ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null);
+                d(updatedGistObservable.SubscribeSafe(x => RefreshHeaderView(subtext: x.Description)));
+                d(updatedGistObservable.Subscribe(x => filesSection.Reset(x.Files.Select(y => new FileElement(y.Value)))));
+                d(ownerElement.BindValue(updatedGistObservable.Select(x => x.Owner?.Login ?? "Anonymous")));
+                d(files.BindText(updatedGistObservable.Select(x => x.Files?.Count() ?? 0)));
+                d(forks.BindText(updatedGistObservable.Select(x => x.Forks?.Count() ?? 0)));
+                d(comments.BindText(updatedGistObservable.Select(x => x.Comments.ToString())));
+                d(splitRow1.Button1.BindText(updatedGistObservable.Select(x => x.Public ? "Public" : "Private")));
+                d(splitRow1.Button2.BindText(updatedGistObservable.Select(x => "Revisions".ToQuantity(x.History?.Count ?? 0))));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Gist.Owner).Select(x => x == null)
+                    .Subscribe(x => ownerElement.Hidden = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Avatar)
+                    .Subscribe(x => HeaderView.SetImage(x?.ToUri(64), Images.LoginUserUnknown)));
 
                 d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
 
-                d(_splitRow1.Button2.Clicked.InvokeCommand(ViewModel.ToggleStarCommand));
-
                 d(this.WhenAnyValue(x => x.ViewModel.IsStarred)
                     .Where(x => x.HasValue)
                     .Select(x => x.Value ? "Starred!" : "Unstarred")
-                    .Subscribe(x => _splitRow2.Button2.Text = x));
+                    .Subscribe(x => splitRow2.Button2.Text = x));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Gist)
-                    .IsNotNull()
-                    .SubscribeSafe(x =>
-                        {
-                            var revisionCount = x.History == null ? 0 : x.History.Count;
-
-                            _splitRow1.Button1.Text = x.Public ? "Public" : "Private";
-                            _splitRow1.Button2.Text = revisionCount + " Revisions";
-
-                            var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
-                            if (delta.Days <= 0)
-                                _splitRow2.Button1.Text = "Created Today";
-                            else
-                                _splitRow2.Button1.Text = string.Format("{0} Days Old", delta.Days);
-                        }));
+                d(splitRow2.Button1.BindText(this.WhenAnyValue(x => x.ViewModel.Gist).Select(x => {
+                    var delta = DateTimeOffset.UtcNow.UtcDateTime - x.UpdatedAt.UtcDateTime;
+                    return (delta.Days <= 0) ? "Created Today" : string.Format("{0} Days Old", delta.Days);
+                })));
             });
+        }
+
+        private class FileElement : StringElement
+        {
+            public Octokit.GistFile File { get; }
+            public FileElement(Octokit.GistFile file)
+                : base(file.Filename, Octicon.FileCode.ToImage())
+            {
+                File = file;
+                SelectionStyle = UITableViewCellSelectionStyle.Blue;
+            }
         }
     }
 }

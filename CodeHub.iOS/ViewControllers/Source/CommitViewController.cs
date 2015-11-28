@@ -31,21 +31,12 @@ namespace CodeHub.iOS.ViewControllers.Source
             var diffButton = new StringElement(Octicon.DiffAdded.ToImage());
             var removedButton = new StringElement(Octicon.DiffRemoved.ToImage());
             var modifiedButton = new StringElement(Octicon.DiffModified.ToImage());
-            detailsSection.Add(new [] { diffButton, removedButton, modifiedButton });
+            var allChangesButton = new StringElement("All Changes", Octicon.Diff.ToImage());
+            detailsSection.Add(new [] { diffButton, removedButton, modifiedButton, allChangesButton });
 
             var additions = split.AddButton("Additions");
             var deletions = split.AddButton("Deletions");
             var parents = split.AddButton("Parents");
-
-            var gotoRepositoryElement = new StringElement(string.Empty) { 
-                Font = StringElement.DefaultDetailFont, 
-                TextColor = StringElement.DefaultDetailColor,
-                Image = Octicon.Repo.ToImage()
-            };
-
-            var allChangesButton = new StringElement("All Changes", Octicon.Diff.ToImage());
-            detailsSection.Add(allChangesButton);
-
             var commentsElement = new HtmlElement("comments");
 
             ViewModel.Comments.Changed
@@ -54,7 +45,7 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Subscribe(x =>
                 {
                     var comments = ViewModel.Comments.Select(c => new Comment(c.Avatar.ToUri(), c.Actor, c.Body, c.UtcCreatedAt.Humanize())).ToList();
-                    var commentModel = new CodeHub.WebViews.CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+                    var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
                     var razorView = new CommentsView { Model = commentModel };
                     var html = razorView.GenerateString();
                     commentsElement.Value = html;
@@ -77,15 +68,8 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Take(1)
                 .Subscribe(_ => detailsSection.Insert(0, UITableViewRowAnimation.Automatic, descriptionElement));
 
-            this.WhenAnyValue(x => x.ViewModel.ShowRepository)
-                .StartWith(false)
-                .Where(x => x)
-                .Take(1)
-                .Subscribe(x => detailsSection.Add(gotoRepositoryElement));
-
             OnActivation(d => {
                 d(allChangesButton.BindCommand(ViewModel.GoToAllFiles));
-                d(gotoRepositoryElement.BindCommand(ViewModel.GoToRepositoryCommand));
                 d(footerButton.Clicked.InvokeCommand(ViewModel.AddCommentCommand));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Avatar)
@@ -95,7 +79,6 @@ namespace CodeHub.iOS.ViewControllers.Source
                     .Subscribe(x => descriptionElement.Details = x ?? string.Empty));
                 
                 d(descriptionElement.BindCaption(this.WhenAnyValue(x => x.ViewModel.CommiterName)));
-                d(gotoRepositoryElement.BindCaption(this.WhenAnyValue(x => x.ViewModel.RepositoryName)));
 
                 d(diffButton.BindCommand(ViewModel.GoToAddedFiles));
                 d(diffButton.BindDisclosure(this.WhenAnyValue(x => x.ViewModel.DiffAdditions).Select(x => x > 0)));
@@ -117,20 +100,15 @@ namespace CodeHub.iOS.ViewControllers.Source
                 d(this.WhenAnyValue(x => x.ViewModel.ShowMenuCommand)
                     .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
 
-                d(this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary).Subscribe(x => {
-                    HeaderView.Text = x;
-                    RefreshHeaderView();
-                }));
+                d(this.WhenAnyValue(x => x.ViewModel.CommitMessageSummary).Subscribe(x => RefreshHeaderView(x)));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Commit).IsNotNull().Subscribe(x => {
-                    HeaderView.SubText = "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize();
-                    RefreshHeaderView();
-                }));
+                d(this.WhenAnyValue(x => x.ViewModel.Commit).IsNotNull()
+                    .Select(x => "Commited " + x.Commit.Committer.Date.LocalDateTime.Humanize())
+                    .Subscribe(x => RefreshHeaderView(subtext: x)));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Commit.Stats).SubscribeSafe(x => {
-                    additions.Text = x != null ? x.Additions.ToString() : "-";
-                    deletions.Text = x != null ? x.Deletions.ToString() : "-";
-                }));
+                var statsObs = this.WhenAnyValue(x => x.ViewModel.Commit.Stats);
+                d(additions.BindText(statsObs.Select(x => x != null ? x.Additions.ToString() : "-")));
+                d(deletions.BindText(statsObs.Select(x => x != null ? x.Deletions.ToString() : "-")));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Commit.Parents)
                     .Subscribe(x => parents.Text = x != null ? x.Count.ToString() : "-"));

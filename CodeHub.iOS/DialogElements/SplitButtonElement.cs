@@ -111,11 +111,9 @@ namespace CodeHub.iOS.DialogElements
                 }
             }
 
-            public IObservable<EventPattern<object>> Clicked
+            public IObservable<Unit> Clicked
             {
-                get {
-                    return Observable.FromEventPattern(t => this.TouchUpInside += t, t => this.TouchUpInside -= t);
-                }
+                get { return this.GetClickedObservable(); }
             }
 
             public SplitButton(string caption, string text)

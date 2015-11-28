@@ -27,10 +27,25 @@ namespace CodeHub.iOS.DialogElements
         private string _value;
         private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
         private readonly Subject<object> _tapped = new Subject<object>();
+        private UITableViewCellSelectionStyle? _selectionStyle;
 
         public IObservable<object> Clicked
         {
             get { return _tapped.AsObservable(); }
+        }
+
+        public UITableViewCellSelectionStyle? SelectionStyle
+        {
+            get { return _selectionStyle; }
+            set
+            {
+                _selectionStyle = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                {
+                    cell.SelectionStyle = value ?? (_tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None);
+                }
+            }
         }
 
         public string Value
@@ -139,7 +154,7 @@ namespace CodeHub.iOS.DialogElements
 
         protected virtual UITableViewCell InitializeCell(UITableViewCell cell)
         {
-            cell.SelectionStyle = _tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
+            cell.SelectionStyle = SelectionStyle ?? (_tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None);
             cell.TextLabel.Text = Caption;
             cell.TextLabel.TextColor = TextColor;
             cell.ImageView.Image = Image;

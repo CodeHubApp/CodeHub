@@ -42,6 +42,7 @@ namespace CodeHub.iOS.Views
             get { return _label.Text; }
             set 
             { 
+                if (value == _label.Text) return;
                 _label.Text = value; 
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();
@@ -62,8 +63,8 @@ namespace CodeHub.iOS.Views
             get { return _label2.Text; }
             set
             {
-                if (!string.IsNullOrEmpty(value))
-                    _label2.Hidden = false;
+                if (value == _label2.Text) return;
+                if (!string.IsNullOrEmpty(value)) _label2.Hidden = false;
                 _label2.Text = value;
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();

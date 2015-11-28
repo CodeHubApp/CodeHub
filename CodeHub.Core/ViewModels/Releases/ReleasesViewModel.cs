@@ -2,15 +2,14 @@
 using ReactiveUI;
 using CodeHub.Core.Services;
 using Octokit;
-using Splat;
 
 namespace CodeHub.Core.ViewModels.Releases
 {
     public class ReleasesViewModel : BaseListViewModel<Release, ReleaseItemViewModel>
     {
-        public string RepositoryOwner { get; set; }
+        public string RepositoryOwner { get; private set; }
 
-        public string RepositoryName { get; set; }
+        public string RepositoryName { get; private set; }
 
         public ReleasesViewModel(ISessionService applicationService)
         {
@@ -23,16 +22,19 @@ namespace CodeHub.Core.ViewModels.Releases
         private ReleaseItemViewModel CreateItemViewModel(Release release)
         {
             var releaseItem = new ReleaseItemViewModel(release);
-            releaseItem.GoToCommand.Subscribe(_ => 
-            {
+            releaseItem.GoToCommand.Subscribe(_ => {
                 var vm = this.CreateViewModel<ReleaseViewModel>();
-                vm.RepositoryName = RepositoryName;
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.ReleaseId = release.Id;
+                vm.Init(RepositoryOwner, RepositoryName, release.Id);
                 NavigateTo(vm);
             });
-
             return releaseItem;
+        }
+
+        public ReleasesViewModel Init(string repositoryOwner, string repositoryName)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            return this;
         }
     }
 }

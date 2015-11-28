@@ -12,6 +12,7 @@ using CodeHub.Core.Factories;
 using Splat;
 using System.Reactive.Subjects;
 using CodeHub.Core.Utilities;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -19,6 +20,7 @@ namespace CodeHub.Core.ViewModels.Issues
     {
         protected readonly ReactiveList<IIssueEventItemViewModel> InternalEvents = new ReactiveList<IIssueEventItemViewModel>();
         private readonly ISubject<Octokit.Issue> _issueUpdatedObservable = new Subject<Octokit.Issue>();
+        private readonly ISubject<IssueCommentModel> _commentAddedSubject = new Subject<IssueCommentModel>();
         private readonly ISessionService _applicationService;
         private readonly IMarkdownService _markdownService;
         private readonly IAlertDialogFactory _alertDialogFactory;
@@ -29,6 +31,11 @@ namespace CodeHub.Core.ViewModels.Issues
         public IObservable<Octokit.Issue> IssueUpdated
         {
             get { return _issueUpdatedObservable.AsObservable(); }
+        }
+
+        public IObservable<IssueCommentModel> CommentAdded
+        {
+            get { return _commentAddedSubject.AsObservable(); }
         }
 
         private int _id;
@@ -116,31 +123,31 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected abstract Uri HtmlUrl { get; }
 
-        public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
+        public IReactiveCommand<object> GoToOwnerCommand { get; }
 
-        public IReactiveCommand<object> GoToAssigneesCommand { get; private set; }
+        public IReactiveCommand<object> GoToAssigneesCommand { get; }
 
-        public IReactiveCommand<object> GoToMilestonesCommand { get; private set; }
+        public IReactiveCommand<object> GoToMilestonesCommand { get; }
 
-        public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
+        public IReactiveCommand<object> GoToLabelsCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
 
-        public IReactiveCommand<object> GoToUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToUrlCommand { get; }
 
-        public IReadOnlyReactiveList<IIssueEventItemViewModel> Events { get; private set; }
+        public IReadOnlyReactiveList<IIssueEventItemViewModel> Events { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<Unit> ToggleStateCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleStateCommand { get; }
 
-        public IReactiveCommand<object> AddCommentCommand { get; private set; }
+        public IReactiveCommand<object> AddCommentCommand { get; }
 
-        public IReactiveCommand<object> GoToEditCommand { get; private set; }
+        public IReactiveCommand<object> GoToEditCommand { get; }
 
-        public IReactiveCommand<object> ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; }
 
-        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
 
         protected BaseIssueViewModel(
             ISessionService applicationService, 
@@ -231,6 +238,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].Issues[Id].CreateComment(s);
                     var comment = (await applicationService.Client.ExecuteAsync(request)).Data;
                     InternalEvents.Add(new IssueCommentItemViewModel(comment));
+                    _commentAddedSubject.OnNext(comment);
                 }, alertDialogFactory);
                 NavigateTo(vm);
             });

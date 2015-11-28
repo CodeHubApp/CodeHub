@@ -18,9 +18,9 @@ namespace CodeHub.iOS.ViewControllers.App
             var contributors = split.AddButton("Contributors", "-");
             var lastCommit = split.AddButton("Last Commit", "-");
 
-            var addFeatureButton = new ButtonElement("Suggest a feature", Octicon.LightBulb.ToImage());
-            var addBugButton = new ButtonElement("Report a bug", Octicon.Bug.ToImage());
-            var featuresButton = new ButtonElement("Submitted Work Items", Octicon.Clippy.ToImage());
+            var addFeatureButton = new ButtonElement("Suggest a feature", Octicon.LightBulb.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var addBugButton = new ButtonElement("Report a bug", Octicon.Bug.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var featuresButton = new ButtonElement("Submitted Work Items", Octicon.Clippy.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
             HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
             HeaderView.Image = UIImage.FromFile("Icon@2x.png");

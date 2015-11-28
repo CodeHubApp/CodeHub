@@ -23,30 +23,11 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             UserVoiceButton.BackgroundColor = UIColor.FromRGB(0x2c, 0x3e, 0x50);
             UserVoiceButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             UserVoiceButton.Layer.CornerRadius = 6f;
-        }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            GitHubButton.TouchUpInside += ShowProject;
-            UserVoiceButton.TouchUpInside += ShowUserVoice;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            GitHubButton.TouchUpInside -= ShowProject;
-            UserVoiceButton.TouchUpInside -= ShowUserVoice;
-        }
-
-        private void ShowProject(object sender, EventArgs args)
-        {
-            ShowWebPage("https://github.com/thedillonb/codehub");
-        }
-
-        private void ShowUserVoice(object sender, EventArgs args)
-        {
-            ShowWebPage("https://codehub.uservoice.com");
+            OnActivation(d => {
+                d(GitHubButton.GetClickedObservable().Subscribe(_ => ShowWebPage("https://github.com/thedillonb/codehub")));
+                d(UserVoiceButton.GetClickedObservable().Subscribe(_ => ShowWebPage("https://codehub.uservoice.com")));
+            });
         }
 
         private void ShowWebPage(string url)

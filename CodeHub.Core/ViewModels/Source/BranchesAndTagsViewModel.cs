@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Source
             Branches = branches.CreateDerivedCollection(
                 x => new BranchItemViewModel(x.Name, () => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.Init(RepositoryOwner, RepositoryName, x.Name);
+                    vm.Init(RepositoryOwner, RepositoryName, x.Name, trueBranch: true);
                     NavigateTo(vm);
                 }), 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword),
@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Source
             Tags = tags.CreateDerivedCollection(
                 x => new TagItemViewModel(x.Name, () => {
                     var vm = this.CreateViewModel<SourceTreeViewModel>();
-                    vm.Init(RepositoryOwner, RepositoryName, x.Commit.Sha, trueBranch: false);
+                    vm.Init(RepositoryOwner, RepositoryName, x.Commit.Sha);
                     NavigateTo(vm);
                 }), 
                 filter: x => x.Name.ContainsKeyword(SearchKeyword), 

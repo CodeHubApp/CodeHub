@@ -25,23 +25,14 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             WatchButton.BackgroundColor = UIColor.FromRGB(0x7f, 0x8c, 0x8d);
             WatchButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             WatchButton.Layer.CornerRadius = 6f;
+
+            OnActivation(d => {
+                d(WatchButton.GetClickedObservable().Subscribe(_ => WatchCodeHub()));
+                d(StarButton.GetClickedObservable().Subscribe(_ => StarCodeHub()));
+            });
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            WatchButton.TouchUpInside += WatchCodeHub;
-            StarButton.TouchUpInside += StarCodeHub;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            WatchButton.TouchUpInside -= WatchCodeHub;
-            StarButton.TouchUpInside -= StarCodeHub;
-        }
-
-        private void StarCodeHub(object sender, EventArgs args)
+        private void StarCodeHub()
         {
             _shouldStar = !_shouldStar;
             DefaultValueService.Instance.Set("SHOULD_STAR_CODEHUB", _shouldStar);
@@ -51,7 +42,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             Alert();
         }
 
-        private void WatchCodeHub(object sender, EventArgs args)
+        private void WatchCodeHub()
         {
             _shouldWatch = !_shouldWatch;
             DefaultValueService.Instance.Set("SHOULD_WATCH_CODEHUB", _shouldWatch);

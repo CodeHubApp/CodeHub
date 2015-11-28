@@ -47,9 +47,14 @@ namespace CodeHub.iOS.ViewControllers.App
             _web.LoadStarted += (sender, e) => _networkActivityService.PushNetworkActive();
             _web.LoadError += (sender, e) => _networkActivityService.PopNetworkActive();
             _web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
-            _web.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
 
             Load().ToBackground();
+        }
+
+        public override void ViewDidLayoutSubviews()
+        {
+            base.ViewDidLayoutSubviews();
+            _web.Frame = new CoreGraphics.CGRect(0, 0, View.Frame.Width, View.Frame.Height);
         }
 
         public override void ViewWillAppear(bool animated)

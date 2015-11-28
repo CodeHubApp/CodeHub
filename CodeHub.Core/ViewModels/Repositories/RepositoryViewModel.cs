@@ -111,41 +111,41 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _avatar.Value; }
         }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
-        public IReactiveCommand<object> GoToOwnerCommand { get; private set; }
+        public IReactiveCommand<object> GoToOwnerCommand { get; }
 
-        public IReactiveCommand<object> GoToForkParentCommand { get; private set; }
+        public IReactiveCommand<object> GoToForkParentCommand { get; }
 
-        public IReactiveCommand<object> GoToStargazersCommand { get; private set; }
+        public IReactiveCommand<object> GoToStargazersCommand { get; }
 
-        public IReactiveCommand<object> GoToWatchersCommand { get; private set; }
+        public IReactiveCommand<object> GoToWatchersCommand { get; }
 
-        public IReactiveCommand<object> GoToContributors { get; private set; }
+        public IReactiveCommand<object> GoToContributors { get; }
 
-        public IReactiveCommand<object> GoToEventsCommand { get; private set; }
+        public IReactiveCommand<object> GoToEventsCommand { get; }
 
-        public IReactiveCommand<object> GoToIssuesCommand { get; private set; }
+        public IReactiveCommand<object> GoToIssuesCommand { get; }
 
-        public IReactiveCommand<object> GoToReadmeCommand { get; private set; }
+        public IReactiveCommand<object> GoToReadmeCommand { get; }
 
-        public IReactiveCommand<object> GoToCommitsCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommitsCommand { get; }
 
-        public IReactiveCommand<object> GoToBranchesCommand { get; private set; }
+        public IReactiveCommand<object> GoToBranchesCommand { get; }
 
-        public IReactiveCommand<object> GoToPullRequestsCommand { get; private set; }
+        public IReactiveCommand<object> GoToPullRequestsCommand { get; }
 
-        public IReactiveCommand<object> GoToSourceCommand { get; private set; }
+        public IReactiveCommand<object> GoToSourceCommand { get; }
 
-        public IReactiveCommand<object> GoToHtmlUrlCommand { get; private set; }
+        public IReactiveCommand<object> GoToHtmlUrlCommand { get; }
 
-        public IReactiveCommand GoToReleasesCommand { get; private set; }
+        public IReactiveCommand GoToReleasesCommand { get; }
 
-        public IReactiveCommand GoToForksCommand { get; private set; }
+        public IReactiveCommand GoToForksCommand { get; }
 
-        public IReactiveCommand<object> GoToHomepageCommand { get; private set; }
+        public IReactiveCommand<object> GoToHomepageCommand { get; }
 
-        public IReactiveCommand<Unit> ShowMenuCommand { get; private set; }
+        public IReactiveCommand<Unit> ShowMenuCommand { get; }
 
         public bool IsPinned
         {
@@ -155,13 +155,13 @@ namespace CodeHub.Core.ViewModels.Repositories
             }
         }
 
-        public IReactiveCommand<object> PinCommand { get; private set; }
+        public IReactiveCommand<object> PinCommand { get; }
 
-        public IReactiveCommand<Unit> ToggleStarCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleStarCommand { get; }
 
-        public IReactiveCommand<Unit> ToggleWatchCommand { get; private set; }
+        public IReactiveCommand<Unit> ToggleWatchCommand { get; }
 
-        public IReactiveCommand<object> ShareCommand { get; private set; }
+        public IReactiveCommand<object> ShareCommand { get; }
 
         public RepositoryViewModel(ISessionService applicationService, 
             IAccountsRepository accountsService, IActionMenuFactory actionMenuService)
@@ -312,11 +312,9 @@ namespace CodeHub.Core.ViewModels.Repositories
                 NavigateTo(vm);
             });
 
-            GoToReleasesCommand = ReactiveCommand.Create().WithSubscription(_ =>
-            {
+            GoToReleasesCommand = ReactiveCommand.Create().WithSubscription(_ => {
                 var vm = this.CreateViewModel<ReleasesViewModel>();
-                vm.RepositoryOwner = RepositoryOwner;
-                vm.RepositoryName = RepositoryName;
+                vm.Init(RepositoryOwner, RepositoryName);
                 NavigateTo(vm);
             });
 
@@ -408,7 +406,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             if (IsWatched.Value)
                 await ApplicationService.GitHubClient.Activity.Watching.UnwatchRepo(RepositoryOwner, RepositoryName);
             else
-                await ApplicationService.GitHubClient.Activity.Watching.WatchRepo(RepositoryOwner, RepositoryName, new Octokit.NewSubscription { Subscribed = true });
+                await ApplicationService.GitHubClient.Activity.Watching.WatchRepo(RepositoryOwner, RepositoryName, new NewSubscription { Subscribed = true });
 
             if (Watchers.HasValue)
                 Watchers += (IsWatched.Value ? -1 : 1);

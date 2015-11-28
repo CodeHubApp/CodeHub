@@ -60,21 +60,21 @@ namespace CodeHub.Core.ViewModels.Issues
             protected set { this.RaiseAndSetIfChanged(ref _assignee, value); }
         }
 
-        public IReactiveCommand<object> GoToAssigneesCommand { get; private set; }
+        public IReactiveCommand<object> GoToAssigneesCommand { get; }
 
-        public IReactiveCommand<object> GoToMilestonesCommand { get; private set; }
+        public IReactiveCommand<object> GoToMilestonesCommand { get; }
 
-        public IReactiveCommand<object> GoToLabelsCommand { get; private set; }
+        public IReactiveCommand<object> GoToLabelsCommand { get; }
 
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
+        public IReactiveCommand<Unit> LoadCommand { get; }
 
 		public string RepositoryOwner { get; set; }
 
 		public string RepositoryName { get; set; }
 
-        public IReactiveCommand<Issue> SaveCommand { get; private set; }
+        public IReactiveCommand<Issue> SaveCommand { get; }
 
-        public IReactiveCommand<bool> DismissCommand { get; private set; }
+        public IReactiveCommand<bool> DismissCommand { get; }
 
         protected IssueModifyViewModel(
             ISessionService sessionService, 

@@ -11,15 +11,15 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesFilterViewModel : BaseViewModel
     {
-        public IReactiveCommand<MyIssuesFilterModel> SaveCommand { get; private set; }
+        public IReactiveCommand<MyIssuesFilterModel> SaveCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; private set; }
+        public IReactiveCommand<object> DismissCommand { get; }
 
-        public IReactiveCommand<Unit> SelectFilterTypeCommand { get; private set; }
+        public IReactiveCommand<Unit> SelectFilterTypeCommand { get; }
 
-        public IReactiveCommand<Unit> SelectStateCommand { get; private set; }
+        public IReactiveCommand<Unit> SelectStateCommand { get; }
 
-        public IReactiveCommand<Unit> SelectSortCommand { get; private set; }
+        public IReactiveCommand<Unit> SelectSortCommand { get; }
 
         private string _labels;
         public string Labels

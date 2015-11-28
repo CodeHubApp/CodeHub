@@ -24,8 +24,6 @@ namespace CodeHub.iOS.ViewControllers.Users
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
-            var websiteElement = new StringElement("Website", Octicon.Globe.ToImage());
-            var extraSection = new Section();
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-");
             var following = split.AddButton("Following", "-");
@@ -33,12 +31,13 @@ namespace CodeHub.iOS.ViewControllers.Users
             var organizations = new StringElement("Organizations", Octicon.Organization.ToImage());
             var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
             var gists = new StringElement("Gists", Octicon.Gist.ToImage());
-            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists }, extraSection });
+            var website = new StringElement("Website", Octicon.Globe.ToImage()) { Hidden = true };
+            Root.Reset(new [] { new Section { split }, new Section { events, organizations, repos, gists }, new Section { website } });
 
             OnActivation(d => {
                 d(followers.Clicked.InvokeCommand(ViewModel.GoToFollowersCommand));
                 d(following.Clicked.InvokeCommand(ViewModel.GoToFollowingCommand));
-                d(websiteElement.Clicked.InvokeCommand(ViewModel.GoToWebsiteCommand));
+                d(website.Clicked.InvokeCommand(ViewModel.GoToWebsiteCommand));
                 d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));
                 d(organizations.Clicked.InvokeCommand(ViewModel.GoToOrganizationsCommand));
                 d(repos.Clicked.InvokeCommand(ViewModel.GoToRepositoriesCommand));
@@ -52,19 +51,12 @@ namespace CodeHub.iOS.ViewControllers.Users
                 d(this.WhenAnyValue(x => x.ViewModel.Avatar)
                     .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
 
-                d(this.WhenAnyValue(x => x.ViewModel.User).IsNotNull().Subscribe(x => {
-                    followers.Text = x.Followers.ToString();
-                    following.Text = x.Following.ToString();
-                    HeaderView.SubText = string.IsNullOrEmpty(x.Name) ? null : x.Name;
-                    RefreshHeaderView();
-                }));
+                d(this.WhenAnyValue(x => x.ViewModel.User.Name).Select(x => string.IsNullOrEmpty(x) ? null : x)
+                    .Subscribe(x => RefreshHeaderView(subtext: x)));
 
-                d(this.WhenAnyValue(x => x.ViewModel.HasBlog).Subscribe(x => {
-                    if (x && websiteElement.Section == null)
-                        extraSection.Add(websiteElement);
-                    else if (!x && websiteElement.Section != null)
-                        extraSection.Remove(websiteElement);
-                }));
+                d(followers.BindText(this.WhenAnyValue(x => x.ViewModel.User.Followers)));
+                d(following.BindText(this.WhenAnyValue(x => x.ViewModel.User.Following)));
+                d(this.WhenAnyValue(x => x.ViewModel.HasBlog).Subscribe(x => website.Hidden = !x));
             });
         }
     }
