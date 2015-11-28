@@ -11,8 +11,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
     {
         private readonly SplitButtonElement _split = new SplitButtonElement();
         private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
-//        private StringElement _ownerElement;
-        private Section _sourceSection;
 
         public override void ViewDidLoad()
         {
@@ -21,23 +19,26 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             HeaderView.Image = Images.LoginUserUnknown;
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
 
-            var events = new StringElement("Events", Octicon.Rss.ToImage());
-            var issuesElement = new StringElement("Issues", Octicon.IssueOpened.ToImage());
-            var commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage());
-            var pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
-            var sourceElement = new StringElement("Source", Octicon.Code.ToImage());
-            var websiteElement = new StringElement("Website", Octicon.Globe.ToImage());
-            var forkedElement = new StringElement("Forked From", Octicon.RepoForked.ToImage());
-            var readmeElement = new StringElement("Readme", Octicon.Book.ToImage());
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
+                .Switch()
+                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
-
-//            _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
-//            _ownerElement.Tapped += () => ViewModel.GoToOwnerCommand.ExecuteIfCan();
-//            this.WhenAnyValue(x => x.ViewModel.Repository)
-//                .Subscribe(x => _ownerElement.Value = x == null ? string.Empty : x.Owner.Login);
-
-//            this.WhenAnyValue(x => x.ViewModel.GoToOwnerCommand).Subscribe(x => 
-//                HeaderView.ImageButtonAction = x != null ? new Action(() => ViewModel.GoToOwnerCommand.ExecuteIfCan()) : null);
+            var events = new StringElement("Events", Octicon.Rss.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var issuesElement = new StringElement("Issues", Octicon.IssueOpened.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var sourceElement = new StringElement("Source", Octicon.Code.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var websiteElement = new StringElement("Website", Octicon.Globe.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var readmeElement = new StringElement("Readme", Octicon.Book.ToImage()) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var forkedElement = new StringElement("Fork", string.Empty) { 
+                Image = Octicon.RepoForked.ToImage(),
+                Font = StringElement.DefaultDetailFont,
+                Accessory = UITableViewCellAccessory.DisclosureIndicator 
+            };
 
             _splitElements[0] = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
             _splitElements[1] = new SplitViewElement(Octicon.IssueOpened.ToImage(), Octicon.Organization.ToImage());
@@ -51,7 +52,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 var model = ViewModel.Repository;
                 var sec1 = new Section();
                 sec1.Add(_splitElements);
-                //            sec1.Add(_ownerElement);
 
                 if (model.Parent != null)
                 {
@@ -76,6 +76,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             });
 
             OnActivation(d => {
+                d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
 
                 d(_splitElements[1].Button1.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
                 d(_splitElements[1].Button2.Clicked.InvokeCommand(ViewModel.GoToContributors));
@@ -95,7 +96,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(commitsElement.Clicked.InvokeCommand(ViewModel.GoToCommitsCommand));
                 d(pullRequestsElement.Clicked.InvokeCommand(ViewModel.GoToPullRequestsCommand));
                 d(sourceElement.Clicked.InvokeCommand(ViewModel.GoToSourceCommand));
-
 
                 d(this.WhenAnyValue(x => x.ViewModel.Stargazers)
                     .Select(x => x != null ? x.ToString() : "-")
@@ -135,11 +135,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     .Select(x => x == null ? "Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
                     .SubscribeSafe(x => _splitElements[2].Button1.Text = x));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Description)
-                    .Subscribe(x => {
-                        HeaderView.SubText = x;
-                        RefreshHeaderView();
-                    }));
+                d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => RefreshHeaderView(subtext: x)));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Avatar)
                     .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
@@ -151,24 +147,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(this.WhenAnyValue(x => x.ViewModel.Readme)
                     .Where(x => x != null && ViewModel.Repository != null)
                     .Subscribe(_ => renderFunc()));
-                
             });
-
-//
-//
-//            Appeared.Take(1)
-//                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
-//                .Switch()
-//                .Select(_ => this.WhenAnyValue(x => x.ViewModel.IsStarred).Where(x => x.HasValue))
-//                .Switch()
-//                .ObserveOn(RxApp.MainThreadScheduler)
-//                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

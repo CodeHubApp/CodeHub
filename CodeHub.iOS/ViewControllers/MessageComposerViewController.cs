@@ -102,9 +102,15 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewWillAppear(animated);
             _keyboardShowObserver = NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            _keyboardHideObserver = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+            _keyboardHideObserver = NSNotificationCenter.DefaultCenter.AddObserver(new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
             ResizeTextView();
             Add(TextView);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            TextView.ResignFirstResponder();
         }
 
         public override void ViewDidDisappear(bool animated)

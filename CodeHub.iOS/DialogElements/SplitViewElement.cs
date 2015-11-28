@@ -1,8 +1,6 @@
 using System;
 using UIKit;
-using System.Collections.Generic;
 using CoreGraphics;
-using System.Reactive.Linq;
 using System.Reactive;
 
 namespace CodeHub.iOS.DialogElements
@@ -30,19 +28,7 @@ namespace CodeHub.iOS.DialogElements
         public override UITableViewCell GetCell(UITableView tv)
         {
             var cell = tv.DequeueReusableCell("splitelement") as SplitCell ?? new SplitCell();
-
-            var buttons = new List<SplitButton>();
-            if (Button1 != null)
-            {
-                buttons.Add(Button1);
-            }
-            if (Button2 != null)
-            {
-                buttons.Add(Button2);
-            }
-
-            cell.SetButtons(tv, buttons);
-
+            cell.SetButtons(tv, new [] { Button1, Button2 });
             cell.SeparatorInset = UIEdgeInsets.Zero;
             cell.PreservesSuperviewLayoutMargins = false;
             cell.LayoutMargins = UIEdgeInsets.Zero;
@@ -67,7 +53,7 @@ namespace CodeHub.iOS.DialogElements
                 SelectionStyle = UITableViewCellSelectionStyle.None;
             }
 
-            public void SetButtons(UITableView tableView, List<SplitButton> items)
+            public void SetButtons(UITableView tableView, SplitButton[] items)
             {
                 if (_buttons != null)
                 {
@@ -77,9 +63,9 @@ namespace CodeHub.iOS.DialogElements
                     }
                 }
 
-                _buttons = new UIButton[items.Count];
+                _buttons = new UIButton[items.Length];
 
-                for (var i = 0; i < items.Count; i++)
+                for (var i = 0; i < items.Length; i++)
                 {
                     _buttons[i] = items[i];
                     ContentView.Add(_buttons[i]);
@@ -95,14 +81,11 @@ namespace CodeHub.iOS.DialogElements
                     _seperatorViews = null;
                 }
 
-                if (items.Count > 0)
+                _seperatorViews = new UIView[Math.Max(items.Length - 1, 0)];
+                for (var i = 0; i < _seperatorViews.Length; i++)
                 {
-                    _seperatorViews = new UIView[items.Count - 1];
-                    for (var i = 0; i < _seperatorViews.Length; i++)
-                    {
-                        _seperatorViews[i] = new UIView { BackgroundColor = tableView.SeparatorColor };
-                        ContentView.Add(_seperatorViews[i]);
-                    }
+                    _seperatorViews[i] = new UIView { BackgroundColor = tableView.SeparatorColor };
+                    ContentView.Add(_seperatorViews[i]);
                 }
             }
 
@@ -110,22 +93,21 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
 
-                if (_buttons != null)
+                if (_buttons == null)
+                    return;
+                
+                var width = Bounds.Width;
+                var space = width / _buttons.Length;
+
+                for (var i = 0; i < _buttons.Length; i++)
                 {
-                    var width = this.Bounds.Width;
-                    var space = width / _buttons.Length;
+                    _buttons[i].Frame = new CGRect(i * space, 0, space - 1f, Bounds.Height);
+                    _buttons[i].LayoutSubviews();
 
-                    for (var i = 0; i < _buttons.Length; i++)
-                    {
-                        _buttons[i].Frame = new CGRect(i * space, 0, space - 1f, Bounds.Height);
-                        _buttons[i].LayoutSubviews();
-
-                        if (i != _buttons.Length - 1)
-                            _seperatorViews[i].Frame = new CGRect(_buttons[i].Frame.Right, 0, SeperatorWidth, Bounds.Height);
-                    }
+                    if (i != _buttons.Length - 1)
+                        _seperatorViews[i].Frame = new CGRect(_buttons[i].Frame.Right, 0, SeperatorWidth, Bounds.Height);
                 }
             }
-
         }
 
 
@@ -146,36 +128,9 @@ namespace CodeHub.iOS.DialogElements
                 set { _image.Image = value; }
             }
 
-            public UIColor ImageTintColor
+            public IObservable<Unit> Clicked
             {
-                get { return _image.TintColor; }
-                set
-                {
-                    _image.TintColor = value;
-                    _image.SetNeedsDisplay();
-                }
-            }
-
-            public UIColor TextColor
-            {
-                get { return _text.TextColor; }
-                set 
-                { 
-                    _text.TextColor = value;
-                    _text.SetNeedsDisplay();
-                }
-            }
-
-            public IObservable<EventPattern<object>> Clicked
-            {
-                get {
-                    return Observable.FromEventPattern(t => this.TouchUpInside += t, t => this.TouchUpInside -= t);
-                }
-            }
-
-            public SplitButton(UIImage image)
-                : this (image, null)
-            {
+                get { return this.GetClickedObservable(); }
             }
 
             public SplitButton(UIImage image, string text = null)
