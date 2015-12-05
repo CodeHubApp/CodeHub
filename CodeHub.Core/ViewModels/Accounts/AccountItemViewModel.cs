@@ -12,17 +12,17 @@ namespace CodeHub.Core.ViewModels.Accounts
             internal set { this.RaiseAndSetIfChanged(ref _selected, value); }
         }
 
-        public string Username { get; private set; }
+        public string Username { get; }
 
-        public string AvatarUrl { get; private set; }
+        public string AvatarUrl { get; }
 
-        public string Domain { get; private set; }
+        public string Domain { get; }
 
-        public string Id { get; private set; }
+        public string Id { get; }
 
-        public IReactiveCommand<object> DeleteCommand { get; private set; }
+        public IReactiveCommand<object> DeleteCommand { get; }
 
-        public IReactiveCommand<object> GoToCommand { get; private set; }
+        public IReactiveCommand<object> GoToCommand { get; }
 
         internal AccountItemViewModel(GitHubAccount account)
         {

@@ -157,7 +157,6 @@
     <Compile Include="ViewModels\IProvidesTitle.cs" />
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="Services\AnalyticsService.cs" />
-    <Compile Include="Services\DefaultValueServiceExtensions.cs" />
     <Compile Include="Services\IAnalyticsService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IEnvironmentalService.cs" />
@@ -166,8 +165,6 @@
     <Compile Include="Services\IServiceConstructor.cs" />
     <Compile Include="Services\IUrlRouterService.cs" />
     <Compile Include="Services\IViewModelViewService.cs" />
-    <Compile Include="Services\NetworkActivityServiceExtensions.cs" />
-    <Compile Include="Services\ServiceConstructorExtensions.cs" />
     <Compile Include="Services\ViewModelViewService.cs" />
     <Compile Include="ViewModels\IRoutingViewModel.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />

@@ -9,19 +9,6 @@ namespace System.Reactive.Linq
         {
             return @this.Where(x => x != null);
         }
-
-        public static IObservable<Unit> AsCompletion<T>(this IObservable<T> observable)
-        {
-            return Observable.Create<Unit>(observer =>
-                {
-                    Action onCompleted = () =>
-                    {
-                        observer.OnNext(Unit.Default);
-                        observer.OnCompleted();
-                    };
-                    return observable.Subscribe(_ => {}, observer.OnError, onCompleted);
-                });
-        }
     }
 }
 

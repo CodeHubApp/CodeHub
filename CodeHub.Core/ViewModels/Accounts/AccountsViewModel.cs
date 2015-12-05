@@ -27,11 +27,11 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
-        public IReadOnlyReactiveList<AccountItemViewModel> Items { get; private set; }
+        public IReadOnlyReactiveList<AccountItemViewModel> Items { get; }
 
-        public IReactiveCommand<object> GoToAddAccountCommand { get; private set; }
+        public IReactiveCommand<object> GoToAddAccountCommand { get; }
 
-        public IReactiveCommand<object> DismissCommand { get; private set; }
+        public IReactiveCommand<object> DismissCommand { get; }
 
         public AccountsViewModel(ISessionService sessionService, IAccountsRepository accountsRepository)
         {

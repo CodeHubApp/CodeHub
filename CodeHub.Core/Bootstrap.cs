@@ -27,7 +27,7 @@ namespace CodeHub.Core
             resolver.RegisterLazySingleton(() => new LoginService(resolver.GetService<IAccountsRepository>()), typeof(ILoginService));
             resolver.RegisterLazySingleton(() => new ImgurService(), typeof(IImgurService));
             resolver.RegisterLazySingleton(() => new SimpleJsonSerializer(), typeof(IJsonSerializer));
-            resolver.RegisterLazySingleton(() => new TrendingRepository(resolver.GetService<IJsonSerializer>()), typeof(ITrendingRepository));
+            resolver.RegisterLazySingleton(() => new TrendingRepository(), typeof(ITrendingRepository));
         }
 
     }
