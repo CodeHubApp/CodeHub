@@ -19,13 +19,15 @@ namespace CodeHub.iOS.ViewControllers.Settings
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", ViewModel.ShowOrganizationsInEvents);
             var showOrganizations = new BooleanElement("List Organizations in Menu", ViewModel.ExpandOrganizations);
             var repoDescriptions = new BooleanElement("Show Repo Descriptions", ViewModel.ShowRepositoryDescriptionInList);
-            var startupView = new StringElement("Startup View", ViewModel.DefaultStartupViewName, UITableViewCellStyle.Value1);
-            var syntaxHighlighter = new StringElement("Syntax Highlighter", ViewModel.SyntaxHighlighter, UITableViewCellStyle.Value1);
+            var startupView = new ButtonElement("Startup View", ViewModel.DefaultStartupViewName);
+            var syntaxHighlighter = new ButtonElement("Syntax Highlighter", ViewModel.SyntaxHighlighter);
+            var followElement = new ButtonElement("Follow On Twitter");
+            var rateElement = new ButtonElement("Rate This App");
+            var sourceElement = new ButtonElement("Source Code");
             var applicationSection = new Section("Application", "Looking for application settings? They're located in the iOS settings application.");
-
             var version = UIDevice.CurrentDevice.SystemVersion.Split('.');
             var major = Int32.Parse(version[0]);
-            var settingsElement = new StringElement("Go To Application Settings");
+            var settingsElement = new ButtonElement("Go To Application Settings");
 
             if (major >= 8)
             {
@@ -41,16 +43,12 @@ namespace CodeHub.iOS.ViewControllers.Settings
                 syntaxHighlighter
             };
 
-            var followElement = new StringElement("Follow On Twitter");
-            var rateElement = new StringElement("Rate This App");
-            var sourceElement = new StringElement("Source Code");
-
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!")
             {
                 followElement,
                 rateElement,
                 sourceElement,
-                new StringElement("App Version", ViewModel.Version)
+                new StringElement("App Version", GetApplicationVersion())
             };
 
             Root.Reset(appearanceSection, applicationSection, aboutSection);
@@ -84,6 +82,29 @@ namespace CodeHub.iOS.ViewControllers.Settings
                 d(syntaxHighlighter.Clicked.InvokeCommand(ViewModel.GoToSyntaxHighlighterCommand));
                 d(settingsElement.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString))));
             });
+        }
+
+        private static string GetApplicationVersion() 
+        {
+            string shortVersion = string.Empty;
+            string bundleVersion = string.Empty;
+
+            try
+            {
+                shortVersion = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            }
+            catch { }
+
+            try
+            {
+                bundleVersion = NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
+            }
+            catch { }
+
+            if (string.Equals(shortVersion, bundleVersion))
+                return shortVersion;
+
+            return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
         }
     }
 }

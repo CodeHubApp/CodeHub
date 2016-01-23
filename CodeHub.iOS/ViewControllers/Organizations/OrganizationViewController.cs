@@ -18,11 +18,11 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             var split = new SplitButtonElement();
             var followers = split.AddButton("Followers", "-");
             var following = split.AddButton("Following", "-");
-            var members = new StringElement("Members", Octicon.Person.ToImage());
-            var teams = new StringElement("Teams", Octicon.Organization.ToImage());
-            var events = new StringElement("Events", Octicon.Rss.ToImage());
-            var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
-            var gists = new StringElement("Gists", Octicon.Gist.ToImage());
+            var members = new ButtonElement("Members", Octicon.Person.ToImage());
+            var teams = new ButtonElement("Teams", Octicon.Organization.ToImage());
+            var events = new ButtonElement("Events", Octicon.Rss.ToImage());
+            var repos = new ButtonElement("Repositories", Octicon.Repo.ToImage());
+            var gists = new ButtonElement("Gists", Octicon.Gist.ToImage());
             var membersAndTeams = new Section { members };
 
             Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });
@@ -30,7 +30,6 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             OnActivation(d => {
                 d(followers.Clicked.InvokeCommand(ViewModel.GoToFollowersCommand));
                 d(following.Clicked.InvokeCommand(ViewModel.GoToFollowingCommand));
-
                 d(members.Clicked.InvokeCommand(ViewModel.GoToMembersCommand));
                 d(teams.Clicked.InvokeCommand(ViewModel.GoToTeamsCommand));
                 d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));

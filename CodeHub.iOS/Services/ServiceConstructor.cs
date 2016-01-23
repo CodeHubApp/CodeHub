@@ -11,6 +11,9 @@ namespace CodeHub.iOS.Services
     {
         public object Construct(Type type)
         {
+            var timer = new Stopwatch();
+            timer.Start();
+
             var constructor = type.GetConstructors().First();
             var parameters = constructor.GetParameters();
             var args = new List<object>(parameters.Length);
@@ -21,7 +24,9 @@ namespace CodeHub.iOS.Services
                     Debugger.Break();
                 args.Add(argument);
             }
-            return Activator.CreateInstance(type, args.ToArray(), null);
+            var instance = Activator.CreateInstance(type, args.ToArray(), null);
+            Debug.WriteLine("Construction of " + type + " took " + timer.ElapsedMilliseconds + "ms");
+            return instance;
         }
     }
 }

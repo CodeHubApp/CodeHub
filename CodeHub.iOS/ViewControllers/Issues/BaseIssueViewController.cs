@@ -17,9 +17,9 @@ namespace CodeHub.iOS.ViewControllers.Issues
         protected readonly SplitButtonElement SplitButton = new SplitButtonElement();
         protected readonly Section DetailsSection = new Section();
         protected readonly Section CommentsSection = new Section();
-        protected readonly StringElement MilestoneElement;
-        protected readonly StringElement AssigneeElement;
-        protected readonly StringElement LabelsElement;
+        protected readonly ButtonElement MilestoneElement;
+        protected readonly ButtonElement AssigneeElement;
+        protected readonly ButtonElement LabelsElement;
         protected readonly HtmlElement DescriptionElement;
         protected readonly HtmlElement CommentsElement;
 
@@ -40,24 +40,20 @@ namespace CodeHub.iOS.ViewControllers.Issues
                     HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
                 });
 
-            MilestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage()};
+            MilestoneElement = new ButtonElement("Milestone", Octicon.Milestone.ToImage());
             this.WhenAnyValue(x => x.ViewModel.AssignedMilestone)
                 .Select(x => x == null ? "No Milestone" : x.Title)
                 .Subscribe(x => MilestoneElement.Value = x);
 
-            AssigneeElement = new StringElement("Assigned", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage()};
+            AssigneeElement = new ButtonElement("Assigned", Octicon.Person.ToImage());
             this.WhenAnyValue(x => x.ViewModel.AssignedUser)
                 .Select(x => x == null ? "Unassigned" : x.Login)
                 .Subscribe(x => AssigneeElement.Value = x);
 
-            LabelsElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage()};
+            LabelsElement = new ButtonElement("Labels", Octicon.Tag.ToImage());
             this.WhenAnyValue(x => x.ViewModel.AssignedLabels)
                 .Select(x => (x == null || x.Count == 0) ? "None" : string.Join(",", x.Select(y => y.Name)))
                 .Subscribe(x => LabelsElement.Value = x);
-
-            this.WhenAnyValue(x => x.ViewModel.CanModify)
-                .Select(x => x ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None)
-                .Subscribe(x => MilestoneElement.Accessory = AssigneeElement.Accessory = LabelsElement.Accessory = x);
 
             DetailsSection.Add(MilestoneElement);
             DetailsSection.Add(AssigneeElement);

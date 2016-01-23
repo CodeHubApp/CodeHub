@@ -14,7 +14,6 @@ namespace CodeHub.Core.ViewModels.Settings
         private readonly ISessionService _sessionService;
         private readonly IFeaturesService _featuresService;
         private readonly IAccountsRepository _accountsService;
-        private readonly IEnvironmentalService _environmentService;
         private readonly IPushNotificationRegistrationService _pushNotificationsService;
 
         public IReactiveCommand<object> GoToDefaultStartupViewCommand { get; private set; }
@@ -40,11 +39,6 @@ namespace CodeHub.Core.ViewModels.Settings
             private set { this.RaisePropertyChanged(); }
         }
 
-        public string Version
-        {
-            get { return _environmentService.ApplicationVersion; }
-        }
-        
         private string _accountImageUrl;
         public string AccountImageUrl
         {
@@ -78,15 +72,13 @@ namespace CodeHub.Core.ViewModels.Settings
         public IReactiveCommand GoToSyntaxHighlighterCommand { get; private set; }
 
         public SettingsViewModel(ISessionService applicationService, IFeaturesService featuresService, 
-            IAccountsRepository accountsService, IEnvironmentalService environmentalService, 
-            IPushNotificationRegistrationService pushNotificationsService)
+            IAccountsRepository accountsService, IPushNotificationRegistrationService pushNotificationsService)
         {
             Title = "Account Settings";
 
             _sessionService = applicationService;
             _featuresService = featuresService;
             _accountsService = accountsService;
-            _environmentService = environmentalService;
             _pushNotificationsService = pushNotificationsService;
 
             AccountImageUrl = applicationService.Account.AvatarUrl;

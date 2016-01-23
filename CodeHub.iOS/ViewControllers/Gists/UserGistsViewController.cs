@@ -9,10 +9,8 @@ namespace CodeHub.iOS.ViewControllers.Gists
     {
         public UserGistsViewController()
         {
-            OnActivation(d => 
-                d(this.WhenAnyValue(x => x.ViewModel.IsMine)
-                .Select(_ => ViewModel.GoToCreateGistCommand)
-                .ToBarButtonItem(UIBarButtonSystemItem.Add, x => NavigationItem.RightBarButtonItem = x)));
+            var obs = this.WhenAnyValue(x => x.ViewModel.IsMine).Where(x => x).Select(_ => ViewModel.GoToCreateGistCommand);
+            OnActivation(d => d(obs.ToBarButtonItem(UIBarButtonSystemItem.Add, x => NavigationItem.RightBarButtonItem = x)));
         }
     }
 }

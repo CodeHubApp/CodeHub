@@ -11,6 +11,12 @@ using GitHubSharp;
 using System.Reactive.Threading.Tasks;
 using System.Reactive.Linq;
 using CodeHub.Core.Utilities;
+using CodeHub.Core.ViewModels.Users;
+
+public sealed class PreserveAttribute : System.Attribute {
+    public bool AllMembers;
+    public bool Conditional;
+}
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -44,6 +50,7 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
         }
 
+        [Preserve]
         public StartupViewModel(
             ISessionService sessionService, 
             IAccountsRepository accountsService, 
@@ -85,7 +92,8 @@ namespace CodeHub.Core.ViewModels.App
 
                 IsLoggingIn = true;
                 await _sessionService.SetSessionAccount(account);
-                NavigateTo(this.CreateViewModel<MenuViewModel>());
+                //                NavigateTo(this.CreateViewModel<MenuViewModel>());
+                NavigateTo(this.CreateViewModel<UserViewModel>().Init("thedillonb"));
                 StarOrWatch();
             }
             catch (UnauthorizedException)

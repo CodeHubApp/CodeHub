@@ -11,7 +11,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
         {
             base.ViewDidLoad();
 
-            var publicElement = new BooleanElement("Public", false);
+            var publicElement = new BooleanElement("Public");
             Source.Root[Source.Root.Count - 1].Insert(0, publicElement);
 
             OnActivation(d => {

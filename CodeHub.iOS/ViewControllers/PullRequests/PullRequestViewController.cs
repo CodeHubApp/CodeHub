@@ -16,8 +16,8 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
         {
             base.ViewDidLoad();
 
-            var commitsElement = new StringElement("Commits", string.Empty) { Image = Octicon.GitCommit.ToImage() };
-            var filesElement = new StringElement("Files Changed", string.Empty) { Image = Octicon.Diff.ToImage() };
+            var commitsElement = new ButtonElement("Commits", Octicon.GitCommit.ToImage());
+            var filesElement = new ButtonElement("Files Changed", Octicon.Diff.ToImage());
             var mergeButton = new StringElement("Merge", Octicon.GitMerge.ToImage());
             var pullRequestSection = new Section { commitsElement, filesElement, mergeButton };
 
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
                         else if (!x.Item1 && x.Item2 && x.Item3 == Octokit.ItemState.Open)
                         {
                             mergeButton.Caption = "Merge";
-                            mergeButton.SelectionStyle = null;
+                            mergeButton.SelectionStyle = UITableViewCellSelectionStyle.Blue;
                             mergeButton.Accessory = UITableViewCellAccessory.DisclosureIndicator;
                         }
                         else

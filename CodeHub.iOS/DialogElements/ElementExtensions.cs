@@ -1,6 +1,5 @@
 ﻿using System;
 using ReactiveUI;
-using System.Reactive.Disposables;
 using UIKit;
 
 namespace CodeHub.iOS.DialogElements
@@ -9,9 +8,7 @@ namespace CodeHub.iOS.DialogElements
     {
         public static IDisposable BindCommand<T>(this StringElement stringElement, IReactiveCommand<T> cmd)
         {
-            var d1 = stringElement.Clicked.InvokeCommand(cmd);
-            var d2 = cmd.CanExecuteObservable.Subscribe(x => stringElement.SelectionStyle = (x ? null : (UITableViewCellSelectionStyle?)UITableViewCellSelectionStyle.None));
-            return new CompositeDisposable(d1, d2);
+            return stringElement.Clicked.InvokeCommand(cmd);
         }
 
         public static IDisposable BindCaption<T>(this Element stringElement, IObservable<T> caption)
@@ -26,7 +23,10 @@ namespace CodeHub.iOS.DialogElements
 
         public static IDisposable BindDisclosure(this StringElement stringElement, IObservable<bool> value)
         {
-            return value.SubscribeSafe(x => stringElement.Accessory = x ? UIKit.UITableViewCellAccessory.DisclosureIndicator : UIKit.UITableViewCellAccessory.None);
+            return value.SubscribeSafe(x => {
+                stringElement.SelectionStyle = x ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None;
+                stringElement.Accessory = x ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+            });
         }
 
         public static IDisposable BindText<T>(this SplitButtonElement.SplitButton button, IObservable<T> value)

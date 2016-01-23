@@ -24,8 +24,6 @@
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <MtouchI18n>
-    </MtouchI18n>
     <MtouchArch>i386</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchProfiling>true</MtouchProfiling>
@@ -43,10 +41,11 @@
     <ConsolePause>false</ConsolePause>
     <MtouchUseLlvm>true</MtouchUseLlvm>
     <MtouchUseThumb>true</MtouchUseThumb>
-    <MtouchI18n>
-    </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>x86_64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchProfiling>true</MtouchProfiling>
+    <MtouchLink>Full</MtouchLink>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,16 +58,15 @@
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseThumb>true</MtouchUseThumb>
-    <MtouchI18n>
-    </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARMv7s</MtouchArch>
     <MtouchDebug>true</MtouchDebug>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>
     </IpaPackageName>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchProfiling>true</MtouchProfiling>
     <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFloat32>true</MtouchFloat32>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -96,10 +94,9 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Distribution</CodesignKey>
-    <BuildIpa>True</BuildIpa>
     <IpaPackageName>
     </IpaPackageName>
-    <MtouchArch>ARMv7s, ARM64</MtouchArch>
+    <MtouchArch>ARMv7s</MtouchArch>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchUseLlvm>true</MtouchUseLlvm>
@@ -206,7 +203,6 @@
     <Compile Include="Factories\Registrations.cs" />
     <Compile Include="Images\UIImageHelper.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
-    <Compile Include="Services\EnvironmentalService.cs" />
     <Compile Include="Services\FilesystemService.cs" />
     <Compile Include="Services\InAppPurchaseService.cs" />
     <Compile Include="Services\NetworkActivityService.cs" />
@@ -488,12 +484,6 @@
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.16.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
-    <Reference Include="Analytics.NET">
-      <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
-    </Reference>
     <Reference Include="MonoTouch.Slideout">
       <HintPath>..\packages\MonoTouch.SlideoutNavigation.1.0.1\lib\Xamarin.iOS10\MonoTouch.Slideout.dll</HintPath>
     </Reference>
@@ -508,6 +498,9 @@
     </Reference>
     <Reference Include="SDWebImage">
       <HintPath>..\Components\sdwebimage-3.7.1.4\lib\ios-unified\SDWebImage.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.17.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Reactive.Linq;
-
-// Analysis disable once CheckNamespace
 using System.Reactive;
 
-
+// Analysis disable once CheckNamespace
 namespace UIKit
 {
     public static class UIKitExtensions

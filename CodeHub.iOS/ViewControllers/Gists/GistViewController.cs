@@ -38,7 +38,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             var splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
             var splitRow2 = new SplitViewElement(Octicon.Pencil.ToImage(), Octicon.Star.ToImage());
-            var ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
+            var ownerElement = new ButtonElement("Owner", Octicon.Person.ToImage());
             var detailsSection = new Section { splitRow1, splitRow2, ownerElement };
             Root.Reset(headerSection, detailsSection, filesSection, commentsSection);
 
@@ -112,14 +112,13 @@ namespace CodeHub.iOS.ViewControllers.Gists
             });
         }
 
-        private class FileElement : StringElement
+        private class FileElement : ButtonElement
         {
             public Octokit.GistFile File { get; }
             public FileElement(Octokit.GistFile file)
                 : base(file.Filename, Octicon.FileCode.ToImage())
             {
                 File = file;
-                SelectionStyle = UITableViewCellSelectionStyle.Blue;
             }
         }
     }

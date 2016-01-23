@@ -12,6 +12,7 @@ using CodeHub.iOS.Views;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 using CodeHub.iOS.Utilities;
+using System.Reactive.Concurrency;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -42,25 +43,28 @@ namespace CodeHub.iOS.ViewControllers
         protected BaseTableViewController(UITableViewStyle style)
             : base(style)
         {
-            this.OnActivation(d => {
-                d(this.WhenAnyValue(x => x.ViewModel)
-                    .OfType<IProvidesTitle>()
-                    .Select(x => x.WhenAnyValue(y => y.Title))
-                    .Switch().Subscribe(x => Title = x ?? string.Empty));
+            var titleObs = this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IProvidesTitle>()
+                .Select(x => x.WhenAnyValue(y => y.Title))
+                .Switch();
 
-                d(this.WhenAnyValue(x => x.ViewModel)
-                    .OfType<IRoutingViewModel>()
-                    .Select(x => x.RequestNavigation)
-                    .Switch()
-                    .Subscribe(x => {
-                        var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
-                        var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                        var viewType = viewModelViewService.GetViewFor(x.GetType());
-                        var view = (IViewFor)serviceConstructor.Construct(viewType);
-                        view.ViewModel = x;
-                        HandleNavigation(x, view as UIViewController);
-                    }));
+            var routeObs = this.WhenAnyValue(x => x.ViewModel)
+                .OfType<IRoutingViewModel>()
+                .Select(x => x.RequestNavigation)
+                .Switch();
+
+            OnActivation(d => {
+                d(titleObs.Subscribe(x => Title = x ?? string.Empty));
+                d(routeObs.Subscribe(x => {
+                    var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
+                    var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
+                    var viewType = viewModelViewService.GetViewFor(x.GetType());
+                    var view = (IViewFor)serviceConstructor.Construct(viewType);
+                    view.ViewModel = x;
+                    HandleNavigation(x, view as UIViewController);
+                }));
             });
+
 
 //            this.Appearing
 //                .Take(1)
@@ -124,7 +128,6 @@ namespace CodeHub.iOS.ViewControllers
         protected virtual void LoadViewModel()
         {
             var iLoadableViewModel = ViewModel as ILoadableViewModel;
-
             if (iLoadableViewModel == null)
                 return;
 
@@ -256,7 +259,7 @@ namespace CodeHub.iOS.ViewControllers
 
         public void OnActivation(Action<Action<IDisposable>> d)
         {
-            Appearing.Subscribe(_ => d(x => _activations.Add(x)));
+            Appearing.ObserveOn(Scheduler.CurrentThread).Subscribe(_ => d(x => _activations.Add(x)));
         }
 
         public BaseTableViewController(UITableViewStyle style)
@@ -289,6 +292,9 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidAppear(animated);
             _appearedSubject.OnNext(animated);
+
+            if (TableView.Superview == null)
+                Add(TableView);
         }
 
         protected override void Dispose(bool disposing)
@@ -307,6 +313,7 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidDisappear(animated);
             _disappearedSubject.OnNext(animated);
+            TableView.RemoveFromSuperview();
         }
     }
 }

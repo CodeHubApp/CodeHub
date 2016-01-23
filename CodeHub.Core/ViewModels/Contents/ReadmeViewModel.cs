@@ -64,7 +64,7 @@ namespace CodeHub.Core.ViewModels.Contents
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(x => {
-                var contentTask = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadmeRendered()
+                var contentTask = applicationService.GitHubClient.Repository.Content.GetReadmeHtml(RepositoryOwner, RepositoryName)
                     .ContinueWith(t => ContentText = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
                 
                 var modelTask = applicationService.GitHubClient.Repository.Content.GetReadme(RepositoryOwner, RepositoryName)
@@ -76,9 +76,7 @@ namespace CodeHub.Core.ViewModels.Contents
 
         private void GoToWebBrowser(Uri uri)
         {
-            var vm = this.CreateViewModel<WebBrowserViewModel>();
-            vm.Init(uri);
-            NavigateTo(vm);
+            NavigateTo(new WebBrowserViewModel().Init(uri));
         }
 
         public ReadmeViewModel Init(string repositoryOwner, string repositoryName, Readme readme = null)

@@ -9,12 +9,12 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 {
     public class RepositoryViewController : BaseDialogViewController<RepositoryViewModel>
     {
-        private readonly SplitButtonElement _split = new SplitButtonElement();
-        private readonly SplitViewElement[] _splitElements = new SplitViewElement[3];
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            var splitButton = new SplitButtonElement();
+            var splitElements = new SplitViewElement[3];
 
             HeaderView.Image = Images.LoginUserUnknown;
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
@@ -40,18 +40,18 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 Accessory = UITableViewCellAccessory.DisclosureIndicator 
             };
 
-            _splitElements[0] = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
-            _splitElements[1] = new SplitViewElement(Octicon.IssueOpened.ToImage(), Octicon.Organization.ToImage());
-            _splitElements[2] = new SplitViewElement(Octicon.Tag.ToImage(), Octicon.GitBranch.ToImage());
+            splitElements[0] = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+            splitElements[1] = new SplitViewElement(Octicon.IssueOpened.ToImage(), Octicon.Organization.ToImage());
+            splitElements[2] = new SplitViewElement(Octicon.Tag.ToImage(), Octicon.GitBranch.ToImage());
 
-            var stargazers = _split.AddButton("Stargazers", "-");
-            var watchers = _split.AddButton("Watchers", "-");
-            var forks = _split.AddButton("Forks", "-");
+            var stargazers = splitButton.AddButton("Stargazers", "-");
+            var watchers = splitButton.AddButton("Watchers", "-");
+            var forks = splitButton.AddButton("Forks", "-");
 
             var renderFunc = new Action(() => {
                 var model = ViewModel.Repository;
                 var sec1 = new Section();
-                sec1.Add(_splitElements);
+                sec1.Add(splitElements);
 
                 if (model.Parent != null)
                 {
@@ -67,7 +67,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 if (ViewModel.Readme != null)
                     sec2.Add(readmeElement);
 
-                Root.Reset(new Section { _split }, sec1, sec2, new Section { commitsElement, pullRequestsElement, sourceElement });
+                Root.Reset(new Section { splitButton }, sec1, sec2, new Section { commitsElement, pullRequestsElement, sourceElement });
 
                 if (!string.IsNullOrEmpty(model.Homepage))
                 {
@@ -78,10 +78,10 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             OnActivation(d => {
                 d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToOwnerCommand));
 
-                d(_splitElements[1].Button1.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
-                d(_splitElements[1].Button2.Clicked.InvokeCommand(ViewModel.GoToContributors));
-                d(_splitElements[2].Button1.Clicked.InvokeCommand(ViewModel.GoToReleasesCommand));
-                d(_splitElements[2].Button2.Clicked.InvokeCommand(ViewModel.GoToBranchesCommand));
+                d(splitElements[1].Button1.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
+                d(splitElements[1].Button2.Clicked.InvokeCommand(ViewModel.GoToContributors));
+                d(splitElements[2].Button1.Clicked.InvokeCommand(ViewModel.GoToReleasesCommand));
+                d(splitElements[2].Button2.Clicked.InvokeCommand(ViewModel.GoToBranchesCommand));
 
                 d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));
                 d(issuesElement.Clicked.InvokeCommand(ViewModel.GoToIssuesCommand));
@@ -112,9 +112,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     .IsNotNull()
                     .Subscribe(x =>
                         {
-                            _splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
-                            _splitElements[0].Button2.Text = x.Language ?? "N/A";
-                            _splitElements[1].Button1.Text = x.OpenIssuesCount + (x.OpenIssuesCount == 1 ? " Issue" : " Issues");
+                            splitElements[0].Button1.Text = x.Private ? "Private" : "Public";
+                            splitElements[0].Button2.Text = x.Language ?? "N/A";
+                            splitElements[1].Button1.Text = x.OpenIssuesCount + (x.OpenIssuesCount == 1 ? " Issue" : " Issues");
                         }));
 
                 d(this.WhenAnyValue(x => x.ViewModel.RepositoryName)
@@ -125,15 +125,15 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
                 d(this.WhenAnyValue(x => x.ViewModel.Branches)
                     .Select(x => x == null ? "Branches" : (x.Count >= 100 ? "100+" : x.Count.ToString()) + (x.Count == 1 ? " Branch" : " Branches"))
-                    .SubscribeSafe(x => _splitElements[2].Button2.Text = x));
+                    .SubscribeSafe(x => splitElements[2].Button2.Text = x));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Contributors)
                     .Select(x => x == null ? "Contributors" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Contributor" : " Contributors"))
-                    .SubscribeSafe(x => _splitElements[1].Button2.Text = x));
+                    .SubscribeSafe(x => splitElements[1].Button2.Text = x));
                 
                 d(this.WhenAnyValue(x => x.ViewModel.Releases)
                     .Select(x => x == null ? "Releases" : (x >= 100 ? "100+" : x.ToString()) + (x == 1 ? " Release" : " Releases"))
-                    .SubscribeSafe(x => _splitElements[2].Button1.Text = x));
+                    .SubscribeSafe(x => splitElements[2].Button1.Text = x));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Description).Subscribe(x => RefreshHeaderView(subtext: x)));
 

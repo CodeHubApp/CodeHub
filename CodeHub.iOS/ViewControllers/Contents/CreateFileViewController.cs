@@ -15,12 +15,11 @@ namespace CodeHub.iOS.ViewControllers.Contents
         {
             base.ViewDidLoad();
 
-            var titleElement = new DummyInputElement("Name");
-            titleElement.SpellChecking = false;
-
-            var descriptionElement = new ExpandingInputElement("Content");
-            descriptionElement.Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize);
-            descriptionElement.SpellChecking = false;
+            var titleElement = new DummyInputElement("Name") { SpellChecking = false };
+            var descriptionElement = new ExpandingInputElement("Content") { 
+                SpellChecking = false, 
+                Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize)
+            };
 
             var source = new DialogTableViewSource(TableView);
             source.Root.Add(new Section { titleElement, descriptionElement });

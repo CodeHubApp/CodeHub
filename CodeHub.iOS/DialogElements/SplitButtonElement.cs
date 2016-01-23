@@ -97,16 +97,16 @@ namespace CodeHub.iOS.DialogElements
         public class SplitButton : UIButton
         {
             private readonly UILabel _caption;
-            private readonly UILabel _text;
+            private readonly UILabel _label;
 
             public string Text
             {
-                get { return _text.Text; }
+                get { return _label.Text; }
                 set 
                 { 
-                    if (_text.Text == value)
+                    if (_label.Text == value)
                         return;
-                    _text.Text = value; 
+                    _label.Text = value; 
                     SetNeedsDisplay();
                 }
             }
@@ -128,11 +128,11 @@ namespace CodeHub.iOS.DialogElements
                 _caption.Text = caption;
                 this.Add(_caption);
 
-                _text = new UILabel();
-                _text.TextColor = TextColor;
-                _text.Font = TextFont;
-                _text.Text = text;
-                this.Add(_text);
+                _label = new UILabel();
+                _label.TextColor = TextColor;
+                _label.Font = TextFont;
+                _label.Text = text;
+                this.Add(_label);
 
                 this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
                 this.TouchUpInside += (sender, e) => this.BackgroundColor = UIColor.White;
@@ -143,8 +143,8 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
 
-                _text.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
-                _caption.Frame = new CGRect(12, _text.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
+                _label.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
+                _caption.Frame = new CGRect(12, _label.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
             }
         }
 

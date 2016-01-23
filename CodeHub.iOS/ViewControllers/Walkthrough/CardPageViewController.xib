@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9531"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CardPageViewController" customModule="CodeHub" customModuleProvider="target">
+            <connections>
+                <outlet property="contentView" destination="hhx-q8-WgW" id="EV8-bc-g43"/>
+                <outlet property="view" destination="HvQ-Sg-MG6" id="aAP-9j-fjP"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="HvQ-Sg-MG6">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hhx-q8-WgW">
+                    <rect key="frame" x="140" y="30" width="320" height="540"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="540" id="KsC-fd-k96"/>
+                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="320" id="Ur3-mF-gHV"/>
+                    </constraints>
+                    <variation key="heightClass=regular" misplaced="YES">
+                        <rect key="frame" x="141" y="130" width="320" height="540"/>
+                    </variation>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="hhx-q8-WgW" firstAttribute="centerY" secondItem="HvQ-Sg-MG6" secondAttribute="centerY" id="5AW-ub-58A"/>
+                <constraint firstItem="hhx-q8-WgW" firstAttribute="leading" secondItem="HvQ-Sg-MG6" secondAttribute="leading" priority="750" constant="10" id="AVm-bS-6gB"/>
+                <constraint firstItem="hhx-q8-WgW" firstAttribute="centerX" secondItem="HvQ-Sg-MG6" secondAttribute="centerX" id="Boa-JM-hwC"/>
+                <constraint firstAttribute="trailing" secondItem="hhx-q8-WgW" secondAttribute="trailing" priority="750" constant="10" id="hi6-BC-5Xf"/>
+                <constraint firstItem="hhx-q8-WgW" firstAttribute="top" secondItem="HvQ-Sg-MG6" secondAttribute="top" priority="750" constant="10" id="l3j-MR-mNd">
+                    <variation key="heightClass=compact-widthClass=compact" constant="10"/>
+                </constraint>
+                <constraint firstAttribute="bottom" secondItem="hhx-q8-WgW" secondAttribute="bottom" priority="750" constant="10" id="rzD-tp-3G3"/>
+            </constraints>
+            <point key="canvasLocation" x="36" y="24"/>
+        </view>
+    </objects>
+</document>

@@ -17,32 +17,45 @@ namespace CodeHub.iOS.ViewControllers.App
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
 
-        public StartupViewController()
+        public override void ViewWillAppear(bool animated)
         {
-            Appeared.Where(_ => ViewModel != null).Subscribe(_ => ViewModel.StartupCommand.ExecuteIfCan());
-            Appearing.Subscribe(_ => UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade));
-            Disappearing.Subscribe(_ => {
-                UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
-                UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
-            });
+            base.ViewWillAppear(animated);
+            UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+            ViewModel.StartupCommand.ExecuteIfCan();
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
+            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
         }
 
         protected override void HandleNavigation(CodeHub.Core.ViewModels.IBaseViewModel viewModel, UIViewController view)
         {
-            if (view is MenuViewController)
-            {
-                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
-                var nav = ((UINavigationController)appDelegate.Window.RootViewController);
-                var slideout = new SlideoutNavigationController();
-                slideout.MenuViewController = new MenuNavigationController(view, slideout);
-                UIView.Transition(nav.View, 0.3, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
-                    () => nav.PushViewController(slideout, false), null);
-            }
-            else
-            {
-                PresentViewController(new ThemedNavigationController(view), true, null);
-                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
-            }
+//            if (view is MenuViewController)
+//            {
+//                var appDelegate = (AppDelegate)UIApplication.SharedApplication.Delegate;
+//                var nav = ((UINavigationController)appDelegate.Window.RootViewController);
+//                var slideout = new SlideoutNavigationController();
+//                slideout.MenuViewController = new MenuNavigationController(view, slideout);
+//                UIView.Transition(nav.View, 0.3, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.TransitionCrossDissolve,
+//                    () => nav.PushViewController(slideout, false), null);
+//            }
+//            else
+//            {
+//                PresentViewController(new ThemedNavigationController(view), true, null);
+//                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
+//            }
+
+            var nav = new ThemedNavigationController(view);
+            PresentViewController(nav, true, null);
+//            NavigationController.PushViewController(nav, true);
         }
  
         public override void ViewWillLayoutSubviews()
@@ -58,6 +71,7 @@ namespace CodeHub.iOS.ViewControllers.App
         {
             base.ViewDidLoad();
             View.AutosizesSubviews = true;
+            View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
 
             _activityView = new UIActivityIndicatorView {
                 HidesWhenStopped = true,
@@ -82,32 +96,30 @@ namespace CodeHub.iOS.ViewControllers.App
             _imgView.Layer.MasksToBounds = true;
             Add(_imgView);
 
-            View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
-
-            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => x).Subscribe(x => {
-                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
-                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 1, null);
-                _activityView.StartAnimating();
-            });
-
-            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => !x).Subscribe(x => {
-                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
-                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 0, null);
-                _activityView.StopAnimating();
-            });
-
-            this.WhenAnyValue(x => x.ViewModel.Status).Subscribe(x => _statusLabel.Text = x);
-
-            this.WhenAnyValue(x => x.ViewModel.Avatar)
-                .Select(x => x.ToUri(128))
-                .Where(x => x != null)
-                .Select(x => BlobCache.LocalMachine.LoadImageFromUrl(x.AbsoluteUri))
-                .Switch()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(img => {
-                    _imgView.Image = Images.LoginUserUnknown;
-                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () => _imgView.Image = img.ToNative(), null);
-                });
+//            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => x).Subscribe(x => {
+//                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
+//                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 1, null);
+//                _activityView.StartAnimating();
+//            });
+//
+//            this.WhenAnyValue(x => x.ViewModel.IsLoggingIn).Where(x => !x).Subscribe(x => {
+//                UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () =>
+//                    _imgView.Alpha = _statusLabel.Alpha = _activityView.Alpha = 0, null);
+//                _activityView.StopAnimating();
+//            });
+//
+//            this.WhenAnyValue(x => x.ViewModel.Status).Subscribe(x => _statusLabel.Text = x);
+//
+//            this.WhenAnyValue(x => x.ViewModel.Avatar)
+//                .Select(x => x.ToUri(128))
+//                .Where(x => x != null)
+//                .Select(x => BlobCache.LocalMachine.LoadImageFromUrl(x.AbsoluteUri))
+//                .Switch()
+//                .ObserveOn(RxApp.MainThreadScheduler)
+//                .Subscribe(img => {
+//                    _imgView.Image = Images.LoginUserUnknown;
+//                    UIView.Transition(_imgView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.BeginFromCurrentState, () => _imgView.Image = img.ToNative(), null);
+//                });
         }
 
         public override bool ShouldAutorotate()

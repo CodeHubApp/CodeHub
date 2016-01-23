@@ -7,6 +7,22 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
+    public class ButtonElement : StringElement
+    {
+        public ButtonElement (string caption, string value, UIImage image = null) 
+            : base (caption, value, UITableViewCellStyle.Value1) 
+        {
+            Image = image;
+            Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            SelectionStyle = UITableViewCellSelectionStyle.Blue;
+        }
+
+        public ButtonElement (string caption, UIImage image = null) 
+            : this (caption, null, image)
+        {
+        }
+    }
+
     public class StringElement : Element 
     {
         public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
@@ -22,29 +38,24 @@ namespace CodeHub.iOS.DialogElements
         public UIFont SubtitleFont;
         public UIColor TextColor;
         private UIImage _image;
-        public UIColor BackgroundColor, DetailColor;
         private Uri _imageUri;
         private string _value;
         private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
         private readonly Subject<object> _tapped = new Subject<object>();
-        private UITableViewCellSelectionStyle? _selectionStyle;
+        private UITableViewCellSelectionStyle _selectionStyle;
 
         public IObservable<object> Clicked
         {
             get { return _tapped.AsObservable(); }
         }
 
-        public UITableViewCellSelectionStyle? SelectionStyle
+        public UITableViewCellSelectionStyle SelectionStyle
         {
             get { return _selectionStyle; }
             set
             {
                 _selectionStyle = value;
-                var cell = GetActiveCell();
-                if (cell != null)
-                {
-                    cell.SelectionStyle = value ?? (_tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None);
-                }
+                GetActiveCell().Do(x => x.SelectionStyle = value);
             }
         }
 
@@ -66,8 +77,7 @@ namespace CodeHub.iOS.DialogElements
             set
             {
                 _accessory = value;
-                var cell = GetActiveCell();
-                if (cell != null) cell.Accessory = value;
+                GetActiveCell().Do(x => x.Accessory = value);
             }
         }
 
@@ -77,9 +87,7 @@ namespace CodeHub.iOS.DialogElements
         {
             Font = DefaultTitleFont.WithSize(DefaultTitleFont.PointSize);
             SubtitleFont = DefaultDetailFont.WithSize(DefaultDetailFont.PointSize);
-            BackgroundColor = BgColor;
             TextColor = DefaultTitleColor;
-            DetailColor = DefaultDetailColor;
         }
 
         public StringElement (UIImage image)
@@ -111,6 +119,11 @@ namespace CodeHub.iOS.DialogElements
             : this (caption, value) 
         { 
             this.Style = style;
+        }
+
+        public StringElement (string caption, UITableViewCellStyle style)
+            : this (caption, null, style) 
+        { 
         }
 
         public UIImage Image {
@@ -154,7 +167,7 @@ namespace CodeHub.iOS.DialogElements
 
         protected virtual UITableViewCell InitializeCell(UITableViewCell cell)
         {
-            cell.SelectionStyle = SelectionStyle ?? (_tapped.HasObservers ? UITableViewCellSelectionStyle.Blue : UITableViewCellSelectionStyle.None);
+            cell.SelectionStyle = SelectionStyle;
             cell.TextLabel.Text = Caption;
             cell.TextLabel.TextColor = TextColor;
             cell.ImageView.Image = Image;
@@ -166,7 +179,7 @@ namespace CodeHub.iOS.DialogElements
             if (cell.DetailTextLabel != null)
             {
                 cell.DetailTextLabel.Text = Value ?? "";
-                cell.DetailTextLabel.TextColor = DetailColor;
+                cell.DetailTextLabel.TextColor = DefaultDetailColor;
             }
             return cell;
         }

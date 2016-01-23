@@ -99,7 +99,7 @@ namespace CodeHub.iOS
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
-            OctokitClientFactory.CreateMessageHandler = () => new HttpMessageHandler();
+            OctokitClientFactory.CreateMessageHandler = () => new System.Net.Http.HttpClientHandler();
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
             var viewModelViews = Locator.Current.GetService<IViewModelViewService>();
@@ -112,14 +112,14 @@ namespace CodeHub.iOS
 //            Locator.Current.GetService<ISessionService>().AccountObservable.Subscribe(x => {
 //            });
 
-            try
-            {
-                Data.LegacyMigration.Migrate(Locator.Current.GetService<IAccountsRepository>());
-            }
-            catch (Exception e)
-            {
-                this.Log().DebugException("Unable to migrate db!", e);
-            }
+//            try
+//            {
+//                Data.LegacyMigration.Migrate(Locator.Current.GetService<IAccountsRepository>());
+//            }
+//            catch (Exception e)
+//            {
+//                this.Log().DebugException("Unable to migrate db!", e);
+//            }
 
             bool hasSeenWelcome;
             if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
@@ -177,7 +177,7 @@ namespace CodeHub.iOS
             }
         }
 
-        class HttpMessageHandler : NativeMessageHandler
+        class HttpMessageHandler : System.Net.Http.HttpClientHandler
         {
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
             {

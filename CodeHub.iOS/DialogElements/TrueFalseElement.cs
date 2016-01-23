@@ -10,7 +10,6 @@ namespace CodeHub.iOS.DialogElements
     {
         private readonly Subject<bool> _changedSubject = new Subject<bool>();
         private bool _value;
-        private UIImage _image;
 
         public IObservable<bool> Changed
         {
@@ -33,18 +32,7 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
-        public UIImage Image {
-            get { return _image; }
-            set 
-            {
-                _image = value;
-                var cell = GetActiveCell();
-                if (cell != null)
-                    cell.ImageView.Image = value;
-            }
-        }
-
-        public BooleanElement (string caption, bool value) 
+        public BooleanElement (string caption, bool value = false) 
         {  
             Caption = caption;
             _value = value;
@@ -58,7 +46,6 @@ namespace CodeHub.iOS.DialogElements
             cell.TextLabel.Font = StringElement.DefaultTitleFont.WithSize(StringElement.DefaultTitleFont.PointSize);
             cell.TextLabel.TextColor = StringElement.DefaultTitleColor;
             cell.TextLabel.Text = Caption;
-            cell.ImageView.Image = _image;
 
             var weakThis = new WeakReference<BooleanElement>(this);
             cell.Switch.ValueChanged += UpdateValueChanged(weakThis);

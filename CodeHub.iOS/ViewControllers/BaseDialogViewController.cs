@@ -123,24 +123,16 @@ namespace CodeHub.iOS.ViewControllers
             _backgroundHeaderView.Layer.ZPosition = -1f;
             TableView.InsertSubview(_backgroundHeaderView, 0);
 
-            OnActivation(d => {
-                var scrollingObservable = _dialogSource.ScrolledObservable
-                    .Select(x => x.Y).StartWith(TableView.ContentOffset.Y);
+            var scrollingObservable = _dialogSource.ScrolledObservable.Select(x => x.Y).StartWith(TableView.ContentOffset.Y);
+            var shadowObs = scrollingObservable.Where(x => x > 0 && NavigationController != null);
+            var shadowImgObs = scrollingObservable.Where(x => x <= 0).Where(_ => NavigationController != null)
+                .Where(_ => NavigationController.NavigationBar.ShadowImage == null);
+            var slideObs = scrollingObservable.Where(_ => SlideUpTitle != null);
 
-                d(scrollingObservable
-                    .Where(x => x > 0)
-                    .Where(_ => NavigationController != null)
-                    .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null));
-                
-                d(scrollingObservable
-                    .Where(x => x <= 0)
-                    .Where(_ => NavigationController != null)
-                    .Where(_ => NavigationController.NavigationBar.ShadowImage == null)
-                    .Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage()));
-                
-                d(scrollingObservable
-                    .Where(_ => SlideUpTitle != null)
-                    .Subscribe(x => SlideUpTitle.Offset = 108 + 28f - x));
+            OnActivation(d => {
+                d(shadowObs.Subscribe(_ => NavigationController.NavigationBar.ShadowImage = null));
+                d(shadowImgObs.Subscribe(_ => NavigationController.NavigationBar.ShadowImage = new UIImage()));
+                d(slideObs.Subscribe(x => SlideUpTitle.Offset = 108 + 28f - x));
             });
         }
     }

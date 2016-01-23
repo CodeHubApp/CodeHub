@@ -179,13 +179,15 @@ namespace CodeHub.Core.ViewModels.App
             });
 
             LoadCommand = ReactiveCommand.CreateAsyncTask(_ => {
-                var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
-                notifications.ToBackground(x => Notifications = x.Count);
+//                var notifications = sessionService.GitHubClient.Notification.GetAllForCurrent();
+//                notifications.ToBackground(x => Notifications = x.Count);
+////
+//                var organizations = sessionService.GitHubClient.Organization.GetAllForCurrent();
+//                organizations.ToBackground(x => Organizations = x);
+//
+//                return Task.WhenAll(notifications, organizations);
 
-                var organizations = sessionService.GitHubClient.Organization.GetAllForCurrent();
-                organizations.ToBackground(x => Organizations = x);
-
-                return Task.WhenAll(notifications, organizations);
+                return Task.FromResult(Unit.Default);
             });
         }
 

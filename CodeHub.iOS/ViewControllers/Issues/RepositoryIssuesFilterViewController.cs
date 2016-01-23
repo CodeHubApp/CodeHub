@@ -34,12 +34,12 @@ namespace CodeHub.iOS.ViewControllers.Issues
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
 
-            var stateElement = new StringElement("State", string.Empty, UITableViewCellStyle.Value1);
-            var labelElement = new StringElement("Labels", string.Empty, UITableViewCellStyle.Value1);
-            var assigneeElement = new StringElement("Assignee", string.Empty, UITableViewCellStyle.Value1);
-            var milestoneElement = new StringElement("Milestone", string.Empty, UITableViewCellStyle.Value1);
-            var fieldElement = new StringElement("Field", string.Empty, UITableViewCellStyle.Value1);
-            var ascElement = new BooleanElement("Ascending", false);
+            var stateElement = new ButtonElement("State");
+            var labelElement = new ButtonElement("Labels");
+            var assigneeElement = new ButtonElement("Assignee");
+            var milestoneElement = new ButtonElement("Milestone");
+            var fieldElement = new ButtonElement("Field");
+            var ascElement = new BooleanElement("Ascending");
 
             var filterSection = new Section("Filter") { stateElement, mentionedElement, creatorElement, labelElement, assigneeElement, milestoneElement };
             var orderSection = new Section("Order By") { fieldElement, ascElement };

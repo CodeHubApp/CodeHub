@@ -4,12 +4,13 @@ using Splat;
 using CodeHub.Core.Services;
 using Octokit;
 using ModernHttpClient;
+using System.Net.Http;
 
 namespace CodeHub.Core.Utilities
 {
     public static class OctokitClientFactory
     {
-        public static Func<NativeMessageHandler> CreateMessageHandler = () => new NativeMessageHandler();
+        public static Func<HttpClientHandler> CreateMessageHandler = () => new HttpClientHandler();
         public static readonly string[] Scopes = { "user", "repo", "gist", "notifications" };
 
         public static GitHubClient Create(Uri domain, Credentials credentials)

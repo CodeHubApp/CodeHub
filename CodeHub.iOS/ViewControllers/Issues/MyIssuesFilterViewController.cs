@@ -25,7 +25,7 @@ namespace CodeHub.iOS.ViewControllers.Issues
             var typeElement = new StringElement("Type", string.Empty, UITableViewCellStyle.Value1);
             var stateElement = new StringElement("State", string.Empty, UITableViewCellStyle.Value1);
             var fieldElement = new StringElement("Field", string.Empty, UITableViewCellStyle.Value1);
-            var ascElement = new BooleanElement("Ascending", false);
+            var ascElement = new BooleanElement("Ascending");
             var labelElement = new EntryElement("Labels", "bug,ui,@user", string.Empty) {
                 TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None
             };
