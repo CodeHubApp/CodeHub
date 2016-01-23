@@ -83,7 +83,6 @@ namespace CodeFramework.Core.ViewModels
         /// <param name="e">E.</param>
         protected void ReportException(Exception e)
         {
-            e.Report();
             Messenger.Publish(new ErrorMessage(this, e));
         }
     }

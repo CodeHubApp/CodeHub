@@ -147,14 +147,12 @@
     <Compile Include="Messages\CancelationMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Services\AccountsService.cs" />
-    <Compile Include="Services\ErrorService.cs" />
     <Compile Include="Services\IAccountPreferencesService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
     <Compile Include="Services\IAnalyticsService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IEnvrionmentService.cs" />
-    <Compile Include="Services\IErrorService.cs" />
     <Compile Include="Services\IHttpClientService.cs" />
     <Compile Include="Services\IJsonHttpClientService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
@@ -198,12 +196,6 @@
     <Reference Include="ModernHttpClient">
       <HintPath>..\packages\modernhttpclient.2.4.2\lib\Xamarin.iOS10\ModernHttpClient.dll</HintPath>
     </Reference>
-    <Reference Include="Flurry.Analytics.iOS">
-      <HintPath>..\packages\Flurry.Analytics.1.2.1\lib\Xamarin.iOS10\Flurry.Analytics.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Flurry.Analytics.Portable">
-      <HintPath>..\packages\Flurry.Analytics.Portable.1.2.0\lib\XamariniOS10\Flurry.Analytics.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="Cirrious.CrossCore.Touch">
       <HintPath>..\packages\MvvmCross.HotTuna.CrossCore.3.5.1\lib\Xamarin.iOS10\Cirrious.CrossCore.Touch.dll</HintPath>
     </Reference>
@@ -222,17 +214,17 @@
     <Reference Include="Cirrious.MvvmCross.Plugins.Messenger">
       <HintPath>..\packages\MvvmCross.HotTuna.Plugin.Messenger.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Cirrious.MvvmCross.Touch">
       <HintPath>..\packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.Touch.dll</HintPath>
     </Reference>
     <Reference Include="Cirrious.MvvmCross">
       <HintPath>..\packages\MvvmCross.HotTuna.MvvmCrossLibraries.3.5.1\lib\Xamarin.iOS10\Cirrious.MvvmCross.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="GitHubSharp">
-      <HintPath>..\packages\GitHubClient.1.0.6.0\lib\portable-net45+win+wpa81\GitHubSharp.dll</HintPath>
+      <HintPath>..\packages\GitHubClient.1.0.8.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

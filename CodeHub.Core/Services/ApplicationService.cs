@@ -45,9 +45,6 @@ namespace CodeHub.Core.Services
 
         public void ActivateUser(GitHubAccount account, Client client)
         {
-			Flurry.Analytics.Portable.AnalyticsApi.SetUserId(account.Username);
-			Flurry.Analytics.Portable.AnalyticsApi.LogEvent ("event:Login");
-
             Accounts.SetActiveAccount(account);
             Account = account;
             Client = client;

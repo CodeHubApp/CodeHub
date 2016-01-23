@@ -21,8 +21,6 @@ namespace CodeFramework.iOS.Views
 		{
 			base.ViewDidAppear (animated);
 			if (!_appeared) {
-				Flurry.Analytics.FlurryAgent.LogPageView ();
-				Flurry.Analytics.FlurryAgent.LogEvent ("view:" + this.GetType ().Name);
 				_appeared = true;
 			}
 		}

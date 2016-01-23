@@ -59,9 +59,8 @@ namespace CodeFramework.ViewControllers
                     else
                         RenderGroupedItems(groupedItems, element, viewModel.MoreItems);
                 }
-                catch (Exception e)
+                catch
                 {
-                    e.Report();
                 }
             };
 
@@ -90,9 +89,8 @@ namespace CodeFramework.ViewControllers
                         if (element != null)
                             sec.Add(element);
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        e.Report();
                     }
                 }
             }
@@ -122,9 +120,8 @@ namespace CodeFramework.ViewControllers
                         if (sec.Elements.Count > 0)
                             sections.Add(sec);
                     }
-                    catch (Exception e)
+                    catch 
                     {
-                        e.Report();
                     }
                 }
             }

@@ -68,10 +68,6 @@ namespace CodeHub.iOS
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
-			Flurry.Analytics.FlurryAgent.StartSession("4F3YDWSN8XBB4QKTNHYS");
-
-            Mvx.Resolve<CodeFramework.Core.Services.IErrorService>().Init("http://sentry.dillonbuchanan.com/api/5/store/", "17e8a650e8cc44678d1bf40c9d86529b ", "9498e93bcdd046d8bb85d4755ca9d330");
-
             // Setup theme
             Theme.Setup();
 //
@@ -96,7 +92,7 @@ namespace CodeHub.iOS
 
             try
             {
-                this.StampInstallDate("CodeHub", DateTime.UtcNow.ToString());
+                this.StampInstallDate("CodeHub", "CodeHub");
             }
             catch
             {
@@ -135,7 +131,6 @@ namespace CodeHub.iOS
 
             if (string.Equals(e, FeatureIds.PushNotifications))
             {
-				Flurry.Analytics.FlurryAgent.LogEvent ("event:Purchased Push Notifications");
 				var notificationTypes = UIUserNotificationSettings.GetSettingsForTypes (UIUserNotificationType.Alert | UIUserNotificationType.Sound, null);
 				UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
             }

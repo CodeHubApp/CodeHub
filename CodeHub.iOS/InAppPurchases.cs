@@ -130,7 +130,6 @@ namespace CodeHub.iOS
                     catch (Exception e)
                     {
                         MonoTouch.Utilities.ShowAlert("Error", "Unable to process transaction: " + e.Message);
-                        e.Report();
                     }
                 }
             }
