@@ -25,10 +25,6 @@ namespace CodeFramework.iOS
         UIImage WebFowardButton { get; }
         UIImage ForkButton { get; }
 
-        UIImage AnonymousUserImage { get; }
-
-        UIImage LoginUserUnknown { get; }
-
         UIImage IssueCellImage1 { get; }
         UIImage IssueCellImage2 { get; }
         UIImage IssueCellImage3 { get; }
@@ -62,6 +58,16 @@ namespace CodeHub.iOS
     {
         public static Theme CurrentTheme { get; private set; }
 
+        private static UIImage CreateBackgroundImage(UIColor color)
+        {
+            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 1f));
+            color.SetFill();
+            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 1));
+            var img = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return img;
+        }
+
         public static void Setup()
         {
             var theme = new Theme();
@@ -70,18 +76,21 @@ namespace CodeHub.iOS
 
             var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
 
+            var primaryColor = UIColor.FromRGB(50, 50, 50);
+            var backgroundImg = CreateBackgroundImage(primaryColor);
+
             bool largeFonts;
             if (!defaultValues.TryGet<bool>("large_fonts", out largeFonts))
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
-            RepositoryCellView.RoundImages = false;
             MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
             MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
-            UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(50, 50, 50);
+            UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
+            UINavigationBar.Appearance.BarTintColor = primaryColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
@@ -132,8 +141,6 @@ namespace CodeHub.iOS
         public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
         public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
         public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
-
-        public UIImage AnonymousUserImage { get { return Images.Anonymous; } }
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
 
@@ -215,7 +222,5 @@ namespace CodeHub.iOS
         }
 
         public float FontSizeRatio { get; set; }
-
-        public UIImage LoginUserUnknown { get { return Images.LoginUserUnknown; } }
     }
 }

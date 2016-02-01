@@ -6,12 +6,10 @@ namespace CodeFramework.Core.Services
     public class JsonHttpClientService : IJsonHttpClientService
     {
         private readonly IHttpClientService _httpClientService;
-        private readonly IJsonSerializationService _jsonSerializationService;
 
-        public JsonHttpClientService(IHttpClientService httpClientService, IJsonSerializationService jsonSerializationService)
+        public JsonHttpClientService(IHttpClientService httpClientService)
         {
             _httpClientService = httpClientService;
-            _jsonSerializationService = jsonSerializationService;
         }
 
         public async Task<TMessage> Get<TMessage>(string url)
@@ -20,7 +18,7 @@ namespace CodeFramework.Core.Services
             client.Timeout = new TimeSpan(0, 0, 30);
             var response = await client.GetAsync(url);
             var data = await response.Content.ReadAsStringAsync();
-            return _jsonSerializationService.Deserialize<TMessage>(data);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<TMessage>(data);
         }
 
     }

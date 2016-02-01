@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
     {
-        private readonly UIBarButtonItem _actionButton;
+        protected UIBarButtonItem _actionButton;
 
         public new RepositoriesViewModel ViewModel
         {  
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.Repositories
         protected Element CreateElement(RepositoryModel repo)
         {
             var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var imageUrl = repo.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;
+            var imageUrl = repo.Owner?.AvatarUrl;
             var sse = new RepositoryElement(repo.Name, repo.Watchers, repo.Forks, description, repo.Owner.Login, imageUrl) { ShowOwner = ViewModel.ShowRepositoryOwner };
             sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
             return sse;

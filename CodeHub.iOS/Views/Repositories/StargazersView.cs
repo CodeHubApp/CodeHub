@@ -1,5 +1,3 @@
-using CodeFramework.iOS.Elements;
-using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.iOS.Views.User;
 
 namespace CodeHub.iOS.Views.Repositories
@@ -8,10 +6,20 @@ namespace CodeHub.iOS.Views.Repositories
     {
 		public override void ViewDidLoad()
 		{
-			Title = "Stargazers".t();
-			NoItemsText = "No Stargazers".t();
+			Title = "Stargazers";
+			NoItemsText = "No Stargazers";
 			base.ViewDidLoad();
 		}
+    }
+
+    public class WatchersView : BaseUserCollectionView
+    {
+        public override void ViewDidLoad()
+        {
+            Title = "Watchers";
+            NoItemsText = "No Watchers";
+            base.ViewDidLoad();
+        }
     }
 }
 

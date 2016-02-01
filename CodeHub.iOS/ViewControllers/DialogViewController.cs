@@ -310,6 +310,10 @@ namespace MonoTouch.Dialog
 			}
 		}
 
+        protected virtual void DidScroll(CGPoint p)
+        {
+        }
+
 		public class Source : UITableViewSource {
 			const float yboundary = 65;
 			protected DialogViewController Container;
@@ -416,6 +420,8 @@ namespace MonoTouch.Dialog
 			#region Pull to Refresh support
 			public override void Scrolled (UIScrollView scrollView)
 			{
+                Container.DidScroll(Root.TableView.ContentOffset);
+
 				if (!checkForRefresh)
 					return;
 				if (Container.reloading)

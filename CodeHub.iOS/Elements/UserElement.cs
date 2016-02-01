@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.Dialog;
 using UIKit;
+using CodeHub.iOS;
 
 namespace CodeFramework.iOS.Elements
 {
@@ -19,7 +20,7 @@ namespace CodeFramework.iOS.Elements
              if (!string.IsNullOrWhiteSpace(realName))
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            Image = Theme.CurrentTheme.AnonymousUserImage;
+            Image = Images.Avatar;
             if (avatar != null)
                 ImageUri = new Uri(avatar);
             UsePinnedImage = true;
@@ -44,8 +45,8 @@ namespace CodeFramework.iOS.Elements
             { 
                 this.SeparatorInset = new UIKit.UIEdgeInsets(0, 48f, 0, 0); 
                 ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
-//                ImageView.Layer.CornerRadius = 4.0f;
-//                ImageView.Layer.MasksToBounds = true;
+                ImageView.Layer.CornerRadius = 16f;
+                ImageView.Layer.MasksToBounds = true;
 //                ImageView.Layer.ShouldRasterize = true;
 //                ImageView.Layer.RasterizationScale = UIScreen.MainScreen.Scale;
             }

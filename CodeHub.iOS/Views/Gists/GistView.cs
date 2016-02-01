@@ -157,7 +157,7 @@ namespace CodeHub.iOS.Views.Gists
             var d = new NameTimeStringElement() { 
                 Time = model.UpdatedAt.ToDaysAgo(), 
                 String = str, 
-                Image = Theme.CurrentTheme.AnonymousUserImage
+                Image = Images.Avatar
             };
 
             //Sometimes there's no user!
@@ -197,7 +197,7 @@ namespace CodeHub.iOS.Views.Gists
 					var el = new NameTimeStringElement 
 					{ 
 						Name = "Anonymous",
-						Image = Theme.CurrentTheme.AnonymousUserImage,
+                        Image = Images.Avatar,
 						String = comment.Body,
 			         	Time = comment.CreatedAt.ToDaysAgo(),
 					};

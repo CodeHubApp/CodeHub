@@ -53,7 +53,7 @@ namespace CodeHub.iOS.Views.Repositories
 			BindCollection(vm.Repositories, repo =>
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var imageUrl = repo.Fork ? Images.GitHubRepoForkUrl : Images.GitHubRepoUrl;
+                var imageUrl = repo.Owner?.AvatarUrl;
 				var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, imageUrl) { ShowOwner = true };
 				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
                 return sse;

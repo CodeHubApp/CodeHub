@@ -1,8 +1,6 @@
 using System;
 using CodeFramework.Elements;
 using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using UIKit;
 using CodeFramework.iOS.Utils;
@@ -13,10 +11,8 @@ using CodeHub.Core.ViewModels.Changesets;
 
 namespace CodeHub.iOS.Views.Source
 {
-    public class ChangesetView : ViewModelDrivenDialogViewController
+    public class ChangesetView : PrettyDialogViewController
     {
-        private readonly HeaderView _header = new HeaderView();
-
         public new ChangesetViewModel ViewModel 
         {
             get { return (ChangesetViewModel)base.ViewModel; }
@@ -25,7 +21,7 @@ namespace CodeHub.iOS.Views.Source
         
         public ChangesetView()
         {
-            Title = "Commit".t();
+            Title = "Commit";
             Root.UnevenRows = true;
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
@@ -34,7 +30,18 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            _header.Title = "Commit: ".t() + ViewModel.Node.Substring(0, ViewModel.Node.Length > 10 ? 10 : ViewModel.Node.Length);
+            HeaderView.SetImage(null, Images.Avatar);
+            HeaderView.Text = Title;
+
+            ViewModel.Bind(x => x.Changeset, x => {
+                var msg = x.Commit.Message ?? string.Empty;
+                msg = msg.Split('\n')[0];
+                HeaderView.Text = msg.Split('\n')[0];
+                HeaderView.SubText = "Commited " + (ViewModel.Changeset?.Commit?.Committer?.Date ?? DateTimeOffset.Now).ToDaysAgo();
+                HeaderView.SetImage(x.Author?.AvatarUrl, Images.Avatar);
+                RefreshHeaderView();
+            });
+
             ViewModel.Bind(x => x.Changeset, Render);
             ViewModel.BindCollection(x => x.Comments, a => Render());
         }
@@ -47,8 +54,15 @@ namespace CodeHub.iOS.Views.Source
 
             var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
 
-            _header.Subtitle = "Commited ".t() + (commitModel.Commit.Committer.Date).ToDaysAgo();
-            var headerSection = new Section(_header);
+            var additions = ViewModel.Changeset.Stats?.Additions ?? 0;
+            var deletions = ViewModel.Changeset.Stats?.Deletions ?? 0;
+
+            var split = new SplitButtonElement();
+            split.AddButton("Additions", additions.ToString());
+            split.AddButton("Deletions", deletions.ToString());
+            split.AddButton("Parents", ViewModel.Changeset.Parents.Count().ToString());
+
+            var headerSection = new Section() { split };
             root.Add(headerSection);
 
             var detailSection = new Section();
@@ -122,7 +136,7 @@ namespace CodeHub.iOS.Views.Source
                     Name = comment.User.Login,
                     Time = comment.CreatedAt.ToDaysAgo(),
                     String = comment.Body,
-                    Image = Images.Anonymous,
+                    Image = Images.Avatar,
                     ImageUri = new Uri(comment.User.AvatarUrl),
                     BackgroundColor = UIColor.White,
                 });

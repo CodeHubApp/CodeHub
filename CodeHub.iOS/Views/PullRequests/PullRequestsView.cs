@@ -41,7 +41,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     String = (s.Body ?? string.Empty).Replace('\n', ' ').Replace("\r", ""),
                     Lines = 3,
                     Time = s.CreatedAt.ToDaysAgo(),
-                    Image = Theme.CurrentTheme.AnonymousUserImage,
+                    Image = Images.Avatar,
                     ImageUri = new Uri(s.User.AvatarUrl)
                 };
                 sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);

@@ -185,6 +185,7 @@
     <Compile Include="ViewModels\IFilterableViewModel.cs" />
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="PresentationValues.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -224,7 +225,7 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="GitHubSharp">
-      <HintPath>..\packages\GitHubClient.1.0.8.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
+      <HintPath>..\packages\GitHubClient.1.0.9.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

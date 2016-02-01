@@ -39,7 +39,6 @@ namespace CodeHub.iOS
         public static UIImage Star2 { get { return UIImage.FromBundle("Images/star2"); } }
         public static UIImage Public { get { return UIImage.FromBundle("Images/public"); } }
         public static UIImage Priority { get { return UIImage.FromBundle("Images/priority"); } }
-        public static UIImage Anonymous { get { return UIImage.FromBundle("Images/anonymous"); } }
 
         public static UIImage News { get { return UIImageHelper.FromFileAuto("Images/news"); } }
         public static UIImage Chart { get { return UIImageHelper.FromFileAuto("Images/chart"); } }
@@ -51,6 +50,7 @@ namespace CodeHub.iOS
         public static UIImage Locked { get { return UIImageHelper.FromFileAuto("Images/locked"); } }
 
         public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown"); } }
+        public static UIImage Avatar { get { return UIImageHelper.FromFileAuto("Images/avatar"); } }
 
 
         public static Uri GitHubRepoUrl

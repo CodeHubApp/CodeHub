@@ -3,13 +3,13 @@ using Cirrious.MvvmCross.Binding.Touch.Views;
 using Foundation;
 using ObjCRuntime;
 using UIKit;
+using SDWebImage;
+using CodeHub.iOS;
 
 namespace CodeFramework.iOS.Cells
 {
     public partial class RepositoryCellView : MvxTableViewCell
     {
-        public static bool RoundImages = true;
-
         public static UIFont CaptionFont
         {
             get { return UIFont.BoldSystemFontOfSize(15f * Theme.CurrentTheme.FontSizeRatio); }
@@ -39,11 +39,8 @@ namespace CodeFramework.iOS.Cells
                 cell.Image3.Image = Theme.CurrentTheme.RepositoryCellForks;
                 cell.UserImage.Image = Theme.CurrentTheme.RepositoryCellUser;
 
-                if (RoundImages)
-                {
-                    cell.BigImage.Layer.MasksToBounds = true;
-                    cell.BigImage.Layer.CornerRadius = cell.BigImage.Bounds.Height / 2f;
-                }
+                cell.BigImage.Layer.MasksToBounds = true;
+                cell.BigImage.Layer.CornerRadius = cell.BigImage.Bounds.Height / 2f;
             }
 
             //Create the icons
@@ -60,12 +57,11 @@ namespace CodeFramework.iOS.Cells
         {
         }
 
-        public void Bind(string name, string name2, string name3, string description, string repoOwner, UIImage logoImage)
+        public void Bind(string name, string name2, string name3, string description, string repoOwner, string imageUrl)
         {
             Caption.Text = name;
             Label1.Text = name2;
             Label3.Text = name3;
-            BigImage.Image = logoImage;
             Description.Hidden = description == null;
             Description.Text = description ?? string.Empty;
 
@@ -77,6 +73,17 @@ namespace CodeFramework.iOS.Cells
             RepoName.Hidden = repoOwner == null;
             UserImage.Hidden = RepoName.Hidden;
             RepoName.Text = repoOwner ?? string.Empty;
+
+            BigImage.Image = Images.Avatar;
+
+            try
+            {
+                var url = new NSUrl(imageUrl);
+                BigImage.SetImage(url, Images.Avatar);
+            }
+            catch
+            {
+            }
         }
     }
 }

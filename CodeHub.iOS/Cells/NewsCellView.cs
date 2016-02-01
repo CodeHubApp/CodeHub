@@ -113,6 +113,9 @@ namespace CodeFramework.iOS
             cell.Header.Lines = 2;
             cell.Header.LineBreakMode = UILineBreakMode.TailTruncation;
 
+            cell.Image.Layer.MasksToBounds = true;
+            cell.Image.Layer.CornerRadius = cell.Image.Frame.Height / 2;
+
             // Special for large fonts
             if (Theme.CurrentTheme.FontSizeRatio > 1.0f)
             {

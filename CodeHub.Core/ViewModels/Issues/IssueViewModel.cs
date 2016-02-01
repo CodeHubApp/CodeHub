@@ -43,6 +43,17 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 		}
 
+        private bool _isCollaborator;
+        public bool IsCollaborator
+        {
+            get { return _isCollaborator; }
+            set
+            {
+                _isCollaborator = value;
+                RaisePropertyChanged(() => IsCollaborator);
+            }
+        }
+
 		private IssueModel _issueModel;
         public IssueModel Issue
         {
@@ -72,7 +83,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				return new MvxCommand(() => {
 					GetService<IViewModelTxService>().Add(Issue.Assignee);
 					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-				}); 
+                }, () =>  IsCollaborator); 
 			}
 		}
 
@@ -83,7 +94,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				return new MvxCommand(() => {
 					GetService<IViewModelTxService>().Add(Issue.Milestone);
 					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-				}); 
+                }, () =>  IsCollaborator); 
 			}
 		}
 
@@ -94,7 +105,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				return new MvxCommand(() => {
 					GetService<IViewModelTxService>().Add(Issue.Labels);
 					ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-				}); 
+                }, () =>  IsCollaborator); 
 			}
 		}
 
@@ -105,7 +116,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				return new MvxCommand(() => {
 					GetService<IViewModelTxService>().Add(Issue);
 					ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
-				}, () => Issue != null); 
+                }, () => Issue != null && IsCollaborator); 
 			}
 		}
 
@@ -142,6 +153,8 @@ namespace CodeHub.Core.ViewModels.Issues
 			var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data);
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
+                forceCacheInvalidation, response => IsCollaborator = response.Data).FireAndForget();
             return t1;
         }
 

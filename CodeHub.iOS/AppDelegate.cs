@@ -90,13 +90,7 @@ namespace CodeHub.iOS
 
 			this.Window.MakeKeyAndVisible();
 
-            try
-            {
-                this.StampInstallDate("CodeHub", "CodeHub");
-            }
-            catch
-            {
-            }
+            this.StampInstallDate("CodeHub");
 
             InAppPurchases.Instance.PurchaseError += HandlePurchaseError;
             InAppPurchases.Instance.PurchaseSuccess += HandlePurchaseSuccess;
@@ -261,11 +255,11 @@ namespace CodeHub.iOS
 		/// <summary>
 		/// Record the date this application was installed (or the date that we started recording installation date).
 		/// </summary>
-		public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name, string key)
+		public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name)
 		{
 			try
 			{
-				var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = key };
+				var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = "account" };
 
 				SecStatusCode secStatusCode;
 				var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
@@ -275,7 +269,7 @@ namespace CodeHub.iOS
 					{
 						Label = name + " Install Date",
 						Service = name,
-						Account = key,
+                        Account = query.Account,
 						Description = string.Format("The first date {0} was installed", name),
 						Generic = NSData.FromString(DateTime.UtcNow.ToString())
 					};

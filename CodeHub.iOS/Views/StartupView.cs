@@ -4,6 +4,7 @@ using UIKit;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS.ViewControllers;
 using MonoTouch.Dialog.Utilities;
+using CodeHub.iOS;
 
 namespace CodeFramework.iOS.Views
 {
@@ -87,7 +88,7 @@ namespace CodeFramework.iOS.Views
 
         private void AssignUnknownUserImage()
         {
-            var img = Theme.CurrentTheme.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var img = Images.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
             _imgView.Image = img;
             _imgView.TintColor = UIColor.FromWhiteAlpha(0.34f, 1f);
         }

@@ -1,92 +1,99 @@
 using UIKit;
 using CoreGraphics;
-using CoreGraphics;
 using System;
+using System.Collections.Generic;
 
 namespace MonoTouch.Dialog
 {
-    public class SplitButtonElement : Element, IElementSizing
+    public class SplitButtonElement : Element
     {
-        public static UIColor CaptionColor = UIColor.Black;
-        public static UIFont CaptionFont = UIFont.BoldSystemFontOfSize(16f);
-        public static UIColor TextColor = UIColor.LightGray;
-        public static UIFont TextFont = UIFont.SystemFontOfSize(12f);
+        public static UIColor CaptionColor = UIColor.FromRGB(41, 41, 41);
+        public static UIFont CaptionFont = UIFont.SystemFontOfSize(14f);
+        public static UIColor TextColor = UIColor.FromRGB(100, 100, 100);
+        public static UIFont TextFont = UIFont.BoldSystemFontOfSize(14f);
+        private readonly List<SplitButton> _buttons = new List<SplitButton>();
 
-        private readonly Item[] _items;
-
-        public SplitButtonElement(params Item[] items)
-            : base("test")
+        public SplitButton AddButton(string caption, string text = null, Action tapped = null)
         {
-            _items = items;
+            var btn = new SplitButton(caption, text);
+            if (tapped != null)
+                btn.TouchUpInside += (sender, e) => tapped();
+            else
+                btn.UserInteractionEnabled = false;
+
+            _buttons.Add(btn);
+            return btn;
         }
 
-        public class Item
+        public SplitButtonElement()
+            : base(null)
         {
-            public string Caption;
-            public string Text;
-            public Action Tapped;
         }
 
-
-        public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
+        public override UITableViewCell GetCell(UITableView tv)
         {
-            return 44f;
-        }
-
-		public override UITableViewCell GetCell(UITableView tv)
-		{
             var cell = tv.DequeueReusableCell("splitbuttonelement") as SplitButtonCell;
             if (cell == null)
+            {
                 cell = new SplitButtonCell();
-            cell.SetButtons(_items);
-
-			cell.SeparatorInset = UIEdgeInsets.Zero;
-			return cell;
-		}
+                cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+                cell.SeparatorInset = UIEdgeInsets.Zero;
+                cell.BackgroundColor = tv.SeparatorColor;
+            }
+            cell.SetButtons(tv, _buttons);
+            return cell;
+        }
 
         private class SplitButtonCell : UITableViewCell
         {
+            private readonly static float SeperatorWidth = 1.0f;
             private UIButton[] _buttons;
 
+            static SplitButtonCell()
+            {
+                if (UIScreen.MainScreen.Scale > 1.0f)
+                    SeperatorWidth = 0.5f;
+            }
+
+
             public SplitButtonCell()
+                : base(UITableViewCellStyle.Default, "splitbuttonelement")
             {
             }
 
-            public void SetButtons(SplitButtonElement.Item[] items)
+            public void SetButtons(UITableView tableView, List<SplitButton> items)
             {
                 if (_buttons != null)
+                {
                     foreach (var btn in _buttons)
                     {
                         btn.RemoveFromSuperview();
-                        btn.Dispose();
                     }
-                _buttons = new UIButton[items.Length];
-
-                for (var i = 0; i < items.Length; i++)
-                {
-                    _buttons[i] = new UIButton(UIButtonType.Custom);
-                    _buttons[i].AutosizesSubviews = true;
-                    _buttons[i].AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-                    _buttons[i].AddSubview(new ButtonView(items[i].Caption, items[i].Text));
-                    this.AddSubview(_buttons[i]);
                 }
 
+                _buttons = new UIButton[items.Count];
+
+                for (var i = 0; i < items.Count; i++)
+                {
+                    _buttons[i] = items[i];
+                    ContentView.Add(_buttons[i]);
+                }
             }
+
 
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
-
 
                 if (_buttons != null)
                 {
                     var width = this.Bounds.Width;
                     var space = width / (float)_buttons.Length;
 
-
                     for (var i = 0; i < _buttons.Length; i++)
                     {
-                        _buttons[i].Frame = new CGRect(i * space, 0, space, this.Bounds.Height);
+                        _buttons[i].Frame = new CGRect(i * space, 0, space - SeperatorWidth, Bounds.Height);
+                        _buttons[i].LayoutSubviews();
                     }
                 }
             }
@@ -94,16 +101,28 @@ namespace MonoTouch.Dialog
         }
 
 
-        private class ButtonView : UIView
+        public class SplitButton : UIButton
         {
             private readonly UILabel _caption;
             private readonly UILabel _text;
 
-            public ButtonView(string caption, string text)
+            public string Text
+            {
+                get { return _text.Text; }
+                set 
+                { 
+                    if (_text.Text == value)
+                        return;
+                    _text.Text = value; 
+                    SetNeedsDisplay();
+                }
+            }
+
+            public SplitButton(string caption, string text)
             {
                 AutosizesSubviews = true;
-                AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
+                BackgroundColor = UIColor.White;
 
                 _caption = new UILabel();
                 _caption.TextColor = CaptionColor;
@@ -116,18 +135,20 @@ namespace MonoTouch.Dialog
                 _text.Font = TextFont;
                 _text.Text = text;
                 this.Add(_text);
-            }
 
+                this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
+                this.TouchUpInside += (sender, e) => this.BackgroundColor = UIColor.White;
+                this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
+            }
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
 
-                _caption.Frame = new CGRect(10, 10, this.Bounds.Width - 20, 14);
-                _text.Frame = new CGRect(10, 30, this.Bounds.Width - 20, 14);
+                _text.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
+                _caption.Frame = new CGRect(12, _text.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
             }
         }
 
     }
 
 }
-

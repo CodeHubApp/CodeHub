@@ -80,6 +80,8 @@ namespace CodeHub.iOS.Views.Issues
 
             vm.Bind(x => x.IsOpen, x =>
             {
+                if (state.Value == x)
+                    return;
                 state.Value = x;
                 if (assignedTo.GetImmediateRootElement() != null)
                     Root.Reload(state, UITableViewRowAnimation.None);

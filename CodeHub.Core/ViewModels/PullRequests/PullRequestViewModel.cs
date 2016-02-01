@@ -40,8 +40,29 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return PullRequest == null ? string.Empty : (GetService<IMarkdownService>().Convert(PullRequest.Body)); }
         }
 
-        private bool _merged;
+        private bool _canPush;
+        public bool CanPush
+        {
+            get { return _canPush; }
+            set
+            {
+                _canPush = value;
+                RaisePropertyChanged(() => CanPush);
+            }
+        }
 
+        private bool _isCollaborator;
+        public bool IsCollaborator
+        {
+            get { return _isCollaborator; }
+            set
+            {
+                _isCollaborator = value;
+                RaisePropertyChanged(() => IsCollaborator);
+            }
+        }
+
+        private bool _merged;
         public bool Merged
         {
             get { return _merged; }
@@ -100,7 +121,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                     {
                         GetService<IViewModelTxService>().Add(Issue.Assignee);
                         ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                    }, () => Issue != null);
+                    }, () => Issue != null && IsCollaborator);
 
                     this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
                     _goToAssigneeCommand = cmd;
@@ -122,7 +143,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                     {
                         GetService<IViewModelTxService>().Add(Issue.Milestone);
                         ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                    }, () => Issue != null);
+                    }, () => Issue != null && IsCollaborator);
 
                     this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
                     _goToMilestoneCommand = cmd;
@@ -144,7 +165,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                     {
                         GetService<IViewModelTxService>().Add(Issue.Labels);
                         ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                    }, () => Issue != null);
+                    }, () => Issue != null && IsCollaborator);
 
                     this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
                     _goToLabelsCommand = cmd;
@@ -162,7 +183,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 {
                     GetService<IViewModelTxService>().Add(Issue);
                     ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
-                }, () => Issue != null); 
+                }, () => Issue != null && IsCollaborator); 
             }
         }
 
@@ -278,6 +299,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), forceCacheInvalidation, 
+                response => CanPush = response.Data.Permissions.Push).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
+                forceCacheInvalidation, response => IsCollaborator = response.Data).FireAndForget();
             return t1;
         }
 

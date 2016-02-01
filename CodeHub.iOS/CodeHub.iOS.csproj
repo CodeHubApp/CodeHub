@@ -314,7 +314,6 @@
     <Compile Include="Utils\ViewControllerExtensions.cs" />
     <Compile Include="Views\AccountsView.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
-    <Compile Include="Views\HeaderView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\MilestoneView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
@@ -367,6 +366,9 @@
     <InterfaceDefinition Include="Cells\NewsCellView.xib" />
     <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="Views\ImageAndTitleHeaderView.cs" />
+    <Compile Include="Views\SlideupTitleVIew.cs" />
+    <Compile Include="Views\Repositories\RepositoriesForkedView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -416,13 +418,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\packages\Xamarin.SDWebImage.3.7.3.4\lib\Xamarin.iOS\SDWebImage.dll</HintPath>
+    </Reference>
     <Reference Include="GitHubSharp">
-      <HintPath>..\packages\GitHubClient.1.0.8.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
+      <HintPath>..\packages\GitHubClient.1.0.9.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\anonymous%402x.png" />
-    <Content Include="Images\anonymous.png" />
     <Content Include="Images\bin_closed%402x.png" />
     <Content Include="Images\bin_closed.png" />
     <Content Include="Images\branch%402x.png" />
@@ -520,14 +523,6 @@
     <Content Include="Images\user.png" />
     <Content Include="Images\webpage%402x.png" />
     <Content Include="Images\webpage.png" />
-    <BundleResource Include="Resources\Icon-72.png" />
-    <BundleResource Include="Resources\Icon-72%402x.png" />
-    <BundleResource Include="Resources\Icon-Small-50.png" />
-    <BundleResource Include="Resources\Icon-Small-50%402x.png" />
-    <BundleResource Include="Resources\Icon-Small.png" />
-    <BundleResource Include="Resources\Icon-Small%402x.png" />
-    <BundleResource Include="Resources\Icon.png" />
-    <BundleResource Include="Resources\Icon%402x.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\Web\back.png" />
@@ -546,11 +541,6 @@
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <BundleResource Include="Resources\Icon-60%402x.png" />
-    <BundleResource Include="Resources\Icon-76.png" />
-    <BundleResource Include="Resources\Icon-76%402x.png" />
-    <BundleResource Include="Resources\Icon-Small-40.png" />
-    <BundleResource Include="Resources\Icon-Small-40%402x.png" />
     <BundleResource Include="Images\chart%402x.png" />
     <BundleResource Include="Images\chart.png" />
     <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
@@ -574,6 +564,8 @@
     <Content Include="SourceBrowser\file-loader.js" />
     <Content Include="SourceBrowser\highlight.pack.js" />
     <Content Include="SourceBrowser\index.html" />
+    <BundleResource Include="Images\avatar.png" />
+    <BundleResource Include="Images\avatar%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -597,5 +589,27 @@
       <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
       <Name>CodeHub.Core.iOS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-60%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-72.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-72%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-76.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-76%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-40.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-40%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <XamarinComponentReference Include="sdwebimage">
+      <Version>3.7.3.4</Version>
+      <Visible>False</Visible>
+    </XamarinComponentReference>
   </ItemGroup>
 </Project>

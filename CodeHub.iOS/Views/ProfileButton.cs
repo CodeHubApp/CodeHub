@@ -22,7 +22,6 @@ namespace CodeFramework.Views
         }
 
         public ProfileButton()
-            : base(UIButtonType.Custom)
         {
             this.AutosizesSubviews = true;
 

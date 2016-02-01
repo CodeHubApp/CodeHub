@@ -8,21 +8,20 @@ using UIKit;
 namespace CodeFramework.iOS.Elements
 {
     
-    public class RepositoryElement : Element, IElementSizing, IColorizeBackground, IImageUpdated
+    public class RepositoryElement : Element, IElementSizing, IColorizeBackground
     {       
         private readonly string _name;
         private readonly int _followers;
         private readonly int _forks;
         private readonly string _description;
         private readonly string _owner;
-        private UIImage _image;
-        private readonly Uri _imageUri;
+        private readonly string _imageUrl;
 
         public UIColor BackgroundColor { get; set; }
 
         public bool ShowOwner { get; set; }
 
-        public RepositoryElement(string name, int followers, int forks, string description, string owner, Uri imageUri = null, UIImage image = null)
+        public RepositoryElement(string name, int followers, int forks, string description, string owner, string imageUrl)
             : base(null)
         {
             _name = name;
@@ -30,8 +29,7 @@ namespace CodeFramework.iOS.Elements
             _forks = forks;
             _description = description;
             _owner = owner;
-            _imageUri = imageUri;
-            _image = image;
+            _imageUrl = imageUrl;
             ShowOwner = true;
         }
 
@@ -76,33 +74,8 @@ namespace CodeFramework.iOS.Elements
             var c = cell as RepositoryCellView;
             if (c == null)
                 return;
-
-            if (_image == null && _imageUri != null)
-                _image = ImageLoader.DefaultRequestImage(_imageUri, this);
-            c.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _image);
+            c.Bind(_name, _followers.ToString(), _forks.ToString(), _description, ShowOwner ? _owner : null, _imageUrl);
         }
-
-        #region IImageUpdated implementation
-
-        public void UpdatedImage(Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-            {
-                Console.WriteLine("DefaultRequestImage returned a null image");
-                return;
-            }
-            _image = img;
-
-            if (uri == null)
-                return;
-            var root = GetImmediateRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new [] { IndexPath }, UITableViewRowAnimation.None);
-        }
-
-        #endregion
     }
 }
 

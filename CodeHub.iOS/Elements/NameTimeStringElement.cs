@@ -65,16 +65,9 @@ namespace MonoTouch.Dialog
                 UIColor.White.SetColor ();
 
                 context.SaveState ();
-                //context.TranslateCTM (imageRect.X, imageRect.Y);
-//				context.SetLineWidth (1);
-                
-                //On device, the shadow is painted in the opposite direction!
-//                context.SetShadowWithColor (new SizeF (0, 0), 3, UIColor.LightGray.CGColor);
-//                context.AddPath (UIBezierPath.FromRect(imageRect).CGPath);
-//                context.FillPath ();
-//                context.RestoreState ();
-
+                UIBezierPath.FromRoundedRect(imageRect, imageRect.Width / 2).AddClip();
                 Image.Draw(imageRect);
+                context.RestoreState();
                 leftMargin += LeftRightPadding + imageRect.Width + 3f;
             }
 

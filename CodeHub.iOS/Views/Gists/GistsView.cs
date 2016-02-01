@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Gists
                     Time = x.UpdatedAt.ToDaysAgo(),
                     String = str,
                     Lines = 4,
-                    Image = Theme.CurrentTheme.AnonymousUserImage
+                    Image = Images.Avatar
                 };
 
                 sse.Name = (x.Owner == null) ? "Anonymous" : x.Owner.Login;

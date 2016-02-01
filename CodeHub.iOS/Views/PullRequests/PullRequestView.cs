@@ -13,10 +13,9 @@ using Humanizer;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestView : ViewModelDrivenDialogViewController
+    public class PullRequestView : PrettyDialogViewController
     {
         private SplitElement _split1, _split2;
-        private HeaderView _header;
         private WebElement _descriptionElement;
         private WebElement _commentsElement;
         private StyledStringElement _milestoneElement;
@@ -31,19 +30,16 @@ namespace CodeHub.iOS.Views.PullRequests
             set { base.ViewModel = value; }
         }
 
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            Title = "Pull Request #".t() + ViewModel.Id;
-        }
-
         public override void ViewDidLoad()
         {
             Root.UnevenRows = true;
 
             base.ViewDidLoad();
 
-            _header = new HeaderView();
+            Title = "Pull Request #" + ViewModel.Id;
+            HeaderView.SetImage(null, Images.Avatar);
+            HeaderView.Text = Title;
+
             _hud = this.CreateHud();
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
@@ -80,9 +76,10 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
 
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
-                _header.Title = x.Title;
-                _header.Subtitle = "Updated " + x.UpdatedAt.ToDaysAgo();
 
+                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
+                RefreshHeaderView();
                 Render();
             });
 
@@ -104,6 +101,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     _hud.Hide();
             });
 
+            ViewModel.Bind(x => x.CanPush, Render);
             ViewModel.Bind(x => x.Issue, x =>
             {
                 _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned".t();
@@ -229,7 +227,7 @@ namespace CodeHub.iOS.Views.PullRequests
 
             var sheet = new UIActionSheet();
             var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit".t()) : -1;
-            var openButton = sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close".t() : "Open".t());
+            var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close".t() : "Open".t()) : -1;
             var commentButton = sheet.AddButton("Comment".t());
             var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share".t()) : -1;
             var showButton = sheet.AddButton("Show in GitHub".t());
@@ -275,8 +273,17 @@ namespace CodeHub.iOS.Views.PullRequests
             if (ViewModel.PullRequest == null)
                 return;
 
+            var additions = ViewModel.PullRequest?.Additions ?? 0;
+            var deletions = ViewModel.PullRequest?.Deletions ?? 0;
+            var changes = ViewModel.PullRequest?.ChangedFiles ?? 0;
+
+            var split = new SplitButtonElement();
+            split.AddButton("Additions", additions.ToString());
+            split.AddButton("Deletions", deletions.ToString());
+            split.AddButton("Changes", changes.ToString());
+
             var root = new RootElement(Title);
-            root.Add(new Section(_header));
+            root.Add(new Section { split });
 
             var secDetails = new Section();
             if (!string.IsNullOrEmpty(_descriptionElement.Value))
@@ -284,6 +291,9 @@ namespace CodeHub.iOS.Views.PullRequests
 
             secDetails.Add(_split1);
             secDetails.Add(_split2);
+
+            foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
+                i.Accessory = ViewModel.IsCollaborator ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
@@ -296,7 +306,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
             });
 
-            if (!(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
+            if (ViewModel.CanPush && !(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
             {
                 Action mergeAction = async () =>
                 {

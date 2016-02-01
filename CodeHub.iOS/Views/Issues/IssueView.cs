@@ -13,15 +13,18 @@ using Humanizer;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueView : ViewModelDrivenDialogViewController
+    public class IssueView : PrettyDialogViewController
     {
-        protected HeaderView _header;
         protected WebElement _descriptionElement;
         protected WebElement _commentsElement;
         protected StyledStringElement _milestoneElement;
         protected StyledStringElement _assigneeElement;
         protected StyledStringElement _labelsElement;
         protected StyledStringElement _addCommentElement;
+        private SplitButtonElement _split = new SplitButtonElement();
+        private SplitButtonElement.SplitButton _splitButton1;
+        private SplitButtonElement.SplitButton _splitButton2;
+
         private IHud _hud;
 
         public new IssueViewModel ViewModel
@@ -39,8 +42,14 @@ namespace CodeHub.iOS.Views.Issues
         {
             base.ViewDidLoad();
 
-            _header = new HeaderView();
+            _splitButton1 = _split.AddButton("Comments", "-");
+            _splitButton2 = _split.AddButton("Participants", "-");
+
             _hud = this.CreateHud();
+
+            Title = "Issue #" + ViewModel.Id;
+            HeaderView.SetImage(null, Images.Avatar);
+            HeaderView.Text = Title;
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "body", false);
@@ -74,6 +83,7 @@ namespace CodeHub.iOS.Views.Issues
                 }
             });
 
+            ViewModel.Bind(x => x.IsCollaborator, Render);
             ViewModel.Bind(x => x.IsModifying, x =>
             {
                 if (x)
@@ -88,19 +98,16 @@ namespace CodeHub.iOS.Views.Issues
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
-                _header.Title = x.Title;
-                _header.Subtitle = "Updated " + x.UpdatedAt.ToDaysAgo();
+ 
+                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
+                RefreshHeaderView();
+
                 Render();
             });
 
             ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
             ViewModel.BindCollection(x => x.Events, (e) => RenderComments());
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            Title = "Issue #" + ViewModel.Id;
         }
 
         private IEnumerable<CommentModel> CreateCommentList()
@@ -168,12 +175,20 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
+            var participants = ViewModel.Events.Select(x => x.Actor.Login).Distinct().Count();
+
+            _splitButton1.Text = ViewModel.Issue.Comments.ToString();
+            _splitButton2.Text = participants.ToString();
+
             var root = new RootElement(Title);
-            root.Add(new Section(_header));
+            root.Add(new Section { _split });
 
             var secDetails = new Section();
             if (!string.IsNullOrEmpty(_descriptionElement.Value))
                 secDetails.Add(_descriptionElement);
+
+            foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
+                i.Accessory = ViewModel.IsCollaborator ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
@@ -217,8 +232,8 @@ namespace CodeHub.iOS.Views.Issues
                 return;
 
             var sheet = new UIActionSheet(Title);
-            var editButton = sheet.AddButton("Edit".t());
-            var openButton = sheet.AddButton(ViewModel.Issue.State == "open" ? "Close".t() : "Open".t());
+            var editButton = ViewModel.IsCollaborator ? sheet.AddButton("Edit".t()) : -1;
+            var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.Issue.State == "open" ? "Close".t() : "Open".t()) : -1;
             var commentButton = sheet.AddButton("Comment".t());
             var shareButton = sheet.AddButton("Share".t());
             var showButton = sheet.AddButton("Show in GitHub".t());
