@@ -4,21 +4,17 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 using Foundation;
+using System.Net.Http;
 
 namespace CodeHub.iOS.Services
 {
     public class FeaturesService : IFeaturesService
     {
         private readonly IDefaultValueService _defaultValueService;
-        private readonly IHttpClientService _httpClientService;
-        private readonly IJsonSerializationService _jsonSerializationService;
 
-
-        public FeaturesService(IDefaultValueService defaultValueService, IHttpClientService httpClientService, IJsonSerializationService jsonSerializationService)
+        public FeaturesService(IDefaultValueService defaultValueService)
         {
             _defaultValueService = defaultValueService;
-            _httpClientService = httpClientService;
-            _jsonSerializationService = jsonSerializationService;
         }
 
         public bool IsPushNotificationsActivated
@@ -58,14 +54,17 @@ namespace CodeHub.iOS.Services
 
         public async Task<IEnumerable<string>> GetAvailableFeatureIds()
         {
-            var ids = new List<string>();
-            ids.Add(FeatureIds.EnterpriseSupport);
-            var client = _httpClientService.Create();
+            var client = new HttpClient();
             client.Timeout = new TimeSpan(0, 0, 15);
-			var response = await client.GetAsync("http://push.codehub-app.com/in-app?version=" + NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString());
+
+            var response = await client.GetAsync("https://raw.githubusercontent.com/thedillonb/CodeHub/gh-pages/features.json");
             var data = await response.Content.ReadAsStringAsync();
-            ids.AddRange(_jsonSerializationService.Deserialize<List<string>>(data));
-            return ids;
+            var features = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(data);
+
+            var version = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            if (!features.ContainsKey(version))
+                return new [] { FeatureIds.EnterpriseSupport };
+            return features[version];
         }
     }
 }
