@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using CodeFramework.ViewControllers;
 using UIKit;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
     public abstract class FilterViewController : BaseDialogViewController
     {

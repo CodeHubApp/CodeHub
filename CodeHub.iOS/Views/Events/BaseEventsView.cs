@@ -1,15 +1,37 @@
 using System;
-using CodeFramework.iOS.Elements;
+using CodeHub.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
 using MonoTouch;
 using UIKit;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Events
 {
     public abstract class BaseEventsView : ViewModelCollectionDrivenDialogViewController
     {
+        private static IDictionary<EventType, Octicon> _eventToImage 
+        = new Dictionary<EventType, Octicon>
+        {
+            {EventType.Unknown, Octicon.Alert},
+            {EventType.Branch, Octicon.GitBranch},
+            {EventType.Comment, Octicon.Comment},
+            {EventType.Commit, Octicon.GitCommit},
+            {EventType.Delete, Octicon.Trashcan},
+            {EventType.Follow, Octicon.Person},
+            {EventType.Fork, Octicon.RepoForked},
+            {EventType.Gist, Octicon.Gist},
+            {EventType.Issue, Octicon.IssueOpened},
+            {EventType.Organization, Octicon.Organization},
+            {EventType.Public, Octicon.Globe},
+            {EventType.PullRequest, Octicon.GitPullRequest},
+            {EventType.Repository, Octicon.Repo},
+            {EventType.Star, Octicon.Star},
+            {EventType.Tag, Octicon.Tag},
+            {EventType.Wiki, Octicon.Pencil},
+        };
+
         protected BaseEventsView()
         {
             Title = "Events".t();
@@ -20,7 +42,7 @@ namespace CodeHub.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			TableView.SeparatorInset = CodeFramework.iOS.NewsCellView.EdgeInsets;
+			TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
@@ -31,7 +53,11 @@ namespace CodeHub.iOS.Views.Events
                 if (e.Item2 == null)
                     return null;
 
-                var img = ChooseImage(e.Item1);
+                var imgKey = ChooseImage(e.Item1);
+                var img = Octicon.Alert;
+                if (_eventToImage.ContainsKey(imgKey))
+                    img = _eventToImage[imgKey];
+                    
                 var avatar = e.Item1.Actor != null ? e.Item1.Actor.AvatarUrl : null;
 				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
 				foreach (var h in e.Item2.Header)
@@ -55,7 +81,7 @@ namespace CodeHub.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
-				return new NewsFeedElement(avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img, e.Item2.Tapped);
+                return new NewsFeedElement(avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), e.Item2.Tapped);
             }
             catch (Exception ex)
             {
@@ -64,55 +90,75 @@ namespace CodeHub.iOS.Views.Events
             }
         }
 
-        private static UIImage ChooseImage(EventModel eventModel)
+        private static EventType ChooseImage(EventModel eventModel)
         {
             if (eventModel.PayloadObject is EventModel.CommitCommentEvent)
-                return Images.Comments;
+                return EventType.Comment;
 
             var createEvent = eventModel.PayloadObject as EventModel.CreateEvent;
             if (createEvent != null)
             {
                 var createModel = createEvent;
                 if (createModel.RefType.Equals("repository"))
-                    return Images.Repo;
+                    return EventType.Repository;
                 if (createModel.RefType.Equals("branch"))
-                    return Images.Branch;
+                    return EventType.Branch;
                 if (createModel.RefType.Equals("tag"))
-                    return Images.Tag;
+                    return EventType.Tag;
             }
             else if (eventModel.PayloadObject is EventModel.DeleteEvent)
-                return Images.BinClosed;
+                return EventType.Delete;
             else if (eventModel.PayloadObject is EventModel.FollowEvent)
-                return Images.Following;
+                return EventType.Follow;
             else if (eventModel.PayloadObject is EventModel.ForkEvent)
-                return Images.Fork;
+                return EventType.Fork;
             else if (eventModel.PayloadObject is EventModel.ForkApplyEvent)
-                return Images.Fork;
+                return EventType.Fork;
             else if (eventModel.PayloadObject is EventModel.GistEvent)
-                return Images.Script;
+                return EventType.Gist;
             else if (eventModel.PayloadObject is EventModel.GollumEvent)
-                return Images.Webpage;
+                return EventType.Wiki;
             else if (eventModel.PayloadObject is EventModel.IssueCommentEvent)
-                return Images.Comments;
+                return EventType.Comment;
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
-                return Images.Flag;
+                return EventType.Issue;
             else if (eventModel.PayloadObject is EventModel.MemberEvent)
-                return Images.Group;
+                return EventType.Organization;
             else if (eventModel.PayloadObject is EventModel.PublicEvent)
-                return Images.Heart;
+                return EventType.Public;
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
-                return Images.Hand;
+                return EventType.PullRequest;
             else if (eventModel.PayloadObject is EventModel.PullRequestReviewCommentEvent)
-                return Images.Comments;
+                return EventType.Comment;
             else if (eventModel.PayloadObject is EventModel.PushEvent)
-                return Images.Commit;
+                return EventType.Commit;
             else if (eventModel.PayloadObject is EventModel.TeamAddEvent)
-                return Images.Team;
+                return EventType.Organization;
             else if (eventModel.PayloadObject is EventModel.WatchEvent)
-                return Images.Star;
-			else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
-				return Images.Public;
-            return Images.Priority;
+                return EventType.Star;
+            else if (eventModel.PayloadObject is EventModel.ReleaseEvent)
+                return EventType.Tag;
+            return EventType.Unknown;
+        }
+
+        public enum EventType
+        {
+            Unknown = 0,
+            Comment,
+            Repository,
+            Branch,
+            Tag,
+            Delete,
+            Follow,
+            Fork,
+            Gist,
+            Wiki,
+            Issue,
+            Organization,
+            Public,
+            PullRequest,
+            Star,
+            Commit
         }
     }
 }

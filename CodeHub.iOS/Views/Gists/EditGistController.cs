@@ -1,18 +1,15 @@
 using System;
-using CodeFramework.iOS.Views;
 using CodeHub.iOS;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using MonoTouch.Dialog;
 using UIKit;
-using CoreGraphics;
 using System.Linq;
 using CodeFramework.ViewControllers;
-using CodeFramework.Views;
 using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views
 {
     public class EditGistController : BaseDialogViewController
     {

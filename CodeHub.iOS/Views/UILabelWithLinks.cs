@@ -1,7 +1,7 @@
 using Foundation;
 using System;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
     [Register("UILabelWithLinks")]
     public class UILabelWithLinks : MonoTouch.TTTAttributedLabel.TTTAttributedLabel

@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using CoreGraphics;
 using System.Linq;
-using CoreGraphics;
 using MonoTouch.Dialog;
 using Foundation;
 using UIKit;
-using MonoTouch.Dialog.Utilities;
+using CodeHub.iOS.TableViewCells;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
-    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground, IImageUpdated
+    public class NewsFeedElement : Element, IElementSizing, IColorizeBackground
     {
         private readonly string _time;
         private readonly Uri _imageUri;
@@ -172,32 +171,8 @@ namespace CodeFramework.iOS.Elements
         void IColorizeBackground.WillDisplay(UITableView tableView, UITableViewCell cell, NSIndexPath indexPath)
         {
             var c = cell as NewsCellView;
-            if (c == null)
-                return;
-
-            UIImage image = null;
-            if (_imageUri != null)
-                image = ImageLoader.DefaultRequestImage(_imageUri, this);
-
-            c.Set(image, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
+            if (c == null) return;
+            c.Set(_imageUri, _time, _actionImage, _attributedHeader, _attributedBody, _headerLinks, _bodyLinks, WebLinkClicked);
         }
-
-        #region IImageUpdated implementation
-
-        public void UpdatedImage(Uri uri)
-        {
-            var img = ImageLoader.DefaultRequestImage(uri, this);
-            if (img == null)
-                return;
-
-            if (uri == null)
-                return;
-            var root = GetImmediateRootElement ();
-            if (root == null || root.TableView == null)
-                return;
-            root.TableView.ReloadRows (new [] { IndexPath }, UITableViewRowAnimation.None);
-        }
-
-        #endregion
     }
 }

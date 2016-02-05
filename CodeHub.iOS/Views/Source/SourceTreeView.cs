@@ -41,21 +41,21 @@ namespace CodeHub.iOS.Views.Source
         {
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
             {
-                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), Images.Folder);
+                return new StyledStringElement(x.Name, () => ViewModel.GoToSourceTreeCommand.Execute(x), Octicon.FileDirectory.ToImage());
             }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
             {
                 //If there's a size, it's a file
                 if (x.Size != null)
                 {
-                    return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Images.File);
+                    return new StyledStringElement(x.Name, () => ViewModel.GoToSourceCommand.Execute(x), Octicon.FileCode.ToImage());
                 }
 
                 //If there is no size, it's most likey a submodule
-                return new StyledStringElement(x.Name, () => ViewModel.GoToSubmoduleCommand.Execute(x), Images.Repo);
+                return new StyledStringElement(x.Name, () => ViewModel.GoToSubmoduleCommand.Execute(x), Octicon.FileSubmodule.ToImage());
             }
             
-            return new StyledStringElement(x.Name) { Image = Images.File };
+            return new StyledStringElement(x.Name) { Image = Octicon.FileMedia.ToImage() };
         }
     }
 }

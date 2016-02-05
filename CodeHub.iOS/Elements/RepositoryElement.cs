@@ -1,11 +1,10 @@
 using System;
-using CodeFramework.iOS.Cells;
 using MonoTouch.Dialog;
-using MonoTouch.Dialog.Utilities;
 using Foundation;
 using UIKit;
+using CodeHub.iOS.TableViewCells;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
     
     public class RepositoryElement : Element, IElementSizing, IColorizeBackground

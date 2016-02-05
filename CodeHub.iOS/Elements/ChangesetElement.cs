@@ -1,7 +1,7 @@
-using CodeFramework.iOS.Views;
 using MonoTouch.Dialog;
+using CodeHub.iOS.Views;
 
-namespace CodeFramework.Elements
+namespace CodeHub.iOS.Elements
 {
     public class ChangesetElement : StyledStringElement
     {

@@ -2,13 +2,16 @@ using System;
 using MonoTouch;
 using UIKit;
 using CodeFramework.Core.ViewModels;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog.Utilities;
 using CodeHub.iOS;
+using SDWebImage;
+using Foundation;
+using System.Security.Policy;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
-    public class StartupView : ViewModelDrivenDialogViewController, IImageUpdated
+    public class StartupView : ViewModelDrivenDialogViewController
     {
         const float imageSize = 128f;
 
@@ -69,26 +72,19 @@ namespace CodeFramework.iOS.Views
         public void UpdatedImage(Uri uri)
         {
             if (uri == null)
-            {
                 AssignUnknownUserImage();
-            }
             else
             {
-                var img = ImageLoader.DefaultRequestImage(uri, this);
-                if (img == null)
-                {
-                    AssignUnknownUserImage();
-                }
-                else
-                {
+                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, url) => {
+                    _imgView.Image = Images.LoginUserUnknown;
                     UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
-                }
+                });
             }
         }
 
         private void AssignUnknownUserImage()
         {
-            var img = Images.LoginUserUnknown.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+            var img = Images.LoginUserUnknown;
             _imgView.Image = img;
             _imgView.TintColor = UIColor.FromWhiteAlpha(0.34f, 1f);
         }

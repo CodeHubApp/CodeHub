@@ -1,6 +1,6 @@
 using System;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
 	public class WebBrowserView : WebView
     {

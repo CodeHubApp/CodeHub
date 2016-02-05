@@ -1,5 +1,5 @@
 using CodeHub.Core.ViewModels.Repositories;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using UIKit;
 
 namespace CodeHub.iOS.Views.Repositories

@@ -1,5 +1,5 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
@@ -41,7 +41,6 @@ namespace CodeHub.iOS.Views.Repositories
             });
 
             ViewModel.Bind(x => x.Branches, Render);
-
             ViewModel.Bind(x => x.Readme, Render);
         }
 
@@ -64,11 +63,11 @@ namespace CodeHub.iOS.Views.Repositories
                 return;
 
             var sheet = new UIActionSheet();
-			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu".t() : "Pin to Slideout Menu".t());
-            var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo".t() : "Star This Repo".t());
-            var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo".t() : "Watch This Repo".t());
-            var showButton = sheet.AddButton("Show in GitHub".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+			var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
+            var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
+            var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
+            var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.DismissWithClickedButtonIndex(cancelButton, true);
 			sheet.Dismissed += (s, e) => {
@@ -115,10 +114,10 @@ namespace CodeHub.iOS.Views.Repositories
             var sec1 = new Section();
 
             sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = model.Private ? "Private".t() : "Public".t(),
-                Image1 = model.Private ? Images.Locked : Images.Unlocked,
+                Text1 = model.Private ? "Private" : "Public",
+                Image1 = Octicon.Lock.ToImage(),
 				Text2 = model.Language ?? "N/A",
-                Image2 = Images.Language
+                Image2 = Octicon.Package.ToImage()
             }));
 
 
@@ -132,53 +131,53 @@ namespace CodeHub.iOS.Views.Repositories
                 size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
 
             sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue".t() : " Issues".t()),
-                Image1 = Images.Flag,
-                Text2 = branches + (branches == 1 ? " Branches".t() : " Branches".t()),
-                Image2 = Images.Branch
+                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues"),
+                Image1 = Octicon.IssueOpened.ToImage(),
+                Text2 = branches + (branches == 1 ? " Branch" : " Branches"),
+                Image2 = Octicon.GitBranch.ToImage()
             }));
 
             sec1.Add(new SplitElement(new SplitElement.Row {
                 Text1 = (model.CreatedAt).ToString("MM/dd/yy"),
-                Image1 = Images.Create,
+                Image1 = Octicon.Calendar.ToImage(),
                 Text2 = size,
-                Image2 = Images.Size
+                Image2 = Octicon.Tools.ToImage()
             }));
 
-            var owner = new StyledStringElement("Owner".t(), model.Owner.Login) { Image = Images.Person,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Octicon.Person.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);
             sec1.Add(owner);
 
             if (model.Parent != null)
             {
-                var parent = new StyledStringElement("Forked From".t(), model.Parent.FullName) { Image = Images.Fork,  Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                var parent = new StyledStringElement("Forked From", model.Parent.FullName) { Image = Octicon.RepoForked.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 				parent.Tapped += () => ViewModel.GoToForkParentCommand.Execute(model.Parent);
                 sec1.Add(parent);
             }
 
-			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
+            var events = new StyledStringElement("Events", () => ViewModel.GoToEventsCommand.Execute(null), Octicon.Rss.ToImage());
             var sec2 = new Section { events };
 
             if (model.HasIssues)
             {
-                sec2.Add(new StyledStringElement("Issues".t(), () => ViewModel.GoToIssuesCommand.Execute(null), Images.Flag));
+                sec2.Add(new StyledStringElement("Issues", () => ViewModel.GoToIssuesCommand.Execute(null), Octicon.IssueOpened.ToImage()));
             }
 
             if (ViewModel.Readme != null)
-				sec2.Add(new StyledStringElement("Readme".t(), () => ViewModel.GoToReadmeCommand.Execute(null), Images.File));
+                sec2.Add(new StyledStringElement("Readme", () => ViewModel.GoToReadmeCommand.Execute(null), Octicon.Book.ToImage()));
 
             var sec3 = new Section
             {
-				new StyledStringElement("Commits".t(), () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-				new StyledStringElement("Pull Requests".t(), () => ViewModel.GoToPullRequestsCommand.Execute(null), Images.Hand),
-				new StyledStringElement("Source".t(), () => ViewModel.GoToSourceCommand.Execute(null), Images.Script),
+                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Octicon.GitCommit.ToImage()),
+                new StyledStringElement("Pull Requests", () => ViewModel.GoToPullRequestsCommand.Execute(null), Octicon.GitPullRequest.ToImage()),
+                new StyledStringElement("Source", () => ViewModel.GoToSourceCommand.Execute(null), Octicon.Code.ToImage()),
             };
 
             root.Add(new[] { sec1, sec2, sec3 });
 
             if (!string.IsNullOrEmpty(model.Homepage))
             {
-				var web = new StyledStringElement("Website".t(), () => ViewModel.GoToUrlCommand.Execute(model.Homepage), Images.Webpage);
+                var web = new StyledStringElement("Website", () => ViewModel.GoToUrlCommand.Execute(model.Homepage), Octicon.Globe.ToImage());
                 root.Add(new Section { web });
             }
 

@@ -3,13 +3,14 @@ using Cirrious.CrossCore;
 using Cirrious.MvvmCross.Touch.Views;
 using Cirrious.MvvmCross.Touch.Views.Presenters;
 using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
 using UIKit;
 using CodeFramework.Core;
 using MonoTouch.SlideoutNavigation;
+using CodeHub.iOS.Views.Accounts;
 
-namespace CodeFramework.iOS
+namespace CodeHub.iOS
 {
     public class TouchViewPresenter : MvxBaseTouchViewPresenter
     {

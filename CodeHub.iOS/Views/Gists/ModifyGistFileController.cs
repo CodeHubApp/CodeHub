@@ -1,12 +1,10 @@
 using System;
 using CoreGraphics;
-using CodeFramework.iOS.Views;
 using CodeHub.iOS;
 using Foundation;
 using UIKit;
-using CodeFramework.Views;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views
 {
     public partial class ModifyGistFileController : UIViewController
     {

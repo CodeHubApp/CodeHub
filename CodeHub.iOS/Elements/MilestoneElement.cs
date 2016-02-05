@@ -2,9 +2,9 @@ using System;
 using MonoTouch.Dialog;
 using Foundation;
 using UIKit;
-using CodeFramework.iOS.TableViewCells;
+using CodeHub.iOS.TableViewCells;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
     public class MilestoneElement : Element
     {

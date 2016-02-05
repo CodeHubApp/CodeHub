@@ -9,7 +9,7 @@ using UIKit;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
     public abstract class PrettyDialogViewController : ViewModelDrivenDialogViewController
     {

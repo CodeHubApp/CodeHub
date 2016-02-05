@@ -65,5 +65,9 @@
 	</dict>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>octicons.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -12,7 +12,7 @@ using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using UIKit;
 
 namespace CodeHub.iOS

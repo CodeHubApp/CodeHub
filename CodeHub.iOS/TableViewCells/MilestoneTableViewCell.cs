@@ -1,9 +1,9 @@
 using System;
 using UIKit;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using CoreGraphics;
 
-namespace CodeFramework.iOS.TableViewCells
+namespace CodeHub.iOS.TableViewCells
 {
     public class MilestoneTableViewCell : UITableViewCell
     {

@@ -2,7 +2,7 @@ using System;
 using CodeHub.iOS;
 using MonoTouch.Dialog;
 using UIKit;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;

@@ -2,9 +2,9 @@ using System;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
-using CodeFramework.iOS.Elements;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
+using CodeHub.iOS.Elements;
 using UIKit;
 using System.Linq;
 using System.Collections.Generic;
@@ -50,20 +50,20 @@ namespace CodeHub.iOS.Views.PullRequests
             _commentsElement = new WebElement(content2, "comments", true);
             _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
-            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Images.Milestone };
+            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Octicon.Milestone.ToImage() };
             _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
 
-            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) { Image = Images.Person };
+            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) { Image = Octicon.Person.ToImage() };
             _assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
 
-            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Images.Tag };
+            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Octicon.Tag.ToImage() };
             _labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
 
-            _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+            _addCommentElement = new StyledStringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
             _addCommentElement.Tapped += AddCommentTapped;
 
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Images.Cog, Image2 = Images.Merge });
-            _split2 = new SplitElement(new SplitElement.Row { Image1 = Images.Person, Image2 = Images.Create });
+            _split1 = new SplitElement(new SplitElement.Row { Image1 = Octicon.Gear.ToImage(), Image2 = Octicon.GitMerge.ToImage() });
+            _split2 = new SplitElement(new SplitElement.Row { Image1 = Octicon.Person.ToImage(), Image2 = Octicon.Calendar.ToImage() });
 
             ViewModel.Bind(x => x.PullRequest, x =>
             {
@@ -302,8 +302,8 @@ namespace CodeHub.iOS.Views.PullRequests
 
             root.Add(new Section
             {
-                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Images.Commit),
-                new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Images.File),
+                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Octicon.GitCommit.ToImage()),
+                new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Octicon.FileCode.ToImage()),
             });
 
             if (ViewModel.CanPush && !(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
@@ -322,11 +322,11 @@ namespace CodeHub.iOS.Views.PullRequests
 
                 StyledStringElement el;
                 if (ViewModel.PullRequest.Mergable == null)
-                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Images.Fork);
+                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Octicon.GitMerge.ToImage());
                 else if (ViewModel.PullRequest.Mergable.Value)
-                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Images.Fork);
+                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Octicon.GitMerge.ToImage());
                 else
-                    el = new StyledStringElement("Unable to merge!".t()) { Image = Images.Fork };
+                    el = new StyledStringElement("Unable to merge!".t()) { Image = Octicon.GitMerge.ToImage() };
                 el.Accessory = UITableViewCellAccessory.None;
 
                 root.Add(new Section { el });

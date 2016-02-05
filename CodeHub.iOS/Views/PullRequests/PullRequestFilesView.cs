@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.PullRequests
             {
                 var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
                 var el = new StyledStringElement(name, x.Status, UITableViewCellStyle.Subtitle);
-                el.Image = Images.File;
+                el.Image = Octicon.FileCode.ToImage();
                 el.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 				el.Tapped += () =>  vm.GoToSourceCommand.Execute(x);
                 return el;

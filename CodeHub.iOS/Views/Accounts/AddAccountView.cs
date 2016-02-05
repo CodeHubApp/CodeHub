@@ -49,7 +49,7 @@ namespace CodeHub.iOS.Views.Accounts
 			});
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
-            Logo.Image = Images.Logos.GitHub;
+            Logo.Image = Images.Logos.DotComMascot;
 
             if (ViewModel.IsEnterprise)
             {

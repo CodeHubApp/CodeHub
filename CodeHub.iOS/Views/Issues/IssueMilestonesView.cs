@@ -3,7 +3,7 @@ using CodeHub.Core.ViewModels.Issues;
 using System.Linq;
 using UIKit;
 using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.Elements;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues
 {

@@ -2,7 +2,7 @@ using CoreGraphics;
 using MonoTouch.Dialog;
 using UIKit;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
     public class LabelElement : StyledStringElement
     {

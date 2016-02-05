@@ -1,51 +1,69 @@
 using CoreGraphics;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
-using MonoTouch;
 using UIKit;
+using Cirrious.MvvmCross.Touch.Views;
 using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
 
-namespace CodeHub.iOS.Views.Accounts
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public partial class NewAccountView : MvxViewController
+    public class NewAccountViewController : MvxViewController
     {
-        public NewAccountView()
-			: base ("NewAccountView", null)
+        private readonly UIColor DotComBackgroundColor = UIColor.FromRGB(239, 239, 244);
+        private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
+        private AccountButton _dotComButton;
+        private AccountButton _enterpriseButton;
+
+        public NewAccountViewController()
         {
-            Title = "Account";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain,(s, e) => NavigationController.PopViewController(true));
+            Title = "New Account";
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
-			
-            InternetButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
-            EnterpriseButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
+            var dotComButton = _dotComButton = new AccountButton("GitHub.com", Images.Logos.DotComMascot);
+            var enterpriseButton = _enterpriseButton = new AccountButton("Enterprise", Images.Logos.EnterpriseMascot);
 
-            InternetButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            InternetButton.Layer.ShadowOffset = new CGSize(0, 1);
-            InternetButton.Layer.ShadowOpacity = 0.3f;
+            dotComButton.BackgroundColor = DotComBackgroundColor;
+            dotComButton.Label.TextColor = EnterpriseBackgroundColor;
+            dotComButton.ImageView.TintColor = EnterpriseBackgroundColor;
 
-            EnterpriseButton.Layer.ShadowColor = UIColor.Black.CGColor;
-            EnterpriseButton.Layer.ShadowOffset = new CGSize(0, 1);
-            EnterpriseButton.Layer.ShadowOpacity = 0.3f;
+            enterpriseButton.BackgroundColor = EnterpriseBackgroundColor;
+            enterpriseButton.Label.TextColor = dotComButton.BackgroundColor;
+            enterpriseButton.ImageView.TintColor = dotComButton.BackgroundColor;
 
-            var set = this.CreateBindingSet<NewAccountView, NewAccountViewModel>();
-            set.Bind(InternetButton).To(x => x.GoToDotComLoginCommand);
-            set.Apply();
+            Add(dotComButton);
+            Add(enterpriseButton);
 
-            EnterpriseButton.TouchUpInside += (object sender, System.EventArgs e) => GoToEnterprise();
+            View.ConstrainLayout(() => 
+                dotComButton.Frame.Top == View.Frame.Top &&
+                dotComButton.Frame.Left == View.Frame.Left &&
+                dotComButton.Frame.Right == View.Frame.Right &&
+                dotComButton.Frame.Bottom == View.Frame.GetMidY() &&
 
-            ScrollView.ContentSize = new CGSize(View.Bounds.Width, EnterpriseButton.Frame.Bottom + 10f);
+                enterpriseButton.Frame.Top == dotComButton.Frame.Bottom &&
+                enterpriseButton.Frame.Left == View.Frame.Left &&
+                enterpriseButton.Frame.Right == View.Frame.Right &&
+                enterpriseButton.Frame.Bottom == View.Frame.Bottom);
         }
 
-        private void GoToEnterprise()
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            _enterpriseButton.TouchUpInside += EnterpriseButtonTouch;
+            _dotComButton.TouchUpInside += DotComButtonTouch;
+        }
+
+        private void DotComButtonTouch (object sender, System.EventArgs e)
+        {
+            var viewModel = ViewModel as NewAccountViewModel;
+            viewModel?.GoToDotComLoginCommand.Execute(null);
+        }
+
+        private void EnterpriseButtonTouch (object sender, System.EventArgs e)
         {
             var features = Mvx.Resolve<IFeaturesService>();
             if (features.IsEnterpriseSupportActivated)
@@ -53,13 +71,51 @@ namespace CodeHub.iOS.Views.Accounts
             else
             {
                 var ctrl = new EnableEnterpriseViewController();
-                ctrl.Dismissed += (sender, e) => {
+                ctrl.Dismissed += (_, __) => {
                     if (features.IsEnterpriseSupportActivated)
                         ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
                 };
                 PresentViewController(ctrl, true, null);
             }
         }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _enterpriseButton.TouchUpInside -= EnterpriseButtonTouch;
+            _dotComButton.TouchUpInside -= DotComButtonTouch;
+        }
+
+        private class AccountButton : UIButton
+        {
+            public UILabel Label { get; private set; }
+
+            public new UIImageView ImageView { get; private set; }
+
+            public AccountButton(string text, UIImage image)
+                : base(new CGRect(0, 0, 100, 100))
+            {
+                Label = new UILabel(new CGRect(0, 0, 100, 100));
+                Label.Text = text;
+                Label.TextAlignment = UITextAlignment.Center;
+                Add(Label);
+
+                ImageView = new UIImageView(new CGRect(0, 0, 100, 100));
+                ImageView.Image = image;
+                ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
+                Add(ImageView);
+
+                this.ConstrainLayout(() => 
+                    ImageView.Frame.Top == this.Frame.Top + 30f &&
+                    ImageView.Frame.Left == this.Frame.Left &&
+                    ImageView.Frame.Right == this.Frame.Right &&
+                    ImageView.Frame.Bottom == this.Frame.Bottom - 60f &&
+
+                    Label.Frame.Top == ImageView.Frame.Bottom + 10f &&
+                    Label.Frame.Left == this.Frame.Left &&
+                    Label.Frame.Right == this.Frame.Right &&
+                    Label.Frame.Height == 20);
+            }
+        }
     }
 }
-

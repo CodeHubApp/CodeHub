@@ -1,6 +1,6 @@
 using Cirrious.MvvmCross.Binding.BindingContext;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.User;
 using MonoTouch.Dialog;
 using UIKit;
@@ -15,12 +15,7 @@ namespace CodeHub.iOS.Views.User
 			get { return (ProfileViewModel)base.ViewModel; }
 			set { base.ViewModel = value; }
 		}
-
-		public ProfileView()
-		{
-			Root.UnevenRows = true;
-		}
-
+            
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -29,31 +24,45 @@ namespace CodeHub.iOS.Views.User
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = ViewModel.Username;
 
+            var split = new SplitButtonElement();
+            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.Execute(null));
+            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.Execute(null));
+
+            var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Octicon.Rss.ToImage());
+            var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToOrganizationsCommand.Execute(null), Octicon.Organization.ToImage());
+            var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Octicon.Repo.ToImage());
+            var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Octicon.Gist.ToImage());
+            Root.UnevenRows = true;
+            Root.Add(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
+
             ViewModel.Bind(x => x.User, x =>
             {
+                followers.Text = x.Followers.ToString();
+                following.Text = x.Following.ToString();
                 HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? null : x.Name;
                 HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
             });
+        }
 
-			var followers = new StyledStringElement("Followers".t(), () => ViewModel.GoToFollowersCommand.Execute(null), Images.Heart);
-			var following = new StyledStringElement("Following".t(), () => ViewModel.GoToFollowingCommand.Execute(null), Images.Following);
-			var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Images.Event);
-			var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group);
-			var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Images.Repo);
-			var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Images.Script);
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            if (!ViewModel.IsLoggedInUser)
+                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+        }
 
-            Root.Add(new [] { new Section(new UIView(new CGRect(0, 0, 0, 20f))) { events, organizations, followers, following }, new Section { repos, gists } });
-
-			if (!ViewModel.IsLoggedInUser)
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
         }
 
 		private void ShowExtraMenu()
 		{
             var sheet = new UIActionSheet();
-			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow".t() : "Follow".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow" : "Follow");
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
 			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 			sheet.Dismissed += (s, e) => {

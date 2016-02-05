@@ -24,6 +24,7 @@ using CoreGraphics;
 using Foundation;
 using MonoTouch.Dialog.Utilities;
 using CoreAnimation;
+using SDWebImage;
 
 namespace MonoTouch.Dialog
 {
@@ -58,6 +59,8 @@ namespace MonoTouch.Dialog
 		{
 			this.Caption = caption;
 		}	
+
+        public Element() : this (string.Empty) {}
 		
 		public void Dispose ()
 		{
@@ -585,7 +588,7 @@ namespace MonoTouch.Dialog
 	///   options and can render images or background images either from UIImage parameters 
 	///   or by downloading them from the net.
 	/// </summary>
-	public class StyledStringElement : StringElement, IImageUpdated, IColorizeBackground {
+	public class StyledStringElement : StringElement, IColorizeBackground {
         public static UIFont  DefaultTitleFont = UIFont.SystemFontOfSize(15f);
         public static UIFont  DefaultDetailFont = UIFont.SystemFontOfSize(14f);
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
@@ -650,7 +653,7 @@ namespace MonoTouch.Dialog
 		class ExtraInfo {
 			public UIImage Image; // Maybe add BackgroundImage?
 			public UIColor BackgroundColor, DetailColor;
-			public Uri Uri, BackgroundUri;
+			public Uri Uri;
 		}
 
 		ExtraInfo OnImageInfo ()
@@ -667,7 +670,6 @@ namespace MonoTouch.Dialog
 			}
 			set {
 				OnImageInfo ().Image = value;
-				extraInfo.Uri = null;
 			}
 		}
 		
@@ -678,7 +680,6 @@ namespace MonoTouch.Dialog
 			}
 			set {
 				OnImageInfo ().Uri = value;
-				extraInfo.Image = null;
 			}
 		}
 		
@@ -689,7 +690,6 @@ namespace MonoTouch.Dialog
 			}
 			set {
 				OnImageInfo ().BackgroundColor = value;
-				extraInfo.BackgroundUri = null;
 			}
 		}
 		
@@ -701,18 +701,7 @@ namespace MonoTouch.Dialog
 				OnImageInfo ().DetailColor = value;
 			}
 		}
-		
-		// Uri for a Background image (alternatiev: BackgroundColor)
-		public Uri BackgroundUri {
-			get {
-				return extraInfo == null ? null : extraInfo.BackgroundUri;
-			}
-			set {
-				OnImageInfo ().BackgroundUri = value;
-				extraInfo.BackgroundColor = null;
-			}
-		}
-			
+
 		protected virtual string GetKey (int style)
 		{
 			return skey [style];
@@ -758,19 +747,13 @@ namespace MonoTouch.Dialog
 			if (extraInfo == null){
 				ClearBackground (cell);
 			} else {
-				var imgView = cell.ImageView;
-				UIImage img;
+                cell.ImageView.Image = extraInfo.Image;
 
-				if (imgView != null) {
-					if (extraInfo.Uri != null)
-						img = ImageLoader.DefaultRequestImage (extraInfo.Uri, this);
-					else if (extraInfo.Image != null)
-						img = extraInfo.Image;
-					else 
-						img = null;
-					imgView.Image = img;
-				}
-
+                if (extraInfo.Uri != null)
+                {
+                    cell.ImageView.SetImage(new NSUrl(extraInfo.Uri.AbsoluteUri), extraInfo.Image);
+                }
+	
 				if (cell.DetailTextLabel != null)
 					cell.DetailTextLabel.TextColor = extraInfo.DetailColor ?? UIColor.Gray;
 			}
@@ -798,28 +781,13 @@ namespace MonoTouch.Dialog
 
             if (extraInfo == null)
                 return;
-
 			
 			if (extraInfo.BackgroundColor != null){
 				cell.BackgroundColor = extraInfo.BackgroundColor;
 				cell.TextLabel.BackgroundColor = UIColor.Clear;
-			} else if (extraInfo.BackgroundUri != null){
-				var img = ImageLoader.DefaultRequestImage (extraInfo.BackgroundUri, this);
-				cell.BackgroundColor = img == null ? UIColor.White : UIColor.FromPatternImage (img);
-				cell.TextLabel.BackgroundColor = UIColor.Clear;
-			} 
+			}
 		}
 
-		void IImageUpdated.UpdatedImage (Uri uri)
-		{
-			if (uri == null || extraInfo == null)
-				return;
-			var root = GetImmediateRootElement ();
-			if (root == null || root.TableView == null)
-				return;
-			root.TableView.ReloadRows (new NSIndexPath [] { IndexPath }, UITableViewRowAnimation.None);
-		}	
-		
 		internal void AccessoryTap ()
 		{
             var tapped = AccessoryTapped;

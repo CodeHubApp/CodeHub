@@ -3,7 +3,7 @@ using CoreGraphics;
 using CoreGraphics;
 using System;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
     public class ProgressBarView : UIView
     {

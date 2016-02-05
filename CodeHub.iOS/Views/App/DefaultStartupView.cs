@@ -4,7 +4,7 @@ using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;
 
-namespace CodeFramework.iOS.Views.App
+namespace CodeHub.iOS.Views.App
 {
 	public class DefaultStartupView : ViewModelCollectionDrivenDialogViewController
     {

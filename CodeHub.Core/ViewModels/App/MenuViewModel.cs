@@ -16,6 +16,7 @@ using CodeHub.Core.Messages;
 using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.ViewModels.Notifications;
 using CodeFramework.Core.ViewModels;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -23,7 +24,7 @@ namespace CodeHub.Core.ViewModels.App
     {
         private readonly IApplicationService _application;
 		private int _notifications;
-		private List<string> _organizations;
+        private List<BasicUserModel> _organizations;
 		private readonly MvxSubscriptionToken _notificationCountToken;
 
 		public int Notifications
@@ -32,7 +33,7 @@ namespace CodeHub.Core.ViewModels.App
             set { _notifications = value; RaisePropertyChanged(() => Notifications); }
         }
 
-		public List<string> Organizations
+        public List<BasicUserModel> Organizations
         {
             get { return _organizations; }
             set { _organizations = value; RaisePropertyChanged(() => Organizations); }
@@ -190,8 +191,7 @@ namespace CodeHub.Core.ViewModels.App
 
             this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(t =>
             {
-                Organizations = t.Result.Data.Select(y => y.Login).ToList();
-
+                Organizations = t.Result.Data.ToList();
             });
         }
     }

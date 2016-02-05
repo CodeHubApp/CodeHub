@@ -233,18 +233,6 @@
       <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
     </Compile>
     <None Include="packages.config" />
-    <Compile Include="Cells\IssueCellView.cs" />
-    <Compile Include="Cells\IssueCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\IssueCellView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cells\NewsCellView.cs" />
-    <Compile Include="Cells\NewsCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\NewsCellView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cells\RepositoryCellView.cs" />
-    <Compile Include="Cells\RepositoryCellView.designer.cs">
-      <DependentUpon>..\..\lib\CodeFramework\CodeFramework.iOS\Cells\RepositoryCellView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Elements\ChangesetElement.cs" />
     <Compile Include="Elements\CommentElement.cs" />
     <Compile Include="Elements\IssueElement.cs" />
@@ -296,7 +284,6 @@
     <None Include="SourceBrowser\css\tomorrow-night-eighties.css" />
     <None Include="SourceBrowser\css\xcode.css" />
     <None Include="SourceBrowser\css\zenburn.css" />
-    <Compile Include="TableViewCells\MilestoneTableViewCell.cs" />
     <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
@@ -306,17 +293,9 @@
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
-    <Compile Include="Utils\Hud.cs" />
-    <Compile Include="Utils\PickerAlert.cs" />
-    <Compile Include="Utils\Translate.cs" />
-    <Compile Include="Utils\UIImageExtensions.cs" />
-    <Compile Include="Utils\Util.cs" />
-    <Compile Include="Utils\ViewControllerExtensions.cs" />
-    <Compile Include="Views\AccountsView.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\MilestoneView.cs" />
-    <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="Views\ProgressBarView.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
     <Compile Include="Views\StartupView.cs" />
@@ -329,7 +308,6 @@
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="Elements\ActivityElement.cs" />
-    <Compile Include="Elements\ButtonElement.cs" />
     <Compile Include="Elements\CustomElement.cs" />
     <Compile Include="Elements\InputElement.cs" />
     <Compile Include="Elements\MultilinedElement.cs" />
@@ -346,14 +324,6 @@
     <Compile Include="Elements\SplitElement.cs" />
     <Compile Include="Elements\TrueFalseElement.cs" />
     <Compile Include="Elements\LoadMoreElement.cs" />
-    <Compile Include="Utils\Controls.cs" />
-    <Compile Include="Utils\GlassButton.cs" />
-    <Compile Include="Utils\Graphics.cs" />
-    <Compile Include="Utils\ImageLoader.cs" />
-    <Compile Include="Utils\LocalizationExtensions.cs" />
-    <Compile Include="Utils\LRUCache.cs" />
-    <Compile Include="Utils\SegmentControl.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <Compile Include="Elements\Elements.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
@@ -362,13 +332,44 @@
     <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
     <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
     <InterfaceDefinition Include="Launch.storyboard" />
-    <InterfaceDefinition Include="Cells\IssueCellView.xib" />
-    <InterfaceDefinition Include="Cells\NewsCellView.xib" />
-    <InterfaceDefinition Include="Cells\RepositoryCellView.xib" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\SlideupTitleVIew.cs" />
     <Compile Include="Views\Repositories\RepositoriesForkedView.cs" />
+    <Compile Include="Utilities\Hud.cs" />
+    <Compile Include="Utilities\PickerAlert.cs" />
+    <Compile Include="Utilities\Translate.cs" />
+    <Compile Include="Utilities\UIImageExtensions.cs" />
+    <Compile Include="Utilities\Util.cs" />
+    <Compile Include="Utilities\ViewControllerExtensions.cs" />
+    <Compile Include="Utilities\Controls.cs" />
+    <Compile Include="Utilities\Graphics.cs" />
+    <Compile Include="Utilities\ImageLoader.cs" />
+    <Compile Include="Utilities\LocalizationExtensions.cs" />
+    <Compile Include="Utilities\LRUCache.cs" />
+    <Compile Include="Utilities\SegmentControl.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
+    <Compile Include="Utilities\EasyLayout.cs" />
+    <Compile Include="Octicons.cs" />
+    <Compile Include="OcticonExtensions.cs" />
+    <Compile Include="Views\Accounts\AccountsView.cs" />
+    <Compile Include="Views\ProfileButton.cs" />
+    <Compile Include="TableViewCells\IssueCellView.cs" />
+    <Compile Include="TableViewCells\IssueCellView.designer.cs">
+      <DependentUpon>IssueCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewCells\NewsCellView.cs" />
+    <Compile Include="TableViewCells\NewsCellView.designer.cs">
+      <DependentUpon>NewsCellView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TableViewCells\RepositoryCellView.cs" />
+    <Compile Include="TableViewCells\RepositoryCellView.designer.cs">
+      <DependentUpon>RepositoryCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\IssueCellView.xib" />
+    <InterfaceDefinition Include="TableViewCells\NewsCellView.xib" />
+    <InterfaceDefinition Include="TableViewCells\RepositoryCellView.xib" />
+    <Compile Include="TableViewCells\MilestoneTableViewCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -418,18 +419,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SDWebImage">
-      <HintPath>..\packages\Xamarin.SDWebImage.3.7.3.4\lib\Xamarin.iOS\SDWebImage.dll</HintPath>
-    </Reference>
     <Reference Include="GitHubSharp">
       <HintPath>..\packages\GitHubClient.1.0.9.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
     </Reference>
+    <Reference Include="SDWebImage">
+      <HintPath>..\packages\Xamarin.SDWebImage.3.7.5\lib\Xamarin.iOS\SDWebImage.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\bin_closed%402x.png" />
-    <Content Include="Images\bin_closed.png" />
-    <Content Include="Images\branch%402x.png" />
-    <Content Include="Images\branch.png" />
     <Content Include="Images\Buttons\black_button%402x.png" />
     <Content Include="Images\Buttons\black_button.png" />
     <Content Include="Images\Buttons\fork%402x.png" />
@@ -440,30 +437,6 @@
     <Content Include="Images\Buttons\save.png" />
     <Content Include="Images\Buttons\view%402x.png" />
     <Content Include="Images\Buttons\view.png" />
-    <Content Include="Images\cog%402x.png" />
-    <Content Include="Images\cog.png" />
-    <Content Include="Images\comments%402x.png" />
-    <Content Include="Images\comments.png" />
-    <Content Include="Images\commit%402x.png" />
-    <Content Include="Images\commit.png" />
-    <Content Include="Images\create%402x.png" />
-    <Content Include="Images\create.png" />
-    <Content Include="Images\events%402x.png" />
-    <Content Include="Images\events.png" />
-    <Content Include="Images\explore%402x.png" />
-    <Content Include="Images\explore.png" />
-    <Content Include="Images\eye%402x.png" />
-    <Content Include="Images\eye.png" />
-    <Content Include="Images\file%402x.png" />
-    <Content Include="Images\file.png" />
-    <Content Include="Images\flag%402x.png" />
-    <Content Include="Images\flag.png" />
-    <Content Include="Images\folder%402x.png" />
-    <Content Include="Images\folder.png" />
-    <Content Include="Images\following%402x.png" />
-    <Content Include="Images\following.png" />
-    <Content Include="Images\fork%402x.png" />
-    <Content Include="Images\fork.png" />
     <Content Include="Images\Gist\share%402x.png" />
     <Content Include="Images\Gist\share.png" />
     <Content Include="Images\Gist\star%402x.png" />
@@ -472,57 +445,8 @@
     <Content Include="Images\Gist\star_highlighted.png" />
     <Content Include="Images\Gist\user%402x.png" />
     <Content Include="Images\Gist\user.png" />
-    <Content Include="Images\group%402x.png" />
-    <Content Include="Images\group.png" />
-    <Content Include="Images\hand%402x.png" />
-    <Content Include="Images\hand.png" />
-    <Content Include="Images\heart%402x.png" />
-    <Content Include="Images\heart.png" />
-    <Content Include="Images\info%402x.png" />
-    <Content Include="Images\info.png" />
-    <Content Include="Images\language%402x.png" />
-    <Content Include="Images\language.png" />
-    <Content Include="Images\locked%402x.png" />
-    <Content Include="Images\locked.png" />
-    <Content Include="Images\Logos\github.png" />
-    <Content Include="Images\merge%402x.png" />
-    <Content Include="Images\merge.png" />
-    <Content Include="Images\milestone%402x.png" />
-    <Content Include="Images\milestone.png" />
-    <Content Include="Images\news%402x.png" />
-    <Content Include="Images\news.png" />
-    <Content Include="Images\notifications%402x.png" />
-    <Content Include="Images\notifications.png" />
-    <Content Include="Images\pencil%402x.png" />
-    <Content Include="Images\pencil.png" />
-    <Content Include="Images\person%402x.png" />
-    <Content Include="Images\person.png" />
-    <Content Include="Images\priority%402x.png" />
-    <Content Include="Images\priority.png" />
-    <Content Include="Images\public%402x.png" />
-    <Content Include="Images\public.png" />
-    <Content Include="Images\repo%402x.png" />
-    <Content Include="Images\repo.png" />
     <Content Include="Images\repository.png" />
     <Content Include="Images\repository_fork.png" />
-    <Content Include="Images\script%402x.png" />
-    <Content Include="Images\script.png" />
-    <Content Include="Images\size%402x.png" />
-    <Content Include="Images\size.png" />
-    <Content Include="Images\star%402x.png" />
-    <Content Include="Images\star.png" />
-    <Content Include="Images\star2%402x.png" />
-    <Content Include="Images\star2.png" />
-    <Content Include="Images\tag%402x.png" />
-    <Content Include="Images\tag.png" />
-    <Content Include="Images\team%402x.png" />
-    <Content Include="Images\team.png" />
-    <Content Include="Images\unlocked%402x.png" />
-    <Content Include="Images\unlocked.png" />
-    <Content Include="Images\user%402x.png" />
-    <Content Include="Images\user.png" />
-    <Content Include="Images\webpage%402x.png" />
-    <Content Include="Images\webpage.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\Web\back.png" />
@@ -541,8 +465,6 @@
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <BundleResource Include="Images\chart%402x.png" />
-    <BundleResource Include="Images\chart.png" />
     <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
     <BundleResource Include="Images\MarkdownComposer\link.png" />
     <BundleResource Include="Images\MarkdownComposer\photo%402x.png" />
@@ -566,6 +488,9 @@
     <Content Include="SourceBrowser\index.html" />
     <BundleResource Include="Images\avatar.png" />
     <BundleResource Include="Images\avatar%402x.png" />
+    <BundleResource Include="Images\Logos\dotcom-mascot.png" />
+    <BundleResource Include="Images\Logos\enterprise-mascot.png" />
+    <BundleResource Include="octicons.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -577,6 +502,7 @@
     <Folder Include="Images\MarkdownComposer\" />
     <Folder Include="Factories\" />
     <Folder Include="Views\Teams\" />
+    <Folder Include="Images\Logos\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">

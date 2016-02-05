@@ -3,7 +3,7 @@ using System.Linq;
 using Cirrious.MvvmCross.ViewModels;
 using CodeFramework.Core.ViewModels;
 using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
 using MonoTouch;

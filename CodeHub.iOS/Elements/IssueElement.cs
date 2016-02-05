@@ -1,10 +1,10 @@
 using System;
-using CodeFramework.iOS.Cells;
 using MonoTouch.Dialog;
 using UIKit;
 using Foundation;
+using CodeHub.iOS.TableViewCells;
 
-namespace CodeFramework.Elements
+namespace CodeHub.iOS.Elements
 {
     public class IssueElement : Element, IElementSizing, IColorizeBackground
     {       

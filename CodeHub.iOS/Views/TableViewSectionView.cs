@@ -2,7 +2,7 @@ using CoreGraphics;
 using UIKit;
 using System;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
     public class TableViewSectionView : UIView
     {

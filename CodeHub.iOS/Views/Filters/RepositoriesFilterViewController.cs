@@ -1,6 +1,6 @@
 using MonoTouch.Dialog;
 using UIKit;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.Filters;
 using CodeFramework.Core.ViewModels;
 
@@ -38,7 +38,7 @@ namespace CodeHub.iOS.Views.Filters
                     new StyledStringElement("Save as Default", () =>{
                         _filterController.ApplyFilter(CreateFilterModel(), true);
                         CloseViewController();
-                    }, Images.Size) { Accessory = UITableViewCellAccessory.None },
+                    }) { Accessory = UITableViewCellAccessory.None },
                 }
             };
 

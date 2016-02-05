@@ -3,7 +3,7 @@ using CoreGraphics;
 using Foundation;
 using UIKit;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
 	public class LiteComposer : UIViewController
 	{

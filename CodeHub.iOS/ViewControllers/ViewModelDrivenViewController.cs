@@ -4,7 +4,7 @@ using CodeFramework.Core.ViewModels;
 using UIKit;
 using CodeHub.Core.ViewModels;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
     public class ViewModelDrivenViewController : MvxViewController
     {

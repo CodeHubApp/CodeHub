@@ -1,11 +1,10 @@
 using CoreGraphics;
-using CodeFramework.Views;
 using MonoTouch.Dialog;
-using Foundation;
 using UIKit;
 using System;
+using CodeHub.iOS.Views;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
 	public abstract class MenuBaseViewController : ViewModelDrivenDialogViewController
     {
@@ -103,13 +102,14 @@ namespace CodeFramework.iOS.ViewControllers
         {
             public int NotificationNumber { get; set; }
 
-            public MenuElement(string title, Action tapped, UIImage image)
+            public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null)
                 : base(title, tapped)
             {
                 BackgroundColor = UIColor.Clear;
                 TextColor = UIColor.FromRGB(213, 213, 213);
                 DetailColor = UIColor.White;
                 Image = image;
+                ImageUri = imageUrl;
             }
 
             //We want everything to be the same size as far as images go.
@@ -181,7 +181,9 @@ namespace CodeFramework.iOS.ViewControllers
 
             protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
             {
-                return new Cell(style, key);
+                var cell = new Cell(style, key);
+                cell.ImageView.TintColor = UIColor.FromRGB(0xd5, 0xd5, 0xd5);
+                return cell;
             }
         }
     }

@@ -2,7 +2,7 @@ using System;
 using MonoTouch.Dialog;
 using Foundation;
 using UIKit;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.iOS.Views.App

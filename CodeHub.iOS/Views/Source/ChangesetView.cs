@@ -1,6 +1,5 @@
 using System;
-using CodeFramework.Elements;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
 using CodeFramework.iOS.Utils;
@@ -8,6 +7,7 @@ using System.Linq;
 using Foundation;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Changesets;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -88,7 +88,7 @@ namespace CodeHub.iOS.Views.Source
                     Lines = 1, 
                     Font = StyledStringElement.DefaultDetailFont, 
                     TextColor = StyledStringElement.DefaultDetailColor,
-                    Image = Images.Repo
+                    Image = Octicon.Repo.ToImage()
                 };
                 repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
                 detailSection.Add(repo);
@@ -145,7 +145,7 @@ namespace CodeHub.iOS.Views.Source
 			if (commentSection.Elements.Count > 0)
 				root.Add(commentSection);
 
-            var addComment = new StyledStringElement("Add Comment".t()) { Image = Images.Pencil };
+            var addComment = new StyledStringElement("Add Comment".t()) { Image = Octicon.Pencil.ToImage() };
             addComment.Tapped += AddCommentTapped;
 			root.Add(new Section { addComment });
             Root = root; 

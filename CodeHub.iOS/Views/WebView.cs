@@ -4,7 +4,7 @@ using UIKit;
 using Foundation;
 using CodeHub.Core.ViewModels;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
     public class WebView : MvxViewController
     {

@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using CodeFramework.iOS.Utils;
-using CodeFramework.iOS.Elements;
+using CodeHub.iOS.Elements;
 using System.Linq;
 using System.Collections.Generic;
 using CodeHub.iOS.ViewControllers;
@@ -61,16 +61,16 @@ namespace CodeHub.iOS.Views.Issues
             _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
             //_commentsElement.HeightChanged = x => Render();
 
-            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Images.Milestone, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
             _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
 
-            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) {Image = Images.Person, Accessory = UITableViewCellAccessory.DisclosureIndicator };
+            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator };
             _assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
 
-            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Images.Tag, Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
             _labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
 
-            _addCommentElement = new StyledStringElement("Add Comment") { Image = Images.Pencil };
+            _addCommentElement = new StyledStringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
             _addCommentElement.Tapped += AddCommentTapped;
 
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());

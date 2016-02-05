@@ -2,7 +2,7 @@ using System;
 using UIKit;
 using CoreGraphics;
 
-namespace CodeFramework.iOS.Views
+namespace CodeHub.iOS.Views
 {
     public class MilestoneView : UIView
     {

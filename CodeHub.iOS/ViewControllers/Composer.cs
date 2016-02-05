@@ -1,11 +1,11 @@
 using System;
 using CoreGraphics;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using Foundation;
 using UIKit;
 using System.Collections.Generic;
 
-namespace CodeFramework.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
 	public class Composer : UIViewController
 	{

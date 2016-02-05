@@ -50,15 +50,15 @@ namespace CodeHub.iOS.Views
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
-                    el.Image = Images.Flag;
+                    el.Image = Octicon.IssueOpened.ToImage();
                 else if (subject.Equals("pullrequest"))
-                    el.Image = Images.Hand;
+                    el.Image = Octicon.GitPullRequest.ToImage();
                 else if (subject.Equals("commit"))
-                    el.Image = Images.Commit;
+                    el.Image = Octicon.GitCommit.ToImage();
                 else if (subject.Equals("release"))
-                    el.Image = Images.Tag;
+                    el.Image = Octicon.Tag.ToImage();
                 else
-                    el.Image = Images.Notifications;
+                    el.Image = Octicon.Alert.ToImage();
 
                 el.Tapped += () => vm.GoToNotificationCommand.Execute(x);
                 return el;

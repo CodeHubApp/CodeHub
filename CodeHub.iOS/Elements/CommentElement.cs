@@ -1,7 +1,7 @@
 using MonoTouch.Dialog;
 using UIKit;
 
-namespace CodeFramework.Elements
+namespace CodeHub.iOS.Elements
 {
     public class CommentElement : NameTimeStringElement
     {

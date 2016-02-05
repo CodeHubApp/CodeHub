@@ -1,8 +1,8 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.Views;
 using MonoTouch.Dialog;
 using System.Linq;
 using CodeFramework.iOS.Utils;

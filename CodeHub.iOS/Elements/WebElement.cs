@@ -4,7 +4,7 @@ using UIKit;
 using Foundation;
 using CoreGraphics;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
     public class WebElement : Element, IElementSizing
     {

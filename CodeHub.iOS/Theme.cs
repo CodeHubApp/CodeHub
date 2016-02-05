@@ -1,60 +1,9 @@
-using CodeFramework.iOS;
 using UIKit;
-using CodeFramework.iOS.Cells;
 using MonoTouch.UIKit;
-
-namespace CodeFramework.iOS
-{
-    public static class Theme
-    {
-        public static ICodeFrameworkTheme CurrentTheme;
-    }
-
-    /// <summary>
-    /// I'd really rather define these at the top most level available to the app. A.k.a the actually application
-    /// code itself instead of the library. All theme tuning will be done on that level.
-    /// </summary>
-    public interface ICodeFrameworkTheme
-    {
-        UIImage BackButton { get; }
-        UIImage ThreeLinesButton { get; }
-        UIImage CancelButton { get; }
-        UIImage SaveButton { get; }
-        UIImage ViewButton { get; }
-        UIImage WebBackButton { get; }
-        UIImage WebFowardButton { get; }
-        UIImage ForkButton { get; }
-
-        UIImage IssueCellImage1 { get; }
-        UIImage IssueCellImage2 { get; }
-        UIImage IssueCellImage3 { get; }
-        UIImage IssueCellImage4 { get; }
-
-        UIImage RepositoryCellFollowers { get; }
-        UIImage RepositoryCellForks { get; }
-        UIImage RepositoryCellUser { get; }
-
-        UIColor MainTitleColor { get; }
-        UIColor MainSubtitleColor { get; }
-        UIColor MainTextColor { get; }
-        UIColor ViewBackgroundColor { get; }
-
-        UIColor WebButtonTint { get; }
-
-        UIColor AccountsNavigationBarTint { get; }
-        UIColor SlideoutNavigationBarTint { get; }
-        UIColor ApplicationNavigationBarTint { get; }
-
-
-        float FontSizeRatio { get; }
-    }
-}
-
-
 
 namespace CodeHub.iOS
 {
-    public class Theme : ICodeFrameworkTheme
+    public class Theme
     {
         public static Theme CurrentTheme { get; private set; }
 
@@ -72,11 +21,11 @@ namespace CodeHub.iOS
         {
             var theme = new Theme();
             CurrentTheme = theme;
-            CodeFramework.iOS.Theme.CurrentTheme = theme;
 
             var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
 
             var primaryColor = UIColor.FromRGB(50, 50, 50);
+            var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);
 
             bool largeFonts;
@@ -112,6 +61,8 @@ namespace CodeHub.iOS
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
             UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor = UIColor.White}, UIControlState.Normal);
+
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
 
 //            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
 //            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
@@ -151,37 +102,37 @@ namespace CodeHub.iOS
 
         public UIImage IssueCellImage1
         {
-            get { return _issueCell1 ?? (_issueCell1 = new UIImage(Images.Cog.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.Gear.ToImage(); }
         }
 
         public UIImage IssueCellImage2
         {
-            get { return _issueCell2 ?? (_issueCell2 = new UIImage(Images.Comments.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.CommentDiscussion.ToImage(); }
         }
 
         public UIImage IssueCellImage3
         {
-            get { return _issueCell3 ?? (_issueCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.Person.ToImage(); }
         }
 
         public UIImage IssueCellImage4
         {
-            get { return _issueCell4 ?? (_issueCell4 = new UIImage(Images.Pencil.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.Pencil.ToImage(); }
         }
 
         public UIImage RepositoryCellFollowers
         {
-            get { return _repoCell1 ?? (_repoCell1 = new UIImage(Images.Star.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.Star.ToImage(); }
         }
 
         public UIImage RepositoryCellForks
         {
-            get { return _repoCell2 ?? (_repoCell2 = new UIImage(Images.Fork.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.RepoForked.ToImage(); }
         }
 
         public UIImage RepositoryCellUser
         {
-            get { return _repoCell3 ?? (_repoCell3 = new UIImage(Images.Person.CGImage, 1.3f, UIImageOrientation.Up)); }
+            get { return Octicon.Person.ToImage(); }
         }
 
         public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }

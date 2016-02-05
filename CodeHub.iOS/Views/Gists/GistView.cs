@@ -1,6 +1,6 @@
 using System;
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;
 using GitHubSharp.Models;

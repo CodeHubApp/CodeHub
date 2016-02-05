@@ -3,12 +3,12 @@ using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS;
 
-namespace CodeFramework.iOS.Elements
+namespace CodeHub.iOS.Elements
 {
     public class UserElement : StyledStringElement
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="CodeFramework.iOS.Elements.UserElement"/> use pinned image.
+        /// Gets or sets a value indicating whether this <see cref="CodeHub.iOS.Elements.UserElement"/> use pinned image.
         /// </summary>
         /// <value><c>true</c> if use pinned image; otherwise, <c>false</c>.</value>
         public bool UsePinnedImage { get; set; }

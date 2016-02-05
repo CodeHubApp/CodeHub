@@ -6,7 +6,7 @@
 //
 using Foundation;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views
 {
 	[Register ("ModifyGistFileController")]
 	partial class ModifyGistFileController

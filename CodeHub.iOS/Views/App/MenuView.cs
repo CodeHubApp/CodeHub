@@ -1,5 +1,5 @@
-using CodeFramework.iOS.ViewControllers;
-using CodeFramework.iOS.Views;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using UIKit;
@@ -30,24 +30,31 @@ namespace CodeHub.iOS.Views.App
 
             root.Add(new Section
             {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Images.Person),
-                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Images.Notifications) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Images.News),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Images.Flag)
+                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Octicon.Person.ToImage()),
+                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Octicon.Inbox.ToImage()) { NotificationNumber = ViewModel.Notifications }),
+                new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Octicon.RadioTower.ToImage()),
+                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Octicon.IssueOpened.ToImage())
             });
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Images.Event));
-			if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
-				ViewModel.Organizations.ForEach(x => eventsSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationEventsCommand.Execute(x), Images.Event)));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Octicon.Rss.ToImage()));
+            if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
+            {
+                foreach (var org in ViewModel.Organizations)
+                {
+                    Uri avatarUri;
+                    Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
+                    eventsSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(org.Login), Octicon.Rss.ToImage(), avatarUri));
+                }
+            }
             root.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-			repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Images.Repo));
+            repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Octicon.Repo.ToImage()));
 			//repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
-            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Images.Star));
-            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Images.Chart));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Images.Explore));
+            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Octicon.Star.ToImage()));
+            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Octicon.Pulse.ToImage()));
+            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Octicon.Globe.ToImage()));
             root.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Count() > 0)
@@ -63,28 +70,35 @@ namespace CodeHub.iOS.Views.App
 			}
 
             var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
-			if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
-				ViewModel.Organizations.ForEach(x => orgSection.Add(new MenuElement(x, () => ViewModel.GoToOrganizationCommand.Execute(x), Images.Team)));
+            if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
+            {
+                foreach (var org in ViewModel.Organizations)
+                {
+                    Uri avatarUri;
+                    Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
+                    orgSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationCommand.Execute(org.Login), Images.Avatar, avatarUri));
+                }
+            }
             else
-				orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Images.Group));
+                orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Octicon.Organization.ToImage()));
 
             //There should be atleast 1 thing...
             if (orgSection.Elements.Count > 0)
                 root.Add(orgSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Images.Script));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Images.Star2));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Images.Public));
+            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Octicon.Gist.ToImage()));
+            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Octicon.Star.ToImage()));
+            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Octicon.Globe.ToImage()));
             root.Add(gistsSection);
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Images.Cog));
-            infoSection.Add(new MenuElement("Upgrades".t(), () => ViewModel.GoToUpgradesCommand.Execute(null), Images.Unlocked));
-			infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Images.Info));
-            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Images.Flag));
-            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Images.User));
+            infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
+            infoSection.Add(new MenuElement("Upgrades".t(), () => ViewModel.GoToUpgradesCommand.Execute(null), Octicon.Lock.ToImage()));
+            infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Octicon.Question.ToImage()));
+            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
+            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Octicon.Person.ToImage()));
             Root = root;
 		}
 
@@ -140,7 +154,7 @@ namespace CodeHub.iOS.Views.App
 			}
 
 			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-				: base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Images.Repo)
+                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Octicon.Repo.ToImage())
 			{
 				PinnedRepo = pinnedRepo;
 

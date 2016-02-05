@@ -1,8 +1,8 @@
-using CodeFramework.Elements;
 using CodeFramework.ViewControllers;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues
 {
