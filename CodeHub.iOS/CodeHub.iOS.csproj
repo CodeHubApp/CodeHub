@@ -238,7 +238,6 @@
     <Compile Include="Elements\MilestoneElement.cs" />
     <Compile Include="Elements\NewsFeedElement.cs" />
     <Compile Include="Elements\RepositoryElement.cs" />
-    <Compile Include="Elements\UserElement.cs" />
     <Compile Include="Elements\WebElement.cs" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />

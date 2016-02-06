@@ -13,8 +13,6 @@ namespace CodeHub.iOS.Views.Accounts
 {
     public partial class AddAccountView : MvxViewController
     {
-		private readonly IHud _hud;
-
         public new AddAccountViewModel ViewModel
         {
             get { return (AddAccountViewModel) base.ViewModel; }
@@ -24,13 +22,16 @@ namespace CodeHub.iOS.Views.Accounts
         public AddAccountView()
             : base("AddAccountView", null)
         {
-            Title = "Login".t();
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
-			_hud = this.CreateHud();
         }
 
         public override void ViewDidLoad()
         {
+            base.ViewDidLoad();
+
+            var hud = this.CreateHud();
+
+            Title = "Login";
+
             var set = this.CreateBindingSet<AddAccountView, AddAccountViewModel>();
             set.Bind(User).To(x => x.Username);
             set.Bind(Password).To(x => x.Password);
@@ -38,14 +39,12 @@ namespace CodeHub.iOS.Views.Accounts
             set.Bind(LoginButton).To(x => x.LoginCommand);
             set.Apply();
 
-            base.ViewDidLoad();
-
 			ViewModel.Bind(x => x.IsLoggingIn, x =>
 			{
 				if (x)
-					_hud.Show("Logging in...");
+					hud.Show("Logging in...");
 				else
-					_hud.Hide();
+					hud.Hide();
 			});
 
 			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
@@ -105,6 +104,13 @@ namespace CodeHub.iOS.Views.Accounts
             base.ViewWillAppear(animated);
             _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
             _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.LeftBarButtonItem = null;
         }
 
         public override void ViewWillDisappear(bool animated)
