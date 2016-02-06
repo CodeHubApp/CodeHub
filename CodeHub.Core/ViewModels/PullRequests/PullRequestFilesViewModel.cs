@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Source;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {

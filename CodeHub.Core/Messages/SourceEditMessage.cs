@@ -1,6 +1,5 @@
-using System;
-using Cirrious.MvvmCross.Plugins.Messenger;
 using GitHubSharp.Models;
+using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.Messages
 {

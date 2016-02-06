@@ -142,7 +142,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             try
             {
-                var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
                 var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
                 var gistController = new EditGistController(data.Data);
                 gistController.Created = editedGist => ViewModel.Gist = editedGist;
@@ -160,7 +160,7 @@ namespace CodeHub.iOS.Views.Gists
             if (ViewModel.Gist == null)
                 return;
 
-            var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+            var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
             var isOwner = string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase);
 
             var sheet = new UIActionSheet();

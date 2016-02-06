@@ -1,11 +1,11 @@
 using System;
 using CodeHub.Core.Services;
 using UIKit;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MvvmCross.Platform;
 
 namespace CodeHub.iOS.Services
 {

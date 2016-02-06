@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public class PinnedRepository
     {

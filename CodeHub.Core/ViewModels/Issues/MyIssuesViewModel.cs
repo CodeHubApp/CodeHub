@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
+using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

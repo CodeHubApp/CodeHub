@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Platform;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewControllers;
 using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;

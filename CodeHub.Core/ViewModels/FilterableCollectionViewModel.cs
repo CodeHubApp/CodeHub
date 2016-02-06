@@ -1,7 +1,7 @@
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
+using MvvmCross.Platform;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     public class FilterableCollectionViewModel<T, TF> : CollectionViewModel<T>, IFilterableViewModel<TF> where TF : FilterModel<TF>, new()
     {

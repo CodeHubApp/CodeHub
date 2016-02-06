@@ -1,13 +1,13 @@
 using CoreGraphics;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeFramework.iOS.Utils;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Platform;
+using MvvmCross.Plugins.Messenger;
 using System;
+using MvvmCross.iOS.Views;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Accounts
 {

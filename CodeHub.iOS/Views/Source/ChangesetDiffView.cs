@@ -9,7 +9,7 @@ using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.ViewControllers;
 using CodeFramework.iOS.Utils;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
 using WebKit;
 
@@ -17,7 +17,7 @@ namespace CodeHub.ViewControllers
 {
 	public class ChangesetDiffView : FileSourceView
     {
-		private readonly IJsonSerializationService _serializationService = Cirrious.CrossCore.Mvx.Resolve<IJsonSerializationService>();
+		private readonly IJsonSerializationService _serializationService = MvvmCross.Platform.Mvx.Resolve<IJsonSerializationService>();
 		private bool _domLoaded = false;
 		private List<string> _toBeExecuted = new List<string>();
 

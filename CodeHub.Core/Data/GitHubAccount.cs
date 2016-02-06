@@ -1,4 +1,4 @@
-using CodeFramework.Core.Data;
+using CodeHub.Core.Data;
 using SQLite;
 
 namespace CodeHub.Core.Data

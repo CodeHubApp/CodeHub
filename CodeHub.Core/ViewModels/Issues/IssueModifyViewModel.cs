@@ -1,9 +1,9 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 
@@ -86,7 +86,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Labels);
+					GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Labels);
 					ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository });
 				}); 
 			}
@@ -97,7 +97,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(Milestone);
+					GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Milestone);
 					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
 				});
 			}
@@ -108,7 +108,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			get 
 			{ 
 				return new MvxCommand(() => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(AssignedTo);
+					GetService<CodeHub.Core.Services.IViewModelTxService>().Add(AssignedTo);
 					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
 				}); 
 			}

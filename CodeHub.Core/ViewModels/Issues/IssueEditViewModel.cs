@@ -1,4 +1,4 @@
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System;
@@ -107,7 +107,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			base.Init(navObject.Username, navObject.Repository);
 			Id = navObject.Id;
-			Issue = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IssueModel;
+			Issue = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IssueModel;
 			if (Issue != null)
 			{
 				Title = Issue.Title;

@@ -1,4 +1,4 @@
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {

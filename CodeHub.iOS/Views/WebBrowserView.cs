@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Views
 		{
 
 			base.ViewDidLoad();
-			var vm = (CodeFramework.Core.ViewModels.WebBrowserViewModel)ViewModel;
+			var vm = (CodeHub.Core.ViewModels.WebBrowserViewModel)ViewModel;
             try
             {
     			if (!string.IsNullOrEmpty(vm.Url))

@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using CodeFramework.Core.Data;
+using CodeHub.Core.Data;
 using SQLite;
 
-namespace CodeFramework.Core.Services
+namespace CodeHub.Core.Services
 {
     public abstract class AccountsService<TAccount> : IAccountsService where TAccount : class, IAccount, new()
     {

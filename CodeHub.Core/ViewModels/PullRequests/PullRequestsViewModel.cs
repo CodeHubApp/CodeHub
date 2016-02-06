@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
 using System.Linq;
 

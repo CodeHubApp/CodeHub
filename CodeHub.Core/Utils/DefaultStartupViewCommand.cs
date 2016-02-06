@@ -1,6 +1,6 @@
 using System;
 
-namespace CodeFramework.Core.Utils
+namespace CodeHub.Core.Utils
 {
 	public class PotentialStartupViewAttribute : Attribute
 	{

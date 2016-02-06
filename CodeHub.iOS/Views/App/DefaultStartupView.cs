@@ -1,5 +1,5 @@
 using CodeFramework.ViewControllers;
-using CodeFramework.Core.ViewModels.App;
+using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;

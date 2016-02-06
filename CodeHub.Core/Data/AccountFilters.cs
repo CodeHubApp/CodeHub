@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using SQLite;
 
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public class AccountFilters : IEnumerable<Filter>
     {

@@ -1,4 +1,4 @@
-namespace CodeFramework.Core
+namespace CodeHub.Core
 {
     public class PresentationValues
     {

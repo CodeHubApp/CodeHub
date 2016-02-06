@@ -5,12 +5,12 @@ using UIKit;
 using CoreGraphics;
 using Foundation;
 using CodeFramework.iOS.Utils;
-using Cirrious.MvvmCross.Touch.Views;
 using System.Threading.Tasks;
+using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class EditSourceView : ViewModelDrivenViewController, IMvxModalTouchView
+	public class EditSourceView : ViewModelDrivenViewController, IMvxModalIosView
     {
 		readonly ComposerView _composerView;
 	

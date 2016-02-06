@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
-using CodeFramework.Core.Services;
-using Cirrious.CrossCore;
+using CodeHub.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
+using MvvmCross.Platform;
 
 namespace CodeHub.Core.ViewModels.Source
 {

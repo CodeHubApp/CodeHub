@@ -1,13 +1,12 @@
-using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.App;
-using CodeFramework.Core.Services;
-using Cirrious.CrossCore;
+using CodeHub.Core.Services;
 using System.Net;
 using System.Net.Http;
 using ModernHttpClient;
 using System.Threading.Tasks;
 using System;
 using Foundation;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core
 {
@@ -24,7 +23,7 @@ namespace CodeHub.Core
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
 			//Ensure this is loaded
-			Cirrious.MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
+            MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
 
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 

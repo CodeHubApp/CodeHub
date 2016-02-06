@@ -1,12 +1,12 @@
 using System.Linq;
 using System.Windows.Input;
-using CodeFramework.Core.Utils;
-using Cirrious.MvvmCross.ViewModels;
+using CodeHub.Core.Utils;
 using System.Collections.Generic;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Platform;
 
-namespace CodeFramework.Core.ViewModels.App
+namespace CodeHub.Core.ViewModels.App
 {
 	public abstract class BaseMenuViewModel : BaseViewModel
     {
@@ -59,7 +59,7 @@ namespace CodeFramework.Core.ViewModels.App
 		{
 			get 
 			{
-				return new MvxCommand<CodeFramework.Core.Data.PinnedRepository>(x => Accounts.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id), x => x != null);
+				return new MvxCommand<CodeHub.Core.Data.PinnedRepository>(x => Accounts.ActiveAccount.PinnnedRepositories.RemovePinnedRepository(x.Id), x => x != null);
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace CodeFramework.Core.ViewModels.App
 			return this.ShowViewModel<T>(data, new MvxBundle(Presentation));
 		}
 
-		public IEnumerable<CodeFramework.Core.Data.PinnedRepository> PinnedRepositories
+		public IEnumerable<CodeHub.Core.Data.PinnedRepository> PinnedRepositories
 		{
 			get { return Accounts.ActiveAccount.PinnnedRepositories; }
 		}

@@ -1,8 +1,8 @@
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeHub.iOS.Elements;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.PullRequests
 {

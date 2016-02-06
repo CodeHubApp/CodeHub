@@ -1,6 +1,6 @@
 using SQLite;
 
-namespace CodeFramework.Core.Cache
+namespace CodeHub.Core.Cache
 {
     public class CacheEntry
     {

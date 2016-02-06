@@ -1,4 +1,4 @@
-namespace CodeFramework.Core.Utils
+namespace CodeHub.Core.Utils
 {
     public class RepositoryIdentifier
     {

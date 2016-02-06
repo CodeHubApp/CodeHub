@@ -1,6 +1,6 @@
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 
-namespace CodeFramework.Core.Messages
+namespace CodeHub.Core.Messages
 {
     public class CancelationMessage : MvxMessage
     {

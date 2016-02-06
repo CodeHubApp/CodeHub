@@ -1,9 +1,9 @@
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using GitHubSharp.Models;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

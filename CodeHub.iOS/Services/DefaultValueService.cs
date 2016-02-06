@@ -1,8 +1,8 @@
 using System;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using MonoTouch;
 
-namespace CodeFramework.iOS.Services
+namespace CodeHub.iOS.Services
 {
     public class DefaultValueService : IDefaultValueService
     {

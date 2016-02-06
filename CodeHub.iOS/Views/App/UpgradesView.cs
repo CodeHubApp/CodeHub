@@ -19,7 +19,7 @@ namespace CodeHub.iOS.Views.App
             Title = "Upgrades";
             EnableSearch = false;
             Style = UIKit.UITableViewStyle.Plain;
-            _features = Cirrious.CrossCore.Mvx.Resolve<IFeaturesService>();
+            _features = MvvmCross.Platform.Mvx.Resolve<IFeaturesService>();
             NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem("Restore", UIKit.UIBarButtonItemStyle.Plain, (s, e) => Restore());
         }
 

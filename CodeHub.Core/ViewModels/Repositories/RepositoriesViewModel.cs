@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Utils;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Utils;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 

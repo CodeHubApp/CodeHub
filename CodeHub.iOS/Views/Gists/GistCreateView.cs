@@ -3,14 +3,14 @@ using CodeHub.iOS;
 using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
-using Cirrious.MvvmCross.Touch.Views;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.ViewControllers;
 using CodeFramework.iOS.Utils;
+using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalTouchView
+    public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalIosView
     {
         private IHud _hud;
 

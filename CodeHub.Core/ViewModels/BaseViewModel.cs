@@ -1,12 +1,13 @@
 using System;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Services;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Services;
 using System.Windows.Input;
-using CodeFramework.Core.Messages;
+using CodeHub.Core.Messages;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
+using MvvmCross.Plugins.Messenger;
+using MvvmCross.Platform;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     /// <summary>
     ///    Defines the BaseViewModel type.

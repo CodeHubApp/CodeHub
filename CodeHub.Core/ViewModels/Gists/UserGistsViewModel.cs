@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using GitHubSharp;
 using GitHubSharp.Models;
-using Cirrious.MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
-using Cirrious.MvvmCross.ViewModels;
 using System.Windows.Input;
+using MvvmCross.Plugins.Messenger;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

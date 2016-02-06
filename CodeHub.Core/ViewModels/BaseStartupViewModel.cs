@@ -1,11 +1,10 @@
 using System.Windows.Input;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
+using MvvmCross.Core.ViewModels;
 using System;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     public abstract class BaseStartupViewModel : BaseViewModel
     {

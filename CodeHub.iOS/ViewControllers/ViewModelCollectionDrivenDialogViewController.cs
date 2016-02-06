@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeFramework.iOS.Utils;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;

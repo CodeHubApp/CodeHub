@@ -1,7 +1,7 @@
 using System;
 using CodeHub.iOS.ViewControllers;
 using UIKit;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.Core.Utils;
 using Foundation;
@@ -9,7 +9,7 @@ using System.Net;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using System.Linq;
 using CoreGraphics;
 using MonoTouch.UIKit;

@@ -3,7 +3,7 @@ using CoreGraphics;
 using Foundation;
 using UIKit;
 using CodeFramework.iOS.Utils;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.App

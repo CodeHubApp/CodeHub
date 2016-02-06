@@ -1,7 +1,7 @@
 using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 
 namespace CodeHub.iOS.Views.Filters

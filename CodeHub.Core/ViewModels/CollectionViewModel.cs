@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Utils;
+using CodeHub.Core.Utils;
+using MvvmCross.Core.ViewModels;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     public class CollectionViewModel<TItem> : MvxViewModel, IEnumerable<TItem>, INotifyCollectionChanged
     {

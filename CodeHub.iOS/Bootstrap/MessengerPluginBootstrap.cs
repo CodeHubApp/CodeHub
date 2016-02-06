@@ -1,9 +1,9 @@
-using Cirrious.CrossCore.Plugins;
+using MvvmCross.Platform.Plugins;
 
 namespace CodeHub.iOS.Bootstrap
 {
     public class MessengerPluginBootstrap
-        : MvxPluginBootstrapAction<Cirrious.MvvmCross.Plugins.Messenger.PluginLoader>
+        : MvxPluginBootstrapAction<MvvmCross.Plugins.Messenger.PluginLoader>
     {
     }
 }

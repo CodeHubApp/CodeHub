@@ -1,5 +1,6 @@
 using UIKit;
 using MonoTouch.UIKit;
+using MvvmCross.Platform;
 
 namespace CodeHub.iOS
 {
@@ -22,7 +23,7 @@ namespace CodeHub.iOS
             var theme = new Theme();
             CurrentTheme = theme;
 
-            var defaultValues = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>();
+            var defaultValues = Mvx.Resolve<CodeHub.Core.Services.IDefaultValueService>();
 
             var primaryColor = UIColor.FromRGB(50, 50, 50);
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);

@@ -180,7 +180,7 @@ namespace CodeHub.iOS.Views.PullRequests
 
         public void RenderComments()
         {
-            var s = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
+            var s = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
             var comments = CreateCommentList().Select(x => new {
                 avatarUrl = x.AvatarUrl,
                 login = x.Login,

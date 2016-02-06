@@ -1,13 +1,14 @@
 using System;
 using CodeFramework.iOS.XCallback;
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Platform;
+using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
-using Cirrious.MvvmCross.Plugins.Messenger;
+using MvvmCross.Plugins.Messenger;
 using UIKit;
 using Foundation;
 using CodeHub.Core.Messages;
+using MvvmCross.Core.Views;
 
 namespace CodeHub.iOS
 {
@@ -17,8 +18,8 @@ namespace CodeHub.iOS
 
         public static bool Handle(XCallbackQuery query)
         {
-            var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
-            var txService = Mvx.Resolve<CodeFramework.Core.Services.IViewModelTxService>();
+            var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
+            var txService = Mvx.Resolve<CodeHub.Core.Services.IViewModelTxService>();
             var appService = Mvx.Resolve<IApplicationService>();
 
             if (query.Url == "/gist/create")
@@ -86,7 +87,7 @@ namespace CodeHub.iOS
             var messenger = Mvx.Resolve<IMvxMessenger>();
             if (!string.IsNullOrEmpty(query.CancelUrl))
             {
-                _cancelToken = messenger.Subscribe<CodeFramework.Core.Messages.CancelationMessage>(msg => 
+                _cancelToken = messenger.Subscribe<CodeHub.Core.Messages.CancelationMessage>(msg => 
                 {
                     if (!(msg.Sender is T))
                         return;
@@ -98,7 +99,7 @@ namespace CodeHub.iOS
 
             if (!string.IsNullOrEmpty(query.ErrorUrl))
             {
-                _cancelToken = messenger.Subscribe<CodeFramework.Core.Messages.ErrorMessage>(msg => 
+                _cancelToken = messenger.Subscribe<CodeHub.Core.Messages.ErrorMessage>(msg => 
                 {
                     if (!(msg.Sender is T))
                         return;

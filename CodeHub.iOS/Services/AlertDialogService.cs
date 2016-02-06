@@ -1,9 +1,9 @@
 using System;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using UIKit;
 using System.Threading.Tasks;
 
-namespace CodeFramework.iOS.Services
+namespace CodeHub.iOS.Services
 {
     public class AlertDialogService : IAlertDialogService
     {

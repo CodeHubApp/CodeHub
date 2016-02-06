@@ -1,8 +1,8 @@
-using Cirrious.MvvmCross.Touch.Views;
 using CodeFramework.iOS.Utils;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using UIKit;
 using CodeHub.Core.ViewModels;
+using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers
 {

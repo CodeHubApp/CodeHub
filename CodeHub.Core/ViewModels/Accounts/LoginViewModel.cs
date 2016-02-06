@@ -1,14 +1,13 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
 using System.Linq;
+using MvvmCross.Platform;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {

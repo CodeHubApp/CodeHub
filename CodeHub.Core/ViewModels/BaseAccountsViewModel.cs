@@ -1,10 +1,10 @@
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
-using CodeFramework.Core.Utils;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
+using CodeHub.Core.Utils;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     public abstract class BaseAccountsViewModel : BaseViewModel
     {

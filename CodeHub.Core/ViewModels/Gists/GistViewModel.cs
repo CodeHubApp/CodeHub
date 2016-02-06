@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
-using CodeFramework.Core.ViewModels;
-using CodeFramework.Core.Services;
+using CodeHub.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -55,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Gists
         {
 			get { 
 				return new MvxCommand<GistFileModel>(x => {
-					GetService<CodeFramework.Core.Services.IViewModelTxService>().Add(x);
+					GetService<CodeHub.Core.Services.IViewModelTxService>().Add(x);
 					ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistId = Id, Filename = x.Filename });
 				});
 			}

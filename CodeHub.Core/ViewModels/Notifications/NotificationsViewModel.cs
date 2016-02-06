@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
@@ -158,7 +158,7 @@ namespace CodeHub.Core.ViewModels.Notifications
             try
             {
                 IsMarking = true;
-                var repoId = new CodeFramework.Core.Utils.RepositoryIdentifier(repo);
+                var repoId = new CodeHub.Core.Utils.RepositoryIdentifier(repo);
                 await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
                 Notifications.Items.RemoveRange(Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 UpdateAccountNotificationsCount();

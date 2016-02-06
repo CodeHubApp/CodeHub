@@ -1,10 +1,11 @@
 using System;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Collections.Generic;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.Core.Services;
+using MvvmCross.Core.Views;
 
 namespace CodeHub.iOS
 {
@@ -28,7 +29,7 @@ namespace CodeHub.iOS
 
         public static bool Handle(string path)
         {
-            var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
+            var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
             var appService = Mvx.Resolve<IApplicationService>();
             if (!path.EndsWith("/", StringComparison.Ordinal))
                 path += "/";

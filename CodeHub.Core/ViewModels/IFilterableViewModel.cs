@@ -1,4 +1,4 @@
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     public interface IFilterableViewModel<TFilter> where TFilter : FilterModel<TFilter>, new()
     {

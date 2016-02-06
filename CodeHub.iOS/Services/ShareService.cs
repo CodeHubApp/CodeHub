@@ -1,20 +1,20 @@
 using System;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using Foundation;
 using UIKit;
-using Cirrious.CrossCore.Touch.Views;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.iOS;
+using MvvmCross.Platform.iOS.Views;
 
-namespace CodeFramework.iOS.Services
+namespace CodeHub.iOS.Services
 {
 	public class ShareService : IShareService
     {
-		private readonly IMvxTouchModalHost _modalHost;
+		private readonly IMvxIosModalHost _modalHost;
 
 		public ShareService()
 		{
-			_modalHost = Mvx.Resolve<IMvxTouchModalHost>();
+			_modalHost = Mvx.Resolve<IMvxIosModalHost>();
 		}
 
 		public void ShareUrl(string url)

@@ -3,8 +3,8 @@ using CodeHub.iOS.Elements;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Repositories
 {

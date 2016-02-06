@@ -51,7 +51,7 @@ namespace CodeHub.iOS.Views
 
 			this.DoWorkAsync("Saving...", async () =>
 			{
-				var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+				var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
 				var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
 				if (Created != null)
 					Created(newGist.Data);

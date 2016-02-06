@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
 using System.Linq;
@@ -86,7 +86,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				Messenger.Publish(new SelectedMilestoneMessage(this) { Milestone = x });
 			}
 
-			ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+			ChangePresentation(new MvvmCross.Core.ViewModels.MvxClosePresentationHint(this));
 		}
 
         protected override Task Load(bool forceCacheInvalidation)

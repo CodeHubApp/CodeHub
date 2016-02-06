@@ -1,9 +1,10 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using System.Linq;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -85,7 +86,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				Messenger.Publish(new SelectedAssignedToMessage(this) { User = x });
 			}
 
-			ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+			ChangePresentation(new MvxClosePresentationHint(this));
 		}
 
 		protected override Task Load(bool forceCacheInvalidation)

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 

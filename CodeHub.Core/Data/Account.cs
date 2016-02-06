@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Cirrious.CrossCore;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using SQLite;
+using MvvmCross.Platform;
 
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public abstract class Account : IAccount, IDisposable
     {

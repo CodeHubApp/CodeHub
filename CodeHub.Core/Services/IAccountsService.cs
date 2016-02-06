@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using CodeFramework.Core.Data;
+using CodeHub.Core.Data;
 
-namespace CodeFramework.Core.Services
+namespace CodeHub.Core.Services
 {
     public interface IAccountsService : IEnumerable<IAccount>
     {

@@ -1,4 +1,4 @@
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
 	public class WebBrowserViewModel : BaseViewModel
     {

@@ -1,14 +1,15 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Services;
-using Cirrious.MvvmCross.Plugins.Messenger;
-using CodeFramework.Core.Services;
+using MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
+using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {

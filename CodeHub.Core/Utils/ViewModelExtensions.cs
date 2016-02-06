@@ -1,6 +1,6 @@
 using CodeHub.Core.Services;
-using CodeFramework.Core.ViewModels;
-using Cirrious.CrossCore;
+using CodeHub.Core.ViewModels;
+using MvvmCross.Platform;
 
 public static class ViewModelExtensions
 {

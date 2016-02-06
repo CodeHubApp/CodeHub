@@ -1,10 +1,10 @@
 using CoreGraphics;
 using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
-using Cirrious.MvvmCross.Touch.Views;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
+using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {

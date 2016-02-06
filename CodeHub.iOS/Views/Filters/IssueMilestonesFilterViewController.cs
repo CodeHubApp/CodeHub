@@ -3,7 +3,7 @@ using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using CodeFramework.ViewControllers;
 using System.Linq;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 
 namespace CodeHub.iOS.Views.Filters
@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Filters
 			try
 			{
 				MonoTouch.Utilities.PushNetworkActive();
-				var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+				var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
 				await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll(), false);
 			}
 			catch {

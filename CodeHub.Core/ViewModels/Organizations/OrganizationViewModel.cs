@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.Teams;
 
 namespace CodeHub.Core.ViewModels.Organizations

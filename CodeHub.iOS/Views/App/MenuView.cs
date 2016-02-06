@@ -4,10 +4,10 @@ using CodeHub.Core.ViewModels.App;
 using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;
-using CodeFramework.Core.Utils;
-using Cirrious.CrossCore;
+using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
 using System;
+using MvvmCross.Platform;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -154,13 +154,13 @@ namespace CodeHub.iOS.Views.App
 
 		private class PinnedRepoElement : MenuElement
 		{
-			public CodeFramework.Core.Data.PinnedRepository PinnedRepo
+			public CodeHub.Core.Data.PinnedRepository PinnedRepo
 			{
 				get;
 				private set; 
 			}
 
-			public PinnedRepoElement(CodeFramework.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
+			public PinnedRepoElement(CodeHub.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
                 : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Octicon.Repo.ToImage())
 			{
 				PinnedRepo = pinnedRepo;

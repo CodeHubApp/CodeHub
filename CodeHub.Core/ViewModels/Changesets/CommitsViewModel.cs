@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using GitHubSharp;
 using System.Collections.Generic;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {

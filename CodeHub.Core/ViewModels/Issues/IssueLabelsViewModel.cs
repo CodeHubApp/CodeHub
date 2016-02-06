@@ -1,12 +1,12 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using CodeHub.Core.Messages;
 using System.Linq;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			Id = navObject.Id;
 			SaveOnSelect = navObject.SaveOnSelect;
 
-			_originalLables = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
+			_originalLables = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
 			SelectedLabels.Items.Reset(_originalLables);
 		}
 

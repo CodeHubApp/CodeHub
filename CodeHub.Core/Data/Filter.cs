@@ -1,6 +1,7 @@
 using SQLite;
+using MvvmCross.Platform;
 
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public class Filter
     {
@@ -22,7 +23,7 @@ namespace CodeFramework.Core.Data
         {
             try
             {
-                var serializer = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
+                var serializer = Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
                 return serializer.Deserialize<T>(RawData);
             }
             catch
@@ -37,7 +38,7 @@ namespace CodeFramework.Core.Data
         /// <param name="o">O.</param>
         public void SetData(object o)
         {
-            var serializer = Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IJsonSerializationService>();
+            var serializer = Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
             RawData = serializer.Serialize(o);
         }
     }

@@ -1,13 +1,13 @@
 using System;
-using Cirrious.CrossCore.Core;
-using Cirrious.CrossCore.Touch.Views;
-using Cirrious.MvvmCross.Binding.BindingContext;
-using Cirrious.MvvmCross.Touch.Views;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeFramework.ViewControllers;
 using UIKit;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
+using MvvmCross.Platform.iOS.Views;
+using MvvmCross.iOS.Views;
+using MvvmCross.Binding.BindingContext;
+using MvvmCross.Platform.Core;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -110,7 +110,7 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public abstract class ViewModelDrivenDialogViewController : BaseDialogViewController, IMvxTouchView, IMvxEventSourceViewController
+    public abstract class ViewModelDrivenDialogViewController : BaseDialogViewController, IMvxIosView, IMvxEventSourceViewController
     {
         private UIRefreshControl _refreshControl;
         private bool _manualRefreshRequested;

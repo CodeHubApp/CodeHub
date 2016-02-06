@@ -1,9 +1,10 @@
 using System.Linq;
-using CodeFramework.Core.Utils;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Utils;
+using CodeHub.Core.Services;
 using System;
+using MvvmCross.Core.ViewModels;
 
-namespace CodeFramework.Core.ViewModels.App
+namespace CodeHub.Core.ViewModels.App
 {
 	public abstract class BaseDefaultStartupViewModel : BaseViewModel
     {
@@ -47,7 +48,7 @@ namespace CodeFramework.Core.ViewModels.App
 			{
 				_accountsService.ActiveAccount.DefaultStartupView = x;
 				_accountsService.Update(_accountsService.ActiveAccount);
-				ChangePresentation(new Cirrious.MvvmCross.ViewModels.MvxClosePresentationHint(this));
+				ChangePresentation(new MvxClosePresentationHint(this));
 			});
 		}
     }

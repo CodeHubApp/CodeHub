@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Collections.Specialized;
 
-namespace CodeFramework.Core.Utils
+namespace CodeHub.Core.Utils
 {
     public class CustomObservableCollection<T> : ObservableCollection<T>
     {

@@ -1,9 +1,9 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using System.Windows.Input;
 using System.Threading.Tasks;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Services;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Services;
 using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.Repositories

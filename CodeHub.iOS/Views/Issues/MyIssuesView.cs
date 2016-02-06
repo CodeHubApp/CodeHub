@@ -1,6 +1,6 @@
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Issues
 {

@@ -1,13 +1,13 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Filters;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.PullRequests;
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.Core.Utils;
+using CodeHub.Core.Utils;
 
 namespace CodeHub.Core.ViewModels.Issues
 {

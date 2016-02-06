@@ -1,5 +1,5 @@
-using CodeFramework.Core.ViewModels.App;
-using CodeFramework.Core.Services;
+using CodeHub.Core.ViewModels.App;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.App
 {

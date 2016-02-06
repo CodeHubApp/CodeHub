@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 
-namespace CodeFramework.Core.Services
+namespace CodeHub.Core.Services
 {
     public interface IHttpClientService
     {

@@ -1,5 +1,5 @@
 using System;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using System.Linq;

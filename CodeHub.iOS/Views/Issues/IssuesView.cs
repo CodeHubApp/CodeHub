@@ -1,5 +1,5 @@
 using System;
-using Cirrious.CrossCore;
+using MvvmCross.Platform;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;

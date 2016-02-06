@@ -1,10 +1,10 @@
 using System;
 using CoreGraphics;
 using UIKit;
-using Cirrious.CrossCore;
 using CodeHub.Core.Services;
 using CodeFramework.iOS.Utils;
 using MonoTouch.UIKit;
+using MvvmCross.Platform;
 
 namespace CodeHub.iOS.Views.App
 {

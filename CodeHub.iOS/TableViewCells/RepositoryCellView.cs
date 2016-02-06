@@ -1,10 +1,10 @@
 using System;
-using Cirrious.MvvmCross.Binding.Touch.Views;
 using Foundation;
 using ObjCRuntime;
 using UIKit;
 using SDWebImage;
 using CodeHub.iOS;
+using MvvmCross.Binding.iOS.Views;
 
 namespace CodeHub.iOS.TableViewCells
 {

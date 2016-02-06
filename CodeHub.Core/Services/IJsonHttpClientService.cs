@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace CodeFramework.Core.Services
+namespace CodeHub.Core.Services
 {
     public interface IJsonHttpClientService
     {

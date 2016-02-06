@@ -1,12 +1,11 @@
 using System;
 using CodeFramework.ViewControllers;
-using CodeHub.Core.ViewModels;
 using MonoTouch.Dialog;
 using UIKit;
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
 using CodeHub.Core.ViewModels.Notifications;
 using Humanizer;
+using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views
 {

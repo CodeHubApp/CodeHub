@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 
-namespace CodeFramework.Core.Utils
+namespace CodeHub.Core.Utils
 {
     public static class FilterGroup
     {

@@ -7,12 +7,10 @@
 using CodeFramework.iOS;
 using System.Collections.Generic;
 using System;    
-using Cirrious.CrossCore;
-using Cirrious.MvvmCross.Touch.Platform;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using Foundation;
 using UIKit;
-using CodeFramework.Core.Utils;
+using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +21,9 @@ using CodeFramework.iOS.XCallback;
 using Security;
 using ObjCRuntime;
 using System.Net;
+using MvvmCross.iOS.Platform;
+using MvvmCross.Platform;
+using MvvmCross.Core.Views;
 
 namespace CodeHub.iOS
 {
@@ -64,7 +65,7 @@ namespace CodeHub.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
 			this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-			var presenter = new TouchViewPresenter(this.Window);
+			var presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, presenter);
             setup.Initialize();
 
@@ -99,7 +100,7 @@ namespace CodeHub.iOS
 
             // Automatic activations in debug mode!
             #if DEBUG
-            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
+            Mvx.Resolve<CodeHub.Core.Services.IDefaultValueService>().Set(FeatureIds.PushNotifications, true);
             #endif
 
 
@@ -121,7 +122,7 @@ namespace CodeHub.iOS
 
         void HandlePurchaseSuccess (object sender, string e)
         {
-            Mvx.Resolve<CodeFramework.Core.Services.IDefaultValueService>().Set(e, true);
+            Mvx.Resolve<CodeHub.Core.Services.IDefaultValueService>().Set(e, true);
 
             if (string.Equals(e, FeatureIds.PushNotifications))
             {
@@ -146,7 +147,7 @@ namespace CodeHub.iOS
 		{
 			try
 			{
-				var viewDispatcher = Mvx.Resolve<Cirrious.MvvmCross.Views.IMvxViewDispatcher>();
+				var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
                 var appService = Mvx.Resolve<IApplicationService>();
                 var repoId = new RepositoryIdentifier(data["r"].ToString());
                 var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};

@@ -1,6 +1,6 @@
 using System;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
     [Serializable]
     public abstract class FilterModel<TF>

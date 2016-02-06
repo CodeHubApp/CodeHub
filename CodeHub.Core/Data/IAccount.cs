@@ -1,4 +1,4 @@
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public interface IAccount
     {

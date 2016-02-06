@@ -1,11 +1,11 @@
 using System;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System.Linq;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
+using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Gists
@@ -64,7 +64,7 @@ namespace CodeHub.Core.ViewModels.Gists
             
         public void Init()
         {
-            var createGistModel = GetService<CodeFramework.Core.Services.IViewModelTxService>().Get() as GistCreateModel;
+            var createGistModel = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as GistCreateModel;
             if (createGistModel != null)
             {
                 Description = createGistModel.Description;

@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.Core.Cache;
+using CodeHub.Core.Cache;
 using SQLite;
 
-namespace CodeFramework.Core.Data
+namespace CodeHub.Core.Data
 {
     public class AccountCache : IEnumerable<CacheEntry>
     {

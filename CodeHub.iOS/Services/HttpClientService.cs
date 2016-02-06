@@ -1,7 +1,7 @@
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using System.Net.Http;
 
-namespace CodeFramework.iOS.Services
+namespace CodeHub.iOS.Services
 {
 	public class HttpClientService : IHttpClientService
     {

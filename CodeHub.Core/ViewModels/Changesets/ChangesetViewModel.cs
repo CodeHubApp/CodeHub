@@ -1,11 +1,12 @@
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Source;
+using MvvmCross.Platform;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -50,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 						}
 						else
 						{
-							Cirrious.CrossCore.Mvx.Resolve<CodeFramework.Core.Services.IViewModelTxService>().Add(x);
+							Mvx.Resolve<CodeHub.Core.Services.IViewModelTxService>().Add(x);
 							ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
 						}
 

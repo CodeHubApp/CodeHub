@@ -1,4 +1,3 @@
-using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.User;

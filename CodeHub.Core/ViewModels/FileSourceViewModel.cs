@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Windows.Input;
-using Cirrious.MvvmCross.ViewModels;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
+using MvvmCross.Core.ViewModels;
 
-namespace CodeFramework.Core.ViewModels
+namespace CodeHub.Core.ViewModels
 {
 	public abstract class FileSourceViewModel : LoadableViewModel
     {

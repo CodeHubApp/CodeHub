@@ -2,8 +2,8 @@ using System;
 using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
-using CodeFramework.Core.ViewModels;
-using CodeFramework.Core.Services;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core
 {

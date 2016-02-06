@@ -1,13 +1,10 @@
 using System;
-using MonoTouch;
 using UIKit;
-using CodeFramework.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.Dialog.Utilities;
 using CodeHub.iOS;
 using SDWebImage;
 using Foundation;
-using System.Security.Policy;
 
 namespace CodeHub.iOS.Views
 {

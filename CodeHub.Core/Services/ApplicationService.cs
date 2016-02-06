@@ -1,13 +1,13 @@
-using Cirrious.MvvmCross.ViewModels;
-using Cirrious.MvvmCross.Views;
-using CodeFramework.Core.Data;
-using CodeFramework.Core.Services;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
 using CodeHub.Core.Data;
 using CodeHub.Core.ViewModels.App;
 using GitHubSharp;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using MvvmCross.Core.Views;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.Services
 {
