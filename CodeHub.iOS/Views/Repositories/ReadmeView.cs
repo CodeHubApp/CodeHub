@@ -1,6 +1,7 @@
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.iOS.Views;
 using UIKit;
+using WebKit;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -17,7 +18,6 @@ namespace CodeHub.iOS.Views.Repositories
 		public ReadmeView() : base(false)
         {
             Title = "Readme";
-            Web.ScalesPageToFit = true;
             _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
         }
 
@@ -28,15 +28,16 @@ namespace CodeHub.iOS.Views.Repositories
 			ViewModel.LoadCommand.Execute(false);
         }
 
-		protected override bool ShouldStartLoad(UIWebView webView, Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
 		{
-			if (!request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
+            
+            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
 			{
-				ViewModel.GoToLinkCommand.Execute(request.Url.AbsoluteString);
+                ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
 				return false;
 			}
 
-            return base.ShouldStartLoad(webView, request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
 		}
 
         public override void ViewWillAppear(bool animated)

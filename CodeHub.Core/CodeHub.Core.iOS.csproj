@@ -180,6 +180,7 @@
     <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
     <Compile Include="Utils\GitHubAvatar.cs" />
     <Compile Include="Utils\GitHubExtensions.cs" />
+    <Compile Include="Utils\WeakReferenceExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

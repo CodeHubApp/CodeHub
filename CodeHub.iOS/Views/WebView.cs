@@ -3,6 +3,7 @@ using Cirrious.MvvmCross.Touch.Views;
 using UIKit;
 using Foundation;
 using CodeHub.Core.ViewModels;
+using WebKit;
 
 namespace CodeHub.iOS.Views
 {
@@ -12,7 +13,7 @@ namespace CodeHub.iOS.Views
         protected UIBarButtonItem RefreshButton;
         protected UIBarButtonItem ForwardButton;
 
-        public UIWebView Web { get; }
+        public WKWebView Web { get; private set; }
         private readonly bool _navigationToolbar;
         private readonly  bool _showPageAsTitle;
 
@@ -48,10 +49,6 @@ namespace CodeHub.iOS.Views
 		public WebView(bool navigationToolbar, bool showPageAsTitle = false)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem() { Title = "" };
-            Web = new UIWebView {ScalesPageToFit = true};
-            Web.LoadFinished += (sender, e) => MonoTouch.Utilities.PopNetworkActive();
-            Web.LoadStarted += (sender, e) => MonoTouch.Utilities.PushNetworkActive();
-            Web.LoadError += (sender, e) => MonoTouch.Utilities.PopNetworkActive();
 
             _navigationToolbar = navigationToolbar;
             _showPageAsTitle = showPageAsTitle;
@@ -70,25 +67,66 @@ namespace CodeHub.iOS.Views
 			EdgesForExtendedLayout = UIRectEdge.None;
         }
 
-        protected virtual bool ShouldStartLoad (UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navigationType)
+        private class NavigationDelegate : WKNavigationDelegate
+        {
+            private readonly WeakReference<WebView> _webView;
+
+            public NavigationDelegate(WebView webView)
+            {
+                _webView = new WeakReference<WebView>(webView);
+            }
+
+            public override void DidFinishNavigation(WKWebView webView, WKNavigation navigation)
+            {
+                _webView.Get()?.OnLoadFinished(null, EventArgs.Empty);
+            }
+
+            public override void DidStartProvisionalNavigation(WKWebView webView, WKNavigation navigation)
+            {
+                _webView.Get()?.OnLoadStarted(null, EventArgs.Empty);
+            }
+
+            public override void DidFailNavigation(WKWebView webView, WKNavigation navigation, NSError error)
+            {
+                _webView.Get()?.OnLoadError(error);
+            }
+
+            public override void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, Action<WKNavigationActionPolicy> decisionHandler)
+            {
+                var ret = _webView.Get()?.ShouldStartLoad(webView, navigationAction) ?? true;
+                decisionHandler(ret ? WKNavigationActionPolicy.Allow : WKNavigationActionPolicy.Cancel);
+            }
+        }
+
+        protected virtual bool ShouldStartLoad (WKWebView webView, WKNavigationAction navigationAction)
         {
             return true;
         }
 
-        protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
+        protected virtual void OnLoadError (NSError error)
         {
-            if (RefreshButton != null)
+            MonoTouch.Utilities.PopNetworkActive();
+
+            if (BackButton != null)
+            {
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
                 RefreshButton.Enabled = true;
+            }
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
+            MonoTouch.Utilities.PushNetworkActive();
+
             if (RefreshButton != null)
                 RefreshButton.Enabled = false;
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
+            MonoTouch.Utilities.PopNetworkActive();
+
             if (BackButton != null)
             {
                 BackButton.Enabled = Web.CanGoBack;
@@ -98,7 +136,9 @@ namespace CodeHub.iOS.Views
 
             if (_showPageAsTitle)
             {
-                Title = Web.EvaluateJavascript("document.title");
+                Web.EvaluateJavaScript("document.title", (o, _) => {
+                    Title = o as NSString;
+                });
             }
         }
         
@@ -112,6 +152,9 @@ namespace CodeHub.iOS.Views
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            Web = new WKWebView(View.Bounds, new WKWebViewConfiguration());
+            Web.NavigationDelegate = new NavigationDelegate(this);
             Add(Web);
 
 			var loadableViewModel = ViewModel as LoadableViewModel;
@@ -184,13 +227,10 @@ namespace CodeHub.iOS.Views
 
             if (_showPageAsTitle)
             {
-                Title = Web.EvaluateJavascript("document.title");
+                Web.EvaluateJavaScript("document.title", (o, _) => {
+                    Title = o as NSString;
+                });
             }
-
-            Web.LoadFinished += OnLoadFinished;
-            Web.LoadStarted += OnLoadStarted;
-            Web.LoadError += OnLoadError;
-            Web.ShouldStartLoad += ShouldStartLoad;
 
             if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(false, animated);
@@ -200,13 +240,8 @@ namespace CodeHub.iOS.Views
         {
             base.ViewDidDisappear(animated);
 
-            Web.LoadFinished -= OnLoadFinished;
-            Web.LoadStarted -= OnLoadStarted;
-            Web.LoadError -= OnLoadError;
-            Web.ShouldStartLoad -= ShouldStartLoad;
-
             if (_navigationToolbar)
-                ToolbarItems = new UIBarButtonItem[0];
+                ToolbarItems = null;
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

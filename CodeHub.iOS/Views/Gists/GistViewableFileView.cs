@@ -2,6 +2,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
+using Foundation;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -32,9 +33,9 @@ namespace CodeHub.iOS.Views.Gists
                 Title = ViewModel.GistFile.Filename;
         }
 
-        protected override void OnLoadError(object sender, UIWebErrorArgs e)
+        protected override void OnLoadError(NSError error)
         {
-            base.OnLoadError(sender, e);
+            base.OnLoadError(error);
             MonoTouch.Utilities.ShowAlert("Error", "Unable to display this type of file.");
         }
     }

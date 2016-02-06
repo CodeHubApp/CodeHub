@@ -6,6 +6,8 @@ using System.Text;
 using Cirrious.CrossCore;
 using CodeFramework.Core.Services;
 using CodeFramework.iOS.Utils;
+using Foundation;
+using WebKit;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -101,23 +103,23 @@ namespace CodeHub.iOS.Views.Accounts
 			alert.Show();
 		}
 
-		protected override bool ShouldStartLoad(UIWebView webView, Foundation.NSUrlRequest request, UIKit.UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
 			try
 			{
 	            //We're being redirected to our redirect URL so we must have been successful
-	            if (request.Url.Host == "dillonbuchanan.com")
+                if (navigationAction.Request.Url.Host == "dillonbuchanan.com")
 	            {
-	                var code = request.Url.Query.Split('=')[1];
+                    var code = navigationAction.Request.Url.Query.Split('=')[1];
 					ViewModel.Login(code);
 	                return false;
 	            }
-	            if (request.Url.AbsoluteString == "https://github.com/" || request.Url.AbsoluteString.StartsWith("https://github.com/join"))
+                if (navigationAction.Request.Url.AbsoluteString == "https://github.com/" || navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
 	            {
 	                return false;
 	            }
 
-                return base.ShouldStartLoad(webView, request, navigationType);
+                return base.ShouldStartLoad(webView, navigationAction);
 			}
 			catch (Exception e) {
 				Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
@@ -125,18 +127,18 @@ namespace CodeHub.iOS.Views.Accounts
 			}
         }
 
-		protected override void OnLoadError(object sender, UIWebErrorArgs e)
+        protected override void OnLoadError(NSError e)
 		{
-			base.OnLoadError(sender, e);
+			base.OnLoadError(e);
 
 			//Frame interrupted error
-            if (e.Error.Code == 102 || e.Error.Code == -999)
+            if (e.Code == 102 || e.Code == -999)
 				return;
 
 			if (ViewModel.IsEnterprise)
-				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub with given Url. " + e.Error.LocalizedDescription, Stuff);
+				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub with given Url. " + e.LocalizedDescription, Stuff);
 			else
-				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription);
+				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
 		}
 
         protected override void OnLoadFinished(object sender, EventArgs e)
@@ -159,7 +161,7 @@ namespace CodeHub.iOS.Views.Accounts
                 script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
             }
 
-            Web.EvaluateJavascript("(function(){setTimeout(function(){" + script.ToString() +"}, 100); })();");
+            Web.EvaluateJavaScript("(function(){setTimeout(function(){" + script.ToString() +"}, 100); })();", null);
         }
 
         private void LoadRequest()

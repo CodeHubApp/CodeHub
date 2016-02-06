@@ -332,9 +332,7 @@
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
     <Compile Include="Utilities\Controls.cs" />
     <Compile Include="Utilities\Graphics.cs" />
-    <Compile Include="Utilities\ImageLoader.cs" />
     <Compile Include="Utilities\LocalizationExtensions.cs" />
-    <Compile Include="Utilities\LRUCache.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Octicons.cs" />
@@ -371,6 +369,7 @@
     <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
     <Compile Include="TableViewCells\CommitCellView.designer.cs" />
     <Compile Include="Elements\CommitElement.cs" />
+    <Compile Include="ViewControllers\LiteComposer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

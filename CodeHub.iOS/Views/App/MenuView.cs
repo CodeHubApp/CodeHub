@@ -101,6 +101,14 @@ namespace CodeHub.iOS.Views.App
             Root = root;
 		}
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+        }
+
         private void PresentUserVoice()
         {
             ViewModel.GoToSupport.Execute(null);

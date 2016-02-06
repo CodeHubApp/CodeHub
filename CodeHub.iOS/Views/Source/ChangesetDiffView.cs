@@ -11,6 +11,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeFramework.iOS.Utils;
 using CodeFramework.Core.Services;
 using CodeHub.iOS.ViewControllers;
+using WebKit;
 
 namespace CodeHub.ViewControllers
 {
@@ -71,17 +72,17 @@ namespace CodeHub.ViewControllers
             public int FileLine { get; set; }
         }
 
-        protected override bool ShouldStartLoad(UIWebView webView, NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-            var url = request.Url;
+            var url = navigationAction.Request.Url;
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
 
 				if (func.Equals("ready"))
 				{
 					_domLoaded = true;
-					foreach (var e in _toBeExecuted)
-						Web.EvaluateJavascript(e);
+                    foreach (var e in _toBeExecuted)
+                        Web.EvaluateJavaScript(e, null);
 				}
 				else if(func.Equals("comment")) 
 				{
@@ -92,13 +93,13 @@ namespace CodeHub.ViewControllers
 				return false;
             }
 
-            return base.ShouldStartLoad(webView, request, navigationType);
+            return base.ShouldStartLoad(webView, navigationAction);
         }
 
 		private void ExecuteJavascript(string data)
 		{
 			if (_domLoaded)
-				InvokeOnMainThread(() => Web.EvaluateJavascript(data));
+                InvokeOnMainThread(() => Web.EvaluateJavaScript(data, null));
 			else
 				_toBeExecuted.Add(data);
 		}
