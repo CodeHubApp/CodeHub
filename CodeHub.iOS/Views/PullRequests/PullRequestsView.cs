@@ -1,9 +1,8 @@
-using System;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
 using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -15,10 +14,10 @@ namespace CodeHub.iOS.Views.PullRequests
         public PullRequestsView()
         {
             Root.UnevenRows = true;
-            Title = "Pull Requests".t();
-            NoItemsText = "No Pull Requests".t();
+            Title = "Pull Requests";
+            NoItemsText = "No Pull Requests";
 
-            _viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t() });
+            _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
         }
@@ -27,26 +26,16 @@ namespace CodeHub.iOS.Views.PullRequests
         {
             base.ViewDidLoad();
 
+            TableView.EstimatedRowHeight = 64f;
+            TableView.RowHeight = UITableView.AutomaticDimension;
+
             var vm = (PullRequestsViewModel)ViewModel;
             _segmentBarButton.Width = View.Frame.Width - 10f;
             var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
             set.Bind(_viewSegment).To(x => x.SelectedFilter);
             set.Apply();
 
-            BindCollection(vm.PullRequests, s =>
-            {
-                var sse = new NameTimeStringElement
-                {
-                    Name = s.Title ?? "No Title",
-                    String = (s.Body ?? string.Empty).Replace('\n', ' ').Replace("\r", ""),
-                    Lines = 3,
-                    Time = s.CreatedAt.ToDaysAgo(),
-                    Image = Images.Avatar,
-                    ImageUri = new Uri(s.User.AvatarUrl)
-                };
-                sse.Tapped += () => vm.GoToPullRequestCommand.Execute(s);
-                return sse;
-            });
+            BindCollection(vm.PullRequests, s => new PullRequestElement(s, () => vm.GoToPullRequestCommand.Execute(s)));
         }
 
         public override void ViewWillAppear(bool animated)

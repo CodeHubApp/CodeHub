@@ -6,6 +6,7 @@ using MonoTouch.Dialog;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.TableViewCells;
+using Humanizer;
 
 namespace CodeHub.iOS.Elements
 {
@@ -63,7 +64,7 @@ namespace CodeHub.iOS.Elements
             : base(null)
         {
             Uri.TryCreate(imageUrl, UriKind.Absolute, out _imageUri);
-            _time = time.ToDaysAgo();
+            _time = time.Humanize();
             _actionImage = littleImage;
             _tapped = tapped;
 

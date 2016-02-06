@@ -4,6 +4,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using UIKit;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -95,6 +96,10 @@ namespace CodeHub.iOS.Views.Repositories
             sheet.ShowInView(this.View);
         }
 
+        SplitViewElement _split1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+        SplitViewElement _split2 = new SplitViewElement(Octicon.IssueOpened.ToImage(), Octicon.GitBranch.ToImage());
+        SplitViewElement _split3 = new SplitViewElement(Octicon.Calendar.ToImage(), Octicon.Tools.ToImage());
+
         public void Render()
         {
             var model = ViewModel.Repository;
@@ -113,14 +118,6 @@ namespace CodeHub.iOS.Views.Repositories
             root.Add(new Section() { split });
             var sec1 = new Section();
 
-            sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = model.Private ? "Private" : "Public",
-                Image1 = Octicon.Lock.ToImage(),
-				Text2 = model.Language ?? "N/A",
-                Image2 = Octicon.Package.ToImage()
-            }));
-
-
             //Calculate the best representation of the size
             string size;
             if (model.Size / 1024f < 1)
@@ -130,19 +127,17 @@ namespace CodeHub.iOS.Views.Repositories
             else
                 size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
 
-            sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues"),
-                Image1 = Octicon.IssueOpened.ToImage(),
-                Text2 = branches + (branches == 1 ? " Branch" : " Branches"),
-                Image2 = Octicon.GitBranch.ToImage()
-            }));
+            _split1.Button1.Text = model.Private ? "Private" : "Public";
+            _split1.Button2.Text = model.Language ?? "N/A";
+            sec1.Add(_split1);
 
-            sec1.Add(new SplitElement(new SplitElement.Row {
-                Text1 = (model.CreatedAt).ToString("MM/dd/yy"),
-                Image1 = Octicon.Calendar.ToImage(),
-                Text2 = size,
-                Image2 = Octicon.Tools.ToImage()
-            }));
+            _split2.Button1.Text = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues");
+            _split2.Button2.Text = branches + (branches == 1 ? " Branch" : " Branches");
+            sec1.Add(_split2);
+
+            _split3.Button1.Text = (model.CreatedAt).ToString("MM/dd/yy");
+            _split3.Button2.Text = size;
+            sec1.Add(_split3);
 
             var owner = new StyledStringElement("Owner", model.Owner.Login) { Image = Octicon.Person.ToImage(),  Accessory = UITableViewCellAccessory.DisclosureIndicator };
 			owner.Tapped += () => ViewModel.GoToOwnerCommand.Execute(null);

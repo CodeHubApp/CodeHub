@@ -2,19 +2,23 @@ using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
-using Foundation;
 using UIKit;
 using CodeFramework.iOS.Utils;
+using System.Linq;
+using CodeHub.iOS.DialogElements;
+using System.Threading.Tasks;
+using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistView : ViewModelDrivenDialogViewController
+    public class GistView : PrettyDialogViewController
     {
-        private readonly UIBarButtonItem _shareButton, _userButton;
-        private readonly UIButton _starButton;
+        private SplitViewElement _splitRow1, _splitRow2;
+        private StyledStringElement _ownerElement;
+        private SplitButtonElement _split;
+        private UIBarButtonItem _editButton;
 
         public new GistViewModel ViewModel
         {
@@ -22,151 +26,76 @@ namespace CodeHub.iOS.Views.Gists
             set { base.ViewModel = value; }
         }
 
-        public GistView()
-        {
-            Title = "Gist";
-
-            ToolbarItems = new []
-            {
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                new UIBarButtonItem((_starButton = ToolbarButton.Create(Images.Gist.Star, () => ViewModel.ToggleStarCommand.Execute(null)))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_userButton = new UIBarButtonItem(ToolbarButton.Create(Images.Gist.User, () => ViewModel.GoToUserCommand.Execute(null)))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                (_shareButton = new UIBarButtonItem(ToolbarButton.Create(Images.Gist.Share, ShareButtonPress))),
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)
-            };
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            //Disable these buttons until the gist object becomes valid
-            _userButton.Enabled = false;
-            _shareButton.Enabled = false;
+            Title = "Gist";
+
+            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, ShareButtonTap);
+
+            HeaderView.SetImage(null, Images.Avatar);
+            HeaderView.Text = "Gist #" + ViewModel.Id;
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
+
+            _split = new SplitButtonElement();
+            var files = _split.AddButton("Files", "-");
+            var comments = _split.AddButton("Comments", "-");
+            var forks = _split.AddButton("Forks", "-");
+
+            _splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
+            _splitRow2 = new SplitViewElement(Octicon.Calendar.ToImage(), Octicon.Star.ToImage());
+            _ownerElement = new StyledStringElement("Owner", string.Empty, UITableViewCellStyle.Value1) { 
+                Image = Octicon.Person.ToImage(),
+                Accessory = UITableViewCellAccessory.DisclosureIndicator
+            };
+            _ownerElement.Tapped += () => ViewModel.GoToUserCommand.Execute(null);
 
             ViewModel.Bind(x => x.Gist, gist =>
             {
-                UpdateOwned();
+                _splitRow1.Button1.Text = (gist.Public ?? true) ? "Public" : "Private";
+                _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
+                _splitRow2.Button1.Text = gist.CreatedAt.Day + " Days Old";
+                _ownerElement.Value = gist.Owner?.Login ?? "Unknown";
+                files.Text = gist.Files.Count.ToString();
+                comments.Text = gist.Comments.ToString();
+                forks.Text = gist.Forks.Count.ToString();
+                HeaderView.SubText = gist.Description;
+                HeaderView.Text = gist.Files?.Select(x => x.Key).FirstOrDefault() ?? HeaderView.Text;
+                HeaderView.SetImage(gist.Owner?.AvatarUrl, Images.Avatar);
                 RenderGist();
+                RefreshHeaderView();
             });
 
 			ViewModel.BindCollection(x => x.Comments, x => RenderGist());
 
             ViewModel.Bind(x => x.IsStarred, isStarred =>
             {
-                _starButton.SetImage(isStarred ? Images.Gist.StarHighlighted : Images.Gist.Star, UIControlState.Normal);
-                _starButton.SetNeedsDisplay();
+                _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred";
             });
         }
 
-        private void UpdateOwned()
+        public override void ViewWillAppear(bool animated)
         {
-            //Is it owned?
-			var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-            if (string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase))
-            {
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Compose, async (s, e) => {
-					try
-					{
-						var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
-						var gistController = new EditGistController(data.Data);
-						gistController.Created = editedGist => ViewModel.Gist = editedGist;
-						var navController = new UINavigationController(gistController);
-						PresentViewController(navController, true, null);
-
-					}
-					catch (Exception ex)
-					{
-						MonoTouch.Utilities.ShowAlert("Error", ex.Message);
-					}
-                });
-            }
-            else
-            {
-				NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ForkButton, UIBarButtonItemStyle.Plain, async (s, e) => {
-					try
-					{
-						NavigationItem.RightBarButtonItem.Enabled = false;
-						await this.DoWorkAsync("Forking...", ViewModel.ForkGist);
-					}
-					catch (Exception ex)
-					{
-						MonoTouch.Utilities.ShowAlert("Error", ex.Message);
-					}
-					finally
-					{
-                        NavigationItem.RightBarButtonItem.Enabled = true;
-					}
-                });
-            }
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _editButton;
         }
-        
-        private void ShareButtonPress()
+
+        public override void ViewDidDisappear(bool animated)
         {
-            if (ViewModel.Gist == null)
-                return;
-
-            var sheet = new UIActionSheet();
-            var shareButton = sheet.AddButton("Share".t());
-            var showButton = sheet.AddButton("Show in GitHub".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
-            sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) =>
-            {
-                BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        if (e.ButtonIndex == shareButton)
-                        {
-                            ViewModel.ShareCommand.Execute(null);
-                        }
-                        else if (e.ButtonIndex == showButton)
-                        {
-                            ViewModel.GoToHtmlUrlCommand.Execute(null);
-                        }
-                    }
-                    catch
-                    {
-                    }
-                });
-
-                sheet.Dispose();
-            };
-
-            sheet.ShowFrom(_shareButton, true);
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
         }
 
         public void RenderGist()
         {
-			if (ViewModel.Gist == null)
-				return;
-
+			if (ViewModel.Gist == null) return;
 			var model = ViewModel.Gist;
-
-            _shareButton.Enabled = _userButton.Enabled = model != null;
-            var root = new RootElement(Title) { UnevenRows = true };
-			var sec = new Section();
-			root.Add(sec);
-
-
-            var str = string.IsNullOrEmpty(model.Description) ? "Gist " + model.Id : model.Description;
-            var d = new NameTimeStringElement() { 
-                Time = model.UpdatedAt.ToDaysAgo(), 
-                String = str, 
-                Image = Images.Avatar
-            };
-
-            //Sometimes there's no user!
-            d.Name = (model.Owner == null) ? "Anonymous" : model.Owner.Login;
-            d.ImageUri = (model.Owner == null) ? null : new Uri(model.Owner.AvatarUrl);
-
-            sec.Add(d);
-
-			var sec2 = new Section("Files");
+            var root = new RootElement(Title);
+            root.Add(new Section { _split });
+            root.Add(new Section { _splitRow1, _splitRow2, _ownerElement });
+			var sec2 = new Section();
 			root.Add(sec2);
 
             foreach (var file in model.Files.Keys)
@@ -184,50 +113,88 @@ namespace CodeHub.iOS.Views.Gists
 //					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
 //				else
 					sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
-                
-
                 sec2.Add(sse);
             }
 
 			if (ViewModel.Comments.Items.Count > 0)
 			{
 				var sec3 = new Section("Comments");
-				foreach (var comment in ViewModel.Comments)
-				{
-					var el = new NameTimeStringElement 
-					{ 
-						Name = "Anonymous",
-                        Image = Images.Avatar,
-						String = comment.Body,
-			         	Time = comment.CreatedAt.ToDaysAgo(),
-					};
-
-					if (comment.User != null)
-					{
-						el.Name = comment.User.Login;
-						el.ImageUri = new Uri(comment.User.AvatarUrl);
-					}
-
-					sec3.Add(el);
-				}
+                sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
 				root.Add(sec3);
 			}
 
             Root = root;
         }
 
-        public override void ViewWillAppear(bool animated)
+        private async Task Fork()
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
-            base.ViewWillAppear(animated);
+            try
+            {
+                await this.DoWorkAsync("Forking...", ViewModel.ForkGist);
+            }
+            catch (Exception ex)
+            {
+                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+            }
         }
 
-        public override void ViewWillDisappear(bool animated)
+        private async Task Compose()
         {
-            base.ViewWillDisappear(animated);
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(true, animated);
+            try
+            {
+                var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
+                var gistController = new EditGistController(data.Data);
+                gistController.Created = editedGist => ViewModel.Gist = editedGist;
+                var navController = new UINavigationController(gistController);
+                PresentViewController(navController, true, null);
+            }
+            catch (Exception ex)
+            {
+                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+            }
+        }
+
+        void ShareButtonTap (object sender, EventArgs args)
+        {
+            if (ViewModel.Gist == null)
+                return;
+
+            var app = Cirrious.CrossCore.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+            var isOwner = string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase);
+
+            var sheet = new UIActionSheet();
+            var editButton = sheet.AddButton(isOwner ? "Edit" : "Fork");
+            var starButton = sheet.AddButton(ViewModel.IsStarred ? "Unstar" : "Star");
+            var shareButton = sheet.AddButton("Share");
+            var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.DismissWithClickedButtonIndex(cancelButton, true);
+            sheet.Dismissed += (s, e) =>
+            {
+                BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        if (e.ButtonIndex == shareButton)
+                            ViewModel.ShareCommand.Execute(null);
+                        else if (e.ButtonIndex == showButton)
+                            ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        else if (e.ButtonIndex == starButton)
+                            ViewModel.ToggleStarCommand.Execute(null);
+                        else if (e.ButtonIndex == editButton)
+                            Compose();
+                    }
+                    catch
+                    {
+                    }
+                });
+
+                sheet.Dispose();
+            };
+
+            sheet.ShowFromToolbar(NavigationController.Toolbar);
         }
     }
 }

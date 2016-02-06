@@ -6,6 +6,7 @@ using CodeFramework.Core.Services;
 using CodeHub.Core.Services;
 using System;
 using System.Threading.Tasks;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -30,15 +31,10 @@ namespace CodeHub.Core.ViewModels.App
 			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
 		}
 
-        public ICommand GoToSidebarOrderCommand
+        public ICommand GoToSourceCodeCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<SidebarOrderViewModel>()); }
+            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }
         }
-
-		public ICommand DeleteAllCacheCommand
-		{
-			get { return new MvxCommand(DeleteCache); }
-		}
 
         private bool _isSaving;
         public bool IsSaving
@@ -50,18 +46,6 @@ namespace CodeHub.Core.ViewModels.App
                 RaisePropertyChanged(() => IsSaving);
             }
         }
-
-		public bool AnalyticsEnabled
-		{
-			get
-			{
-				return GetService<IAnalyticsService>().Enabled;
-			}
-			set
-			{
-				GetService<IAnalyticsService>().Enabled = value;
-			}
-		}
 
         public bool LargeFonts
         {
@@ -132,25 +116,6 @@ namespace CodeHub.Core.ViewModels.App
                 RaisePropertyChanged(() => PushNotificationsEnabled);
                 IsSaving = false;
             }
-		}
-
-		private void DeleteCache()
-		{
-			if (this.GetApplication().Account.Cache != null)
-				this.GetApplication().Account.Cache.DeleteAll();
-		}
-
-		public float CacheSize
-		{
-			get
-			{
-				if (this.GetApplication().Account.Cache == null)
-					return 0f;
-
-				var totalCacheSize = this.GetApplication().Account.Cache.Sum(x => System.IO.File.Exists(x.Path) ? new System.IO.FileInfo(x.Path).Length : 0);
-				var totalCacheSizeMB = ((float)totalCacheSize / 1024f / 1024f);
-				return totalCacheSizeMB;
-			}
 		}
     }
 }

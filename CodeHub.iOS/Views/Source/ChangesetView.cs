@@ -5,9 +5,9 @@ using UIKit;
 using CodeFramework.iOS.Utils;
 using System.Linq;
 using Foundation;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Changesets;
 using CodeHub.iOS.Elements;
+using Humanizer;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -21,8 +21,6 @@ namespace CodeHub.iOS.Views.Source
         
         public ChangesetView()
         {
-            Title = "Commit";
-            Root.UnevenRows = true;
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
         }
 
@@ -30,14 +28,18 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
+            Title = ViewModel.Node;
+
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
 
             ViewModel.Bind(x => x.Changeset, x => {
                 var msg = x.Commit.Message ?? string.Empty;
                 msg = msg.Split('\n')[0];
                 HeaderView.Text = msg.Split('\n')[0];
-                HeaderView.SubText = "Commited " + (ViewModel.Changeset?.Commit?.Committer?.Date ?? DateTimeOffset.Now).ToDaysAgo();
+                HeaderView.SubText = "Commited " + (ViewModel.Changeset?.Commit?.Committer?.Date ?? DateTimeOffset.Now).Humanize();
                 HeaderView.SetImage(x.Author?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
             });
@@ -52,7 +54,7 @@ namespace CodeHub.iOS.Views.Source
             if (commitModel == null)
                 return;
 
-            var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
+            var root = new RootElement(Title);
 
             var additions = ViewModel.Changeset.Stats?.Additions ?? 0;
             var deletions = ViewModel.Changeset.Stats?.Deletions ?? 0;
@@ -132,14 +134,7 @@ namespace CodeHub.iOS.Views.Source
                 if (!string.IsNullOrEmpty(comment.Path))
                     continue;
 
-                commentSection.Add(new CommentElement {
-                    Name = comment.User.Login,
-                    Time = comment.CreatedAt.ToDaysAgo(),
-                    String = comment.Body,
-                    Image = Images.Avatar,
-                    ImageUri = new Uri(comment.User.AvatarUrl),
-                    BackgroundColor = UIColor.White,
-                });
+                commentSection.Add(new CommentElement(comment.User.Login, comment.Body, comment.CreatedAt, comment.User.AvatarUrl));
             }
 
 			if (commentSection.Elements.Count > 0)

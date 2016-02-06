@@ -99,7 +99,7 @@ namespace CodeHub.iOS.Views.Issues
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
  
-                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
 

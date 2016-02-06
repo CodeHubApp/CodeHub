@@ -6,6 +6,7 @@ using UIKit;
 using Cirrious.MvvmCross.Binding.BindingContext;
 using CodeFramework.iOS.Utils;
 using CodeHub.Core.ViewModels.Notifications;
+using Humanizer;
 
 namespace CodeHub.iOS.Views
 {
@@ -46,7 +47,7 @@ namespace CodeHub.iOS.Views
 
             BindCollection(vm.Notifications, x =>
             {
-                var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.ToDaysAgo(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                var el = new StyledStringElement(x.Subject.Title, x.UpdatedAt.Humanize(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))

@@ -112,7 +112,6 @@
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
-    <Compile Include="ViewModels\App\AboutViewModel.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="Messages\SourceEditMessage.cs" />
     <Compile Include="Services\JsonSerializationService.cs" />
@@ -123,7 +122,6 @@
     <Compile Include="Messages\GistAddMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="Utils\MarkdownHtmlGenerator.cs" />
-    <Compile Include="ViewModels\App\SidebarOrderViewModel.cs" />
     <Compile Include="Factories\IFeatureFactory.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
     <Compile Include="Factories\LoginFactory.cs" />
@@ -150,9 +148,7 @@
     <Compile Include="Services\IAccountPreferencesService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
-    <Compile Include="Services\IAnalyticsService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
-    <Compile Include="Services\IEnvrionmentService.cs" />
     <Compile Include="Services\IHttpClientService.cs" />
     <Compile Include="Services\IJsonHttpClientService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
@@ -161,7 +157,6 @@
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\JsonHttpClientService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
-    <Compile Include="Utils\CrashReporting.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
@@ -186,6 +181,8 @@
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="PresentationValues.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
+    <Compile Include="Utils\GitHubAvatar.cs" />
+    <Compile Include="Utils\GitHubExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

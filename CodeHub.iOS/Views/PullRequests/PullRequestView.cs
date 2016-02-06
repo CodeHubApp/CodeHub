@@ -10,12 +10,12 @@ using System.Linq;
 using System.Collections.Generic;
 using CodeHub.iOS.ViewControllers;
 using Humanizer;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
-        private SplitElement _split1, _split2;
         private WebElement _descriptionElement;
         private WebElement _commentsElement;
         private StyledStringElement _milestoneElement;
@@ -29,6 +29,10 @@ namespace CodeHub.iOS.Views.PullRequests
             get { return (PullRequestViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
         }
+
+        SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
+        SplitViewElement _split2 = new SplitViewElement(Octicon.Person.ToImage(), Octicon.Calendar.ToImage());
+
 
         public override void ViewDidLoad()
         {
@@ -62,22 +66,19 @@ namespace CodeHub.iOS.Views.PullRequests
             _addCommentElement = new StyledStringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
             _addCommentElement.Tapped += AddCommentTapped;
 
-            _split1 = new SplitElement(new SplitElement.Row { Image1 = Octicon.Gear.ToImage(), Image2 = Octicon.GitMerge.ToImage() });
-            _split2 = new SplitElement(new SplitElement.Row { Image1 = Octicon.Person.ToImage(), Image2 = Octicon.Calendar.ToImage() });
-
             ViewModel.Bind(x => x.PullRequest, x =>
             {
                 var merged = (x.Merged != null && x.Merged.Value);
 
-                _split1.Value.Text1 = x.State;
-                _split1.Value.Text2 = merged ? "Merged" : "Not Merged";
+                _split1.Button1.Text = x.State;
+                _split1.Button2.Text = merged ? "Merged" : "Not Merged";
 
-                _split2.Value.Text1 = x.User.Login;
-                _split2.Value.Text2 = x.CreatedAt.ToString("MM/dd/yy");
+                _split2.Button1.Text = x.User.Login;
+                _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
 
-                HeaderView.SubText = "Updated " + x.UpdatedAt.ToDaysAgo();
+                HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
                 Render();

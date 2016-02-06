@@ -219,13 +219,11 @@
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
-    <Compile Include="Views\App\SidebarOrderView.cs" />
     <Compile Include="Views\App\EnablePushNotificationsViewController.cs" />
     <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
       <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Factories\FeatureFactory.cs" />
-    <Compile Include="Views\App\AboutView.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamMembersView.cs" />
     <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
@@ -244,9 +242,7 @@
     <Compile Include="Elements\WebElement.cs" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
-    <Compile Include="Services\AnalyticsService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
-    <Compile Include="Services\EnvironmentService.cs" />
     <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\ShareService.cs" />
     <Compile Include="Services\UIThreadService.cs" />
@@ -307,21 +303,16 @@
     <Compile Include="Views\App\DefaultStartupView.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
-    <Compile Include="Elements\ActivityElement.cs" />
     <Compile Include="Elements\CustomElement.cs" />
     <Compile Include="Elements\InputElement.cs" />
     <Compile Include="Elements\MultilinedElement.cs" />
     <Compile Include="Elements\MultilinedInputElement.cs" />
     <Compile Include="Elements\MultiLineEditElement.cs" />
     <Compile Include="Elements\MultiLineTableCell.cs" />
-    <Compile Include="Elements\NameTimeStringElement.cs" />
     <Compile Include="Elements\NoItemsElement.cs" />
     <Compile Include="Elements\OwnerDrawnElement.cs" />
     <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SegmentElement.cs" />
-    <Compile Include="Elements\SpaceingElement.cs" />
     <Compile Include="Elements\SplitButtonElement.cs" />
-    <Compile Include="Elements\SplitElement.cs" />
     <Compile Include="Elements\TrueFalseElement.cs" />
     <Compile Include="Elements\LoadMoreElement.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
@@ -370,6 +361,20 @@
     <InterfaceDefinition Include="TableViewCells\NewsCellView.xib" />
     <InterfaceDefinition Include="TableViewCells\RepositoryCellView.xib" />
     <Compile Include="TableViewCells\MilestoneTableViewCell.cs" />
+    <Compile Include="Elements\SplitViewElement.cs" />
+    <Compile Include="TableViewCells\GistCellView.cs" />
+    <Compile Include="TableViewCells\GistCellView.designer.cs" />
+    <InterfaceDefinition Include="TableViewCells\GistCellView.xib" />
+    <Compile Include="Utilities\UIImageViewExtensions.cs" />
+    <Compile Include="Elements\GistElement.cs" />
+    <Compile Include="TableViewCells\PullRequestCellView.cs" />
+    <Compile Include="TableViewCells\PullRequestCellView.designer.cs" />
+    <InterfaceDefinition Include="TableViewCells\PullRequestCellView.xib" />
+    <Compile Include="Elements\PullRequestElement.cs" />
+    <Compile Include="TableViewCells\CommitCellView.cs" />
+    <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
+    <Compile Include="TableViewCells\CommitCellView.designer.cs" />
+    <Compile Include="Elements\CommitElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

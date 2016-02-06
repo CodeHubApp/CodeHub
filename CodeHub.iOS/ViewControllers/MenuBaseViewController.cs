@@ -116,7 +116,7 @@ namespace CodeHub.iOS.ViewControllers
             //So, during layout, we'll resize the imageview and pin it to a specific size!
             private class Cell : UITableViewCell
             {
-                private const float ImageSize = 16f;
+                private const float ImageSize = 20f;
                 private UILabel _numberView;
 
                 public int NotificationNumber { get; set; }
@@ -176,12 +176,14 @@ namespace CodeHub.iOS.ViewControllers
             {
                 var cell = base.GetCell(tv) as Cell;
                 cell.NotificationNumber = NotificationNumber;
+                cell.ImageView.Layer.CornerRadius = ImageUri != null ? (cell.ImageView.Frame.Height / 2) : 0;
                 return cell;
             }
 
             protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
             {
                 var cell = new Cell(style, key);
+                cell.ImageView.Layer.MasksToBounds = true;
                 cell.ImageView.TintColor = UIColor.FromRGB(0xd5, 0xd5, 0xd5);
                 return cell;
             }

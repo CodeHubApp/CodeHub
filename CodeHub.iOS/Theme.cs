@@ -33,7 +33,6 @@ namespace CodeHub.iOS
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
-            MonoTouch.Dialog.NameTimeStringElement.NameColor = Theme.CurrentTheme.MainTitleColor;
             MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;

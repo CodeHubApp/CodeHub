@@ -4,6 +4,8 @@ using MonoTouch.Dialog;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 using CodeFramework.iOS.Utils;
+using UIKit;
+using Foundation;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -42,25 +44,25 @@ namespace CodeHub.iOS.Views.App
 			var currentAccount = application.Account;
             var accountSection = new Section("Account");
 
-            accountSection.Add(new TrueFalseElement("Save Credentials".t(), !currentAccount.DontRemember, e =>
+            accountSection.Add(new TrueFalseElement("Save Credentials", !currentAccount.DontRemember, e =>
             { 
                 currentAccount.DontRemember = !e.Value;
                 application.Accounts.Update(currentAccount);
             }));
 
-			var showOrganizationsInEvents = new TrueFalseElement("Show Organizations in Events".t(), currentAccount.ShowOrganizationsInEvents, e =>
+			var showOrganizationsInEvents = new TrueFalseElement("Show Organizations in Events", currentAccount.ShowOrganizationsInEvents, e =>
 			{ 
 				currentAccount.ShowOrganizationsInEvents = e.Value;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var showOrganizations = new TrueFalseElement("List Organizations in Menu".t(), currentAccount.ExpandOrganizations, e =>
+			var showOrganizations = new TrueFalseElement("List Organizations in Menu", currentAccount.ExpandOrganizations, e =>
 			{ 
 				currentAccount.ExpandOrganizations = e.Value;
 				application.Accounts.Update(currentAccount);
 			});
 
-			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions".t(), currentAccount.ShowRepositoryDescriptionInList, e =>
+			var repoDescriptions = new TrueFalseElement("Show Repo Descriptions", currentAccount.ShowRepositoryDescriptionInList, e =>
 			{ 
 				currentAccount.ShowRepositoryDescriptionInList = e.Value;
 				application.Accounts.Update(currentAccount);
@@ -79,25 +81,47 @@ namespace CodeHub.iOS.Views.App
                 CreateTable();
             });
 
-            accountSection.Add(new TrueFalseElement("Push Notifications".t(), vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
-
-			var totalCacheSizeMB = vm.CacheSize.ToString("0.##");
-			var deleteCache = new StyledStringElement("Delete Cache".t(), string.Format("{0} MB", totalCacheSizeMB), UIKit.UITableViewCellStyle.Value1);
-			deleteCache.Tapped += () =>
-			{ 
-				vm.DeleteAllCacheCommand.Execute(null);
-				deleteCache.Value = string.Format("{0} MB", 0);
-				ReloadData();
-			};
+            accountSection.Add(new TrueFalseElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
+       
+            var aboutSection = new Section("About", "Thank you for downloading. Enjoy!")
+            {
+                new StyledStringElement("Source Code", () => vm.GoToSourceCodeCommand.Execute(null)),
+                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
+                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
+                new StyledStringElement("App Version", GetApplicationVersion())
+            };
 
 			//Assign the root
 			var root = new RootElement(Title);
             root.Add(accountSection);
             root.Add(new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView, largeFonts });
-			root.Add(new Section ("Internal") { deleteCache });
+            root.Add(aboutSection);
 			Root = root;
 
 		}
+
+        private static string GetApplicationVersion() 
+        {
+            string shortVersion = string.Empty;
+            string bundleVersion = string.Empty;
+
+            try
+            {
+                shortVersion = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            }
+            catch { }
+
+            try
+            {
+                bundleVersion = NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
+            }
+            catch { }
+
+            if (string.Equals(shortVersion, bundleVersion))
+                return shortVersion;
+
+            return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
+        }
     }
 }
 

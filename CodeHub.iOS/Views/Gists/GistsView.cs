@@ -1,7 +1,7 @@
-using System;
 using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
-using MonoTouch.Dialog;
+using CodeHub.iOS.Elements;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -9,27 +9,15 @@ namespace CodeHub.iOS.Views.Gists
     {
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Gists".t();
+            NoItemsText = "No Gists";
 
             base.ViewDidLoad();
 
-            var vm = (GistsViewModel) ViewModel;
-            BindCollection(vm.Gists, x =>
-            {
-                var str = string.IsNullOrEmpty(x.Description) ? "Gist " + x.Id : x.Description;
-                var sse = new NameTimeStringElement
-                {
-                    Time = x.UpdatedAt.ToDaysAgo(),
-                    String = str,
-                    Lines = 4,
-                    Image = Images.Avatar
-                };
+            TableView.EstimatedRowHeight = 64f;
+            TableView.RowHeight = UITableView.AutomaticDimension;
 
-                sse.Name = (x.Owner == null) ? "Anonymous" : x.Owner.Login;
-                sse.ImageUri = (x.Owner == null) ? null : new Uri(x.Owner.AvatarUrl);
-                sse.Tapped += () => vm.GoToGistCommand.Execute(x);
-                return sse;
-            });
+            var vm = (GistsViewModel) ViewModel;
+            BindCollection(vm.Gists, x => new GistElement(x, () => vm.GoToGistCommand.Execute(x)));
         }
     }
 }

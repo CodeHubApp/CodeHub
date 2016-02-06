@@ -59,7 +59,7 @@ namespace CodeHub.iOS.Views.App
             
 			if (ViewModel.PinnedRepositories.Count() > 0)
 			{
-				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories".t()) };
+				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
 					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
 				root.Add(_favoriteRepoSection);
@@ -92,13 +92,12 @@ namespace CodeHub.iOS.Views.App
             gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Octicon.Globe.ToImage()));
             root.Add(gistsSection);
 //
-            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences".t()) };
+            var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             root.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings".t(), () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
-            infoSection.Add(new MenuElement("Upgrades".t(), () => ViewModel.GoToUpgradesCommand.Execute(null), Octicon.Lock.ToImage()));
-            infoSection.Add(new MenuElement("About".t(), () => ViewModel.GoToAboutCommand.Execute(null), Octicon.Question.ToImage()));
-            infoSection.Add(new MenuElement("Feedback & Support".t(), PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
-            infoSection.Add(new MenuElement("Accounts".t(), () => ProfileButtonClicked(this, System.EventArgs.Empty), Octicon.Person.ToImage()));
+            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
+            infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.Execute(null), Octicon.Lock.ToImage()));
+            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
+            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Octicon.Person.ToImage()));
             Root = root;
 		}
 
