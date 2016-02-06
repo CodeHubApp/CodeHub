@@ -283,7 +283,6 @@
     <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
-    <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="ViewControllers\MenuBaseViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
@@ -307,8 +306,6 @@
     <Compile Include="Elements\InputElement.cs" />
     <Compile Include="Elements\MultilinedElement.cs" />
     <Compile Include="Elements\MultilinedInputElement.cs" />
-    <Compile Include="Elements\MultiLineEditElement.cs" />
-    <Compile Include="Elements\MultiLineTableCell.cs" />
     <Compile Include="Elements\NoItemsElement.cs" />
     <Compile Include="Elements\OwnerDrawnElement.cs" />
     <Compile Include="Elements\PaginateElement.cs" />
@@ -338,7 +335,6 @@
     <Compile Include="Utilities\ImageLoader.cs" />
     <Compile Include="Utilities\LocalizationExtensions.cs" />
     <Compile Include="Utilities\LRUCache.cs" />
-    <Compile Include="Utilities\SegmentControl.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Octicons.cs" />

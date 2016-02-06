@@ -161,12 +161,9 @@
     <Compile Include="Utils\DateTimeExtensions.cs" />
     <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\EnumExtensions.cs" />
-    <Compile Include="Utils\ExceptionExtensions.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
-    <Compile Include="Utils\SimpleJson.cs" />
-    <Compile Include="Utils\StringExtensions.cs" />
     <Compile Include="ViewModels\App\BaseDefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="ViewModels\BaseAccountsViewModel.cs" />

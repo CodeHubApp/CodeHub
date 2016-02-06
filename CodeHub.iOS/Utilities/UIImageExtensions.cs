@@ -41,17 +41,6 @@ namespace MonoTouch.UIKit
                 return System.IO.File.Exists(file) ? UIImage.FromFile(file) : UIImage.FromFile(filename + "@2x." + extension);
             }
         }
-
-        public static UIImage ConvertToGrayScale (UIImage image)
-        {
-            var imageRect = new CGRect (CGPoint.Empty, image.Size);
-            using (var colorSpace = CGColorSpace.CreateDeviceGray ())
-                using (var context = new CGBitmapContext (IntPtr.Zero, (int) imageRect.Width, (int) imageRect.Height, 8, 0, colorSpace, CGImageAlphaInfo.None)) {
-                context.DrawImage (imageRect, image.CGImage);
-                using (var imageRef = context.ToImage ())
-                    return new UIImage (imageRef);
-            }
-        }
     }
 }
 
