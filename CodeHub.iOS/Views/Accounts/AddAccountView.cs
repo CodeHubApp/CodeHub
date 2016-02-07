@@ -3,8 +3,6 @@ using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeFramework.iOS.Utils;
-using MvvmCross.Platform;
-using MvvmCross.Plugins.Messenger;
 using System;
 using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;
@@ -13,6 +11,8 @@ namespace CodeHub.iOS.Views.Accounts
 {
     public partial class AddAccountView : MvxViewController
     {
+        private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
+
         public new AddAccountViewModel ViewModel
         {
             get { return (AddAccountViewModel) base.ViewModel; }
@@ -47,37 +47,31 @@ namespace CodeHub.iOS.Views.Accounts
 					hud.Hide();
 			});
 
-			View.BackgroundColor = UIColor.FromRGB(239, 239, 244);
-            Logo.Image = Images.Logos.DotComMascot;
+            View.BackgroundColor = EnterpriseBackgroundColor;
+            Logo.Image = Images.Logos.EnterpriseMascot;
 
-            if (ViewModel.IsEnterprise)
-            {
-                LoginButton.SetTitleColor(UIColor.White, UIControlState.Normal);
-                LoginButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
-            }
-            else
-            {
-                LoginButton.SetBackgroundImage(Images.Buttons.GreyButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
-
-                //Hide the domain, slide everything up
-                Domain.Hidden = true;
-                var f = User.Frame;
-                f.Y -= 39;
-                User.Frame = f;
-
-                var p = Password.Frame;
-                p.Y -= 39;
-                Password.Frame = p;
-
-                var l = LoginButton.Frame;
-                l.Y -= 39;
-                LoginButton.Frame = l;
-            }
+            LoginButton.SetBackgroundImage(Images.Buttons.BlackButton.CreateResizableImage(new UIEdgeInsets(18, 18, 18, 18)), UIControlState.Normal);
+            LoginButton.Enabled = true;
 
             //Set some generic shadowing
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
             LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
             LoginButton.Layer.ShadowOpacity = 0.3f;
+
+            var attributes = new UIStringAttributes {
+                ForegroundColor = UIColor.LightGray,
+            };
+
+            Domain.AttributedPlaceholder = new NSAttributedString("Domain", attributes);
+            User.AttributedPlaceholder = new NSAttributedString("Username", attributes);
+            Password.AttributedPlaceholder = new NSAttributedString("Password", attributes);
+
+            foreach (var i in new [] { Domain, User, Password })
+            {
+                i.Layer.BorderColor = UIColor.Black.CGColor;
+                i.Layer.BorderWidth = 1;
+                i.Layer.CornerRadius = 4;
+            }
 
             Domain.ShouldReturn = delegate {
                 User.BecomeFirstResponder();
@@ -93,24 +87,14 @@ namespace CodeHub.iOS.Views.Accounts
                 LoginButton.SendActionForControlEvents(UIControlEvent.TouchUpInside);
                 return true;
             };
-
-
-            ScrollView.ContentSize = new CGSize(View.Frame.Width, LoginButton.Frame.Bottom + 10f);
         }
 
         NSObject _hideNotification, _showNotification;
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardNotification);
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardHideNotification);
             _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.LeftBarButtonItem = null;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -120,59 +104,18 @@ namespace CodeHub.iOS.Views.Accounts
             NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
 
-        private void OnKeyboardNotification (NSNotification notification)
+        private void OnKeyboardHideNotification(NSNotification notification)
         {
-            if (IsViewLoaded) {
-
-                //Check if the keyboard is becoming visible
-                bool visible = notification.Name == UIKeyboard.WillShowNotification;
-
-                //Start an animation, using values from the keyboard
-                UIView.BeginAnimations ("AnimateForKeyboard");
-                UIView.SetAnimationBeginsFromCurrentState (true);
-                UIView.SetAnimationDuration (UIKeyboard.AnimationDurationFromNotification (notification));
-                UIView.SetAnimationCurve ((UIViewAnimationCurve)UIKeyboard.AnimationCurveFromNotification (notification));
-
-                //Pass the notification, calculating keyboard height, etc.
-                bool landscape = InterfaceOrientation == UIInterfaceOrientation.LandscapeLeft || InterfaceOrientation == UIInterfaceOrientation.LandscapeRight;
-                if (visible) {
-                    var keyboardFrame = UIKeyboard.FrameEndFromNotification (notification);
-
-                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
-                } else {
-                    var keyboardFrame = UIKeyboard.FrameBeginFromNotification (notification);
-
-                    OnKeyboardChanged (visible, landscape ? keyboardFrame.Width : keyboardFrame.Height);
-                }
-
-                //Commit the animation
-                UIView.CommitAnimations (); 
-            }
+            ScrollView.ContentInset = UIEdgeInsets.Zero;
+            ScrollView.ScrollIndicatorInsets = UIEdgeInsets.Zero;
         }
 
-        /// <summary>
-        /// Override this method to apply custom logic when the keyboard is shown/hidden
-        /// </summary>
-        /// <param name='visible'>
-        /// If the keyboard is visible
-        /// </param>
-        /// <param name='keyboardHeight'>
-        /// Calculated height of the keyboard (width not generally needed here)
-        /// </param>
-        protected virtual void OnKeyboardChanged (bool visible, nfloat keyboardHeight)
+        private void OnKeyboardNotification (NSNotification notification)
         {
-            if (visible)
-            {
-                var frame = ScrollView.Frame;
-                frame.Height -= keyboardHeight;
-                ScrollView.Frame = frame;
-            }
-            else
-            {
-                var frame = ScrollView.Frame;
-                frame.Height = View.Bounds.Height;
-                ScrollView.Frame = frame;
-            }
+            var keyboardFrame = UIKeyboard.FrameEndFromNotification (notification);
+            var inset = new UIEdgeInsets(0, 0, keyboardFrame.Height, 0);
+            ScrollView.ContentInset = inset;
+            ScrollView.ScrollIndicatorInsets = inset;
         }
     }
 }

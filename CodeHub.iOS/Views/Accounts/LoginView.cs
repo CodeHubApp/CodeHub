@@ -2,56 +2,26 @@ using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
-using System.Text;
 using MvvmCross.Platform;
-using CodeHub.Core.Services;
 using CodeFramework.iOS.Utils;
 using Foundation;
 using WebKit;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Views.Accounts
 {
     public class LoginView : WebView
     {
-        private readonly IHud _hud;
-
 		public new LoginViewModel ViewModel
 		{
 			get { return (LoginViewModel)base.ViewModel; }
 			set { base.ViewModel = value; }
 		}
 
-        public LoginView()
-            : base(false)
+        public LoginView() : base(true)
         {
             Title = "Login";
-			NavigationItem.RightBarButtonItem = new UIKit.UIBarButtonItem(UIKit.UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            _hud = this.CreateHud();
         }
-
-		private void ShowExtraMenu()
-		{
-            var sheet = new UIActionSheet();
-			var basicButton = sheet.AddButton("Login via BASIC");
-			var cancelButton = sheet.AddButton("Cancel".t());
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
-            sheet.Dismissed += (s, e) =>
-            {
-                // Pin to menu
-                BeginInvokeOnMainThread(() =>
-                {
-                    if (e.ButtonIndex == basicButton)
-                    {
-                        ViewModel.GoToOldLoginWaysCommand.Execute(null);
-                    }
-                });
-
-                sheet.Dispose();
-            };
-
-			sheet.ShowInView(this.View);
-		}
 
 		public override void ViewDidLoad()
 		{
@@ -60,12 +30,14 @@ namespace CodeHub.iOS.Views.Accounts
             if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
 				LoadRequest();
 
+            var hud = this.CreateHud();
+
             ViewModel.Bind(x => x.IsLoggingIn, x =>
             {
                 if (x)
-                    _hud.Show("Logging in...");
+                    hud.Show("Logging in...");
                 else
-                    _hud.Hide();
+                    hud.Hide();
             });
 		}
 
@@ -114,14 +86,17 @@ namespace CodeHub.iOS.Views.Accounts
 					ViewModel.Login(code);
 	                return false;
 	            }
-                if (navigationAction.Request.Url.AbsoluteString == "https://github.com/" || navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
-	            {
-	                return false;
-	            }
+    
+                if (navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
+                {
+                    Mvx.Resolve<IAlertDialogService>().Alert("Error", "Sorry, due to Apple restrictions, creating GitHub accounts cannot be done in CodeHub.");
+                    return false;
+                }
 
                 return base.ShouldStartLoad(webView, navigationAction);
 			}
-			catch (Exception e) {
+			catch 
+            {
 				Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
 				return false;
 			}
@@ -140,29 +115,6 @@ namespace CodeHub.iOS.Views.Accounts
 			else
 				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
 		}
-
-        protected override void OnLoadFinished(object sender, EventArgs e)
-        {
-            base.OnLoadFinished(sender, e);
-
-            var script = new StringBuilder();
-
-            //Apple is full of clowns. The GitHub login page has links that can ultimiately end you at a place where you can purchase something
-            //so we need to inject javascript that will remove these links. What a bunch of idiots...
-            script.Append("$('.switch-to-desktop').hide();");
-            script.Append("$('.header-button').hide();");
-            script.Append("$('.header').hide();");
-            script.Append("$('.site-footer').hide();");
-            script.Append("$('.brand-logo-wordmark').click(function(e) { e.preventDefault(); });");
-
-            //Inject some Javascript so we can set the username if there is an attempted account
-			if (ViewModel.AttemptedAccount != null)
-            {
-                script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
-            }
-
-            Web.EvaluateJavaScript("(function(){setTimeout(function(){" + script.ToString() +"}, 100); })();", null);
-        }
 
         private void LoadRequest()
         {

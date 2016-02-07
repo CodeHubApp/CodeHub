@@ -37,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 				//Hack for now
 				if (isEnterprise)
 				{
-					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = account.Id });
+					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
 				}
 				else
 				{
@@ -58,7 +58,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
 
 				if (isEnterprise)
-					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true, AttemptedAccountId = githubAccount.Id });
+					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
 				else
 					ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
 			}

@@ -244,40 +244,6 @@
     <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\ShareService.cs" />
     <Compile Include="Services\UIThreadService.cs" />
-    <None Include="SourceBrowser\css\arta.css" />
-    <None Include="SourceBrowser\css\ascetic.css" />
-    <None Include="SourceBrowser\css\brown_paper.css" />
-    <None Include="SourceBrowser\css\brown_papersq.png" />
-    <None Include="SourceBrowser\css\dark.css" />
-    <None Include="SourceBrowser\css\default.css" />
-    <None Include="SourceBrowser\css\docco.css" />
-    <None Include="SourceBrowser\css\far.css" />
-    <None Include="SourceBrowser\css\foundation.css" />
-    <None Include="SourceBrowser\css\github.css" />
-    <None Include="SourceBrowser\css\googlecode.css" />
-    <None Include="SourceBrowser\css\idea.css" />
-    <None Include="SourceBrowser\css\ir_black.css" />
-    <None Include="SourceBrowser\css\magula.css" />
-    <None Include="SourceBrowser\css\mono-blue.css" />
-    <None Include="SourceBrowser\css\monokai.css" />
-    <None Include="SourceBrowser\css\monokai_sublime.css" />
-    <None Include="SourceBrowser\css\obsidian.css" />
-    <None Include="SourceBrowser\css\pojoaque.css" />
-    <None Include="SourceBrowser\css\pojoaque.jpg" />
-    <None Include="SourceBrowser\css\railscasts.css" />
-    <None Include="SourceBrowser\css\rainbow.css" />
-    <None Include="SourceBrowser\css\school_book.css" />
-    <None Include="SourceBrowser\css\school_book.png" />
-    <None Include="SourceBrowser\css\solarized_dark.css" />
-    <None Include="SourceBrowser\css\solarized_light.css" />
-    <None Include="SourceBrowser\css\sunburst.css" />
-    <None Include="SourceBrowser\css\tomorrow.css" />
-    <None Include="SourceBrowser\css\tomorrow-night.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-blue.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-bright.css" />
-    <None Include="SourceBrowser\css\tomorrow-night-eighties.css" />
-    <None Include="SourceBrowser\css\xcode.css" />
-    <None Include="SourceBrowser\css\zenburn.css" />
     <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
@@ -369,6 +335,31 @@
     <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Elements\UserElement.cs" />
+    <Compile Include="WebViews\SourceBrowserModel.cs" />
+    <Compile Include="WebViews\UpgradeDetailsModel.cs" />
+    <Compile Include="WebViews\DescriptionModel.cs" />
+    <None Include="WebResources\LICENSE" />
+    <None Include="WebViews\UpgradeDetailsRazorView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>UpgradeDetailsRazorView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\UpgradeDetailsRazorView.cs">
+      <DependentUpon>UpgradeDetailsRazorView.cshtml</DependentUpon>
+    </Compile>
+    <None Include="WebViews\SyntaxHighlighterView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\SyntaxHighlighterView.cs">
+      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
+    </Compile>
+    <None Include="WebViews\MarkdownView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\MarkdownView.cs">
+      <DependentUpon>MarkdownView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -480,16 +471,64 @@
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
     <Content Include="Diff\jquery.min.js" />
-    <Content Include="SourceBrowser\css\line-numbers.css" />
-    <Content Include="SourceBrowser\css\vs.css" />
-    <Content Include="SourceBrowser\file-loader.js" />
-    <Content Include="SourceBrowser\highlight.pack.js" />
-    <Content Include="SourceBrowser\index.html" />
     <BundleResource Include="Images\avatar.png" />
     <BundleResource Include="Images\avatar%402x.png" />
     <BundleResource Include="Images\Logos\dotcom-mascot.png" />
     <BundleResource Include="Images\Logos\enterprise-mascot.png" />
     <BundleResource Include="octicons.ttf" />
+    <Content Include="WebResources\highlight.pack.js" />
+    <Content Include="WebResources\styles\arta.css" />
+    <Content Include="WebResources\styles\ascetic.css" />
+    <Content Include="WebResources\styles\atelier-dune.dark.css" />
+    <Content Include="WebResources\styles\atelier-dune.light.css" />
+    <Content Include="WebResources\styles\atelier-forest.dark.css" />
+    <Content Include="WebResources\styles\atelier-forest.light.css" />
+    <Content Include="WebResources\styles\atelier-heath.dark.css" />
+    <Content Include="WebResources\styles\atelier-heath.light.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.dark.css" />
+    <Content Include="WebResources\styles\atelier-lakeside.light.css" />
+    <Content Include="WebResources\styles\atelier-seaside.dark.css" />
+    <Content Include="WebResources\styles\atelier-seaside.light.css" />
+    <Content Include="WebResources\styles\brown_paper.css" />
+    <Content Include="WebResources\styles\brown_papersq.png" />
+    <Content Include="WebResources\styles\codepen-embed.css" />
+    <Content Include="WebResources\styles\color-brewer.css" />
+    <Content Include="WebResources\styles\dark.css" />
+    <Content Include="WebResources\styles\default.css" />
+    <Content Include="WebResources\styles\docco.css" />
+    <Content Include="WebResources\styles\far.css" />
+    <Content Include="WebResources\styles\foundation.css" />
+    <Content Include="WebResources\styles\github.css" />
+    <Content Include="WebResources\styles\googlecode.css" />
+    <Content Include="WebResources\styles\hybrid.css" />
+    <Content Include="WebResources\styles\idea.css" />
+    <Content Include="WebResources\styles\ir_black.css" />
+    <Content Include="WebResources\styles\kimbie.dark.css" />
+    <Content Include="WebResources\styles\kimbie.light.css" />
+    <Content Include="WebResources\styles\magula.css" />
+    <Content Include="WebResources\styles\mono-blue.css" />
+    <Content Include="WebResources\styles\monokai_sublime.css" />
+    <Content Include="WebResources\styles\monokai.css" />
+    <Content Include="WebResources\styles\obsidian.css" />
+    <Content Include="WebResources\styles\paraiso.dark.css" />
+    <Content Include="WebResources\styles\paraiso.light.css" />
+    <Content Include="WebResources\styles\pojoaque.css" />
+    <Content Include="WebResources\styles\pojoaque.jpg" />
+    <Content Include="WebResources\styles\railscasts.css" />
+    <Content Include="WebResources\styles\rainbow.css" />
+    <Content Include="WebResources\styles\school_book.css" />
+    <Content Include="WebResources\styles\school_book.png" />
+    <Content Include="WebResources\styles\solarized_dark.css" />
+    <Content Include="WebResources\styles\solarized_light.css" />
+    <Content Include="WebResources\styles\sunburst.css" />
+    <Content Include="WebResources\styles\tomorrow-night-blue.css" />
+    <Content Include="WebResources\styles\tomorrow-night-bright.css" />
+    <Content Include="WebResources\styles\tomorrow-night-eighties.css" />
+    <Content Include="WebResources\styles\tomorrow-night.css" />
+    <Content Include="WebResources\styles\tomorrow.css" />
+    <Content Include="WebResources\styles\vs.css" />
+    <Content Include="WebResources\styles\xcode.css" />
+    <Content Include="WebResources\styles\zenburn.css" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -502,6 +541,9 @@
     <Folder Include="Factories\" />
     <Folder Include="Views\Teams\" />
     <Folder Include="Images\Logos\" />
+    <Folder Include="WebViews\" />
+    <Folder Include="WebResources\" />
+    <Folder Include="WebResources\styles\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">

@@ -36,13 +36,15 @@ namespace CodeHub.iOS.Views.App
                 new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Octicon.IssueOpened.ToImage())
             });
 
+            Uri avatarUri;
+            Uri.TryCreate(ViewModel.Account.AvatarUrl, UriKind.Absolute, out avatarUri);
+
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Octicon.Rss.ToImage()));
+            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Octicon.Rss.ToImage(), avatarUri));
             if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
             {
                 foreach (var org in ViewModel.Organizations)
                 {
-                    Uri avatarUri;
                     Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
                     eventsSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(org.Login), Octicon.Rss.ToImage(), avatarUri));
                 }
@@ -74,7 +76,6 @@ namespace CodeHub.iOS.Views.App
             {
                 foreach (var org in ViewModel.Organizations)
                 {
-                    Uri avatarUri;
                     Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
                     orgSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationCommand.Execute(org.Login), Images.Avatar, avatarUri));
                 }
@@ -100,14 +101,6 @@ namespace CodeHub.iOS.Views.App
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, System.EventArgs.Empty), Octicon.Person.ToImage()));
             Root = root;
 		}
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            GC.Collect();
-            GC.Collect();
-            GC.Collect();
-        }
 
         private void PresentUserVoice()
         {

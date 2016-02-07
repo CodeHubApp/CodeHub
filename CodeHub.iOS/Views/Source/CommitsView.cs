@@ -9,7 +9,7 @@ namespace CodeHub.iOS.Views.Source
 	{
 		public override void ViewDidLoad()
 		{
-			Title = "Commits".t();
+			Title = "Commits";
 
 			base.ViewDidLoad();
 

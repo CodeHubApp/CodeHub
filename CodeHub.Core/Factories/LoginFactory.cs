@@ -58,11 +58,15 @@ namespace CodeHub.Core.Factories
             account.Username = userInfo.Login;
             account.AvatarUrl = userInfo.AvatarUrl;
 			client.Username = userInfo.Login;
-            _accounts.Update(account);
+
+            if (_accounts.Exists(account))
+                _accounts.Update(account);
+            else
+                _accounts.Insert(account);
             return client;
         }
 
-        public async Task<LoginData> Authenticate(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount account)
+        public async Task<LoginData> CreateLoginData(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount account)
         {
             //Fill these variables in during the proceeding try/catch
             var apiUrl = domain;
@@ -77,11 +81,7 @@ namespace CodeHub.Core.Factories
                 if (apiUrl != null && !Uri.IsWellFormedUriString(apiUrl, UriKind.Absolute))
                     throw new ArgumentException("Domain is invalid");
 
-                //Does this user exist?
-                bool exists = account != null;
-                if (!exists)
-                    account = new GitHubAccount { Username = user };
-
+                account = account ?? new GitHubAccount { Username = user };
                 account.Domain = apiUrl;
 				account.IsEnterprise = enterprise;
                 var client = twoFactor == null ? Client.Basic(user, pass, apiUrl) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiUrl);
@@ -95,11 +95,6 @@ namespace CodeHub.Core.Factories
                     var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", new System.Collections.Generic.List<string>(Scopes), "CodeHub", null));
 	                account.OAuth = auth.Data.Token;
 				}
-
-                if (exists)
-                    _accounts.Update(account);
-                else
-                    _accounts.Insert(account);
 
 				return new LoginData { Client = client, Account = account };
             }

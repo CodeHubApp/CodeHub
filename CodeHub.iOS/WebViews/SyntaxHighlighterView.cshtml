@@ -1,0 +1,72 @@
+﻿@model SourceBrowserModel
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="WebResources/styles/@(Model.Theme).css" />
+<style>
+html { height: 100%; width: 100%; }
+body { 
+    margin: 0; 
+    min-height: 100%; 
+    min-width: 100%;
+    text-size-adjust: 100%; 
+    -webkit-text-size-adjust: none;
+    font-size: @(Model.FontSize)px;
+}
+
+body > pre { margin: 0em; min-width: 100%; min-height: 100%; }
+.hljs { 
+    min-width: 100%; min-height: 100%; 
+    box-sizing: border-box; 
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+}
+
+code {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  padding: 0;
+}
+
+.pre-numbering {
+    padding: 0 2px 0 2px;
+    border-right: 1px solid #C3CCD0;
+    text-align: right;
+    color: #AAA;
+    background-color: #EEE;
+    display: inline-block;
+    float: left;
+    margin-top: 0;
+    margin-right: 15px;
+}
+</style>
+</head>
+<body>
+    <pre><code id="code" style="display: none;" class="@Model.Language">@Model.Content</code></pre>
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="WebResources/highlight.pack.js"></script>
+    <script>
+        $(function() {
+            hljs.configure({
+              tabReplace: '    '
+            });
+
+            hljs.initHighlighting();
+            document.getElementById("code").style.display = 'block';
+
+            $('#code').each(function(){
+                var lines = $(this).text().split('\n').length - 1;
+                var $numbering = $('<div/>').addClass('pre-numbering');
+                $(this)
+                    .addClass('has-numbering')
+                    .prepend($numbering);
+                for(i=1;i<=lines + 1;i++){
+                    $numbering.append(document.createTextNode(i + '\n'));
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

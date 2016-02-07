@@ -1,5 +1,4 @@
 using System;
-using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels;
@@ -11,7 +10,18 @@ namespace CodeHub.Core
     {
 		private string _id;
 		private string _filename;
-		private GistFileModel _fileModel;
+
+        public string FileName { get; private set; }
+
+        private GistFileModel _gist;
+        public GistFileModel Gist
+        {
+            get { return _gist; }
+            private set {
+                _gist = value;
+                RaisePropertyChanged();
+            }
+        }
 
 		public void Init(NavObject navObject)
         {
@@ -22,33 +32,33 @@ namespace CodeHub.Core
 
 			//Create the temp file path
 			Title = fileName;
+            FileName = fileName;
 
 			_id = navObject.GistId;
 			_filename = navObject.Filename;
 
 			//Grab the data
-			_fileModel = GetService<IViewModelTxService>().Get() as GistFileModel;
+            Gist = GetService<IViewModelTxService>().Get() as GistFileModel;
         }
 
 		protected override async Task Load(bool forceCacheInvalidation)
 		{
-			if (_fileModel == null)
+            
+            if (Gist == null)
 			{
 				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[_id].Get());
-				_fileModel = data.Data.Files[_filename];
+                Gist = data.Data.Files[_filename];
 			}
 
-			//Check to make sure...
-			if (_fileModel == null || _fileModel.Content == null)
-			{
+            if (Gist == null || Gist.Content == null)
 				throw new Exception("Unable to retreive gist!");
-			}
 
-			var content = _fileModel.Content;
-			var filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_fileModel.Filename));
-			System.IO.File.WriteAllText(filePath, content, System.Text.Encoding.UTF8);
-			FilePath = filePath;
-			ContentPath = CreateContentFile();
+            IsMarkdown = string.Equals(Gist?.Language, "Markdown");
+            Gist = Gist;
+
+            var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), FileName);
+            System.IO.File.WriteAllText(filepath, Gist.Content, System.Text.Encoding.UTF8);
+            ContentPath = FilePath = filepath;
 		}
 
 		public class NavObject

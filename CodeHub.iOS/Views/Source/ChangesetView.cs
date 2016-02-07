@@ -28,7 +28,7 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            Title = ViewModel.Node;
+            Title = "Commit " + (ViewModel.Node.Length > 6 ? ViewModel.Node.Substring(0, 6) : ViewModel.Node);
 
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;

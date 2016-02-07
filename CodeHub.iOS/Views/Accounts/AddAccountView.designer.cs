@@ -4,14 +4,17 @@
 // actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-
 using Foundation;
+using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.Views.Accounts
 {
 	[Register ("AddAccountView")]
 	partial class AddAccountView
 	{
+		[Outlet]
+		UIKit.UIView ContainerView { get; set; }
+
 		[Outlet]
 		UIKit.UITextField Domain { get; set; }
 
@@ -32,6 +35,16 @@ namespace CodeHub.iOS.Views.Accounts
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (ContainerView != null) {
+				ContainerView.Dispose ();
+				ContainerView = null;
+			}
+
+			if (Domain != null) {
+				Domain.Dispose ();
+				Domain = null;
+			}
+
 			if (LoginButton != null) {
 				LoginButton.Dispose ();
 				LoginButton = null;
@@ -55,11 +68,6 @@ namespace CodeHub.iOS.Views.Accounts
 			if (User != null) {
 				User.Dispose ();
 				User = null;
-			}
-
-			if (Domain != null) {
-				Domain.Dispose ();
-				Domain = null;
 			}
 		}
 	}

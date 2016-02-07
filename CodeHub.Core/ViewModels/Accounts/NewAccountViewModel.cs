@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public ICommand GoToEnterpriseLoginCommand
         {
-			get { return new MvxCommand(() => this.ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = true })); }
+            get { return new MvxCommand(() => this.ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject())); }
         }
     }
 }

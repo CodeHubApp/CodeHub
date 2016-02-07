@@ -194,10 +194,9 @@ namespace CodeHub.iOS.Views
             return uri;
         }
 
-		protected void LoadContent(string content, string contextPath)
+		protected void LoadContent(string content)
 		{
-			contextPath = contextPath.Replace("/", "//").Replace(" ", "%20");
-			Web.LoadHtmlString(content, NSUrl.FromString("file:/" + contextPath + "//"));
+            Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
 		}
         
         public override void ViewWillAppear(bool animated)

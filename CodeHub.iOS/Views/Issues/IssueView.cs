@@ -231,7 +231,7 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
-            var sheet = new UIActionSheet(Title);
+            var sheet = new UIActionSheet();
             var editButton = ViewModel.IsCollaborator ? sheet.AddButton("Edit".t()) : -1;
             var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.Issue.State == "open" ? "Close".t() : "Open".t()) : -1;
             var commentButton = sheet.AddButton("Comment".t());

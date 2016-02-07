@@ -187,7 +187,7 @@ namespace CodeHub.iOS.Views.Accounts
                 cell.Accessory = _currentAccount ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
                 cell.TextLabel.Text = Account.Username;
                 cell.DetailTextLabel.Text = Account.IsEnterprise ? Account.WebDomain : "GitHub.com";
-                cell.ImageView.SetImage(new NSUrl(Account.AvatarUrl), Images.Avatar);
+                cell.ImageView.SetAvatar(new CodeHub.Core.Utilities.GitHubAvatar(Account.AvatarUrl));
                 return cell;
             }
 

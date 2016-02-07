@@ -2,6 +2,10 @@ using System;
 using Foundation;
 using UIKit;
 using CodeHub.Core.ViewModels.Source;
+using System.Threading.Tasks;
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -11,13 +15,12 @@ namespace CodeHub.iOS.Views.Source
 		{
 			base.ViewDidLoad();
 
-			ViewModel.Bind(x => x.IsLoading, x =>
-			{
-				if (x) return;
+            ViewModel.Bind(x => x.IsLoading, x => 
+            {
+                if (x) return;
 				if (!string.IsNullOrEmpty(ViewModel.ContentPath))
 				{
-					var data = System.IO.File.ReadAllText(ViewModel.ContentPath, System.Text.Encoding.UTF8);
-					LoadContent(data, System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
+                    LoadSource(new Uri("file://" + ViewModel.ContentPath));
 				}
 				else if (!string.IsNullOrEmpty(ViewModel.FilePath))
 				{
@@ -44,6 +47,26 @@ namespace CodeHub.iOS.Views.Source
             };
 			return sheet;
 		}
+
+        async Task LoadSource(Uri fileUri)
+        {
+            var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+            var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
+
+            if (ViewModel.IsMarkdown)
+            {
+                var markdownContent = await Mvx.Resolve<IApplicationService>().Client.Markdown.GetMarkdown(content);
+                var model = new DescriptionModel(markdownContent, fontSize);
+                var htmlContent = new MarkdownView { Model = model };
+                LoadContent(htmlContent.GenerateString());
+            }
+            else
+            {
+                var model = new SourceBrowserModel(content, "idea", fontSize, fileUri.LocalPath);
+                var contentView = new SyntaxHighlighterView { Model = model };
+                LoadContent(contentView.GenerateString());
+            }
+        }
     }
 }
 

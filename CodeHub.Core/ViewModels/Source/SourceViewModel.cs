@@ -5,12 +5,14 @@ using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Source
 {
 	public class SourceViewModel : FileSourceViewModel
     {
 		private readonly MvxSubscriptionToken _editToken;
+        private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
 		private string _path;
 		private string _name;
@@ -27,7 +29,8 @@ namespace CodeHub.Core.ViewModels.Source
 
 		protected override async Task Load(bool forceCacheInvalidation)
         {
-			var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(_name));
+            var fileName = System.IO.Path.GetFileName(_name);
+            var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
 			string mime = string.Empty;
 
 			using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
@@ -44,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Source
 			var isText = mime.Contains("charset");
 			if (isText)
 			{
-				ContentPath = CreateContentFile();
+                ContentPath = FilePath;
 			}
         }
 
@@ -84,6 +87,9 @@ namespace CodeHub.Core.ViewModels.Source
 
 			//Create the temp file path
 			Title = fileName;
+
+            var extension = System.IO.Path.GetExtension(_path);
+            IsMarkdown = MarkdownExtensions.Contains(extension);
 		}
 
 		public class NavObject

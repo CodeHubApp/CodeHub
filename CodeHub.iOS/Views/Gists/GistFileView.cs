@@ -1,6 +1,12 @@
-using Foundation;
+using UIKit;
+using System;
+using CodeHub.iOS.WebViews;
+using CodeHub.Core;
+using System.Threading.Tasks;
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
 	public class GistFileView : CodeHub.iOS.Views.Source.FileSourceView
     {
@@ -8,12 +14,29 @@ namespace CodeHub.ViewControllers
 		{
 			base.ViewDidLoad();
 
-			ViewModel.Bind(x => x.ContentPath, x =>
-			{
-				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-				LoadContent(data, System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "SourceBrowser"));
-			});
+            var vm = ViewModel as GistFileViewModel;
+            vm.Bind(x => x.ContentPath, x => LoadSource(new Uri("file://" + x)));
 		}
+
+        async Task LoadSource(Uri fileUri)
+        {
+            var fontSize = (int)UIFont.PreferredSubheadline.PointSize;
+            var content = System.IO.File.ReadAllText(fileUri.LocalPath, System.Text.Encoding.UTF8);
+
+            if (ViewModel.IsMarkdown)
+            {
+                var markdownContent = await Mvx.Resolve<IApplicationService>().Client.Markdown.GetMarkdown(content);
+                var model = new DescriptionModel(markdownContent, fontSize);
+                var htmlContent = new MarkdownView { Model = model };
+                LoadContent(htmlContent.GenerateString());
+            }
+            else
+            {
+                var model = new SourceBrowserModel(content, "idea", fontSize, fileUri.LocalPath);
+                var contentView = new SyntaxHighlighterView { Model = model };
+                LoadContent(contentView.GenerateString());
+            }
+        }
     }
 }
 

@@ -49,11 +49,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string WebDomain { get; set; }
 
-        public ICommand GoToOldLoginWaysCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { IsEnterprise = IsEnterprise })); }
-        }
-
         public ICommand GoBackCommand
         {
             get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
