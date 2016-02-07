@@ -43,7 +43,6 @@
     <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApplicationService.cs" />
-    <Compile Include="Services\GitHubAccountsService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />

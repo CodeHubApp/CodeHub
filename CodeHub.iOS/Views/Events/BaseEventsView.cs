@@ -42,6 +42,7 @@ namespace CodeHub.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+            TableView.CellLayoutMarginsFollowReadableWidth = false;
 			TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }

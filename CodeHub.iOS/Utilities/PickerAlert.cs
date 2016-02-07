@@ -71,6 +71,10 @@ namespace CodeFramework.iOS.Utils
         {
             base.LayoutSubviews();
             Frame = Superview.Bounds;
+
+
+            _pickerView.Frame = new CGRect(0, 44f, Frame.Width, _pickerView.Frame.Height);
+            _pickerView.SetNeedsLayout();
         }
 
 

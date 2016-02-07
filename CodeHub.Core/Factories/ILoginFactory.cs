@@ -5,7 +5,7 @@ namespace CodeHub.Core.Factories
 {
     public interface ILoginFactory
     {
-		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount existingAccount);
+		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain);
 
 		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
 

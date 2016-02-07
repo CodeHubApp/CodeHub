@@ -655,6 +655,12 @@ namespace MonoTouch.Dialog
 			}
 		}
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            TableView.CellLayoutMarginsFollowReadableWidth = false;
+        }
+
 		public override void ViewWillDisappear (bool animated)
 		{
 			base.ViewWillDisappear (animated);

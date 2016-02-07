@@ -20,6 +20,12 @@ namespace CodeHub.iOS.Views.Issues
             Title = "Issues".t();
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            TableView.CellLayoutMarginsFollowReadableWidth = false;
+        }
+
         protected MonoTouch.Dialog.Element CreateElement(IssueModel x)
         {
 			var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));

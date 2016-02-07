@@ -9,17 +9,28 @@ namespace CodeHub
 {
     public static class OcticonExtensions
     {
-        private static readonly bool IsRetnia;
+        private static readonly nfloat Scale;
 
         static OcticonExtensions()
         {
-            IsRetnia = UIScreen.MainScreen.Scale > 1;
+            Scale = UIScreen.MainScreen.Scale;
         }
 
         public static UIImage ToImage(this Octicon @this, nfloat size, bool cache = true)
         {
             var cacheDir = NSFileManager.DefaultManager.GetUrls(NSSearchPathDirectory.CachesDirectory, NSSearchPathDomain.User)[0].Path;
-            var fileName = string.Format("octicon-{0}-{1}{2}.png", (int)@this.CharacterCode, size, IsRetnia ? "@2x" : string.Empty);
+
+            string extension = string.Empty;
+            if (Scale > 1 && Scale < 3)
+            {
+                extension = "@2x";
+            }
+            else if (Scale >= 3)
+            {
+                extension = "@3x";
+            }
+
+            var fileName = string.Format("octicon-{0}-{1}{2}.png", (int)@this.CharacterCode, size, extension);
             var combinedPath = Path.Combine(cacheDir, fileName);
 
             if (File.Exists(combinedPath))

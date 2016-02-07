@@ -1,7 +1,6 @@
 using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
-using UIKit;
 using MvvmCross.Platform;
 using CodeFramework.iOS.Utils;
 using Foundation;
@@ -27,11 +26,7 @@ namespace CodeHub.iOS.Views.Accounts
 		{
 			base.ViewDidLoad();
 
-            if (!ViewModel.IsEnterprise || ViewModel.AttemptedAccount != null)
-				LoadRequest();
-
             var hud = this.CreateHud();
-
             ViewModel.Bind(x => x.IsLoggingIn, x =>
             {
                 if (x)
@@ -39,40 +34,8 @@ namespace CodeHub.iOS.Views.Accounts
                 else
                     hud.Hide();
             });
-		}
 
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(animated);
-
-			if (ViewModel.IsEnterprise && string.IsNullOrEmpty(ViewModel.WebDomain))
-			{
-				Stuff();
-			}
-		}
-
-		private void Stuff()
-		{
-			var alert = new UIAlertView();
-			alert.Title = "Enterprise URL";
-			alert.Message = "Please enter the webpage address for the GitHub Enterprise installation";
-			alert.CancelButtonIndex = alert.AddButton("Cancel");
-			var okButton = alert.AddButton("Ok");
-			alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-			alert.Clicked += (sender, e) => {
-				if (e.ButtonIndex == okButton)
-				{
-					var txt = alert.GetTextField(0);
-					ViewModel.WebDomain = txt.Text;
-					LoadRequest();
-				}
-				if (e.ButtonIndex == alert.CancelButtonIndex)
-				{
-					ViewModel.GoBackCommand.Execute(null);
-				}
-			};
-
-			alert.Show();
+			LoadRequest();
 		}
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
@@ -107,13 +70,8 @@ namespace CodeHub.iOS.Views.Accounts
 			base.OnLoadError(e);
 
 			//Frame interrupted error
-            if (e.Code == 102 || e.Code == -999)
-				return;
-
-			if (ViewModel.IsEnterprise)
-				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub with given Url. " + e.LocalizedDescription, Stuff);
-			else
-				MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
+            if (e.Code == 102 || e.Code == -999) return;
+			MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
 		}
 
         private void LoadRequest()
@@ -121,10 +79,9 @@ namespace CodeHub.iOS.Views.Accounts
             try
             {
                 //Remove all cookies & cache
-                foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                    Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-                Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-    			Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(ViewModel.LoginUrl)));
+                WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), () => {
+                    Web.LoadRequest(new NSUrlRequest(new Foundation.NSUrl(ViewModel.LoginUrl)));
+                });
             }
             catch (Exception e)
             {

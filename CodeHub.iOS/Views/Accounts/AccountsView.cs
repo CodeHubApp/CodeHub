@@ -77,7 +77,7 @@ namespace CodeHub.iOS.Views.Accounts
         /// Called when an account is deleted
         /// </summary>
         /// <param name="account">Account.</param>
-        protected void AccountDeleted(IAccount account)
+        protected void AccountDeleted(GitHubAccount account)
         {
             //Remove the designated username
             var thisAccount = account;

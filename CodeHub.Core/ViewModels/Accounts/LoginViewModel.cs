@@ -43,8 +43,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
-        public bool IsEnterprise { get; private set; }
-
         public GitHubAccount AttemptedAccount { get; private set; }
 
         public string WebDomain { get; set; }
@@ -62,63 +60,25 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public void Init(NavObject navObject)
         {
-            IsEnterprise = navObject.IsEnterprise;
-            WebDomain = navObject.WebDomain;
-
-            if (WebDomain == null && !IsEnterprise)
-            {
-                WebDomain = GitHubSharp.Client.AccessTokenUri;
-            }
+            WebDomain = navObject.WebDomain ?? GitHubSharp.Client.AccessTokenUri;
 
             if (navObject.AttemptedAccountId >= 0)
             {
-                AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
-
-                //This is a hack to get around the fact that WebDomain will be null for Enterprise users since the last version did not contain the variable
-                if (WebDomain == null && IsEnterprise)
-                {
-                    try
-                    {
-                        WebDomain = AttemptedAccount.Domain.Substring(0, AttemptedAccount.Domain.IndexOf("/api"));
-                    }
-                    catch 
-                    {
-                        //Doh!
-                    }
-                }
+                AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
             }
         }
 
         public async Task Login(string code)
         {
-            string apiUrl;
-            if (IsEnterprise)
-            {
-                apiUrl = WebDomain;
-                if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
-                    apiUrl = "https://" + apiUrl;
-                if (!apiUrl.EndsWith("/"))
-                    apiUrl += "/";
-                if (!apiUrl.Contains("/api/"))
-                    apiUrl += "api/v3/";
-
-                apiUrl = apiUrl.TrimEnd('/');
-            }
-            else
-            {
-                apiUrl = GitHubSharp.Client.DefaultApi;
-            }
-    
             LoginData loginData = null;
             bool shouldPromptPush = false;
 
             try
             {
                 IsLoggingIn = true;
-                var account = AttemptedAccount;
-                loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, apiUrl, account);
+                loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
 
-                if (!_featuresService.IsPushNotificationsActivated && !IsEnterprise)
+                if (!_featuresService.IsPushNotificationsActivated)
                 {
                     try
                     {
@@ -157,7 +117,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         public class NavObject
         {
             public string Username { get; set; }
-            public bool IsEnterprise { get; set; }
             public string WebDomain { get; set; }
             public int AttemptedAccountId { get; set; }
 
@@ -171,7 +130,6 @@ namespace CodeHub.Core.ViewModels.Accounts
                 return new NavObject
                 { 
                     WebDomain = account.WebDomain, 
-                    IsEnterprise = !string.Equals(account.Domain, GitHubSharp.Client.DefaultApi), 
                     Username = account.Username,
                     AttemptedAccountId = account.Id
                 };

@@ -144,16 +144,22 @@ namespace CodeHub.iOS.DialogElements
                 _text.MinimumScaleFactor = 0.7f;
                 this.Add(_text);
             }
+
+            private static bool IsPad = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad;
+
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
 
+                var offset = IsPad ? 24f : 18f;
+                var rightOffset = IsPad ? 16f : 14f;
+
                 var height = (this.Bounds.Height - 24f);
-                _image.Frame = new CGRect(15, 12, height, height);
+                _image.Frame = new CGRect(offset, 12, height, height);
 
                 var textHeight = (int)Math.Ceiling(TextFont.LineHeight) + 1;
                 var textY = (this.Bounds.Height / 2) - (textHeight / 2);
-                _text.Frame = new CGRect(_image.Frame.Right + 10f, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + 10f + _image.Frame.Left), textHeight);
+                _text.Frame = new CGRect(_image.Frame.Right + rightOffset, textY, (int)Math.Floor(this.Bounds.Width) - (_image.Frame.Right + rightOffset + _image.Frame.Left), textHeight);
             }
         }
     }

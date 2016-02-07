@@ -7,15 +7,15 @@ using SQLite;
 
 namespace CodeHub.Core.Services
 {
-    public abstract class AccountsService<TAccount> : IAccountsService where TAccount : class, IAccount, new()
+    public class AccountsService : IAccountsService
     {
         private readonly SQLiteConnection _userDatabase;
         private readonly IDefaultValueService _defaults;
         private readonly string _accountsPath;
 
-        public IAccount ActiveAccount { get; private set; }
+        public GitHubAccount ActiveAccount { get; private set; }
 
-        protected AccountsService(IDefaultValueService defaults, IAccountPreferencesService accountPreferences)
+        public AccountsService(IDefaultValueService defaults, IAccountPreferencesService accountPreferences)
         {
             _defaults = defaults;
             _accountsPath = accountPreferences.AccountsDir;
@@ -25,16 +25,16 @@ namespace CodeHub.Core.Services
                 Directory.CreateDirectory(_accountsPath);
 
             _userDatabase = new SQLiteConnection(Path.Combine(_accountsPath, "accounts.db"));
-            _userDatabase.CreateTable<TAccount>();
+            _userDatabase.CreateTable<GitHubAccount>();
         }
 
-        public IAccount GetDefault()
+        public GitHubAccount GetDefault()
         {
             int id;
 			return !_defaults.TryGet("DEFAULT_ACCOUNT", out id) ? null : Find(id);
         }
 
-        public void SetDefault(IAccount account)
+        public void SetDefault(GitHubAccount account)
         {
             if (account == null)
                 _defaults.Set("DEFAULT_ACCOUNT", null);
@@ -42,7 +42,7 @@ namespace CodeHub.Core.Services
                 _defaults.Set("DEFAULT_ACCOUNT", account.Id);
         }
 
-		public void SetActiveAccount(IAccount account)
+        public void SetActiveAccount(GitHubAccount account)
         {
 			if (account != null)
 			{
@@ -54,12 +54,12 @@ namespace CodeHub.Core.Services
             ActiveAccount = account;
         }
 
-        protected string CreateAccountDirectory(IAccount account)
+        protected string CreateAccountDirectory(GitHubAccount account)
         {
             return Path.Combine(_accountsPath, account.Id.ToString(CultureInfo.InvariantCulture));
         }
 
-        public void Insert(IAccount account)
+        public void Insert(GitHubAccount account)
         {
 			lock (_userDatabase)
 			{
@@ -67,7 +67,7 @@ namespace CodeHub.Core.Services
 			}
         }
 
-        public void Remove(IAccount account)
+        public void Remove(GitHubAccount account)
         {
 			lock (_userDatabase)
 			{
@@ -80,7 +80,7 @@ namespace CodeHub.Core.Services
             Directory.Delete(accountDir, true);
         }
 
-        public void Update(IAccount account)
+        public void Update(GitHubAccount account)
         {
 			lock (_userDatabase)
 			{
@@ -88,23 +88,24 @@ namespace CodeHub.Core.Services
 			}
         }
 
-        public bool Exists(IAccount account)
+        public bool Exists(GitHubAccount account)
         {
 			return Find(account.Id) != null;
         }
 
-        public IAccount Find(int id)
+        public GitHubAccount Find(int id)
         {
 			lock (_userDatabase)
 			{
-				var query = _userDatabase.Find<TAccount>(x => x.Id == id);
+                var query = _userDatabase.Find<GitHubAccount>(x => x.Id == id);
 				return query;
 			}
         }
 
-        public IEnumerator<IAccount> GetEnumerator()
+        public IEnumerator<GitHubAccount> GetEnumerator()
         {
-            return _userDatabase.Table<TAccount>().GetEnumerator();
+            foreach (var account in _userDatabase.Table<GitHubAccount>())
+                yield return account;
         }
 
         IEnumerator IEnumerable.GetEnumerator()

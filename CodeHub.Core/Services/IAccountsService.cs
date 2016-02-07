@@ -3,52 +3,52 @@ using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
 {
-    public interface IAccountsService : IEnumerable<IAccount>
+    public interface IAccountsService : IEnumerable<GitHubAccount>
     {
         /// <summary>
         /// Gets the active account
         /// </summary>
-        IAccount ActiveAccount { get; }
+        GitHubAccount ActiveAccount { get; }
 
         /// <summary>
         /// Sets the active account
         /// </summary>
         /// <param name="account"></param>
-        void SetActiveAccount(IAccount account);
+        void SetActiveAccount(GitHubAccount account);
 
         /// <summary>
         /// Gets the default account
         /// </summary>
-        IAccount GetDefault();
+        GitHubAccount GetDefault();
 
         /// <summary>
         /// Sets the default account
         /// </summary>
-        void SetDefault(IAccount account);
+        void SetDefault(GitHubAccount account);
 
         /// <summary>
         /// Insert the specified account.
         /// </summary>
-        void Insert(IAccount account);
+        void Insert(GitHubAccount account);
 
         /// <summary>
         /// Remove the specified account.
         /// </summary>
-        void Remove(IAccount account);
+        void Remove(GitHubAccount account);
 
         /// <summary>
         /// Update this instance in the database
         /// </summary>
-        void Update(IAccount account);
+        void Update(GitHubAccount account);
 
         /// <summary>
         /// Checks to see whether a specific account exists (Username comparison)
         /// </summary>
-        bool Exists(IAccount account);
+        bool Exists(GitHubAccount account);
 
         /// <summary>
         /// Find the specified account via it's username
         /// </summary>
-        IAccount Find(int id);
+        GitHubAccount Find(int id);
     }
 }

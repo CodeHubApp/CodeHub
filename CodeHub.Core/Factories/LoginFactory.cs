@@ -3,6 +3,7 @@ using CodeHub.Core.Services;
 using CodeHub.Core.Data;
 using GitHubSharp;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CodeHub.Core.Factories
 {
@@ -16,7 +17,7 @@ namespace CodeHub.Core.Factories
             _accounts = accounts;
         }
 
-		public async Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain, GitHubAccount account)
+        public async Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain)
         {
 			var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
 			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
@@ -24,9 +25,11 @@ namespace CodeHub.Core.Factories
             var username = info.Data.Login;
 
             //Does this user exist?
+
+            var account = _accounts.FirstOrDefault(x => string.Equals(x.Username, username) && string.Equals(x.Domain, apiDomain));
             var exists = account != null;
-			if (!exists)
-                account = new GitHubAccount { Username = username };
+            account = account ?? new GitHubAccount { Username = username };
+
 			account.OAuth = token.AccessToken;
             account.AvatarUrl = info.Data.AvatarUrl;
 			account.Domain = apiDomain;
