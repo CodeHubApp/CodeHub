@@ -45,15 +45,6 @@ namespace CodeHub.iOS
             return list.ToArray();
         }
 
-        protected override IMvxTrace CreateDebugTrace()
-        {
-            #if DEBUG
-            return base.CreateDebugTrace();
-            #else
-			return new Cirrious.CrossCore.Platform.MvxDebugOnlyTrace();
-            #endif
-        }
-
         protected override void FillBindingNames(IMvxBindingNameRegistry obj)
         {
             base.FillBindingNames(obj);
