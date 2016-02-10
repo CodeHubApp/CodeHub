@@ -7,29 +7,55 @@ using System;
 using CodeHub.Core.Factories;
 using System.Threading.Tasks;
 using System.Net;
+using CodeHub.Core.Utils;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AccountsViewModel : BaseAccountsViewModel
+    public class AccountsViewModel : BaseViewModel
     {
-        private readonly ILoginFactory _loginFactory;
-        private readonly IApplicationService _applicationService;
+        private readonly IAccountsService _accountsService;
+        private readonly CustomObservableCollection<IAccount> _accounts = new CustomObservableCollection<IAccount>();
+        private bool _isLoggingIn;
+
+        public bool IsLoggingIn
+        {
+            get { return _isLoggingIn; }
+            protected set
+            {
+                _isLoggingIn = value;
+                RaisePropertyChanged(() => IsLoggingIn);
+            }
+        }
+
+        public CustomObservableCollection<IAccount> Accounts
+        {
+            get { return _accounts; }
+        }
+
+        public IMvxCommand AddAccountCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<NewAccountViewModel>()); }
+        }
+
+        public IMvxCommand SelectAccountCommand
+        {
+            get { return new MvxCommand<GitHubAccount>(SelectAccount); }
+        }
+
+        public void Init()
+        {
+            _accounts.Reset(_accountsService);
+        }
 		
-        public AccountsViewModel(IAccountsService accountsService, ILoginFactory loginFactory, IApplicationService applicationService) 
-            : base(accountsService)
+        public AccountsViewModel(IAccountsService accountsService) 
         {
-            _loginFactory = loginFactory;
-            _applicationService = applicationService;
+            _accountsService = accountsService;
         }
 
-        protected override void AddAccount()
+        private void SelectAccount(GitHubAccount githubAccount)
         {
-            this.ShowViewModel<NewAccountViewModel>();
-        }
-
-		protected async override void SelectAccount(IAccount account)
-        {
-            var githubAccount = (GitHubAccount) account;
 			var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
 
 			if (githubAccount.DontRemember)
@@ -37,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 				//Hack for now
 				if (isEnterprise)
 				{
-					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
+                    ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
 				}
 				else
 				{
@@ -47,29 +73,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 				return;
 			}
 
-			try
-			{
-				IsLoggingIn = true;
-				var client = await _loginFactory.LoginAccount(githubAccount);
-				_applicationService.ActivateUser(githubAccount, client);
-			}
-			catch (GitHubSharp.UnauthorizedException e)
-			{
-                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
-
-				if (isEnterprise)
-					ShowViewModel<AddAccountViewModel>(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
-				else
-					ShowViewModel<LoginViewModel>(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
-			}
-			catch (Exception e)
-			{
-                DisplayAlert(e.Message);
-			}
-			finally
-			{
-				IsLoggingIn = false;
-			}
+            _accountsService.SetDefault(githubAccount);
+            ShowViewModel<StartupViewModel>();
         }
     }
 }

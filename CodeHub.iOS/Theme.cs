@@ -1,3 +1,4 @@
+
 using UIKit;
 using MonoTouch.UIKit;
 using MvvmCross.Platform;
@@ -25,12 +26,12 @@ namespace CodeHub.iOS
 
             var defaultValues = Mvx.Resolve<CodeHub.Core.Services.IDefaultValueService>();
 
-            var primaryColor = UIColor.FromRGB(50, 50, 50);
+            var primaryColor = Theme.CurrentTheme.PrimaryColor;
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);
 
             bool largeFonts;
-            if (!defaultValues.TryGet<bool>("large_fonts", out largeFonts))
+            if (!defaultValues.TryGet("large_fonts", out largeFonts))
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
@@ -147,6 +148,8 @@ namespace CodeHub.iOS
         public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
 
         public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
+
+        public UIColor PrimaryColor { get { return UIColor.FromRGB(50, 50, 50); } }
 
         public UIColor AccountsNavigationBarTint
         {

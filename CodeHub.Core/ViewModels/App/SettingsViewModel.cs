@@ -1,7 +1,5 @@
 using CodeHub.Core.ViewModels;
 using System.Windows.Input;
-using System.Linq;
-using CodeHub.Core.Services;
 using CodeHub.Core.Services;
 using System;
 using System.Threading.Tasks;
@@ -26,6 +24,11 @@ namespace CodeHub.Core.ViewModels.App
 			get { return this.GetApplication().Account.DefaultStartupView; }
 		}
 
+        public bool ShouldShowUpgrades
+        {
+            get { return _featuresService.IsProEnabled; }
+        }
+
 		public ICommand GoToDefaultStartupViewCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
@@ -34,6 +37,11 @@ namespace CodeHub.Core.ViewModels.App
         public ICommand GoToSourceCodeCommand
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }
+        }
+
+        public ICommand GoToUpgradesCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<UpgradeViewModel>()); }
         }
 
         private bool _isSaving;
@@ -52,7 +60,7 @@ namespace CodeHub.Core.ViewModels.App
             get 
             { 
                 bool value;
-                _defaultValueService.TryGet<bool>("large_fonts", out value);
+                _defaultValueService.TryGet("large_fonts", out value);
                 return value;
             }
             set { _defaultValueService.Set("large_fonts", value); }
@@ -80,7 +88,7 @@ namespace CodeHub.Core.ViewModels.App
                         .ContinueWith(t =>
                         {
                             if (t.Status == TaskStatus.RanToCompletion && t.Result)
-                                ShowViewModel<UpgradesViewModel>();
+                                ShowViewModel<UpgradeViewModel>();
                         });
                     RaisePropertyChanged(() => PushNotificationsEnabled);
                 }

@@ -1,31 +1,32 @@
 using CodeHub.Core.Services;
-using CodeHub.Core.Services;
-using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using Foundation;
-using System.Net.Http;
+using System.Linq;
+using UIKit;
 
 namespace CodeHub.iOS.Services
 {
     public class FeaturesService : IFeaturesService
     {
         private readonly IDefaultValueService _defaultValueService;
+        private readonly IInAppPurchaseService _inAppPurchaseService;
 
-        public FeaturesService(IDefaultValueService defaultValueService)
+        /// <summary>
+        /// The pro edition identifier
+        /// </summary>
+        public const string ProEdition = "com.dillonbuchanan.codehub.pro";
+
+        public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {
             _defaultValueService = defaultValueService;
+            _inAppPurchaseService = inAppPurchaseService;
         }
 
         public bool IsPushNotificationsActivated
         {
             get
             {
-                return IsActivated(FeatureIds.PushNotifications);
-            }
-            set
-            {
-                _defaultValueService.Set(FeatureIds.PushNotifications, value);
+                return IsActivated(ProEdition);
             }
         }
 
@@ -33,38 +34,45 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(FeatureIds.EnterpriseSupport);
-            }
-            set
-            {
-                _defaultValueService.Set(FeatureIds.EnterpriseSupport, value);
+                return IsActivated(ProEdition);
             }
         }
 
-        public void Activate(string id)
+        public bool IsPrivateRepositoriesEnabled
         {
-            InAppPurchases.Instance.PurchaseProduct(id);
+            get
+            {
+                return IsActivated(ProEdition);
+            }
         }
 
-        public bool IsActivated(string id)
+        public bool IsProEnabled
+        {
+            get
+            {
+                return IsActivated(ProEdition);
+            }
+        }
+
+        public async Task ActivatePro()
+        {
+            var productData = (await _inAppPurchaseService.RequestProductData(ProEdition)).Products.FirstOrDefault();
+            if (productData == null)
+                throw new InvalidOperationException("Unable to activate CodeHub Pro");
+            await _inAppPurchaseService.PurchaseProduct(productData);
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            appDelegate?.RegisterUserForNotifications();
+        }
+
+        public Task RestorePro()
+        {
+            return _inAppPurchaseService.Restore();
+        }
+
+        private bool IsActivated(string id)
         {
             bool value;
-            return _defaultValueService.TryGet<bool>(id, out value) && value;
-        }
-
-        public async Task<IEnumerable<string>> GetAvailableFeatureIds()
-        {
-            var client = new HttpClient();
-            client.Timeout = new TimeSpan(0, 0, 15);
-
-            var response = await client.GetAsync("https://raw.githubusercontent.com/thedillonb/CodeHub/gh-pages/features.json");
-            var data = await response.Content.ReadAsStringAsync();
-            var features = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(data);
-
-            var version = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
-            if (!features.ContainsKey(version))
-                return new [] { FeatureIds.EnterpriseSupport };
-            return features[version];
+            return _defaultValueService.TryGet(id, out value) && value;
         }
     }
 }

@@ -54,13 +54,12 @@ namespace MonoTouch
 
         public static void ShowAlert(string title, string message, Action dismissed = null)
         {
-            var alert = new UIAlertView {Title = title, Message = message};
-            alert.DismissWithClickedButtonIndex(alert.AddButton("Ok".t()), true);
-            alert.Dismissed += (sender, e) => {
+            var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
+            alert.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, x => {
                 dismissed?.Invoke();
                 alert.Dispose();
-            };
-            alert.Show();
+            }));
+            UIApplication.SharedApplication.KeyWindow.GetVisibleViewController().PresentViewController(alert, true, null);
         }
 
 

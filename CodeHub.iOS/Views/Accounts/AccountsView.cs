@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using MvvmCross.Platform;
-using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewControllers;
 using CodeFramework.ViewControllers;
 using MonoTouch.Dialog;
@@ -13,7 +11,7 @@ using System;
 using CodeHub.Core.Data;
 using CoreGraphics;
 using System.Linq;
-using SDWebImage;
+using CodeHub.Core.ViewModels.Accounts;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -21,9 +19,9 @@ namespace CodeHub.iOS.Views.Accounts
     {
 		private IHud _hud;
 
-        public new BaseAccountsViewModel ViewModel
+        public new AccountsViewModel ViewModel
         {
-            get { return (BaseAccountsViewModel) base.ViewModel; }
+            get { return (AccountsViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
         }
 

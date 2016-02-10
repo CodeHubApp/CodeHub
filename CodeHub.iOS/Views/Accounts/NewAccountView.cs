@@ -5,6 +5,7 @@ using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Views.App;
 using MvvmCross.iOS.Views;
+using CodeHub.iOS.ViewControllers.Application;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -70,12 +71,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
             else
             {
-                var ctrl = new EnableEnterpriseViewController();
-                ctrl.Dismissed += (_, __) => {
-                    if (features.IsEnterpriseSupportActivated)
-                        ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
-                };
-                PresentViewController(ctrl, true, null);
+                PresentViewController(new UpgradeViewController(), true, null);
             }
         }
 

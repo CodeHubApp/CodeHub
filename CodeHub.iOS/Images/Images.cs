@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using Foundation;
 using UIKit;
 using MonoTouch.UIKit;
 
@@ -13,7 +10,6 @@ namespace CodeHub.iOS
 
         public static class Logos
         {
-            public static UIImage Enterprise { get { return UIImage.FromFile("Images/enterprise.png"); } }
             public static UIImage DotComMascot { get { return UIImage.FromFile("Images/Logos/dotcom-mascot.png"); } }
             public static UIImage EnterpriseMascot { get { return UIImage.FromFile("Images/Logos/enterprise-mascot.png"); } }
         }

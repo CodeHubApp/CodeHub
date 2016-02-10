@@ -2,10 +2,18 @@ namespace CodeHub.Core.Services
 {
     public interface IDefaultValueService
     {
-        T Get<T>(string key);
+        bool TryGet(string key, out string value);
 
-        bool TryGet<T>(string key, out T value);
+        bool TryGet(string key, out int value);
 
-        void Set(string key, object value);
+        bool TryGet(string key, out bool value);
+
+        void Set(string key, string value);
+
+        void Set(string key, int? value);
+
+        void Set(string key, bool? value);
+
+        void Clear(string key);
     }
 }

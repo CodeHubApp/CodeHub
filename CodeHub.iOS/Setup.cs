@@ -4,19 +4,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
-using CodeHub.Core.ViewModels;
-using CodeFramework.iOS;
 using MonoTouch.Dialog;
-using CodeHub.iOS.Views;
 using UIKit;
 using MvvmCross.iOS.Platform;
 using MvvmCross.iOS.Views.Presenters;
-using MvvmCross.Platform.Platform;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.IoC;
+using CodeHub.Core.ViewModels.App;
 
 namespace CodeHub.iOS
 {
@@ -41,7 +37,7 @@ namespace CodeHub.iOS
         {
             var list = new List<Assembly>();
             list.AddRange(base.GetViewModelAssemblies());
-			list.Add(typeof(BaseStartupViewModel).Assembly);
+			list.Add(typeof(StartupViewModel).Assembly);
             return list.ToArray();
         }
 

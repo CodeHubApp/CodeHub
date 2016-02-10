@@ -6,8 +6,6 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
-using System.Linq;
-using MvvmCross.Platform;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -71,24 +69,11 @@ namespace CodeHub.Core.ViewModels.Accounts
         public async Task Login(string code)
         {
             LoginData loginData = null;
-            bool shouldPromptPush = false;
 
             try
             {
                 IsLoggingIn = true;
                 loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
-
-                if (!_featuresService.IsPushNotificationsActivated)
-                {
-                    try
-                    {
-                        var ids = await _featuresService.GetAvailableFeatureIds();
-                        shouldPromptPush = ids.Contains(FeatureIds.PushNotifications);
-                    }
-                    catch
-                    {
-                    }
-                }
             }
             catch (Exception e)
             {
@@ -98,17 +83,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             finally
             {
                 IsLoggingIn = false;
-            }
-
-            try
-            {
-                // Only prompt if we're allowing that to be enabled.
-                if (shouldPromptPush)
-                    await Mvx.Resolve<IFeatureFactory>().PromptPushNotificationFeature();
-            }
-            catch
-            {
-                // Don't do anything...
             }
 
             this.GetApplication().ActivateUser(loginData.Account, loginData.Client);

@@ -24,9 +24,10 @@ namespace CodeHub.Core.ViewModels.App
 	public class MenuViewModel : BaseMenuViewModel
     {
         private readonly IApplicationService _application;
+        private readonly IFeaturesService _featuresService;
 		private int _notifications;
         private List<BasicUserModel> _organizations;
-		private readonly MvxSubscriptionToken _notificationCountToken;
+        private readonly MvxSubscriptionToken _notificationCountToken;
 
 		public int Notifications
         {
@@ -44,10 +45,16 @@ namespace CodeHub.Core.ViewModels.App
         {
             get { return _application.Account; }
         }
+
+        public bool ShouldShowUpgrades
+        {
+            get { return !_featuresService.IsProEnabled; }
+        }
 		
-        public MenuViewModel(IApplicationService application)
+        public MenuViewModel(IApplicationService application, IFeaturesService featuresService)
         {
             _application = application;
+            _featuresService = featuresService;
 			_notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
         }
 
@@ -167,7 +174,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToUpgradesCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<UpgradesViewModel>(null)); }
+            get { return new MvxCommand(() => ShowMenuViewModel<UpgradeViewModel>(null)); }
         }
 
         public ICommand LoadCommand

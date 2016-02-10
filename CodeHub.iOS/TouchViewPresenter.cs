@@ -2,13 +2,13 @@ using System;
 using MvvmCross.Platform;
 using MvvmCross.Core.ViewModels;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Views;
 using UIKit;
 using CodeHub.Core;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.Views.Accounts;
 using MvvmCross.iOS.Views.Presenters;
 using MvvmCross.iOS.Views;
+using CodeHub.iOS.Views.App;
 
 namespace CodeHub.iOS
 {
@@ -77,6 +77,7 @@ namespace CodeHub.iOS
             }
             else if (uiView is StartupView)
             {
+//                Transition(uiView);
                 _window.RootViewController = uiView;
             }
             else if (uiView is AccountsView)

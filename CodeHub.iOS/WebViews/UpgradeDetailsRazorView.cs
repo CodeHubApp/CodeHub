@@ -104,16 +104,16 @@ WriteLiteral(" onclick=\"window.location=\'mailto://codehubapp@gmail.com?Subject
 
 WriteLiteral(" target=\"_blank\"");
 
-WriteLiteral(">reach out to me</a>. \n        I\'m happy to answer any questions!\n    </p>\n\n");
+WriteLiteral(">contact me</a>!\n    </p>\n\n");
 
 
-#line 152 "UpgradeDetailsRazorView.cshtml"
+#line 151 "UpgradeDetailsRazorView.cshtml"
     
 
 #line default
 #line hidden
 
-#line 152 "UpgradeDetailsRazorView.cshtml"
+#line 151 "UpgradeDetailsRazorView.cshtml"
      if (Model.IsPurchased)
     {
 
@@ -129,7 +129,7 @@ WriteLiteral(" class=\"btn\"");
 WriteLiteral(">Pro Already Enabled!</a>\n        </p>\n");
 
 
-#line 157 "UpgradeDetailsRazorView.cshtml"
+#line 156 "UpgradeDetailsRazorView.cshtml"
     }
     else
     {
@@ -150,7 +150,7 @@ WriteLiteral(" class=\"btn\"");
 WriteLiteral(">Purchase CodeHub Pro for ");
 
 
-#line 163 "UpgradeDetailsRazorView.cshtml"
+#line 162 "UpgradeDetailsRazorView.cshtml"
                                                                              Write(Model.Price);
 
 
@@ -169,7 +169,7 @@ WriteLiteral(" href=\"app://restore\"");
 WriteLiteral(">Click here</a> to restore a previous purchase.\n            </p>\n");
 
 
-#line 168 "UpgradeDetailsRazorView.cshtml"
+#line 167 "UpgradeDetailsRazorView.cshtml"
         }
     }
 
@@ -198,7 +198,7 @@ WriteLiteral(@">Enterprise Support</h3>
     <p>
         With CodeHub Pro, access to GitHub Enterprise instances becomes available for use. 
         Enterprise support allows for unlimited accounts, in CodeHub, accessing unlimited Enterprise instances - there are no restrictions!
-        There are currently two ways to authenticate with an Enterprise instance in CodeHub: Basic Auth, or OAuth token. Unlike authentication
+        You can authenticate with your GitHub Enterprise instance in two ways: Basic Auth, or OAuth token. Unlike authentication
         with GitHub.com, there is no avilable web application flow, which means that you will be prompted for your credentials in a view that
         is native to CodeHub, not GitHub. This method, also known as Basic Auth, is safe. The username and password pair is <b>NOT</b> saved on the device
         nor is it ever sent anywhere but GitHub. Even more, the username and password is exchanged for an OAuth token on GitHub so you may revoke access
@@ -237,7 +237,7 @@ WriteLiteral(@" />
     <p>Notifications are also sent for conversations in unwatched repositories when the user is involved including:</p>
 
     <ul>
-        <li>mentions</li>
+        <li>Mentions</li>
         <li>Issue assignments</li>
         <li>Commits the user authors or commits</li>
         <li>Any discussion in which the user actively participates</li>

@@ -70,7 +70,7 @@ namespace CodeHub.iOS.Views.App
 
 			var startupView = new StyledStringElement("Startup View", vm.DefaultStartupViewName, UIKit.UITableViewCellStyle.Value1)
 			{ 
-				Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator,
+				Accessory = UITableViewCellAccessory.DisclosureIndicator,
 			};
 			startupView.Tapped += () => vm.GoToDefaultStartupViewCommand.Execute(null);
 
@@ -83,13 +83,15 @@ namespace CodeHub.iOS.Views.App
 
             accountSection.Add(new TrueFalseElement("Push Notifications", vm.PushNotificationsEnabled, e => vm.PushNotificationsEnabled = e.Value));
        
-            var aboutSection = new Section("About", "Thank you for downloading. Enjoy!")
-            {
-                new StyledStringElement("Source Code", () => vm.GoToSourceCodeCommand.Execute(null)),
-                new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))),
-                new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))),
-                new StyledStringElement("App Version", GetApplicationVersion())
-            };
+            var aboutSection = new Section("About", "Thank you for downloading. Enjoy!");
+            aboutSection.Add(new StyledStringElement("Source Code", () => vm.GoToSourceCodeCommand.Execute(null)));
+            aboutSection.Add(new StyledStringElement("Follow On Twitter", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))));
+            aboutSection.Add(new StyledStringElement("Rate This App", () => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))));
+
+            if (vm.ShouldShowUpgrades)
+                aboutSection.Add(new StyledStringElement("Upgrades", () => vm.GoToUpgradesCommand.Execute(null)));
+
+            aboutSection.Add(new StyledStringElement("App Version", GetApplicationVersion()));
 
 			//Assign the root
 			var root = new RootElement(Title);

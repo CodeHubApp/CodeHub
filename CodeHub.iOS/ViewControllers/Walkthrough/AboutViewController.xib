@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AboutViewController">
+            <connections>
+                <outlet property="view" destination="iN0-l3-epB" id="Dni-8h-PeX"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Hello!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6LD-jI-9EX">
+                    <rect key="frame" x="26" y="48" width="268" height="62"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="62"/>
+                    <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to CodeHub, the most advanced GitHub client for iOS! Before you begin, there's a few things you should know." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q47-Vo-o6H">
+                    <rect key="frame" x="26" y="402" width="268" height="80"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" misplaced="YES" image="CodeHubRound.png" translatesAutoresizingMaskIntoConstraints="NO" id="1Kv-xl-h37">
+                    <rect key="frame" x="56" y="142" width="208" height="228"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="208" id="YEc-jm-KWj"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="6LD-jI-9EX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="48" id="BLn-b9-vbe"/>
+                <constraint firstItem="1Kv-xl-h37" firstAttribute="trailing" secondItem="q47-Vo-o6H" secondAttribute="trailing" constant="-30" id="Ede-CD-Zgp"/>
+                <constraint firstAttribute="bottom" secondItem="q47-Vo-o6H" secondAttribute="bottom" constant="86" id="Yy9-7i-n0J"/>
+                <constraint firstItem="1Kv-xl-h37" firstAttribute="leading" secondItem="q47-Vo-o6H" secondAttribute="leading" constant="30" id="c60-tq-0ky"/>
+                <constraint firstItem="6LD-jI-9EX" firstAttribute="leading" secondItem="1Kv-xl-h37" secondAttribute="leading" constant="-30" id="d17-Vp-aKN"/>
+                <constraint firstItem="6LD-jI-9EX" firstAttribute="trailing" secondItem="1Kv-xl-h37" secondAttribute="trailing" constant="30" id="eGR-SN-dcA"/>
+                <constraint firstItem="1Kv-xl-h37" firstAttribute="top" secondItem="6LD-jI-9EX" secondAttribute="bottom" constant="32" id="sDG-wF-qqv"/>
+                <constraint firstAttribute="centerX" secondItem="1Kv-xl-h37" secondAttribute="centerX" id="vYG-Nq-w4F"/>
+                <constraint firstItem="q47-Vo-o6H" firstAttribute="top" secondItem="1Kv-xl-h37" secondAttribute="bottom" constant="32" id="xOZ-CR-CBf"/>
+            </constraints>
+            <point key="canvasLocation" x="66" y="91"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="CodeHubRound.png" width="512" height="512"/>
+    </resources>
+</document>

@@ -1,12 +1,12 @@
 using System;
 using UIKit;
-using CodeHub.Core.ViewModels;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS;
 using SDWebImage;
 using Foundation;
+using CodeHub.Core.ViewModels.App;
 
-namespace CodeHub.iOS.Views
+namespace CodeHub.iOS.Views.App
 {
     public class StartupView : ViewModelDrivenDialogViewController
     {
@@ -15,7 +15,6 @@ namespace CodeHub.iOS.Views
         private UIImageView _imgView;
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
-        private UIStatusBarStyle _previousStatusbarStyle;
 
         public override void ViewWillLayoutSubviews()
         {
@@ -32,6 +31,7 @@ namespace CodeHub.iOS.Views
             View.AutosizesSubviews = true;
 
             _imgView = new UIImageView();
+            _imgView.TintColor = Theme.CurrentTheme.PrimaryColor;
             _imgView.Layer.CornerRadius = imageSize / 2;
             _imgView.Layer.MasksToBounds = true;
             Add(_imgView);
@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views
 
 			View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
            
-			var vm = (BaseStartupViewModel)ViewModel;
+			var vm = (StartupViewModel)ViewModel;
 			vm.Bind(x => x.IsLoggingIn, x =>
 			{
 				if (x)
@@ -90,20 +90,19 @@ namespace CodeHub.iOS.Views
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            _previousStatusbarStyle = UIApplication.SharedApplication.StatusBarStyle;
-            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.Default, false);
+            UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            UIApplication.SharedApplication.SetStatusBarStyle(_previousStatusbarStyle, true);
+            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
         }
 
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			var vm = (BaseStartupViewModel)ViewModel;
+			var vm = (StartupViewModel)ViewModel;
 			vm.StartupCommand.Execute(null);
 		}
 

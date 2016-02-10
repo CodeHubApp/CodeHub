@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FeedbackViewController" customModule="CodeHub_iOS" customModuleProvider="target">
+            <connections>
+                <outlet property="GitHubButton" destination="zHz-pv-YiY" id="kZ6-YY-9nz"/>
+                <outlet property="UserVoiceButton" destination="y7B-8k-KDh" id="wVz-8I-FTs"/>
+                <outlet property="view" destination="iN0-l3-epB" id="TUC-Dh-oEH"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Feedback Welcome!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qnq-co-ogv">
+                    <rect key="frame" x="26" y="30" width="268" height="90"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="38"/>
+                    <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eSV-qX-yAZ">
+                    <rect key="frame" x="26" y="395" width="268" height="100"/>
+                    <string key="text">App reviews are great, but direct feedback is better! Reach out to us via UserVoice or GitHub. Your feedback helps create a better app!</string>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                    <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" image="Feedback.png" translatesAutoresizingMaskIntoConstraints="NO" id="6dn-z9-JDQ">
+                    <rect key="frame" x="56" y="152" width="208" height="211"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="208" id="FWd-B8-xLa"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y7B-8k-KDh">
+                    <rect key="frame" x="174" y="518" width="120" height="36"/>
+                    <color key="backgroundColor" red="0.17254901960784313" green="0.24313725490196078" blue="0.31372549019607843" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="36" id="ZFa-2b-QZM"/>
+                        <constraint firstAttribute="width" constant="120" id="pa6-un-8w0"/>
+                    </constraints>
+                    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <state key="normal" title="UserVoice">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zHz-pv-YiY">
+                    <rect key="frame" x="26" y="518" width="120" height="36"/>
+                    <color key="backgroundColor" red="0.49803921568627452" green="0.5490196078431373" blue="0.55294117647058827" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="36" id="XpR-sE-M5P"/>
+                        <constraint firstAttribute="width" constant="120" id="fza-pr-mrO"/>
+                    </constraints>
+                    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <state key="normal" title="GitHub">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Qnq-co-ogv" firstAttribute="trailing" secondItem="6dn-z9-JDQ" secondAttribute="trailing" constant="30" id="1bu-Ac-QED"/>
+                <constraint firstItem="eSV-qX-yAZ" firstAttribute="top" secondItem="6dn-z9-JDQ" secondAttribute="bottom" constant="32" id="Anu-Rz-guU"/>
+                <constraint firstItem="6dn-z9-JDQ" firstAttribute="top" secondItem="Qnq-co-ogv" secondAttribute="bottom" constant="32" id="C3P-kS-m9B"/>
+                <constraint firstItem="zHz-pv-YiY" firstAttribute="leading" secondItem="eSV-qX-yAZ" secondAttribute="leading" id="DQu-3C-bna"/>
+                <constraint firstItem="6dn-z9-JDQ" firstAttribute="trailing" secondItem="eSV-qX-yAZ" secondAttribute="trailing" constant="-30" id="KlG-ta-U0h"/>
+                <constraint firstItem="Qnq-co-ogv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="30" id="MtE-ys-tbN"/>
+                <constraint firstItem="6dn-z9-JDQ" firstAttribute="leading" secondItem="eSV-qX-yAZ" secondAttribute="leading" constant="30" id="OPi-8k-CjZ"/>
+                <constraint firstAttribute="bottom" secondItem="zHz-pv-YiY" secondAttribute="bottom" constant="14" id="PQH-7U-7HI"/>
+                <constraint firstItem="y7B-8k-KDh" firstAttribute="top" secondItem="eSV-qX-yAZ" secondAttribute="bottom" constant="23" id="PlS-UI-3JE"/>
+                <constraint firstItem="eSV-qX-yAZ" firstAttribute="trailing" secondItem="y7B-8k-KDh" secondAttribute="trailing" id="c1c-Sx-PVU"/>
+                <constraint firstItem="zHz-pv-YiY" firstAttribute="top" secondItem="eSV-qX-yAZ" secondAttribute="bottom" constant="23" id="s24-I2-Nur"/>
+                <constraint firstAttribute="bottom" secondItem="y7B-8k-KDh" secondAttribute="bottom" constant="14" id="tQk-Mr-seg"/>
+                <constraint firstAttribute="centerX" secondItem="6dn-z9-JDQ" secondAttribute="centerX" id="y4x-Nr-dqL"/>
+                <constraint firstItem="Qnq-co-ogv" firstAttribute="leading" secondItem="6dn-z9-JDQ" secondAttribute="leading" constant="-30" id="z2m-WQ-4rd"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="Feedback.png" width="512" height="512"/>
+    </resources>
+</document>

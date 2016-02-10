@@ -69,5 +69,7 @@
 	<array>
 		<string>octicons.ttf</string>
 	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
 </dict>
 </plist>

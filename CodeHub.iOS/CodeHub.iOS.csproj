@@ -209,26 +209,15 @@
     <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
-    <Compile Include="InAppPurchases.cs" />
     <Compile Include="Services\FeaturesService.cs" />
-    <Compile Include="Views\App\UpgradesView.cs" />
     <Compile Include="UrlRouterProvider.cs" />
     <Compile Include="XCallbackProvider.cs" />
     <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
-    <Compile Include="Views\App\EnablePushNotificationsViewController.cs" />
-    <Compile Include="Views\App\EnablePushNotificationsViewController.designer.cs">
-      <DependentUpon>EnablePushNotificationsViewController.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Factories\FeatureFactory.cs" />
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamMembersView.cs" />
-    <Compile Include="Views\App\EnableEnterpriseViewController.cs" />
-    <Compile Include="Views\App\EnableEnterpriseViewController.designer.cs">
-      <DependentUpon>EnableEnterpriseViewController.cs</DependentUpon>
-    </Compile>
     <None Include="packages.config" />
     <Compile Include="Elements\ChangesetElement.cs" />
     <Compile Include="Elements\CommentElement.cs" />
@@ -257,11 +246,9 @@
     <Compile Include="Views\MilestoneView.cs" />
     <Compile Include="Views\ProgressBarView.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
-    <Compile Include="Views\StartupView.cs" />
     <Compile Include="Views\TableViewSectionView.cs" />
     <Compile Include="Views\ToolbarButton.cs" />
     <Compile Include="Views\UILabelWithLinks.cs" />
-    <Compile Include="Views\WebBrowserView.cs" />
     <Compile Include="Views\WebView.cs" />
     <Compile Include="Views\App\DefaultStartupView.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
@@ -281,8 +268,6 @@
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
-    <InterfaceDefinition Include="Views\App\EnablePushNotificationsViewController.xib" />
-    <InterfaceDefinition Include="Views\App\EnableEnterpriseViewController.xib" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\SlideupTitleVIew.cs" />
@@ -360,6 +345,33 @@
     <Compile Include="WebViews\MarkdownView.cs">
       <DependentUpon>MarkdownView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\AboutViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\AboutViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\CardPageViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\CardPageViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\FeedbackViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\FeedbackViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\GoProViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\GoProViewController.xib" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\PromoteViewController.xib" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomePageViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\WelcomeViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\WelcomeViewController.xib" />
+    <Compile Include="ViewControllers\BaseViewController.cs" />
+    <Compile Include="Utilities\UIKitExtensions.cs" />
+    <Compile Include="ViewControllers\ThemedNavigationController.cs" />
+    <Compile Include="ViewControllers\WebBrowserViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\PromoteViewController.designer.cs" />
+    <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
+    <Compile Include="Services\InAppPurchaseService.cs" />
+    <Compile Include="Utilities\UIWindowExtensions.cs" />
+    <Compile Include="Views\App\StartupView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -415,6 +427,24 @@
     <Reference Include="MvvmCross.Plugins.Messenger">
       <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.0.0\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\portable-windows8+net45+wp8\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png" />
@@ -463,7 +493,6 @@
     <BundleResource Include="Images\MarkdownComposer\picture.png" />
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\login_user_unknown.png" />
-    <BundleResource Include="Images\enterprise.png" />
     <BundleResource Include="CodeHubLaunch.png" />
     <Content Include="Diff\app.js" />
     <Content Include="Diff\diffindex.html" />
@@ -529,6 +558,11 @@
     <Content Include="WebResources\styles\vs.css" />
     <Content Include="WebResources\styles\xcode.css" />
     <Content Include="WebResources\styles\zenburn.css" />
+    <BundleResource Include="CodeHubRound.png" />
+    <BundleResource Include="Feedback.png" />
+    <BundleResource Include="Heart.png" />
+    <BundleResource Include="Rocket.png" />
+    <BundleResource Include="Briefcase.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -538,12 +572,12 @@
   <ItemGroup>
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\MarkdownComposer\" />
-    <Folder Include="Factories\" />
     <Folder Include="Views\Teams\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="WebViews\" />
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
+    <Folder Include="ViewControllers\Application\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">
