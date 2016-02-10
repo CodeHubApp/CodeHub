@@ -101,7 +101,8 @@ namespace CodeHub.iOS
             {
                 if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
                 {
-                    var mainNavigationController = new MainNavigationController(uiView, _slideoutController);
+                    var openButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ThreeLinesButton };
+                    var mainNavigationController = new MainNavigationController(uiView, _slideoutController, openButton);
                     _generalNavigationController = mainNavigationController;
                     _slideoutController.SetMainViewController(mainNavigationController, true);
 
