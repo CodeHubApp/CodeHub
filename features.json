@@ -1,5 +1,6 @@
 {
   "2.3.8": ["com.dillonbuchanan.codehub.enterprise_support", "com.dillonbuchanan.codehub.push"],
   "2.4.0": ["com.dillonbuchanan.codehub.enterprise_support", "com.dillonbuchanan.codehub.push"],
-  "2.5.0": ["com.dillonbuchanan.codehub.enterprise_support", "com.dillonbuchanan.codehub.push"]
+  "2.5.0": ["com.dillonbuchanan.codehub.enterprise_support", "com.dillonbuchanan.codehub.push"],
+  "2.5.1": ["com.dillonbuchanan.codehub.enterprise_support"]
 }
