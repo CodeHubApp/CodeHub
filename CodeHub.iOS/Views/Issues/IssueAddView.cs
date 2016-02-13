@@ -2,11 +2,9 @@ using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeHub.iOS.Views;
 using MonoTouch.Dialog;
 using System.Linq;
-using CodeFramework.iOS.Utils;
-using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.Views.Issues
 {

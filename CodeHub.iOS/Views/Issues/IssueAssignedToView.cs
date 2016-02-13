@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using CodeHub.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.Views.Issues
 {

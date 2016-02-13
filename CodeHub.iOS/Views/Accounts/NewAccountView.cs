@@ -71,7 +71,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
             else
             {
-                PresentViewController(new UpgradeViewController(), true, null);
+                var vc = new UpgradeViewController();
+                var nav = new ThemedNavigationController(vc);
+                vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Done, 
+                    (_, __) => DismissViewController(true, null));
+                PresentViewController(nav, true, null);
             }
         }
 

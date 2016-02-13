@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;
-using CodeFramework.ViewControllers;
-using CodeFramework.iOS.Utils;
 using CodeHub.iOS.ViewControllers;
+using CodeHub.iOS.Utilities;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views
 {
@@ -45,7 +45,7 @@ namespace CodeHub.iOS.Views
         {
             if (_model.Files.Count(x => x.Value != null) == 0)
             {
-                MonoTouch.Utilities.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
+                AlertDialogService.ShowAlert("No Files", "You cannot modify a Gist without atleast one file");
                 return;
             }
 

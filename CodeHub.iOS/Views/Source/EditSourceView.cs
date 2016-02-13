@@ -4,9 +4,10 @@ using CodeHub.Core.ViewModels.Source;
 using UIKit;
 using CoreGraphics;
 using Foundation;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using System.Threading.Tasks;
 using MvvmCross.iOS.Views;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -56,7 +57,7 @@ namespace CodeHub.iOS.Views.Source
             }
             catch (Exception ex)
             {
-                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+                AlertDialogService.ShowAlert("Error", ex.Message);
                 composer.EnableSendButton = true;
             }
         }

@@ -1,4 +1,4 @@
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;

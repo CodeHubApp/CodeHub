@@ -3,6 +3,7 @@ using CoreGraphics;
 using CodeHub.iOS;
 using Foundation;
 using UIKit;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views
 {
@@ -28,7 +29,7 @@ namespace CodeHub.iOS.Views
 
                 if (String.IsNullOrEmpty(newContent))
                 {
-                    MonoTouch.Utilities.ShowAlert("No Content", "You cannot save a file without content!");
+                    AlertDialogService.ShowAlert("No Content", "You cannot save a file without content!");
                     return;
                 }
 
@@ -40,7 +41,7 @@ namespace CodeHub.iOS.Views
                 }
 				catch (Exception ex)
                 {
-					MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+                    AlertDialogService.ShowAlert("Error", ex.Message);
                     return;
                 }
             });

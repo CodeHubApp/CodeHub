@@ -1,6 +1,5 @@
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
-using CodeHub.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
 using System;

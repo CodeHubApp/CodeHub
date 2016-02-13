@@ -128,7 +128,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", e.Message);
+                AlertDialogService.ShowAlert("Error", e.Message);
             }
         }
     }

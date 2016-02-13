@@ -1,4 +1,4 @@
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels;
 using UIKit;
 using CodeHub.Core.ViewModels;
@@ -26,7 +26,7 @@ namespace CodeHub.iOS.ViewControllers
                 {
                     if (x)
                     {
-                        MonoTouch.Utilities.PushNetworkActive();
+                        NetworkActivity.PushNetworkActive();
                         _hud.Show("Loading...");
 
                         if (ToolbarItems != null)
@@ -37,7 +37,7 @@ namespace CodeHub.iOS.ViewControllers
                     }
                     else
                     {
-                        MonoTouch.Utilities.PopNetworkActive();
+                        NetworkActivity.PopNetworkActive();
                         _hud.Hide();
 
                         if (ToolbarItems != null)

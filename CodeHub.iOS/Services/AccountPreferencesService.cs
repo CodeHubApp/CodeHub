@@ -1,18 +1,21 @@
 using CodeHub.Core.Services;
-using MonoTouch;
+using System.IO;
+using System;
 
 namespace CodeHub.iOS.Services
 {
     public class AccountPreferencesService : IAccountPreferencesService
     {
+        public readonly static string BaseDir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), "..");
+
         public string AccountsDir
         {
-            get { return System.IO.Path.Combine(Utilities.BaseDir, "Documents/accounts"); }
+            get { return System.IO.Path.Combine(BaseDir, "Documents/accounts"); }
         }
 
         public string CacheDir
         {
-            get { return System.IO.Path.Combine(Utilities.BaseDir, "Library/Caches/codeframework.cache/"); }
+            get { return System.IO.Path.Combine(BaseDir, "Library/Caches/codeframework.cache/"); }
         }
     }
 }

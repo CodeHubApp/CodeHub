@@ -3,7 +3,7 @@ using CodeHub.Core.Services;
 using MonoTouch.Dialog;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using UIKit;
 using Foundation;
 

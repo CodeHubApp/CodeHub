@@ -1,4 +1,4 @@
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Organizations;
 using MonoTouch.Dialog;
 using CodeHub.iOS.Elements;

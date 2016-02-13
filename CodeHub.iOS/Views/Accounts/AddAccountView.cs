@@ -2,7 +2,7 @@ using CoreGraphics;
 using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using System;
 using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;

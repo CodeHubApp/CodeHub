@@ -4,6 +4,7 @@ using Foundation;
 using CodeHub.Core.ViewModels;
 using WebKit;
 using MvvmCross.iOS.Views;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.Views
 {
@@ -105,7 +106,7 @@ namespace CodeHub.iOS.Views
 
         protected virtual void OnLoadError (NSError error)
         {
-            MonoTouch.Utilities.PopNetworkActive();
+            NetworkActivity.PopNetworkActive();
 
             if (BackButton != null)
             {
@@ -117,7 +118,7 @@ namespace CodeHub.iOS.Views
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            MonoTouch.Utilities.PushNetworkActive();
+            NetworkActivity.PushNetworkActive();
 
             if (RefreshButton != null)
                 RefreshButton.Enabled = false;
@@ -125,7 +126,7 @@ namespace CodeHub.iOS.Views
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            MonoTouch.Utilities.PopNetworkActive();
+            NetworkActivity.PopNetworkActive();
 
             if (BackButton != null)
             {
@@ -162,8 +163,8 @@ namespace CodeHub.iOS.Views
 			{
 				loadableViewModel.Bind(x => x.IsLoading, x =>
 				{
-					if (x) MonoTouch.Utilities.PushNetworkActive();
-					else MonoTouch.Utilities.PopNetworkActive();
+                    if (x) NetworkActivity.PushNetworkActive();
+					else NetworkActivity.PopNetworkActive();
 				});
 			}
         }

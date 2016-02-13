@@ -1,7 +1,6 @@
 using System;
 using CodeHub.Core.Services;
 using UIKit;
-using CodeHub.Core.Services;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;

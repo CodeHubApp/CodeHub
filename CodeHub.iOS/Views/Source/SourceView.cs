@@ -1,5 +1,4 @@
 using System;
-using Foundation;
 using UIKit;
 using CodeHub.Core.ViewModels.Source;
 using System.Threading.Tasks;
@@ -44,6 +43,8 @@ namespace CodeHub.iOS.Views.Source
                         editCommand = null;
                     }
                 });
+
+                sheet.Dispose();
             };
 			return sheet;
 		}

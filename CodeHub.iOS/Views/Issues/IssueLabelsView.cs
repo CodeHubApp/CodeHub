@@ -1,10 +1,10 @@
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Issues;
 using GitHubSharp.Models;
 using System.Linq;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Elements;
 
 namespace CodeHub.iOS.Views.Issues

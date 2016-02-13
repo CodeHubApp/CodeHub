@@ -1,9 +1,9 @@
 using System;
 using CodeHub.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using MvvmCross.Binding.BindingContext;
 
 namespace CodeHub.iOS.Views.Repositories

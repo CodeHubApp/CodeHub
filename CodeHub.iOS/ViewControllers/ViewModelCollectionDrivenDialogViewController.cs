@@ -2,15 +2,16 @@ using System;
 using System.Linq;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
 using MonoTouch;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CodeHub.iOS.Services;
 
-namespace CodeFramework.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
     public abstract class ViewModelCollectionDrivenDialogViewController : ViewModelDrivenDialogViewController
     {
@@ -159,7 +160,7 @@ namespace CodeFramework.ViewControllers
                     }
                     catch (Exception e)
                     {
-                        Utilities.ShowAlert("Unable to load more!".t(), e.Message);
+                        AlertDialogService.ShowAlert("Unable to load more!".t(), e.Message);
                     }
 
                 };    

@@ -1,14 +1,12 @@
 using System;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Elements;
 using System.Linq;
 using System.Collections.Generic;
-using CodeHub.iOS.ViewControllers;
 using Humanizer;
 
 namespace CodeHub.iOS.Views.Issues

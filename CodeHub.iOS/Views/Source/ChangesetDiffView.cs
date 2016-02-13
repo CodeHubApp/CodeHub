@@ -2,18 +2,16 @@ using System;
 using CodeHub.iOS.Views.Source;
 using UIKit;
 using Foundation;
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
-using CodeFramework.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.ViewControllers;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.Core.Services;
-using CodeHub.iOS.ViewControllers;
 using WebKit;
+using CodeHub.iOS.Services;
 
-namespace CodeHub.ViewControllers
+namespace CodeHub.iOS.Views.Source
 {
 	public class ChangesetDiffView : FileSourceView
     {
@@ -139,7 +137,7 @@ namespace CodeHub.ViewControllers
 				}
 				catch (Exception e)
 				{
-					MonoTouch.Utilities.ShowAlert("Unable to Comment".t(), e.Message);
+                    AlertDialogService.ShowAlert("Unable to Comment".t(), e.Message);
 					composer.EnableSendButton = true;
 				}
             });

@@ -3,7 +3,6 @@ using CoreGraphics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using CoreGraphics;
 using CoreAnimation;
 using Foundation;
 using UIKit;

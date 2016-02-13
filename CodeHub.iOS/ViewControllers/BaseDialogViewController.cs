@@ -1,8 +1,7 @@
 using MonoTouch.Dialog;
 using UIKit;
-using System;
 
-namespace CodeFramework.ViewControllers
+namespace CodeHub.iOS.ViewControllers
 {
     public class BaseDialogViewController : DialogViewController
     {

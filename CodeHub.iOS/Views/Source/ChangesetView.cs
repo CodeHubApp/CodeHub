@@ -2,12 +2,13 @@ using System;
 using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using System.Linq;
 using Foundation;
 using CodeHub.Core.ViewModels.Changesets;
 using CodeHub.iOS.Elements;
 using Humanizer;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -157,7 +158,7 @@ namespace CodeHub.iOS.Views.Source
                 }
                 catch (Exception e)
                 {
-					MonoTouch.Utilities.ShowAlert("Unable to post comment!", e.Message);
+                    AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
                 }
                 finally
                 {

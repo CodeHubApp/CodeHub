@@ -276,7 +276,6 @@
     <Compile Include="Utilities\PickerAlert.cs" />
     <Compile Include="Utilities\Translate.cs" />
     <Compile Include="Utilities\UIImageExtensions.cs" />
-    <Compile Include="Utilities\Util.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
     <Compile Include="Utilities\Controls.cs" />
     <Compile Include="Utilities\Graphics.cs" />
@@ -372,6 +371,7 @@
     <Compile Include="Services\InAppPurchaseService.cs" />
     <Compile Include="Utilities\UIWindowExtensions.cs" />
     <Compile Include="Views\App\StartupView.cs" />
+    <Compile Include="Utilities\NetworkActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

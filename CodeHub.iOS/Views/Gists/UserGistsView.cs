@@ -1,6 +1,4 @@
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
 using UIKit;
 
 namespace CodeHub.iOS.Views.Gists

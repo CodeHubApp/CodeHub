@@ -42,7 +42,7 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
             UINavigationBar.Appearance.BarTintColor = primaryColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-            CodeFramework.iOS.Utils.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+            CodeHub.iOS.Utilities.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
             UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
 
@@ -95,11 +95,6 @@ namespace CodeHub.iOS
         public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
-
-
-        //Cache these because we make a smaller size of them
-        private UIImage _issueCell1, _issueCell2, _issueCell3, _issueCell4;
-        private UIImage _repoCell1, _repoCell2, _repoCell3;
 
         public UIImage IssueCellImage1
         {

@@ -1,6 +1,6 @@
 using System;
 using MvvmCross.Core.ViewModels;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using UIKit;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
@@ -8,6 +8,7 @@ using MvvmCross.Platform.iOS.Views;
 using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.Core;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -130,7 +131,7 @@ namespace CodeHub.iOS.ViewControllers
                 {
                     if (x)
                     {
-                        MonoTouch.Utilities.PushNetworkActive();
+                        NetworkActivity.PushNetworkActive();
                         _refreshControl.BeginRefreshing();
 
                         if (!_manualRefreshRequested)
@@ -147,7 +148,7 @@ namespace CodeHub.iOS.ViewControllers
                     }
                     else
                     {
-                        MonoTouch.Utilities.PopNetworkActive();
+                        NetworkActivity.PopNetworkActive();
 
                         // Stupid bug...
                         BeginInvokeOnMainThread(() => {

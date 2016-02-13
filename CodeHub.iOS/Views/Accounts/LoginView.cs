@@ -2,10 +2,11 @@ using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MvvmCross.Platform;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using Foundation;
 using WebKit;
 using CodeHub.Core.Services;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Accounts
 {
@@ -71,7 +72,7 @@ namespace CodeHub.iOS.Views.Accounts
 
 			//Frame interrupted error
             if (e.Code == 102 || e.Code == -999) return;
-			MonoTouch.Utilities.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
+            AlertDialogService.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
 		}
 
         private void LoadRequest()

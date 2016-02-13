@@ -1,10 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MonoTouch;
 using UIKit;
 
-namespace CodeFramework.iOS.Utils
+namespace CodeHub.iOS.Utilities
 {
     public static class ViewControllerExtensions
     {
@@ -76,17 +75,16 @@ namespace CodeFramework.iOS.Utils
 		{
 			try
 			{
-				Utilities.PushNetworkActive();
+                NetworkActivity.PushNetworkActive();
 				return await work();
 			}
 			catch (Exception e)
 			{
-				Utilities.LogException(e.Message, e);
 				throw e;
 			}
 			finally 
 			{
-				Utilities.PopNetworkActive();
+                NetworkActivity.PopNetworkActive();
 			}
 		}
 
@@ -94,17 +92,16 @@ namespace CodeFramework.iOS.Utils
         {
             try
             {
-                Utilities.PushNetworkActive();
+                NetworkActivity.PushNetworkActive();
                 await work();
             }
             catch (Exception e)
             {
-                Utilities.LogException(e.Message, e);
                 throw e;
             }
             finally 
             {
-                Utilities.PopNetworkActive();
+                NetworkActivity.PopNetworkActive();
             }
         }
 
@@ -113,18 +110,17 @@ namespace CodeFramework.iOS.Utils
             ThreadPool.QueueUserWorkItem(delegate {
                 try
                 {
-                    Utilities.PushNetworkActive();
+                    NetworkActivity.PushNetworkActive();
                     work();
                 }
                 catch (Exception e)
                 {
-                    Utilities.LogException(e.Message, e);
                     if (error != null)
                         controller.InvokeOnMainThread(() => error(e));
                 }
                 finally 
                 {
-                    Utilities.PopNetworkActive();
+                    NetworkActivity.PopNetworkActive();
                     if (final != null)
                         controller.InvokeOnMainThread(() => final());
                 }

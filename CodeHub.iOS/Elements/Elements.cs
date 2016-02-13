@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UIKit;
 using CoreGraphics;
-using CoreGraphics;
 using Foundation;
 using CoreAnimation;
 using SDWebImage;

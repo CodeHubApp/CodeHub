@@ -1,6 +1,7 @@
 ﻿using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -32,7 +33,7 @@ namespace CodeHub.iOS.ViewControllers
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Unable to process request!", e.Message);
+                AlertDialogService.ShowAlert("Unable to process request!", e.Message);
             }
         }
     }

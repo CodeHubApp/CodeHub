@@ -4,8 +4,7 @@ using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.ViewControllers;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.Views.Gists

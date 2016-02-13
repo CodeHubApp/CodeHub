@@ -1,16 +1,15 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
 using MonoTouch.Dialog;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Views;
 using CodeHub.iOS.Elements;
 using UIKit;
 using System.Linq;
 using System.Collections.Generic;
-using CodeHub.iOS.ViewControllers;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -317,7 +316,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     }
                     catch (Exception e)
                     {
-                        MonoTouch.Utilities.ShowAlert("Unable to Merge", e.Message);
+                        AlertDialogService.ShowAlert("Unable to Merge", e.Message);
                     }
                 };
 

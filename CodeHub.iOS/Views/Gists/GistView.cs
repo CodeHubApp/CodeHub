@@ -5,11 +5,13 @@ using CodeHub.Core.ViewModels.Gists;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using System.Linq;
 using CodeHub.iOS.DialogElements;
 using System.Threading.Tasks;
 using CodeHub.iOS.Elements;
+using CodeHub.Core.Services;
+using MvvmCross.Platform;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -19,6 +21,7 @@ namespace CodeHub.iOS.Views.Gists
         private StyledStringElement _ownerElement;
         private SplitButtonElement _split;
         private UIBarButtonItem _editButton;
+        private readonly IAlertDialogService _alertDialogService = Mvx.Resolve<IAlertDialogService>();
 
         public new GistViewModel ViewModel
         {
@@ -134,7 +137,7 @@ namespace CodeHub.iOS.Views.Gists
             }
             catch (Exception ex)
             {
-                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+                _alertDialogService.Alert("Error", ex.Message);
             }
         }
 
@@ -151,7 +154,7 @@ namespace CodeHub.iOS.Views.Gists
             }
             catch (Exception ex)
             {
-                MonoTouch.Utilities.ShowAlert("Error", ex.Message);
+                _alertDialogService.Alert("Error", ex.Message);
             }
         }
 

@@ -1,7 +1,7 @@
 using BigTed;
 using UIKit;
 
-namespace CodeFramework.iOS.Utils
+namespace CodeHub.iOS.Utilities
 {
 	public class Hud : IHud
     {

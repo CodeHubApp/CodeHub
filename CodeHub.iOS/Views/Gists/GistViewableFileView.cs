@@ -3,6 +3,7 @@ using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
 using Foundation;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -36,7 +37,7 @@ namespace CodeHub.iOS.Views.Gists
         protected override void OnLoadError(NSError error)
         {
             base.OnLoadError(error);
-            MonoTouch.Utilities.ShowAlert("Error", "Unable to display this type of file.");
+            AlertDialogService.ShowAlert("Error", "Unable to display this type of file.");
         }
     }
 }

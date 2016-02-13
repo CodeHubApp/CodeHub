@@ -21,8 +21,18 @@ namespace CodeHub.iOS.Services
         public Task Alert(string title, string message)
         {
             var tcs = new TaskCompletionSource<object>();
-            MonoTouch.Utilities.ShowAlert(title, message, () => tcs.SetResult(null));
+            ShowAlert(title, message, () => tcs.SetResult(null));
             return tcs.Task;
+        }
+
+        public static void ShowAlert(string title, string message, Action dismissed = null)
+        {
+            var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
+            alert.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, x => {
+                dismissed?.Invoke();
+                alert.Dispose();
+            }));
+            UIApplication.SharedApplication.KeyWindow.GetVisibleViewController().PresentViewController(alert, true, null);
         }
 
         public Task<string> PromptTextBox(string title, string message, string defaultValue, string okTitle)

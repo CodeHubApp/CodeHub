@@ -1,8 +1,8 @@
 using System;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using MonoTouch.Dialog;
 using UIKit;
-using CodeFramework.iOS.Utils;
+using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels.Notifications;
 using Humanizer;
 using MvvmCross.Binding.BindingContext;

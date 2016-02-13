@@ -96,7 +96,7 @@ namespace CodeHub.iOS
 
             bool hasSeenWelcome;
             var defaultValueService = Mvx.Resolve<IDefaultValueService>();
-            if (true) //!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
                 defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
                 var welcomeViewController = new CodeHub.iOS.ViewControllers.Walkthrough.WelcomePageViewController();
@@ -237,7 +237,7 @@ namespace CodeHub.iOS
 
 		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
 		{
-			MonoTouch.Utilities.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
+            AlertDialogService.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
 		}
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)

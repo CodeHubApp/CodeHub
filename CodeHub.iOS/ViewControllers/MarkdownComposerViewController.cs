@@ -13,6 +13,7 @@ using CodeHub.Core.Services;
 using System.Linq;
 using CoreGraphics;
 using MonoTouch.UIKit;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -84,7 +85,7 @@ namespace CodeHub.iOS.ViewControllers
 
         private async void UploadImage(UIImage img)
         {
-            var hud = new CodeFramework.iOS.Utils.Hud(null);
+            var hud = new CodeHub.iOS.Utilities.Hud(null);
             hud.Show("Uploading...");
 
             try
@@ -115,7 +116,7 @@ namespace CodeHub.iOS.ViewControllers
             }
             catch (Exception e)
             {
-                MonoTouch.Utilities.ShowAlert("Error", "Unable to upload image: " + e.Message);
+                AlertDialogService.ShowAlert("Error", "Unable to upload image: " + e.Message);
             }
             finally
             {
@@ -177,7 +178,7 @@ namespace CodeHub.iOS.ViewControllers
                 } 
                 else 
                 { // if it's a video
-                    MonoTouch.Utilities.ShowAlert("Not supported!", "Video upload is currently not supported.");
+                    AlertDialogService.ShowAlert("Not supported!", "Video upload is currently not supported.");
                 }          
 
                 // dismiss the picker

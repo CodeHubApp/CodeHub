@@ -1,5 +1,4 @@
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Organizations;
 using MonoTouch.Dialog;
 using UIKit;

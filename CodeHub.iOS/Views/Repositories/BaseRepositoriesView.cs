@@ -1,5 +1,5 @@
 using CodeHub.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
 using MonoTouch.Dialog;

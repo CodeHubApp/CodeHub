@@ -1,9 +1,8 @@
 using System;
 using CodeHub.iOS.Elements;
-using CodeFramework.ViewControllers;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
-using MonoTouch;
 using UIKit;
 using System.Collections.Generic;
 
@@ -86,7 +85,7 @@ namespace CodeHub.iOS.Views.Events
             }
             catch (Exception ex)
             {
-                Utilities.LogException("Unable to add event", ex);
+                System.Diagnostics.Debug.WriteLine("Unable to add event: " + ex.Message);
                 return null;
             }
         }
