@@ -5,6 +5,7 @@ using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
 using UIKit;
 using System.Collections.Generic;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Events
 {
@@ -80,7 +81,8 @@ namespace CodeHub.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
-                return new NewsFeedElement(avatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), e.Item2.Tapped);
+                var githubAvatar = new GitHubAvatar(avatar).ToUri(64)?.AbsoluteUri;
+                return new NewsFeedElement(githubAvatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), e.Item2.Tapped);
             }
             catch (Exception ex)
             {

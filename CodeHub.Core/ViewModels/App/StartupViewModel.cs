@@ -7,11 +7,14 @@ using CodeHub.Core.Factories;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel
     {
+        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.AccountsPresentation, string.Empty}};  
+
         private bool _isLoggingIn;
         private string _status;
         private Uri _imageUrl;
@@ -65,8 +68,7 @@ namespace CodeHub.Core.ViewModels.App
         {
             if (!_applicationService.Accounts.Any())
             {
-                ShowViewModel<Accounts.AccountsViewModel>();
-                ShowViewModel<Accounts.NewAccountViewModel>();
+                ShowViewModel<Accounts.NewAccountViewModel>(presentationBundle: new MvxBundle(Presentation));
                 return;
             }
 
@@ -81,7 +83,7 @@ namespace CodeHub.Core.ViewModels.App
             var isEnterprise = account.IsEnterprise || !string.IsNullOrEmpty(account.Password);
             if (account.DontRemember)
             {
-                ShowViewModel<Accounts.AccountsViewModel>();
+                ShowViewModel<Accounts.AccountsViewModel>(presentationBundle: new MvxBundle(Presentation));
 
                 //Hack for now
                 if (isEnterprise)
@@ -116,7 +118,7 @@ namespace CodeHub.Core.ViewModels.App
             {
                 DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
 
-                ShowViewModel<Accounts.AccountsViewModel>();
+                ShowViewModel<Accounts.AccountsViewModel>(presentationBundle: new MvxBundle(Presentation));
                 if (isEnterprise)
                     ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
                 else

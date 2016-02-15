@@ -15,7 +15,6 @@ using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Notifications;
 using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using CodeHub.Core.ViewModels.App;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
 
@@ -23,6 +22,8 @@ namespace CodeHub.Core.ViewModels.App
 {
 	public class MenuViewModel : BaseMenuViewModel
     {
+        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.AccountsPresentation, string.Empty}};  
+
         private readonly IApplicationService _application;
         private readonly IFeaturesService _featuresService;
 		private int _notifications;
@@ -65,7 +66,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToAccountsCommand
         {
-            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>()); }
+            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>(presentationBundle: new MvxBundle(Presentation))); }
         }
 
 		[PotentialStartupViewAttribute("Profile")]

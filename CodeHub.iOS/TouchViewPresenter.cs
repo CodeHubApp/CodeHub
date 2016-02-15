@@ -15,6 +15,7 @@ namespace CodeHub.iOS
     public class IosViewPresenter : MvxBaseIosViewPresenter
     {
         private readonly UIWindow _window;
+        private UINavigationController _baseNavigationController;
         private UINavigationController _generalNavigationController;
         private SlideoutNavigationController _slideoutController;
         private IMvxModalIosView _currentModal;
@@ -77,15 +78,9 @@ namespace CodeHub.iOS
             }
             else if (uiView is StartupView)
             {
-                _window.RootViewController = uiView;
-            }
-            else if (uiView is AccountsView)
-            {
-                _slideoutController = null;
-                _generalNavigationController = new UINavigationController(uiView);
-                _generalNavigationController.NavigationBar.Translucent = false;
-                _generalNavigationController.Toolbar.Translucent = false;
-                Transition(_generalNavigationController);
+                _baseNavigationController = new UINavigationController(uiView);
+                _baseNavigationController.NavigationBarHidden = true;
+                _window.RootViewController = _baseNavigationController;
             }
             else if (uiView is MenuBaseViewController)
             {
@@ -94,11 +89,19 @@ namespace CodeHub.iOS
                 uiView.NavigationController.NavigationBar.Translucent = false;
                 uiView.NavigationController.Toolbar.Translucent = false;
                 uiView.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(50, 50, 50);
-                Transition(_slideoutController);
+
+                _baseNavigationController.PopToRootViewController(false);
+                _baseNavigationController.PushViewController(_slideoutController, false);
             }
             else
             {
-                if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
+                if (request.PresentationValues?.ContainsKey(PresentationValues.AccountsPresentation) ?? false)
+                {
+                    var vc = new UINavigationController(uiView);
+                    _generalNavigationController = vc;
+                    _baseNavigationController.PresentViewController(vc, true, null);
+                }
+                else if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
                 {
                     var openButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ThreeLinesButton };
                     var mainNavigationController = new MainNavigationController(uiView, _slideoutController, openButton);
@@ -123,12 +126,6 @@ namespace CodeHub.iOS
                 return false;
             _window.RootViewController.PresentViewController(viewController, true, null);
             return true;
-        }
-
-        private void Transition(UIViewController controller)
-        {
-            UIView.Transition(_window, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () => 
-                _window.RootViewController = controller, null);
         }
     }
 }

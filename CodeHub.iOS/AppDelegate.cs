@@ -108,7 +108,7 @@ namespace CodeHub.iOS
                 GoToStartupView();
             }
 
-			this.Window.MakeKeyAndVisible();
+			Window.MakeKeyAndVisible();
 
 			// Notifications don't work on teh simulator so don't bother
             var features = Mvx.Resolve<IFeaturesService>();
@@ -124,7 +124,7 @@ namespace CodeHub.iOS
             UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
         }
 
-        private void GoToStartupView()
+        private static void GoToStartupView()
         {
             Mvx.Resolve<IMvxAppStart>()?.Start();
         }

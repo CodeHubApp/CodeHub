@@ -129,9 +129,7 @@
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="Messages\PullRequestEditMessage.cs" />
-    <Compile Include="Cache\CacheEntry.cs" />
     <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\AccountCache.cs" />
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Filter.cs" />
@@ -251,7 +249,6 @@
     <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
-    <Folder Include="Cache\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
