@@ -1,18 +1,17 @@
 using System;
 using CodeHub.iOS;
-using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Utilities;
 using MvvmCross.iOS.Views;
+using CodeHub.iOS.DialogElements;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Gists
 {
     public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalIosView
     {
-        private IHud _hud;
-
         public new GistCreateViewModel ViewModel
         {
             get { return (GistCreateViewModel)base.ViewModel; }
@@ -22,19 +21,12 @@ namespace CodeHub.iOS.Views.Gists
         public override void ViewDidLoad()
         {
             Title = "Create Gist";
-            _hud = this.CreateHud();
             base.ViewDidLoad();
             NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
-            ViewModel.Bind(x => x.Description, UpdateView);
-            ViewModel.Bind(x => x.Files, UpdateView);
-            ViewModel.Bind(x => x.Public, UpdateView);
-            ViewModel.Bind(x => x.IsSaving, x =>
-            {
-                if (x)
-                    _hud.Show("Saving...");
-                else
-                    _hud.Hide();
-            });
+            ViewModel.Bind(x => x.Description).Subscribe(_ => UpdateView());
+            ViewModel.Bind(x => x.Files).Subscribe(_ => UpdateView());
+            ViewModel.Bind(x => x.Public).Subscribe(_ => UpdateView());
+            ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }
 
         int _gistFileCounter = 0;
@@ -71,19 +63,20 @@ namespace CodeHub.iOS.Views.Gists
 
         protected void UpdateView()
         {
-            var root = new RootElement(Title) { UnevenRows = true };
+            ICollection<Section> sections = new LinkedList<Section>();
             var section = new Section();
-            root.Add(section);
+            sections.Add(section);
 
             var desc = new MultilinedElement("Description") { Value = ViewModel.Description };
             desc.Tapped += ChangeDescription;
             section.Add(desc);
 
-            var pub = new TrueFalseElement("Public", ViewModel.Public, (e) => ViewModel.Public = e.Value); 
+            var pub = new BooleanElement("Public", ViewModel.Public); 
+            pub.Changed.Subscribe(x => ViewModel.Public = x);
             section.Add(pub);
 
             var fileSection = new Section();
-            root.Add(fileSection);
+            sections.Add(fileSection);
 
             foreach (var file in ViewModel.Files.Keys)
             {
@@ -92,8 +85,8 @@ namespace CodeHub.iOS.Views.Gists
                     continue;
 
                 var size = System.Text.Encoding.UTF8.GetByteCount(ViewModel.Files[file]);
-                var el = new StyledStringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
-                el.Tapped += () => {
+                var el = new StringElement(file, size + " bytes", UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                el.Clicked.Subscribe(_ => {
                     if (!ViewModel.Files.ContainsKey(key))
                         return;
                     var createController = new ModifyGistFileController(key, ViewModel.Files[key]);
@@ -112,13 +105,15 @@ namespace CodeHub.iOS.Views.Gists
                     };
 
                     NavigationController.PushViewController(createController, true);
-                };
+                });
                 fileSection.Add(el);
             }
 
-            fileSection.Add(new StyledStringElement("Add New File", AddFile));
+            var add = new StringElement("Add New File");
+            add.Clicked.Subscribe(_ => AddFile());
+            fileSection.Add(add);
 
-            Root = root;
+            Root.Reset(sections);
         }
 
         private void ChangeDescription()
@@ -130,7 +125,7 @@ namespace CodeHub.iOS.Views.Gists
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }
@@ -140,7 +135,7 @@ namespace CodeHub.iOS.Views.Gists
             ViewModel.Files.Remove(element.Caption);
         }
 
-        private class EditSource : DialogViewController.SizingSource
+        private class EditSource : Source
         {
             private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 

@@ -4,12 +4,12 @@ using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.Dialog;
 using UIKit;
-using MonoTouch;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.DialogElements;
+using Foundation;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -22,16 +22,10 @@ namespace CodeHub.iOS.ViewControllers
         /// </summary>
         /// <param name='push'>True if navigation controller should push, false if otherwise</param>
         protected ViewModelCollectionDrivenDialogViewController(bool push = true)
-            : base(push)
+            : base(push, UITableViewStyle.Plain)
         {
-            NoItemsText = "No Items".t();
-            Style = UITableViewStyle.Plain;
+            NoItemsText = "No Items";
             EnableSearch = true;
-        }
-
-        protected void BindCollection<T, R>(T viewModel, Func<T, CollectionViewModel<R>> outExpr, Func<R, Element> element, bool activateNow = false) where T : MvxViewModel
-        {
-            BindCollection(outExpr(viewModel), element, activateNow);
         }
 
         protected void BindCollection<TElement>(CollectionViewModel<TElement> viewModel, 
@@ -65,13 +59,13 @@ namespace CodeHub.iOS.ViewControllers
                 }
             };
 
-            viewModel.Bind(x => x.GroupingFunction, updateDel);
-            viewModel.Bind(x => x.FilteringFunction, updateDel);
-            viewModel.Bind(x => x.SortingFunction, updateDel);
+            viewModel.Bind(x => x.GroupingFunction).Subscribe(_ => updateDel());
+            viewModel.Bind(x => x.FilteringFunction).Subscribe(_ => updateDel());
+            viewModel.Bind(x => x.SortingFunction).Subscribe(_ => updateDel());
 
             //The CollectionViewModel binds all of the collection events from the observablecollection + more
             //So just listen to it.
-            viewModel.CollectionChanged += (sender, e) => InvokeOnMainThread(() => updateDel());
+            viewModel.CollectionChanged += (sender, e) => InvokeOnMainThread(updateDel);
 
             if (activateNow)
                 updateDel();
@@ -132,29 +126,29 @@ namespace CodeHub.iOS.ViewControllers
 
         private void RenderSections(IEnumerable<Section> sections, Action moreAction)
         {
-            var root = new RootElement(Title) { UnevenRows = Root.UnevenRows };
+            ICollection<Section> newSections = new LinkedList<Section>();
 
             foreach (var section in sections)
-                root.Add(section);
+                newSections.Add(section);
 
-            var elements = root.Sum(s => s.Elements.Count);
+            var elements = newSections.Sum(s => s.Elements.Count);
 
             //There are no items! We must have filtered them out
             if (elements == 0)
-                root.Add(new Section { new NoItemsElement(NoItemsText) });
+                newSections.Add(new Section { new NoItemsElement(NoItemsText) });
 
             if (moreAction != null)
             {
-                var loadMore = new PaginateElement("Load More".t(), "Loading...".t()) { AutoLoadOnVisible = true };
-                root.Add(new Section { loadMore });
+                var loadMore = new PaginateElement("Load More", "Loading...") { AutoLoadOnVisible = true };
+                newSections.Add(new Section { loadMore });
                 loadMore.Tapped += async (obj) =>
                 {
                     try
                     {
                         await this.DoWorkNoHudAsync(() => Task.Run(moreAction));
-                        if (loadMore.GetImmediateRootElement() != null)
+                        if (loadMore.GetRootElement() != null)
                         {
-                            var section = loadMore.Parent as Section;
+                            var section = loadMore.Section;
                             Root.Remove(section, UITableViewRowAnimation.Fade);
                         }
                     }
@@ -166,7 +160,7 @@ namespace CodeHub.iOS.ViewControllers
                 };    
             }
 
-            Root = root;
+            Root.Reset(newSections);
         }
 
         protected void ShowFilterController(FilterViewController filter)

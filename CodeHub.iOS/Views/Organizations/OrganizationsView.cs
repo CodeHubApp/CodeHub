@@ -1,7 +1,7 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Organizations;
-using MonoTouch.Dialog;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
+using System;
 
 namespace CodeHub.iOS.Views.Organizations
 {
@@ -15,10 +15,11 @@ namespace CodeHub.iOS.Views.Organizations
             base.ViewDidLoad();
 
             var vm = (OrganizationsViewModel) ViewModel;
+            var weakVm = new WeakReference<OrganizationsViewModel>(vm);
 			BindCollection(vm.Organizations, x =>
 			{
 				var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-				e.Tapped += () => vm.GoToOrganizationCommand.Execute(x);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
 				return e;
 			});
         }

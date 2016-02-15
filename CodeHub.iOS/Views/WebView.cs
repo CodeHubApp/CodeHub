@@ -161,7 +161,7 @@ namespace CodeHub.iOS.Views
 			var loadableViewModel = ViewModel as LoadableViewModel;
 			if (loadableViewModel != null)
 			{
-				loadableViewModel.Bind(x => x.IsLoading, x =>
+                loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
 				{
                     if (x) NetworkActivity.PushNetworkActive();
 					else NetworkActivity.PopNetworkActive();

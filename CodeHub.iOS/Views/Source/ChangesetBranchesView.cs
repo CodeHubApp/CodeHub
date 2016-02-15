@@ -1,6 +1,7 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
-using MonoTouch.Dialog;
+using CodeHub.iOS.DialogElements;
+using System;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -8,13 +9,18 @@ namespace CodeHub.iOS.Views.Source
     {
         public override void ViewDidLoad()
         {
-            Title = "Changeset Branch".t();
-            NoItemsText = "No Branches".t();
+            Title = "Changeset Branch";
+            NoItemsText = "No Branches";
 
             base.ViewDidLoad();
 
             var vm = (ChangesetBranchesViewModel) ViewModel;
-            BindCollection(vm.Branches, x => new StyledStringElement(x.Name, () => vm.GoToBranchCommand.Execute(x)));
+            var weakVm = new WeakReference<ChangesetBranchesViewModel>(vm);
+            BindCollection(vm.Branches, x => {
+                var e = new StringElement(x.Name);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToBranchCommand.Execute(x));
+                return e;
+            });
         }
     }
 }

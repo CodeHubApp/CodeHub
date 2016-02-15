@@ -219,21 +219,12 @@
     <Compile Include="Views\Teams\TeamsView.cs" />
     <Compile Include="Views\Teams\TeamMembersView.cs" />
     <None Include="packages.config" />
-    <Compile Include="Elements\ChangesetElement.cs" />
-    <Compile Include="Elements\CommentElement.cs" />
-    <Compile Include="Elements\IssueElement.cs" />
-    <Compile Include="Elements\LabelElement.cs" />
-    <Compile Include="Elements\MilestoneElement.cs" />
-    <Compile Include="Elements\NewsFeedElement.cs" />
-    <Compile Include="Elements\RepositoryElement.cs" />
-    <Compile Include="Elements\WebElement.cs" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\ShareService.cs" />
     <Compile Include="Services\UIThreadService.cs" />
-    <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\MenuBaseViewController.cs" />
@@ -246,25 +237,12 @@
     <Compile Include="Views\MilestoneView.cs" />
     <Compile Include="Views\ProgressBarView.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
-    <Compile Include="Views\TableViewSectionView.cs" />
-    <Compile Include="Views\ToolbarButton.cs" />
     <Compile Include="Views\UILabelWithLinks.cs" />
     <Compile Include="Views\WebView.cs" />
     <Compile Include="Views\App\DefaultStartupView.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
-    <Compile Include="Elements\CustomElement.cs" />
-    <Compile Include="Elements\InputElement.cs" />
-    <Compile Include="Elements\MultilinedElement.cs" />
-    <Compile Include="Elements\MultilinedInputElement.cs" />
-    <Compile Include="Elements\NoItemsElement.cs" />
-    <Compile Include="Elements\OwnerDrawnElement.cs" />
-    <Compile Include="Elements\PaginateElement.cs" />
-    <Compile Include="Elements\SplitButtonElement.cs" />
-    <Compile Include="Elements\TrueFalseElement.cs" />
-    <Compile Include="Elements\LoadMoreElement.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
-    <Compile Include="Elements\Elements.cs" />
     <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
     <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
@@ -273,13 +251,10 @@
     <Compile Include="Views\SlideupTitleVIew.cs" />
     <Compile Include="Views\Repositories\RepositoriesForkedView.cs" />
     <Compile Include="Utilities\Hud.cs" />
-    <Compile Include="Utilities\PickerAlert.cs" />
     <Compile Include="Utilities\Translate.cs" />
     <Compile Include="Utilities\UIImageExtensions.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
-    <Compile Include="Utilities\Controls.cs" />
     <Compile Include="Utilities\Graphics.cs" />
-    <Compile Include="Utilities\LocalizationExtensions.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Octicons.cs" />
@@ -302,23 +277,18 @@
     <InterfaceDefinition Include="TableViewCells\NewsCellView.xib" />
     <InterfaceDefinition Include="TableViewCells\RepositoryCellView.xib" />
     <Compile Include="TableViewCells\MilestoneTableViewCell.cs" />
-    <Compile Include="Elements\SplitViewElement.cs" />
     <Compile Include="TableViewCells\GistCellView.cs" />
     <Compile Include="TableViewCells\GistCellView.designer.cs" />
     <InterfaceDefinition Include="TableViewCells\GistCellView.xib" />
     <Compile Include="Utilities\UIImageViewExtensions.cs" />
-    <Compile Include="Elements\GistElement.cs" />
     <Compile Include="TableViewCells\PullRequestCellView.cs" />
     <Compile Include="TableViewCells\PullRequestCellView.designer.cs" />
     <InterfaceDefinition Include="TableViewCells\PullRequestCellView.xib" />
-    <Compile Include="Elements\PullRequestElement.cs" />
     <Compile Include="TableViewCells\CommitCellView.cs" />
     <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
     <Compile Include="TableViewCells\CommitCellView.designer.cs" />
-    <Compile Include="Elements\CommitElement.cs" />
     <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="Elements\UserElement.cs" />
     <Compile Include="WebViews\SourceBrowserModel.cs" />
     <Compile Include="WebViews\UpgradeDetailsModel.cs" />
     <Compile Include="WebViews\DescriptionModel.cs" />
@@ -372,6 +342,44 @@
     <Compile Include="Utilities\UIWindowExtensions.cs" />
     <Compile Include="Views\App\StartupView.cs" />
     <Compile Include="Utilities\NetworkActivity.cs" />
+    <InterfaceDefinition Include="ViewControllers\Repositories\PrivateRepositoryViewController.xib" />
+    <Compile Include="ViewControllers\Repositories\PrivateRepositoryViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\PrivateRepositoryViewController.designer.cs">
+      <DependentUpon>PrivateRepositoryViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewControllers\TableViewController.cs" />
+    <Compile Include="DialogElements\Element.cs" />
+    <Compile Include="DialogElements\RootElement.cs" />
+    <Compile Include="DialogElements\Section.cs" />
+    <Compile Include="DialogElements\BooleanElement.cs" />
+    <Compile Include="DialogElements\StringElement.cs" />
+    <Compile Include="DialogElements\CommitElement.cs" />
+    <Compile Include="DialogElements\ChangesetElement.cs" />
+    <Compile Include="DialogElements\GistElement.cs" />
+    <Compile Include="DialogElements\MilestoneElement.cs" />
+    <Compile Include="DialogElements\LabelElement.cs" />
+    <Compile Include="DialogElements\NoItemsElement.cs" />
+    <Compile Include="DialogElements\SplitButtonElement.cs" />
+    <Compile Include="DialogElements\PullRequestElement.cs" />
+    <Compile Include="DialogElements\RepositoryElement.cs" />
+    <Compile Include="DialogElements\SplitViewElement.cs" />
+    <Compile Include="DialogElements\CommentElement.cs" />
+    <Compile Include="DialogElements\IssueElement.cs" />
+    <Compile Include="DialogElements\UserElement.cs" />
+    <Compile Include="DialogElements\NewsFeedElement.cs" />
+    <Compile Include="DialogElements\EntryElement.cs" />
+    <Compile Include="DialogElements\IElementSizing.cs" />
+    <Compile Include="DialogElements\WebElement.cs" />
+    <Compile Include="DialogElements\MultilinedElement.cs" />
+    <Compile Include="DialogElements\CustomElement.cs" />
+    <Compile Include="DialogElements\OwnerDrawnElement.cs" />
+    <Compile Include="DialogElements\LoadMoreElement.cs" />
+    <Compile Include="DialogElements\PaginateElement.cs" />
+    <Compile Include="DialogElements\InputElement.cs" />
+    <Compile Include="Transitions\SlideDownTransition.cs" />
+    <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
+    <Compile Include="Views\TrendingTitleButton.cs" />
+    <Compile Include="Utilities\Emojis.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -563,6 +571,8 @@
     <BundleResource Include="Heart.png" />
     <BundleResource Include="Rocket.png" />
     <BundleResource Include="Briefcase.png" />
+    <BundleResource Include="Images\down_chevron.png" />
+    <BundleResource Include="Images\down_chevron%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -578,6 +588,9 @@
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
     <Folder Include="ViewControllers\Application\" />
+    <Folder Include="ViewControllers\Repositories\" />
+    <Folder Include="DialogElements\" />
+    <Folder Include="Transitions\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">

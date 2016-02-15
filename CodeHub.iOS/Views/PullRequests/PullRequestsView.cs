@@ -1,8 +1,9 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using MvvmCross.Binding.BindingContext;
+using System;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -13,7 +14,6 @@ namespace CodeHub.iOS.Views.PullRequests
  
         public PullRequestsView()
         {
-            Root.UnevenRows = true;
             Title = "Pull Requests";
             NoItemsText = "No Pull Requests";
 
@@ -35,7 +35,9 @@ namespace CodeHub.iOS.Views.PullRequests
             set.Bind(_viewSegment).To(x => x.SelectedFilter);
             set.Apply();
 
-            BindCollection(vm.PullRequests, s => new PullRequestElement(s, () => vm.GoToPullRequestCommand.Execute(s)));
+
+            var weakVm = new WeakReference<PullRequestsViewModel>(vm);
+            BindCollection(vm.PullRequests, s => new PullRequestElement(s, () => weakVm.Get()?.GoToPullRequestCommand.Execute(s)));
         }
 
         public override void ViewWillAppear(bool animated)

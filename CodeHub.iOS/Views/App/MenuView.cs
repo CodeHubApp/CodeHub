@@ -1,13 +1,14 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.App;
-using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
 using System;
 using MvvmCross.Platform;
+using CodeHub.iOS.DialogElements;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -26,9 +27,9 @@ namespace CodeHub.iOS.Views.App
 		{
             var username = ViewModel.Account.Username;
 			Title = username;
-            var root = new RootElement(username);
+            ICollection<Section> sections = new LinkedList<Section>();
 
-            root.Add(new Section
+            sections.Add(new Section
             {
                 new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Octicon.Person.ToImage()),
                 (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Octicon.Inbox.ToImage()) { NotificationNumber = ViewModel.Notifications }),
@@ -49,7 +50,7 @@ namespace CodeHub.iOS.Views.App
                     eventsSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(org.Login), Octicon.Rss.ToImage(), avatarUri));
                 }
             }
-            root.Add(eventsSection);
+            sections.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
             repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Octicon.Repo.ToImage()));
@@ -57,14 +58,14 @@ namespace CodeHub.iOS.Views.App
             repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Octicon.Star.ToImage()));
             repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Octicon.Pulse.ToImage()));
             repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Octicon.Globe.ToImage()));
-            root.Add(repoSection);
+            sections.Add(repoSection);
             
 			if (ViewModel.PinnedRepositories.Count() > 0)
 			{
 				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
 				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
 					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
-				root.Add(_favoriteRepoSection);
+                sections.Add(_favoriteRepoSection);
 			}
 			else
 			{
@@ -85,16 +86,16 @@ namespace CodeHub.iOS.Views.App
 
             //There should be atleast 1 thing...
             if (orgSection.Elements.Count > 0)
-                root.Add(orgSection);
+                sections.Add(orgSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
             gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Octicon.Gist.ToImage()));
             gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Octicon.Star.ToImage()));
             gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Octicon.Globe.ToImage()));
-            root.Add(gistsSection);
+            sections.Add(gistsSection);
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
-            root.Add(infoSection);
+            sections.Add(infoSection);
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
 
             if (ViewModel.ShouldShowUpgrades)
@@ -102,8 +103,21 @@ namespace CodeHub.iOS.Views.App
             
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
             infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Octicon.Person.ToImage()));
-            Root = root;
+
+            Root.Reset(sections);
 		}
+
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            #if DEBUG
+            GC.Collect();
+            GC.Collect();
+            GC.Collect();
+            #endif
+        }
 
         private void PresentUserVoice()
         {
@@ -123,9 +137,9 @@ namespace CodeHub.iOS.Views.App
 			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
 
 			if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
-				ProfileButton.Uri = new System.Uri(ViewModel.Account.AvatarUrl);
+				ProfileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
 
-            ViewModel.Bind(x => x.Notifications, x =>
+            ViewModel.Bind(x => x.Notifications).Subscribe(x =>
             {
                 if (_notifications != null)
                 {
@@ -134,7 +148,7 @@ namespace CodeHub.iOS.Views.App
                 }
             });
 
-            ViewModel.Bind(x => x.Organizations, x => CreateMenuRoot());
+            ViewModel.Bind(x => x.Organizations).Subscribe(x => CreateMenuRoot());
 
             ViewModel.LoadCommand.Execute(null);
 
@@ -192,12 +206,12 @@ namespace CodeHub.iOS.Views.App
 			}
 		}
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource()
 		{
 			return new EditSource(this);
 		}
 
-		private class EditSource : SizingSource
+        private class EditSource : Source
 		{
 			private readonly MenuView _parent;
 			public EditSource(MenuView dvc) 

@@ -1,14 +1,14 @@
 using System;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using CodeHub.iOS.ViewControllers;
 using System.Linq;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Utilities;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Filters
 {
-	public class IssueMilestonesFilterViewController : BaseDialogViewController
+	public class IssueMilestonesFilterViewController : DialogViewController
     {
 		private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
 		private string _username, _repository;
@@ -34,9 +34,8 @@ namespace CodeHub.iOS.Views.Filters
 		}
 
         public IssueMilestonesFilterViewController(string user, string repo, bool alreadySelected)
-			: base(true)
+            : base(UIKit.UITableViewStyle.Plain)
         {
-			Style = UIKit.UITableViewStyle.Plain;
 			_username = user;
 			_repository = repo;
             Title = "Milestones".t();
@@ -59,24 +58,24 @@ namespace CodeHub.iOS.Views.Filters
 				foreach (var item in items)
 				{
 					var x = item;
-					sec.Add(new StyledStringElement(x.Title, () => {
-						if (MilestoneSelected != null)
-						{
-							if (x == noMilestone)
-								MilestoneSelected(x.Title, null, "none");
-							else if (x == withMilestone)
-								MilestoneSelected(x.Title, null, "*");
-							else if (x == clearMilestone)
-								MilestoneSelected(null, null, null);
-							else
-								MilestoneSelected(x.Title, x.Number, x.Number.ToString());
-						}
-					}));
+                    var element = new StringElement(x.Title);
+                    element.Clicked.Subscribe(_ => {
+                        if (MilestoneSelected != null)
+                        {
+                            if (x == noMilestone)
+                                MilestoneSelected(x.Title, null, "none");
+                            else if (x == withMilestone)
+                                MilestoneSelected(x.Title, null, "*");
+                            else if (x == clearMilestone)
+                                MilestoneSelected(null, null, null);
+                            else
+                                MilestoneSelected(x.Title, x.Number, x.Number.ToString());
+                        }
+                    });
+                    sec.Add(element);
 				}
 
-				InvokeOnMainThread(() => {
-					Root = new RootElement(Title) { sec };
-				});
+				InvokeOnMainThread(() => Root.Reset(sec));
 			};
         }
     }

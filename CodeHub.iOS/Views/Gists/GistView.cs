@@ -3,22 +3,21 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using System.Linq;
-using CodeHub.iOS.DialogElements;
 using System.Threading.Tasks;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.Core.Services;
 using MvvmCross.Platform;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Gists
 {
     public class GistView : PrettyDialogViewController
     {
         private SplitViewElement _splitRow1, _splitRow2;
-        private StyledStringElement _ownerElement;
+        private StringElement _ownerElement;
         private SplitButtonElement _split;
         private UIBarButtonItem _editButton;
         private readonly IAlertDialogService _alertDialogService = Mvx.Resolve<IAlertDialogService>();
@@ -49,13 +48,12 @@ namespace CodeHub.iOS.Views.Gists
 
             _splitRow1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
             _splitRow2 = new SplitViewElement(Octicon.Calendar.ToImage(), Octicon.Star.ToImage());
-            _ownerElement = new StyledStringElement("Owner", string.Empty, UITableViewCellStyle.Value1) { 
+            _ownerElement = new StringElement("Owner", string.Empty, UITableViewCellStyle.Value1) { 
                 Image = Octicon.Person.ToImage(),
                 Accessory = UITableViewCellAccessory.DisclosureIndicator
             };
-            _ownerElement.Tapped += () => ViewModel.GoToUserCommand.Execute(null);
 
-            ViewModel.Bind(x => x.Gist, gist =>
+            ViewModel.Bind(x => x.Gist).Subscribe(gist =>
             {
                 _splitRow1.Button1.Text = (gist.Public ?? true) ? "Public" : "Private";
                 _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
@@ -73,9 +71,14 @@ namespace CodeHub.iOS.Views.Gists
 
 			ViewModel.BindCollection(x => x.Comments, x => RenderGist());
 
-            ViewModel.Bind(x => x.IsStarred, isStarred =>
+            ViewModel.Bind(x => x.IsStarred).Subscribe(isStarred =>
             {
                 _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred";
+            });
+
+            OnActivation(d =>
+            {
+                d(_ownerElement.Clicked.BindCommand(ViewModel.GoToUserCommand));
             });
         }
 
@@ -95,15 +98,16 @@ namespace CodeHub.iOS.Views.Gists
         {
 			if (ViewModel.Gist == null) return;
 			var model = ViewModel.Gist;
-            var root = new RootElement(Title);
-            root.Add(new Section { _split });
-            root.Add(new Section { _splitRow1, _splitRow2, _ownerElement });
+
+            ICollection<Section> sections = new LinkedList<Section>();
+            sections.Add(new Section { _split });
+            sections.Add(new Section { _splitRow1, _splitRow2, _ownerElement });
 			var sec2 = new Section();
-			root.Add(sec2);
+            sections.Add(sec2);
 
             foreach (var file in model.Files.Keys)
             {
-                var sse = new StyledStringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
+                var sse = new StringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
                     Accessory = UITableViewCellAccessory.DisclosureIndicator, 
                     LineBreakMode = UILineBreakMode.TailTruncation,
                     Lines = 1 
@@ -115,7 +119,7 @@ namespace CodeHub.iOS.Views.Gists
 //				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
 //					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
 //				else
-					sse.Tapped += () => ViewModel.GoToFileSourceCommand.Execute(gistFileModel);
+                sse.Clicked.Subscribe(_ => ViewModel.GoToFileSourceCommand.Execute(gistFileModel));
                 sec2.Add(sse);
             }
 
@@ -123,10 +127,10 @@ namespace CodeHub.iOS.Views.Gists
 			{
 				var sec3 = new Section("Comments");
                 sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
-				root.Add(sec3);
+                sections.Add(sec3);
 			}
 
-            Root = root;
+            Root.Reset(sections);
         }
 
         private async Task Fork()

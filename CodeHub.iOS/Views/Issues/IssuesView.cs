@@ -21,15 +21,21 @@ namespace CodeHub.iOS.Views.Issues
 
         public override void ViewDidLoad()
         {
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.GoToNewIssueCommand.Execute(null));
+            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
+            NavigationItem.RightBarButtonItem = addButton;
 
             base.ViewDidLoad();
 
-            _viewSegment = new CustomUISegmentedControl(new [] { "Open".t(), "Closed".t(), "Mine".t(), "Custom".t() }, 3);
+            _viewSegment = new CustomUISegmentedControl(new [] { "Open", "Closed", "Mine", "Custom" }, 3);
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
             BindCollection(ViewModel.Issues, CreateElement);
+
+            OnActivation(d =>
+            {
+                d(addButton.GetClickedObservable().BindCommand(ViewModel.GoToNewIssueCommand));
+            });
         }
 
         public override void ViewWillAppear(bool animated)
@@ -86,6 +92,12 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewWillDisappear(animated);
             if (ToolbarItems != null)
                 NavigationController.SetToolbarHidden(true, animated);
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _viewSegment.ValueChanged -= SegmentValueChanged;
         }
 
         private class CustomUISegmentedControl : UISegmentedControl

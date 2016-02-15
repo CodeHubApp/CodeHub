@@ -1,44 +1,51 @@
 using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
-using MonoTouch.Dialog;
 using UIKit;
+using CodeHub.iOS.DialogElements;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
 	public class BranchesAndTagsView : ViewModelCollectionDrivenDialogViewController
 	{
-		private UISegmentedControl _viewSegment;
-		private UIBarButtonItem _segmentBarButton;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 
 		public override void ViewDidLoad()
 		{
-			Title = "Source".t();
-			NoItemsText = "No Items".t();
+			Title = "Source";
+			NoItemsText = "No Items";
 
 			base.ViewDidLoad();
 
-			_viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
-			_segmentBarButton = new UIBarButtonItem(_viewSegment) { Width = View.Frame.Width - 10f };
-			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
+            NavigationItem.TitleView = _viewSegment;
 
 			var vm = (BranchesAndTagsViewModel)ViewModel;
-			this.BindCollection(vm.Items, x => new StyledStringElement(x.Name, () => vm.GoToSourceCommand.Execute(x)));
-            _viewSegment.ValueChanged += (sender, e) => vm.SelectedFilter = (int)_viewSegment.SelectedSegment; 
-            vm.Bind(x => x.SelectedFilter, x => _viewSegment.SelectedSegment = (nint)x, true);
+            this.BindCollection(vm.Items, x => {
+                var e = new StringElement(x.Name);
+                e.Clicked.Select(_ => x).BindCommand(vm.GoToSourceCommand);
+                return e;
+            });
+            vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x);
 		}
 
 		public override void ViewWillAppear(bool animated)
 		{
 			base.ViewWillAppear(animated);
-			NavigationController?.SetToolbarHidden(false, animated);
+            _viewSegment.ValueChanged += SegmentChanged;
 		}
 
-		public override void ViewWillDisappear(bool animated)
-		{
-			base.ViewWillDisappear(animated);
-			NavigationController?.SetToolbarHidden(true, animated);
-		}
+        void SegmentChanged (object sender, EventArgs e)
+        {
+            var vm = (BranchesAndTagsViewModel)ViewModel;
+            vm.SelectedFilter = (int)_viewSegment.SelectedSegment;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _viewSegment.ValueChanged -= SegmentChanged;
+        }
 	}
 }
 

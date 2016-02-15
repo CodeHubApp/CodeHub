@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
@@ -13,8 +13,8 @@ namespace CodeHub.iOS.Views.Issues
 
         public override void ViewDidLoad()
         {
-            Title = "Assignees".t();
-            NoItemsText = "No Assignees".t();
+            Title = "Assignees";
+            NoItemsText = "No Assignees";
 
             base.ViewDidLoad();
 
@@ -22,12 +22,13 @@ namespace CodeHub.iOS.Views.Issues
 			BindCollection(vm.Users, x =>
 			{
 				var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
-				el.Tapped += () => {
+                el.Clicked.Subscribe(_ => {
 					if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
 						vm.SelectedUser = null;
 					else
 						vm.SelectedUser = x;
-				};
+                });
+
 				if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
 					el.Accessory = UITableViewCellAccessory.Checkmark;
 				else
@@ -35,7 +36,7 @@ namespace CodeHub.iOS.Views.Issues
 				return el;
 			});
 
-			vm.Bind(x => x.SelectedUser, x =>
+            vm.Bind(x => x.SelectedUser).Subscribe(x =>
 			{
 				if (Root.Count == 0)
 					return;
@@ -45,12 +46,7 @@ namespace CodeHub.iOS.Views.Issues
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});
 
-			var _hud = new Hud(View);
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x) _hud.Show("Saving...");
-				else _hud.Hide();
-			});
+            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }
     }
 }

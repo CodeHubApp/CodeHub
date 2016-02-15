@@ -28,8 +28,6 @@ namespace CodeHub.iOS.Views.Accounts
         {
             base.ViewDidLoad();
 
-            var hud = this.CreateHud();
-
             Title = "Login";
 
             var set = this.CreateBindingSet<AddAccountView, AddAccountViewModel>();
@@ -39,13 +37,7 @@ namespace CodeHub.iOS.Views.Accounts
             set.Bind(LoginButton).To(x => x.LoginCommand);
             set.Apply();
 
-			ViewModel.Bind(x => x.IsLoggingIn, x =>
-			{
-				if (x)
-					hud.Show("Logging in...");
-				else
-					hud.Hide();
-			});
+            ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...");
 
             View.BackgroundColor = EnterpriseBackgroundColor;
             Logo.Image = Images.Logos.EnterpriseMascot;

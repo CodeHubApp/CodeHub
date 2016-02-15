@@ -2,6 +2,7 @@ using GitHubSharp.Models;
 using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Changesets;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -12,6 +13,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
 			get; 
 			private set; 
 		}
+
+        public PullRequestCommitsViewModel(IFeaturesService featuresService)
+            : base(featuresService)
+        {
+        }
 
 		public void Init(NavObject navObject)
 		{

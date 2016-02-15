@@ -29,9 +29,9 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
-            _issues.Bind(x => x.Filter, () => LoadCommand.Execute(false));
+            _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
-			this.Bind(x => x.SelectedFilter, x =>
+            this.Bind(x => x.SelectedFilter).Subscribe(x =>
 			{
 				if (x == 0)
 					_issues.Filter = MyIssuesFilterModel.CreateOpenFilter();

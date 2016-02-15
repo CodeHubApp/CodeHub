@@ -55,17 +55,6 @@ namespace CodeHub.Core.ViewModels.App
             }
         }
 
-        public bool LargeFonts
-        {
-            get 
-            { 
-                bool value;
-                _defaultValueService.TryGet("large_fonts", out value);
-                return value;
-            }
-            set { _defaultValueService.Set("large_fonts", value); }
-        }
-
         public bool PushNotificationsActivated
         {
             get { return _featuresService.IsPushNotificationsActivated; }

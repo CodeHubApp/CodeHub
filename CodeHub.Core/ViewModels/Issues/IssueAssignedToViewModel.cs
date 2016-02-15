@@ -56,7 +56,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			SaveOnSelect = navObject.SaveOnSelect;
 
 			SelectedUser = TxSevice.Get() as BasicUserModel;
-			this.Bind(x => x.SelectedUser, x => SelectUser(x));
+            this.Bind(x => x.SelectedUser).Subscribe(x => SelectUser(x));
 		}
 
 		private async Task SelectUser(BasicUserModel x)

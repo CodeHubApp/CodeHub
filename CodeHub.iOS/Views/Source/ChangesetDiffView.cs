@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Views.Source
 			base.ViewDidLoad();
 
 
-			ViewModel.Bind(x => x.FilePath, x =>
+            ViewModel.Bind(x => x.FilePath).Subscribe(x =>
 			{
 				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
 				var patch = JavaScriptStringEncode(data);
@@ -104,14 +104,11 @@ namespace CodeHub.iOS.Views.Source
 
         private void PromptForComment(JavascriptCommentModel model)
         {
-            string title = string.Empty;
-            title = "Line ".t() + model.FileLine;
-
+            var title = "Line " + model.FileLine;
             var sheet = new UIActionSheet(title);
-            var addButton = sheet.AddButton("Add Comment".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var addButton = sheet.AddButton("Add Comment");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (sender, e) =>
             {
                 BeginInvokeOnMainThread(() =>
@@ -137,7 +134,7 @@ namespace CodeHub.iOS.Views.Source
 				}
 				catch (Exception e)
 				{
-                    AlertDialogService.ShowAlert("Unable to Comment".t(), e.Message);
+                    AlertDialogService.ShowAlert("Unable to Comment", e.Message);
 					composer.EnableSendButton = true;
 				}
             });

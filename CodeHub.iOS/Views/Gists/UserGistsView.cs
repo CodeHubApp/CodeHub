@@ -1,3 +1,4 @@
+using System;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
 
@@ -16,8 +17,12 @@ namespace CodeHub.iOS.Views.Gists
             Title = "Gists";
             base.ViewDidLoad();
 
+            var button = new UIBarButtonItem(UIBarButtonSystemItem.Add);
+
             if (ViewModel.IsMine)
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.GoToCreateGistCommand.Execute(null));
+                NavigationItem.RightBarButtonItem = button;
+
+            OnActivation(d => d(button.GetClickedObservable().Subscribe(_ => ViewModel.GoToCreateGistCommand.Execute(null))));
         }
 
         public override void ViewWillAppear(bool animated)

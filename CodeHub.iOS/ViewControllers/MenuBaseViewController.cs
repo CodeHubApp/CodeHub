@@ -1,8 +1,8 @@
 using CoreGraphics;
-using MonoTouch.Dialog;
 using UIKit;
 using System;
 using CodeHub.iOS.Views;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -12,10 +12,8 @@ namespace CodeHub.iOS.ViewControllers
         readonly UILabel _title;
 
         protected MenuBaseViewController()
-            : base(false)
+            : base(false, UITableViewStyle.Plain)
         {
-            Style = UITableViewStyle.Plain;
-            Autorotate = true;
 			_title = new UILabel(new CGRect(0, 40, 320, 40));
             _title.TextAlignment = UITextAlignment.Left;
             _title.BackgroundColor = UIColor.Clear;
@@ -98,18 +96,17 @@ namespace CodeHub.iOS.ViewControllers
             UpdateProfilePicture();
         }
 
-        protected class MenuElement : StyledStringElement
+        protected class MenuElement : StringElement
         {
             public int NotificationNumber { get; set; }
 
-            public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null)
-                : base(title, tapped)
+            public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) : base(title)
             {
-                BackgroundColor = UIColor.Clear;
+                Clicked.Subscribe(_ => tapped?.Invoke());
                 TextColor = UIColor.FromRGB(213, 213, 213);
-                DetailColor = UIColor.White;
                 Image = image;
                 ImageUri = imageUrl;
+                Accessory = UITableViewCellAccessory.None;
             }
 
             //We want everything to be the same size as far as images go.
@@ -124,13 +121,6 @@ namespace CodeHub.iOS.ViewControllers
                 public Cell(UITableViewCellStyle style, string key)
                     : base(style, key)
                 {
-//                    var v = new UIView(new RectangleF(0, 0, Frame.Width, 1)) { 
-//                        BackgroundColor = UIColor.FromRGB(44, 44, 44)
-//                    };
-//
-//                    AddSubview(v);
-//                    TextLabel.ShadowColor = UIColor.Black;
-//                    TextLabel.ShadowOffset = new SizeF(0, -1); 
                     SelectedBackgroundView = new UIView { BackgroundColor = UIColor.FromRGB(25, 25, 25) };
 
                     _numberView = new UILabel { BackgroundColor = UIColor.FromRGB(54, 54, 54) };
@@ -177,6 +167,7 @@ namespace CodeHub.iOS.ViewControllers
                 var cell = base.GetCell(tv) as Cell;
                 cell.NotificationNumber = NotificationNumber;
                 cell.ImageView.Layer.CornerRadius = ImageUri != null ? (cell.ImageView.Frame.Height / 2) : 0;
+                cell.BackgroundColor = UIColor.Clear;
                 return cell;
             }
 

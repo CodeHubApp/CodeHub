@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,12 +8,14 @@ using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : LoadableViewModel
     {
         private readonly FilterableCollectionViewModel<ContentModel, SourceFilterModel> _content;
+        private readonly IFeaturesService _featuresService;
         private SourceFilterModel _filter;
 
         public FilterableCollectionViewModel<ContentModel, SourceFilterModel> Content
@@ -41,6 +44,17 @@ namespace CodeHub.Core.ViewModels.Source
             }
         }
 
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
+        {
+            get { return _shouldShowPro; }
+            private set
+            {
+                _shouldShowPro = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public ICommand GoToSourceTreeCommand
         {
 			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
@@ -64,11 +78,12 @@ namespace CodeHub.Core.ViewModels.Source
             ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
         }
 
-        public SourceTreeViewModel()
+        public SourceTreeViewModel(IFeaturesService featuresService)
         {
+            _featuresService = featuresService;
             _content = new FilterableCollectionViewModel<ContentModel, SourceFilterModel>("SourceViewModel");
             _content.FilteringFunction = FilterModel;
-			_content.Bind(x => x.Filter, _content.Refresh);
+            _content.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
         }
 
         public void Init(NavObject navObject)
@@ -93,6 +108,11 @@ namespace CodeHub.Core.ViewModels.Source
 
         protected override Task Load(bool forceCacheInvalidation)
         {
+            if (_featuresService.IsProEnabled)
+                ShouldShowPro = false;
+            else
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            
 			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
         }
 

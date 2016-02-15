@@ -1,7 +1,10 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Changesets;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using UIKit;
+using CodeHub.iOS.ViewControllers.Repositories;
+using System;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -17,7 +20,13 @@ namespace CodeHub.iOS.Views.Source
             TableView.RowHeight = UITableView.AutomaticDimension;
 
 			var vm = (CommitsViewModel) ViewModel;
-			BindCollection(vm.Commits, x => new CommitElement(x, () => vm.GoToChangesetCommand.Execute(x)));
+            var weakVm = new WeakReference<CommitsViewModel>(vm);
+            BindCollection(vm.Commits, x => new CommitElement(x, () => weakVm.Get()?.GoToChangesetCommand.Execute(x)));
+
+            vm.Bind(x => x.ShouldShowPro)
+                .Where(x => x)
+                .Take(1)
+                .Subscribe(_ => this.ShowPrivateView());
 		}
 	}
 }

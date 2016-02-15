@@ -4,7 +4,7 @@ namespace CodeHub.iOS.Views.Gists
     {
         public override void ViewDidLoad()
         {
-            Title = "Public Gists".t();
+            Title = "Public Gists";
             base.ViewDidLoad();
         }
     }

@@ -1,14 +1,14 @@
 using System;
 using UIKit;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS;
 using SDWebImage;
 using Foundation;
 using CodeHub.Core.ViewModels.App;
+using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class StartupView : ViewModelDrivenDialogViewController
+    public class StartupView : MvxViewController
     {
         const float imageSize = 128f;
 
@@ -49,7 +49,7 @@ namespace CodeHub.iOS.Views.App
 			View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
            
 			var vm = (StartupViewModel)ViewModel;
-			vm.Bind(x => x.IsLoggingIn, x =>
+            vm.Bind(x => x.IsLoggingIn).Subscribe(x =>
 			{
 				if (x)
 				{
@@ -61,8 +61,8 @@ namespace CodeHub.iOS.Views.App
 				}
 			});
 
-            vm.Bind(x => x.ImageUrl, UpdatedImage);
-            vm.Bind(x => x.Status, x => _statusLabel.Text = x);
+            vm.Bind(x => x.ImageUrl).Subscribe(UpdatedImage);
+            vm.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x);
 
         }
 

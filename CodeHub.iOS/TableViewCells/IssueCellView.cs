@@ -9,6 +9,8 @@ namespace CodeHub.iOS.TableViewCells
 {
     public partial class IssueCellView : UITableViewCell
     {
+        public static readonly NSString Key = new NSString("IssueCellView");
+
         public static IssueCellView Create()
         {
             var cell = new IssueCellView();
@@ -41,6 +43,14 @@ namespace CodeHub.iOS.TableViewCells
 
             //Create the icons
             return cell;
+        }
+
+        public override NSString ReuseIdentifier
+        {
+            get
+            {
+                return Key;
+            }
         }
 
         public IssueCellView()

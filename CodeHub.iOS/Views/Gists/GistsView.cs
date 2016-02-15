@@ -1,7 +1,8 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.iOS.Elements;
 using UIKit;
+using CodeHub.iOS.DialogElements;
+using System;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -17,7 +18,8 @@ namespace CodeHub.iOS.Views.Gists
             TableView.RowHeight = UITableView.AutomaticDimension;
 
             var vm = (GistsViewModel) ViewModel;
-            BindCollection(vm.Gists, x => new GistElement(x, () => vm.GoToGistCommand.Execute(x)));
+            var weakVm = new WeakReference<GistsViewModel>(vm);
+            BindCollection(vm.Gists, x => new GistElement(x, () => weakVm.Get()?.GoToGistCommand.Execute(x)));
         }
     }
 }

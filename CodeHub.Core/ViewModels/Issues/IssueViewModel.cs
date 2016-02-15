@@ -4,17 +4,16 @@ using GitHubSharp.Models;
 using System.Windows.Input;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Services;
-using CodeHub.Core.Services;
 using System;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueViewModel : LoadableViewModel
     {
 		private MvxSubscriptionToken _editToken;
+        private readonly IFeaturesService _featuresService;
 
         public long Id 
         { 
@@ -43,6 +42,17 @@ namespace CodeHub.Core.ViewModels.Issues
 				return (GetService<IMarkdownService>().Convert(Issue.Body));
 			}
 		}
+
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
+        {
+            get { return _shouldShowPro; }
+            protected set
+            {
+                _shouldShowPro = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private bool _isCollaborator;
         public bool IsCollaborator
@@ -151,6 +161,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         protected override Task Load(bool forceCacheInvalidation)
         {
+            if (_featuresService.IsProEnabled)
+                ShouldShowPro = false;
+            else
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+
 			var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data);
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
@@ -162,6 +177,11 @@ namespace CodeHub.Core.ViewModels.Issues
         public string ConvertToMarkdown(string str)
         {
 			return (GetService<IMarkdownService>().Convert(str));
+        }
+
+        public IssueViewModel(IFeaturesService featuresService)
+        {
+            _featuresService = featuresService;
         }
 
         public void Init(NavObject navObject)

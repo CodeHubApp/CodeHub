@@ -1,23 +1,21 @@
 using System;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using MvvmCross.Binding.BindingContext;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
-		private Hud _hud;
-
 		public RepositoriesExploreView()
         {
             AutoHideSearch = false;
-            //EnableFilter = true;
-            NoItemsText = "No Repositories".t();
-            Title = "Explore".t();
+            NoItemsText = "No Repositories";
+            Title = "Explore";
         }
 
         protected override IUISearchBarDelegate CreateSearchDelegate()
@@ -28,9 +26,12 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			_hud = new Hud(View);
 			var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
+
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 64f;
+            TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
 
 			var set = this.CreateBindingSet<RepositoriesExploreView, RepositoriesExploreViewModel>();
 			set.Bind(search).For(x => x.Text).To(x => x.SearchText);
@@ -42,20 +43,15 @@ namespace CodeHub.iOS.Views.Repositories
 				vm.SearchCommand.Execute(null);
 			};
 
-			vm.Bind(x => x.IsSearching, x =>
-			{
-				if (x)
-					_hud.Show("Searching...");
-				else
-					_hud.Hide();
-			});
+            vm.Bind(x => x.IsSearching).SubscribeStatus("Searching...");
 
+            var weakVm = new WeakReference<RepositoriesExploreViewModel>(vm);
 			BindCollection(vm.Repositories, repo =>
             {
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-                var imageUrl = repo.Owner?.AvatarUrl;
-				var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, imageUrl) { ShowOwner = true };
-				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
+                var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
+                var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, avatar) { ShowOwner = true };
+                sse.Tapped += () => weakVm.Get()?.GoToRepositoryCommand.Execute(repo);
                 return sse;
             });
         }

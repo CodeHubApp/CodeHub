@@ -27,15 +27,7 @@ namespace CodeHub.iOS.Views.Accounts
 		{
 			base.ViewDidLoad();
 
-            var hud = this.CreateHud();
-            ViewModel.Bind(x => x.IsLoggingIn, x =>
-            {
-                if (x)
-                    hud.Show("Logging in...");
-                else
-                    hud.Hide();
-            });
-
+            ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...");
 			LoadRequest();
 		}
 

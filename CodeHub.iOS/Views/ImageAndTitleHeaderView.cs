@@ -127,9 +127,10 @@ namespace CodeHub.iOS.Views
         {
             ImageButton = new UIButton();
             ImageButton.Frame = new CGRect(0, 0, 80, 80);
-            ImageButton.TouchUpInside += (sender, e) => {
-                if (ImageButtonAction != null)
-                    ImageButtonAction();
+            var weakRef = new WeakReference<ImageAndTitleHeaderView>(this);
+            ImageButton.TouchUpInside += (sender, e) =>
+            {
+                weakRef.Get()?.ImageButtonAction?.Invoke();
             };
             Add(ImageButton);
 

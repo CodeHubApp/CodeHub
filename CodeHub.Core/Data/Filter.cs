@@ -1,5 +1,5 @@
-using SQLite;
 using MvvmCross.Platform;
+using SQLite;
 
 namespace CodeHub.Core.Data
 {

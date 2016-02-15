@@ -44,7 +44,7 @@ namespace CodeHub.Core.ViewModels.App
 			SelectedStartupView = _accountsService.ActiveAccount.DefaultStartupView;
 			StartupViews.Items.Reset(props.Select(x => x.Name));
 
-			this.Bind(x => SelectedStartupView, x =>
+            this.Bind(x => SelectedStartupView).Subscribe(x =>
 			{
 				_accountsService.ActiveAccount.DefaultStartupView = x;
 				_accountsService.Update(_accountsService.ActiveAccount);

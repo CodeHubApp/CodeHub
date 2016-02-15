@@ -1,17 +1,16 @@
 using System;
 using System.Linq;
-using CodeHub.iOS.Views;
 using CodeHub.iOS.ViewControllers;
 using UIKit;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class FilterViewController : BaseDialogViewController
+    public abstract class FilterViewController : DialogViewController
     {
         protected FilterViewController()
-            : base(true)
+            : base(UITableViewStyle.Grouped)
         {
-            Style = UITableViewStyle.Grouped;
             Title = "Filter & Sort".t();
 			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
@@ -33,7 +32,7 @@ namespace CodeHub.iOS.ViewControllers
             TableView.ReloadData();
         }
 
-        public class EnumChoiceElement<T> : MonoTouch.Dialog.StyledStringElement where T : struct, IConvertible
+        public class EnumChoiceElement<T> : StringElement where T : struct, IConvertible
         {
             private T _value;
 
@@ -59,31 +58,35 @@ namespace CodeHub.iOS.ViewControllers
         {
             var element = new EnumChoiceElement<T>(title, value);
 
-            element.Tapped += () =>
+            element.Clicked.Subscribe(_ =>
             {
-                var ctrl = new BaseDialogViewController(true);
+                var ctrl = new DialogViewController(UITableViewStyle.Grouped);
                 ctrl.Title = title;
-                ctrl.Style = UIKit.UITableViewStyle.Grouped;
 
-                var sec = new MonoTouch.Dialog.Section();
-                foreach (var x in System.Enum.GetValues(typeof(T)).Cast<System.Enum>())
+                var sec = new Section();
+                foreach (var x in Enum.GetValues(typeof(T)).Cast<Enum>())
                 {
-                    sec.Add(new MonoTouch.Dialog.StyledStringElement(x.Description(), () => { 
+                    var e = new StringElement(x.Description())
+                    { 
+                        Accessory = object.Equals(x, element.Value) ? 
+                            UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None 
+                    };
+                    e.Clicked.Subscribe(__ =>
+                    { 
                         element.Value = (T)Enum.ToObject(typeof(T), x); 
                         NavigationController.PopViewController(true);
-                    }) { 
-                        Accessory = object.Equals(x, element.Value) ? 
-                            UIKit.UITableViewCellAccessory.Checkmark : UIKit.UITableViewCellAccessory.None 
                     });
+
+                    sec.Add(e);
                 }
-                ctrl.Root = new MonoTouch.Dialog.RootElement(title) { sec };
+                ctrl.Root.Reset(sec);
                 NavigationController.PushViewController(ctrl, true);
-            };
+            });
             
             return element;
         }
 
-        public class MultipleChoiceElement<T> : MonoTouch.Dialog.StyledStringElement
+        public class MultipleChoiceElement<T> : StringElement
         {
             public T Obj;
             public MultipleChoiceElement(string title, T obj)
@@ -97,14 +100,14 @@ namespace CodeHub.iOS.ViewControllers
         protected MultipleChoiceElement<T> CreateMultipleChoiceElement<T>(string title, T o)
         {
             var element = new MultipleChoiceElement<T>(title, o);
-            element.Tapped += () =>
+            element.Clicked.Subscribe(_ =>
             {
                 var en = new MultipleChoiceViewController(element.Caption, o);
-                en.ViewDisappearing += (sender, e) => {
+                en.Disappearing.Subscribe(__ => {
                     element.Value = CreateCaptionForMultipleChoice(o);
-                };
+                });
                 NavigationController.PushViewController(en, true);
-            };
+            });
 
             return element;
         }

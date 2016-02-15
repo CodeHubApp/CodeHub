@@ -1,4 +1,4 @@
-using CodeHub.iOS.ViewControllers;
+using System;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
@@ -9,6 +9,8 @@ namespace CodeHub.iOS.Views.Gists
 {
     public class GistViewableFileView : WebView
     {
+        private readonly UIBarButtonItem _viewButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ViewButton };
+
         public new GistViewableFileViewModel ViewModel
         {
             get { return (GistViewableFileViewModel) base.ViewModel; }
@@ -18,13 +20,13 @@ namespace CodeHub.iOS.Views.Gists
         public GistViewableFileView()
                 : base(true)
         {
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.ViewButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.GoToFileSourceCommand.Execute(null));
+            NavigationItem.RightBarButtonItem = _viewButton;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.FilePath, path => LoadFile(path));
+            ViewModel.Bind(x => x.FilePath).Subscribe(x => LoadFile(x));
         }
 
         public override void ViewWillAppear(bool animated)
@@ -32,6 +34,18 @@ namespace CodeHub.iOS.Views.Gists
             base.ViewWillAppear(animated);
             if (ViewModel != null)
                 Title = ViewModel.GistFile.Filename;
+            _viewButton.Clicked += ViewButtonClick;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _viewButton.Clicked -= ViewButtonClick;
+        }
+
+        void ViewButtonClick (object sender, System.EventArgs e)
+        {
+            ViewModel.GoToFileSourceCommand.Execute(null);
         }
 
         protected override void OnLoadError(NSError error)

@@ -1,5 +1,5 @@
 using System;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Events;
 using GitHubSharp.Models;
@@ -34,7 +34,6 @@ namespace CodeHub.iOS.Views.Events
         protected BaseEventsView()
         {
             Title = "Events".t();
-            Root.UnevenRows = true;
             EnableSearch = false;
         }
 
@@ -46,7 +45,7 @@ namespace CodeHub.iOS.Views.Events
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
-        private static MonoTouch.Dialog.Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
+        private static Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)
         {
             try
             {

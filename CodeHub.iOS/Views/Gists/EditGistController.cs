@@ -2,26 +2,25 @@ using System;
 using CodeHub.iOS;
 using GitHubSharp.Models;
 using System.Collections.Generic;
-using MonoTouch.Dialog;
 using UIKit;
 using System.Linq;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views
 {
-    public class EditGistController : BaseDialogViewController
+    public class EditGistController : DialogViewController
     {
         private GistEditModel _model;
         public Action<GistModel> Created;
         private GistModel _originalGist;
 
         public EditGistController(GistModel gist)
-            : base(true)
+            : base(UITableViewStyle.Grouped, true)
         {
             Title = "Edit Gist";
-            Style = UITableViewStyle.Grouped;
             _originalGist = gist;
 
 			NavigationItem.LeftBarButtonItem = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => Discard());
@@ -103,16 +102,16 @@ namespace CodeHub.iOS.Views
 
         protected void UpdateView()
         {
-            var root = new RootElement(Title) { UnevenRows = true };
+            ICollection<Section> sections = new LinkedList<Section>();
             var section = new Section();
-            root.Add(section);
+            sections.Add(section);
 
             var desc = new MultilinedElement("Description") { Value = _model.Description };
             desc.Tapped += ChangeDescription;
             section.Add(desc);
 
             var fileSection = new Section();
-            root.Add(fileSection);
+            sections.Add(fileSection);
 
             foreach (var file in _model.Files.Keys)
             {
@@ -125,7 +124,7 @@ namespace CodeHub.iOS.Views
                     elName = _model.Files[key].Filename;
 
                 var el = new FileElement(elName, key, _model.Files[key]);
-                el.Tapped += () => {
+                el.Clicked.Subscribe(_ => {
                     if (!_model.Files.ContainsKey(key))
                         return;
                     var createController = new ModifyGistFileController(key, _model.Files[key].Content);
@@ -149,13 +148,15 @@ namespace CodeHub.iOS.Views
                     };
 
                     NavigationController.PushViewController(createController, true);
-                };
+                });
                 fileSection.Add(el);
             }
 
-            fileSection.Add(new StyledStringElement("Add New File", AddFile));
+            var addFile = new StringElement("Add New File");
+            addFile.Clicked.Subscribe(_ => AddFile());
+            fileSection.Add(addFile);
 
-            Root = root;
+            Root.Reset(sections);
         }
 
         private void ChangeDescription()
@@ -167,7 +168,7 @@ namespace CodeHub.iOS.Views
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }
@@ -187,7 +188,7 @@ namespace CodeHub.iOS.Views
             section.Remove(element);
         }
 
-        private class FileElement : StyledStringElement
+        private class FileElement : StringElement
         {
             public readonly GistEditModel.File File;
             public readonly string Key;
@@ -203,7 +204,7 @@ namespace CodeHub.iOS.Views
             }
         }
 
-        private class EditSource : SizingSource
+        private class EditSource : Source
         {
             private readonly EditGistController _parent;
             public EditSource(EditGistController dvc) 

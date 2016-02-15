@@ -2,23 +2,20 @@ using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using MonoTouch.Dialog;
 using System.Linq;
 using CodeHub.iOS.Utilities;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
 	public class IssueAddView : ViewModelDrivenDialogViewController
     {
-		private IHud _hud;
-
 		public override void ViewDidLoad()
 		{
 			Title = "New Issue";
 
 			base.ViewDidLoad();
 
-			_hud = this.CreateHud();
 			var vm = (IssueAddViewModel)ViewModel;
 
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
@@ -27,19 +24,19 @@ namespace CodeHub.iOS.Views.Issues
 			});
 
 			var title = new InputElement("Title", string.Empty, string.Empty);
-			title.Changed += (object sender, EventArgs e) => vm.Title = title.Value;
+            title.Changed.Subscribe(x => vm.Title = x);
 
-			var assignedTo = new StyledStringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
+			var assignedTo = new StringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
 			assignedTo.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-			assignedTo.Tapped += () => vm.GoToAssigneeCommand.Execute(null);
+            assignedTo.Clicked.Subscribe(_ => vm.GoToAssigneeCommand.Execute(null));
 
-			var milestone = new StyledStringElement("Milestone".t(), "None", UITableViewCellStyle.Value1);
+			var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
 			milestone.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-			milestone.Tapped += () => vm.GoToMilestonesCommand.Execute(null);
+            milestone.Clicked.Subscribe(_ => vm.GoToMilestonesCommand.Execute(null));
 
-			var labels = new StyledStringElement("Labels".t(), "None", UITableViewCellStyle.Value1);
+			var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);
 			labels.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-			labels.Tapped += () => vm.GoToLabelsCommand.Execute(null);
+            labels.Clicked.Subscribe(_ => vm.GoToLabelsCommand.Execute(null));
 
 			var content = new MultilinedElement("Description");
 			content.Tapped += () =>
@@ -51,13 +48,13 @@ namespace CodeHub.iOS.Views.Issues
 				});
 			};
 
-			vm.Bind(x => x.Title, x => title.Value = x);
-			vm.Bind(x => x.Content, x => content.Value = x);
-			vm.Bind(x => x.AssignedTo, x => {
+            vm.Bind(x => x.Title).Subscribe(x => title.Value = x);
+            vm.Bind(x => x.Content).Subscribe(x => content.Value = x);
+            vm.Bind(x => x.AssignedTo).Subscribe(x => {
 				assignedTo.Value = x == null ? "Unassigned" : x.Login;
 				Root.Reload(assignedTo, UITableViewRowAnimation.None);
 			});
-			vm.Bind(x => x.Milestone, x => {
+            vm.Bind(x => x.Milestone).Subscribe(x => {
 				milestone.Value = x == null ? "None" : x.Title;
 				Root.Reload(milestone, UITableViewRowAnimation.None);
 			});
@@ -66,15 +63,8 @@ namespace CodeHub.iOS.Views.Issues
 				Root.Reload(labels, UITableViewRowAnimation.None);
 			});
 
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x)
-					_hud.Show("Saving...");
-				else
-					_hud.Hide();
-			});
-
-			Root = new RootElement(Title) { new Section { title, assignedTo, milestone, labels }, new Section { content } };
+            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
+            Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { content });
 		}
     }
 }

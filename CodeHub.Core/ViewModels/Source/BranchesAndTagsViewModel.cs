@@ -1,5 +1,5 @@
+using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Source
 			get { return _items; }
 		}
 
-		public ICommand GoToSourceCommand
+        public IMvxCommand GoToSourceCommand
 		{
 			get { return new MvxCommand<ViewObject>(GoToSource); }
 		}
@@ -59,7 +59,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public BranchesAndTagsViewModel()
 		{
-			this.Bind(x => x.SelectedFilter, x => LoadCommand.Execute(false));
+            this.Bind(x => x.SelectedFilter).Subscribe(x => LoadCommand.Execute(false));
 		}
 
 		public void Init(NavObject navObject)

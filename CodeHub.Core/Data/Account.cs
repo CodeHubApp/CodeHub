@@ -2,8 +2,8 @@ using System;
 using System.Globalization;
 using System.IO;
 using CodeHub.Core.Services;
-using SQLite;
 using MvvmCross.Platform;
+using SQLite;
 
 namespace CodeHub.Core.Data
 {

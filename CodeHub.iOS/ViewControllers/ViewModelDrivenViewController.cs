@@ -1,33 +1,47 @@
+using System;
 using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels;
 using UIKit;
-using CodeHub.Core.ViewModels;
 using MvvmCross.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public class ViewModelDrivenViewController : MvxViewController
     {
-        private Hud _hud;
+        private readonly UIBarButtonItem _backButton = new UIBarButtonItem { Image = Theme.CurrentTheme.BackButton };
+
+        public ViewModelDrivenViewController()
+        {
+            NavigationItem.LeftBarButtonItem = _backButton;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _backButton.Clicked -= BackButtonClicked;
+        }
+
+        void BackButtonClicked (object sender, System.EventArgs e)
+        {
+            NavigationController.PopViewController(true);
+        }
 
         public override void ViewDidLoad()
         {
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
-
             base.ViewDidLoad();
 
-            _hud = new Hud(View);
+            var hud = new Hud(View);
 
             var loadableViewModel = ViewModel as LoadableViewModel;
             if (loadableViewModel != null)
             {
 
-                loadableViewModel.Bind(x => x.IsLoading, x =>
+                loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
                 {
                     if (x)
                     {
                         NetworkActivity.PushNetworkActive();
-                        _hud.Show("Loading...");
+                        hud.Show("Loading...");
 
                         if (ToolbarItems != null)
                         {
@@ -38,7 +52,7 @@ namespace CodeHub.iOS.ViewControllers
                     else
                     {
                         NetworkActivity.PopNetworkActive();
-                        _hud.Hide();
+                        hud.Hide();
 
                         if (ToolbarItems != null)
                         {
@@ -62,6 +76,8 @@ namespace CodeHub.iOS.ViewControllers
                     loadableViewModel.LoadCommand.Execute(false);
                 _isLoaded = true;
             }
+
+            _backButton.Clicked += BackButtonClicked;
         }
     }
 }

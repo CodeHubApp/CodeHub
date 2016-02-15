@@ -1,28 +1,32 @@
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using MvvmCross.Binding.BindingContext;
+using System;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class MyIssuesView : BaseIssuesView
     {
-		private UISegmentedControl _viewSegment;
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed", "Custom" });
 		private UIBarButtonItem _segmentBarButton;
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			_viewSegment = new UISegmentedControl(new object[] { "Open".t(), "Closed".t(), "Custom".t() });
 			_segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
 			ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 			var vm = (MyIssuesViewModel)ViewModel;
-			vm.Bind(x => x.SelectedFilter, x =>
+            var weakVm = new WeakReference<MyIssuesViewModel>(vm);
+
+            vm.Bind(x => x.SelectedFilter).Subscribe(x =>
 			{
-				if (x == 2)
+                var goodVm = weakVm.Get();
+
+                if (x == 2 && goodVm != null)
 				{
-					ShowFilterController(new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(vm.Issues));
+                    ShowFilterController(new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(goodVm.Issues));
 				}
 
                 // If there is searching going on. Finish it.

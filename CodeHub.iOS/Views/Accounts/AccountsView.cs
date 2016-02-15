@@ -2,72 +2,63 @@ using System.Collections.Generic;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.Dialog;
 using UIKit;
-using CodeHub.iOS.Utilities;
 using Foundation;
 using System;
 using CodeHub.Core.Data;
 using CoreGraphics;
-using System.Linq;
 using CodeHub.Core.ViewModels.Accounts;
+using CodeHub.iOS.DialogElements;
+using System.Linq;
+using System.Reactive.Disposables;
 
 namespace CodeHub.iOS.Views.Accounts
 {
 	public class AccountsView : ViewModelDrivenDialogViewController
     {
-		private IHud _hud;
-
         public new AccountsViewModel ViewModel
         {
             get { return (AccountsViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
         }
 
-        public AccountsView() : base(true)
+        public AccountsView() : base(true, UITableViewStyle.Plain)
         {
-            Style = UITableViewStyle.Plain;
             Title = "Accounts";
+
+            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
+            NavigationItem.RightBarButtonItem = addButton;
             NavigationItem.LeftBarButtonItem = null;
+
+            OnActivation(d => {
+                d(addButton.GetClickedObservable().BindCommand(ViewModel.AddAccountCommand));
+
+                Console.WriteLine("Activated Accounts");
+                d(Disposable.Create(() => Console.WriteLine("Deactivated Accounts")));
+            });
         }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-
             TableView.RowHeight = 74;
-
-			_hud = new Hud(View);
-			ViewModel.Bind(x => x.IsLoggingIn, x =>
-			{
-				if (x)
-				{
-					_hud.Show("Logging in...");
-				}
-				else
-				{
-					_hud.Hide();
-				}
-			});
 		}
 
         /// <summary>
         /// Called when the accounts need to be populated
         /// </summary>
         /// <returns>The accounts.</returns>
-        protected List<AccountElement> PopulateAccounts()
+        protected IEnumerable<AccountElement> PopulateAccounts()
         {
-            var accounts = new List<AccountElement>();
             var accountsService = Mvx.Resolve<IAccountsService>();
+            var weakVm = new WeakReference<AccountsViewModel>(ViewModel);
 
-            foreach (var account in accountsService.OfType<GitHubAccount>())
+            return accountsService.Select(account =>
             {
-                var thisAccount = account;
-                var t = new AccountElement(thisAccount, thisAccount.Equals(accountsService.ActiveAccount));
-                t.Tapped += () => ViewModel.SelectAccountCommand.Execute(thisAccount);
-                accounts.Add(t);
-            }
-            return accounts;
+                var t = new AccountElement(account, account.Equals(accountsService.ActiveAccount));
+                t.Tapped += () => weakVm.Get()?.SelectAccountCommand.Execute(account);
+                return t;
+            });
         }
 
         /// <summary>
@@ -92,23 +83,12 @@ namespace CodeHub.iOS.Views.Accounts
         {
             base.ViewWillAppear(animated);
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Add, (s, e) => ViewModel.AddAccountCommand.Execute(null));
-
-            var root = new RootElement(Title);
             var accountSection = new Section();
             accountSection.AddAll(PopulateAccounts());
-            root.Add(accountSection);
-            Root = root;
+            Root.Reset(accountSection);
         }
 
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
-        }
-
-
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }
@@ -123,7 +103,7 @@ namespace CodeHub.iOS.Views.Accounts
             AccountDeleted(accountElement.Account);
         }
 
-		private class EditSource : BaseDialogViewController.Source
+		private class EditSource : DialogViewController.Source
         {
             private readonly AccountsView _parent;
             public EditSource(AccountsView dvc) 
@@ -188,10 +168,10 @@ namespace CodeHub.iOS.Views.Accounts
                 return cell;
             }
 
-            public override void Selected (DialogViewController dvc, UITableView tableView, NSIndexPath indexPath)
+            public override void Selected (UITableView tableView, NSIndexPath indexPath)
             {
+                base.Selected(tableView, indexPath);
                 Tapped?.Invoke();
-                tableView.DeselectRow (indexPath, true);
             }
         }
 

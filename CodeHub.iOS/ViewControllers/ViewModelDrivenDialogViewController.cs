@@ -9,6 +9,7 @@ using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.Core;
 using CodeHub.iOS.Utilities;
+using CodeHub.iOS.ViewControllers.Repositories;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -111,9 +112,8 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public abstract class ViewModelDrivenDialogViewController : BaseDialogViewController, IMvxIosView, IMvxEventSourceViewController
+    public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
     {
-        private UIRefreshControl _refreshControl;
         private bool _manualRefreshRequested;
   
         public override void ViewDidLoad()
@@ -124,20 +124,18 @@ namespace CodeHub.iOS.ViewControllers
             var loadableViewModel = ViewModel as LoadableViewModel;
             if (loadableViewModel != null)
             {
-                _refreshControl = new UIRefreshControl();
-                RefreshControl = _refreshControl;
-                _refreshControl.ValueChanged += HandleRefreshRequested;
-                loadableViewModel.Bind(x => x.IsLoading, x =>
+                RefreshControl = new UIRefreshControl();
+                loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
                 {
                     if (x)
                     {
                         NetworkActivity.PushNetworkActive();
-                        _refreshControl.BeginRefreshing();
+                        RefreshControl.BeginRefreshing();
 
                         if (!_manualRefreshRequested)
                         {
                             UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -_refreshControl.Frame.Height), null);
+                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -RefreshControl.Frame.Height), null);
                         }
 
                         if (ToolbarItems != null)
@@ -154,7 +152,7 @@ namespace CodeHub.iOS.ViewControllers
                         BeginInvokeOnMainThread(() => {
                             UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
                                 () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                            _refreshControl.EndRefreshing(); 
+                            RefreshControl.EndRefreshing(); 
                         });
 
                         if (ToolbarItems != null)
@@ -172,10 +170,8 @@ namespace CodeHub.iOS.ViewControllers
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name='push'>True if navigation controller should push, false if otherwise</param>
-        /// <param name='refresh'>True if the data can be refreshed, false if otherwise</param>
-        protected ViewModelDrivenDialogViewController(bool push = true)
-            : base(push)
+        protected ViewModelDrivenDialogViewController(bool push = true, UITableViewStyle style = UITableViewStyle.Grouped)
+            : base(style, push)
         {
             this.AdaptForBinding();
         }
@@ -203,13 +199,9 @@ namespace CodeHub.iOS.ViewControllers
                     loadableViewModel.LoadCommand.Execute(false);
                 _isLoaded = true;
             }
-        }
 
-        public override nfloat GetHeightForFooter(UITableView tableView, nint section)
-        {
-            if (tableView.Style == UIKit.UITableViewStyle.Grouped)
-                return 2;
-            return base.GetHeightForFooter(tableView, section);
+            if (RefreshControl != null)
+                RefreshControl.ValueChanged += HandleRefreshRequested;
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -238,6 +230,9 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidDisappear(animated);
             ViewDidDisappearCalled.Raise(this, animated);
+
+            if (RefreshControl != null)
+                RefreshControl.ValueChanged -= HandleRefreshRequested;
         }
 
         public override void ViewDidAppear(bool animated)

@@ -42,10 +42,9 @@ namespace CodeHub.iOS.Services
             alert.Title = title;
             alert.Message = message;
             alert.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
-            var cancelButton = alert.AddButton("Cancel".t());
+            var cancelButton = alert.AddButton("Cancel");
             var okButton = alert.AddButton(okTitle);
             alert.CancelButtonIndex = cancelButton;
-            alert.DismissWithClickedButtonIndex(cancelButton, true);
             alert.GetTextField(0).Text = defaultValue;
             alert.Clicked += (s, e) =>
             {

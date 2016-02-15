@@ -15,7 +15,7 @@ namespace CodeHub.iOS.ViewControllers
 			base.ViewDidLoad();
 
             var vm = ViewModel as GistFileViewModel;
-            vm.Bind(x => x.ContentPath, x => LoadSource(new Uri("file://" + x)));
+            vm.Bind(x => x.ContentPath).Subscribe(x => LoadSource(new Uri("file://" + x)));
 		}
 
         async Task LoadSource(Uri fileUri)

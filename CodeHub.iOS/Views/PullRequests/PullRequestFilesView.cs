@@ -1,8 +1,8 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
 using UIKit;
 using System;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -11,28 +11,29 @@ namespace CodeHub.iOS.Views.PullRequests
         public override void ViewDidLoad()
         {
             Title = "Files";
-            NoItemsText = "No Files".t();
+            NoItemsText = "No Files";
 
             base.ViewDidLoad();
 
             var vm = (PullRequestFilesViewModel) ViewModel;
+            var weakVm = new WeakReference<PullRequestFilesViewModel>(vm);
             BindCollection(vm.Files, x =>
             {
-                var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-                var el = new StyledStringElement(name, x.Status, UITableViewCellStyle.Subtitle);
+                var name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                var el = new StringElement(name, x.Status, UITableViewCellStyle.Subtitle);
                 el.Image = Octicon.FileCode.ToImage();
                 el.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-				el.Tapped += () =>  vm.GoToSourceCommand.Execute(x);
+                el.Clicked.Subscribe(_ => weakVm.Get()?.GoToSourceCommand.Execute(x));
                 return el;
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource(bool unevenRows)
+		public override DialogViewController.Source CreateSizingSource()
         {
             return new CustomSource(this);
         }
     
-		private class CustomSource : BaseDialogViewController.Source
+		private class CustomSource : DialogViewController.Source
         {
             public CustomSource(PullRequestFilesView parent)
                 : base(parent)

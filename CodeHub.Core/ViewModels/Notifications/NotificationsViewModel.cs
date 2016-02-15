@@ -102,14 +102,15 @@ namespace CodeHub.Core.ViewModels.Notifications
         {
             _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
-			_notifications.Bind(x => x.Filter, () => LoadCommand.Execute(false));
-			this.Bind(x => x.ShownIndex, x => {
+            _notifications.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
+
+            this.Bind(x => x.ShownIndex).Subscribe(x => {
 				if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
 				else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
 				else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
 				((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged();
 			});
-			this.Bind(x => x.IsLoading, ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged);
+            this.Bind(x => x.IsLoading).Subscribe(_ => ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged());
 
 			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
 				_shownIndex = 0;

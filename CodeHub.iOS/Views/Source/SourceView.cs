@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Views.Source
 		{
 			base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.IsLoading, x => 
+            ViewModel.Bind(x => x.IsLoading).Subscribe(x => 
             {
                 if (x) return;
 				if (!string.IsNullOrEmpty(ViewModel.ContentPath))
@@ -33,19 +33,13 @@ namespace CodeHub.iOS.Views.Source
             var editCommand = ((SourceViewModel)ViewModel).GoToEditCommand;
 			var sheet = base.CreateActionSheet(title);
             var editButton = editCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
-            sheet.Dismissed += (sender, e) =>
-            {
-                BeginInvokeOnMainThread(() =>
+            sheet.Dismissed += (sender, e) => BeginInvokeOnMainThread(() => {
+                if (e.ButtonIndex == editButton)
                 {
-                    if (e.ButtonIndex == editButton)
-                    {
-                        editCommand.Execute(null);
-                        editCommand = null;
-                    }
-                });
-
-                sheet.Dispose();
-            };
+                    editCommand.Execute(null);
+                    editCommand = null;
+                }
+            });
 			return sheet;
 		}
 

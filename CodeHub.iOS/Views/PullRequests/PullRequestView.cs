@@ -1,15 +1,14 @@
 using System;
 using CodeHub.Core.ViewModels.PullRequests;
-using MonoTouch.Dialog;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using UIKit;
 using System.Linq;
 using System.Collections.Generic;
 using Humanizer;
-using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.ViewControllers.Repositories;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -17,11 +16,11 @@ namespace CodeHub.iOS.Views.PullRequests
     {
         private WebElement _descriptionElement;
         private WebElement _commentsElement;
-        private StyledStringElement _milestoneElement;
-        private StyledStringElement _assigneeElement;
-        private StyledStringElement _labelsElement;
-        private StyledStringElement _addCommentElement;
-        private IHud _hud;
+        private StringElement _milestoneElement;
+        private StringElement _assigneeElement;
+        private StringElement _labelsElement;
+        private StringElement _addCommentElement;
+        private UIBarButtonItem _actionButton;
 
         public new PullRequestViewModel ViewModel
         {
@@ -35,37 +34,24 @@ namespace CodeHub.iOS.Views.PullRequests
 
         public override void ViewDidLoad()
         {
-            Root.UnevenRows = true;
-
             base.ViewDidLoad();
 
             Title = "Pull Request #" + ViewModel.Id;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;
 
-            _hud = this.CreateHud();
-
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "body", false);
-            _descriptionElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
             var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
             _commentsElement = new WebElement(content2, "comments", true);
-            _commentsElement.UrlRequested = ViewModel.GoToUrlCommand.Execute;
 
-            _milestoneElement = new StyledStringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Octicon.Milestone.ToImage() };
-            _milestoneElement.Tapped += () => ViewModel.GoToMilestoneCommand.Execute(null);
+            _milestoneElement = new StringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Octicon.Milestone.ToImage() };
+            _assigneeElement = new StringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) { Image = Octicon.Person.ToImage() };
+            _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Octicon.Tag.ToImage() };
+            _addCommentElement = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
 
-            _assigneeElement = new StyledStringElement("Assigned", "Unassigned".t(), UITableViewCellStyle.Value1) { Image = Octicon.Person.ToImage() };
-            _assigneeElement.Tapped += () => ViewModel.GoToAssigneeCommand.Execute(null);
-
-            _labelsElement = new StyledStringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Octicon.Tag.ToImage() };
-            _labelsElement.Tapped += () => ViewModel.GoToLabelsCommand.Execute(null);
-
-            _addCommentElement = new StyledStringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
-            _addCommentElement.Tapped += AddCommentTapped;
-
-            ViewModel.Bind(x => x.PullRequest, x =>
+            ViewModel.Bind(x => x.PullRequest).Subscribe(x =>
             {
                 var merged = (x.Merged != null && x.Merged.Value);
 
@@ -83,28 +69,24 @@ namespace CodeHub.iOS.Views.PullRequests
                 Render();
             });
 
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-            NavigationItem.RightBarButtonItem.Enabled = false;
-            ViewModel.Bind(x => x.IsLoading, x =>
+            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()) { Enabled = false };
+            ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
             {
                 if (!x)
                 {
-                    NavigationItem.RightBarButtonItem.Enabled = ViewModel.PullRequest != null;
+                    _actionButton.Enabled = ViewModel.PullRequest != null;
                 }
             });
 
-            ViewModel.Bind(x => x.IsModifying, x =>
-            {
-                if (x)
-                    _hud.Show("Loading...");
-                else
-                    _hud.Hide();
+            ViewModel.Bind(x => x.ShouldShowPro).Subscribe(x => {
+                if (x) this.ShowPrivateView();
             });
 
-            ViewModel.Bind(x => x.CanPush, Render);
-            ViewModel.Bind(x => x.Issue, x =>
+            ViewModel.Bind(x => x.IsModifying).SubscribeStatus("Loading...");
+            ViewModel.Bind(x => x.CanPush).Subscribe(_ => Render());
+            ViewModel.Bind(x => x.Issue).Subscribe(x =>
             {
-                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned".t();
+                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
                 Render();
@@ -114,26 +96,36 @@ namespace CodeHub.iOS.Views.PullRequests
             {
                 var before = _labelsElement.Accessory;
                 _labelsElement.Accessory = ViewModel.GoToLabelsCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_labelsElement.Accessory != before && _labelsElement.GetImmediateRootElement() != null)
+                if (_labelsElement.Accessory != before && _labelsElement.GetRootElement() != null)
                     Root.Reload(_labelsElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToAssigneeCommand.CanExecuteChanged += (sender, e) =>
             {
                 var before = _assigneeElement.Accessory;
                 _assigneeElement.Accessory = ViewModel.GoToAssigneeCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_assigneeElement.Accessory != before && _assigneeElement.GetImmediateRootElement() != null)
+                if (_assigneeElement.Accessory != before && _assigneeElement.GetRootElement() != null)
                     Root.Reload(_assigneeElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToMilestoneCommand.CanExecuteChanged += (sender, e) =>
             {
                 var before = _milestoneElement.Accessory;
                 _milestoneElement.Accessory = ViewModel.GoToMilestoneCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_milestoneElement.Accessory != before && _milestoneElement.GetImmediateRootElement() != null)
+                if (_milestoneElement.Accessory != before && _milestoneElement.GetRootElement() != null)
                     Root.Reload(_milestoneElement, UITableViewRowAnimation.Fade);
             };
 
             ViewModel.BindCollection(x => x.Comments, e => RenderComments());
             ViewModel.BindCollection(x => x.Events, e => RenderComments());
+
+            OnActivation(d =>
+            {
+                d(_milestoneElement.Clicked.BindCommand(ViewModel.GoToMilestoneCommand));
+                d(_assigneeElement.Clicked.BindCommand(ViewModel.GoToAssigneeCommand));
+                d(_labelsElement.Clicked.BindCommand(ViewModel.GoToLabelsCommand));
+                d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
+                d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+            });
         }
 
         private IEnumerable<CommentModel> CreateCommentList()
@@ -191,7 +183,7 @@ namespace CodeHub.iOS.Views.PullRequests
             InvokeOnMainThread(() =>
             {
                 _commentsElement.Value = !comments.Any() ? string.Empty : data;
-                if (_commentsElement.GetImmediateRootElement() == null)
+                if (_commentsElement.GetRootElement() == null)
                     Render();
             });
         }
@@ -226,14 +218,13 @@ namespace CodeHub.iOS.Views.PullRequests
                 return;
 
             var sheet = new UIActionSheet();
-            var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit".t()) : -1;
-            var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close".t() : "Open".t()) : -1;
-            var commentButton = sheet.AddButton("Comment".t());
-            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share".t()) : -1;
-            var showButton = sheet.AddButton("Show in GitHub".t());
-            var cancelButton = sheet.AddButton("Cancel".t());
+            var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
+            var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close" : "Open") : -1;
+            var commentButton = sheet.AddButton("Comment");
+            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share") : -1;
+            var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
-            sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) =>
             {
                 BeginInvokeOnMainThread(() =>
@@ -282,8 +273,8 @@ namespace CodeHub.iOS.Views.PullRequests
             split.AddButton("Deletions", deletions.ToString());
             split.AddButton("Changes", changes.ToString());
 
-            var root = new RootElement(Title);
-            root.Add(new Section { split });
+            ICollection<Section> sections = new LinkedList<Section>();
+            sections.Add(new Section { split });
 
             var secDetails = new Section();
             if (!string.IsNullOrEmpty(_descriptionElement.Value))
@@ -298,13 +289,15 @@ namespace CodeHub.iOS.Views.PullRequests
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
             secDetails.Add(_labelsElement);
-            root.Add(secDetails);
+            sections.Add(secDetails);
 
-            root.Add(new Section
-            {
-                new StyledStringElement("Commits", () => ViewModel.GoToCommitsCommand.Execute(null), Octicon.GitCommit.ToImage()),
-                new StyledStringElement("Files", () => ViewModel.GoToFilesCommand.Execute(null), Octicon.FileCode.ToImage()),
-            });
+            var commits = new StringElement("Commits", Octicon.GitCommit.ToImage());
+            commits.Clicked.Subscribe(_ => ViewModel.GoToCommitsCommand.Execute(null));
+
+            var files = new StringElement("Files", Octicon.FileCode.ToImage());
+            files.Clicked.Subscribe(_ => ViewModel.GoToFilesCommand.Execute(null));
+
+            sections.Add(new Section { commits, files });
 
             if (ViewModel.CanPush && !(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
             {
@@ -320,26 +313,44 @@ namespace CodeHub.iOS.Views.PullRequests
                     }
                 };
 
-                StyledStringElement el;
+                StringElement el;
                 if (ViewModel.PullRequest.Mergable == null)
-                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Octicon.GitMerge.ToImage());
+                {
+                    el = new StringElement("Merge This Pull Request!", Octicon.GitMerge.ToImage());
+                    el.Clicked.Subscribe(_ => mergeAction());
+                }
                 else if (ViewModel.PullRequest.Mergable.Value)
-                    el = new StyledStringElement("Merge This Pull Request!".t(), mergeAction, Octicon.GitMerge.ToImage());
+                {
+                    el = new StringElement("Merge This Pull Request!", Octicon.GitMerge.ToImage());
+                    el.Clicked.Subscribe(_ => mergeAction());
+                }
                 else
-                    el = new StyledStringElement("Unable to merge!".t()) { Image = Octicon.GitMerge.ToImage() };
+                    el = new StringElement("Unable to merge!") { Image = Octicon.GitMerge.ToImage() };
                 el.Accessory = UITableViewCellAccessory.None;
 
-                root.Add(new Section { el });
+                sections.Add(new Section { el });
             }
 
             if (!string.IsNullOrEmpty(_commentsElement.Value))
-                root.Add(new Section { _commentsElement });
+                sections.Add(new Section { _commentsElement });
 
-            root.Add(new Section { _addCommentElement });
+            sections.Add(new Section { _addCommentElement });
 
 
-            Root = root;
+            Root.Reset(sections);
 
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _actionButton;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

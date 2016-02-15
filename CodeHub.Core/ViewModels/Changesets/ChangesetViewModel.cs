@@ -14,6 +14,7 @@ namespace CodeHub.Core.ViewModels.Changesets
     {
         private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
         private readonly IApplicationService _application;
+        private readonly IFeaturesService _featuresService;
         private CommitModel _commitModel;
 
 		public string Node { get; private set; }
@@ -30,7 +31,18 @@ namespace CodeHub.Core.ViewModels.Changesets
             private set
             {
                 _commitModel = value;
-                RaisePropertyChanged(() => Changeset);
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
+        {
+            get { return _shouldShowPro; }
+            protected set
+            {
+                _shouldShowPro = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -69,9 +81,10 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _comments; }
         }
 
-        public ChangesetViewModel(IApplicationService application)
+        public ChangesetViewModel(IApplicationService application, IFeaturesService featuresService)
         {
             _application = application;
+            _featuresService = featuresService;
         }
 
         public void Init(NavObject navObject)
@@ -84,6 +97,11 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         protected override Task Load(bool forceCacheInvalidation)
         {
+            if (_featuresService.IsProEnabled)
+                ShouldShowPro = false;
+            else
+                this.RequestModel(this.GetApplication().Client.Users[User].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+
             var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceCacheInvalidation, response => Changeset = response.Data);
 			Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
             return t1;

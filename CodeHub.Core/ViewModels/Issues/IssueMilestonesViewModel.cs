@@ -55,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			SaveOnSelect = navObject.SaveOnSelect;
 			SelectedMilestone = TxSevice.Get() as MilestoneModel;
 
-			this.Bind(x => x.SelectedMilestone, x => SelectMilestone(x));
+            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
         }
 
 		private async Task SelectMilestone(MilestoneModel x)

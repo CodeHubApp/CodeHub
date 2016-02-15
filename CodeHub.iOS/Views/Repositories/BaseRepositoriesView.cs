@@ -1,10 +1,12 @@
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
-using MonoTouch.Dialog;
 using CodeHub.iOS.Views.Filters;
 using UIKit;
+using System;
+using CodeHub.Core.Utilities;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -20,9 +22,9 @@ namespace CodeHub.iOS.Views.Repositories
 
         protected BaseRepositoriesView()
         {
-            Title = "Repositories".t();
-            NoItemsText = "No Repositories".t(); 
-            _actionButton = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIKit.UIBarButtonItemStyle.Plain, 
+            Title = "Repositories";
+            NoItemsText = "No Repositories"; 
+            _actionButton = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIBarButtonItemStyle.Plain, 
                 (s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));
         }
 
@@ -42,15 +44,19 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             BindCollection(ViewModel.Repositories, CreateElement);
+
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 64f;
 			TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
         protected Element CreateElement(RepositoryModel repo)
         {
-            var description = ViewModel.ShowRepositoryDescription ? repo.Description : string.Empty;
-            var imageUrl = repo.Owner?.AvatarUrl;
-            var sse = new RepositoryElement(repo.Name, repo.Watchers, repo.Forks, description, repo.Owner.Login, imageUrl) { ShowOwner = ViewModel.ShowRepositoryOwner };
-            sse.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(repo);
+            var description = ViewModel.ShowRepositoryDescription ? Emojis.FindAndReplace(repo.Description) : string.Empty;
+            var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
+            var vm = new WeakReference<RepositoriesViewModel>(ViewModel);
+            var sse = new RepositoryElement(repo.Name, repo.Watchers, repo.Forks, description, repo.Owner.Login, avatar) { ShowOwner = ViewModel.ShowRepositoryOwner };
+            sse.Tapped += () => vm.Get()?.GoToRepositoryCommand.Execute(repo);
             return sse;
         }
     }

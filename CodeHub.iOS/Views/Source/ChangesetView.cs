@@ -1,33 +1,34 @@
 using System;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.Dialog;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using System.Linq;
 using Foundation;
 using CodeHub.Core.ViewModels.Changesets;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using Humanizer;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.ViewControllers.Repositories;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : PrettyDialogViewController
     {
+        private UIBarButtonItem _actionButton;
+
         public new ChangesetViewModel ViewModel 
         {
             get { return (ChangesetViewModel)base.ViewModel; }
 			set { base.ViewModel = value; }
         }
-        
-        public ChangesetView()
-        {
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 
             Title = "Commit " + (ViewModel.Node.Length > 6 ? ViewModel.Node.Substring(0, 6) : ViewModel.Node);
 
@@ -36,7 +37,7 @@ namespace CodeHub.iOS.Views.Source
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            ViewModel.Bind(x => x.Changeset, x => {
+            ViewModel.Bind(x => x.Changeset).Subscribe(x => {
                 var msg = x.Commit.Message ?? string.Empty;
                 msg = msg.Split('\n')[0];
                 HeaderView.Text = msg.Split('\n')[0];
@@ -45,8 +46,9 @@ namespace CodeHub.iOS.Views.Source
                 RefreshHeaderView();
             });
 
-            ViewModel.Bind(x => x.Changeset, Render);
+            ViewModel.Bind(x => x.Changeset).Subscribe(_ => Render());
             ViewModel.BindCollection(x => x.Comments, a => Render());
+            ViewModel.Bind(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
         }
 
         public void Render()
@@ -55,7 +57,7 @@ namespace CodeHub.iOS.Views.Source
             if (commitModel == null)
                 return;
 
-            var root = new RootElement(Title);
+            ICollection<Section> sections = new LinkedList<Section>();
 
             var additions = ViewModel.Changeset.Stats?.Additions ?? 0;
             var deletions = ViewModel.Changeset.Stats?.Deletions ?? 0;
@@ -66,10 +68,10 @@ namespace CodeHub.iOS.Views.Source
             split.AddButton("Parents", ViewModel.Changeset.Parents.Count().ToString());
 
             var headerSection = new Section() { split };
-            root.Add(headerSection);
+            sections.Add(headerSection);
 
             var detailSection = new Section();
-            root.Add(detailSection);
+            sections.Add(detailSection);
 
             var user = "Unknown";
             if (commitModel.Commit.Author != null)
@@ -86,14 +88,14 @@ namespace CodeHub.iOS.Views.Source
 
             if (ViewModel.ShowRepository)
             {
-                var repo = new StyledStringElement(ViewModel.Repository) { 
+                var repo = new StringElement(ViewModel.Repository) { 
                     Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
-                    Font = StyledStringElement.DefaultDetailFont, 
-                    TextColor = StyledStringElement.DefaultDetailColor,
+                    Font = StringElement.DefaultDetailFont, 
+                    TextColor = StringElement.DefaultDetailColor,
                     Image = Octicon.Repo.ToImage()
                 };
-                repo.Tapped += () => ViewModel.GoToRepositoryCommand.Execute(null);
+                repo.Clicked.Subscribe(_ => ViewModel.GoToRepositoryCommand.Execute(null));
                 detailSection.Add(repo);
             }
 
@@ -110,10 +112,10 @@ namespace CodeHub.iOS.Views.Source
 					var y = x;
 					var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
 					var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-					sse.Tapped += () => ViewModel.GoToFileCommand.Execute(y);
+                    sse.Clicked.Subscribe(_ => ViewModel.GoToFileCommand.Execute(y));
 					fileSection.Add(sse);
 				}
-				root.Add(fileSection);
+                sections.Add(fileSection);
 			}
 //
 //			var fileSection = new Section();
@@ -139,12 +141,12 @@ namespace CodeHub.iOS.Views.Source
             }
 
 			if (commentSection.Elements.Count > 0)
-				root.Add(commentSection);
+                sections.Add(commentSection);
 
-            var addComment = new StyledStringElement("Add Comment".t()) { Image = Octicon.Pencil.ToImage() };
-            addComment.Tapped += AddCommentTapped;
-			root.Add(new Section { addComment });
-            Root = root; 
+            var addComment = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
+            addComment.Clicked.Subscribe(_ => AddCommentTapped());
+            sections.Add(new Section { addComment });
+            Root.Reset(sections); 
         }
 
         void AddCommentTapped()
@@ -153,7 +155,7 @@ namespace CodeHub.iOS.Views.Source
 			composer.NewComment(this, async (text) => {
                 try
                 {
-					await composer.DoWorkAsync("Commenting...".t(), () => ViewModel.AddComment(text));
+					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
 					composer.CloseComposer();
                 }
                 catch (Exception e)
@@ -174,13 +176,12 @@ namespace CodeHub.iOS.Views.Source
 				return;
 
             var sheet = new UIActionSheet();
-			var addComment = sheet.AddButton("Add Comment".t());
-			var copySha = sheet.AddButton("Copy Sha".t());
-			var shareButton = sheet.AddButton("Share".t());
-			//var showButton = sheet.AddButton("Show in GitHub".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var addComment = sheet.AddButton("Add Comment");
+			var copySha = sheet.AddButton("Copy Sha");
+			var shareButton = sheet.AddButton("Share");
+			//var showButton = sheet.AddButton("Show in GitHub");
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
             sheet.Dismissed += (s, e) =>
             {
                 BeginInvokeOnMainThread(() =>
@@ -219,6 +220,18 @@ namespace CodeHub.iOS.Views.Source
 
 			sheet.ShowInView(this.View);
 		}
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _actionButton;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
+        }
     }
 }
 

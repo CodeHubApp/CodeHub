@@ -5,11 +5,9 @@ using MvvmCross.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Services;
 using MvvmCross.Plugins.Messenger;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
-using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -17,6 +15,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
     {
         private MvxSubscriptionToken _issueEditSubscription;
         private MvxSubscriptionToken _pullRequestEditSubscription;
+        private readonly IFeaturesService _featuresService;
 
         public long Id
         { 
@@ -124,7 +123,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                         ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                     }, () => Issue != null && IsCollaborator);
 
-                    this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
+                    this.Bind(x => Issue).Subscribe(_ => cmd.RaiseCanExecuteChanged());
                     _goToAssigneeCommand = cmd;
                 }
 
@@ -146,7 +145,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                         ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                     }, () => Issue != null && IsCollaborator);
 
-                    this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
+                    this.Bind(x => Issue).Subscribe(_ => cmd.RaiseCanExecuteChanged());
                     _goToMilestoneCommand = cmd;
                 }
 
@@ -168,7 +167,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                         ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                     }, () => Issue != null && IsCollaborator);
 
-                    this.Bind(x => Issue, cmd.RaiseCanExecuteChanged);
+                    this.Bind(x => Issue).Subscribe(_ => cmd.RaiseCanExecuteChanged());
                     _goToLabelsCommand = cmd;
                 }
 
@@ -197,7 +196,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 if (_shareCommmand == null)
                 {
                     var cmd = new MvxCommand(() => base.ShareCommand.Execute(PullRequest.HtmlUrl), () => PullRequest != null);
-                    this.Bind(x => x.PullRequest, cmd.RaiseCanExecuteChanged);
+                    this.Bind(x => x.PullRequest).Subscribe(_ => cmd.RaiseCanExecuteChanged());
                     _shareCommmand = cmd;
                 }
 
@@ -237,6 +236,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public string ConvertToMarkdown(string str)
         {
             return (GetService<IMarkdownService>().Convert(str));
+        }
+
+        public PullRequestViewModel(IFeaturesService featuresService)
+        {
+            _featuresService = featuresService;
         }
 
         public void Init(NavObject navObject)
@@ -293,15 +297,30 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }
         }
 
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
+        {
+            get { return _shouldShowPro; }
+            protected set
+            {
+                _shouldShowPro = value;
+                RaisePropertyChanged();
+            }
+        }
+
         protected override Task Load(bool forceCacheInvalidation)
         {
+            ShouldShowPro = false;
+
             var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
             var t1 = this.RequestModel(pullRequest, forceCacheInvalidation, response => PullRequest = response.Data);
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), forceCacheInvalidation, 
-                response => CanPush = response.Data.Permissions.Push).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), forceCacheInvalidation, response => {
+                CanPush = response.Data.Permissions.Push;
+                ShouldShowPro = response.Data.Private && !_featuresService.IsProEnabled;
+            }).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
                 forceCacheInvalidation, response => IsCollaborator = response.Data).FireAndForget();
             return t1;

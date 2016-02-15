@@ -77,7 +77,6 @@ namespace CodeHub.iOS
             }
             else if (uiView is StartupView)
             {
-//                Transition(uiView);
                 _window.RootViewController = uiView;
             }
             else if (uiView is AccountsView)
@@ -128,14 +127,8 @@ namespace CodeHub.iOS
 
         private void Transition(UIViewController controller)
         {
-            // Quickly swap to get the right sizes for the views
-            var current = _window.RootViewController;
-            _window.RootViewController = controller;
-            _window.RootViewController = current;
-
-            UIView.Transition(_window.RootViewController.View, controller.View, 0.3f, 
-                UIViewAnimationOptions.TransitionCrossDissolve | UIViewAnimationOptions.AllowAnimatedContent, 
-                () => _window.RootViewController = controller);
+            UIView.Transition(_window, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () => 
+                _window.RootViewController = controller, null);
         }
     }
 }

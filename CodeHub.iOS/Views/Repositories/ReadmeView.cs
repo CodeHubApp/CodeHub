@@ -2,12 +2,13 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.iOS.Views;
 using UIKit;
 using WebKit;
+using System;
 
 namespace CodeHub.iOS.Views.Repositories
 {
     public class ReadmeView : WebView
     {
-        private readonly UIBarButtonItem _actionButton;
+        private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
 
         public new ReadmeViewModel ViewModel
         {
@@ -18,13 +19,13 @@ namespace CodeHub.iOS.Views.Repositories
 		public ReadmeView() : base(false)
         {
             Title = "Readme";
-            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShareButtonPress());
+            NavigationItem.RightBarButtonItem = _actionButton;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.Path, x => LoadFile(x));
+            ViewModel.Bind(x => x.Path).Subscribe(x => LoadFile(x));
 			ViewModel.LoadCommand.Execute(false);
         }
 
@@ -43,23 +44,22 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem = _actionButton;
+            _actionButton.Clicked += ShareButtonPress;
         }
 
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
+            _actionButton.Clicked -= ShareButtonPress;
         }
 
-		private void ShareButtonPress()
+        private void ShareButtonPress(object o, EventArgs args)
 		{
             var sheet = new UIActionSheet();
-			var shareButton = sheet.AddButton("Share".t());
-			var showButton = sheet.AddButton("Show in GitHub".t());
-			var cancelButton = sheet.AddButton("Cancel".t());
+			var shareButton = sheet.AddButton("Share");
+			var showButton = sheet.AddButton("Show in GitHub");
+			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 
             sheet.Dismissed += (sender, e) =>
             {

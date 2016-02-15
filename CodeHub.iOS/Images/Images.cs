@@ -8,6 +8,8 @@ namespace CodeHub.iOS
         public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown").ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate); } }
         public static UIImage Avatar { get { return UIImageHelper.FromFileAuto("Images/avatar"); } }
 
+        public static UIImage DownChevron { get { return CreateTemplateFromAuto("Images/down_chevron"); } }
+
         public static class Logos
         {
             public static UIImage DotComMascot { get { return UIImage.FromFile("Images/Logos/dotcom-mascot.png"); } }
@@ -26,6 +28,11 @@ namespace CodeHub.iOS
             public static UIImage Star { get { return UIImageHelper.FromFileAuto("Images/Gist/star"); } }
             public static UIImage StarHighlighted { get { return UIImageHelper.FromFileAuto("Images/Gist/star_highlighted"); } }
             public static UIImage User { get { return UIImageHelper.FromFileAuto("Images/Gist/user"); } }
+        }
+
+        private static UIImage CreateTemplateFromAuto(string path)
+        {
+            return UIImageHelper.FromFileAuto(path);
         }
     }
 }

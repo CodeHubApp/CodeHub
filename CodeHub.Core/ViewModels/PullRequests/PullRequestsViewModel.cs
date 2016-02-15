@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
@@ -41,7 +42,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
 		public PullRequestsViewModel()
 		{
-			this.Bind(x => x.SelectedFilter, () => LoadCommand.Execute(null));
+            this.Bind(x => x.SelectedFilter).Subscribe(_ => LoadCommand.Execute(null));
 		}
 
 		public void Init(NavObject navObject) 

@@ -1,6 +1,5 @@
 using UIKit;
 using CoreGraphics;
-using CoreGraphics;
 using System;
 
 namespace CodeHub.iOS.Views

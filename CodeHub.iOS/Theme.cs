@@ -35,8 +35,6 @@ namespace CodeHub.iOS
                 largeFonts = false;
             Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
 
-            MonoTouch.Dialog.Element.FontSizeRatio = Theme.CurrentTheme.FontSizeRatio;
-
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
@@ -130,8 +128,6 @@ namespace CodeHub.iOS
         {
             get { return Octicon.Person.ToImage(); }
         }
-
-        public UIColor NavigationTextColor { get { return UIColor.FromRGB(97, 95, 95); } }
 
         public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
         public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }

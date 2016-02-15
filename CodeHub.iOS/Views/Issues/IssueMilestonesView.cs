@@ -1,9 +1,10 @@
+using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using System.Linq;
 using UIKit;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -37,7 +38,7 @@ namespace CodeHub.iOS.Views.Issues
 				return e;
 			});
 
-			vm.Bind(x => x.SelectedMilestone, x =>
+            vm.Bind(x => x.SelectedMilestone).Subscribe(x =>
 			{
 				if (Root.Count == 0)
 					return;
@@ -46,12 +47,7 @@ namespace CodeHub.iOS.Views.Issues
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			});
 
-			var _hud = new Hud(View);
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x) _hud.Show("Saving...");
-				else _hud.Hide();
-			});
+            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }
     }
 }

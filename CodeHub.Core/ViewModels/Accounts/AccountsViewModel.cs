@@ -1,12 +1,7 @@
-using CodeHub.Core.Data;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System;
-using CodeHub.Core.Factories;
-using System.Threading.Tasks;
-using System.Net;
 using CodeHub.Core.Utils;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.App;
@@ -17,17 +12,6 @@ namespace CodeHub.Core.ViewModels.Accounts
     {
         private readonly IAccountsService _accountsService;
         private readonly CustomObservableCollection<IAccount> _accounts = new CustomObservableCollection<IAccount>();
-        private bool _isLoggingIn;
-
-        public bool IsLoggingIn
-        {
-            get { return _isLoggingIn; }
-            protected set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(() => IsLoggingIn);
-            }
-        }
 
         public CustomObservableCollection<IAccount> Accounts
         {

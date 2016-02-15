@@ -1,8 +1,9 @@
-using MonoTouch.Dialog;
+using System;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Filters
 {
@@ -13,11 +14,11 @@ namespace CodeHub.iOS.Views.Filters
         private readonly string _repo;
         private IssuesFilterModel.MilestoneKeyValue _milestoneHolder;
 
-        private TrueFalseElement _open;
-        private StyledStringElement _milestone;
+        private BooleanElement _open;
+        private StringElement _milestone;
         private EntryElement _labels, _mentioned, _creator, _assignee;
         private EnumChoiceElement<IssuesFilterModel.Sort> _sort;
-        private TrueFalseElement _asc;
+        private BooleanElement _asc;
 
         public IssuesFilterViewController(string user, string repo, IFilterableViewModel<IssuesFilterModel> filterController)
         {
@@ -59,32 +60,36 @@ namespace CodeHub.iOS.Views.Filters
             base.ViewDidLoad();
             var model = _filterController.Filter.Clone();
 
+            var save = new StringElement("Save as Default") { Accessory = UITableViewCellAccessory.None };
+            save.Clicked.Subscribe(_ =>
+            {
+                _filterController.ApplyFilter(CreateFilterModel(), true);
+                CloseViewController();
+            });
+
             //Load the root
-            var root = new RootElement(Title) {
+            var root = new [] {
                 new Section("Filter") {
-                    (_open = new TrueFalseElement("Open?", model.Open)),
+                    (_open = new BooleanElement("Open?", model.Open)),
                     (_labels = new InputElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                     (_mentioned = new InputElement("Mentioned", "User", model.Mentioned) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                     (_creator = new InputElement("Creator", "User", model.Creator) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                     (_assignee = new InputElement("Assignee", "User", model.Assignee) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
-                    (_milestone = new StyledStringElement("Milestone", "None", UITableViewCellStyle.Value1)),
+                    (_milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1)),
                 },
                 new Section("Order By") {
                     (_sort = CreateEnumElement("Field", model.SortType)),
-                    (_asc = new TrueFalseElement("Ascending", model.Ascending))
+                    (_asc = new BooleanElement("Ascending", model.Ascending))
                 },
                 new Section(string.Empty, "Saving this filter as a default will save it only for this repository.") {
-                    new StyledStringElement("Save as Default", () =>{
-                        _filterController.ApplyFilter(CreateFilterModel(), true);
-                        CloseViewController();
-                    }) { Accessory = UITableViewCellAccessory.None },
+                    save
                 }
             };
 
             RefreshMilestone();
 
             _milestone.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            _milestone.Tapped += () => {
+            _milestone.Clicked.Subscribe(_ => {
                 var ctrl = new IssueMilestonesFilterViewController(_user, _repo, _milestoneHolder != null);
 
                 ctrl.MilestoneSelected = (title, num, val) => {
@@ -96,9 +101,9 @@ namespace CodeHub.iOS.Views.Filters
                     NavigationController.PopViewController(true);
                 };
                 NavigationController.PushViewController(ctrl, true);
-            };
+            });
 
-            Root = root;
+            Root.Reset(root);
         }
     }
 }

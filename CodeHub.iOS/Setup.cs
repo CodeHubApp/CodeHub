@@ -6,13 +6,13 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using MonoTouch.Dialog;
 using UIKit;
 using MvvmCross.iOS.Platform;
 using MvvmCross.iOS.Views.Presenters;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.IoC;
 using CodeHub.Core.ViewModels.App;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS
 {
@@ -44,7 +44,7 @@ namespace CodeHub.iOS
         protected override void FillBindingNames(IMvxBindingNameRegistry obj)
         {
             base.FillBindingNames(obj);
-			obj.AddOrOverwrite(typeof(StyledStringElement), "Tapped");
+			obj.AddOrOverwrite(typeof(StringElement), "Tapped");
 			obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
         }
 

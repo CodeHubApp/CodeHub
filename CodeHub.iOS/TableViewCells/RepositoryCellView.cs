@@ -1,25 +1,16 @@
 using System;
 using Foundation;
 using ObjCRuntime;
-using UIKit;
 using SDWebImage;
 using CodeHub.iOS;
 using MvvmCross.Binding.iOS.Views;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.TableViewCells
 {
     public partial class RepositoryCellView : MvxTableViewCell
     {
-        public static UIFont CaptionFont
-        {
-            get { return UIFont.BoldSystemFontOfSize(15f * Theme.CurrentTheme.FontSizeRatio); }
-        }
-
-        public static UIFont DescriptionFont
-        {
-            get { return UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio); }
-        }
-
+        public static NSString Key = new NSString("RepositoryCellView");
 
         public static RepositoryCellView Create()
         {
@@ -30,10 +21,8 @@ namespace CodeHub.iOS.TableViewCells
             if (cell != null)
             {
                 cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
-                cell.Caption.Font = CaptionFont;
 
                 cell.Description.TextColor = Theme.CurrentTheme.MainTextColor;
-                cell.Description.Font = DescriptionFont;
 
                 cell.Image1.Image = Theme.CurrentTheme.RepositoryCellFollowers;
                 cell.Image3.Image = Theme.CurrentTheme.RepositoryCellForks;
@@ -47,6 +36,13 @@ namespace CodeHub.iOS.TableViewCells
             return cell;
         }
 
+        public override NSString ReuseIdentifier
+        {
+            get
+            {
+                return Key;
+            }
+        }
 
         public RepositoryCellView()
         {
@@ -57,18 +53,13 @@ namespace CodeHub.iOS.TableViewCells
         {
         }
 
-        public void Bind(string name, string name2, string name3, string description, string repoOwner, string imageUrl)
+        public void Bind(string name, string name2, string name3, string description, string repoOwner, GitHubAvatar imageUrl)
         {
             Caption.Text = name;
             Label1.Text = name2;
             Label3.Text = name3;
             Description.Hidden = description == null;
             Description.Text = description ?? string.Empty;
-
-            var frame = Description.Frame;
-            frame.Y = 29f;
-            frame.Height = this.Bounds.Height - frame.Y - 16f - 12f;
-            Description.Frame = frame;
 
             RepoName.Hidden = repoOwner == null;
             UserImage.Hidden = RepoName.Hidden;
@@ -78,8 +69,9 @@ namespace CodeHub.iOS.TableViewCells
 
             try
             {
-                var url = new NSUrl(imageUrl);
-                BigImage.SetImage(url, Images.Avatar);
+                var uri = imageUrl.ToUri(64)?.AbsoluteUri;
+                if (uri != null)
+                    BigImage.SetImage(new NSUrl(uri), Images.Avatar);
             }
             catch
             {

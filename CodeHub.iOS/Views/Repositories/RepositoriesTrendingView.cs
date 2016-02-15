@@ -1,92 +1,94 @@
 using System;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels.Repositories;
 using UIKit;
 using System.Linq;
+using CoreGraphics;
+using CodeHub.Core.Utilities;
+using CodeHub.iOS.ViewControllers.Repositories;
+using CodeHub.iOS.Transitions;
 
 namespace CodeHub.iOS.Views.Repositories
 {
-    public class RepositoriesTrendingView : ViewModelCollectionDrivenDialogViewController
+    public class RepositoriesTrendingView : ViewModelDrivenDialogViewController
     {
-        private UIBarButtonItem _timeButton;
-        private UIBarButtonItem _languageButton;
-
+        private readonly TrendingTitleButton _trendingTitleButton = new TrendingTitleButton { Frame = new CGRect(0, 0, 200f, 32f) };
 
         public RepositoriesTrendingView()
         {
             EnableSearch = false;
-            NoItemsText = "No Repositories".t();
-            Title = "Trending".t();
+            NavigationItem.TitleView = _trendingTitleButton;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
             var vm = (RepositoriesTrendingViewModel)ViewModel;
+            var weakVm = new WeakReference<RepositoriesTrendingViewModel>(vm);
 
-			BindCollection(vm.Repositories, repo =>
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 64f;
+            TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
+
+            vm.Bind(x => x.SelectedLanguage, true).Subscribe(l => _trendingTitleButton.Text = l.Name);
+
+            vm.Bind(x => x.Repositories).Subscribe(repos =>
             {
-				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
-                string imageUrl = repo.AvatarUrl;
-                var sse = new RepositoryElement(repo.Name, repo.Stars, repo.Forks, description, repo.Owner, imageUrl) { ShowOwner = true };
-				sse.Tapped += () => vm.GoToRepositoryCommand.Execute(repo);
-                return sse;
+                Root.Reset(repos.Select(x => {
+                    var s = new Section(CreateHeaderView(x.Item1));
+                    s.Reset(x.Item2.Select(repo => {
+                        var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
+                        var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
+                        var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.Forks, description, repo.Owner?.Login, avatar) { ShowOwner = true };
+                        sse.Tapped += () => weakVm.Get()?.GoToRepositoryCommand.Execute(repo);
+                        return sse;
+                    }));
+                    return s;
+                }));
             });
 
-            _timeButton = new UIBarButtonItem("Time", UIBarButtonItemStyle.Plain, (s, e) =>
-            {
-                var index = vm.SelectedTime == null ? 0 : vm.Times.ToList().IndexOf(vm.SelectedTime);
-                if (index < 0) index = 0;
-                new PickerAlert(vm.Times.Select(x => x.Name).ToArray(), index, x => 
-                {
-                    var selectedTime = vm.Times.ElementAtOrDefault(x);
-                    if (selectedTime != null)
-                        vm.SelectedTime = selectedTime;
-                }).Show();
+            OnActivation(d => _trendingTitleButton.GetClickedObservable().Subscribe(_ => ShowLanguages()));
+        }
+
+
+        private void ShowLanguages()
+        {
+            var vm = new WeakReference<RepositoriesTrendingViewModel>(ViewModel as RepositoriesTrendingViewModel);
+            var view = new LanguagesViewController();
+            view.SelectedLanguage = vm.Get()?.SelectedLanguage;
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
+            view.Language.Subscribe(x => {
+                vm.Get().Do(y => y.SelectedLanguage = x);
+                DismissViewController(true, null);
             });
-
-            _languageButton = new UIBarButtonItem("Language", UIBarButtonItemStyle.Plain, (s, e) =>
-            {
-                var index = vm.SelectedLanguage == null ? 0 : vm.Languages.ToList().IndexOf(vm.SelectedLanguage);
-                if (index < 0) index = 0;
-                new PickerAlert(vm.Languages.Select(x => x.Name).ToArray(), index, x =>
-                {
-                    var selectedlanguage = vm.Languages.ElementAtOrDefault(x);
-                    if (selectedlanguage != null)
-                        vm.SelectedLanguage = selectedlanguage;
-                }).Show();
-            });
-
-            vm.Bind(x => x.SelectedTime, x => _timeButton.Title = x.Name, true);
-            vm.Bind(x => x.SelectedLanguage, x => _languageButton.Title = x.Name, true);
-
-
+            var ctrlToPresent = new ThemedNavigationController(view);
+            ctrlToPresent.TransitioningDelegate = new SlideDownTransition();
+            PresentViewController(ctrlToPresent, true, null);
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
 
-            ToolbarItems = new []
+            if (NavigationController != null)
             {
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                _languageButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                _timeButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace)
-            };
-
-            NavigationController.SetToolbarHidden(false, animated);
+                NavigationController.NavigationBar.ShadowImage = new UIImage();
+                _trendingTitleButton.TintColor = NavigationController.NavigationBar.TintColor;
+            }
         }
 
-        public override void ViewWillDisappear(bool animated)
+        private static UILabel CreateHeaderView(string name)
         {
-            base.ViewWillDisappear(animated);
-
-            ToolbarItems = new UIBarButtonItem[0];
-            NavigationController.SetToolbarHidden(true, animated);
+            return new UILabel(new CGRect(0, 0, 320f, 26f)) 
+            {
+                BackgroundColor = Theme.CurrentTheme.PrimaryColor,
+                Text = name,
+                Font = UIFont.BoldSystemFontOfSize(14f),
+                TextColor = UIColor.White,
+                TextAlignment = UITextAlignment.Center
+            };
         }
     }
 }

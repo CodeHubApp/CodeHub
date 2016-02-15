@@ -2,11 +2,13 @@ using System;
 using UIKit;
 using CodeHub.iOS.Views;
 using CoreGraphics;
+using Foundation;
 
 namespace CodeHub.iOS.TableViewCells
 {
     public class MilestoneTableViewCell : UITableViewCell
     {
+        public static readonly NSString Key = new NSString("MilestoneTableViewCell");
         private readonly MilestoneView _milestoneView;
 
         public void Init(string title, int openIssues, int closedIssues, DateTimeOffset? dueDate)
@@ -22,6 +24,14 @@ namespace CodeHub.iOS.TableViewCells
         public override void SetHighlighted(bool highlighted, bool animated)
         {
             BackgroundColor = highlighted ? UIColor.FromWhiteAlpha(0.9f, 1.0f) : UIColor.White;
+        }
+
+        public override NSString ReuseIdentifier
+        {
+            get
+            {
+                return Key;
+            }
         }
 
         public MilestoneTableViewCell()

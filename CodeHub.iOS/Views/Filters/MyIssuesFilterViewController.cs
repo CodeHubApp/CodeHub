@@ -1,8 +1,9 @@
-using MonoTouch.Dialog;
+using System;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Filters
 {
@@ -11,10 +12,10 @@ namespace CodeHub.iOS.Views.Filters
         private readonly IFilterableViewModel<MyIssuesFilterModel> _filterController;
 
         private EnumChoiceElement<MyIssuesFilterModel.Filter> _filter;
-        private TrueFalseElement _open;
+        private BooleanElement _open;
         private EntryElement _labels;
         private EnumChoiceElement<MyIssuesFilterModel.Sort> _sort;
-        private TrueFalseElement _asc;
+        private BooleanElement _asc;
 
 
         public MyIssuesFilterViewController(IFilterableViewModel<MyIssuesFilterModel> filterController)
@@ -43,26 +44,30 @@ namespace CodeHub.iOS.Views.Filters
             base.ViewDidLoad();
             var model = _filterController.Filter.Clone();
 
+            var save = new StringElement("Save as Default") { Accessory = UITableViewCellAccessory.None };
+            save.Clicked.Subscribe(_ =>
+            {
+                _filterController.ApplyFilter(CreateFilterModel(), true);
+                CloseViewController();
+            });
+
             //Load the root
-            var root = new RootElement(Title) {
+            var sections = new [] {
                 new Section("Filter") {
                     (_filter = CreateEnumElement("Type", model.FilterType)),
-                    (_open = new TrueFalseElement("Open?", model.Open)),
+                    (_open = new BooleanElement("Open?", model.Open)),
                     (_labels = new InputElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                 },
                 new Section("Order By") {
                     (_sort = CreateEnumElement("Field", model.SortType)),
-                    (_asc = new TrueFalseElement("Ascending", model.Ascending))
+                    (_asc = new BooleanElement("Ascending", model.Ascending))
                 },
                 new Section() {
-                    new StyledStringElement("Save as Default", () =>{
-                        _filterController.ApplyFilter(CreateFilterModel(), true);
-                        CloseViewController();
-                    }) { Accessory = UITableViewCellAccessory.None },
+                    save,
                 }
             };
 
-            Root = root;
+            Root.Reset(sections);
         }
     }
 }

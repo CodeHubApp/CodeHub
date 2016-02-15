@@ -1,19 +1,25 @@
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.User;
-using MonoTouch.Dialog;
 using UIKit;
-using CoreGraphics;
+using System;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.User
 {
     public class ProfileView : PrettyDialogViewController
     {
+        private readonly Lazy<UIBarButtonItem> _actionButton;
+
 		public new ProfileViewModel ViewModel
 		{
 			get { return (ProfileViewModel)base.ViewModel; }
 			set { base.ViewModel = value; }
 		}
+
+        public ProfileView()
+        {
+            _actionButton = new Lazy<UIBarButtonItem>(() => new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
+        }
             
         public override void ViewDidLoad()
         {
@@ -24,17 +30,16 @@ namespace CodeHub.iOS.Views.User
             HeaderView.Text = ViewModel.Username;
 
             var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-", () => ViewModel.GoToFollowersCommand.Execute(null));
-            var following = split.AddButton("Following", "-", () => ViewModel.GoToFollowingCommand.Execute(null));
+            var followers = split.AddButton("Followers", "-");
+            var following = split.AddButton("Following", "-");
 
-            var events = new StyledStringElement("Events".t(), () => ViewModel.GoToEventsCommand.Execute(null), Octicon.Rss.ToImage());
-            var organizations = new StyledStringElement("Organizations".t(), () => ViewModel.GoToOrganizationsCommand.Execute(null), Octicon.Organization.ToImage());
-            var repos = new StyledStringElement("Repositories".t(), () => ViewModel.GoToRepositoriesCommand.Execute(null), Octicon.Repo.ToImage());
-            var gists = new StyledStringElement("Gists", () => ViewModel.GoToGistsCommand.Execute(null), Octicon.Gist.ToImage());
-            Root.UnevenRows = true;
+            var events = new StringElement("Events", Octicon.Rss.ToImage());
+            var organizations = new StringElement("Organizations", Octicon.Organization.ToImage());
+            var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", Octicon.Gist.ToImage());
             Root.Add(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
-            ViewModel.Bind(x => x.User, x =>
+            ViewModel.Bind(x => x.User).Subscribe(x =>
             {
                 followers.Text = x.Followers.ToString();
                 following.Text = x.Following.ToString();
@@ -42,13 +47,23 @@ namespace CodeHub.iOS.Views.User
                 HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
             });
+
+            OnActivation(d =>
+            {
+                d(followers.Clicked.BindCommand(ViewModel.GoToFollowersCommand));
+                d(following.Clicked.BindCommand(ViewModel.GoToFollowingCommand));
+                d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
+                d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
+                d(repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand));
+                d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
+            });
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             if (!ViewModel.IsLoggedInUser)
-                NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
+                NavigationItem.RightBarButtonItem = _actionButton.Value;
         }
 
         public override void ViewDidDisappear(bool animated)
@@ -63,12 +78,14 @@ namespace CodeHub.iOS.Views.User
 			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow" : "Follow");
 			var cancelButton = sheet.AddButton("Cancel");
 			sheet.CancelButtonIndex = cancelButton;
-			sheet.DismissWithClickedButtonIndex(cancelButton, true);
 			sheet.Dismissed += (s, e) => {
-				if (e.ButtonIndex == followButton)
-				{
-					ViewModel.ToggleFollowingCommand.Execute(null);
-				}
+                BeginInvokeOnMainThread(() =>
+                {
+    				if (e.ButtonIndex == followButton)
+    				{
+    					ViewModel.ToggleFollowingCommand.Execute(null);
+    				}
+                });
 
                 sheet.Dispose();
 			};

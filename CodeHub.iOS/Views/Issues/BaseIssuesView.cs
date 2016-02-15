@@ -2,7 +2,8 @@ using CodeHub.iOS.ViewControllers;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
+using System;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -16,8 +17,7 @@ namespace CodeHub.iOS.Views.Issues
 
         protected BaseIssuesView()
         {
-            Root.UnevenRows = true;
-            Title = "Issues".t();
+            Title = "Issues";
         }
 
         public override void ViewDidLoad()
@@ -26,21 +26,15 @@ namespace CodeHub.iOS.Views.Issues
             TableView.CellLayoutMarginsFollowReadableWidth = false;
         }
 
-        protected MonoTouch.Dialog.Element CreateElement(IssueModel x)
+        protected IssueElement CreateElement(IssueModel x)
         {
+            var weakVm = new WeakReference<IBaseIssuesViewModel>(ViewModel);
 			var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
             var assigned = x.Assignee != null ? x.Assignee.Login : "unassigned";
             var kind = isPullRequest ? "Pull" : "Issue";
             var commentString = x.Comments == 1 ? "1 comment".t() : x.Comments + " comments".t();
             var el = new IssueElement(x.Number.ToString(), x.Title, assigned, x.State, commentString, kind, x.UpdatedAt);
-            el.Tag = x;
-
-            el.Tapped += () => {
-                //Make sure the first responder is gone.
-                View.EndEditing(true);
-				ViewModel.GoToIssueCommand.Execute(x);
-            };
-
+            el.Tapped += () => weakVm.Get()?.GoToIssueCommand.Execute(x);
             return el;
         }
     }

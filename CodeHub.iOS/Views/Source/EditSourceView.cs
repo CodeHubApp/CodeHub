@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Views.Source
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Commit());
 
 			var vm = (EditSourceViewModel)this.ViewModel;
-			vm.Bind(x => x.Text, x => _composerView.Text = x);
+            vm.Bind(x => x.Text).Subscribe(x => _composerView.Text = x);
 		}
 
 		private void Commit()

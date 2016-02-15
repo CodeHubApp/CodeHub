@@ -1,15 +1,17 @@
 using GitHubSharp;
 using System.Collections.Generic;
 using GitHubSharp.Models;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
 	public class ChangesetsViewModel : CommitsViewModel
     {
-        public string Branch
+        public string Branch { get; private set; }
+
+        public ChangesetsViewModel(IFeaturesService featuresService)
+            : base(featuresService)
         {
-            get;
-            private set;
         }
 
         public void Init(NavObject navObject)

@@ -1,11 +1,10 @@
+using System;
 using CodeHub.iOS.ViewControllers;
-using MonoTouch.Dialog;
 using CodeHub.Core.ViewModels.Issues;
-using GitHubSharp.Models;
 using System.Linq;
 using UIKit;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.Elements;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -14,8 +13,8 @@ namespace CodeHub.iOS.Views.Issues
 		public IssueLabelsView()
 		{
 			EnableSearch = false;
-			Title = "Labels".t();
-			NoItemsText = "No Labels".t();
+			Title = "Labels";
+            NoItemsText = "No Labels";
 		}
 
         public override void ViewDidLoad()
@@ -28,13 +27,13 @@ namespace CodeHub.iOS.Views.Issues
 			BindCollection(vm.Labels, x => 
             {
                 var e = new LabelElement(x.Name, x.Color);
-                e.Tapped += () =>
+                e.Clicked.Subscribe(_ =>
                 {
                     if (e.Accessory == UITableViewCellAccessory.Checkmark)
 						vm.SelectedLabels.Items.Remove(x);
                     else
 						vm.SelectedLabels.Items.Add(x);
-                };
+                });
 
 				e.Accessory = vm.SelectedLabels.Contains(x) ? 
 				               UITableViewCellAccessory.Checkmark : 
@@ -59,12 +58,7 @@ namespace CodeHub.iOS.Views.Issues
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
 			}, true);
 
-			var _hud = new Hud(View);
-			vm.Bind(x => x.IsSaving, x =>
-			{
-				if (x) _hud.Show("Saving...");
-				else _hud.Hide();
-			});
+            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }
     }
 }

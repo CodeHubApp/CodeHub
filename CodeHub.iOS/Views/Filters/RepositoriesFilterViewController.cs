@@ -1,14 +1,15 @@
-using MonoTouch.Dialog;
+using System;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels;
+using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Filters
 {
     public class RepositoriesFilterViewController : FilterViewController
     {
-        private TrueFalseElement _ascendingElement;
+        private BooleanElement _ascendingElement;
         private EnumChoiceElement<RepositoriesFilterModel.Order> _orderby;
         private readonly IFilterableViewModel<RepositoriesFilterModel> _filterController;
 
@@ -28,21 +29,22 @@ namespace CodeHub.iOS.Views.Filters
 
             var currentModel = _filterController.Filter.Clone();
 
-            //Load the root
-            var root = new RootElement(Title) {
-                new Section("Order By") {
-                    (_orderby = CreateEnumElement("Field", currentModel.OrderBy)),
-                    (_ascendingElement = new TrueFalseElement("Ascending", currentModel.Ascending)),
-                },
-                new Section {
-                    new StyledStringElement("Save as Default", () =>{
-                        _filterController.ApplyFilter(CreateFilterModel(), true);
-                        CloseViewController();
-                    }) { Accessory = UITableViewCellAccessory.None },
-                }
-            };
-
-            Root = root;
+            var save = new StringElement("Save as Default") { Accessory = UITableViewCellAccessory.None };
+            save.Clicked.Subscribe(_ =>
+            {
+                _filterController.ApplyFilter(CreateFilterModel(), true);
+                CloseViewController();
+            });
+    
+            Root.Reset(new Section("Order By")
+            {
+                (_orderby = CreateEnumElement("Field", currentModel.OrderBy)),
+                (_ascendingElement = new BooleanElement("Ascending", currentModel.Ascending)),
+            },
+            new Section
+            {
+                save
+            });
         }
 
         private RepositoriesFilterModel CreateFilterModel()

@@ -137,7 +137,6 @@
     <Compile Include="Data\Filter.cs" />
     <Compile Include="Data\IAccount.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
-    <Compile Include="Data\SQLite.cs" />
     <Compile Include="Messages\CancelationMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Services\AccountsService.cs" />
@@ -146,12 +145,10 @@
     <Compile Include="Services\IAlertDialogService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IHttpClientService.cs" />
-    <Compile Include="Services\IJsonHttpClientService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
     <Compile Include="Services\IShareService.cs" />
     <Compile Include="Services\IUIThreadService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
-    <Compile Include="Services\JsonHttpClientService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
@@ -178,6 +175,12 @@
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Utils\TaskExtensions.cs" />
     <Compile Include="ViewModels\App\UpgradeViewModel.cs" />
+    <Compile Include="Utils\ObservableExtensions.cs" />
+    <Compile Include="Data\Language.cs" />
+    <Compile Include="Data\LanguageRepository.cs" />
+    <Compile Include="Data\TrendingRepository.cs" />
+    <Compile Include="Utils\FunctionalExtensions.cs" />
+    <Compile Include="Data\SQLite.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
