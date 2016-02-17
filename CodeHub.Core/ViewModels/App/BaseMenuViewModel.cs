@@ -17,11 +17,6 @@ namespace CodeHub.Core.ViewModels.App
 			get { return Mvx.Resolve<IAccountsService>(); }
 		}
 
-		public void Init()
-		{
-			GoToDefaultTopView.Execute(null);
-		}
-
 		public ICommand GoToDefaultTopView
 		{
 			get

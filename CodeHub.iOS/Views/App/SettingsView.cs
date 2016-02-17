@@ -12,26 +12,17 @@ namespace CodeHub.iOS.Views.App
 {
 	public class SettingsView : ViewModelDrivenDialogViewController
     {
-        private IHud _hud;
-
         public SettingsView()
         {
             Title = "Settings";
-        }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            _hud = new Hud(View);
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-			var vm = (SettingsViewModel)ViewModel;
-            vm.Bind(x => x.PushNotificationsEnabled).Subscribe(_ => CreateTable());
-            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
-			CreateTable();
-            base.ViewWillAppear(animated);
+            OnActivation(d =>
+            {
+                var vm = (SettingsViewModel)ViewModel;
+                d(vm.Bind(x => x.PushNotificationsEnabled).Subscribe(_ => CreateTable()));
+                d(vm.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
+                CreateTable();
+            });
         }
 
 		private void CreateTable()
@@ -70,7 +61,7 @@ namespace CodeHub.iOS.Views.App
 			{ 
 				Accessory = UITableViewCellAccessory.DisclosureIndicator,
 			};
-            startupView.Clicked.Subscribe(_ => vm.GoToDefaultStartupViewCommand.Execute(null));
+            startupView.Clicked.BindCommand(vm.GoToDefaultStartupViewCommand);
 
             var pushNotifications = new BooleanElement("Push Notifications", vm.PushNotificationsEnabled);
             pushNotifications.Changed.Subscribe(e => vm.PushNotificationsEnabled = e);
@@ -88,7 +79,13 @@ namespace CodeHub.iOS.Views.App
                 OnActivation(d => upgrades.Clicked.BindCommand(vm.GoToUpgradesCommand));
             }
 
-            aboutSection.Add(new StringElement("App Version", GetApplicationVersion()));
+            var appVersion = new StringElement("App Version", GetApplicationVersion())
+            { 
+                Accessory = UITableViewCellAccessory.None,
+                SelectionStyle = UITableViewCellSelectionStyle.None
+            };
+
+            aboutSection.Add(appVersion);
 
 			//Assign the root
             Root.Reset(accountSection, new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView }, aboutSection);

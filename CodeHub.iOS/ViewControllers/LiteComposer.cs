@@ -63,7 +63,7 @@ namespace CodeHub.iOS.ViewControllers
 
 		public LiteComposer () : base (null, null)
 		{
-			Title = "New Comment".t();
+			Title = "New Comment";
 			EdgesForExtendedLayout = UIRectEdge.None;
 			// Navigation Bar
 

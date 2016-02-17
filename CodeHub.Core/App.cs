@@ -18,10 +18,6 @@ namespace CodeHub.Core
 
 			//Ensure this is loaded
             MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
-
-
-            // Start the app with the First View Model.
-			this.RegisterAppStart<StartupViewModel>();
         }
     }
 }

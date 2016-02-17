@@ -6,41 +6,47 @@ using CoreGraphics;
 using Foundation;
 using CodeHub.iOS.Utilities;
 using System.Threading.Tasks;
-using MvvmCross.iOS.Views;
 using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class EditSourceView : ViewModelDrivenViewController, IMvxModalIosView
+    public class EditSourceView : BaseViewController
     {
-		readonly ComposerView _composerView;
+		ComposerView _composerView;
+
+        public EditSourceViewModel ViewModel { get; }
 	
 		public EditSourceView()
 		{
+            ViewModel = new EditSourceViewModel();
 			EdgesForExtendedLayout = UIRectEdge.None;
 			Title = "Edit";
-			_composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
-
-			View.AddSubview (_composerView);
 		}
       
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Commit());
+            _composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
 
-			var vm = (EditSourceViewModel)this.ViewModel;
-            vm.Bind(x => x.Text).Subscribe(x => _composerView.Text = x);
+            View.AddSubview (_composerView);
+
+            OnActivation(d =>
+            {
+                d(saveButton.GetClickedObservable().Subscribe(_ => Commit()));
+                d(ViewModel.Bind(x => x.Text).Subscribe(x => _composerView.Text = x));
+            });
+
+            ViewModel.LoadCommand.Execute(null);
 		}
 
 		private void Commit()
 		{
 			var composer = new LiteComposer { Title = "Commit Message" };
-			var vm = (EditSourceViewModel)this.ViewModel;
-			composer.Text = "Update " + vm.Path.Substring(vm.Path.LastIndexOf('/') + 1);
+            composer.Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
             var text = _composerView.Text;
-            composer.ReturnAction += (s, e) => CommitThis(vm, composer, text, e);
+            composer.ReturnAction += (s, e) => CommitThis(ViewModel, composer, text, e);
 			_composerView.TextView.BecomeFirstResponder ();
 			NavigationController.PushViewController(composer, true);
 		}
@@ -81,12 +87,6 @@ namespace CodeHub.iOS.Views.Source
 		{
 			var view = View.Bounds;
 			return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
-		}
-
-		[Obsolete]
-		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-		{
-			return true;
 		}
 
 		public override void ViewWillAppear (bool animated)

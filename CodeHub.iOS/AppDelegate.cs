@@ -27,6 +27,9 @@ using MvvmCross.Core.Views;
 using ModernHttpClient;
 using System.Net.Http;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.Views.App;
+using ReactiveUI;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.iOS
 {
@@ -48,6 +51,8 @@ namespace CodeHub.iOS
 			set;
 		}
 
+        public IosViewPresenter Presenter { get; private set; }
+
 		/// <summary>
 		/// This is the main entry point of the application.
 		/// </summary>
@@ -67,9 +72,9 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-			this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
-			var presenter = new IosViewPresenter(this.Window);
-            var setup = new Setup(this, presenter);
+			Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            Presenter = new IosViewPresenter(this.Window);
+            var setup = new Setup(this, Presenter);
             setup.Initialize();
 
             // Setup theme
@@ -124,9 +129,11 @@ namespace CodeHub.iOS
             UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationTypes);
         }
 
-        private static void GoToStartupView()
+        private void GoToStartupView()
         {
-            Mvx.Resolve<IMvxAppStart>()?.Start();
+            var startup = new StartupView();
+            TransitionToViewController(startup);
+            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => startup.DismissViewController(true, null));
         }
 
         private void TransitionToViewController(UIViewController viewController)

@@ -9,8 +9,8 @@ namespace CodeHub.iOS.Views.Organizations
 	{
         public override void ViewDidLoad()
         {
-            Title = "Organizations".t();
-            NoItemsText = "No Organizations".t();
+            Title = "Organizations";
+            NoItemsText = "No Organizations";
 
             base.ViewDidLoad();
 

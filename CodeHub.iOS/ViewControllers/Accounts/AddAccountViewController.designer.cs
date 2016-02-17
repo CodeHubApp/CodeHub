@@ -7,10 +7,10 @@
 using Foundation;
 using System.CodeDom.Compiler;
 
-namespace CodeHub.iOS.Views.Accounts
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
 	[Register ("AddAccountView")]
-	partial class AddAccountView
+	partial class AddAccountViewController
 	{
 		[Outlet]
 		UIKit.UIView ContainerView { get; set; }

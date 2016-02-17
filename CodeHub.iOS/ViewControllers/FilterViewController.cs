@@ -11,7 +11,7 @@ namespace CodeHub.iOS.ViewControllers
         protected FilterViewController()
             : base(UITableViewStyle.Grouped)
         {
-            Title = "Filter & Sort".t();
+            Title = "Filter & Sort";
 			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
 			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
                 ApplyButtonPressed();
@@ -128,8 +128,8 @@ namespace CodeHub.iOS.ViewControllers
             }
             var str = sb.ToString();
             if (str.EndsWith(", "))
-                return trueCounter == fields.Length ? "Any".t() : str.Substring(0, str.Length - 2);
-            return "None".t();
+                return trueCounter == fields.Length ? "Any" : str.Substring(0, str.Length - 2);
+            return "None";
         }
     }
 }

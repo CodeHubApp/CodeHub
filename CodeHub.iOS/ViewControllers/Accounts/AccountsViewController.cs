@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers;
@@ -10,32 +9,27 @@ using CoreGraphics;
 using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.iOS.DialogElements;
 using System.Linq;
-using System.Reactive.Disposables;
+using ReactiveUI;
+using CodeHub.Core.Messages;
 
-namespace CodeHub.iOS.Views.Accounts
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
-	public class AccountsView : ViewModelDrivenDialogViewController
+    public class AccountsViewController : DialogViewController
     {
-        public new AccountsViewModel ViewModel
-        {
-            get { return (AccountsViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        private readonly IAccountsService _accountsService = Mvx.Resolve<IAccountsService>();
 
-        public AccountsView() : base(true, UITableViewStyle.Plain)
+        public AccountsViewController() : base(UITableViewStyle.Plain)
         {
             Title = "Accounts";
 
             var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
             NavigationItem.RightBarButtonItem = addButton;
-            NavigationItem.LeftBarButtonItem = null;
+            OnActivation(d => d(addButton.GetClickedObservable().Subscribe(_ => AddAccount())));
+        }
 
-            OnActivation(d => {
-                d(addButton.GetClickedObservable().BindCommand(ViewModel.AddAccountCommand));
-
-                Console.WriteLine("Activated Accounts");
-                d(Disposable.Create(() => Console.WriteLine("Deactivated Accounts")));
-            });
+        private void AddAccount()
+        {
+            NavigationController.PushViewController(new NewAccountViewController(), true);
         }
 
 		public override void ViewDidLoad()
@@ -44,48 +38,50 @@ namespace CodeHub.iOS.Views.Accounts
             TableView.RowHeight = 74;
 		}
 
-        /// <summary>
-        /// Called when the accounts need to be populated
-        /// </summary>
-        /// <returns>The accounts.</returns>
-        protected IEnumerable<AccountElement> PopulateAccounts()
+        private void SelectAccount(GitHubAccount githubAccount)
         {
-            var accountsService = Mvx.Resolve<IAccountsService>();
-            var weakVm = new WeakReference<AccountsViewModel>(ViewModel);
+            var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
 
-            return accountsService.Select(account =>
+            if (githubAccount.DontRemember)
             {
-                var t = new AccountElement(account, account.Equals(accountsService.ActiveAccount));
-                t.Tapped += () => weakVm.Get()?.SelectAccountCommand.Execute(account);
-                return t;
-            });
-        }
+                //Hack for now
+                if (isEnterprise)
+                {
+                    var vc = new AddAccountViewController();
+                    vc.ViewModel.Init(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
+                    NavigationController.PushViewController(vc, true);
+                }
+                else
+                {
+                    var loginViewController = new LoginViewController();
+                    loginViewController.ViewModel.Init(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+                    NavigationController.PushViewController(loginViewController, true);
+                }
 
-        /// <summary>
-        /// Called when an account is deleted
-        /// </summary>
-        /// <param name="account">Account.</param>
-        protected void AccountDeleted(GitHubAccount account)
-        {
-            //Remove the designated username
-            var thisAccount = account;
-            var accountsService = Mvx.Resolve<IAccountsService>();
-
-            accountsService.Remove(thisAccount);
-
-            if (accountsService.ActiveAccount != null && accountsService.ActiveAccount.Equals(thisAccount))
-            {
-                accountsService.SetActiveAccount(null);
+                return;
             }
+
+            _accountsService.SetDefault(githubAccount);
+            MessageBus.Current.SendMessage(new LogoutMessage());
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
 
+            var accountsService = Mvx.Resolve<IAccountsService>();
+            var weakVm = new WeakReference<AccountsViewController>(this);
             var accountSection = new Section();
-            accountSection.AddAll(PopulateAccounts());
+            accountSection.AddAll(accountsService.Select(account =>
+            {
+                var t = new AccountElement(account, account.Equals(accountsService.ActiveAccount));
+                t.Tapped += () => weakVm.Get()?.SelectAccount(account);
+                return t;
+            }));
             Root.Reset(accountSection);
+
+            if (NavigationItem.LeftBarButtonItem != null)
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
         }
 
 		public override DialogViewController.Source CreateSizingSource()
@@ -100,31 +96,34 @@ namespace CodeHub.iOS.Views.Accounts
                 return;
 
             //Remove the designated username
-            AccountDeleted(accountElement.Account);
+            _accountsService.Remove(accountElement.Account);
+
+            if (_accountsService.ActiveAccount != null && _accountsService.ActiveAccount.Equals(accountElement.Account))
+            {
+                _accountsService.SetActiveAccount(null);
+            }
+
+            if (NavigationItem.LeftBarButtonItem != null)
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
         }
 
 		private class EditSource : DialogViewController.Source
         {
-            private readonly AccountsView _parent;
-            public EditSource(AccountsView dvc) 
-                : base (dvc)
+            public EditSource(AccountsViewController dvc) : base (dvc)
             {
-                _parent = dvc;
             }
 
-            public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
+            public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
-                return (indexPath.Section == 0);
+                return true;
             }
 
-            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
             {
-                if (indexPath.Section == 0)
-                    return UITableViewCellEditingStyle.Delete;
-                return UITableViewCellEditingStyle.None;
+                return UITableViewCellEditingStyle.Delete;
             }
 
-            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
             {
                 if (indexPath == null)
                     return;
@@ -132,10 +131,10 @@ namespace CodeHub.iOS.Views.Accounts
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = _parent.Root[indexPath.Section];
+                        var section = Container.Root[indexPath.Section];
                         var element = section[indexPath.Row];
-                        _parent.Delete(element);
                         section.Remove(element);
+                        (Container as AccountsViewController)?.Delete(element);
                         break;
                 }
             }

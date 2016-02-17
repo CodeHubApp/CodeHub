@@ -1,5 +1,4 @@
 ﻿using UIKit;
-using CodeHub.iOS.Services;
 using System;
 using CodeHub.Core.Services;
 using MvvmCross.Platform;

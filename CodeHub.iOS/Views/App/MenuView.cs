@@ -9,6 +9,8 @@ using System;
 using MvvmCross.Platform;
 using CodeHub.iOS.DialogElements;
 using System.Collections.Generic;
+using CodeHub.iOS.ViewControllers.Accounts;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -22,6 +24,12 @@ namespace CodeHub.iOS.Views.App
 	        get { return (MenuViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
 	    }
+
+        public MenuView()
+        {
+            ViewModel = new MenuViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<IFeaturesService>());
+//            Appeared.Take(1).Subscribe(_ => ViewModel.GoToDefaultTopView.Execute(null));
+        }
 
 	    protected override void CreateMenuRoot()
 		{
@@ -60,17 +68,17 @@ namespace CodeHub.iOS.Views.App
             repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Octicon.Globe.ToImage()));
             sections.Add(repoSection);
             
-			if (ViewModel.PinnedRepositories.Count() > 0)
-			{
-				_favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
-				foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-					_favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
+            if (ViewModel.PinnedRepositories.Any())
+            {
+                _favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
+                foreach (var pinnedRepository in ViewModel.PinnedRepositories)
+                    _favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
                 sections.Add(_favoriteRepoSection);
-			}
-			else
-			{
-				_favoriteRepoSection = null;
-			}
+            }
+            else
+            {
+                _favoriteRepoSection = null;
+            }
 
             var orgSection = new Section() { HeaderView = new MenuSectionView("Organizations") };
             if (ViewModel.Organizations != null && ViewModel.Account.ExpandOrganizations)
@@ -102,7 +110,7 @@ namespace CodeHub.iOS.Views.App
                 infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.Execute(null), Octicon.Lock.ToImage()));
             
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
-            infoSection.Add(new MenuElement("Accounts", () => ProfileButtonClicked(this, EventArgs.Empty), Octicon.Person.ToImage()));
+            infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, Octicon.Person.ToImage()));
 
             Root.Reset(sections);
 		}
@@ -124,9 +132,12 @@ namespace CodeHub.iOS.Views.App
             ViewModel.GoToSupport.Execute(null);
         }
 
-        protected override void ProfileButtonClicked(object sender, System.EventArgs e)
+        protected override void ProfileButtonClicked()
         {
-            ViewModel.GoToAccountsCommand.Execute(null);
+            var vc = new AccountsViewController();
+            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
+            PresentViewController(new ThemedNavigationController(vc), true, null);
         }
 
         public override void ViewDidLoad()

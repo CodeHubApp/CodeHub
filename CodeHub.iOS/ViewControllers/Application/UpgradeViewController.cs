@@ -16,22 +16,19 @@ namespace CodeHub.iOS.ViewControllers.Application
 {
     public class UpgradeViewController : WebView
     {
-        private readonly IFeaturesService _featuresService;
-        private readonly IInAppPurchaseService _inAppPurchaseService;
+        private readonly IFeaturesService _featuresService = Mvx.Resolve<IFeaturesService>();
+        private readonly IInAppPurchaseService _inAppPurchaseService = Mvx.Resolve<IInAppPurchaseService>();
         private UIActivityIndicatorView _activityView;
 
         public UpgradeViewController() : base(false, false)
         {
-            _featuresService = Mvx.Resolve<IFeaturesService>();
-            _inAppPurchaseService = Mvx.Resolve<IInAppPurchaseService>();
+            Title = "Pro Upgrade";
             ViewModel = new CodeHub.Core.ViewModels.App.UpgradeViewModel();
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            Title = "Pro Upgrade";
 
             _activityView = new UIActivityIndicatorView
             {

@@ -24,7 +24,11 @@ namespace CodeHub.iOS.ViewControllers
             NavigationItem.TitleView = _title;
 
             _profileButton = new ProfileButton();
-            _profileButton.TouchUpInside += ProfileButtonClicked;
+
+            OnActivation(d =>
+            {
+                d(_profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked()));
+            });
         }
 
         /// <summary>
@@ -66,7 +70,7 @@ namespace CodeHub.iOS.ViewControllers
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(_profileButton);
         }
 
-        protected virtual void ProfileButtonClicked (object sender, System.EventArgs e)
+        protected virtual void ProfileButtonClicked ()
         {
         }
         

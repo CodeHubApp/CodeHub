@@ -4,6 +4,7 @@ using UIKit;
 using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 using System;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Organizations
 {
@@ -18,13 +19,6 @@ namespace CodeHub.iOS.Views.Organizations
             HeaderView.SetImage(null, Images.Avatar);
             Title = vm.Name;
             HeaderView.Text = vm.Name;
-
-            vm.Bind(x => x.Organization).Subscribe(x =>
-            {
-                HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
-                HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
-                RefreshHeaderView();
-            });
 
             var members = new StringElement("Members", Octicon.Person.ToImage());
             var teams = new StringElement("Teams", Octicon.Organization.ToImage());
@@ -42,6 +36,13 @@ namespace CodeHub.iOS.Views.Organizations
                 d(events.Clicked.BindCommand(vm.GoToEventsCommand));
                 d(repos.Clicked.BindCommand(vm.GoToRepositoriesCommand));
                 d(gists.Clicked.BindCommand(vm.GoToGistsCommand));
+
+                d(vm.Bind(x => x.Organization, true).Where(x => x != null).Subscribe(x =>
+                {
+                    HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
+                    HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
+                    RefreshHeaderView();
+                }));
             });
         }
     }

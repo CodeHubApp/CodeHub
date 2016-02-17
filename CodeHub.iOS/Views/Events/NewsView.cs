@@ -2,10 +2,9 @@ namespace CodeHub.iOS.Views.Events
 {
     public class NewsView : BaseEventsView
     {
-		public override void ViewDidLoad()
+        public NewsView()
 		{
-			Title = "News".t();
-			base.ViewDidLoad();
+			Title = "News";
 		}
     }
 }

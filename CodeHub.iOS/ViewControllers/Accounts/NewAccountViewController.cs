@@ -1,20 +1,16 @@
+using System;
 using CoreGraphics;
-using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.iOS.Views.App;
-using MvvmCross.iOS.Views;
 using CodeHub.iOS.ViewControllers.Application;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class NewAccountViewController : MvxViewController
+    public class NewAccountViewController : BaseViewController
     {
         private readonly UIColor DotComBackgroundColor = UIColor.FromRGB(239, 239, 244);
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
-        private AccountButton _dotComButton;
-        private AccountButton _enterpriseButton;
 
         public NewAccountViewController()
         {
@@ -25,8 +21,8 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         {
             base.ViewDidLoad();
 
-            var dotComButton = _dotComButton = new AccountButton("GitHub.com", Images.Logos.DotComMascot);
-            var enterpriseButton = _enterpriseButton = new AccountButton("Enterprise", Images.Logos.EnterpriseMascot);
+            var dotComButton = new AccountButton("GitHub.com", Images.Logos.DotComMascot);
+            var enterpriseButton = new AccountButton("Enterprise", Images.Logos.EnterpriseMascot);
 
             dotComButton.BackgroundColor = DotComBackgroundColor;
             dotComButton.Label.TextColor = EnterpriseBackgroundColor;
@@ -49,37 +45,30 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 enterpriseButton.Frame.Left == View.Frame.Left &&
                 enterpriseButton.Frame.Right == View.Frame.Right &&
                 enterpriseButton.Frame.Bottom == View.Frame.Bottom);
+
+            OnActivation(d =>
+            {
+                d(dotComButton.GetClickedObservable().Subscribe(_ => DotComButtonTouch()));
+                d(enterpriseButton.GetClickedObservable().Subscribe(_ => EnterpriseButtonTouch()));
+            });
         }
 
-        public override void ViewWillAppear(bool animated)
+        private void DotComButtonTouch ()
         {
-            base.ViewWillAppear(animated);
-            _enterpriseButton.TouchUpInside += EnterpriseButtonTouch;
-            _dotComButton.TouchUpInside += DotComButtonTouch;
+            NavigationController.PushViewController(new LoginViewController(), true);
         }
 
-        private void DotComButtonTouch (object sender, System.EventArgs e)
-        {
-            var viewModel = ViewModel as NewAccountViewModel;
-            viewModel?.GoToDotComLoginCommand.Execute(null);
-        }
-
-        private void EnterpriseButtonTouch (object sender, System.EventArgs e)
+        private void EnterpriseButtonTouch ()
         {
             var features = Mvx.Resolve<IFeaturesService>();
             if (features.IsEnterpriseSupportActivated)
-                ((NewAccountViewModel)ViewModel).GoToEnterpriseLoginCommand.Execute(null);
+            {
+                NavigationController.PushViewController(new AddAccountViewController(), true);
+            }
             else
             {
                 this.PresentUpgradeViewController();
             }
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            _enterpriseButton.TouchUpInside -= EnterpriseButtonTouch;
-            _dotComButton.TouchUpInside -= DotComButtonTouch;
         }
 
         private class AccountButton : UIButton

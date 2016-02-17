@@ -1,19 +1,88 @@
-using System;
 using CodeHub.Core.Services;
 using System.Windows.Input;
-using CodeHub.Core.Messages;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Platform;
+using ReactiveUI;
+using System;
+using System.Reactive;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels
 {
+    public interface IProvidesTitle
+    {
+        string Title { get; }
+    }
+
+    public interface IRoutingViewModel
+    {
+        IObservable<IBaseViewModel> RequestNavigation { get; }
+
+        IObservable<Unit> RequestDismiss { get; }
+    }
+
+    public interface IBaseViewModel : ISupportsActivation, IProvidesTitle, IRoutingViewModel
+    {
+    }
+
     /// <summary>
     ///    Defines the BaseViewModel type.
     /// </summary>
-    public abstract class BaseViewModel : MvxViewModel
+    public abstract class BaseViewModel : MvxViewModel, IBaseViewModel, IReactiveObject
     {
+        private readonly ViewModelActivator _viewModelActivator = new ViewModelActivator();
+        private readonly ISubject<IBaseViewModel> _requestNavigationSubject = new Subject<IBaseViewModel>();
+        private readonly ISubject<Unit> _requestDismissSubject = new Subject<Unit>();
+
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        public void RaisePropertyChanging(PropertyChangingEventArgs args)
+        {
+            this.RaisePropertyChanged(args.PropertyName);
+        }
+
+
+        ViewModelActivator ISupportsActivation.Activator
+        {
+            get { return _viewModelActivator; }
+        }
+
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            protected set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        protected void NavigateTo(IBaseViewModel viewModel)
+        {
+            _requestNavigationSubject.OnNext(viewModel);
+        }
+
+        protected void Dismiss()
+        {
+            _requestDismissSubject.OnNext(Unit.Default);
+        }
+
+        IObservable<IBaseViewModel> IRoutingViewModel.RequestNavigation
+        {
+            get { return _requestNavigationSubject; }
+        }
+
+        IObservable<Unit> IRoutingViewModel.RequestDismiss
+        {
+            get { return _requestDismissSubject; }
+        }
+
         /// <summary>
         /// Gets the go to URL command.
         /// </summary>
@@ -76,15 +145,6 @@ namespace CodeHub.Core.ViewModels
         protected void DisplayAlert(string message)
         {
             AlertService.Alert("Error!", message);
-        }
-
-        /// <summary>
-        /// Reports the error by displaying it and reporting it to analytics
-        /// </summary>
-        /// <param name="e">E.</param>
-        protected void ReportException(Exception e)
-        {
-            Messenger.Publish(new ErrorMessage(this, e));
         }
     }
 }

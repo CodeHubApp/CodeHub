@@ -9,9 +9,7 @@ using System.Net;
 using System.Collections.Specialized;
 using System.IO;
 using System.Threading.Tasks;
-using CodeHub.Core.Services;
 using System.Linq;
-using CoreGraphics;
 using MonoTouch.UIKit;
 using CodeHub.iOS.Services;
 

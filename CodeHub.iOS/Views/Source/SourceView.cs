@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.WebViews;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -30,18 +31,27 @@ namespace CodeHub.iOS.Views.Source
 
 		protected override UIActionSheet CreateActionSheet(string title)
 		{
-            var editCommand = ((SourceViewModel)ViewModel).GoToEditCommand;
+            var vm = ((SourceViewModel)ViewModel);
 			var sheet = base.CreateActionSheet(title);
-            var editButton = editCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
+            var editButton = vm.CanEdit ? sheet.AddButton("Edit") : -1;
             sheet.Dismissed += (sender, e) => BeginInvokeOnMainThread(() => {
                 if (e.ButtonIndex == editButton)
                 {
-                    editCommand.Execute(null);
-                    editCommand = null;
+                    EditSource();
                 }
             });
 			return sheet;
 		}
+
+        private void EditSource()
+        {
+            var vm = ((SourceViewModel)ViewModel);
+            var vc = new EditSourceView();
+            vc.ViewModel.Init(new EditSourceViewModel.NavObject { Path = vm.Path, Branch = vm.Branch, Username = vm.Username, Repository = vm.Repository });
+            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
+            PresentViewController(new ThemedNavigationController(vc), true, null);
+        }
 
         async Task LoadSource(Uri fileUri)
         {

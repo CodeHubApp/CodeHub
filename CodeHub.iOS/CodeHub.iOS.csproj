@@ -134,14 +134,6 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
-    <Compile Include="Views\Accounts\NewAccountView.cs" />
-    <Compile Include="Views\Accounts\NewAccountView.designer.cs">
-      <DependentUpon>NewAccountView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Accounts\AddAccountView.cs" />
-    <Compile Include="Views\Accounts\AddAccountView.designer.cs">
-      <DependentUpon>AddAccountView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\App\MenuView.cs" />
     <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\NewsView.cs" />
@@ -199,7 +191,6 @@
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
-    <Compile Include="Views\Accounts\LoginView.cs" />
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
@@ -231,7 +222,6 @@
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelDrivenViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\MilestoneView.cs" />
@@ -243,15 +233,12 @@
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
-    <InterfaceDefinition Include="Views\Accounts\NewAccountView.xib" />
-    <InterfaceDefinition Include="Views\Accounts\AddAccountView.xib" />
     <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\SlideupTitleVIew.cs" />
     <Compile Include="Views\Repositories\RepositoriesForkedView.cs" />
     <Compile Include="Utilities\Hud.cs" />
-    <Compile Include="Utilities\Translate.cs" />
     <Compile Include="Utilities\UIImageExtensions.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
     <Compile Include="Utilities\Graphics.cs" />
@@ -259,7 +246,6 @@
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Octicons.cs" />
     <Compile Include="OcticonExtensions.cs" />
-    <Compile Include="Views\Accounts\AccountsView.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="TableViewCells\IssueCellView.cs" />
     <Compile Include="TableViewCells\IssueCellView.designer.cs">
@@ -380,6 +366,13 @@
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
     <Compile Include="Utilities\Emojis.cs" />
+    <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
+    <Compile Include="ViewControllers\BaseWebViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\AddAccountView.xib" />
+    <Compile Include="ViewControllers\Accounts\AddAccountViewController.designer.cs" />
+    <Compile Include="ViewControllers\Accounts\AddAccountViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -591,6 +584,7 @@
     <Folder Include="ViewControllers\Repositories\" />
     <Folder Include="DialogElements\" />
     <Folder Include="Transitions\" />
+    <Folder Include="ViewControllers\Accounts\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\arrow.png">

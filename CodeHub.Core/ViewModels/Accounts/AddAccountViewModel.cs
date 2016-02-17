@@ -6,6 +6,8 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Factories;
 using MvvmCross.Core.ViewModels;
+using ReactiveUI;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -59,7 +61,7 @@ namespace CodeHub.Core.ViewModels.Accounts
         public void Init(NavObject navObject)
         {
 			if (navObject.AttemptedAccountId >= 0)
-				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId) as GitHubAccount;
+				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
 
             if (_attemptedAccount != null)
             {
@@ -94,6 +96,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 var loginData = await _loginFactory.CreateLoginData(apiUrl, Username, Password, TwoFactor, true, _attemptedAccount);
 				var client = await _loginFactory.LoginAccount(loginData.Account);
 				_application.ActivateUser(loginData.Account, client);
+                MessageBus.Current.SendMessage(new LogoutMessage());
             }
             catch (Exception e)
             {

@@ -28,7 +28,6 @@ namespace CodeHub.iOS.ViewControllers
         private readonly Lazy<RootElement> _rootElement;
 		public UISearchBar searchBar;
 		bool pushing;
-		bool dirty;
 
 		/// <summary>
 		/// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
@@ -191,6 +190,11 @@ namespace CodeHub.iOS.ViewControllers
             private readonly WeakReference<DialogViewController> _container;
             private readonly RootElement _root;
 
+            public DialogViewController Container
+            {
+                get { return _container.Get(); }
+            }
+
 			public Source (DialogViewController container)
 			{
                 _container = new WeakReference<DialogViewController>(container);
@@ -335,10 +339,7 @@ namespace CodeHub.iOS.ViewControllers
 			}
 
 			NavigationItem.HidesBackButton = !pushing;
-			if (dirty){
-				TableView.ReloadData ();
-				dirty = false;
-			}
+			TableView.ReloadData ();
 		}
 
 		public bool Pushing {
@@ -355,7 +356,6 @@ namespace CodeHub.iOS.ViewControllers
 		public void ReloadData ()
 		{
 			TableView.ReloadData ();
-			dirty = false;
 		}
 
         public override void ViewDidLoad()

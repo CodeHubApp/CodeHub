@@ -1,24 +1,21 @@
 using System;
 using MvvmCross.Platform;
 using MvvmCross.Core.ViewModels;
-using CodeHub.iOS.ViewControllers;
 using UIKit;
 using CodeHub.Core;
 using MonoTouch.SlideoutNavigation;
-using CodeHub.iOS.Views.Accounts;
 using MvvmCross.iOS.Views.Presenters;
 using MvvmCross.iOS.Views;
-using CodeHub.iOS.Views.App;
 
 namespace CodeHub.iOS
 {
     public class IosViewPresenter : MvxBaseIosViewPresenter
     {
         private readonly UIWindow _window;
-        private UINavigationController _baseNavigationController;
         private UINavigationController _generalNavigationController;
-        private SlideoutNavigationController _slideoutController;
         private IMvxModalIosView _currentModal;
+
+        public SlideoutNavigationController SlideoutNavigationController { get; set; }
 
         public IosViewPresenter(UIWindow window)
         {
@@ -76,42 +73,14 @@ namespace CodeHub.iOS
                 });
                 PresentModalViewController(modalNavigationController, true);
             }
-            else if (uiView is StartupView)
-            {
-                _baseNavigationController = new UINavigationController(uiView);
-                _baseNavigationController.NavigationBarHidden = true;
-                _window.RootViewController = _baseNavigationController;
-            }
-            else if (uiView is MenuBaseViewController)
-            {
-                _slideoutController = new SlideoutNavigationController();
-                _slideoutController.MenuViewController = new MenuNavigationController(uiView, _slideoutController);
-                uiView.NavigationController.NavigationBar.Translucent = false;
-                uiView.NavigationController.Toolbar.Translucent = false;
-                uiView.NavigationController.NavigationBar.BarTintColor = UIColor.FromRGB(50, 50, 50);
-
-                _baseNavigationController.PopToRootViewController(false);
-                _baseNavigationController.PushViewController(_slideoutController, false);
-            }
             else
             {
-                if (request.PresentationValues?.ContainsKey(PresentationValues.AccountsPresentation) ?? false)
-                {
-                    var vc = new UINavigationController(uiView);
-                    _generalNavigationController = vc;
-                    _baseNavigationController.PresentViewController(vc, true, null);
-                }
-                else if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
+                if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
                 {
                     var openButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ThreeLinesButton };
-                    var mainNavigationController = new MainNavigationController(uiView, _slideoutController, openButton);
+                    var mainNavigationController = new MainNavigationController(uiView, SlideoutNavigationController, openButton);
                     _generalNavigationController = mainNavigationController;
-                    _slideoutController.SetMainViewController(mainNavigationController, true);
-
-
-                    //_generalNavigationController.NavigationBar.BarTintColor = Theme.CurrentTheme.ApplicationNavigationBarTint;
-                    _generalNavigationController.NavigationBar.Translucent = false;
-                    _generalNavigationController.Toolbar.Translucent = false;
+                    SlideoutNavigationController.SetMainViewController(mainNavigationController, true);
                 }
                 else
                 {

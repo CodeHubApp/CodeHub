@@ -4,17 +4,32 @@ using CodeHub.iOS;
 using SDWebImage;
 using Foundation;
 using CodeHub.Core.ViewModels.App;
-using MvvmCross.iOS.Views;
+using CodeHub.iOS.ViewControllers;
+using MvvmCross.Platform;
+using CodeHub.Core.Factories;
+using CodeHub.Core.Services;
+using MonoTouch.SlideoutNavigation;
+using CodeHub.iOS.ViewControllers.Accounts;
 
 namespace CodeHub.iOS.Views.App
 {
-    public class StartupView : MvxViewController
+    public class StartupView : BaseViewController
     {
         const float imageSize = 128f;
 
         private UIImageView _imgView;
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
+
+        public StartupViewModel ViewModel { get; }
+
+        public StartupView()
+        {
+            ViewModel = new StartupViewModel(
+                Mvx.Resolve<ILoginFactory>(),
+                Mvx.Resolve<IApplicationService>(),
+                Mvx.Resolve<IDefaultValueService>());
+        }
 
         public override void ViewWillLayoutSubviews()
         {
@@ -42,28 +57,54 @@ namespace CodeHub.iOS.Views.App
             _statusLabel.TextColor = UIColor.FromWhiteAlpha(0.34f, 1f);
             Add(_statusLabel);
 
-            _activityView = new UIActivityIndicatorView() { HidesWhenStopped = true };
+            _activityView = new UIActivityIndicatorView();
             _activityView.Color = UIColor.FromRGB(0.33f, 0.33f, 0.33f);
             Add(_activityView);
 
 			View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
-           
-			var vm = (StartupViewModel)ViewModel;
-            vm.Bind(x => x.IsLoggingIn).Subscribe(x =>
-			{
-				if (x)
-				{
-                    _activityView.StartAnimating();
-				}
-				else
-				{
-                    _activityView.StopAnimating();
-				}
-			});
 
-            vm.Bind(x => x.ImageUrl).Subscribe(UpdatedImage);
-            vm.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x);
+            OnActivation(d =>
+            {
+                d(ViewModel.Bind(x => x.ImageUrl).Subscribe(UpdatedImage));
+                d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
+                d(ViewModel.GoToMenu.Subscribe(GoToMenu));
+                d(ViewModel.GoToAccounts.Subscribe(GoToAccounts));
+                d(ViewModel.GoToNewAccount.Subscribe(GoToNewAccount));
+                d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
+                {
+                    if (x)
+                        _activityView.StartAnimating();
+                    else
+                        _activityView.StopAnimating();
 
+                    _activityView.Hidden = !x;
+                }));
+            });
+        }
+
+        private void GoToMenu(object o)
+        {
+            var vc = new MenuView();
+            var slideoutController = new SlideoutNavigationController();
+            slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
+            (UIApplication.SharedApplication.Delegate as AppDelegate).Do(y => y.Presenter.SlideoutNavigationController = slideoutController);
+            vc.ViewModel.GoToDefaultTopView.Execute(null);
+            slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
+            PresentViewController(slideoutController, true, null);
+        }
+
+        private void GoToNewAccount(object o)
+        {
+            var vc = new NewAccountViewController();
+            var nav = new ThemedNavigationController(vc);
+            PresentViewController(nav, true, null);
+        }
+
+        private void GoToAccounts(object o)
+        {
+            var vc = new AccountsViewController();
+            var nav = new ThemedNavigationController(vc);
+            PresentViewController(nav, true, null);
         }
 
         public void UpdatedImage(Uri uri)
@@ -89,8 +130,11 @@ namespace CodeHub.iOS.Views.App
 
         public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear(animated);
             UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
+            AssignUnknownUserImage();
+            _statusLabel.Text = "";
+
+            base.ViewWillAppear(animated);
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -102,13 +146,18 @@ namespace CodeHub.iOS.Views.App
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			var vm = (StartupViewModel)ViewModel;
-			vm.StartupCommand.Execute(null);
+            ViewModel.StartupCommand.Execute(null);
 		}
 
         public override bool ShouldAutorotate()
         {
             return true;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            _imgView.Image = null;
         }
 
         public override UIStatusBarStyle PreferredStatusBarStyle()

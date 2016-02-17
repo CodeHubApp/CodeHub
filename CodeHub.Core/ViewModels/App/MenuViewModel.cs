@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
@@ -17,13 +16,12 @@ using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.App
 {
 	public class MenuViewModel : BaseMenuViewModel
     {
-        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.AccountsPresentation, string.Empty}};  
-
         private readonly IApplicationService _application;
         private readonly IFeaturesService _featuresService;
 		private int _notifications;
@@ -33,13 +31,13 @@ namespace CodeHub.Core.ViewModels.App
 		public int Notifications
         {
             get { return _notifications; }
-            set { _notifications = value; RaisePropertyChanged(() => Notifications); }
+            set { _notifications = value; RaisePropertyChanged(); }
         }
 
         public List<BasicUserModel> Organizations
         {
             get { return _organizations; }
-            set { _organizations = value; RaisePropertyChanged(() => Organizations); }
+            set { _organizations = value; RaisePropertyChanged(); }
         }
 		
         public GitHubAccount Account
@@ -64,10 +62,7 @@ namespace CodeHub.Core.ViewModels.App
 			Notifications = msg.Count;
 		}
 
-        public ICommand GoToAccountsCommand
-        {
-            get { return new MvxCommand(() => this.ShowViewModel<AccountsViewModel>(presentationBundle: new MvxBundle(Presentation))); }
-        }
+        public IReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
 
 		[PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
@@ -198,5 +193,38 @@ namespace CodeHub.Core.ViewModels.App
                 Organizations = t.Result.Data.ToList();
             });
         }
+
+//
+//        private async Task PromptForPushNotifications()
+//        {
+//            // Push notifications are not enabled for enterprise
+//            if (Account.IsEnterprise)
+//                return;
+//
+//            try
+//            {
+//                var features = Mvx.Resolve<IFeaturesService>();
+//                var alertDialog = Mvx.Resolve<IAlertDialogService>();
+//                var push = Mvx.Resolve<IPushNotificationsService>();
+//                var 
+//                // Check for push notifications
+//                if (Account.IsPushNotificationsEnabled == null && features.IsPushNotificationsActivated)
+//                {
+//                    var result = await alertDialog.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
+//                    if (result)
+//                        Task.Run(() => push.Register()).FireAndForget();
+//                    Account.IsPushNotificationsEnabled = result;
+//                    Accounts.Update(Account);
+//                }
+//                else if (Account.IsPushNotificationsEnabled.HasValue && Account.IsPushNotificationsEnabled.Value)
+//                {
+//                    Task.Run(() => push.Register()).FireAndForget();
+//                }
+//            }
+//            catch (Exception e)
+//            {
+//                _alertDialogService.Alert("Error", e.Message);
+//            }
+//        }
     }
 }

@@ -44,7 +44,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
-    <Compile Include="ViewModels\Accounts\AccountsViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
@@ -54,7 +53,6 @@
     <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\UserGistsViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
-    <Compile Include="ViewModels\Accounts\NewAccountViewModel.cs" />
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
@@ -179,6 +177,8 @@
     <Compile Include="Data\TrendingRepository.cs" />
     <Compile Include="Utils\FunctionalExtensions.cs" />
     <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Messages\LogoutMessage.cs" />
+    <Compile Include="Services\ViewModelService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

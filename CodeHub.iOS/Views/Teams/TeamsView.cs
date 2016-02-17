@@ -7,11 +7,14 @@ namespace CodeHub.iOS.Views.Teams
 {
     public class TeamsView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public TeamsView()
         {
             Title = "Teams";
             NoItemsText = "No Teams";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var vm = (TeamsViewModel) ViewModel;

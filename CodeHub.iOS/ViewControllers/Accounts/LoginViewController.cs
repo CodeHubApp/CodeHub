@@ -1,5 +1,4 @@
 using System;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Accounts;
 using MvvmCross.Platform;
 using CodeHub.iOS.Utilities;
@@ -7,27 +6,27 @@ using Foundation;
 using WebKit;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Services;
+using CodeHub.Core.Factories;
+using CodeHub.iOS.ViewControllers;
 
-namespace CodeHub.iOS.Views.Accounts
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class LoginView : WebView
+    public class LoginViewController : BaseWebViewController
     {
-		public new LoginViewModel ViewModel
-		{
-			get { return (LoginViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+        public LoginViewModel ViewModel { get; }
 
-        public LoginView() : base(true)
+        public LoginViewController() 
+            : base(true)
         {
             Title = "Login";
+            ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>(), Mvx.Resolve<IFeaturesService>());
+            ViewModel.Init(new LoginViewModel.NavObject());
         }
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-
-            ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...");
+            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
 			LoadRequest();
 		}
 
@@ -73,7 +72,7 @@ namespace CodeHub.iOS.Views.Accounts
             {
                 //Remove all cookies & cache
                 WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), () => {
-                    Web.LoadRequest(new NSUrlRequest(new Foundation.NSUrl(ViewModel.LoginUrl)));
+                    Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.LoginUrl)));
                 });
             }
             catch (Exception e)

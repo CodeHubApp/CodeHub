@@ -11,41 +11,32 @@ namespace CodeHub.iOS.Views.Source
 	{
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 
+        public BranchesAndTagsView()
+        {
+            Title = "Source";
+            NoItemsText = "No Items";
+            NavigationItem.TitleView = _viewSegment;
+        }
+
 		public override void ViewDidLoad()
 		{
-			Title = "Source";
-			NoItemsText = "No Items";
-
 			base.ViewDidLoad();
 
-            NavigationItem.TitleView = _viewSegment;
-
 			var vm = (BranchesAndTagsViewModel)ViewModel;
-            this.BindCollection(vm.Items, x => {
+            var weakVm = new WeakReference<BranchesAndTagsViewModel>(vm);
+
+            BindCollection(vm.Items, x => {
                 var e = new StringElement(x.Name);
-                e.Clicked.Select(_ => x).BindCommand(vm.GoToSourceCommand);
+                e.Clicked.Select(_ => x).Subscribe(_ => weakVm.Get()?.GoToSourceCommand.Execute(null));
                 return e;
             });
-            vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x);
+
+            OnActivation(d =>
+            {
+                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(_viewSegment.GetChangedObservable().Subscribe(_ => vm.SelectedFilter = (int)_viewSegment.SelectedSegment));
+            });
 		}
-
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
-            _viewSegment.ValueChanged += SegmentChanged;
-		}
-
-        void SegmentChanged (object sender, EventArgs e)
-        {
-            var vm = (BranchesAndTagsViewModel)ViewModel;
-            vm.SelectedFilter = (int)_viewSegment.SelectedSegment;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            _viewSegment.ValueChanged -= SegmentChanged;
-        }
 	}
 }
 

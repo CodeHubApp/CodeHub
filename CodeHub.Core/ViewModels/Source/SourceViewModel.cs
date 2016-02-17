@@ -1,10 +1,8 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
 using MvvmCross.Plugins.Messenger;
-using MvvmCross.Core.ViewModels;
 using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Source
@@ -14,7 +12,6 @@ namespace CodeHub.Core.ViewModels.Source
 		private readonly MvxSubscriptionToken _editToken;
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-		private string _path;
 		private string _name;
 		private string _gitUrl;
 		private bool _forceBinary;
@@ -26,6 +23,8 @@ namespace CodeHub.Core.ViewModels.Source
 		public string Branch { get; private set; }
 
 		public bool TrueBranch { get; private set; }
+
+        public string Path { get; private set; }
 
 		protected override async Task Load(bool forceCacheInvalidation)
         {
@@ -51,11 +50,11 @@ namespace CodeHub.Core.ViewModels.Source
 			}
         }
 
-		public ICommand GoToEditCommand
-		{
-            get { return new MvxCommand(() => ShowViewModel<EditSourceViewModel>(new EditSourceViewModel.NavObject { Path = _path, Branch = Branch, Username = Username, Repository = Repository }), () => ContentPath != null && TrueBranch); }
-		}
-
+        public bool CanEdit
+        {
+            get { return ContentPath != null && TrueBranch; }
+        }
+            
         public SourceViewModel()
         {
             _editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
@@ -70,7 +69,7 @@ namespace CodeHub.Core.ViewModels.Source
 
 		public void Init(NavObject navObject)
 		{
-			_path = navObject.Path;
+			Path = navObject.Path;
 			HtmlUrl = navObject.HtmlUrl;
 			_name = navObject.Name;
 			_gitUrl = navObject.GitUrl;
@@ -81,14 +80,14 @@ namespace CodeHub.Core.ViewModels.Source
 			TrueBranch = navObject.TrueBranch;
 
 			//Create the filename
-			var fileName = System.IO.Path.GetFileName(_path);
+			var fileName = System.IO.Path.GetFileName(Path);
 			if (fileName == null)
-				fileName = _path.Substring(_path.LastIndexOf('/') + 1);
+				fileName = Path.Substring(Path.LastIndexOf('/') + 1);
 
 			//Create the temp file path
 			Title = fileName;
 
-            var extension = System.IO.Path.GetExtension(_path);
+            var extension = System.IO.Path.GetExtension(Path);
             IsMarkdown = MarkdownExtensions.Contains(extension);
 		}
 

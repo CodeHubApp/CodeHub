@@ -15,7 +15,7 @@ namespace CodeHub.iOS.Views.Repositories
     {
         private readonly TrendingTitleButton _trendingTitleButton = new TrendingTitleButton { Frame = new CGRect(0, 0, 200f, 32f) };
 
-        public RepositoriesTrendingView()
+        public RepositoriesTrendingView() : base(true, UITableViewStyle.Plain)
         {
             EnableSearch = false;
             NavigationItem.TitleView = _trendingTitleButton;

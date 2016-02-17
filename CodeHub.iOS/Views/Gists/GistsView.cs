@@ -8,10 +8,13 @@ namespace CodeHub.iOS.Views.Gists
 {
     public abstract class GistsView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        protected GistsView()
         {
             NoItemsText = "No Gists";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             TableView.EstimatedRowHeight = 64f;

@@ -4,21 +4,19 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class StargazersView : BaseUserCollectionView
     {
-		public override void ViewDidLoad()
+        public StargazersView()
 		{
 			Title = "Stargazers";
 			NoItemsText = "No Stargazers";
-			base.ViewDidLoad();
 		}
     }
 
     public class WatchersView : BaseUserCollectionView
     {
-        public override void ViewDidLoad()
+        public WatchersView()
         {
             Title = "Watchers";
             NoItemsText = "No Watchers";
-            base.ViewDidLoad();
         }
     }
 }

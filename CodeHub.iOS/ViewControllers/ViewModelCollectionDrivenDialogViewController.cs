@@ -15,6 +15,7 @@ namespace CodeHub.iOS.ViewControllers
 {
     public abstract class ViewModelCollectionDrivenDialogViewController : ViewModelDrivenDialogViewController
     {
+        private static NSObject _dumb = new NSObject();
         public string NoItemsText { get; set; }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace CodeHub.iOS.ViewControllers
 
             //The CollectionViewModel binds all of the collection events from the observablecollection + more
             //So just listen to it.
-            viewModel.CollectionChanged += (sender, e) => InvokeOnMainThread(updateDel);
+            viewModel.CollectionChanged += (sender, e) => _dumb.InvokeOnMainThread(updateDel);
 
             if (activateNow)
                 updateDel();
@@ -154,7 +155,7 @@ namespace CodeHub.iOS.ViewControllers
                     }
                     catch (Exception e)
                     {
-                        AlertDialogService.ShowAlert("Unable to load more!".t(), e.Message);
+                        AlertDialogService.ShowAlert("Unable to load more!", e.Message);
                     }
 
                 };    

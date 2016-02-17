@@ -38,12 +38,12 @@ namespace CodeHub.iOS.Views.Filters
         {
 			_username = user;
 			_repository = repo;
-            Title = "Milestones".t();
-            SearchPlaceholder = "Search Milestones".t();
+            Title = "Milestones";
+            SearchPlaceholder = "Search Milestones";
 
-            var clearMilestone = new MilestoneModel { Title = "Clear milestone filter".t() };
-            var noMilestone = new MilestoneModel { Title = "Issues with no milestone".t() };
-            var withMilestone = new MilestoneModel { Title = "Issues with milestone".t() };
+            var clearMilestone = new MilestoneModel { Title = "Clear milestone filter" };
+            var noMilestone = new MilestoneModel { Title = "Issues with no milestone" };
+            var withMilestone = new MilestoneModel { Title = "Issues with milestone" };
 
 			_milestones.CollectionChanged += (sender, e) => {
 				var items = _milestones.ToList();

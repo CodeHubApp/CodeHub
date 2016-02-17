@@ -20,13 +20,19 @@ namespace CodeHub.iOS.Views.Gists
 
         public override void ViewDidLoad()
         {
-            Title = "Create Gist";
             base.ViewDidLoad();
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => ViewModel.SaveCommand.Execute(null));
-            ViewModel.Bind(x => x.Description).Subscribe(_ => UpdateView());
-            ViewModel.Bind(x => x.Files).Subscribe(_ => UpdateView());
-            ViewModel.Bind(x => x.Public).Subscribe(_ => UpdateView());
-            ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
+
+            Title = "Create Gist";
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+
+            OnActivation(d =>
+            {
+                d(saveButton.GetClickedObservable().BindCommand(ViewModel.SaveCommand));
+                d(ViewModel.Bind(x => x.Description).Subscribe(_ => UpdateView()));
+                d(ViewModel.Bind(x => x.Files).Subscribe(_ => UpdateView()));
+                d(ViewModel.Bind(x => x.Public).Subscribe(_ => UpdateView()));
+                d(ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
+            });
         }
 
         int _gistFileCounter = 0;

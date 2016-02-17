@@ -4,11 +4,10 @@ namespace CodeHub.iOS.Views.Teams
 {
     public class TeamMembersView : BaseUserCollectionView
     {
-        public override void ViewDidLoad()
+        public TeamMembersView()
         {
             Title = "Members";
-            NoItemsText = "No Members";
-            base.ViewDidLoad();
+            NoItemsText = "No Members"; 
         }
     }
 }

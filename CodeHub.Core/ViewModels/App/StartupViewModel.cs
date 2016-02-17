@@ -5,16 +5,15 @@ using CodeHub.Core.Services;
 using System.Linq;
 using CodeHub.Core.Factories;
 using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
+using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using ReactiveUI;
+using CodeHub.Core.ViewModels.Accounts;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel
     {
-        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> {{PresentationValues.AccountsPresentation, string.Empty}};  
-
         private bool _isLoggingIn;
         private string _status;
         private Uri _imageUrl;
@@ -25,39 +24,36 @@ namespace CodeHub.Core.ViewModels.App
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
-            private set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
         public string Status
         {
             get { return _status; }
-            private set
-            {
-                _status = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
         public Uri ImageUrl
         {
             get { return _imageUrl; }
-            private set
-            {
-                _imageUrl = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
         public ICommand StartupCommand
         {
-            get { return new MvxAsyncCommand(Startup); }
+            get { return new Dumb.MvxAsyncCommand(Startup); }
         }
 
-        public StartupViewModel(ILoginFactory loginFactory, IApplicationService applicationService, IDefaultValueService defaultValueService)
+        public ReactiveCommand<object> GoToMenu { get; } = ReactiveCommand.Create();
+
+        public ReactiveCommand<object> GoToAccounts { get; } = ReactiveCommand.Create();
+
+        public ReactiveCommand<object> GoToNewAccount { get; } = ReactiveCommand.Create();
+
+        public StartupViewModel(
+            ILoginFactory loginFactory, 
+            IApplicationService applicationService, 
+            IDefaultValueService defaultValueService)
         {
             _loginFactory = loginFactory;
             _applicationService = applicationService;
@@ -68,7 +64,7 @@ namespace CodeHub.Core.ViewModels.App
         {
             if (!_applicationService.Accounts.Any())
             {
-                ShowViewModel<Accounts.NewAccountViewModel>(presentationBundle: new MvxBundle(Presentation));
+                GoToNewAccount.Execute(null);
                 return;
             }
 
@@ -76,31 +72,22 @@ namespace CodeHub.Core.ViewModels.App
             var account = accounts.GetDefault();
             if (account == null)
             {
-                ShowViewModel<Accounts.AccountsViewModel>();
+                GoToAccounts.Execute(null);
                 return;
             }
 
             var isEnterprise = account.IsEnterprise || !string.IsNullOrEmpty(account.Password);
             if (account.DontRemember)
             {
-                ShowViewModel<Accounts.AccountsViewModel>(presentationBundle: new MvxBundle(Presentation));
-
-                //Hack for now
-                if (isEnterprise)
-                {
-                    ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
-                }
-                else
-                {
-                    ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
-                }
-
+                GoToAccounts.Execute(null);
                 return;
             }
 
             //Lets login!
             try
             {
+                ImageUrl = null;
+                Status = null;
                 IsLoggingIn = true;
 
                 Uri accountAvatarUri = null;
@@ -113,23 +100,24 @@ namespace CodeHub.Core.ViewModels.App
 
                 if (!isEnterprise)
                     StarOrWatch();
+
+                GoToMenu.Execute(typeof(MenuViewModel));
             }
             catch (GitHubSharp.UnauthorizedException e)
             {
                 DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
 
-                ShowViewModel<Accounts.AccountsViewModel>(presentationBundle: new MvxBundle(Presentation));
                 if (isEnterprise)
-                    ShowViewModel<Accounts.AddAccountViewModel>(new Accounts.AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
+                    GoToUrlCommand.Execute(new AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
                 else
-                    ShowViewModel<Accounts.LoginViewModel>(Accounts.LoginViewModel.NavObject.CreateDontRemember(account));
+                    GoToUrlCommand.Execute(LoginViewModel.NavObject.CreateDontRemember(account));
 
                 StarOrWatch();
             }
             catch (Exception e)
             {
                 DisplayAlert(e.Message);
-                ShowViewModel<Accounts.AccountsViewModel>();
+                GoToAccounts.Execute(null);
             }
             finally
             {

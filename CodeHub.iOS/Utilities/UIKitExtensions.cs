@@ -36,6 +36,16 @@ namespace UIKit
         {
             return Observable.FromEventPattern(t => @this.ValueChanged += t, t => @this.ValueChanged -= t).Select(_ => Unit.Default);
         }
+
+        public static IObservable<string> GetChangedObservable(this UISearchBar @this)
+        {
+            return Observable.FromEventPattern<UISearchBarTextChangedEventArgs>(t => @this.TextChanged += t, t => @this.TextChanged -= t).Select(_ => @this.Text);
+        }
+
+        public static IObservable<Unit> GetSearchObservable(this UISearchBar @this)
+        {
+            return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
+        }
     }
 }
 

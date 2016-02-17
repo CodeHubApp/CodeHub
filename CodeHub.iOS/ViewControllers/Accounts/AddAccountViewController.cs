@@ -3,25 +3,25 @@ using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.Utilities;
+using CodeHub.iOS.ViewControllers;
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
+using CodeHub.Core.Factories;
 using System;
-using MvvmCross.iOS.Views;
-using MvvmCross.Binding.BindingContext;
 
-namespace CodeHub.iOS.Views.Accounts
+namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public partial class AddAccountView : MvxViewController
+    public partial class AddAccountViewController : BaseViewController
     {
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
 
-        public new AddAccountViewModel ViewModel
-        {
-            get { return (AddAccountViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public AddAccountViewModel ViewModel { get; }
 
-        public AddAccountView()
+        public AddAccountViewController()
             : base("AddAccountView", null)
         {
+            ViewModel = new AddAccountViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<ILoginFactory>());
+            ViewModel.Init(new AddAccountViewModel.NavObject());
         }
 
         public override void ViewDidLoad()
@@ -29,13 +29,6 @@ namespace CodeHub.iOS.Views.Accounts
             base.ViewDidLoad();
 
             Title = "Login";
-
-            var set = this.CreateBindingSet<AddAccountView, AddAccountViewModel>();
-            set.Bind(User).To(x => x.Username);
-            set.Bind(Password).To(x => x.Password);
-            set.Bind(Domain).To(x => x.Domain);
-            set.Bind(LoginButton).To(x => x.LoginCommand);
-            set.Apply();
 
             ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...");
 
@@ -79,6 +72,14 @@ namespace CodeHub.iOS.Views.Accounts
                 LoginButton.SendActionForControlEvents(UIControlEvent.TouchUpInside);
                 return true;
             };
+
+            OnActivation(d =>
+            {
+                d(User.GetChangedObservable().Subscribe(x => ViewModel.Username = x));
+                d(Password.GetChangedObservable().Subscribe(x => ViewModel.Password = x));
+                d(Domain.GetChangedObservable().Subscribe(x => ViewModel.Domain = x));
+                d(LoginButton.GetClickedObservable().BindCommand(ViewModel.LoginCommand));
+            });
         }
 
         NSObject _hideNotification, _showNotification;

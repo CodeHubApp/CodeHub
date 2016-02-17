@@ -2,10 +2,10 @@ using System;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
+using ReactiveUI;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
@@ -45,15 +45,12 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string WebDomain { get; set; }
 
-        public ICommand GoBackCommand
-        {
-            get { return new MvxCommand(() => ChangePresentation(new MvxClosePresentationHint(this))); }
-        }
-
         public LoginViewModel(ILoginFactory loginFactory, IFeaturesService featuresService)
         {
             _loginFactory = loginFactory;
             _featuresService = featuresService;
+
+            Title = "Login";
         }
 
         public void Init(NavObject navObject)
@@ -86,6 +83,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
 
             this.GetApplication().ActivateUser(loginData.Account, loginData.Client);
+            MessageBus.Current.SendMessage(new LogoutMessage());
         }
 
         public class NavObject

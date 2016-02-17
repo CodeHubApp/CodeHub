@@ -25,7 +25,7 @@ namespace CodeHub.iOS.ViewControllers
 
 		public Composer () : base (null, null)
 		{
-            Title = "New Comment".t();
+            Title = "New Comment";
 			EdgesForExtendedLayout = UIRectEdge.None;
 
 			var close = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());

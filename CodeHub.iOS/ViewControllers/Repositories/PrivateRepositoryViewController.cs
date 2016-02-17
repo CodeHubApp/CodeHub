@@ -20,8 +20,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             Button.SetTitleColor(UIColor.White, UIControlState.Normal);
             Button.Layer.CornerRadius = 6f;
 
-//            OnActivation(d => 
-//                d(Button.GetClickedObservable().Subscribe(_ => this.PresentUpgradeViewController())));
+            OnActivation(d => d(Button.GetClickedObservable().Subscribe(_ => this.PresentUpgradeViewController())));
         }
     }
 
@@ -40,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             vc.View.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
 
-            @this.NavigationItem.RightBarButtonItem = null;
+            @this.NavigationItem.RightBarButtonItem.Do(x => x.Enabled = false);
 
             return Disposable.Create(() =>
             {

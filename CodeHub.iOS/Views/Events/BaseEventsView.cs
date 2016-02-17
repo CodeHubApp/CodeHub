@@ -34,7 +34,7 @@ namespace CodeHub.iOS.Views.Events
 
         protected BaseEventsView()
         {
-            Title = "Events".t();
+            Title = "Events";
             EnableSearch = false;
         }
 
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.Views.Events
                     img = _eventToImage[imgKey];
                     
                 var avatar = e.Item1.Actor != null ? e.Item1.Actor.AvatarUrl : null;
-				var headerBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
+				var headerBlocks = new List<NewsFeedElement.TextBlock>();
 				foreach (var h in e.Item2.Header)
 				{
 					Action act = null;
@@ -69,7 +69,7 @@ namespace CodeHub.iOS.Views.Events
 					headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
 				}
 
-				var bodyBlocks = new System.Collections.Generic.List<NewsFeedElement.TextBlock>();
+				var bodyBlocks = new List<NewsFeedElement.TextBlock>();
 				foreach (var h in e.Item2.Body)
 				{
 					Action act = null;
@@ -81,8 +81,9 @@ namespace CodeHub.iOS.Views.Events
 					bodyBlocks.Add(block);
 				}
 
+                var weakTapped = new WeakReference<Action>(e.Item2.Tapped);
                 var githubAvatar = new GitHubAvatar(avatar).ToUri(64)?.AbsoluteUri;
-                return new NewsFeedElement(githubAvatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), e.Item2.Tapped);
+                return new NewsFeedElement(githubAvatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), () => weakTapped.Get()?.Invoke());
             }
             catch (Exception ex)
             {

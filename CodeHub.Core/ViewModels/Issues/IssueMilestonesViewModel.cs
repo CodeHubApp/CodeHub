@@ -74,7 +74,6 @@ namespace CodeHub.Core.ViewModels.Issues
 				catch (Exception e)
 				{
                     DisplayAlert("Unable to to save milestone! Please try again.");
-                    ReportException(e);
 				}
 				finally
 				{

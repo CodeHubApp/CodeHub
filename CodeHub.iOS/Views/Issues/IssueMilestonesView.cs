@@ -12,8 +12,8 @@ namespace CodeHub.iOS.Views.Issues
     {
 		public IssueMilestonesView()
 		{
-			Title = "Milestones".t();
-			NoItemsText = "No Milestones".t();
+			Title = "Milestones";
+			NoItemsText = "No Milestones";
 			EnableSearch = false;
 		}
 
