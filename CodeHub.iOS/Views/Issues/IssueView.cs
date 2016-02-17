@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Humanizer;
 using CodeHub.iOS.ViewControllers.Repositories;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -234,7 +235,7 @@ namespace CodeHub.iOS.Views.Issues
                     else if (e.ButtonIndex == openButton)
                         ViewModel.ToggleStateCommand.Execute(null);
                     else if (e.ButtonIndex == shareButton)
-                        ViewModel.ShareCommand.Execute(ViewModel.Issue.HtmlUrl);
+                        AlertDialogService.ShareUrl(ViewModel.Issue?.HtmlUrl, NavigationItem.RightBarButtonItem);
                     else if (e.ButtonIndex == showButton)
                         ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
                     else if (e.ButtonIndex == commentButton)

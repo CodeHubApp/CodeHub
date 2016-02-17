@@ -196,8 +196,6 @@
     <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
     <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
     <Compile Include="Views\Filters\MyIssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\RepositoriesFilterViewController.cs" />
-    <Compile Include="Views\Filters\SourceFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
@@ -214,7 +212,6 @@
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="Services\HttpClientService.cs" />
-    <Compile Include="Services\ShareService.cs" />
     <Compile Include="Services\UIThreadService.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />

@@ -139,14 +139,6 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        public ICommand ShareCommand
-        {
-            get
-            {
-                return new MvxCommand(() => GetService<IShareService>().ShareUrl(Issue.HtmlUrl), () => Issue != null & !string.IsNullOrEmpty(Issue.HtmlUrl));
-            }
-        }
-
 		private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
         public CollectionViewModel<IssueCommentModel> Comments
         {

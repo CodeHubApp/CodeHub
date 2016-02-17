@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
-using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
@@ -14,14 +11,9 @@ namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceTreeViewModel : LoadableViewModel
     {
-        private readonly FilterableCollectionViewModel<ContentModel, SourceFilterModel> _content;
         private readonly IFeaturesService _featuresService;
-        private SourceFilterModel _filter;
 
-        public FilterableCollectionViewModel<ContentModel, SourceFilterModel> Content
-        {
-            get { return _content; }
-        }
+        public CollectionViewModel<ContentModel> Content { get; }
 
 		public string Username { get; private set; }
 
@@ -32,17 +24,6 @@ namespace CodeHub.Core.ViewModels.Source
 		public bool TrueBranch { get; private set; }
 
 		public string Repository { get; private set; }
-
-        public SourceFilterModel Filter
-        {
-            get { return _filter; }
-            set
-            {
-                _filter = value;
-                RaisePropertyChanged(() => Filter);
-                _content.Refresh();
-            }
-        }
 
         private bool _shouldShowPro; 
         public bool ShouldShowPro
@@ -81,9 +62,7 @@ namespace CodeHub.Core.ViewModels.Source
         public SourceTreeViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
-            _content = new FilterableCollectionViewModel<ContentModel, SourceFilterModel>("SourceViewModel");
-            _content.FilteringFunction = FilterModel;
-            _content.Bind(x => x.Filter).Subscribe(_ => _content.Refresh());
+            Content = new CollectionViewModel<ContentModel>();
         }
 
         public void Init(NavObject navObject)
@@ -93,17 +72,6 @@ namespace CodeHub.Core.ViewModels.Source
             Branch = navObject.Branch ?? "master";
             Path = navObject.Path ?? "";
 			TrueBranch = navObject.TrueBranch;
-        }
-
-        private IEnumerable<ContentModel> FilterModel(IEnumerable<ContentModel> model)
-        {
-            var ret = model;
-            var order = _content.Filter.OrderBy;
-            if (order == SourceFilterModel.Order.Alphabetical)
-                ret = model.OrderBy(x => x.Name);
-            else if (order == SourceFilterModel.Order.FoldersThenFiles)
-                ret = model.OrderBy(x => x.Type).ThenBy(x => x.Name);
-            return _content.Filter.Ascending ? ret : ret.Reverse();
         }
 
         protected override Task Load(bool forceCacheInvalidation)

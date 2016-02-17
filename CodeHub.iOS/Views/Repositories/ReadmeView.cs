@@ -3,6 +3,7 @@ using CodeHub.iOS.Views;
 using UIKit;
 using WebKit;
 using System;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -68,7 +69,7 @@ namespace CodeHub.iOS.Views.Repositories
                     if (e.ButtonIndex == showButton)
                         ViewModel.GoToGitHubCommand.Execute(null);
                     else if (e.ButtonIndex == shareButton)
-                        ViewModel.ShareCommand.Execute(null);
+                        AlertDialogService.ShareUrl(ViewModel.HtmlUrl, o as UIBarButtonItem);
                 });
 
                 sheet.Dispose();

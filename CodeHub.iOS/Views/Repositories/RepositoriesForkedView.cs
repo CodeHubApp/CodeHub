@@ -5,7 +5,6 @@
         public RepositoriesForkedView()
         {
             Title = "Forks";
-            _actionButton = null;
         }
     }
 }

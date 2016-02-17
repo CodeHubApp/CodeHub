@@ -39,8 +39,6 @@
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\NotificationsFilterModel.cs" />
-    <Compile Include="Filters\RepositoriesFilterModel.cs" />
-    <Compile Include="Filters\SourceFilterModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
@@ -142,7 +140,6 @@
     <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IHttpClientService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
-    <Compile Include="Services\IShareService.cs" />
     <Compile Include="Services\IUIThreadService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />

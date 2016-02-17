@@ -2,6 +2,8 @@ using System;
 using CodeHub.Core.Services;
 using UIKit;
 using System.Threading.Tasks;
+using Foundation;
+using CoreGraphics;
 
 namespace CodeHub.iOS.Services
 {
@@ -33,6 +35,41 @@ namespace CodeHub.iOS.Services
                 alert.Dispose();
             }));
             UIApplication.SharedApplication.KeyWindow.GetVisibleViewController().PresentViewController(alert, true, null);
+        }
+
+        public static void ShareUrl(string url, UIBarButtonItem barButtonItem = null)
+        {
+            try
+            {
+                var item = new NSUrl(url);
+                var activityItems = new NSObject[] { item };
+                UIActivity[] applicationActivities = null;
+                var activityController = new UIActivityViewController (activityItems, applicationActivities);
+
+                if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad) 
+                {
+                    var window = UIApplication.SharedApplication.KeyWindow;
+                    var pop = new UIPopoverController (activityController);
+
+                    if (barButtonItem != null)
+                    {
+                        pop.PresentFromBarButtonItem(barButtonItem, UIPopoverArrowDirection.Any, true);
+                    }
+                    else
+                    {
+                        var rect = new CGRect(window.RootViewController.View.Frame.Width / 2, window.RootViewController.View.Frame.Height / 2, 0, 0);
+                        pop.PresentFromRect (rect, window.RootViewController.View, UIPopoverArrowDirection.Any, true);
+                    }
+                } 
+                else 
+                {
+                    var viewController = UIApplication.SharedApplication.KeyWindow.GetVisibleViewController();
+                    viewController.PresentViewController(activityController, true, null);
+                }
+            }
+            catch
+            {
+            }
         }
 
         public Task<string> PromptTextBox(string title, string message, string defaultValue, string okTitle)

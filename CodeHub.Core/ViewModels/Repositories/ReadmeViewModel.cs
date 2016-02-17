@@ -40,19 +40,19 @@ namespace CodeHub.Core.ViewModels.Repositories
             set { _path = value; RaisePropertyChanged(() => Path); }
         }
 
+        public string HtmlUrl
+        {
+            get { return _contentModel?.HtmlUrl; }
+        }
+
 		public ICommand GoToGitHubCommand
 		{
-			get { return new MvxCommand(() => GoToUrlCommand.Execute(_contentModel.HtmlUrl), () => _contentModel != null); }
+			get { return new MvxCommand(() => GoToUrlCommand.Execute(HtmlUrl), () => _contentModel != null); }
 		}
 
 		public ICommand GoToLinkCommand
 		{
 			get { return GoToUrlCommand; }
-		}
-
-		public ICommand ShareCommand
-		{
-            get { return new MvxCommand(() => GetService<IShareService>().ShareUrl(_contentModel.HtmlUrl), () => _contentModel != null); }
 		}
 
         public ReadmeViewModel(IMarkdownService markdownService)

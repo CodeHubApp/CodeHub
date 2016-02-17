@@ -93,15 +93,6 @@ namespace CodeHub.Core.ViewModels
         }
 
         /// <summary>
-        /// Gets the share command.
-        /// </summary>
-        /// <value>The share command.</value>
-        public ICommand ShareCommand
-        {
-            get { return new MvxCommand<string>(x => GetService<IShareService>().ShareUrl(x), x => !string.IsNullOrEmpty(x)); }
-        }
-
-        /// <summary>
         /// Gets the ViewModelTxService
         /// </summary>
         /// <value>The tx sevice.</value>

@@ -87,14 +87,6 @@ namespace CodeHub.Core.ViewModels.Gists
             }
         }
 
-		public ICommand ShareCommand
-		{
-			get
-			{
-				return new MvxCommand(() => GetService<IShareService>().ShareUrl(Gist.HtmlUrl), () => Gist != null);
-			}
-		}
-
         public void Init(NavObject navObject)
         {
             Id = navObject.Id;

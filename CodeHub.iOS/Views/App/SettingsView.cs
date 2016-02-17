@@ -68,15 +68,21 @@ namespace CodeHub.iOS.Views.App
             accountSection.Add(pushNotifications);
        
             var source = new StringElement("Source Code");
+            source.Clicked.BindCommand(vm.GoToSourceCodeCommand);
+
             var follow = new StringElement("Follow On Twitter");
+            follow.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp")));
+
             var rate = new StringElement("Rate This App");
+            rate.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8")));
+
             var aboutSection = new Section("About", "Thank you for downloading. Enjoy!") { source, follow, rate };
         
             if (vm.ShouldShowUpgrades)
             {
                 var upgrades = new StringElement("Upgrades");
+                upgrades.Clicked.BindCommand(vm.GoToUpgradesCommand);
                 aboutSection.Add(upgrades);
-                OnActivation(d => upgrades.Clicked.BindCommand(vm.GoToUpgradesCommand));
             }
 
             var appVersion = new StringElement("App Version", GetApplicationVersion())
@@ -89,14 +95,6 @@ namespace CodeHub.iOS.Views.App
 
 			//Assign the root
             Root.Reset(accountSection, new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView }, aboutSection);
-
-            OnActivation(d => 
-            {
-                d(source.Clicked.BindCommand(vm.GoToSourceCodeCommand));
-                d(follow.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://twitter.com/CodeHubapp"))));
-                d(rate.Clicked.Subscribe(_ => UIApplication.SharedApplication.OpenUrl(new NSUrl("https://itunes.apple.com/us/app/codehub-github-for-ios/id707173885?mt=8"))));
-            });
-
 		}
 
         private static string GetApplicationVersion() 

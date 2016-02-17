@@ -187,23 +187,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }
         }
 
-        private ICommand _shareCommmand;
-
-        public new ICommand ShareCommand
-        {
-            get
-            { 
-                if (_shareCommmand == null)
-                {
-                    var cmd = new MvxCommand(() => base.ShareCommand.Execute(PullRequest.HtmlUrl), () => PullRequest != null);
-                    this.Bind(x => x.PullRequest).Subscribe(_ => cmd.RaiseCanExecuteChanged());
-                    _shareCommmand = cmd;
-                }
-
-                return _shareCommmand;
-            }
-        }
-
         public ICommand ToggleStateCommand
         {
             get { return new MvxCommand(() => ToggleState(PullRequest.State == "open")); }

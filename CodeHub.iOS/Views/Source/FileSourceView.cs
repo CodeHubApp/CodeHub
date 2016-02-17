@@ -3,6 +3,7 @@ using CodeHub.iOS.Views;
 using UIKit;
 using CodeHub.Core.ViewModels;
 using Foundation;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -78,7 +79,7 @@ namespace CodeHub.iOS.Views.Source
                     }
                     else if (e.ButtonIndex == shareButton)
                     {
-                        vm.ShareCommand.Execute(null);
+                        AlertDialogService.ShareUrl(ViewModel?.HtmlUrl, o as UIBarButtonItem);
                     }
                     else if (e.ButtonIndex == showButton)
                     {

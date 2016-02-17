@@ -38,12 +38,6 @@ namespace CodeHub.Core.ViewModels
 			}
 		}
 
-		public string Title
-		{
-			get;
-			protected set;
-		}
-
 		public string HtmlUrl
 		{
 			get;
@@ -53,14 +47,6 @@ namespace CodeHub.Core.ViewModels
 		public ICommand GoToHtmlUrlCommand
 		{
 			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = HtmlUrl }), () => !string.IsNullOrEmpty(HtmlUrl)); }
-		}
-
-		public ICommand ShareCommand
-		{
-			get
-			{
-				return new MvxCommand(() => GetService<IShareService>().ShareUrl(HtmlUrl), () => !string.IsNullOrEmpty(HtmlUrl));
-			}
 		}
 
 		protected static string CreatePlainContentFile(string data, string filename)

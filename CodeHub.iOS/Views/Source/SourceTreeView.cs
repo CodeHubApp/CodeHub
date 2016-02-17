@@ -2,8 +2,6 @@ using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using GitHubSharp.Models;
-using CodeHub.iOS.Views.Filters;
-using UIKit;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
@@ -12,8 +10,6 @@ namespace CodeHub.iOS.Views.Source
 {
     public class SourceTreeView : ViewModelCollectionDrivenDialogViewController
     {
-        private UIBarButtonItem _sortButton;
-
         public new SourceTreeViewModel ViewModel
         {
             get { return (SourceTreeViewModel) base.ViewModel; }
@@ -23,10 +19,6 @@ namespace CodeHub.iOS.Views.Source
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            _sortButton = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIBarButtonItemStyle.Plain, 
-                (s, e) => ShowFilterController(new SourceFilterViewController(ViewModel.Content))); 
-            
             BindCollection(ViewModel.Content, CreateElement);
             ViewModel.Bind(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
         }
@@ -42,8 +34,6 @@ namespace CodeHub.iOS.Views.Source
                 var path = ViewModel.Path.TrimEnd('/');
                 Title = path.Substring(path.LastIndexOf('/') + 1);
             } 
-
-            NavigationItem.RightBarButtonItem = _sortButton;
         }
 
         public override void ViewDidDisappear(bool animated)

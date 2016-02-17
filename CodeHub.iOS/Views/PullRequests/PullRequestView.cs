@@ -221,7 +221,7 @@ namespace CodeHub.iOS.Views.PullRequests
             var editButton = ViewModel.GoToEditCommand.CanExecute(null) ? sheet.AddButton("Edit") : -1;
             var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.PullRequest.State == "open" ? "Close" : "Open") : -1;
             var commentButton = sheet.AddButton("Comment");
-            var shareButton = ViewModel.ShareCommand.CanExecute(null) ? sheet.AddButton("Share") : -1;
+            var shareButton = !string.IsNullOrEmpty(ViewModel.PullRequest?.HtmlUrl) ? sheet.AddButton("Share") : -1;
             var showButton = sheet.AddButton("Show in GitHub");
             var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
@@ -234,7 +234,7 @@ namespace CodeHub.iOS.Views.PullRequests
                     else if (e.ButtonIndex == openButton)
                         ViewModel.ToggleStateCommand.Execute(null);
                     else if (e.ButtonIndex == shareButton)
-                        ViewModel.ShareCommand.Execute(null);
+                        AlertDialogService.ShareUrl(ViewModel.PullRequest?.HtmlUrl, NavigationItem.RightBarButtonItem);
                     else if (e.ButtonIndex == showButton)
                         ViewModel.GoToUrlCommand.Execute(ViewModel.PullRequest.HtmlUrl);
                     else if (e.ButtonIndex == commentButton)

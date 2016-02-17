@@ -2,7 +2,6 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
-using CodeHub.iOS.Views.Filters;
 using UIKit;
 using System;
 using CodeHub.Core.Utilities;
@@ -12,8 +11,6 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public abstract class BaseRepositoriesView : ViewModelCollectionDrivenDialogViewController
     {
-        protected UIBarButtonItem _actionButton;
-
         public new RepositoriesViewModel ViewModel
         {  
             get { return (RepositoriesViewModel)base.ViewModel; }
@@ -24,20 +21,6 @@ namespace CodeHub.iOS.Views.Repositories
         {
             Title = "Repositories";
             NoItemsText = "No Repositories"; 
-            _actionButton = new UIBarButtonItem(Theme.CurrentTheme.SortButton, UIBarButtonItemStyle.Plain, 
-                (s, e) => ShowFilterController(new RepositoriesFilterViewController(ViewModel.Repositories)));
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem = _actionButton;  
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;  
         }
 
         public override void ViewDidLoad()

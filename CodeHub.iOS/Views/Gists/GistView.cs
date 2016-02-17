@@ -11,6 +11,7 @@ using CodeHub.iOS.DialogElements;
 using CodeHub.Core.Services;
 using MvvmCross.Platform;
 using System.Collections.Generic;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -185,7 +186,7 @@ namespace CodeHub.iOS.Views.Gists
                     try
                     {
                         if (e.ButtonIndex == shareButton)
-                            ViewModel.ShareCommand.Execute(null);
+                            AlertDialogService.ShareUrl(ViewModel.Gist?.HtmlUrl, sender as UIBarButtonItem);
                         else if (e.ButtonIndex == showButton)
                             ViewModel.GoToHtmlUrlCommand.Execute(null);
                         else if (e.ButtonIndex == starButton)
