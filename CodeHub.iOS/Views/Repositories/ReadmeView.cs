@@ -17,7 +17,7 @@ namespace CodeHub.iOS.Views.Repositories
             set { base.ViewModel = value; }
         }
 
-		public ReadmeView() : base(false)
+        public ReadmeView() : base(false)
         {
             Title = "Readme";
             NavigationItem.RightBarButtonItem = _actionButton;
@@ -27,19 +27,19 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
             ViewModel.Bind(x => x.Path).Subscribe(x => LoadFile(x));
-			ViewModel.LoadCommand.Execute(false);
+            ViewModel.LoadCommand.Execute(false);
         }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
-		{
+        {
             if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
-			{
+            {
                 ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
-				return false;
-			}
+                return false;
+            }
 
             return base.ShouldStartLoad(webView, navigationAction);
-		}
+        }
 
         public override void ViewWillAppear(bool animated)
         {
@@ -54,12 +54,12 @@ namespace CodeHub.iOS.Views.Repositories
         }
 
         private void ShareButtonPress(object o, EventArgs args)
-		{
+        {
             var sheet = new UIActionSheet();
-			var shareButton = sheet.AddButton("Share");
-			var showButton = sheet.AddButton("Show in GitHub");
-			var cancelButton = sheet.AddButton("Cancel");
-			sheet.CancelButtonIndex = cancelButton;
+            var shareButton = sheet.AddButton("Share");
+            var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
+            sheet.CancelButtonIndex = cancelButton;
 
             sheet.Dismissed += (sender, e) =>
             {
@@ -75,7 +75,7 @@ namespace CodeHub.iOS.Views.Repositories
             };
 
             sheet.ShowFrom(_actionButton, true);
-		}
+        }
     }
 }
 

@@ -7,47 +7,47 @@ namespace CodeHub.iOS.Utilities
 {
     public static class ViewControllerExtensions
     {
-		public static IHud CreateHud(this UIViewController controller)
-		{
-			return new Hud(controller.View);
-		}
+        public static IHud CreateHud(this UIViewController controller)
+        {
+            return new Hud(controller.View);
+        }
 
-		public async static Task<T> DoWorkAsync<T>(this UIViewController controller, string workTitle, Func<Task<T>> work)
-		{
-			var hud = CreateHud(controller);
-			hud.Show(workTitle);
+        public async static Task<T> DoWorkAsync<T>(this UIViewController controller, string workTitle, Func<Task<T>> work)
+        {
+            var hud = CreateHud(controller);
+            hud.Show(workTitle);
 
-			//Make sure the Toolbar is disabled too
-			if (controller.ToolbarItems != null)
-			{
-				foreach (var t in controller.ToolbarItems)
-					t.Enabled = false;
-			}
+            //Make sure the Toolbar is disabled too
+            if (controller.ToolbarItems != null)
+            {
+                foreach (var t in controller.ToolbarItems)
+                    t.Enabled = false;
+            }
 
-			try
-			{
+            try
+            {
                 NetworkActivity.PushNetworkActive();
                 return await work();
-			}
-			finally
-			{
+            }
+            finally
+            {
                 NetworkActivity.PopNetworkActive();
 
-				hud.Hide();
+                hud.Hide();
 
-				//Enable all the toolbar items
-				if (controller.ToolbarItems != null)
-				{
-					foreach (var t in controller.ToolbarItems)
-						t.Enabled = true;
-				}
-			}
-		}
+                //Enable all the toolbar items
+                if (controller.ToolbarItems != null)
+                {
+                    foreach (var t in controller.ToolbarItems)
+                        t.Enabled = true;
+                }
+            }
+        }
 
         public async static Task DoWorkAsync(this UIViewController controller, string workTitle, Func<Task> work)
         {
-			var hud = CreateHud(controller);
-			hud.Show(workTitle);
+            var hud = CreateHud(controller);
+            hud.Show(workTitle);
 
             //Make sure the Toolbar is disabled too
             if (controller.ToolbarItems != null)

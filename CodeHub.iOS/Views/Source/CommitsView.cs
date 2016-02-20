@@ -9,18 +9,18 @@ using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
-	{
-		public override void ViewDidLoad()
-		{
-			Title = "Commits";
+    public abstract class CommitsView : ViewModelCollectionDrivenDialogViewController
+    {
+        public override void ViewDidLoad()
+        {
+            Title = "Commits";
 
-			base.ViewDidLoad();
+            base.ViewDidLoad();
 
             TableView.EstimatedRowHeight = 64f;
             TableView.RowHeight = UITableView.AutomaticDimension;
 
-			var vm = (CommitsViewModel) ViewModel;
+            var vm = (CommitsViewModel) ViewModel;
             var weakVm = new WeakReference<CommitsViewModel>(vm);
             BindCollection(vm.Commits, x => new CommitElement(x, MakeCallback(weakVm, x)));
 
@@ -28,12 +28,12 @@ namespace CodeHub.iOS.Views.Source
                 .Where(x => x)
                 .Take(1)
                 .Subscribe(_ => this.ShowPrivateView());
-		}
+        }
 
         private static Action MakeCallback(WeakReference<CommitsViewModel> weakVm, CommitModel model)
         {
             return new Action(() => weakVm.Get()?.GoToChangesetCommand.Execute(model));
         }
-	}
+    }
 }
 
