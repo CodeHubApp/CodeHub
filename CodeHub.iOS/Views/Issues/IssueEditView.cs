@@ -27,20 +27,7 @@ namespace CodeHub.iOS.Views.Issues
             var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);
             var content = new MultilinedElement("Description");
 
-            content.Tapped += () =>
-            {
-                var composer = new MarkdownComposerViewController { Title = "Issue Description", Text = content.Value };
-                composer.NewComment(this, (text) => {
-                    vm.Content = text;
-                    composer.CloseComposer();
-                });
-            };
-
             var state = new BooleanElement("Open", true);
-            state.Changed.Subscribe(x => vm.IsOpen = x);
-
-            vm.Bind(x => x.Title, true).Subscribe(x => title.Value = x);
-            vm.Bind(x => x.Content, true).Subscribe(x => content.Value = x);
 
             vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
                 assignedTo.Value = x == null ? "Unassigned" : x.Login;
@@ -54,11 +41,11 @@ namespace CodeHub.iOS.Views.Issues
                     Root.Reload(milestone);
             });
 
-            vm.BindCollection(x => x.Labels, x => {
+            vm.BindCollection(x => x.Labels, true).Subscribe(x => {
                 labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
                 if (assignedTo.GetRootElement() != null)
                     Root.Reload(labels);
-            }, true);
+            });
 
             vm.Bind(x => x.IsOpen, true).Subscribe(x =>
             {
@@ -75,13 +62,26 @@ namespace CodeHub.iOS.Views.Issues
 
             OnActivation(d =>
             {
-                d(title.Changed.Subscribe(x => vm.Title = x));
+                d(title.Changed.Subscribe(x => vm.IssueTitle = x));
                 d(assignedTo.Clicked.BindCommand(vm.GoToAssigneeCommand));
                 d(milestone.Clicked.BindCommand(vm.GoToMilestonesCommand));
                 d(labels.Clicked.BindCommand(vm.GoToLabelsCommand));
+
+                d(state.Changed.Subscribe(x => vm.IsOpen = x));
+                d(vm.Bind(x => x.Title, true).Subscribe(x => title.Value = x));
+                d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
+
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
                     vm.SaveCommand.Execute(null);
+                }));
+
+                d(content.Clicked.Subscribe(_ => {
+                    var composer = new MarkdownComposerViewController { Title = "Issue Description", Text = content.Details };
+                    composer.NewComment(this, (text) => {
+                        vm.Content = text;
+                        composer.CloseComposer();
+                    });
                 }));
             });
         }

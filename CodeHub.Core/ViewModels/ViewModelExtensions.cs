@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using MvvmCross.Platform;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -23,18 +24,8 @@ namespace CodeHub.Core.ViewModels
             }
 
             var application = Mvx.Resolve<IApplicationService>();
-            var uiThrad = Mvx.Resolve<IUIThreadService>();
-
-			var result = await application.Client.ExecuteAsync(request).ConfigureAwait(false);
-            uiThrad.MarshalOnUIThread(() => update(result));
-
-            if (result.WasCached)
-            {
-                request.RequestFromCache = false;
-                var uncachedTask = application.Client.ExecuteAsync(request);
-                uncachedTask.FireAndForget();
-                uncachedTask.ContinueWith(t => uiThrad.MarshalOnUIThread(() => update(t.Result)), TaskContinuationOptions.OnlyOnRanToCompletion);
-            }
+			var result = await application.Client.ExecuteAsync(request);
+            update(result);
 		}
 
         public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
@@ -88,32 +79,13 @@ public static class BindExtensions
         return activate ? ret.StartWith(comp(viewModel)) : ret;
     }
 
-    public static void BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, Action<NotifyCollectionChangedEventArgs> b, bool activateNow = false) where T : INotifyPropertyChanged
+    public static IObservable<Unit> BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, bool activate = false) where T : INotifyPropertyChanged
     {
         var exp = outExpr.Compile();
         var m = exp(viewModel);
-        m.CollectionChanged += (sender, e) =>
-        {
-            try
-            {
-                b(e);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        };
 
-        if (activateNow)
-        {
-            try
-            {
-                b(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+        var ret = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(t => m.CollectionChanged += t, t => m.CollectionChanged -= t)
+            .Select(_ => Unit.Default);
+        return activate ? ret.StartWith(Unit.Default) : ret;
     }
 }

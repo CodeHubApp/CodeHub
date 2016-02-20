@@ -37,7 +37,7 @@ namespace CodeHub.iOS.Views.Source
 				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
 			});
 
-			ViewModel.BindCollection(x => x.Comments, e =>
+            ViewModel.BindCollection(x => x.Comments).Subscribe(e =>
 			{
 				//Convert it to something light weight
 				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 

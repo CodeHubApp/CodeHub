@@ -15,20 +15,13 @@ namespace CodeHub.Core.ViewModels.Issues
 		public bool IsOpen
 		{
 			get { return _open; }
-			set
-			{
-				_open = value;
-				RaisePropertyChanged(() => IsOpen);
-			}
+            set { this.RaiseAndSetIfChanged(ref _open, value); }
 		}
 
 		public IssueModel Issue
 		{
 			get { return _issue; }
-			set {
-				_issue = value;
-				RaisePropertyChanged(() => Issue);
-			}
+            set { this.RaiseAndSetIfChanged(ref _issue, value); }
 		}
 
 		public long Id { get; private set; }
@@ -37,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Issues
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(Title))
+				if (string.IsNullOrEmpty(IssueTitle))
 					throw new Exception("Issue must have a title!");
 
 				string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
@@ -56,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
 				try
 				{
-					var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(Title, content, state, assignedTo, milestone, labels)); 
+                    var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(IssueTitle, content, state, assignedTo, milestone, labels)); 
 					Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
 				}
 				catch (GitHubSharp.InternalServerException)
@@ -110,7 +103,7 @@ namespace CodeHub.Core.ViewModels.Issues
 			Issue = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IssueModel;
 			if (Issue != null)
 			{
-				Title = Issue.Title;
+                IssueTitle = Issue.Title;
 				AssignedTo = Issue.Assignee;
 				Milestone = Issue.Milestone;
 				Labels.Items.Reset(Issue.Labels);

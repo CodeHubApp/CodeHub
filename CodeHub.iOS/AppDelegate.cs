@@ -4,7 +4,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using CodeFramework.iOS;
 using System.Collections.Generic;
 using System;    
 using MvvmCross.Core.ViewModels;
@@ -12,15 +11,10 @@ using Foundation;
 using UIKit;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.Linq;
-using System.Text;
-using CodeFramework.iOS.XCallback;
 using Security;
 using ObjCRuntime;
-using System.Net;
 using MvvmCross.iOS.Platform;
 using MvvmCross.Platform;
 using MvvmCross.Core.Views;
@@ -30,6 +24,7 @@ using CodeHub.iOS.Services;
 using CodeHub.iOS.Views.App;
 using ReactiveUI;
 using CodeHub.Core.Messages;
+using CodeHub.iOS.XCallback;
 
 namespace CodeHub.iOS
 {
@@ -152,12 +147,6 @@ namespace CodeHub.iOS
             }
         }
 
-        public override void WillEnterForeground(UIApplication application)
-        {
-            XCallbackProvider.DestoryTokens();
-            base.WillEnterForeground(application);
-        }
-
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
             if (application.ApplicationState == UIApplicationState.Active)
@@ -266,8 +255,6 @@ namespace CodeHub.iOS
                 if (!path.EndsWith("/", StringComparison.Ordinal))
                     path += "/";
                 var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
-                var firstIsDomain = first.Contains(".");
-
                 return UrlRouteProvider.Handle(path);
             }
         }

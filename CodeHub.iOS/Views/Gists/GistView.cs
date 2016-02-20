@@ -70,7 +70,7 @@ namespace CodeHub.iOS.Views.Gists
                 RefreshHeaderView();
             });
 
-			ViewModel.BindCollection(x => x.Comments, x => RenderGist());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderGist());
 
             ViewModel.Bind(x => x.IsStarred).Subscribe(isStarred =>
             {

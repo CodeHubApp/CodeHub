@@ -12,10 +12,5 @@ namespace CodeHub.iOS.Services
         {
             get { return System.IO.Path.Combine(BaseDir, "Documents/accounts"); }
         }
-
-        public string CacheDir
-        {
-            get { return System.IO.Path.Combine(BaseDir, "Library/Caches/codeframework.cache/"); }
-        }
     }
 }

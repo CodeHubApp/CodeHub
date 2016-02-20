@@ -41,7 +41,7 @@ namespace CodeHub.iOS.Views.Issues
                 return e;
             });
 
-			vm.BindCollection(x => x.SelectedLabels, x =>
+            vm.BindCollection(x => x.SelectedLabels, true).Subscribe(_ =>
 			{
 				if (Root.Count == 0)
 					return;
@@ -56,7 +56,7 @@ namespace CodeHub.iOS.Views.Issues
 				}
 
 				Root.Reload(Root[0], UITableViewRowAnimation.None);
-			}, true);
+			});
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }

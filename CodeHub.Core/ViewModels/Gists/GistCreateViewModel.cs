@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System.Linq;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -14,82 +13,53 @@ namespace CodeHub.Core.ViewModels.Gists
     {
         private string _description;
         private bool _public;
-        private IDictionary<string, string> _files;
+        private IDictionary<string, string> _files = new Dictionary<string, string>();
         private bool _saving;
 
         public bool IsSaving
         {
             get { return _saving; }
-            private set
-            {
-                _saving = value;
-                RaisePropertyChanged(() => IsSaving);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _saving, value); }
         }
 
         public string Description
         {
             get { return _description; }
-            set
-            {
-                _description = value;
-                RaisePropertyChanged(() => Description);
-            }
+            set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
         public bool Public
         {
             get { return _public; }
-            set
-            {
-                _public = value;
-                RaisePropertyChanged(() => Public);
-            }
+            set { this.RaiseAndSetIfChanged(ref _public, value); }
         }
 
         public IDictionary<string, string> Files
         {
             get { return _files; }
-            set
-            {
-                _files = value;
-                RaisePropertyChanged(() => Files);
-            }
+            set { this.RaiseAndSetIfChanged(ref _files, value); }
         }
 
-        public ICommand SaveCommand
+        public IReactiveCommand<GistModel> SaveCommand { get; }
+
+        public IReactiveCommand<object> CancelCommand { get; }
+
+
+        public GistCreateViewModel()
         {
-            get { return new MvxCommand(() => Save()); }
-        }
-            
-        public void Init()
-        {
-            var createGistModel = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as GistCreateModel;
-            if (createGistModel != null)
-            {
-                Description = createGistModel.Description;
-                Public = createGistModel.Public ?? false;
-                Files = createGistModel.Files != null ? 
-                    createGistModel.Files.ToDictionary(x => x.Key, x => x.Value.Content) :
-                    new Dictionary<string, string>();
-            }
-            else
-            {
-                Files = new Dictionary<string, string>();
-            }
+            CancelCommand = ReactiveCommand.Create();
+            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => Save());
+            SaveCommand.ThrownExceptions.Subscribe(x => DisplayAlert(x.Message));
         }
 
-        private async Task Save()
+        private async Task<GistModel> Save()
         {
             if (_files.Count == 0)
-            {
-                DisplayAlert("You cannot create a Gist without atleast one file! Please correct and try again.");
-                return;
-            }
+                throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");
 
             try
             {
-                var createGist = new GistCreateModel()
+                var createGist = new GistCreateModel
                 {
                     Description = Description ?? string.Empty,
                     Public = Public,
@@ -99,11 +69,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 IsSaving = true;
                 var newGist = (await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
                 Messenger.Publish(new GistAddMessage(this, newGist));
-                ChangePresentation(new MvxClosePresentationHint(this));
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to create new gist! Please try again.");
+                return newGist;
             }
             finally
             {

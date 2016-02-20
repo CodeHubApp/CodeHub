@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CodeHub.iOS.ViewControllers
 {
-	public class Composer : UIViewController
+    public class Composer : BaseViewController
 	{
         protected UIBarButtonItem SendItem;
 		UIViewController _previousController;
@@ -28,9 +28,9 @@ namespace CodeHub.iOS.ViewControllers
             Title = "New Comment";
 			EdgesForExtendedLayout = UIRectEdge.None;
 
-			var close = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
+            var close = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
             NavigationItem.LeftBarButtonItem = close;
-			SendItem = new UIBarButtonItem (Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => PostCallback());
+            SendItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
             NavigationItem.RightBarButtonItem = SendItem;
 
             TextView = new UITextView(ComputeComposerSize(CGRect.Empty));
@@ -45,6 +45,12 @@ namespace CodeHub.iOS.ViewControllers
 
             _normalButtonImage = ImageFromColor(UIColor.White);
             _pressedButtonImage = ImageFromColor(UIColor.FromWhiteAlpha(0.0f, 0.4f));
+
+            OnActivation(d =>
+            {
+                d(close.GetClickedObservable().Subscribe(_ => CloseComposer()));
+                d(SendItem.GetClickedObservable().Subscribe(_ => PostCallback()));
+            });
 		}
 
         private UIImage ImageFromColor(UIColor color)
@@ -176,12 +182,6 @@ namespace CodeHub.iOS.ViewControllers
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
 		}
 
-        [Obsolete]
-        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-        {
-            return true;
-        }
-		
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);

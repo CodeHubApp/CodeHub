@@ -4,8 +4,9 @@ using UIKit;
 using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels.Notifications;
 using Humanizer;
-using MvvmCross.Binding.BindingContext;
 using CodeHub.iOS.DialogElements;
+using GitHubSharp.Models;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
 {
@@ -36,10 +37,6 @@ namespace CodeHub.iOS.Views
             var vm = (NotificationsViewModel)ViewModel;
             var weakVm = new WeakReference<NotificationsViewModel>(vm);
 
-            vm.ReadAllCommand.CanExecuteChanged += (sender, e) => NavigationItem.RightBarButtonItem.Enabled = vm.ReadAllCommand.CanExecute(null);
-
-            vm.Bind(x => x.IsMarking).SubscribeStatus("Marking...");
-
             BindCollection(vm.Notifications, x =>
             {
                 var el = new StringElement(x.Subject.Title, x.UpdatedAt.Humanize(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
@@ -56,18 +53,25 @@ namespace CodeHub.iOS.Views
                 else
                     el.Image = Octicon.Alert.ToImage();
 
-                el.Clicked.Subscribe(_ => weakVm.Get()?.GoToNotificationCommand.Execute(x));
+                el.Clicked.Subscribe(MakeCallback(weakVm, x));
                 return el;
             });
 
-            var set = this.CreateBindingSet<NotificationsView, NotificationsViewModel>();
-            set.Bind(_viewSegment).To(x => x.ShownIndex);
-            set.Apply();
+            var o = Observable.FromEventPattern(t => vm.ReadAllCommand.CanExecuteChanged += t, t => vm.ReadAllCommand.CanExecuteChanged -= t);
 
             OnActivation(d =>
             {
                 d(checkButton.GetClickedObservable().BindCommand(vm.ReadAllCommand));
+                d(vm.Bind(x => x.IsMarking).SubscribeStatus("Marking..."));
+                d(vm.Bind(x => x.ShownIndex, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => vm.ShownIndex = x));
+                d(o.Subscribe(_ => NavigationItem.RightBarButtonItem.Enabled = vm.ReadAllCommand.CanExecute(null)));
             });
+        }
+
+        private static Action<object> MakeCallback(WeakReference<NotificationsViewModel> weakVm, NotificationModel model)
+        {
+            return new Action<object>(_ => weakVm.Get()?.GoToNotificationCommand.Execute(model));
         }
 
         protected override Section CreateSection(string text)
@@ -78,11 +82,10 @@ namespace CodeHub.iOS.Views
         private class MarkReadSection : UITableViewHeaderFooterView
         {
             readonly UIButton _button;
-            readonly NotificationsView _parent;
             public MarkReadSection(string text, NotificationsView parent, bool button)
                 : base(new CoreGraphics.CGRect(0, 0, 320, 28f))
             {
-                _parent = parent;
+                var weakVm = new WeakReference<NotificationsViewModel>(parent.ViewModel as NotificationsViewModel);
                 TextLabel.Text = text;
                 TextLabel.Font = TextLabel.Font.WithSize(TextLabel.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
 
@@ -92,7 +95,7 @@ namespace CodeHub.iOS.Views
                     _button.SetImage(Theme.CurrentTheme.CheckButton, UIControlState.Normal);
                     //_button.Frame = new System.Drawing.RectangleF(320f - 42f, 1f, 26f, 26f);
                     _button.TintColor = UIColor.FromRGB(50, 50, 50);
-                    _button.TouchUpInside += (sender, e) => ((NotificationsViewModel)_parent.ViewModel).ReadRepositoriesCommand.Execute(text);
+                    _button.TouchUpInside += (sender, e) => weakVm.Get()?.ReadRepositoriesCommand.Execute(text);
                     Add(_button);
                 }
             }

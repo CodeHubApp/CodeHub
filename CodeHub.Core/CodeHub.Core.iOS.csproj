@@ -131,16 +131,12 @@
     <Compile Include="Data\Filter.cs" />
     <Compile Include="Data\IAccount.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
-    <Compile Include="Messages\CancelationMessage.cs" />
-    <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Services\AccountsService.cs" />
     <Compile Include="Services\IAccountPreferencesService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
     <Compile Include="Services\IDefaultValueService.cs" />
-    <Compile Include="Services\IHttpClientService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
-    <Compile Include="Services\IUIThreadService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
@@ -175,7 +171,6 @@
     <Compile Include="Utils\FunctionalExtensions.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
-    <Compile Include="Services\ViewModelService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

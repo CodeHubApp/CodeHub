@@ -13,7 +13,6 @@ namespace CodeHub.iOS
     {
         private readonly UIWindow _window;
         private UINavigationController _generalNavigationController;
-        private IMvxModalIosView _currentModal;
 
         public SlideoutNavigationController SlideoutNavigationController { get; set; }
 
@@ -27,12 +26,6 @@ namespace CodeHub.iOS
             var closeHint = hint as MvxClosePresentationHint;
             if (closeHint != null)
             {
-                if (_currentModal != null)
-                {
-                    ((UIViewController)_currentModal).DismissViewController(true, null);
-                    return;
-                }
-
                 for (int i = _generalNavigationController.ViewControllers.Length - 1; i >= 1; i--)
                 {
                     var vc = _generalNavigationController.ViewControllers[i];
@@ -58,42 +51,22 @@ namespace CodeHub.iOS
             if (uiView == null)
                 throw new InvalidOperationException("Asking to show a view which is not a UIViewController!");
 
-            if (uiView is IMvxModalIosView)
+            if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
             {
-                _currentModal = (IMvxModalIosView)uiView;
-                var modalNavigationController = new UINavigationController(uiView);
-                modalNavigationController.NavigationBar.Translucent = false;
-                modalNavigationController.Toolbar.Translucent = false;
-                uiView.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) =>
-                {
-                    var vm = ((IMvxModalIosView)uiView).ViewModel;
-                    Mvx.Resolve<MvvmCross.Plugins.Messenger.IMvxMessenger>().Publish(new CodeHub.Core.Messages.CancelationMessage(vm));
-                    modalNavigationController.DismissViewController(true, null);
-                    _currentModal = null;
-                });
-                PresentModalViewController(modalNavigationController, true);
+                var openButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ThreeLinesButton };
+                var mainNavigationController = new MainNavigationController(uiView, SlideoutNavigationController, openButton);
+                _generalNavigationController = mainNavigationController;
+                SlideoutNavigationController.SetMainViewController(mainNavigationController, true);
             }
             else
             {
-                if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
-                {
-                    var openButton = new UIBarButtonItem { Image = Theme.CurrentTheme.ThreeLinesButton };
-                    var mainNavigationController = new MainNavigationController(uiView, SlideoutNavigationController, openButton);
-                    _generalNavigationController = mainNavigationController;
-                    SlideoutNavigationController.SetMainViewController(mainNavigationController, true);
-                }
-                else
-                {
-                    _generalNavigationController.PushViewController(uiView, true);
-                }
+                _generalNavigationController.PushViewController(uiView, true);
             }
         }
 
         public override bool PresentModalViewController(UIViewController viewController, bool animated)
         {
-            if (_window.RootViewController == null)
-                return false;
-            _window.RootViewController.PresentViewController(viewController, true, null);
+            _window?.GetVisibleViewController()?.PresentViewController(viewController, true, null);
             return true;
         }
     }

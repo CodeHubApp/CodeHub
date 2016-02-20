@@ -200,7 +200,6 @@
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="UrlRouterProvider.cs" />
-    <Compile Include="XCallbackProvider.cs" />
     <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
@@ -211,8 +210,6 @@
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
     <Compile Include="Services\DefaultValueService.cs" />
-    <Compile Include="Services\HttpClientService.cs" />
-    <Compile Include="Services\UIThreadService.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\MenuBaseViewController.cs" />
@@ -354,7 +351,6 @@
     <Compile Include="DialogElements\IElementSizing.cs" />
     <Compile Include="DialogElements\WebElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
-    <Compile Include="DialogElements\CustomElement.cs" />
     <Compile Include="DialogElements\OwnerDrawnElement.cs" />
     <Compile Include="DialogElements\LoadMoreElement.cs" />
     <Compile Include="DialogElements\PaginateElement.cs" />
@@ -370,6 +366,10 @@
     <InterfaceDefinition Include="ViewControllers\Accounts\AddAccountView.xib" />
     <Compile Include="ViewControllers\Accounts\AddAccountViewController.designer.cs" />
     <Compile Include="ViewControllers\Accounts\AddAccountViewController.cs" />
+    <Compile Include="XCallback\XCallbackProvider.cs" />
+    <Compile Include="TableViewCells\MultilinedCellView.cs" />
+    <Compile Include="TableViewCells\MultilinedCellView.designer.cs" />
+    <InterfaceDefinition Include="TableViewCells\MultilinedCellView.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

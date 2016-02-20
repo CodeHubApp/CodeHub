@@ -80,8 +80,8 @@ namespace CodeHub.iOS.Views.Issues
                 Render();
             });
 
-            ViewModel.BindCollection(x => x.Comments, (e) => RenderComments());
-            ViewModel.BindCollection(x => x.Events, (e) => RenderComments());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
+            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments());
             ViewModel.Bind(x => x.ShouldShowPro).Subscribe(x => {
                 if (x) this.ShowPrivateView(); 
             });

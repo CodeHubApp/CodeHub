@@ -8,6 +8,7 @@ using CoreGraphics;
 using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.Transitions;
+using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -31,8 +32,6 @@ namespace CodeHub.iOS.Views.Repositories
             TableView.EstimatedRowHeight = 64f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
 
-            vm.Bind(x => x.SelectedLanguage, true).Subscribe(l => _trendingTitleButton.Text = l.Name);
-
             vm.Bind(x => x.Repositories).Subscribe(repos =>
             {
                 Root.Reset(repos.Select(x => {
@@ -41,14 +40,22 @@ namespace CodeHub.iOS.Views.Repositories
                         var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
                         var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
                         var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.Forks, description, repo.Owner?.Login, avatar) { ShowOwner = true };
-                        sse.Tapped += () => weakVm.Get()?.GoToRepositoryCommand.Execute(repo);
+                        sse.Tapped += MakeCallback(weakVm, repo);
                         return sse;
                     }));
                     return s;
                 }));
             });
 
-            OnActivation(d => _trendingTitleButton.GetClickedObservable().Subscribe(_ => ShowLanguages()));
+            OnActivation(d => {
+                d(_trendingTitleButton.GetClickedObservable().Subscribe(_ => ShowLanguages()));
+                d(vm.Bind(x => x.SelectedLanguage, true).Subscribe(l => _trendingTitleButton.Text = l.Name));
+            });
+        }
+
+        private static Action MakeCallback(WeakReference<RepositoriesTrendingViewModel> weakVm, RepositoryModel model)
+        {
+            return new Action(() => weakVm.Get()?.GoToRepositoryCommand.Execute(model));
         }
 
 

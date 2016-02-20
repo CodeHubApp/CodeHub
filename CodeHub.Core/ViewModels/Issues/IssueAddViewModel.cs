@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Issues
     {
 		protected override async Task Save()
 		{
-            if (string.IsNullOrEmpty(Title))
+            if (string.IsNullOrEmpty(IssueTitle))
             {
                 DisplayAlert("Unable to save the issue: you must provide a title!");
                 return;
@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Issues
 				var content = Content ?? string.Empty;
 
 				IsSaving = true;
-				var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(Title, content, assignedTo, milestone, labels));
+                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(IssueTitle, content, assignedTo, milestone, labels));
 				Messenger.Publish(new IssueAddMessage(this) { Issue = data.Data });
 				ChangePresentation(new MvxClosePresentationHint(this));
 			}

@@ -5,6 +5,7 @@ using CodeHub.Core.ViewModels;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using CodeHub.Core.Utilities;
+using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -38,7 +39,7 @@ namespace CodeHub.iOS.Views.Repositories
 				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
                 var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
                 var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, avatar) { ShowOwner = true };
-                sse.Tapped += () => weakVm.Get()?.GoToRepositoryCommand.Execute(repo);
+                sse.Tapped += MakeCallback(weakVm, repo);
                 return sse;
             });
 
@@ -51,6 +52,11 @@ namespace CodeHub.iOS.Views.Repositories
                     vm.SearchCommand.Execute(null);
                 }));
             });
+        }
+
+        private static Action MakeCallback(WeakReference<RepositoriesExploreViewModel> weakVm, RepositorySearchModel.RepositoryModel model)
+        {
+            return new Action(() => weakVm.Get()?.GoToRepositoryCommand.Execute(model));
         }
     }
 }

@@ -114,8 +114,8 @@ namespace CodeHub.iOS.Views.PullRequests
                     Root.Reload(_milestoneElement, UITableViewRowAnimation.Fade);
             };
 
-            ViewModel.BindCollection(x => x.Comments, e => RenderComments());
-            ViewModel.BindCollection(x => x.Events, e => RenderComments());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
+            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments());
 
             OnActivation(d =>
             {

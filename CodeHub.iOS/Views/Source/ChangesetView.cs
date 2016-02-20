@@ -28,6 +28,9 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
+
             _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
 
             Title = "Commit " + (ViewModel.Node.Length > 6 ? ViewModel.Node.Substring(0, 6) : ViewModel.Node);
@@ -47,7 +50,7 @@ namespace CodeHub.iOS.Views.Source
             });
 
             ViewModel.Bind(x => x.Changeset).Subscribe(_ => Render());
-            ViewModel.BindCollection(x => x.Comments, a => Render());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
             ViewModel.Bind(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
         }
 
@@ -79,17 +82,12 @@ namespace CodeHub.iOS.Views.Source
             if (commitModel.Commit.Committer != null)
                 user = commitModel.Commit.Committer.Name;
 
-            detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message)
-            {
-                CaptionColor = Theme.CurrentTheme.MainTextColor,
-                ValueColor = Theme.CurrentTheme.MainTextColor,
-                BackgroundColor = UIColor.White
-            });
+            detailSection.Add(new MultilinedElement(user, commitModel.Commit.Message));
 
             if (ViewModel.ShowRepository)
             {
                 var repo = new StringElement(ViewModel.Repository) { 
-                    Accessory = UIKit.UITableViewCellAccessory.DisclosureIndicator, 
+                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
                     Font = StringElement.DefaultDetailFont, 
                     TextColor = StringElement.DefaultDetailColor,

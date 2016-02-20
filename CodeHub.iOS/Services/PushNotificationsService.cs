@@ -25,7 +25,7 @@ namespace CodeHub.iOS.Services
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = Mvx.Resolve<IHttpClientService>().Create();
+            var client = new HttpClient();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),
@@ -52,7 +52,7 @@ namespace CodeHub.iOS.Services
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 
-            var client = Mvx.Resolve<IHttpClientService>().Create();
+            var client = new HttpClient();
             var content = new FormUrlEncodedContent(new[] 
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),

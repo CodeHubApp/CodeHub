@@ -4,25 +4,42 @@ using UIKit;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Utilities;
-using MvvmCross.iOS.Views;
 using CodeHub.iOS.DialogElements;
 using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class GistCreateView : ViewModelDrivenDialogViewController, IMvxModalIosView
+    public class GistCreateView : DialogViewController
     {
-        public new GistCreateViewModel ViewModel
+        public GistCreateViewModel ViewModel { get; }
+
+        public GistCreateView() : base(UITableViewStyle.Grouped)
         {
-            get { return (GistCreateViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
+            Title = "Create Gist";
+            ViewModel = new GistCreateViewModel();
+        }
+
+        public static GistCreateView Show(UIViewController parent)
+        {
+            var ctrl = new GistCreateView();
+            var weakVm = new WeakReference<GistCreateViewModel>(ctrl.ViewModel);
+            ctrl.ViewModel.SaveCommand.Subscribe(_ => parent.DismissViewController(true, null));
+            ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            ctrl.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => {
+                weakVm.Get()?.CancelCommand.Execute(null);
+                parent.DismissViewController(true, null);
+            });
+            parent.PresentViewController(new ThemedNavigationController(ctrl), true, null);
+            return ctrl;
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            Title = "Create Gist";
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
+
             var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
 
             OnActivation(d =>
@@ -73,8 +90,8 @@ namespace CodeHub.iOS.Views.Gists
             var section = new Section();
             sections.Add(section);
 
-            var desc = new MultilinedElement("Description") { Value = ViewModel.Description };
-            desc.Tapped += ChangeDescription;
+            var desc = new MultilinedElement("Description", ViewModel.Description);
+            desc.Clicked.Subscribe(_ => ChangeDescription());
             section.Add(desc);
 
             var pub = new BooleanElement("Public", ViewModel.Public); 
@@ -138,26 +155,25 @@ namespace CodeHub.iOS.Views.Gists
 
         private void Delete(Element element)
         {
-            ViewModel.Files.Remove(element.Caption);
+            if (element != null)
+                ViewModel.Files.Remove(element.Caption);
         }
 
         private class EditSource : Source
         {
-            private readonly GistCreateView _parent;
             public EditSource(GistCreateView dvc) 
                 : base (dvc)
             {
-                _parent = dvc;
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                return (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1));
+                return (indexPath.Section == 1 && indexPath.Row != ((Root?[1].Count ?? 0) - 1));
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                if (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1))
+                if (indexPath.Section == 1 && indexPath.Row != ((Root?[1].Count ?? 0) - 1))
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }
@@ -167,10 +183,10 @@ namespace CodeHub.iOS.Views.Gists
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = _parent.Root[indexPath.Section];
-                        var element = section[indexPath.Row];
-                        _parent.Delete(element);
-                        section.Remove(element);
+                        var section = Root?[indexPath.Section];
+                        var element = section?[indexPath.Row];
+                        (Container as GistCreateView)?.Delete(element);
+                        section?.Remove(element);
                         break;
                 }
             }

@@ -23,9 +23,6 @@ namespace CodeHub.iOS.Views
             Title = "Edit Gist";
             _originalGist = gist;
 
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem (Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => Discard());
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => Save());
-
             _model = new GistEditModel();
             _model.Description = gist.Description;
             _model.Files = new Dictionary<string, GistEditModel.File>();
@@ -94,6 +91,25 @@ namespace CodeHub.iOS.Views
             NavigationController.PushViewController(createController, true);
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
+
+            var cancelButton = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton  };
+            var saveButton = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton  };
+            NavigationItem.LeftBarButtonItem = cancelButton;
+            NavigationItem.RightBarButtonItem = saveButton;
+
+            OnActivation(d =>
+            {
+                d(cancelButton.GetClickedObservable().Subscribe(_ => Discard()));
+                d(saveButton.GetClickedObservable().Subscribe(_ => Save()));
+            });
+        }
+
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
@@ -106,8 +122,8 @@ namespace CodeHub.iOS.Views
             var section = new Section();
             sections.Add(section);
 
-            var desc = new MultilinedElement("Description") { Value = _model.Description };
-            desc.Tapped += ChangeDescription;
+            var desc = new MultilinedElement("Description", _model.Description);
+            desc.Clicked.Subscribe(_ => ChangeDescription());
             section.Add(desc);
 
             var fileSection = new Section();
@@ -206,21 +222,19 @@ namespace CodeHub.iOS.Views
 
         private class EditSource : Source
         {
-            private readonly EditGistController _parent;
             public EditSource(EditGistController dvc) 
                 : base (dvc)
             {
-                _parent = dvc;
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                return (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1));
+                return (indexPath.Section == 1 && indexPath.Row != ((Root?[1].Count ?? 0) - 1));
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
             {
-                if (indexPath.Section == 1 && indexPath.Row != (_parent.Root[1].Count - 1))
+                if (indexPath.Section == 1 && indexPath.Row != ((Root?[1].Count ?? 0) - 1))
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }
@@ -230,9 +244,9 @@ namespace CodeHub.iOS.Views
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = _parent.Root[indexPath.Section];
-                        var element = section[indexPath.Row];
-                        _parent.Delete(element, section);
+                        var section = Root?[indexPath.Section];
+                        var element = section?[indexPath.Row];
+                        (Container as EditGistController)?.Delete(element, section);
                         break;
                 }
             }

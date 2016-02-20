@@ -33,21 +33,13 @@ namespace CodeHub.Core.ViewModels.Notifications
 		public int ShownIndex
 		{
 			get { return _shownIndex; }
-			private set
-			{
-				_shownIndex = value;
-				RaisePropertyChanged(() => ShownIndex);
-			}
+            set { this.RaiseAndSetIfChanged(ref _shownIndex, value); }
 		}
 
 		public bool IsMarking
 		{
 			get { return _isMarking; }
-			set
-			{
-				_isMarking = value;
-				RaisePropertyChanged(() => IsMarking);
-			}
+            set { this.RaiseAndSetIfChanged(ref _isMarking, value); }
 		}
 
         public ICommand ReadCommand

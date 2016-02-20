@@ -19,34 +19,22 @@ namespace CodeHub.Core.ViewModels.Issues
 		private MvxSubscriptionToken _labelsToken, _milestoneToken, _assignedToken;
 		private bool _isSaving;
 
-		public string Title
+		public string IssueTitle
 		{
 			get { return _title; }
-			set
-			{
-				_title = value;
-				RaisePropertyChanged(() => Title);
-			}
+            set { this.RaiseAndSetIfChanged(ref _title, value); }
 		}
 
 		public string Content
 		{
 			get { return _content; }
-			set
-			{
-				_content = value;
-				RaisePropertyChanged(() => Content);
-			}
+            set { this.RaiseAndSetIfChanged(ref _content, value); }
 		}
 
 		public MilestoneModel Milestone
 		{
 			get { return _milestone; }
-			set
-			{
-				_milestone = value;
-				RaisePropertyChanged(() => Milestone);
-			}
+            set { this.RaiseAndSetIfChanged(ref _milestone, value); }
 		}
 
 		public CollectionViewModel<LabelModel> Labels
@@ -57,24 +45,13 @@ namespace CodeHub.Core.ViewModels.Issues
 		public BasicUserModel AssignedTo
 		{
 			get { return _assignedTo; }
-			set
-			{
-				_assignedTo = value;
-				RaisePropertyChanged(() => AssignedTo);
-			}
+            set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
 		}
 
 		public bool IsSaving
 		{
-			get
-			{
-				return _isSaving;
-			}
-			set
-			{
-				_isSaving = value;
-				RaisePropertyChanged(() => IsSaving);
-			}
+            get { return _isSaving; }
+            protected set { this.RaiseAndSetIfChanged(ref _isSaving, value); }
 		}
 
 		public string Username { get; private set; }

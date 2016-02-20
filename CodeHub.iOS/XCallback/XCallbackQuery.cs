@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace CodeFramework.iOS.XCallback
+namespace CodeHub.iOS.XCallback
 {
     public class XCallbackQuery
     {

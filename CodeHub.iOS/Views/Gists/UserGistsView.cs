@@ -22,13 +22,18 @@ namespace CodeHub.iOS.Views.Gists
             if (ViewModel.IsMine)
                 NavigationItem.RightBarButtonItem = button;
 
-            OnActivation(d => d(button.GetClickedObservable().Subscribe(_ => ViewModel.GoToCreateGistCommand.Execute(null))));
+            OnActivation(d => d(button.GetClickedObservable().Subscribe(_ => GoToCreateGist())));
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
             if (ViewModel != null) Title = ViewModel.Title;
+        }
+
+        private void GoToCreateGist()
+        {
+            GistCreateView.Show(this);
         }
     }
 }

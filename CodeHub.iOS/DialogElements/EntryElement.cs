@@ -18,6 +18,9 @@ namespace CodeHub.iOS.DialogElements
         { 
             get { return _currentValue; }
             set {
+                if (string.Equals(_currentValue, value))
+                    return;
+                
                 _currentValue = value;
                 if (entry != null)
                     entry.Text = value;
