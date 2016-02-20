@@ -10,6 +10,7 @@ using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.Core;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers.Repositories;
+using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -125,44 +126,42 @@ namespace CodeHub.iOS.ViewControllers
             if (loadableViewModel != null)
             {
                 RefreshControl = new UIRefreshControl();
-                loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
+                OnActivation(d =>
                 {
-                    if (x)
+                    d(loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
                     {
-                        NetworkActivity.PushNetworkActive();
-                        RefreshControl.BeginRefreshing();
-
-                        if (!_manualRefreshRequested)
+                        if (x)
                         {
-                            UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -RefreshControl.Frame.Height), null);
-                        }
+                            NetworkActivity.PushNetworkActive();
+                            RefreshControl.BeginRefreshing();
 
-                        if (ToolbarItems != null)
-                        {
-                            foreach (var t in ToolbarItems)
+                            if (!_manualRefreshRequested)
+                            {
+                                UIView.Animate(0.25, 0f, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                                    () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, -RefreshControl.Frame.Height), null);
+                            }
+
+                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
                                 t.Enabled = false;
                         }
-                    }
-                    else
-                    {
-                        NetworkActivity.PopNetworkActive();
-
-                        // Stupid bug...
-                        BeginInvokeOnMainThread(() => {
-                            UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                            RefreshControl.EndRefreshing(); 
-                        });
-
-                        if (ToolbarItems != null)
+                        else
                         {
-                            foreach (var t in ToolbarItems)
-                                t.Enabled = true;
-                        }
+                            NetworkActivity.PopNetworkActive();
 
-                        _manualRefreshRequested = false;
-                    }
+                            // Stupid bug...
+                            BeginInvokeOnMainThread(() =>
+                            {
+                                UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                                    () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
+                                RefreshControl.EndRefreshing(); 
+                            });
+
+                            foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
+                                t.Enabled = true;
+
+                            _manualRefreshRequested = false;
+                        }
+                    }));
                 });
             }
         }

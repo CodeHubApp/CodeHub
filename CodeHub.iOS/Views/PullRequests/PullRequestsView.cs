@@ -2,8 +2,8 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
 using CodeHub.iOS.DialogElements;
-using MvvmCross.Binding.BindingContext;
 using System;
+using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -28,12 +28,19 @@ namespace CodeHub.iOS.Views.PullRequests
             TableView.RowHeight = UITableView.AutomaticDimension;
 
             var vm = (PullRequestsViewModel)ViewModel;
-            var set = this.CreateBindingSet<PullRequestsView, PullRequestsViewModel>();
-            set.Bind(_viewSegment).To(x => x.SelectedFilter);
-            set.Apply();
-
             var weakVm = new WeakReference<PullRequestsViewModel>(vm);
-            BindCollection(vm.PullRequests, s => new PullRequestElement(s, () => weakVm.Get()?.GoToPullRequestCommand.Execute(s)));
+            BindCollection(vm.PullRequests, s => new PullRequestElement(s, MakeCallback(weakVm, s)));
+
+            OnActivation(d =>
+            {
+                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = x));
+            });
+        }
+
+        private static Action MakeCallback(WeakReference<PullRequestsViewModel> weakVm, PullRequestModel model)
+        {
+            return new Action(() => weakVm.Get()?.GoToPullRequestCommand.Execute(model));
         }
     }
 }

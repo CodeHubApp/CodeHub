@@ -5,6 +5,7 @@ using UIKit;
 using CodeHub.iOS.ViewControllers.Repositories;
 using System;
 using System.Reactive.Linq;
+using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -21,13 +22,18 @@ namespace CodeHub.iOS.Views.Source
 
 			var vm = (CommitsViewModel) ViewModel;
             var weakVm = new WeakReference<CommitsViewModel>(vm);
-            BindCollection(vm.Commits, x => new CommitElement(x, () => weakVm.Get()?.GoToChangesetCommand.Execute(x)));
+            BindCollection(vm.Commits, x => new CommitElement(x, MakeCallback(weakVm, x)));
 
             vm.Bind(x => x.ShouldShowPro)
                 .Where(x => x)
                 .Take(1)
                 .Subscribe(_ => this.ShowPrivateView());
 		}
+
+        private static Action MakeCallback(WeakReference<CommitsViewModel> weakVm, CommitModel model)
+        {
+            return new Action(() => weakVm.Get()?.GoToChangesetCommand.Execute(model));
+        }
 	}
 }
 

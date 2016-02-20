@@ -83,7 +83,9 @@ namespace CodeHub.iOS.Views.Issues
             }
             else if (_viewSegment.SelectedSegment == 3)
             {
-				ShowFilterController(new IssuesFilterViewController(ViewModel.Username, ViewModel.Repository, ViewModel.Issues));
+                var filter = new IssuesFilterViewController(ViewModel.Username, ViewModel.Repository, ViewModel.Issues);
+                var nav = new UINavigationController(filter);
+                PresentViewController(nav, true, null);
             }
         }
 

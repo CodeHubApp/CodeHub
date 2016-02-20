@@ -3,7 +3,6 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using UIKit;
 using CodeHub.iOS.DialogElements;
-using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -27,7 +26,7 @@ namespace CodeHub.iOS.Views.Source
 
             BindCollection(vm.Items, x => {
                 var e = new StringElement(x.Name);
-                e.Clicked.Select(_ => x).Subscribe(_ => weakVm.Get()?.GoToSourceCommand.Execute(null));
+                e.Clicked.Subscribe(MakeCallback(weakVm, x));
                 return e;
             });
 
@@ -37,6 +36,11 @@ namespace CodeHub.iOS.Views.Source
                 d(_viewSegment.GetChangedObservable().Subscribe(_ => vm.SelectedFilter = (int)_viewSegment.SelectedSegment));
             });
 		}
+
+        private static Action<object> MakeCallback(WeakReference<BranchesAndTagsViewModel> weakVm, BranchesAndTagsViewModel.ViewObject viewObject)
+        {
+            return new Action<object>(_ => weakVm.Get()?.GoToSourceCommand.Execute(viewObject));
+        }
 	}
 }
 

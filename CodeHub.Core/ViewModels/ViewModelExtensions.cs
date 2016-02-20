@@ -59,10 +59,15 @@ namespace CodeHub.Core.ViewModels
 
         public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
         {
+            var fuckYou = new WeakReference<CollectionViewModel<T>>(viewModel);
             return viewModel.RequestModel(request, forceDataRefresh, response =>
             {
-                viewModel.CreateMore(response, m => viewModel.MoreItems = m, viewModel.Items.AddRange);
-                viewModel.Items.Reset(response.Data);
+                fuckYou.Get()?.CreateMore(response, m => {
+                    var weak = fuckYou.Get();
+                    if (weak != null)
+                        weak.MoreItems = m;
+                }, viewModel.Items.AddRange);
+                fuckYou.Get()?.Items.Reset(response.Data);
             });
         }
     }

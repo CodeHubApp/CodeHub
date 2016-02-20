@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
@@ -32,6 +31,9 @@ namespace CodeHub.iOS.ViewControllers
         protected void BindCollection<TElement>(CollectionViewModel<TElement> viewModel, 
                                                 Func<TElement, Element> element, bool activateNow = false)
         {
+            var weakVm = new WeakReference<CollectionViewModel<TElement>>(viewModel);
+            var weakRoot = new WeakReference<RootElement>(Root);
+
             Action updateDel = () =>
             {
                 try
@@ -50,10 +52,17 @@ namespace CodeHub.iOS.ViewControllers
                     if (groupingFn != null)
                         groupedItems = groupingFn(items);
 
+                    ICollection<Section> newSections;
                     if (groupedItems == null)
-                        RenderList(items, element, viewModel.MoreItems);
+                        newSections = RenderList(items, element, weakVm.Get()?.MoreItems);
                     else
-                        RenderGroupedItems(groupedItems, element, viewModel.MoreItems);
+                        newSections = RenderGroupedItems(groupedItems, element, weakVm.Get()?.MoreItems);
+
+                    var elements = newSections.Sum(s => s.Elements.Count);
+                    if (elements == 0)
+                        newSections.Add(new Section { new NoItemsElement(NoItemsText) });
+
+                    weakRoot.Get()?.Reset(newSections);
                 }
                 catch
                 {
@@ -72,26 +81,23 @@ namespace CodeHub.iOS.ViewControllers
                 updateDel();
         }
 
-        protected void RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)
+        protected ICollection<Section> RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)
         {
+            items = items ?? Enumerable.Empty<T>();
             var sec = new Section();
-            if (items != null)
+            sec.AddAll(items.Select(item =>
             {
-                foreach (var item in items.ToList())
+                try
                 {
-                    try
-                    {
-                        var element = select(item);
-                        if (element != null)
-                            sec.Add(element);
-                    }
-                    catch
-                    {
-                    }
+                    return @select(item);
                 }
-            }
+                catch
+                {
+                    return null;
+                }
+            }).Where(x => x != null));
 
-            RenderSections(new [] { sec }, moreAction);
+            return RenderSections(new [] { sec }, moreAction);
         }
 
         protected virtual Section CreateSection(string text)
@@ -99,7 +105,7 @@ namespace CodeHub.iOS.ViewControllers
             return new Section(text);
         }
 
-        protected void RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Action moreAction)
+        protected ICollection<Section> RenderGroupedItems<T>(IEnumerable<IGrouping<string, T>> items, Func<T, Element> select, Action moreAction)
         {
             var sections = new List<Section>();
 
@@ -122,21 +128,13 @@ namespace CodeHub.iOS.ViewControllers
                 }
             }
 
-            RenderSections(sections, moreAction);
+            return RenderSections(sections, moreAction);
         }
 
-        private void RenderSections(IEnumerable<Section> sections, Action moreAction)
+        private static ICollection<Section> RenderSections(IEnumerable<Section> sections, Action moreAction)
         {
-            ICollection<Section> newSections = new LinkedList<Section>();
-
-            foreach (var section in sections)
-                newSections.Add(section);
-
-            var elements = newSections.Sum(s => s.Elements.Count);
-
-            //There are no items! We must have filtered them out
-            if (elements == 0)
-                newSections.Add(new Section { new NoItemsElement(NoItemsText) });
+            var weakAction = new WeakReference<Action>(moreAction);
+            ICollection<Section> newSections = new LinkedList<Section>(sections);
 
             if (moreAction != null)
             {
@@ -146,28 +144,28 @@ namespace CodeHub.iOS.ViewControllers
                 {
                     try
                     {
-                        await this.DoWorkNoHudAsync(() => Task.Run(moreAction));
-                        if (loadMore.GetRootElement() != null)
-                        {
-                            var section = loadMore.Section;
-                            Root.Remove(section, UITableViewRowAnimation.Fade);
-                        }
+                        NetworkActivity.PushNetworkActive();
+
+                        var a = weakAction.Get();
+                        if (a != null)
+                            await Task.Run(a);
+
+                        var root = loadMore.GetRootElement();
+                        root?.Remove(loadMore.Section, UITableViewRowAnimation.Fade);
                     }
                     catch (Exception e)
                     {
                         AlertDialogService.ShowAlert("Unable to load more!", e.Message);
                     }
+                    finally
+                    {
+                        NetworkActivity.PopNetworkActive();
+                    }
 
                 };    
             }
 
-            Root.Reset(newSections);
-        }
-
-        protected void ShowFilterController(FilterViewController filter)
-        {
-            var nav = new UINavigationController(filter);
-            PresentViewController(nav, true, null);
+            return newSections;
         }
     }
 }

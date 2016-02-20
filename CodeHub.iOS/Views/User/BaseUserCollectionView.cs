@@ -2,6 +2,7 @@ using System;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.User;
+using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.User
 {

@@ -126,7 +126,7 @@ namespace CodeHub.iOS.Views.Repositories
                 return;
 
             _stargazers.Text = model.StargazersCount.ToString();
-            _watchers.Text = model.WatchersCount.ToString();
+            _watchers.Text = model.SubscribersCount.ToString();
             _forks.Text = model.ForksCount.ToString();
 
             Title = model.Name;

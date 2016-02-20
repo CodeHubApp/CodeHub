@@ -5,12 +5,12 @@ namespace CodeHub.iOS.DialogElements
     public class NoItemsElement : StringElement
     {
         public NoItemsElement()
-            : this("No Items")
+            : this(null)
         {
         }
 
         public NoItemsElement(string text)
-            : base(text)
+            : base(text ?? "No Items")
         {
             Accessory = UITableViewCellAccessory.None;
         }

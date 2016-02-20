@@ -32,8 +32,7 @@ namespace CodeHub.iOS.Views.Repositories
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
 		{
-            
-            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", System.StringComparison.Ordinal))
+            if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
 			{
                 ViewModel.GoToLinkCommand.Execute(navigationAction.Request.Url.AbsoluteString);
 				return false;

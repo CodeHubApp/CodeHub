@@ -1,6 +1,5 @@
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using MvvmCross.Binding.BindingContext;
 using System;
 
 namespace CodeHub.iOS.Views.Issues
@@ -26,17 +25,22 @@ namespace CodeHub.iOS.Views.Issues
 
                 if (x == 2 && goodVm != null)
 				{
-                    ShowFilterController(new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(goodVm.Issues));
+                    var filter = new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(goodVm.Issues);
+                    var nav = new UINavigationController(filter);
+                    PresentViewController(nav, true, null);
 				}
 
                 // If there is searching going on. Finish it.
                 FinishSearch();
 			});
 
-			BindCollection(vm.Issues, CreateElement);
-			var set = this.CreateBindingSet<MyIssuesView, MyIssuesViewModel>();
-			set.Bind(_viewSegment).To(x => x.SelectedFilter);
-			set.Apply();
+			this.BindCollection(vm.Issues, CreateElement);
+
+            OnActivation(d =>
+            {
+                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(_viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = x));
+            });
         }
 
         public override void ViewWillAppear(bool animated)

@@ -26,10 +26,13 @@ namespace CodeHub.iOS.Utilities
 
 			try
 			{
-				return await DoWorkNoHudAsync(controller, work);
+                NetworkActivity.PushNetworkActive();
+                return await work();
 			}
 			finally
 			{
+                NetworkActivity.PopNetworkActive();
+
 				hud.Hide();
 
 				//Enable all the toolbar items
@@ -40,7 +43,6 @@ namespace CodeHub.iOS.Utilities
 				}
 			}
 		}
-
 
         public async static Task DoWorkAsync(this UIViewController controller, string workTitle, Func<Task> work)
         {
@@ -56,10 +58,13 @@ namespace CodeHub.iOS.Utilities
 
             try
             {
-                await DoWorkNoHudAsync(controller, work);
+                NetworkActivity.PushNetworkActive();
+                await work();
             }
             finally
             {
+                NetworkActivity.PopNetworkActive();
+
                 hud.Hide();
 
                 //Enable all the toolbar items
@@ -69,62 +74,6 @@ namespace CodeHub.iOS.Utilities
                         t.Enabled = true;
                 }
             }
-        }
-
-		public async static Task<T> DoWorkNoHudAsync<T>(this UIViewController controller, Func<Task<T>> work)
-		{
-			try
-			{
-                NetworkActivity.PushNetworkActive();
-				return await work();
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
-			finally 
-			{
-                NetworkActivity.PopNetworkActive();
-			}
-		}
-
-        public async static Task DoWorkNoHudAsync(this UIViewController controller, Func<Task> work)
-        {
-            try
-            {
-                NetworkActivity.PushNetworkActive();
-                await work();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            finally 
-            {
-                NetworkActivity.PopNetworkActive();
-            }
-        }
-
-        public static void DoWorkNoHud(this UIViewController controller, Action work, Action<Exception> error = null, Action final = null)
-        {
-            ThreadPool.QueueUserWorkItem(delegate {
-                try
-                {
-                    NetworkActivity.PushNetworkActive();
-                    work();
-                }
-                catch (Exception e)
-                {
-                    if (error != null)
-                        controller.InvokeOnMainThread(() => error(e));
-                }
-                finally 
-                {
-                    NetworkActivity.PopNetworkActive();
-                    if (final != null)
-                        controller.InvokeOnMainThread(() => final());
-                }
-            });
         }
     }
 }

@@ -117,7 +117,10 @@ namespace CodeHub.iOS.DialogElements
                 var strLength = str.Length;
 
                 if (b.Tapped != null)
-                    links.Add(new NewsCellView.Link { Range = new NSRange(lengthCounter, strLength), Callback = b.Tapped, Id = i++ });
+                {
+                    var weakTapped = new WeakReference<Action>(b.Tapped);
+                    links.Add(new NewsCellView.Link { Range = new NSRange(lengthCounter, strLength), Callback = () => weakTapped.Get()?.Invoke(), Id = i++ });
+                }
 
                 lengthCounter += strLength;
             }

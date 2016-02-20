@@ -18,6 +18,11 @@ namespace CodeHub.iOS.Views
         private readonly bool _navigationToolbar;
         private readonly  bool _showPageAsTitle;
 
+        ~WebView()
+        {
+            Console.WriteLine("All done with " + GetType().Name);
+        }
+
 		bool _appeared;
 		public override void ViewDidAppear (bool animated)
 		{
