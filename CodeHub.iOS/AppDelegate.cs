@@ -83,6 +83,15 @@ namespace CodeHub.iOS
             Console.WriteLine("CodeHub was installed on: " + installedDate);
             if (installedDate < new DateTime(2016, 3, 10, 1, 1, 1))
                 features.ActivateProDirect();
+
+            if (!features.IsProEnabled)
+            {
+                bool isActive;
+                if (defaultValueService.TryGet(FeaturesService.EnterpriseSupport, out isActive) && isActive)
+                    features.ActivateProDirect();
+                else if (defaultValueService.TryGet(FeaturesService.PushNotifications, out isActive) && isActive)
+                    features.ActivateProDirect();
+            }
 //
 //            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
 //                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));

@@ -15,6 +15,8 @@ namespace CodeHub.iOS.Services
         /// The pro edition identifier
         /// </summary>
         public const string ProEdition = "com.dillonbuchanan.codehub.pro";
+        public const string PushNotifications = "com.dillonbuchanan.codehub.push";
+        public const string EnterpriseSupport = "com.dillonbuchanan.codehub.enterprise_support";
 
         public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {
