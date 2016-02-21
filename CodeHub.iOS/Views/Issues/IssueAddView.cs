@@ -37,8 +37,9 @@ namespace CodeHub.iOS.Views.Issues
             OnActivation(d =>
             {
                 d(vm.Bind(x => x.IssueTitle, true).Subscribe(x => title.Value = x));
-                d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
                 d(title.Changed.Subscribe(x => vm.IssueTitle = x));
+
+                d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
                 d(labels.Clicked.Subscribe(_ => vm.GoToLabelsCommand.Execute(null)));
                 d(milestone.Clicked.Subscribe(_ => vm.GoToMilestonesCommand.Execute(null)));
                 d(assignedTo.Clicked.Subscribe(_ => vm.GoToAssigneeCommand.Execute(null)));

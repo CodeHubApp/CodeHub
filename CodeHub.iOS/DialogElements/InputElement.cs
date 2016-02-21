@@ -1,5 +1,3 @@
-using UIKit;
-
 namespace CodeHub.iOS.DialogElements
 {
     public class InputElement : EntryElement
@@ -8,7 +6,6 @@ namespace CodeHub.iOS.DialogElements
             : base(caption, placeholder, value)
         {
             TitleFont = StringElement.DefaultTitleFont;
-            EntryFont = UIFont.SystemFontOfSize(14);
             TitleColor = StringElement.DefaultTitleColor;
         }
     }
