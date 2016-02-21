@@ -67,6 +67,7 @@ namespace CodeHub.iOS.Views.Repositories
             view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
             view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             view.Language.Subscribe(x => {
+                Root.Clear();
                 vm.Get().Do(y => y.SelectedLanguage = x);
                 DismissViewController(true, null);
             });

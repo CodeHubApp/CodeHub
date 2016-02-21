@@ -128,7 +128,7 @@ namespace CodeHub.iOS.ViewControllers
                 RefreshControl = new UIRefreshControl();
                 OnActivation(d =>
                 {
-                    d(loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
+                    d(loadableViewModel.Bind(x => x.IsLoading, true).Subscribe(x =>
                     {
                         if (x)
                         {
@@ -148,13 +148,16 @@ namespace CodeHub.iOS.ViewControllers
                         {
                             NetworkActivity.PopNetworkActive();
 
-                            // Stupid bug...
-                            BeginInvokeOnMainThread(() =>
+                            if (RefreshControl.Refreshing)
                             {
-                                UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
-                                    () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
-                                RefreshControl.EndRefreshing(); 
-                            });
+                                // Stupid bug...
+                                BeginInvokeOnMainThread(() =>
+                                {
+                                    UIView.Animate(0.25, 0.0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseOut,
+                                        () => TableView.ContentOffset = new CoreGraphics.CGPoint(0, 0), null);
+                                    RefreshControl.EndRefreshing(); 
+                                });
+                            }
 
                             foreach (var t in (ToolbarItems ?? Enumerable.Empty<UIBarButtonItem>()))
                                 t.Enabled = true;
