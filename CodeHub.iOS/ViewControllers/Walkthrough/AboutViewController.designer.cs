@@ -9,12 +9,12 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-	[Register ("AboutViewController")]
-	partial class AboutViewController
-	{
-		
-		void ReleaseDesignerOutlets ()
-		{
-		}
-	}
+    [Register ("AboutViewController")]
+    partial class AboutViewController
+    {
+        
+        void ReleaseDesignerOutlets ()
+        {
+        }
+    }
 }

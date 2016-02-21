@@ -28,26 +28,26 @@ namespace CodeHub.iOS.Views.PullRequests
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource()
+        public override DialogViewController.Source CreateSizingSource()
         {
             return new CustomSource(this);
         }
     
-		private class CustomSource : DialogViewController.Source
+        private class CustomSource : DialogViewController.Source
         {
             public CustomSource(PullRequestFilesView parent)
                 : base(parent)
             {
             }
 
-			public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, nint section)
-			{
-				var x = headerView as UITableViewHeaderFooterView;
-				if (x != null)
-				{
-					x.TextLabel.LineBreakMode = UILineBreakMode.HeadTruncation;
-				}
-			}
+            public override void WillDisplayHeaderView(UITableView tableView, UIView headerView, nint section)
+            {
+                var x = headerView as UITableViewHeaderFooterView;
+                if (x != null)
+                {
+                    x.TextLabel.LineBreakMode = UILineBreakMode.HeadTruncation;
+                }
+            }
         }
     }
 }

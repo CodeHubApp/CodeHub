@@ -39,25 +39,25 @@ namespace CodeHub.iOS
         /// <summary>
         /// The window.
         /// </summary>
-		public string DeviceToken;
+        public string DeviceToken;
 
-		public override UIWindow Window {
-			get;
-			set;
-		}
+        public override UIWindow Window {
+            get;
+            set;
+        }
 
         public IosViewPresenter Presenter { get; private set; }
 
-		/// <summary>
-		/// This is the main entry point of the application.
-		/// </summary>
-		/// <param name="args">The args.</param>
-		public static void Main(string[] args)
-		{
-			// if you want to use a different Application Delegate class from "AppDelegate"
-			// you can specify it here.
-			UIApplication.Main(args, null, "AppDelegate");
-		}
+        /// <summary>
+        /// This is the main entry point of the application.
+        /// </summary>
+        /// <param name="args">The args.</param>
+        public static void Main(string[] args)
+        {
+            // if you want to use a different Application Delegate class from "AppDelegate"
+            // you can specify it here.
+            UIApplication.Main(args, null, "AppDelegate");
+        }
 
         /// <summary>
         /// Finished the launching.
@@ -67,7 +67,7 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-			Window = new UIWindow(UIScreen.MainScreen.Bounds);
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
             Presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, Presenter);
             setup.Initialize();
@@ -84,8 +84,8 @@ namespace CodeHub.iOS
             if (installedDate < new DateTime(2016, 3, 10, 1, 1, 1))
                 features.ActivateProDirect();
 //
-//			options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
-//				new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
+//            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
+//                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
 //
             if (options != null)
             {
@@ -114,9 +114,9 @@ namespace CodeHub.iOS
                 GoToStartupView();
             }
 
-			Window.MakeKeyAndVisible();
+            Window.MakeKeyAndVisible();
 
-			// Notifications don't work on teh simulator so don't bother
+            // Notifications don't work on teh simulator so don't bother
             if (Runtime.Arch != Arch.SIMULATOR && features.IsPushNotificationsActivated)
                 RegisterUserForNotifications();
 
@@ -160,10 +160,10 @@ namespace CodeHub.iOS
         }
 
         private void HandleNotification(NSDictionary data, bool fromBootup)
-		{
-			try
-			{
-				var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
+        {
+            try
+            {
+                var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
                 var appService = Mvx.Resolve<IApplicationService>();
                 var repoId = new RepositoryIdentifier(data["r"].ToString());
                 var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
@@ -211,21 +211,21 @@ namespace CodeHub.iOS
                     var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
                     viewDispatcher.ShowViewModel(startupViewModelRequest);
                 }
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("Handle Notifications issue: " + e);
-			}
-		}
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Handle Notifications issue: " + e);
+            }
+        }
 
-		public override void DidRegisterUserNotificationSettings (UIApplication application, UIUserNotificationSettings notificationSettings)
-		{
-			application.RegisterForRemoteNotifications ();
-		}
+        public override void DidRegisterUserNotificationSettings (UIApplication application, UIUserNotificationSettings notificationSettings)
+        {
+            application.RegisterForRemoteNotifications ();
+        }
 
-		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
-		{
-			DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
 
             var app = Mvx.Resolve<IApplicationService>();
             if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
@@ -234,12 +234,12 @@ namespace CodeHub.iOS
                 app.Account.IsPushNotificationsEnabled = true;
                 app.Accounts.Update(app.Account);
             }
-		}
+        }
 
-		public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
-		{
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
             AlertDialogService.ShowAlert("Error Registering for Notifications", error.LocalizedDescription);
-		}
+        }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
@@ -265,48 +265,48 @@ namespace CodeHub.iOS
         }
     }
 
-	public static class UIApplicationDelegateExtensions
-	{
-		/// <summary>
-		/// Record the date this application was installed (or the date that we started recording installation date).
-		/// </summary>
-		public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name)
-		{
-			try
-			{
-				var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = "account" };
+    public static class UIApplicationDelegateExtensions
+    {
+        /// <summary>
+        /// Record the date this application was installed (or the date that we started recording installation date).
+        /// </summary>
+        public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name)
+        {
+            try
+            {
+                var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = "account" };
 
-				SecStatusCode secStatusCode;
-				var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
-				if (secStatusCode != SecStatusCode.Success)
-				{
-					queriedRecord = new SecRecord(SecKind.GenericPassword)
-					{
-						Label = name + " Install Date",
-						Service = name,
+                SecStatusCode secStatusCode;
+                var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
+                if (secStatusCode != SecStatusCode.Success)
+                {
+                    queriedRecord = new SecRecord(SecKind.GenericPassword)
+                    {
+                        Label = name + " Install Date",
+                        Service = name,
                         Account = query.Account,
-						Description = string.Format("The first date {0} was installed", name),
-						Generic = NSData.FromString(DateTime.UtcNow.ToString())
-					};
+                        Description = string.Format("The first date {0} was installed", name),
+                        Generic = NSData.FromString(DateTime.UtcNow.ToString())
+                    };
 
-					var err = SecKeyChain.Add(queriedRecord);
-					if (err != SecStatusCode.Success)
-						System.Diagnostics.Debug.WriteLine("Unable to save stamp date!");
-				}
-				else
-				{
-					DateTime time;
-					if (!DateTime.TryParse(queriedRecord.Generic.ToString(), out time))
-						SecKeyChain.Remove(query);
-				}
+                    var err = SecKeyChain.Add(queriedRecord);
+                    if (err != SecStatusCode.Success)
+                        System.Diagnostics.Debug.WriteLine("Unable to save stamp date!");
+                }
+                else
+                {
+                    DateTime time;
+                    if (!DateTime.TryParse(queriedRecord.Generic.ToString(), out time))
+                        SecKeyChain.Remove(query);
+                }
 
-				return DateTime.Parse(NSString.FromData(queriedRecord.Generic, NSStringEncoding.UTF8));
-			}
-			catch (Exception e)
-			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
-				return DateTime.Now;
-			}
-		}
-	}
+                return DateTime.Parse(NSString.FromData(queriedRecord.Generic, NSStringEncoding.UTF8));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                return DateTime.Now;
+            }
+        }
+    }
 }

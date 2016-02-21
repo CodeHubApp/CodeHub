@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Events
 
         protected override GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage)
         {
-			return this.GetApplication().Client.Users[Username].GetOrganizationEvents(OrganizationName, page, perPage);
+            return this.GetApplication().Client.Users[Username].GetOrganizationEvents(OrganizationName, page, perPage);
         }
 
         public class NavObject

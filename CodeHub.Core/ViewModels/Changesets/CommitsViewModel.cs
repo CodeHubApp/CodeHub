@@ -10,22 +10,22 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-	public abstract class CommitsViewModel : LoadableViewModel
-	{
-		private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
+    public abstract class CommitsViewModel : LoadableViewModel
+    {
+        private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
         private readonly IFeaturesService _featuresService;
 
-		public string Username
-		{
-			get;
-			private set;
-		}
+        public string Username
+        {
+            get;
+            private set;
+        }
 
-		public string Repository
-		{
-			get;
-			private set;
-		}
+        public string Repository
+        {
+            get;
+            private set;
+        }
 
         private bool _shouldShowPro; 
         public bool ShouldShowPro
@@ -34,44 +34,44 @@ namespace CodeHub.Core.ViewModels.Changesets
             protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-		public ICommand GoToChangesetCommand
-		{
-			get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Sha })); }
-		}
+        public ICommand GoToChangesetCommand
+        {
+            get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Sha })); }
+        }
 
-		public CollectionViewModel<CommitModel> Commits
-		{
-			get { return _commits; }
-		}
+        public CollectionViewModel<CommitModel> Commits
+        {
+            get { return _commits; }
+        }
 
         protected CommitsViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
         }
 
-		public void Init(NavObject navObject)
-		{
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-		}
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+        }
 
-		protected override Task Load(bool forceCacheInvalidation)
-		{
+        protected override Task Load(bool forceCacheInvalidation)
+        {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
                 this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
             
-			return Commits.SimpleCollectionLoad(GetRequest(), forceCacheInvalidation);
-		}
+            return Commits.SimpleCollectionLoad(GetRequest(), forceCacheInvalidation);
+        }
 
-		protected abstract GitHubRequest<List<CommitModel>> GetRequest();
+        protected abstract GitHubRequest<List<CommitModel>> GetRequest();
 
-		public class NavObject
-		{
-			public string Username { get; set; }
-			public string Repository { get; set; }
-		}
-	}
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+        }
+    }
 }
 

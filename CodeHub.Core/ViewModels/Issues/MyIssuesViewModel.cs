@@ -10,20 +10,20 @@ using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
+    public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
         private MvxSubscriptionToken _editToken;
 
-		private int _selectedFilter;
-		public int SelectedFilter
-		{
-			get { return _selectedFilter; }
-			set 
-			{
-				_selectedFilter = value;
-				RaisePropertyChanged(() => SelectedFilter);
-			}
-		}
+        private int _selectedFilter;
+        public int SelectedFilter
+        {
+            get { return _selectedFilter; }
+            set 
+            {
+                _selectedFilter = value;
+                RaisePropertyChanged(() => SelectedFilter);
+            }
+        }
 
         public MyIssuesViewModel()
         {
@@ -32,12 +32,12 @@ namespace CodeHub.Core.ViewModels.Issues
             _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
             this.Bind(x => x.SelectedFilter).Subscribe(x =>
-			{
-				if (x == 0)
-					_issues.Filter = MyIssuesFilterModel.CreateOpenFilter();
-				else if (x == 1)
-					_issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
-			});
+            {
+                if (x == 0)
+                    _issues.Filter = MyIssuesFilterModel.CreateOpenFilter();
+                else if (x == 1)
+                    _issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
+            });
 
             _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
             {
@@ -85,7 +85,7 @@ namespace CodeHub.Core.ViewModels.Issues
             string sort = Issues.Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Issues.Filter.SortType.ToString().ToLower();
             string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
 
-			var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
+            var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
             return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
         }
     }

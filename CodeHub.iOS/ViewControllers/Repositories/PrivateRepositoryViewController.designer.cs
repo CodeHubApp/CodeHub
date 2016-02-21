@@ -9,42 +9,42 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
-	[Register ("PrivateRepositoryViewController")]
-	partial class PrivateRepositoryViewController
-	{
-		[Outlet]
-		UIKit.UIButton Button { get; set; }
+    [Register ("PrivateRepositoryViewController")]
+    partial class PrivateRepositoryViewController
+    {
+        [Outlet]
+        UIKit.UIButton Button { get; set; }
 
-		[Outlet]
-		UIKit.UILabel Description { get; set; }
+        [Outlet]
+        UIKit.UILabel Description { get; set; }
 
-		[Outlet]
-		UIKit.UIImageView ImageView { get; set; }
+        [Outlet]
+        UIKit.UIImageView ImageView { get; set; }
 
-		[Outlet]
-		UIKit.UILabel Title { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (ImageView != null) {
-				ImageView.Dispose ();
-				ImageView = null;
-			}
+        [Outlet]
+        UIKit.UILabel Title { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (ImageView != null) {
+                ImageView.Dispose ();
+                ImageView = null;
+            }
 
-			if (Description != null) {
-				Description.Dispose ();
-				Description = null;
-			}
+            if (Description != null) {
+                Description.Dispose ();
+                Description = null;
+            }
 
-			if (Button != null) {
-				Button.Dispose ();
-				Button = null;
-			}
+            if (Button != null) {
+                Button.Dispose ();
+                Button = null;
+            }
 
-			if (Title != null) {
-				Title.Dispose ();
-				Title = null;
-			}
-		}
-	}
+            if (Title != null) {
+                Title.Dispose ();
+                Title = null;
+            }
+        }
+    }
 }

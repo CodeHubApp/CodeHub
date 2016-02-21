@@ -4,9 +4,9 @@ using MvvmCross.Platform;
 
 public static class ViewModelExtensions
 {
-	public static IApplicationService GetApplication(this BaseViewModel vm)
+    public static IApplicationService GetApplication(this BaseViewModel vm)
     {
-		return Mvx.Resolve<IApplicationService>();
+        return Mvx.Resolve<IApplicationService>();
     }
 }
 

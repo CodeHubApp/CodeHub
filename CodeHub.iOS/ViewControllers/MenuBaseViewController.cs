@@ -6,7 +6,7 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.ViewControllers
 {
-	public abstract class MenuBaseViewController : ViewModelDrivenDialogViewController
+    public abstract class MenuBaseViewController : ViewModelDrivenDialogViewController
     {
         readonly ProfileButton _profileButton;
         readonly UILabel _title;
@@ -14,10 +14,10 @@ namespace CodeHub.iOS.ViewControllers
         protected MenuBaseViewController()
             : base(false, UITableViewStyle.Plain)
         {
-			_title = new UILabel(new CGRect(0, 40, 320, 40));
+            _title = new UILabel(new CGRect(0, 40, 320, 40));
             _title.TextAlignment = UITextAlignment.Left;
             _title.BackgroundColor = UIColor.Clear;
-			_title.Font = UIFont.SystemFontOfSize(16f);
+            _title.Font = UIFont.SystemFontOfSize(16f);
             _title.TextColor = UIColor.FromRGB(246, 246, 246);
 //            _title.ShadowColor = UIColor.FromRGB(21, 21, 21);
 //            _title.ShadowOffset = new SizeF(0, 1);
@@ -37,11 +37,11 @@ namespace CodeHub.iOS.ViewControllers
         /// <value>The title.</value>
         public override string Title {
             get {
-				return _title == null ? base.Title : " " + _title.Text;
+                return _title == null ? base.Title : " " + _title.Text;
             }
             set {
                 if (_title != null)
-					_title.Text = " " + value;
+                    _title.Text = " " + value;
                 base.Title = value;
             }
         }
@@ -51,10 +51,10 @@ namespace CodeHub.iOS.ViewControllers
             get { return _profileButton; }
         }
 
-		/// <summary>
-		/// Invoked when it comes time to set the root so the child classes can create their own menus
-		/// </summary>
-		protected abstract void CreateMenuRoot();
+        /// <summary>
+        /// Invoked when it comes time to set the root so the child classes can create their own menus
+        /// </summary>
+        protected abstract void CreateMenuRoot();
 
         private void UpdateProfilePicture()
         {
@@ -65,7 +65,7 @@ namespace CodeHub.iOS.ViewControllers
                 size = new CGSize(24, 24);
             }
 
-			_profileButton.Frame = new CGRect(new CGPoint(0, 4), size);
+            _profileButton.Frame = new CGRect(new CGPoint(0, 4), size);
 
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(_profileButton);
         }

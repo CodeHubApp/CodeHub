@@ -3,12 +3,12 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.App
 {
-	public class DefaultStartupViewModel : BaseDefaultStartupViewModel
+    public class DefaultStartupViewModel : BaseDefaultStartupViewModel
     {
-		public DefaultStartupViewModel(IAccountsService accountsService)
-			: base(accountsService, typeof(MenuViewModel))
-		{
-		}
+        public DefaultStartupViewModel(IAccountsService accountsService)
+            : base(accountsService, typeof(MenuViewModel))
+        {
+        }
     }
 }
 

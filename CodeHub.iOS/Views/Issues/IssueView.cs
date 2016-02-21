@@ -118,14 +118,14 @@ namespace CodeHub.iOS.Views.Issues
             { 
                 AvatarUrl = x.User.AvatarUrl, 
                 Login = x.User.Login, 
-				CreatedAt = x.CreatedAt.UtcDateTime,
+                CreatedAt = x.CreatedAt.UtcDateTime,
                 Body = ViewModel.ConvertToMarkdown(x.Body)
             })
                 .Concat(ViewModel.Events.Select(x => new CommentModel
             {
                 AvatarUrl = x.Actor.AvatarUrl, 
                 Login = x.Actor.Login, 
-				CreatedAt = x.CreatedAt.UtcDateTime,
+                CreatedAt = x.CreatedAt.UtcDateTime,
                 Body = CreateEventBody(x.Event, x.CommitId)
             })
                 .Where(x => !string.IsNullOrEmpty(x.Body)));
@@ -159,7 +159,7 @@ namespace CodeHub.iOS.Views.Issues
             var comments = CreateCommentList().Select(x => new {
                 avatarUrl = x.AvatarUrl,
                 login = x.Login,
-				created_at = x.CreatedAt.Humanize(),
+                created_at = x.CreatedAt.Humanize(),
                 body = x.Body
             });
             var data = s.Serialize(comments);

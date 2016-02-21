@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public ICommand LoginCommand
         {
-			get { return new MvxCommand(() => Login(), CanLogin);}
+            get { return new MvxCommand(() => Login(), CanLogin);}
         }
 
         public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
@@ -60,8 +60,8 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public void Init(NavObject navObject)
         {
-			if (navObject.AttemptedAccountId >= 0)
-				_attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
+            if (navObject.AttemptedAccountId >= 0)
+                _attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
 
             if (_attemptedAccount != null)
             {
@@ -77,7 +77,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             return true;
         }
 
-		private async Task Login()
+        private async Task Login()
         {
             var apiUrl = Domain;
             if (apiUrl != null)
@@ -94,8 +94,8 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 IsLoggingIn = true;
                 var loginData = await _loginFactory.CreateLoginData(apiUrl, Username, Password, TwoFactor, true, _attemptedAccount);
-				var client = await _loginFactory.LoginAccount(loginData.Account);
-				_application.ActivateUser(loginData.Account, client);
+                var client = await _loginFactory.LoginAccount(loginData.Account);
+                _application.ActivateUser(loginData.Account, client);
                 MessageBus.Current.SendMessage(new LogoutMessage());
             }
             catch (Exception e)
@@ -117,12 +117,12 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public class NavObject
         {
-			public int AttemptedAccountId { get; set; }
+            public int AttemptedAccountId { get; set; }
 
-			public NavObject()
-			{
-				AttemptedAccountId = int.MinValue;
-			}
+            public NavObject()
+            {
+                AttemptedAccountId = int.MinValue;
+            }
         }
     }
 }

@@ -5,35 +5,35 @@ using System.Reactive.Disposables;
 
 namespace CodeHub.iOS.Utilities
 {
-	public class Hud : IHud
+    public class Hud : IHud
     {
-		public static UIColor BackgroundTint;
-		public Hud(UIView window)
+        public static UIColor BackgroundTint;
+        public Hud(UIView window)
         {
         }
 
-		public void Show(string text)
-		{
-			ProgressHUD.Shared.HudBackgroundColour = BackgroundTint;
-			BTProgressHUD.Show(text, maskType: ProgressHUD.MaskType.Gradient);
-		}
-
-		public static void ShowSuccess(string text)
-		{
+        public void Show(string text)
+        {
             ProgressHUD.Shared.HudBackgroundColour = BackgroundTint;
-			BTProgressHUD.ShowSuccessWithStatus(text);
-		}
+            BTProgressHUD.Show(text, maskType: ProgressHUD.MaskType.Gradient);
+        }
 
-		public static void ShowFailure(string text)
-		{
+        public static void ShowSuccess(string text)
+        {
             ProgressHUD.Shared.HudBackgroundColour = BackgroundTint;
-			BTProgressHUD.ShowErrorWithStatus(text);
-		}
+            BTProgressHUD.ShowSuccessWithStatus(text);
+        }
 
-		public void Hide()
-		{
-			BTProgressHUD.Dismiss();
-		}
+        public static void ShowFailure(string text)
+        {
+            ProgressHUD.Shared.HudBackgroundColour = BackgroundTint;
+            BTProgressHUD.ShowErrorWithStatus(text);
+        }
+
+        public void Hide()
+        {
+            BTProgressHUD.Dismiss();
+        }
     }
 
     public static class HudExtensions
@@ -67,11 +67,11 @@ namespace CodeHub.iOS.Utilities
         }
     }
 
-	public interface IHud
-	{
-		void Show(string text);
+    public interface IHud
+    {
+        void Show(string text);
 
-		void Hide();
-	}
+        void Hide();
+    }
 }
 

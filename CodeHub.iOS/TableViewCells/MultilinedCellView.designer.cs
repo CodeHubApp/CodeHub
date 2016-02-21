@@ -9,26 +9,26 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.TableViewCells
 {
-	[Register ("MultilinedCellView")]
-	partial class MultilinedCellView
-	{
-		[Outlet]
-		UIKit.UILabel CaptionLabel { get; set; }
+    [Register ("MultilinedCellView")]
+    partial class MultilinedCellView
+    {
+        [Outlet]
+        UIKit.UILabel CaptionLabel { get; set; }
 
-		[Outlet]
-		UIKit.UILabel DetailsLabel { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (CaptionLabel != null) {
-				CaptionLabel.Dispose ();
-				CaptionLabel = null;
-			}
+        [Outlet]
+        UIKit.UILabel DetailsLabel { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (CaptionLabel != null) {
+                CaptionLabel.Dispose ();
+                CaptionLabel = null;
+            }
 
-			if (DetailsLabel != null) {
-				DetailsLabel.Dispose ();
-				DetailsLabel = null;
-			}
-		}
-	}
+            if (DetailsLabel != null) {
+                DetailsLabel.Dispose ();
+                DetailsLabel = null;
+            }
+        }
+    }
 }

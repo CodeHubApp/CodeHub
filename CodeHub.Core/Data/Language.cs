@@ -13,7 +13,7 @@ namespace CodeHub.Core.Data
             Slug = slug;
         }
 
-		public string Name { get; set; }
+        public string Name { get; set; }
 
         public string Slug { get; set; }
 

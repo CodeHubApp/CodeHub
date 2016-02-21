@@ -61,7 +61,7 @@ namespace CodeHub.iOS.Views.App
             _activityView.Color = UIColor.FromRGB(0.33f, 0.33f, 0.33f);
             Add(_activityView);
 
-			View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
+            View.BackgroundColor = UIColor.FromRGB (221, 221, 221);
 
             OnActivation(d =>
             {
@@ -143,11 +143,11 @@ namespace CodeHub.iOS.Views.App
             UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
         }
 
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(animated);
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
             ViewModel.StartupCommand.Execute(null);
-		}
+        }
 
         public override bool ShouldAutorotate()
         {

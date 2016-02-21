@@ -6,8 +6,8 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class BranchesAndTagsView : ViewModelCollectionDrivenDialogViewController
-	{
+    public class BranchesAndTagsView : ViewModelCollectionDrivenDialogViewController
+    {
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] {"Branches", "Tags"});
 
         public BranchesAndTagsView()
@@ -17,11 +17,11 @@ namespace CodeHub.iOS.Views.Source
             NavigationItem.TitleView = _viewSegment;
         }
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
-			var vm = (BranchesAndTagsViewModel)ViewModel;
+            var vm = (BranchesAndTagsViewModel)ViewModel;
             var weakVm = new WeakReference<BranchesAndTagsViewModel>(vm);
 
             BindCollection(vm.Items, x => {
@@ -35,12 +35,12 @@ namespace CodeHub.iOS.Views.Source
                 d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
                 d(_viewSegment.GetChangedObservable().Subscribe(_ => vm.SelectedFilter = (int)_viewSegment.SelectedSegment));
             });
-		}
+        }
 
         private static Action<object> MakeCallback(WeakReference<BranchesAndTagsViewModel> weakVm, BranchesAndTagsViewModel.ViewObject viewObject)
         {
             return new Action<object>(_ => weakVm.Get()?.GoToSourceCommand.Execute(viewObject));
         }
-	}
+    }
 }
 

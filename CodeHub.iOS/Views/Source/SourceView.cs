@@ -9,30 +9,30 @@ using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class SourceView : FileSourceView
+    public class SourceView : FileSourceView
     {
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             ViewModel.Bind(x => x.IsLoading).Subscribe(x => 
             {
                 if (x) return;
-				if (!string.IsNullOrEmpty(ViewModel.ContentPath))
-				{
+                if (!string.IsNullOrEmpty(ViewModel.ContentPath))
+                {
                     LoadSource(new Uri("file://" + ViewModel.ContentPath));
-				}
-				else if (!string.IsNullOrEmpty(ViewModel.FilePath))
-				{
-					LoadFile(ViewModel.FilePath);
-				}
-			});
-		}
+                }
+                else if (!string.IsNullOrEmpty(ViewModel.FilePath))
+                {
+                    LoadFile(ViewModel.FilePath);
+                }
+            });
+        }
 
-		protected override UIActionSheet CreateActionSheet(string title)
-		{
+        protected override UIActionSheet CreateActionSheet(string title)
+        {
             var vm = ((SourceViewModel)ViewModel);
-			var sheet = base.CreateActionSheet(title);
+            var sheet = base.CreateActionSheet(title);
             var editButton = vm.CanEdit ? sheet.AddButton("Edit") : -1;
             sheet.Dismissed += (sender, e) => BeginInvokeOnMainThread(() => {
                 if (e.ButtonIndex == editButton)
@@ -40,8 +40,8 @@ namespace CodeHub.iOS.Views.Source
                     EditSource();
                 }
             });
-			return sheet;
-		}
+            return sheet;
+        }
 
         private void EditSource()
         {

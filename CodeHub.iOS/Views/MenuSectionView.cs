@@ -8,13 +8,13 @@ namespace CodeHub.iOS.Views
         public MenuSectionView(string caption)
             : base(new CGRect(0, 0, 320, 27))
         {
-			//var background = new UIImageView(Theme.CurrentTheme.MenuSectionBackground);
-			//background.Frame = this.Frame; 
+            //var background = new UIImageView(Theme.CurrentTheme.MenuSectionBackground);
+            //background.Frame = this.Frame; 
 
-			this.BackgroundColor = UIColor.FromRGB(50, 50, 50);
+            this.BackgroundColor = UIColor.FromRGB(50, 50, 50);
 
             var label = new UILabel(); 
-			label.BackgroundColor = UIColor.Clear;
+            label.BackgroundColor = UIColor.Clear;
             label.Opaque = false; 
             label.TextColor = UIColor.FromRGB(171, 171, 171); 
             label.Font =  UIFont.BoldSystemFontOfSize(12.5f);
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views
 //            label.ShadowColor = UIColor.FromRGB(0, 0, 0); 
 //            label.ShadowOffset = new SizeF(0, -1); 
 
-			//this.AddSubview(background); 
+            //this.AddSubview(background); 
             this.AddSubview(label); 
         }
     }

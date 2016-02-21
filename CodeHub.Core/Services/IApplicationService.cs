@@ -18,6 +18,6 @@ namespace CodeHub.Core.Services
 
         void SetUserActivationAction(Action action);
 
-		Action ActivationAction { get; set; }
+        Action ActivationAction { get; set; }
     }
 }

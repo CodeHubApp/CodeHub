@@ -10,12 +10,12 @@ namespace CodeHub.iOS.Views.Issues
 {
     public class IssueMilestonesView : ViewModelCollectionDrivenDialogViewController
     {
-		public IssueMilestonesView()
-		{
-			Title = "Milestones";
-			NoItemsText = "No Milestones";
-			EnableSearch = false;
-		}
+        public IssueMilestonesView()
+        {
+            Title = "Milestones";
+            NoItemsText = "No Milestones";
+            EnableSearch = false;
+        }
 
         public override void ViewDidLoad()
         {
@@ -24,28 +24,28 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = 80f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
 
-			var vm = (IssueMilestonesViewModel)ViewModel;
-			BindCollection(vm.Milestones, x => {
+            var vm = (IssueMilestonesViewModel)ViewModel;
+            BindCollection(vm.Milestones, x => {
                 var e = new MilestoneElement(x.Number, x.Title, x.OpenIssues, x.ClosedIssues, x.DueOn);
-				e.Tapped += () => {
-					if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
-						vm.SelectedMilestone = null;
-					else
-						vm.SelectedMilestone = x;
-				};
-				if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
-					e.Accessory = UITableViewCellAccessory.Checkmark;
-				return e;
-			});
+                e.Tapped += () => {
+                    if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
+                        vm.SelectedMilestone = null;
+                    else
+                        vm.SelectedMilestone = x;
+                };
+                if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
+                    e.Accessory = UITableViewCellAccessory.Checkmark;
+                return e;
+            });
 
             vm.Bind(x => x.SelectedMilestone).Subscribe(x =>
-			{
-				if (Root.Count == 0)
-					return;
-				foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
-					m.Accessory = (x != null && m.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-				Root.Reload(Root[0], UITableViewRowAnimation.None);
-			});
+            {
+                if (Root.Count == 0)
+                    return;
+                foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
+                    m.Accessory = (x != null && m.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                Root.Reload(Root[0], UITableViewRowAnimation.None);
+            });
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }

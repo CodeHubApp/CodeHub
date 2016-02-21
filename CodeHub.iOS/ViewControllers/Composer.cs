@@ -8,9 +8,9 @@ using System.Collections.Generic;
 namespace CodeHub.iOS.ViewControllers
 {
     public class Composer : BaseViewController
-	{
+    {
         protected UIBarButtonItem SendItem;
-		UIViewController _previousController;
+        UIViewController _previousController;
         public Action<string> ReturnAction;
         protected readonly UITextView TextView;
         protected UIView ScrollingToolbarView;
@@ -23,10 +23,10 @@ namespace CodeHub.iOS.ViewControllers
             set { SendItem.Enabled = value; }
         }
 
-		public Composer () : base (null, null)
-		{
+        public Composer () : base (null, null)
+        {
             Title = "New Comment";
-			EdgesForExtendedLayout = UIRectEdge.None;
+            EdgesForExtendedLayout = UIRectEdge.None;
 
             var close = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
             NavigationItem.LeftBarButtonItem = close;
@@ -51,7 +51,7 @@ namespace CodeHub.iOS.ViewControllers
                 d(close.GetClickedObservable().Subscribe(_ => CloseComposer()));
                 d(SendItem.GetClickedObservable().Subscribe(_ => PostCallback()));
             });
-		}
+        }
 
         private UIImage ImageFromColor(UIColor color)
         {
@@ -141,15 +141,15 @@ namespace CodeHub.iOS.ViewControllers
             set { TextView.Text = value; }
         }
 
-		public void CloseComposer ()
-		{
-			SendItem.Enabled = true;
-			_previousController.DismissViewController(true, null);
+        public void CloseComposer ()
+        {
+            SendItem.Enabled = true;
+            _previousController.DismissViewController(true, null);
         }
 
-		void PostCallback ()
-		{
-			SendItem.Enabled = false;
+        void PostCallback ()
+        {
+            SendItem.Enabled = false;
             TextView.ResignFirstResponder();
 
             try
@@ -161,26 +161,26 @@ namespace CodeHub.iOS.ViewControllers
             {
                 System.Diagnostics.Debug.WriteLine(e.Message + " - " + e.StackTrace);
             }
-		}
-		
-		void KeyboardWillShow (NSNotification notification)
-		{
-		    var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
-		    if (nsValue == null) return;
-		    var kbdBounds = nsValue.RectangleFValue;
+        }
+        
+        void KeyboardWillShow (NSNotification notification)
+        {
+            var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
+            if (nsValue == null) return;
+            var kbdBounds = nsValue.RectangleFValue;
             UIView.Animate(1.0f, 0, UIViewAnimationOptions.CurveEaseIn, () => TextView.Frame = ComputeComposerSize (kbdBounds), null);
-		}
+        }
 
         void KeyboardWillHide (NSNotification notification)
         {
             TextView.Frame = ComputeComposerSize(new CGRect(0, 0, 0, 0));
         }
 
-	    CGRect ComputeComposerSize (CGRect kbdBounds)
-		{
-			var view = View.Bounds;
+        CGRect ComputeComposerSize (CGRect kbdBounds)
+        {
+            var view = View.Bounds;
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
-		}
+        }
 
         public override void ViewWillAppear (bool animated)
         {
@@ -195,15 +195,15 @@ namespace CodeHub.iOS.ViewControllers
             base.ViewWillDisappear(animated);
             NSNotificationCenter.DefaultCenter.RemoveObserver(this);
         }
-		
-		public void NewComment (UIViewController parent, Action<string> action)
-		{
+        
+        public void NewComment (UIViewController parent, Action<string> action)
+        {
             Title = Title;
             ReturnAction = action;
             _previousController = parent;
             TextView.BecomeFirstResponder ();
             var nav = new UINavigationController(this);
             parent.PresentViewController(nav, true, null);
-		}
-	}
+        }
+    }
 }

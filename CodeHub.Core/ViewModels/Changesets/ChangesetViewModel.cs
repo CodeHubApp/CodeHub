@@ -17,11 +17,11 @@ namespace CodeHub.Core.ViewModels.Changesets
         private readonly IFeaturesService _featuresService;
         private CommitModel _commitModel;
 
-		public string Node { get; private set; }
+        public string Node { get; private set; }
 
-		public string User { get; private set; }
+        public string User { get; private set; }
 
-		public string Repository { get; private set; }
+        public string Repository { get; private set; }
 
         public bool ShowRepository { get; private set; }
 
@@ -51,30 +51,30 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, Repository = Repository })); }
         }
 
-		public ICommand GoToFileCommand
-		{
-			get
-			{ 
-				return new MvxCommand<CommitModel.CommitFileModel>(x =>
-				{
-						if (x.Patch == null)
-						{
-							ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { GitUrl = x.ContentsUrl, HtmlUrl = x.BlobUrl, Name = x.Filename, Path = x.Filename, ForceBinary = true });
-						}
-						else
-						{
-							Mvx.Resolve<CodeHub.Core.Services.IViewModelTxService>().Add(x);
-							ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
-						}
+        public ICommand GoToFileCommand
+        {
+            get
+            { 
+                return new MvxCommand<CommitModel.CommitFileModel>(x =>
+                {
+                        if (x.Patch == null)
+                        {
+                            ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { GitUrl = x.ContentsUrl, HtmlUrl = x.BlobUrl, Name = x.Filename, Path = x.Filename, ForceBinary = true });
+                        }
+                        else
+                        {
+                            Mvx.Resolve<CodeHub.Core.Services.IViewModelTxService>().Add(x);
+                            ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
+                        }
 
-				});
-			}
-		}
+                });
+            }
+        }
 
-		public ICommand GoToHtmlUrlCommand
-		{
-			get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _commitModel.Url }), () => _commitModel != null); }
-		}
+        public ICommand GoToHtmlUrlCommand
+        {
+            get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = _commitModel.Url }), () => _commitModel != null); }
+        }
 
         public CollectionViewModel<CommentModel> Comments
         {
@@ -103,7 +103,7 @@ namespace CodeHub.Core.ViewModels.Changesets
                 this.RequestModel(this.GetApplication().Client.Users[User].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
 
             var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceCacheInvalidation, response => Changeset = response.Data);
-			Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
+            Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
             return t1;
         }
 

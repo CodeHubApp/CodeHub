@@ -8,42 +8,42 @@ using Foundation;
 
 namespace CodeHub.iOS.Views
 {
-	[Register ("ModifyGistFileController")]
-	partial class ModifyGistFileController
-	{
-		[Outlet]
-		UIKit.UITextField Name { get; set; }
+    [Register ("ModifyGistFileController")]
+    partial class ModifyGistFileController
+    {
+        [Outlet]
+        UIKit.UITextField Name { get; set; }
 
-		[Outlet]
-		UIKit.UIView NameView { get; set; }
+        [Outlet]
+        UIKit.UIView NameView { get; set; }
 
-		[Outlet]
-		UIKit.UIScrollView Scroll { get; set; }
+        [Outlet]
+        UIKit.UIScrollView Scroll { get; set; }
 
-		[Outlet]
-		UIKit.UITextView Text { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (Name != null) {
-				Name.Dispose ();
-				Name = null;
-			}
+        [Outlet]
+        UIKit.UITextView Text { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (Name != null) {
+                Name.Dispose ();
+                Name = null;
+            }
 
-			if (Scroll != null) {
-				Scroll.Dispose ();
-				Scroll = null;
-			}
+            if (Scroll != null) {
+                Scroll.Dispose ();
+                Scroll = null;
+            }
 
-			if (Text != null) {
-				Text.Dispose ();
-				Text = null;
-			}
+            if (Text != null) {
+                Text.Dispose ();
+                Text = null;
+            }
 
-			if (NameView != null) {
-				NameView.Dispose ();
-				NameView = null;
-			}
-		}
-	}
+            if (NameView != null) {
+                NameView.Dispose ();
+                NameView = null;
+            }
+        }
+    }
 }

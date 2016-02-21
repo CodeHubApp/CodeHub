@@ -34,18 +34,18 @@ namespace CodeHub.Core.ViewModels.Gists
             GistFile = navObject.GistFile;
         }
 
-		protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load(bool forceCacheInvalidation)
         {
             string data;
             using (var ms = new System.IO.MemoryStream())
             {
-				await this.GetApplication().Client.DownloadRawResource(GistFile.RawUrl, ms);
+                await this.GetApplication().Client.DownloadRawResource(GistFile.RawUrl, ms);
                 ms.Position = 0;
                 var sr = new System.IO.StreamReader(ms);
                 data = sr.ReadToEnd();
             }
             if (GistFile.Language.Equals("Markdown"))
-				data = await this.GetApplication().Client.Markdown.GetMarkdown(data);
+                data = await this.GetApplication().Client.Markdown.GetMarkdown(data);
 
             var path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetTempFileName() + ".html");
             System.IO.File.WriteAllText(path, data, Encoding.UTF8);
@@ -54,8 +54,8 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public class NavObject
         {
-			public string Filename { get; set; }
-			public string RawUrl { get; set; }
+            public string Filename { get; set; }
+            public string RawUrl { get; set; }
             public GistFileModel GistFile { get; set; }
         }
     }

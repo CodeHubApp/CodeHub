@@ -1,7 +1,7 @@
 namespace CodeHub.iOS.Views.Repositories
 {
-	public class UserRepositoriesView : BaseRepositoriesView
-	{
-	}
+    public class UserRepositoriesView : BaseRepositoriesView
+    {
+    }
 }
 

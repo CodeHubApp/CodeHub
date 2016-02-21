@@ -6,7 +6,7 @@ using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-	public class StargazersViewModel : BaseUserCollectionViewModel
+    public class StargazersViewModel : BaseUserCollectionViewModel
     {
         public string User
         {
@@ -28,7 +28,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         protected override Task Load(bool forceDataRefresh)
         {
-			return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
         }
 
         public class NavObject

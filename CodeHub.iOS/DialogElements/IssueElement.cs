@@ -18,7 +18,7 @@ namespace CodeHub.iOS.DialogElements
         public string Kind { get; set; }
         public DateTimeOffset LastUpdated { get; set; }
 
-		public IssueElement(string id, string title, string assigned, string status, string priority, string kind, DateTimeOffset lastUpdated) 
+        public IssueElement(string id, string title, string assigned, string status, string priority, string kind, DateTimeOffset lastUpdated) 
         {
             if (string.IsNullOrEmpty(assigned))
                 assigned = "unassigned";

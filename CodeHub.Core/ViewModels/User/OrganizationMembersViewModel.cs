@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load(bool forceDataRefresh)
         {
-			return Users.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetMembers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetMembers(), forceDataRefresh);
         }
     }
 }

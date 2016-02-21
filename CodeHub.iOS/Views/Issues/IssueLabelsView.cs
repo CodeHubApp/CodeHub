@@ -10,53 +10,53 @@ namespace CodeHub.iOS.Views.Issues
 {
     public class IssueLabelsView : ViewModelCollectionDrivenDialogViewController
     {
-		public IssueLabelsView()
-		{
-			EnableSearch = false;
-			Title = "Labels";
+        public IssueLabelsView()
+        {
+            EnableSearch = false;
+            Title = "Labels";
             NoItemsText = "No Labels";
-		}
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-			var vm = (IssueLabelsViewModel)ViewModel;
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SaveLabelChoices.Execute(null));
+            var vm = (IssueLabelsViewModel)ViewModel;
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SaveLabelChoices.Execute(null));
 
-			BindCollection(vm.Labels, x => 
+            BindCollection(vm.Labels, x => 
             {
                 var e = new LabelElement(x.Name, x.Color);
                 e.Clicked.Subscribe(_ =>
                 {
                     if (e.Accessory == UITableViewCellAccessory.Checkmark)
-						vm.SelectedLabels.Items.Remove(x);
+                        vm.SelectedLabels.Items.Remove(x);
                     else
-						vm.SelectedLabels.Items.Add(x);
+                        vm.SelectedLabels.Items.Add(x);
                 });
 
-				e.Accessory = vm.SelectedLabels.Contains(x) ? 
-				               UITableViewCellAccessory.Checkmark : 
-				               UITableViewCellAccessory.None;
+                e.Accessory = vm.SelectedLabels.Contains(x) ? 
+                               UITableViewCellAccessory.Checkmark : 
+                               UITableViewCellAccessory.None;
                 return e;
             });
 
             vm.BindCollection(x => x.SelectedLabels, true).Subscribe(_ =>
-			{
-				if (Root.Count == 0)
-					return;
+            {
+                if (Root.Count == 0)
+                    return;
 
-				var elements = Root[0].Elements;
-				foreach (var el in elements.Cast<LabelElement>())
-				{
+                var elements = Root[0].Elements;
+                foreach (var el in elements.Cast<LabelElement>())
+                {
                     var element = el;
                     el.Accessory = vm.SelectedLabels.Any(y => string.Equals(y.Name, element.Name, System.StringComparison.OrdinalIgnoreCase)) ? 
-					               UITableViewCellAccessory.Checkmark : 
-					               UITableViewCellAccessory.None;
-				}
+                                   UITableViewCellAccessory.Checkmark : 
+                                   UITableViewCellAccessory.None;
+                }
 
-				Root.Reload(Root[0], UITableViewRowAnimation.None);
-			});
+                Root.Reload(Root[0], UITableViewRowAnimation.None);
+            });
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }

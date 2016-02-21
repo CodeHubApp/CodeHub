@@ -10,7 +10,7 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class SettingsView : ViewModelDrivenDialogViewController
+    public class SettingsView : ViewModelDrivenDialogViewController
     {
         public SettingsView()
         {
@@ -25,11 +25,11 @@ namespace CodeHub.iOS.Views.App
             });
         }
 
-		private void CreateTable()
-		{
-			var application = Mvx.Resolve<IApplicationService>();
-			var vm = (SettingsViewModel)ViewModel;
-			var currentAccount = application.Account;
+        private void CreateTable()
+        {
+            var application = Mvx.Resolve<IApplicationService>();
+            var vm = (SettingsViewModel)ViewModel;
+            var currentAccount = application.Account;
             var accountSection = new Section("Account");
 
             var saveCredentials = new BooleanElement("Save Credentials", !currentAccount.DontRemember);
@@ -41,26 +41,26 @@ namespace CodeHub.iOS.Views.App
 
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", currentAccount.ShowOrganizationsInEvents);
             showOrganizationsInEvents.Changed.Subscribe(x => {
-				currentAccount.ShowOrganizationsInEvents = x;
-				application.Accounts.Update(currentAccount);
-			});
+                currentAccount.ShowOrganizationsInEvents = x;
+                application.Accounts.Update(currentAccount);
+            });
 
             var showOrganizations = new BooleanElement("List Organizations in Menu", currentAccount.ExpandOrganizations);
             showOrganizations.Changed.Subscribe(x => { 
-				currentAccount.ExpandOrganizations = x;
-				application.Accounts.Update(currentAccount);
-			});
+                currentAccount.ExpandOrganizations = x;
+                application.Accounts.Update(currentAccount);
+            });
 
             var repoDescriptions = new BooleanElement("Show Repo Descriptions", currentAccount.ShowRepositoryDescriptionInList);
             repoDescriptions.Changed.Subscribe(x => {
-				currentAccount.ShowRepositoryDescriptionInList = x;
-				application.Accounts.Update(currentAccount);
-			});
+                currentAccount.ShowRepositoryDescriptionInList = x;
+                application.Accounts.Update(currentAccount);
+            });
 
-			var startupView = new StringElement("Startup View", vm.DefaultStartupViewName, UITableViewCellStyle.Value1)
-			{ 
-				Accessory = UITableViewCellAccessory.DisclosureIndicator,
-			};
+            var startupView = new StringElement("Startup View", vm.DefaultStartupViewName, UITableViewCellStyle.Value1)
+            { 
+                Accessory = UITableViewCellAccessory.DisclosureIndicator,
+            };
             startupView.Clicked.BindCommand(vm.GoToDefaultStartupViewCommand);
 
             var pushNotifications = new BooleanElement("Push Notifications", vm.PushNotificationsEnabled);
@@ -93,9 +93,9 @@ namespace CodeHub.iOS.Views.App
 
             aboutSection.Add(appVersion);
 
-			//Assign the root
+            //Assign the root
             Root.Reset(accountSection, new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView }, aboutSection);
-		}
+        }
 
         private static string GetApplicationVersion() 
         {

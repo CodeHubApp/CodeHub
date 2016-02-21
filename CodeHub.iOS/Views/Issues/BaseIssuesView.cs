@@ -9,11 +9,11 @@ namespace CodeHub.iOS.Views.Issues
 {
     public abstract class BaseIssuesView : ViewModelCollectionDrivenDialogViewController
     {
-		public new IBaseIssuesViewModel ViewModel
-		{
-			get { return (IBaseIssuesViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+        public new IBaseIssuesViewModel ViewModel
+        {
+            get { return (IBaseIssuesViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
 
         protected BaseIssuesView()
         {
@@ -29,7 +29,7 @@ namespace CodeHub.iOS.Views.Issues
         protected IssueElement CreateElement(IssueModel x)
         {
             var weakVm = new WeakReference<IBaseIssuesViewModel>(ViewModel);
-			var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
+            var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
             var assigned = x.Assignee != null ? x.Assignee.Login : "unassigned";
             var kind = isPullRequest ? "Pull" : "Issue";
             var commentString = x.Comments == 1 ? "1 comment" : x.Comments + " comments";

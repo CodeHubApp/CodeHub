@@ -45,14 +45,14 @@ namespace CodeHub.iOS.Views
                 return;
             }
 
-			this.DoWorkAsync("Saving...", async () =>
-			{
-				var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-				var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
-				if (Created != null)
-					Created(newGist.Data);
-				DismissViewController(true, null);
-			});
+            this.DoWorkAsync("Saving...", async () =>
+            {
+                var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
+                if (Created != null)
+                    Created(newGist.Data);
+                DismissViewController(true, null);
+            });
         }
 
         private bool IsDuplicateName(string name)
@@ -184,7 +184,7 @@ namespace CodeHub.iOS.Views
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource()
+        public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }

@@ -12,20 +12,20 @@ namespace CodeHub.iOS.Views.Source
 {
     public class EditSourceView : BaseViewController
     {
-		ComposerView _composerView;
+        ComposerView _composerView;
 
         public EditSourceViewModel ViewModel { get; }
-	
-		public EditSourceView()
-		{
+    
+        public EditSourceView()
+        {
             ViewModel = new EditSourceViewModel();
-			EdgesForExtendedLayout = UIRectEdge.None;
-			Title = "Edit";
-		}
+            EdgesForExtendedLayout = UIRectEdge.None;
+            Title = "Edit";
+        }
       
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             _composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
             var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
@@ -39,17 +39,17 @@ namespace CodeHub.iOS.Views.Source
             });
 
             ViewModel.LoadCommand.Execute(null);
-		}
+        }
 
-		private void Commit()
-		{
-			var composer = new LiteComposer { Title = "Commit Message" };
+        private void Commit()
+        {
+            var composer = new LiteComposer { Title = "Commit Message" };
             composer.Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
             var text = _composerView.Text;
             composer.ReturnAction += (s, e) => CommitThis(ViewModel, composer, text, e);
-			_composerView.TextView.BecomeFirstResponder ();
-			NavigationController.PushViewController(composer, true);
-		}
+            _composerView.TextView.BecomeFirstResponder ();
+            NavigationController.PushViewController(composer, true);
+        }
 
         /// <summary>
         /// Need another function because Xamarin generates an Invalid IL if used inline above
@@ -68,85 +68,85 @@ namespace CodeHub.iOS.Views.Source
             }
         }
 
-		void KeyboardWillShow (NSNotification notification)
-		{
-			var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
-			if (nsValue == null) return;
-			var kbdBounds = nsValue.RectangleFValue;
-			UIView.Animate(0.25f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-			_composerView.Frame = ComputeComposerSize(kbdBounds), null);
-		}
+        void KeyboardWillShow (NSNotification notification)
+        {
+            var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
+            if (nsValue == null) return;
+            var kbdBounds = nsValue.RectangleFValue;
+            UIView.Animate(0.25f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
+            _composerView.Frame = ComputeComposerSize(kbdBounds), null);
+        }
 
-		void KeyboardWillHide (NSNotification notification)
-		{
-			UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-			_composerView.Frame = ComputeComposerSize(CGRect.Empty), null);
-		}
+        void KeyboardWillHide (NSNotification notification)
+        {
+            UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
+            _composerView.Frame = ComputeComposerSize(CGRect.Empty), null);
+        }
 
-		CGRect ComputeComposerSize (CGRect kbdBounds)
-		{
-			var view = View.Bounds;
-			return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
-		}
+        CGRect ComputeComposerSize (CGRect kbdBounds)
+        {
+            var view = View.Bounds;
+            return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
+        }
 
-		public override void ViewWillAppear (bool animated)
-		{
-			base.ViewWillAppear (animated);
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+        public override void ViewWillAppear (bool animated)
+        {
+            base.ViewWillAppear (animated);
+            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
 
-			_composerView.TextView.BecomeFirstResponder ();
-		}
+            _composerView.TextView.BecomeFirstResponder ();
+        }
 
-		public override void ViewWillDisappear(bool animated)
-		{
-			base.ViewWillDisappear(animated);
-			NSNotificationCenter.DefaultCenter.RemoveObserver(this);
-		}
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+        }
 
-		private class ComposerView : UIView 
-		{
-			internal readonly UITextView TextView;
+        private class ComposerView : UIView 
+        {
+            internal readonly UITextView TextView;
 
-			public ComposerView (CGRect bounds) : base (bounds)
-			{
-				TextView = new UITextView (CGRect.Empty) {
-					Font = UIFont.SystemFontOfSize (14),
-				};
+            public ComposerView (CGRect bounds) : base (bounds)
+            {
+                TextView = new UITextView (CGRect.Empty) {
+                    Font = UIFont.SystemFontOfSize (14),
+                };
 
-				// Work around an Apple bug in the UITextView that crashes
-				if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
-					TextView.AutocorrectionType = UITextAutocorrectionType.No;
+                // Work around an Apple bug in the UITextView that crashes
+                if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
+                    TextView.AutocorrectionType = UITextAutocorrectionType.No;
 
-				AddSubview (TextView);
-			}
+                AddSubview (TextView);
+            }
 
 
-			internal void Reset (string text)
-			{
-				TextView.Text = text;
-			}
+            internal void Reset (string text)
+            {
+                TextView.Text = text;
+            }
 
-			public override void LayoutSubviews ()
-			{
-				Resize (Bounds);
-			}
+            public override void LayoutSubviews ()
+            {
+                Resize (Bounds);
+            }
 
-			void Resize (CGRect bounds)
-			{
-				TextView.Frame = new CGRect (0, 0, bounds.Width, bounds.Height);
-			}
+            void Resize (CGRect bounds)
+            {
+                TextView.Frame = new CGRect (0, 0, bounds.Width, bounds.Height);
+            }
 
-			public string Text { 
-				get {
-					return TextView.Text;
-				}
-				set {
-					TextView.Text = value;
-					TextView.SelectedRange = new NSRange(0, 0);
-				}
-			}
-		}
+            public string Text { 
+                get {
+                    return TextView.Text;
+                }
+                set {
+                    TextView.Text = value;
+                    TextView.SelectedRange = new NSRange(0, 0);
+                }
+            }
+        }
 
     }
 }

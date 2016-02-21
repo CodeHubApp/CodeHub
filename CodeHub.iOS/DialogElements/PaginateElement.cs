@@ -11,8 +11,8 @@ namespace CodeHub.iOS.DialogElements
 
         public PaginateElement(string normal, string loading)
         {
-			NormalCaption = normal;
-			LoadingCaption = loading;
+            NormalCaption = normal;
+            LoadingCaption = loading;
             Font = StringElement.DefaultTitleFont;
             TextColor = StringElement.DefaultTitleColor;
         }

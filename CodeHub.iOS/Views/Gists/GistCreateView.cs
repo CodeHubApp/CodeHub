@@ -148,7 +148,7 @@ namespace CodeHub.iOS.Views.Gists
             });
         }
 
-		public override DialogViewController.Source CreateSizingSource()
+        public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }

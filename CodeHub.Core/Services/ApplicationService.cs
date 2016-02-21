@@ -17,7 +17,7 @@ namespace CodeHub.Core.Services
         public GitHubAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
-		public Action ActivationAction { get; set; }
+        public Action ActivationAction { get; set; }
 
         public ApplicationService(IAccountsService accounts, IMvxViewDispatcher viewDispatcher, 
             IFeaturesService features, IPushNotificationsService pushNotifications,
@@ -53,7 +53,7 @@ namespace CodeHub.Core.Services
             if (Account != null)
                 action();
             else
-				ActivationAction = action;
+                ActivationAction = action;
         }
 
     }

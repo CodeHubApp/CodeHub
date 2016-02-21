@@ -5,16 +5,16 @@ namespace CodeHub.Core.Factories
 {
     public interface ILoginFactory
     {
-		Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain);
+        Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain);
 
-		Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
+        Task<GitHubSharp.Client> LoginAccount(GitHubAccount account);
 
         Task<LoginData> CreateLoginData(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount existingAccount);
     }
 
-	public class LoginData
-	{
-		public GitHubSharp.Client Client { get; set; }
-		public GitHubAccount Account { get; set; }
-	}
+    public class LoginData
+    {
+        public GitHubSharp.Client Client { get; set; }
+        public GitHubAccount Account { get; set; }
+    }
 }

@@ -15,16 +15,16 @@ using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.App
 {
-	public class MenuView : MenuBaseViewController
+    public class MenuView : MenuBaseViewController
     {
         private MenuElement _notifications;
-		private Section _favoriteRepoSection;
+        private Section _favoriteRepoSection;
 
-	    public new MenuViewModel ViewModel
-	    {
-	        get { return (MenuViewModel) base.ViewModel; }
+        public new MenuViewModel ViewModel
+        {
+            get { return (MenuViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
-	    }
+        }
 
         public MenuView()
         {
@@ -63,10 +63,10 @@ namespace CodeHub.iOS.Views.App
             }
         }
 
-	    protected override void CreateMenuRoot()
-		{
+        protected override void CreateMenuRoot()
+        {
             var username = ViewModel.Account.Username;
-			Title = username;
+            Title = username;
             ICollection<Section> sections = new LinkedList<Section>();
 
             sections.Add(new Section
@@ -144,7 +144,7 @@ namespace CodeHub.iOS.Views.App
             infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, Octicon.Person.ToImage()));
 
             Root.Reset(sections);
-		}
+        }
 
 
         public override void ViewWillAppear(bool animated)
@@ -175,11 +175,11 @@ namespace CodeHub.iOS.Views.App
         {
             base.ViewDidLoad();
 
-			TableView.SeparatorInset = UIEdgeInsets.Zero;
-			TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
+            TableView.SeparatorInset = UIEdgeInsets.Zero;
+            TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
 
-			if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
-				ProfileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
+            if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
+                ProfileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
 
             ViewModel.Bind(x => x.Notifications).Subscribe(x =>
             {
@@ -194,28 +194,28 @@ namespace CodeHub.iOS.Views.App
 
             ViewModel.LoadCommand.Execute(null);
 
-			var appService = Mvx.Resolve<IApplicationService> ();
+            var appService = Mvx.Resolve<IApplicationService> ();
 
-			// A user has been activated!
-			if (appService.ActivationAction != null)
-			{
-				appService.ActivationAction();
-				appService.ActivationAction = null;
-			}
+            // A user has been activated!
+            if (appService.ActivationAction != null)
+            {
+                appService.ActivationAction();
+                appService.ActivationAction = null;
+            }
         }
 
-		private class PinnedRepoElement : MenuElement
-		{
-			public CodeHub.Core.Data.PinnedRepository PinnedRepo
-			{
-				get;
-				private set; 
-			}
+        private class PinnedRepoElement : MenuElement
+        {
+            public CodeHub.Core.Data.PinnedRepository PinnedRepo
+            {
+                get;
+                private set; 
+            }
 
-			public PinnedRepoElement(CodeHub.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
+            public PinnedRepoElement(CodeHub.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
                 : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Octicon.Repo.ToImage())
-			{
-				PinnedRepo = pinnedRepo;
+            {
+                PinnedRepo = pinnedRepo;
 
                 // BUG FIX: App keeps getting relocated so the URLs become off
                 if (PinnedRepo.ImageUri.EndsWith("repository.png", System.StringComparison.Ordinal))
@@ -230,78 +230,78 @@ namespace CodeHub.iOS.Views.App
                 {
                     ImageUri = new System.Uri(PinnedRepo.ImageUri);
                 }
-			}
-		}
+            }
+        }
 
-		private void DeletePinnedRepo(PinnedRepoElement el)
-		{
-			ViewModel.DeletePinnedRepositoryCommand.Execute(el.PinnedRepo);
+        private void DeletePinnedRepo(PinnedRepoElement el)
+        {
+            ViewModel.DeletePinnedRepositoryCommand.Execute(el.PinnedRepo);
 
-			if (_favoriteRepoSection.Elements.Count == 1)
-			{
-				Root.Remove(_favoriteRepoSection);
-				_favoriteRepoSection = null;
-			}
-			else
-			{
-				_favoriteRepoSection.Remove(el);
-			}
-		}
+            if (_favoriteRepoSection.Elements.Count == 1)
+            {
+                Root.Remove(_favoriteRepoSection);
+                _favoriteRepoSection = null;
+            }
+            else
+            {
+                _favoriteRepoSection.Remove(el);
+            }
+        }
 
-		public override DialogViewController.Source CreateSizingSource()
-		{
-			return new EditSource(this);
-		}
+        public override DialogViewController.Source CreateSizingSource()
+        {
+            return new EditSource(this);
+        }
 
         private class EditSource : Source
-		{
-			private readonly WeakReference<MenuView> _parent;
-			public EditSource(MenuView dvc) 
-				: base (dvc)
-			{
+        {
+            private readonly WeakReference<MenuView> _parent;
+            public EditSource(MenuView dvc) 
+                : base (dvc)
+            {
                 _parent = new WeakReference<MenuView>(dvc);
-			}
+            }
 
-			public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
-			{
+            public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
+            {
                 var view = _parent.Get();
                 if (view == null)
                     return false;
 
                 if (view._favoriteRepoSection == null)
-					return false;
+                    return false;
                 if (view.Root[indexPath.Section] == view._favoriteRepoSection)
-					return true;
-				return false;
-			}
+                    return true;
+                return false;
+            }
 
-			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
-			{
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
+            {
                 var view = _parent.Get();
                 if (view == null)
                     return UITableViewCellEditingStyle.None;
 
                 if (view._favoriteRepoSection != null && view.Root[indexPath.Section] == view._favoriteRepoSection)
-					return UITableViewCellEditingStyle.Delete;
-				return UITableViewCellEditingStyle.None;
-			}
+                    return UITableViewCellEditingStyle.Delete;
+                return UITableViewCellEditingStyle.None;
+            }
 
-			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
-			{
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
+            {
                 var view = _parent.Get();
                 if (view == null)
                     return;
                 
-				switch (editingStyle)
-				{
-					case UITableViewCellEditingStyle.Delete:
+                switch (editingStyle)
+                {
+                    case UITableViewCellEditingStyle.Delete:
                         var section = view.Root[indexPath.Section];
-						var element = section[indexPath.Row];
+                        var element = section[indexPath.Row];
                         view.DeletePinnedRepo(element as PinnedRepoElement);
-						break;
-				}
-			}
-		}
+                        break;
+                }
+            }
+        }
     }
 }
 

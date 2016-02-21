@@ -32,11 +32,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             NavigationController.PushViewController(new NewAccountViewController(), true);
         }
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
             TableView.RowHeight = 74;
-		}
+        }
 
         private void SelectAccount(GitHubAccount githubAccount)
         {
@@ -84,7 +84,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
         }
 
-		public override DialogViewController.Source CreateSizingSource()
+        public override DialogViewController.Source CreateSizingSource()
         {
             return new EditSource(this);
         }
@@ -107,7 +107,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
         }
 
-		private class EditSource : DialogViewController.Source
+        private class EditSource : DialogViewController.Source
         {
             public EditSource(AccountsViewController dvc) : base (dvc)
             {

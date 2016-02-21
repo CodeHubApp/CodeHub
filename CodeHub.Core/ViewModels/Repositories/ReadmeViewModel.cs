@@ -9,12 +9,12 @@ using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-	public class ReadmeViewModel : LoadableViewModel
+    public class ReadmeViewModel : LoadableViewModel
     {
         private readonly IMarkdownService _markdownService;
         private string _data;
         private string _path;
-		private GitHubSharp.Models.ContentModel _contentModel;
+        private GitHubSharp.Models.ContentModel _contentModel;
 
         public string Username 
         {
@@ -45,30 +45,30 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _contentModel?.HtmlUrl; }
         }
 
-		public ICommand GoToGitHubCommand
-		{
-			get { return new MvxCommand(() => GoToUrlCommand.Execute(HtmlUrl), () => _contentModel != null); }
-		}
+        public ICommand GoToGitHubCommand
+        {
+            get { return new MvxCommand(() => GoToUrlCommand.Execute(HtmlUrl), () => _contentModel != null); }
+        }
 
-		public ICommand GoToLinkCommand
-		{
-			get { return GoToUrlCommand; }
-		}
+        public ICommand GoToLinkCommand
+        {
+            get { return GoToUrlCommand; }
+        }
 
         public ReadmeViewModel(IMarkdownService markdownService)
         {
             _markdownService = markdownService;
         }
 
-		protected override Task Load(bool forceCacheInvalidation)
-		{
+        protected override Task Load(bool forceCacheInvalidation)
+        {
             return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme(), forceCacheInvalidation, x =>
             {
                 _contentModel = x.Data;
                 var data = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
                 Path = MarkdownHtmlGenerator.CreateFile(data);
             });
-		}
+        }
 
         public void Init(NavObject navObject)
         {

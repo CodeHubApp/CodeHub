@@ -23,24 +23,24 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             ViewModel.Init(new LoginViewModel.NavObject());
         }
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
             OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
-			LoadRequest();
-		}
+            LoadRequest();
+        }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
-			try
-			{
-	            //We're being redirected to our redirect URL so we must have been successful
+            try
+            {
+                //We're being redirected to our redirect URL so we must have been successful
                 if (navigationAction.Request.Url.Host == "dillonbuchanan.com")
-	            {
+                {
                     var code = navigationAction.Request.Url.Query.Split('=')[1];
-					ViewModel.Login(code);
-	                return false;
-	            }
+                    ViewModel.Login(code);
+                    return false;
+                }
     
                 if (navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
                 {
@@ -49,22 +49,22 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 }
 
                 return base.ShouldStartLoad(webView, navigationAction);
-			}
-			catch 
+            }
+            catch 
             {
-				Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
-				return false;
-			}
+                Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
+                return false;
+            }
         }
 
         protected override void OnLoadError(NSError e)
-		{
-			base.OnLoadError(e);
+        {
+            base.OnLoadError(e);
 
-			//Frame interrupted error
+            //Frame interrupted error
             if (e.Code == 102 || e.Code == -999) return;
             AlertDialogService.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
-		}
+        }
 
         private void LoadRequest()
         {

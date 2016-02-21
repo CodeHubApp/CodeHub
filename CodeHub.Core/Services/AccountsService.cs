@@ -31,7 +31,7 @@ namespace CodeHub.Core.Services
         public GitHubAccount GetDefault()
         {
             int id;
-			return !_defaults.TryGet("DEFAULT_ACCOUNT", out id) ? null : Find(id);
+            return !_defaults.TryGet("DEFAULT_ACCOUNT", out id) ? null : Find(id);
         }
 
         public void SetDefault(GitHubAccount account)
@@ -44,12 +44,12 @@ namespace CodeHub.Core.Services
 
         public void SetActiveAccount(GitHubAccount account)
         {
-			if (account != null)
-			{
-				var accountDir = CreateAccountDirectory(account);
-				if (!Directory.Exists(accountDir))
-					Directory.CreateDirectory(accountDir);
-			}
+            if (account != null)
+            {
+                var accountDir = CreateAccountDirectory(account);
+                if (!Directory.Exists(accountDir))
+                    Directory.CreateDirectory(accountDir);
+            }
 
             ActiveAccount = account;
         }
@@ -61,18 +61,18 @@ namespace CodeHub.Core.Services
 
         public void Insert(GitHubAccount account)
         {
-			lock (_userDatabase)
-			{
-				_userDatabase.Insert(account);
-			}
+            lock (_userDatabase)
+            {
+                _userDatabase.Insert(account);
+            }
         }
 
         public void Remove(GitHubAccount account)
         {
-			lock (_userDatabase)
-			{
-				_userDatabase.Delete(account);
-			}
+            lock (_userDatabase)
+            {
+                _userDatabase.Delete(account);
+            }
             var accountDir = CreateAccountDirectory(account);
 
             if (!Directory.Exists(accountDir))
@@ -82,24 +82,24 @@ namespace CodeHub.Core.Services
 
         public void Update(GitHubAccount account)
         {
-			lock (_userDatabase)
-			{
-				_userDatabase.Update(account);
-			}
+            lock (_userDatabase)
+            {
+                _userDatabase.Update(account);
+            }
         }
 
         public bool Exists(GitHubAccount account)
         {
-			return Find(account.Id) != null;
+            return Find(account.Id) != null;
         }
 
         public GitHubAccount Find(int id)
         {
-			lock (_userDatabase)
-			{
+            lock (_userDatabase)
+            {
                 var query = _userDatabase.Find<GitHubAccount>(x => x.Id == id);
-				return query;
-			}
+                return query;
+            }
         }
 
         public IEnumerator<GitHubAccount> GetEnumerator()

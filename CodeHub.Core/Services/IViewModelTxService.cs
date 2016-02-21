@@ -2,9 +2,9 @@ namespace CodeHub.Core.Services
 {
     public interface IViewModelTxService
     {
-		void Add(object obj);
+        void Add(object obj);
 
-		object Get();
+        object Get();
     }
 }
 

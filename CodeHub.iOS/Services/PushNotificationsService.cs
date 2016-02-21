@@ -8,17 +8,17 @@ using MvvmCross.Platform;
 
 namespace CodeHub.iOS.Services
 {
-	public class PushNotificationsService : IPushNotificationsService
+    public class PushNotificationsService : IPushNotificationsService
     {
         private const string RegisterUri = "https://push.codehub-app.com/register";
         private const string DeregisterUri = "https://push.codehub-app.com/unregister";
 
         public async Task Register()
-		{
-			var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
+        {
+            var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
 
-			if (string.IsNullOrEmpty(del.DeviceToken))
-				throw new InvalidOperationException("Push notifications has not been enabled for this app!");
+            if (string.IsNullOrEmpty(del.DeviceToken))
+                throw new InvalidOperationException("Push notifications has not been enabled for this app!");
 
             var applicationService = Mvx.Resolve<IApplicationService>();
             var user = applicationService.Account;
@@ -38,11 +38,11 @@ namespace CodeHub.iOS.Services
             var response = await client.PostAsync(RegisterUri, content);
             if (response.StatusCode != System.Net.HttpStatusCode.OK && response.StatusCode != System.Net.HttpStatusCode.Conflict)
                 throw new InvalidOperationException("Unable to register! Server returned a " + response.StatusCode + " status code");
-		}
+        }
 
         public async Task Deregister()
-		{
-			var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
+        {
+            var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
 
             if (string.IsNullOrEmpty(del.DeviceToken))
                 throw new InvalidOperationException("Push notifications has not been enabled for this app!");
@@ -63,7 +63,7 @@ namespace CodeHub.iOS.Services
             var response = await client.PostAsync(DeregisterUri, content);
             if (response.StatusCode != System.Net.HttpStatusCode.NotFound && response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new InvalidOperationException("Unable to deregister! Server returned a " + response.StatusCode + " status code");
-		}
+        }
     }
 }
 

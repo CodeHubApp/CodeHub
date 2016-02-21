@@ -2,7 +2,7 @@ using System;
 
 namespace CodeHub.Core.Filters
 {
-	public class IssuesFilterModel : BaseIssuesFilterModel<IssuesFilterModel>
+    public class IssuesFilterModel : BaseIssuesFilterModel<IssuesFilterModel>
     {
         public string Labels { get; set; }
 

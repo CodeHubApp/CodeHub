@@ -8,15 +8,15 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.ViewControllers
 {
-	public class GistFileView : CodeHub.iOS.Views.Source.FileSourceView
+    public class GistFileView : CodeHub.iOS.Views.Source.FileSourceView
     {
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             var vm = ViewModel as GistFileViewModel;
             vm.Bind(x => x.ContentPath).Subscribe(x => LoadSource(new Uri("file://" + x)));
-		}
+        }
 
         async Task LoadSource(Uri fileUri)
         {

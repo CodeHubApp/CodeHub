@@ -8,29 +8,29 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Issues
 {
-	public class IssueAddView : ViewModelDrivenDialogViewController
+    public class IssueAddView : ViewModelDrivenDialogViewController
     {
         public IssueAddView()
         {
             Title = "New Issue";
         }
         
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-			var vm = (IssueAddViewModel)ViewModel;
+            var vm = (IssueAddViewModel)ViewModel;
             var saveButton = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
             NavigationItem.RightBarButtonItem = saveButton;
 
-			var title = new InputElement("Title", string.Empty, string.Empty);
-			var assignedTo = new StringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
-			var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
-			var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);
-			var content = new MultilinedElement("Description");
+            var title = new InputElement("Title", string.Empty, string.Empty);
+            var assignedTo = new StringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
+            var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
+            var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);
+            var content = new MultilinedElement("Description");
 
             Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { content });
 
@@ -69,7 +69,7 @@ namespace CodeHub.iOS.Views.Issues
                     });
                 }));
             });
-		}
+        }
     }
 }
 

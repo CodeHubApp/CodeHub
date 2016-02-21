@@ -20,15 +20,15 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.App
 {
-	public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseMenuViewModel
     {
         private readonly IApplicationService _application;
         private readonly IFeaturesService _featuresService;
-		private int _notifications;
+        private int _notifications;
         private List<BasicUserModel> _organizations;
         private readonly MvxSubscriptionToken _notificationCountToken;
 
-		public int Notifications
+        public int Notifications
         {
             get { return _notifications; }
             set { _notifications = value; RaisePropertyChanged(); }
@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.App
             get { return _organizations; }
             set { _organizations = value; RaisePropertyChanged(); }
         }
-		
+        
         public GitHubAccount Account
         {
             get { return _application.Account; }
@@ -49,80 +49,80 @@ namespace CodeHub.Core.ViewModels.App
         {
             get { return !_featuresService.IsProEnabled; }
         }
-		
+        
         public MenuViewModel(IApplicationService application, IFeaturesService featuresService)
         {
             _application = application;
             _featuresService = featuresService;
-			_notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
+            _notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
         }
 
-		private void OnNotificationCountMessage(NotificationCountMessage msg)
-		{
-			Notifications = msg.Count;
-		}
+        private void OnNotificationCountMessage(NotificationCountMessage msg)
+        {
+            Notifications = msg.Count;
+        }
 
         public IReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
 
-		[PotentialStartupViewAttribute("Profile")]
+        [PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
         }
 
-		[PotentialStartupViewAttribute("Notifications")]
+        [PotentialStartupViewAttribute("Notifications")]
         public ICommand GoToNotificationsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<NotificationsViewModel>(null)); }
         }
 
-		[PotentialStartupViewAttribute("My Issues")]
+        [PotentialStartupViewAttribute("My Issues")]
         public ICommand GoToMyIssuesCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<MyIssuesViewModel>(null)); }
         }
 
-		[PotentialStartupViewAttribute("My Events")]
+        [PotentialStartupViewAttribute("My Events")]
         public ICommand GoToMyEvents
         {
             get { return new MvxCommand(() => ShowMenuViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Account.Username })); }
         }
 
-		[PotentialStartupViewAttribute("My Gists")]
+        [PotentialStartupViewAttribute("My Gists")]
         public ICommand GoToMyGistsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Account.Username}));}
         }
 
-		[PotentialStartupViewAttribute("Starred Gists")]
+        [PotentialStartupViewAttribute("Starred Gists")]
         public ICommand GoToStarredGistsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<StarredGistsViewModel>(null)); }
         }
 
-		[PotentialStartupViewAttribute("Public Gists")]
+        [PotentialStartupViewAttribute("Public Gists")]
         public ICommand GoToPublicGistsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<PublicGistsViewModel>(null)); }
         }
 
-		[PotentialStartupViewAttribute("Starred Repositories")]
+        [PotentialStartupViewAttribute("Starred Repositories")]
         public ICommand GoToStarredRepositoriesCommand
         {
-			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
+            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
         }
 
-		[PotentialStartupViewAttribute("Owned Repositories")]
-		public ICommand GoToOwnedRepositoriesCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
-		}
+        [PotentialStartupViewAttribute("Owned Repositories")]
+        public ICommand GoToOwnedRepositoriesCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
+        }
 
-		[PotentialStartupViewAttribute("Explore Repositories")]
-		public ICommand GoToExploreRepositoriesCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
-		}
+        [PotentialStartupViewAttribute("Explore Repositories")]
+        public ICommand GoToExploreRepositoriesCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
+        }
 
         [PotentialStartupViewAttribute("Trending Repositories")]
         public ICommand GoToTrendingRepositoriesCommand
@@ -130,43 +130,43 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesTrendingViewModel>(null));}
         }
 
-		public ICommand GoToOrganizationEventsCommand
-		{
-			get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
-		}
+        public ICommand GoToOrganizationEventsCommand
+        {
+            get { return new MvxCommand<string>(x => ShowMenuViewModel<Events.UserEventsViewModel>(new Events.UserEventsViewModel.NavObject { Username = x }));}
+        }
 
-		public ICommand GoToOrganizationCommand
-		{
-			get { return new MvxCommand<string>(x => ShowMenuViewModel<Organizations.OrganizationViewModel>(new Organizations.OrganizationViewModel.NavObject { Name = x }));}
-		}
+        public ICommand GoToOrganizationCommand
+        {
+            get { return new MvxCommand<string>(x => ShowMenuViewModel<Organizations.OrganizationViewModel>(new Organizations.OrganizationViewModel.NavObject { Name = x }));}
+        }
 
-		[PotentialStartupViewAttribute("Organizations")]
-		public ICommand GoToOrganizationsCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<Organizations.OrganizationsViewModel>(new Organizations.OrganizationsViewModel.NavObject { Username = Account.Username }));}
-		}
+        [PotentialStartupViewAttribute("Organizations")]
+        public ICommand GoToOrganizationsCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<Organizations.OrganizationsViewModel>(new Organizations.OrganizationsViewModel.NavObject { Username = Account.Username }));}
+        }
 
-		[DefaultStartupViewAttribute]
-		[PotentialStartupViewAttribute("News")]
+        [DefaultStartupViewAttribute]
+        [PotentialStartupViewAttribute("News")]
         public ICommand GoToNewsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<NewsViewModel>(null));}
         }
 
-		public ICommand GoToSettingsCommand
-		{
-			get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
-		}
+        public ICommand GoToSettingsCommand
+        {
+            get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
+        }
 
         public ICommand GoToSupport
         {
             get { return new MvxCommand(() => ShowMenuViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = "https://codehub.uservoice.com/" })); }
         }
 
-		public ICommand GoToRepositoryCommand
-		{
-			get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
-		}
+        public ICommand GoToRepositoryCommand
+        {
+            get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
+        }
 
         public ICommand GoToUpgradesCommand
         {

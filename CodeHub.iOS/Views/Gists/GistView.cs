@@ -95,13 +95,13 @@ namespace CodeHub.iOS.Views.Gists
 
         public void RenderGist()
         {
-			if (ViewModel.Gist == null) return;
-			var model = ViewModel.Gist;
+            if (ViewModel.Gist == null) return;
+            var model = ViewModel.Gist;
 
             ICollection<Section> sections = new LinkedList<Section>();
             sections.Add(new Section { _split });
             sections.Add(new Section { _splitRow1, _splitRow2, _ownerElement });
-			var sec2 = new Section();
+            var sec2 = new Section();
             sections.Add(sec2);
 
             var weakVm = new WeakReference<GistViewModel>(ViewModel);
@@ -119,12 +119,12 @@ namespace CodeHub.iOS.Views.Gists
                 sec2.Add(sse);
             }
 
-			if (ViewModel.Comments.Items.Count > 0)
-			{
-				var sec3 = new Section("Comments");
+            if (ViewModel.Comments.Items.Count > 0)
+            {
+                var sec3 = new Section("Comments");
                 sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
                 sections.Add(sec3);
-			}
+            }
 
             Root.Reset(sections);
         }

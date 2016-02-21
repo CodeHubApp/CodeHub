@@ -37,15 +37,15 @@ namespace CodeHub.iOS
         {
             var list = new List<Assembly>();
             list.AddRange(base.GetViewModelAssemblies());
-			list.Add(typeof(StartupViewModel).Assembly);
+            list.Add(typeof(StartupViewModel).Assembly);
             return list.ToArray();
         }
 
         protected override void FillBindingNames(IMvxBindingNameRegistry obj)
         {
             base.FillBindingNames(obj);
-			obj.AddOrOverwrite(typeof(StringElement), "Tapped");
-			obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
+            obj.AddOrOverwrite(typeof(StringElement), "Tapped");
+            obj.AddOrOverwrite(typeof(UISegmentedControl), "ValueChanged");
         }
 
         /// <summary>

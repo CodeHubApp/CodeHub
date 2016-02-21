@@ -6,7 +6,7 @@ using System;
 namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationsView : ViewModelCollectionDrivenDialogViewController
-	{
+    {
         public override void ViewDidLoad()
         {
             Title = "Organizations";
@@ -16,13 +16,13 @@ namespace CodeHub.iOS.Views.Organizations
 
             var vm = (OrganizationsViewModel) ViewModel;
             var weakVm = new WeakReference<OrganizationsViewModel>(vm);
-			BindCollection(vm.Organizations, x =>
-			{
-				var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
+            BindCollection(vm.Organizations, x =>
+            {
+                var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
-				return e;
-			});
+                return e;
+            });
         }
-	}
+    }
 }
 

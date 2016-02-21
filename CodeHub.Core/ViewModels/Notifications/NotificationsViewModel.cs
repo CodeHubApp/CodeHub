@@ -19,49 +19,49 @@ namespace CodeHub.Core.ViewModels.Notifications
     public class NotificationsViewModel : LoadableViewModel
     {
         private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
-		private ICommand _readAllCommand;
-		private ICommand _readCommand;
-		private ICommand _readReposCommand;
-		private int _shownIndex;
-		private bool _isMarking;
+        private ICommand _readAllCommand;
+        private ICommand _readCommand;
+        private ICommand _readReposCommand;
+        private int _shownIndex;
+        private bool _isMarking;
 
         public FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> Notifications
         {
             get { return _notifications; }
         }
 
-		public int ShownIndex
-		{
-			get { return _shownIndex; }
+        public int ShownIndex
+        {
+            get { return _shownIndex; }
             set { this.RaiseAndSetIfChanged(ref _shownIndex, value); }
-		}
+        }
 
-		public bool IsMarking
-		{
-			get { return _isMarking; }
+        public bool IsMarking
+        {
+            get { return _isMarking; }
             set { this.RaiseAndSetIfChanged(ref _isMarking, value); }
-		}
+        }
 
         public ICommand ReadCommand
         {
-			get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
+            get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
         }
 
-		public ICommand ReadRepositoriesCommand
-		{
-			get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(x => MarkRepoAsRead(x))); }
-		}
+        public ICommand ReadRepositoriesCommand
+        {
+            get { return _readReposCommand ?? (_readReposCommand = new MvxCommand<string>(x => MarkRepoAsRead(x))); }
+        }
 
         public ICommand ReadAllCommand
         {
-			get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
+            get { return _readAllCommand ?? (_readAllCommand = new MvxCommand(() => MarkAllAsRead(), () => ShownIndex != 2 && !IsLoading && !IsMarking && Notifications.Any())); }
         }
 
         public ICommand GoToNotificationCommand
         {
             get { return new MvxCommand<NotificationModel>(GoToNotification); }
         }
-		
+        
         private void GoToNotification(NotificationModel x)
         {
             var subject = x.Subject.Type.ToLower();
@@ -97,57 +97,57 @@ namespace CodeHub.Core.ViewModels.Notifications
             _notifications.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
             this.Bind(x => x.ShownIndex).Subscribe(x => {
-				if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
-				else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
-				else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
-				((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged();
-			});
+                if (x == 0) _notifications.Filter = NotificationsFilterModel.CreateUnreadFilter();
+                else if (x == 1) _notifications.Filter = NotificationsFilterModel.CreateParticipatingFilter();
+                else _notifications.Filter = NotificationsFilterModel.CreateAllFilter();
+                ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged();
+            });
             this.Bind(x => x.IsLoading).Subscribe(_ => ((IMvxCommand)ReadAllCommand).RaiseCanExecuteChanged());
 
-			if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
-				_shownIndex = 0;
-			else if (_notifications.Filter.Equals(NotificationsFilterModel.CreateParticipatingFilter()))
-				_shownIndex = 1;
-			else
-				_shownIndex = 2;
+            if (_notifications.Filter.Equals(NotificationsFilterModel.CreateUnreadFilter()))
+                _shownIndex = 0;
+            else if (_notifications.Filter.Equals(NotificationsFilterModel.CreateParticipatingFilter()))
+                _shownIndex = 1;
+            else
+                _shownIndex = 2;
 
         }
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
+            return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
                 Notifications.Items.Reset(response.Data);
                 UpdateAccountNotificationsCount();
             });
         }
 
-		private async Task Read(NotificationModel model)
+        private async Task Read(NotificationModel model)
         {
-			// If its already read, ignore it
-			if (!model.Unread)
-				return;
+            // If its already read, ignore it
+            if (!model.Unread)
+                return;
 
-			try
-			{
-				var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
-	            if (response.Data) 
-	            {
-	                //We just read it
-	                model.Unread = false;
-	 
-	                //Update the notifications count on the account
-					Notifications.Items.Remove(model);
-	                UpdateAccountNotificationsCount();
-	            }
-			}
-			catch (Exception e)
-			{
+            try
+            {
+                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
+                if (response.Data) 
+                {
+                    //We just read it
+                    model.Unread = false;
+     
+                    //Update the notifications count on the account
+                    Notifications.Items.Remove(model);
+                    UpdateAccountNotificationsCount();
+                }
+            }
+            catch (Exception e)
+            {
                 DisplayAlert("Unable to mark notification as read. Please try again.");
-			}
+            }
         }
 
         private async Task MarkRepoAsRead(string repo)
-		{
+        {
             try
             {
                 IsMarking = true;
@@ -164,11 +164,11 @@ namespace CodeHub.Core.ViewModels.Notifications
             {
                 IsMarking = false;
             }
-		}
+        }
 
-		private async Task MarkAllAsRead()
-		{
-			// Make sure theres some sort of notification
+        private async Task MarkAllAsRead()
+        {
+            // Make sure theres some sort of notification
             if (!Notifications.Any())
                 return;
 
@@ -192,8 +192,8 @@ namespace CodeHub.Core.ViewModels.Notifications
         private void UpdateAccountNotificationsCount()
         {
             // Only update if we're looking at 
-			if (!Notifications.Filter.All && !Notifications.Filter.Participating)
-				Messenger.Publish<NotificationCountMessage>(new NotificationCountMessage(this) { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
+            if (!Notifications.Filter.All && !Notifications.Filter.Participating)
+                Messenger.Publish<NotificationCountMessage>(new NotificationCountMessage(this) { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
         }
     }
 }

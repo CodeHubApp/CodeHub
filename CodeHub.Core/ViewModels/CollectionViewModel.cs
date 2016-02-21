@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels
         private Func<IEnumerable<TItem>, IEnumerable<IGrouping<string, TItem>>> _groupingFunction;
         private Func<IEnumerable<TItem>, IEnumerable<TItem>> _sortingFunction;
         private Func<IEnumerable<TItem>, IEnumerable<TItem>> _filteringFunction;
-		private Action _moreItems;
+        private Action _moreItems;
         private int _deferLevel;
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -31,7 +31,7 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-		public Action MoreItems
+        public Action MoreItems
         {
             get { return _moreItems; }
             set 

@@ -13,56 +13,56 @@ using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Source
 {
-	public class ChangesetDiffView : FileSourceView
+    public class ChangesetDiffView : FileSourceView
     {
-		private readonly IJsonSerializationService _serializationService = MvvmCross.Platform.Mvx.Resolve<IJsonSerializationService>();
-		private bool _domLoaded = false;
-		private List<string> _toBeExecuted = new List<string>();
+        private readonly IJsonSerializationService _serializationService = MvvmCross.Platform.Mvx.Resolve<IJsonSerializationService>();
+        private bool _domLoaded = false;
+        private List<string> _toBeExecuted = new List<string>();
 
-		public new ChangesetDiffViewModel ViewModel
-		{
-			get { return (ChangesetDiffViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+        public new ChangesetDiffViewModel ViewModel
+        {
+            get { return (ChangesetDiffViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
 
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
 
             ViewModel.Bind(x => x.FilePath).Subscribe(x =>
-			{
-				var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-				var patch = JavaScriptStringEncode(data);
-				ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
-			});
+            {
+                var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
+                var patch = JavaScriptStringEncode(data);
+                ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
+            });
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(e =>
-			{
-				//Convert it to something light weight
-				var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
-					Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
-					Content = x.Body, Date = x.UpdatedAt
-				}).ToList();
+            {
+                //Convert it to something light weight
+                var slimComments = ViewModel.Comments.Items.Where(x => string.Equals(x.Path, ViewModel.Filename)).Select(x => new { 
+                    Id = x.Id, User = x.User.Login, Avatar = x.User.AvatarUrl, LineTo = x.Position, LineFrom = x.Position,
+                    Content = x.Body, Date = x.UpdatedAt
+                }).ToList();
 
-				var c = _serializationService.Serialize(slimComments);
-				ExecuteJavascript("var a = " + c + "; setComments(a);");
-			});
-		}
+                var c = _serializationService.Serialize(slimComments);
+                ExecuteJavascript("var a = " + c + "; setComments(a);");
+            });
+        }
 
-		private bool _isLoaded;
-		public override void ViewWillAppear(bool animated)
-		{
-			base.ViewWillAppear(animated);
+        private bool _isLoaded;
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
 
-			if (!_isLoaded)
-			{
-				var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
-				var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-				Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
-				_isLoaded = true;
-			}
-		}
+            if (!_isLoaded)
+            {
+                var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
+                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
+                Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
+                _isLoaded = true;
+            }
+        }
 
         private class JavascriptCommentModel
         {
@@ -76,31 +76,31 @@ namespace CodeHub.iOS.Views.Source
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
 
-				if (func.Equals("ready"))
-				{
-					_domLoaded = true;
+                if (func.Equals("ready"))
+                {
+                    _domLoaded = true;
                     foreach (var e in _toBeExecuted)
                         Web.EvaluateJavaScript(e, null);
-				}
-				else if(func.Equals("comment")) 
-				{
-					var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
-					PromptForComment(commentModel);
+                }
+                else if(func.Equals("comment")) 
+                {
+                    var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
+                    PromptForComment(commentModel);
                 }
 
-				return false;
+                return false;
             }
 
             return base.ShouldStartLoad(webView, navigationAction);
         }
 
-		private void ExecuteJavascript(string data)
-		{
-			if (_domLoaded)
+        private void ExecuteJavascript(string data)
+        {
+            if (_domLoaded)
                 InvokeOnMainThread(() => Web.EvaluateJavaScript(data, null));
-			else
-				_toBeExecuted.Add(data);
-		}
+            else
+                _toBeExecuted.Add(data);
+        }
 
         private void PromptForComment(JavascriptCommentModel model)
         {
@@ -126,17 +126,17 @@ namespace CodeHub.iOS.Views.Source
         private void ShowCommentComposer(int line)
         {
             var composer = new MarkdownComposerViewController();
-			composer.NewComment(this, async (text) => {
-				try
-				{
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, line));
-					composer.CloseComposer();
-				}
-				catch (Exception e)
-				{
+            composer.NewComment(this, async (text) => {
+                try
+                {
+                    await composer.DoWorkAsync("Commenting...", () => ViewModel.PostComment(text, line));
+                    composer.CloseComposer();
+                }
+                catch (Exception e)
+                {
                     AlertDialogService.ShowAlert("Unable to Comment", e.Message);
-					composer.EnableSendButton = true;
-				}
+                    composer.EnableSendButton = true;
+                }
             });
         }
     }

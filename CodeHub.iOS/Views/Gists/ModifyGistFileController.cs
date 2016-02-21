@@ -21,8 +21,8 @@ namespace CodeHub.iOS.Views
             _content = content;
 
             Title = "New File";
-			NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
-			NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
+            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
 
                 var newName = Name.Text;
                 var newContent = Text.Text;
@@ -39,7 +39,7 @@ namespace CodeHub.iOS.Views
                         Save(newName, newContent);
                     NavigationController.PopViewController(true);
                 }
-				catch (Exception ex)
+                catch (Exception ex)
                 {
                     AlertDialogService.ShowAlert("Error", ex.Message);
                     return;

@@ -2,17 +2,17 @@ using System;
 
 namespace CodeHub.Core.Filters
 {
-	public class MyIssuesFilterModel : BaseIssuesFilterModel<MyIssuesFilterModel>
+    public class MyIssuesFilterModel : BaseIssuesFilterModel<MyIssuesFilterModel>
     {
-		public string Labels { get; set; }
+        public string Labels { get; set; }
 
-		public Filter FilterType { get; set; }
+        public Filter FilterType { get; set; }
 
         public bool Open { get; set; }
 
-		public DateTime? Since { get; set; }
+        public DateTime? Since { get; set; }
 
-		public MyIssuesFilterModel()
+        public MyIssuesFilterModel()
         {
             Open = true;
             FilterType = Filter.All;
@@ -59,18 +59,18 @@ namespace CodeHub.Core.Filters
             }
         }
         
-		public enum Filter
-		{
+        public enum Filter
+        {
             [EnumDescription("Assigned To You")]
-			Assigned,
+            Assigned,
             [EnumDescription("Created By You")]
-			Created,
+            Created,
             [EnumDescription("Mentioning You")]
-			Mentioned,
+            Mentioned,
             [EnumDescription("Issues Subscribed To")]
-			Subscribed,
-			All
-		}
+            Subscribed,
+            All
+        }
     }
 }
 

@@ -15,15 +15,15 @@ namespace CodeHub.Core.ViewModels.Source
 
         public CollectionViewModel<ContentModel> Content { get; }
 
-		public string Username { get; private set; }
+        public string Username { get; private set; }
 
-		public string Path { get; private set; }
+        public string Path { get; private set; }
 
-		public string Branch { get; private set; }
+        public string Branch { get; private set; }
 
-		public bool TrueBranch { get; private set; }
+        public bool TrueBranch { get; private set; }
 
-		public string Repository { get; private set; }
+        public string Repository { get; private set; }
 
         private bool _shouldShowPro; 
         public bool ShouldShowPro
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceTreeCommand
         {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
+            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
         }
 
         public ICommand GoToSubmoduleCommand
@@ -48,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ICommand GoToSourceCommand
         {
-			get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
+            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
         }
 
         private void GoToSubmodule(ContentModel x)
@@ -71,7 +71,7 @@ namespace CodeHub.Core.ViewModels.Source
             Repository = navObject.Repository;
             Branch = navObject.Branch ?? "master";
             Path = navObject.Path ?? "";
-			TrueBranch = navObject.TrueBranch;
+            TrueBranch = navObject.TrueBranch;
         }
 
         protected override Task Load(bool forceCacheInvalidation)
@@ -81,7 +81,7 @@ namespace CodeHub.Core.ViewModels.Source
             else
                 this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
             
-			return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
+            return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
         }
 
         public class NavObject
@@ -91,8 +91,8 @@ namespace CodeHub.Core.ViewModels.Source
             public string Branch { get; set; }
             public string Path { get; set; }
 
-			// Whether the branch is a real branch and not a node
-			public bool TrueBranch { get; set; }
+            // Whether the branch is a real branch and not a node
+            public bool TrueBranch { get; set; }
         }
     }
 }

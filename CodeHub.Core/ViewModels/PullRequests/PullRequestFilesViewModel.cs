@@ -23,23 +23,23 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; private set; }
 
-		public ICommand GoToSourceCommand
-		{
-			get 
-			{ 
-				return new MvxCommand<CommitModel.CommitFileModel>(x => 
-				{
-					var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-					ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
-				});
-			}
-		}
-
-		public void Init(NavObject navObject)
+        public ICommand GoToSourceCommand
         {
-			Username = navObject.Username;
-			Repository = navObject.Repository;
-			PullRequestId = navObject.PullRequestId;
+            get 
+            { 
+                return new MvxCommand<CommitModel.CommitFileModel>(x => 
+                {
+                    var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
+                });
+            }
+        }
+
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            PullRequestId = navObject.PullRequestId;
 
             _files.GroupingFunction = (x) => x.GroupBy(y => {
                 var filename = "/" + y.Filename;
@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         protected override Task Load(bool forceDataRefresh)
         {
-			return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
+            return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
         }
 
         public class NavObject

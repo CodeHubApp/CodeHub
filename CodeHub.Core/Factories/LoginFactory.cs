@@ -19,9 +19,9 @@ namespace CodeHub.Core.Factories
 
         public async Task<LoginData> LoginWithToken(string clientId, string clientSecret, string code, string redirect, string requestDomain, string apiDomain)
         {
-			var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
-			var client = Client.BasicOAuth(token.AccessToken, apiDomain);
-			var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
+            var token = await Client.RequestAccessToken(clientId, clientSecret, code, redirect, requestDomain);
+            var client = Client.BasicOAuth(token.AccessToken, apiDomain);
+            var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
             var username = info.Data.Login;
 
             //Does this user exist?
@@ -30,37 +30,37 @@ namespace CodeHub.Core.Factories
             var exists = account != null;
             account = account ?? new GitHubAccount { Username = username };
 
-			account.OAuth = token.AccessToken;
+            account.OAuth = token.AccessToken;
             account.AvatarUrl = info.Data.AvatarUrl;
-			account.Domain = apiDomain;
-			account.WebDomain = requestDomain;
-			client.Username = username;
+            account.Domain = apiDomain;
+            account.WebDomain = requestDomain;
+            client.Username = username;
 
             if (exists)
                 _accounts.Update(account);
             else
                 _accounts.Insert(account);
-			return new LoginData { Client = client, Account = account };
+            return new LoginData { Client = client, Account = account };
         }
 
-		public async Task<Client> LoginAccount(GitHubAccount account)
+        public async Task<Client> LoginAccount(GitHubAccount account)
         {
             //Create the client
-			Client client = null;
-			if (!string.IsNullOrEmpty(account.OAuth))
-			{
-				client = Client.BasicOAuth(account.OAuth, account.Domain ?? Client.DefaultApi);
-			}
-			else if (account.IsEnterprise || !string.IsNullOrEmpty(account.Password))
-			{
-				client = Client.Basic(account.Username, account.Password, account.Domain ?? Client.DefaultApi);
-			}
+            Client client = null;
+            if (!string.IsNullOrEmpty(account.OAuth))
+            {
+                client = Client.BasicOAuth(account.OAuth, account.Domain ?? Client.DefaultApi);
+            }
+            else if (account.IsEnterprise || !string.IsNullOrEmpty(account.Password))
+            {
+                client = Client.Basic(account.Username, account.Password, account.Domain ?? Client.DefaultApi);
+            }
 
-			var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
-			var userInfo = data.Data;
+            var data = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
+            var userInfo = data.Data;
             account.Username = userInfo.Login;
             account.AvatarUrl = userInfo.AvatarUrl;
-			client.Username = userInfo.Login;
+            client.Username = userInfo.Login;
 
             if (_accounts.Exists(account))
                 _accounts.Update(account);
@@ -86,20 +86,20 @@ namespace CodeHub.Core.Factories
 
                 account = account ?? new GitHubAccount { Username = user };
                 account.Domain = apiUrl;
-				account.IsEnterprise = enterprise;
+                account.IsEnterprise = enterprise;
                 var client = twoFactor == null ? Client.Basic(user, pass, apiUrl) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiUrl);
 
-				if (enterprise)
-				{
-					account.Password = pass;
-				}
-				else
-				{
+                if (enterprise)
+                {
+                    account.Password = pass;
+                }
+                else
+                {
                     var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", new System.Collections.Generic.List<string>(Scopes), "CodeHub", null));
-	                account.OAuth = auth.Data.Token;
-				}
+                    account.OAuth = auth.Data.Token;
+                }
 
-				return new LoginData { Client = client, Account = account };
+                return new LoginData { Client = client, Account = account };
             }
             catch (StatusCodeException ex)
             {

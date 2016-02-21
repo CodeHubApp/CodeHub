@@ -11,24 +11,24 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
     [Register ("PromoteViewController")]
     partial class PromoteViewController
-	{
-		[Outlet]
-		UIKit.UIButton StarButton { get; set; }
+    {
+        [Outlet]
+        UIKit.UIButton StarButton { get; set; }
 
-		[Outlet]
-		UIKit.UIButton WatchButton { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (StarButton != null) {
-				StarButton.Dispose ();
-				StarButton = null;
-			}
+        [Outlet]
+        UIKit.UIButton WatchButton { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (StarButton != null) {
+                StarButton.Dispose ();
+                StarButton = null;
+            }
 
-			if (WatchButton != null) {
-				WatchButton.Dispose ();
-				WatchButton = null;
-			}
-		}
-	}
+            if (WatchButton != null) {
+                WatchButton.Dispose ();
+                WatchButton = null;
+            }
+        }
+    }
 }

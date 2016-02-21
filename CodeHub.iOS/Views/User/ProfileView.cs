@@ -10,11 +10,11 @@ namespace CodeHub.iOS.Views.User
     {
         private readonly Lazy<UIBarButtonItem> _actionButton;
 
-		public new ProfileViewModel ViewModel
-		{
-			get { return (ProfileViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
-		}
+        public new ProfileViewModel ViewModel
+        {
+            get { return (ProfileViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
 
         public ProfileView()
         {
@@ -72,26 +72,26 @@ namespace CodeHub.iOS.Views.User
             NavigationItem.RightBarButtonItem = null;
         }
 
-		private void ShowExtraMenu()
-		{
+        private void ShowExtraMenu()
+        {
             var sheet = new UIActionSheet();
-			var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow" : "Follow");
-			var cancelButton = sheet.AddButton("Cancel");
-			sheet.CancelButtonIndex = cancelButton;
-			sheet.Dismissed += (s, e) => {
+            var followButton = sheet.AddButton(ViewModel.IsFollowing ? "Unfollow" : "Follow");
+            var cancelButton = sheet.AddButton("Cancel");
+            sheet.CancelButtonIndex = cancelButton;
+            sheet.Dismissed += (s, e) => {
                 BeginInvokeOnMainThread(() =>
                 {
-    				if (e.ButtonIndex == followButton)
-    				{
-    					ViewModel.ToggleFollowingCommand.Execute(null);
-    				}
+                    if (e.ButtonIndex == followButton)
+                    {
+                        ViewModel.ToggleFollowingCommand.Execute(null);
+                    }
                 });
 
                 sheet.Dispose();
-			};
+            };
 
-			sheet.ShowInView(this.View);
-		}
+            sheet.ShowInView(this.View);
+        }
     }
 }
 

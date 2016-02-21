@@ -2,25 +2,25 @@ using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.Filters
 {
-	public abstract class BaseIssuesFilterModel<T> : FilterModel<T>
+    public abstract class BaseIssuesFilterModel<T> : FilterModel<T>
     {
-		public bool Ascending { get; set; }
+        public bool Ascending { get; set; }
 
-		public Sort SortType { get; set; }
+        public Sort SortType { get; set; }
 
-	    protected BaseIssuesFilterModel()
+        protected BaseIssuesFilterModel()
         {
-			SortType = Sort.None;
-			Ascending = false;
+            SortType = Sort.None;
+            Ascending = false;
         }
 
-		public enum Sort
-		{
-			None,
-			Created,
-			Updated,
-			Comments
-		}
+        public enum Sort
+        {
+            None,
+            Created,
+            Updated,
+            Comments
+        }
     }
 }
 

@@ -5,10 +5,10 @@ namespace CodeHub.iOS.Views.Repositories
     public class StargazersView : BaseUserCollectionView
     {
         public StargazersView()
-		{
-			Title = "Stargazers";
-			NoItemsText = "No Stargazers";
-		}
+        {
+            Title = "Stargazers";
+            NoItemsText = "No Stargazers";
+        }
     }
 
     public class WatchersView : BaseUserCollectionView

@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         public bool ShowRepositoryDescription
         {
-			get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
+            get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
         }
 
         public CollectionViewModel<RepositoryModel> Repositories { get; }

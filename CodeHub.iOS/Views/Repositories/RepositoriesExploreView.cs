@@ -11,7 +11,7 @@ namespace CodeHub.iOS.Views.Repositories
 {
     public class RepositoriesExploreView : ViewModelCollectionDrivenDialogViewController
     {
-		public RepositoriesExploreView()
+        public RepositoriesExploreView()
         {
             AutoHideSearch = false;
             NoItemsText = "No Repositories";
@@ -26,7 +26,7 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			var vm = (RepositoriesExploreViewModel)ViewModel;
+            var vm = (RepositoriesExploreViewModel)ViewModel;
             var search = (UISearchBar)TableView.TableHeaderView;
 
             TableView.RowHeight = UITableView.AutomaticDimension;
@@ -34,9 +34,9 @@ namespace CodeHub.iOS.Views.Repositories
             TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
 
             var weakVm = new WeakReference<RepositoriesExploreViewModel>(vm);
-			BindCollection(vm.Repositories, repo =>
+            BindCollection(vm.Repositories, repo =>
             {
-				var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
+                var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
                 var avatar = new GitHubAvatar(repo.Owner?.AvatarUrl);
                 var sse = new RepositoryElement(repo.Name, repo.StargazersCount, repo.ForksCount, description, repo.Owner.Login, avatar) { ShowOwner = true };
                 sse.Tapped += MakeCallback(weakVm, repo);

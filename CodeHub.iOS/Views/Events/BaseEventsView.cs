@@ -42,7 +42,7 @@ namespace CodeHub.iOS.Views.Events
         {
             base.ViewDidLoad();
             TableView.CellLayoutMarginsFollowReadableWidth = false;
-			TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
+            TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }
 
@@ -59,27 +59,27 @@ namespace CodeHub.iOS.Views.Events
                     img = _eventToImage[imgKey];
                     
                 var avatar = e.Item1.Actor != null ? e.Item1.Actor.AvatarUrl : null;
-				var headerBlocks = new List<NewsFeedElement.TextBlock>();
-				foreach (var h in e.Item2.Header)
-				{
-					Action act = null;
-					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
-					if (anchorBlock != null)
-						act = anchorBlock.Tapped;
-					headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
-				}
+                var headerBlocks = new List<NewsFeedElement.TextBlock>();
+                foreach (var h in e.Item2.Header)
+                {
+                    Action act = null;
+                    var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+                    if (anchorBlock != null)
+                        act = anchorBlock.Tapped;
+                    headerBlocks.Add(new NewsFeedElement.TextBlock(h.Text, act));
+                }
 
-				var bodyBlocks = new List<NewsFeedElement.TextBlock>();
-				foreach (var h in e.Item2.Body)
-				{
-					Action act = null;
-					var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
-					if (anchorBlock != null)
-						act = anchorBlock.Tapped;
-					var block = new NewsFeedElement.TextBlock(h.Text, act);
-					if (act == null) block.Color = UIColor.DarkGray;
-					bodyBlocks.Add(block);
-				}
+                var bodyBlocks = new List<NewsFeedElement.TextBlock>();
+                foreach (var h in e.Item2.Body)
+                {
+                    Action act = null;
+                    var anchorBlock = h as BaseEventsViewModel.AnchorBlock;
+                    if (anchorBlock != null)
+                        act = anchorBlock.Tapped;
+                    var block = new NewsFeedElement.TextBlock(h.Text, act);
+                    if (act == null) block.Color = UIColor.DarkGray;
+                    bodyBlocks.Add(block);
+                }
 
                 var weakTapped = new WeakReference<Action>(e.Item2.Tapped);
                 var githubAvatar = new GitHubAvatar(avatar).ToUri(64)?.AbsoluteUri;

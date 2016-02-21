@@ -8,36 +8,36 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.Views.Filters
 {
-	public class IssueMilestonesFilterViewController : DialogViewController
+    public class IssueMilestonesFilterViewController : DialogViewController
     {
-		private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
-		private string _username, _repository;
+        private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
+        private string _username, _repository;
 
         public Action<string, int?, string> MilestoneSelected;
 
-		public async override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+        public async override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
 
-			try
-			{
+            try
+            {
                 NetworkActivity.PushNetworkActive();
-				var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-				await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll(), false);
-			}
-			catch {
-			}
-			finally
-			{
+                var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll(), false);
+            }
+            catch {
+            }
+            finally
+            {
                 NetworkActivity.PopNetworkActive();
-			}
-		}
+            }
+        }
 
         public IssueMilestonesFilterViewController(string user, string repo, bool alreadySelected)
             : base(UIKit.UITableViewStyle.Plain)
         {
-			_username = user;
-			_repository = repo;
+            _username = user;
+            _repository = repo;
             Title = "Milestones";
             SearchPlaceholder = "Search Milestones";
 
@@ -45,19 +45,19 @@ namespace CodeHub.iOS.Views.Filters
             var noMilestone = new MilestoneModel { Title = "Issues with no milestone" };
             var withMilestone = new MilestoneModel { Title = "Issues with milestone" };
 
-			_milestones.CollectionChanged += (sender, e) => {
-				var items = _milestones.ToList();
+            _milestones.CollectionChanged += (sender, e) => {
+                var items = _milestones.ToList();
 
-				items.Insert(0, noMilestone);
-				items.Insert(1, withMilestone);
+                items.Insert(0, noMilestone);
+                items.Insert(1, withMilestone);
 
-				if (alreadySelected)
-					items.Insert(0, clearMilestone);
+                if (alreadySelected)
+                    items.Insert(0, clearMilestone);
 
-				var sec = new Section();
-				foreach (var item in items)
-				{
-					var x = item;
+                var sec = new Section();
+                foreach (var item in items)
+                {
+                    var x = item;
                     var element = new StringElement(x.Title);
                     element.Clicked.Subscribe(_ => {
                         if (MilestoneSelected != null)
@@ -73,10 +73,10 @@ namespace CodeHub.iOS.Views.Filters
                         }
                     });
                     sec.Add(element);
-				}
+                }
 
-				InvokeOnMainThread(() => Root.Reset(sec));
-			};
+                InvokeOnMainThread(() => Root.Reset(sec));
+            };
         }
     }
 }

@@ -9,50 +9,50 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.TableViewCells
 {
-	[Register ("GistCellView")]
-	partial class GistCellView
-	{
-		[Outlet]
-		UIKit.NSLayoutConstraint ContentConstraint { get; set; }
+    [Register ("GistCellView")]
+    partial class GistCellView
+    {
+        [Outlet]
+        UIKit.NSLayoutConstraint ContentConstraint { get; set; }
 
-		[Outlet]
-		UIKit.UILabel ContentLabel { get; set; }
+        [Outlet]
+        UIKit.UILabel ContentLabel { get; set; }
 
-		[Outlet]
-		UIKit.UIImageView MainImageView { get; set; }
+        [Outlet]
+        UIKit.UIImageView MainImageView { get; set; }
 
-		[Outlet]
-		UIKit.UILabel TimeLabel { get; set; }
+        [Outlet]
+        UIKit.UILabel TimeLabel { get; set; }
 
-		[Outlet]
-		UIKit.UILabel TitleLabel { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (ContentLabel != null) {
-				ContentLabel.Dispose ();
-				ContentLabel = null;
-			}
+        [Outlet]
+        UIKit.UILabel TitleLabel { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (ContentLabel != null) {
+                ContentLabel.Dispose ();
+                ContentLabel = null;
+            }
 
-			if (MainImageView != null) {
-				MainImageView.Dispose ();
-				MainImageView = null;
-			}
+            if (MainImageView != null) {
+                MainImageView.Dispose ();
+                MainImageView = null;
+            }
 
-			if (TimeLabel != null) {
-				TimeLabel.Dispose ();
-				TimeLabel = null;
-			}
+            if (TimeLabel != null) {
+                TimeLabel.Dispose ();
+                TimeLabel = null;
+            }
 
-			if (TitleLabel != null) {
-				TitleLabel.Dispose ();
-				TitleLabel = null;
-			}
+            if (TitleLabel != null) {
+                TitleLabel.Dispose ();
+                TitleLabel = null;
+            }
 
-			if (ContentConstraint != null) {
-				ContentConstraint.Dispose ();
-				ContentConstraint = null;
-			}
-		}
-	}
+            if (ContentConstraint != null) {
+                ContentConstraint.Dispose ();
+                ContentConstraint = null;
+            }
+        }
+    }
 }

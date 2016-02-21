@@ -23,14 +23,14 @@ namespace CodeHub.iOS.Views
             Console.WriteLine("All done with " + GetType().Name);
         }
 
-		bool _appeared;
-		public override void ViewDidAppear (bool animated)
-		{
-			base.ViewDidAppear (animated);
-			if (!_appeared) {
-				_appeared = true;
-			}
-		}
+        bool _appeared;
+        public override void ViewDidAppear (bool animated)
+        {
+            base.ViewDidAppear (animated);
+            if (!_appeared) {
+                _appeared = true;
+            }
+        }
 
         protected virtual void GoBack()
         {
@@ -47,12 +47,12 @@ namespace CodeHub.iOS.Views
             Web.GoForward();
         }
          
-		public WebView()
-			: this(true, true)
+        public WebView()
+            : this(true, true)
         {
         }
 
-		public WebView(bool navigationToolbar, bool showPageAsTitle = false)
+        public WebView(bool navigationToolbar, bool showPageAsTitle = false)
         {
             NavigationItem.BackBarButtonItem = new UIBarButtonItem() { Title = "" };
 
@@ -70,7 +70,7 @@ namespace CodeHub.iOS.Views
                 RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
             }
 
-			EdgesForExtendedLayout = UIRectEdge.None;
+            EdgesForExtendedLayout = UIRectEdge.None;
         }
 
         private class NavigationDelegate : WKNavigationDelegate
@@ -163,15 +163,15 @@ namespace CodeHub.iOS.Views
             Web.NavigationDelegate = new NavigationDelegate(this);
             Add(Web);
 
-			var loadableViewModel = ViewModel as LoadableViewModel;
-			if (loadableViewModel != null)
-			{
+            var loadableViewModel = ViewModel as LoadableViewModel;
+            if (loadableViewModel != null)
+            {
                 loadableViewModel.Bind(x => x.IsLoading).Subscribe(x =>
-				{
+                {
                     if (x) NetworkActivity.PushNetworkActive();
-					else NetworkActivity.PopNetworkActive();
-				});
-			}
+                    else NetworkActivity.PopNetworkActive();
+                });
+            }
         }
 
         public override void ViewWillLayoutSubviews()
@@ -180,30 +180,30 @@ namespace CodeHub.iOS.Views
             Web.Frame = View.Bounds;
         }
 
-		protected static string JavaScriptStringEncode(string data)
-		{
-			return System.Web.HttpUtility.JavaScriptStringEncode(data);
-		}
-
-		protected static string UrlDecode(string data)
-		{
-			return System.Web.HttpUtility.UrlDecode(data);
-		}
-
-		protected string LoadFile(string path)
+        protected static string JavaScriptStringEncode(string data)
         {
-			if (path == null)
-				return string.Empty;
+            return System.Web.HttpUtility.JavaScriptStringEncode(data);
+        }
+
+        protected static string UrlDecode(string data)
+        {
+            return System.Web.HttpUtility.UrlDecode(data);
+        }
+
+        protected string LoadFile(string path)
+        {
+            if (path == null)
+                return string.Empty;
 
             var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
             InvokeOnMainThread(() => Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri))));
             return uri;
         }
 
-		protected void LoadContent(string content)
-		{
+        protected void LoadContent(string content)
+        {
             Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
-		}
+        }
         
         public override void ViewWillAppear(bool animated)
         {

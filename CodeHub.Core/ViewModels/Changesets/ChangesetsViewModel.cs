@@ -5,7 +5,7 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-	public class ChangesetsViewModel : CommitsViewModel
+    public class ChangesetsViewModel : CommitsViewModel
     {
         public string Branch { get; private set; }
 
@@ -16,16 +16,16 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public void Init(NavObject navObject)
         {
-			base.Init(navObject);
+            base.Init(navObject);
             Branch = navObject.Branch ?? "master";
         }
 
-		protected override GitHubRequest<List<CommitModel>> GetRequest()
+        protected override GitHubRequest<List<CommitModel>> GetRequest()
         {
-			return this.GetApplication().Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
+            return this.GetApplication().Client.Users[Username].Repositories[Repository].Commits.GetAll(Branch);
         }
 
-		public new class NavObject : CommitsViewModel.NavObject
+        public new class NavObject : CommitsViewModel.NavObject
         {
             public string Branch { get; set; }
         }

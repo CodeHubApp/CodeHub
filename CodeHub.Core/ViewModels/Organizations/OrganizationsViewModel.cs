@@ -7,7 +7,7 @@ using MvvmCross.Core.ViewModels;
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : LoadableViewModel
-	{
+    {
         private readonly CollectionViewModel<BasicUserModel> _orgs = new CollectionViewModel<BasicUserModel>();
 
         public CollectionViewModel<BasicUserModel> Organizations
@@ -33,13 +33,13 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         protected override Task Load(bool forceDataRefresh)
         {
-			return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
+            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
         }
 
         public class NavObject
         {
             public string Username { get; set; }
         }
-	}
+    }
 }
 

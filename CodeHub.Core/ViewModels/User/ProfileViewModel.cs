@@ -12,7 +12,7 @@ namespace CodeHub.Core.ViewModels.User
     public class ProfileViewModel : LoadableViewModel
     {
         private UserModel _userModel;
-		private bool _isFollowing;
+        private bool _isFollowing;
 
         public string Username
         {
@@ -26,23 +26,23 @@ namespace CodeHub.Core.ViewModels.User
             private set { _userModel = value; RaisePropertyChanged(() => User); }
         }
 
-		public bool IsFollowing
-		{
-			get { return _isFollowing; }
-			private set
-			{
-				_isFollowing = value;
-				RaisePropertyChanged(() => IsFollowing);
-			}
-		}
+        public bool IsFollowing
+        {
+            get { return _isFollowing; }
+            private set
+            {
+                _isFollowing = value;
+                RaisePropertyChanged(() => IsFollowing);
+            }
+        }
 
-		public bool IsLoggedInUser
-		{
-			get
-			{
-				return string.Equals(Username, this.GetApplication().Account.Username);
-			}
-		}
+        public bool IsLoggedInUser
+        {
+            get
+            {
+                return string.Equals(Username, this.GetApplication().Account.Username);
+            }
+        }
 
         public ICommand GoToFollowersCommand
         {
@@ -74,26 +74,26 @@ namespace CodeHub.Core.ViewModels.User
             get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Username })); }
         }
 
-		public ICommand ToggleFollowingCommand
-		{
-			get { return new MvxCommand(() => ToggleFollowing()); }
-		}
+        public ICommand ToggleFollowingCommand
+        {
+            get { return new MvxCommand(() => ToggleFollowing()); }
+        }
 
-		private async Task ToggleFollowing()
-		{
-			try
-			{
-				if (IsFollowing)
-					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Unfollow(Username));
-				else
-					await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
-				IsFollowing = !IsFollowing;
-			}
-			catch (System.Exception e)
-			{
+        private async Task ToggleFollowing()
+        {
+            try
+            {
+                if (IsFollowing)
+                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Unfollow(Username));
+                else
+                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
+                IsFollowing = !IsFollowing;
+            }
+            catch (System.Exception e)
+            {
                 DisplayAlert("Unable to follow user! Please try again.");
-			}
-		}
+            }
+        }
   
         public void Init(NavObject navObject)
         {
@@ -102,8 +102,8 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data).FireAndForget();
-			return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data);
+            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data).FireAndForget();
+            return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data);
         }
 
         public class NavObject

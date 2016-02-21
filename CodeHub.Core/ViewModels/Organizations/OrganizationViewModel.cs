@@ -12,7 +12,7 @@ using CodeHub.Core.ViewModels.Teams;
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationViewModel : LoadableViewModel
-	{
+    {
         private UserModel _userModel;
 
         public string Name 
@@ -21,10 +21,10 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set; 
         }
 
-		public void Init(NavObject navObject) 
-		{
-			Name = navObject.Name;
-		}
+        public void Init(NavObject navObject) 
+        {
+            Name = navObject.Name;
+        }
 
         public UserModel Organization
         {
@@ -68,13 +68,13 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceCacheInvalidation, response => Organization = response.Data);
+            return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), forceCacheInvalidation, response => Organization = response.Data);
         }
 
         public class NavObject
         {
             public string Name { get; set; }
         }
-	}
+    }
 }
 

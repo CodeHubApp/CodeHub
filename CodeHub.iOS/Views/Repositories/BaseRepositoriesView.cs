@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Views.Repositories
 
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 64f;
-			TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
+            TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
         protected Element CreateElement(RepositoryModel repo)

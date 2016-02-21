@@ -9,66 +9,66 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-	[Register ("AddAccountView")]
-	partial class AddAccountViewController
-	{
-		[Outlet]
-		UIKit.UIView ContainerView { get; set; }
+    [Register ("AddAccountView")]
+    partial class AddAccountViewController
+    {
+        [Outlet]
+        UIKit.UIView ContainerView { get; set; }
 
-		[Outlet]
-		UIKit.UITextField Domain { get; set; }
+        [Outlet]
+        UIKit.UITextField Domain { get; set; }
 
-		[Outlet]
-		UIKit.UIButton LoginButton { get; set; }
+        [Outlet]
+        UIKit.UIButton LoginButton { get; set; }
 
-		[Outlet]
-		UIKit.UIImageView Logo { get; set; }
+        [Outlet]
+        UIKit.UIImageView Logo { get; set; }
 
-		[Outlet]
-		UIKit.UITextField Password { get; set; }
+        [Outlet]
+        UIKit.UITextField Password { get; set; }
 
-		[Outlet]
-		UIKit.UIScrollView ScrollView { get; set; }
+        [Outlet]
+        UIKit.UIScrollView ScrollView { get; set; }
 
-		[Outlet]
-		UIKit.UITextField User { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (ContainerView != null) {
-				ContainerView.Dispose ();
-				ContainerView = null;
-			}
+        [Outlet]
+        UIKit.UITextField User { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (ContainerView != null) {
+                ContainerView.Dispose ();
+                ContainerView = null;
+            }
 
-			if (Domain != null) {
-				Domain.Dispose ();
-				Domain = null;
-			}
+            if (Domain != null) {
+                Domain.Dispose ();
+                Domain = null;
+            }
 
-			if (LoginButton != null) {
-				LoginButton.Dispose ();
-				LoginButton = null;
-			}
+            if (LoginButton != null) {
+                LoginButton.Dispose ();
+                LoginButton = null;
+            }
 
-			if (Logo != null) {
-				Logo.Dispose ();
-				Logo = null;
-			}
+            if (Logo != null) {
+                Logo.Dispose ();
+                Logo = null;
+            }
 
-			if (Password != null) {
-				Password.Dispose ();
-				Password = null;
-			}
+            if (Password != null) {
+                Password.Dispose ();
+                Password = null;
+            }
 
-			if (ScrollView != null) {
-				ScrollView.Dispose ();
-				ScrollView = null;
-			}
+            if (ScrollView != null) {
+                ScrollView.Dispose ();
+                ScrollView = null;
+            }
 
-			if (User != null) {
-				User.Dispose ();
-				User = null;
-			}
-		}
-	}
+            if (User != null) {
+                User.Dispose ();
+                User = null;
+            }
+        }
+    }
 }

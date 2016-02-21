@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueViewModel : LoadableViewModel
     {
-		private MvxSubscriptionToken _editToken;
+        private MvxSubscriptionToken _editToken;
         private readonly IFeaturesService _featuresService;
 
         public long Id 
@@ -34,15 +34,15 @@ namespace CodeHub.Core.ViewModels.Issues
             private set; 
         }
 
-		public string MarkdownDescription
-		{
-			get
-			{
-				if (Issue == null)
-					return string.Empty;
-				return (GetService<IMarkdownService>().Convert(Issue.Body));
-			}
-		}
+        public string MarkdownDescription
+        {
+            get
+            {
+                if (Issue == null)
+                    return string.Empty;
+                return (GetService<IMarkdownService>().Convert(Issue.Body));
+            }
+        }
 
         private bool? _isClosed;
         public bool? IsClosed
@@ -65,7 +65,7 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
-		private IssueModel _issueModel;
+        private IssueModel _issueModel;
         public IssueModel Issue
         {
             get { return _issueModel; }
@@ -79,49 +79,49 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
 
-		public ICommand GoToAssigneeCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Issue.Assignee);
-					ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+        public ICommand GoToAssigneeCommand
+        {
+            get 
+            { 
+                return new MvxCommand(() => {
+                    GetService<IViewModelTxService>().Add(Issue.Assignee);
+                    ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                 }, () =>  IsCollaborator); 
-			}
-		}
+            }
+        }
 
-		public ICommand GoToMilestoneCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Issue.Milestone);
-					ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+        public ICommand GoToMilestoneCommand
+        {
+            get 
+            { 
+                return new MvxCommand(() => {
+                    GetService<IViewModelTxService>().Add(Issue.Milestone);
+                    ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                 }, () =>  IsCollaborator); 
-			}
-		}
+            }
+        }
 
-		public ICommand GoToLabelsCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Issue.Labels);
-					ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
+        public ICommand GoToLabelsCommand
+        {
+            get 
+            { 
+                return new MvxCommand(() => {
+                    GetService<IViewModelTxService>().Add(Issue.Labels);
+                    ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
                 }, () =>  IsCollaborator); 
-			}
-		}
+            }
+        }
 
-		public ICommand GoToEditCommand
-		{
-			get 
-			{ 
-				return new MvxCommand(() => {
-					GetService<IViewModelTxService>().Add(Issue);
-					ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
+        public ICommand GoToEditCommand
+        {
+            get 
+            { 
+                return new MvxCommand(() => {
+                    GetService<IViewModelTxService>().Add(Issue);
+                    ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
                 }, () => Issue != null && IsCollaborator); 
-			}
-		}
+            }
+        }
 
         public ICommand ToggleStateCommand
         {
@@ -131,7 +131,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-		private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
+        private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
         public CollectionViewModel<IssueCommentModel> Comments
         {
             get { return _comments; }
@@ -150,7 +150,7 @@ namespace CodeHub.Core.ViewModels.Issues
             else
                 this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
 
-			var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data);
+            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data);
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
@@ -160,7 +160,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string ConvertToMarkdown(string str)
         {
-			return (GetService<IMarkdownService>().Convert(str));
+            return (GetService<IMarkdownService>().Convert(str));
         }
 
         public IssueViewModel(IFeaturesService featuresService)
@@ -175,19 +175,19 @@ namespace CodeHub.Core.ViewModels.Issues
             Repository = navObject.Repository;
             Id = navObject.Id;
 
-			_editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
-			{
-				if (x.Issue == null || x.Issue.Number != Issue.Number)
-					return;
-				Issue = x.Issue;
-			});
+            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            {
+                if (x.Issue == null || x.Issue.Number != Issue.Number)
+                    return;
+                Issue = x.Issue;
+            });
         }
 
         public async Task<bool> AddComment(string text)
         {
             try
             {
-    			var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
+                var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
                 Comments.Items.Add(comment.Data);
                 return true;
             }

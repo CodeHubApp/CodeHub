@@ -40,39 +40,39 @@ namespace CodeHub.Core.ViewModels.Events
 
         protected override Task Load(bool forceCacheInvalidation)
         {
-			return this.RequestModel(CreateRequest(0, 100), forceCacheInvalidation, response => {
-				this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
+            return this.RequestModel(CreateRequest(0, 100), forceCacheInvalidation, response => {
+                this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
                 Events.Items.Reset(CreateDataFromLoad(response.Data));
             });
         }
 
-		private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(List<EventModel> events)
+        private IEnumerable<Tuple<EventModel, EventBlock>> CreateDataFromLoad(List<EventModel> events)
         {
-			var transformedEvents = new List<Tuple<EventModel, EventBlock>>(events.Count);
-			foreach (var e in events)
-			{
-				try
-				{
-					transformedEvents.Add(new Tuple<EventModel, EventBlock>(e, CreateEventTextBlocks(e)));
-				}
-				catch (Exception ex)
-				{
-					System.Diagnostics.Debug.WriteLine(ex.ToString());
-				}
-			}
-			return transformedEvents;
+            var transformedEvents = new List<Tuple<EventModel, EventBlock>>(events.Count);
+            foreach (var e in events)
+            {
+                try
+                {
+                    transformedEvents.Add(new Tuple<EventModel, EventBlock>(e, CreateEventTextBlocks(e)));
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                }
+            }
+            return transformedEvents;
         }
         
         protected abstract GitHubRequest<List<EventModel>> CreateRequest(int page, int perPage);
 
-		private void GoToCommits(EventModel.RepoModel repoModel, string branch)
+        private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {
-			var repoId = new RepositoryIdentifier(repoModel.Name);
+            var repoId = new RepositoryIdentifier(repoModel.Name);
             ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
             {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				Branch = branch
+                Username = repoId.Owner,
+                Repository = repoId.Name,
+                Branch = branch
             });
         }
 
@@ -86,8 +86,8 @@ namespace CodeHub.Core.ViewModels.Events
             var repoId = new RepositoryIdentifier(eventModel.Name);
             ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
             {
-				Username = repoId.Owner,
-				Repository = repoId.Name
+                Username = repoId.Owner,
+                Repository = repoId.Name
             });
         }
 
@@ -100,22 +100,22 @@ namespace CodeHub.Core.ViewModels.Events
 
         private void GoToBranches(RepositoryIdentifier repoId)
         {
-			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
+            ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				IsShowingBranches = true
+                Username = repoId.Owner,
+                Repository = repoId.Name,
+                IsShowingBranches = true
             });
         }
 
         private void GoToTags(EventModel.RepoModel eventModel)
         {
             var repoId = new RepositoryIdentifier(eventModel.Name);
-			ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
+            ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
-				Username = repoId.Owner,
-				Repository = repoId.Name,
-				IsShowingBranches = false
+                Username = repoId.Owner,
+                Repository = repoId.Name,
+                IsShowingBranches = false
             });
         }
 
@@ -163,11 +163,11 @@ namespace CodeHub.Core.ViewModels.Events
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-			ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
+            ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject
             {
                 Username = repo.Owner,
                 Repository = repo.Name,
-				Node = sha
+                Node = sha
             });
         }
 
@@ -178,13 +178,13 @@ namespace CodeHub.Core.ViewModels.Events
             var username = eventModel.Actor != null ? eventModel.Actor.Login : null;
 
             // Insert the actor
-			eventBlock.Header.Add(new AnchorBlock(username, () => GoToUser(username)));
+            eventBlock.Header.Add(new AnchorBlock(username, () => GoToUser(username)));
 
             var commitCommentEvent = eventModel.PayloadObject as EventModel.CommitCommentEvent;
             if (commitCommentEvent != null)
             {
-				var node = commitCommentEvent.Comment.CommitId.Substring(0, commitCommentEvent.Comment.CommitId.Length > 6 ? 6 : commitCommentEvent.Comment.CommitId.Length);
-				eventBlock.Tapped = () => GoToChangeset(repoId, commitCommentEvent.Comment.CommitId);
+                var node = commitCommentEvent.Comment.CommitId.Substring(0, commitCommentEvent.Comment.CommitId.Length > 6 ? 6 : commitCommentEvent.Comment.CommitId.Length);
+                eventBlock.Tapped = () => GoToChangeset(repoId, commitCommentEvent.Comment.CommitId);
                 eventBlock.Header.Add(new TextBlock(" commented on commit "));
                 eventBlock.Header.Add(new AnchorBlock(node, eventBlock.Tapped));
 
@@ -206,16 +206,16 @@ namespace CodeHub.Core.ViewModels.Events
                     if (ReportRepository)
                     {
                         eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
-						eventBlock.Header.Add(new TextBlock(" created repository "));
+                        eventBlock.Header.Add(new TextBlock(" created repository "));
                         eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                     }
                     else
-						eventBlock.Header.Add(new TextBlock(" created this repository"));
+                        eventBlock.Header.Add(new TextBlock(" created this repository"));
                 }
                 else if (createEvent.RefType.Equals("branch"))
                 {
                     eventBlock.Tapped = () => GoToBranches(repoId);
-					eventBlock.Header.Add(new TextBlock(" created branch "));
+                    eventBlock.Header.Add(new TextBlock(" created branch "));
                     eventBlock.Header.Add(new AnchorBlock(createEvent.Ref, eventBlock.Tapped));
 
                     if (ReportRepository)
@@ -226,8 +226,8 @@ namespace CodeHub.Core.ViewModels.Events
                 }
                 else if (createEvent.RefType.Equals("tag"))
                 {
-					eventBlock.Tapped = () => GoToTags(eventModel.Repo);
-					eventBlock.Header.Add(new TextBlock(" created tag "));
+                    eventBlock.Tapped = () => GoToTags(eventModel.Repo);
+                    eventBlock.Header.Add(new TextBlock(" created tag "));
                     eventBlock.Header.Add(new AnchorBlock(createEvent.Ref, eventBlock.Tapped));
 
                     if (ReportRepository)
@@ -245,12 +245,12 @@ namespace CodeHub.Core.ViewModels.Events
                 if (deleteEvent.RefType.Equals("branch"))
                 {
                     eventBlock.Tapped = () => GoToBranches(repoId);
-					eventBlock.Header.Add(new TextBlock(" deleted branch "));
+                    eventBlock.Header.Add(new TextBlock(" deleted branch "));
                 }
                 else if (deleteEvent.RefType.Equals("tag"))
                 {
-					eventBlock.Tapped = () => GoToTags(eventModel.Repo);
-					eventBlock.Header.Add(new TextBlock(" deleted tag "));
+                    eventBlock.Tapped = () => GoToTags(eventModel.Repo);
+                    eventBlock.Header.Add(new TextBlock(" deleted tag "));
                 }
                 else
                     return null;
@@ -274,7 +274,7 @@ namespace CodeHub.Core.ViewModels.Events
             if (followEvent != null)
             {
                 eventBlock.Tapped = () => GoToUser(followEvent.Target.Login);
-				eventBlock.Header.Add(new TextBlock(" started following "));
+                eventBlock.Header.Add(new TextBlock(" started following "));
                 eventBlock.Header.Add(new AnchorBlock(followEvent.Target.Login, eventBlock.Tapped));
                 return eventBlock;
             }
@@ -286,7 +286,7 @@ namespace CodeHub.Core.ViewModels.Events
                 var forkEvent = (EventModel.ForkEvent)eventModel.PayloadObject;
                 var forkedRepo = new EventModel.RepoModel {Id = forkEvent.Forkee.Id, Name = forkEvent.Forkee.FullName, Url = forkEvent.Forkee.Url};
                 eventBlock.Tapped = () => GoToRepositoryCommand.Execute(forkedRepo);
-				eventBlock.Header.Add(new TextBlock(" forked "));
+                eventBlock.Header.Add(new TextBlock(" forked "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 eventBlock.Header.Add(new TextBlock(" to "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(forkedRepo));
@@ -298,7 +298,7 @@ namespace CodeHub.Core.ViewModels.Events
             {
                 var forkEvent = (EventModel.ForkApplyEvent)eventModel.PayloadObject;
                 eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
-				eventBlock.Header.Add(new TextBlock(" applied fork to "));
+                eventBlock.Header.Add(new TextBlock(" applied fork to "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 eventBlock.Header.Add(new TextBlock(" on branch "));
                 eventBlock.Header.Add(new AnchorBlock(forkEvent.Head, () => GoToBranches(repoId)));
@@ -312,11 +312,11 @@ namespace CodeHub.Core.ViewModels.Events
                 eventBlock.Tapped = () => GoToGistCommand.Execute(gistEvent);
 
                 if (string.Equals(gistEvent.Action, "create", StringComparison.OrdinalIgnoreCase))
-					eventBlock.Header.Add(new TextBlock(" created Gist #"));
+                    eventBlock.Header.Add(new TextBlock(" created Gist #"));
                 else if (string.Equals(gistEvent.Action, "update", StringComparison.OrdinalIgnoreCase))
-					eventBlock.Header.Add(new TextBlock(" updated Gist #"));
-				else if (string.Equals(gistEvent.Action, "fork", StringComparison.OrdinalIgnoreCase))
-					eventBlock.Header.Add(new TextBlock(" forked Gist #"));
+                    eventBlock.Header.Add(new TextBlock(" updated Gist #"));
+                else if (string.Equals(gistEvent.Action, "fork", StringComparison.OrdinalIgnoreCase))
+                    eventBlock.Header.Add(new TextBlock(" forked Gist #"));
 
                 eventBlock.Header.Add(new AnchorBlock(gistEvent.Gist.Id, eventBlock.Tapped));
                 eventBlock.Body.Add(new TextBlock(gistEvent.Gist.Description.Replace('\n', ' ').Replace("\r", "").Trim()));
@@ -326,19 +326,19 @@ namespace CodeHub.Core.ViewModels.Events
              */
             else if (eventModel.PayloadObject is EventModel.GollumEvent)
             {
-				var gollumEvent = eventModel.PayloadObject as EventModel.GollumEvent;
-				eventBlock.Header.Add(new TextBlock(" modified the wiki in "));
-				eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
+                var gollumEvent = eventModel.PayloadObject as EventModel.GollumEvent;
+                eventBlock.Header.Add(new TextBlock(" modified the wiki in "));
+                eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
 
-				if (gollumEvent != null && gollumEvent.Pages != null)
-				{
-					foreach (var page in gollumEvent.Pages)
-					{
-						var p = page;
-						eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToUrlCommand.Execute(p.HtmlUrl)));
-						eventBlock.Body.Add(new TextBlock(" - " + page.Action + "\n"));
-					}
-				}
+                if (gollumEvent != null && gollumEvent.Pages != null)
+                {
+                    foreach (var page in gollumEvent.Pages)
+                    {
+                        var p = page;
+                        eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToUrlCommand.Execute(p.HtmlUrl)));
+                        eventBlock.Body.Add(new TextBlock(" - " + page.Action + "\n"));
+                    }
+                }
             }
             /*
              * ISSUE COMMENT EVENT
@@ -347,16 +347,16 @@ namespace CodeHub.Core.ViewModels.Events
             {
                 var commentEvent = (EventModel.IssueCommentEvent)eventModel.PayloadObject;
 
-				if (commentEvent.Issue.PullRequest != null && !string.IsNullOrEmpty(commentEvent.Issue.PullRequest.HtmlUrl))
-				{
-					eventBlock.Tapped = () => GoToPullRequest(repoId, commentEvent.Issue.Number);
-					eventBlock.Header.Add(new TextBlock(" commented on pull request "));
-				}
-				else
-				{
-					eventBlock.Tapped = () => GoToIssue(repoId, commentEvent.Issue.Number);
-					eventBlock.Header.Add(new TextBlock(" commented on issue "));
-				}
+                if (commentEvent.Issue.PullRequest != null && !string.IsNullOrEmpty(commentEvent.Issue.PullRequest.HtmlUrl))
+                {
+                    eventBlock.Tapped = () => GoToPullRequest(repoId, commentEvent.Issue.Number);
+                    eventBlock.Header.Add(new TextBlock(" commented on pull request "));
+                }
+                else
+                {
+                    eventBlock.Tapped = () => GoToIssue(repoId, commentEvent.Issue.Number);
+                    eventBlock.Header.Add(new TextBlock(" commented on issue "));
+                }
 
                 eventBlock.Header.Add(new AnchorBlock("#" + commentEvent.Issue.Number, eventBlock.Tapped));
                 eventBlock.Header.Add(new TextBlock(" in "));
@@ -375,9 +375,9 @@ namespace CodeHub.Core.ViewModels.Events
                 if (string.Equals(issueEvent.Action, "opened", StringComparison.OrdinalIgnoreCase))
                     eventBlock.Header.Add(new TextBlock(" opened issue "));
                 else if (string.Equals(issueEvent.Action, "closed", StringComparison.OrdinalIgnoreCase))
-					eventBlock.Header.Add(new TextBlock(" closed issue "));
+                    eventBlock.Header.Add(new TextBlock(" closed issue "));
                 else if (string.Equals(issueEvent.Action, "reopened", StringComparison.OrdinalIgnoreCase))
-					eventBlock.Header.Add(new TextBlock(" reopened issue "));
+                    eventBlock.Header.Add(new TextBlock(" reopened issue "));
 
                 eventBlock.Header.Add(new AnchorBlock("#" + issueEvent.Issue.Number, eventBlock.Tapped));
                 eventBlock.Header.Add(new TextBlock(" in "));
@@ -434,7 +434,7 @@ namespace CodeHub.Core.ViewModels.Events
                 else if (pullEvent.Action.Equals("reopened"))
                     eventBlock.Header.Add(new TextBlock(" reopened pull request "));
 
-				eventBlock.Header.Add(new AnchorBlock("#" + pullEvent.PullRequest.Number, eventBlock.Tapped));
+                eventBlock.Header.Add(new AnchorBlock("#" + pullEvent.PullRequest.Number, eventBlock.Tapped));
                 eventBlock.Header.Add(new TextBlock(" in "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
 
@@ -463,19 +463,19 @@ namespace CodeHub.Core.ViewModels.Events
             {
                 var pushEvent = (EventModel.PushEvent)eventModel.PayloadObject;
 
-				string branchRef = null;
-				if (!string.IsNullOrEmpty(pushEvent.Ref))
-				{
-					var lastSlash = pushEvent.Ref.LastIndexOf("/", StringComparison.Ordinal) + 1;
-					branchRef = pushEvent.Ref.Substring(lastSlash);
-				}
+                string branchRef = null;
+                if (!string.IsNullOrEmpty(pushEvent.Ref))
+                {
+                    var lastSlash = pushEvent.Ref.LastIndexOf("/", StringComparison.Ordinal) + 1;
+                    branchRef = pushEvent.Ref.Substring(lastSlash);
+                }
 
                 if (eventModel.Repo != null)
-					eventBlock.Tapped = () => GoToCommits(eventModel.Repo, pushEvent.Ref);
+                    eventBlock.Tapped = () => GoToCommits(eventModel.Repo, pushEvent.Ref);
 
                 eventBlock.Header.Add(new TextBlock(" pushed to "));
-				if (branchRef != null)
-					eventBlock.Header.Add(new AnchorBlock(branchRef, () => GoToBranches(repoId)));
+                if (branchRef != null)
+                    eventBlock.Header.Add(new AnchorBlock(branchRef, () => GoToBranches(repoId)));
 
                 if (ReportRepository)
                 {
@@ -483,25 +483,25 @@ namespace CodeHub.Core.ViewModels.Events
                     eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 }
 
-				if (pushEvent.Commits != null)
-				{
-					foreach (var commit in pushEvent.Commits)
-					{
-						var desc = (commit.Message ?? "");
-						var sha = commit.Sha;
-						var firstNewLine = desc.IndexOf("\n");
-						if (firstNewLine <= 0)
-							firstNewLine = desc.Length;
+                if (pushEvent.Commits != null)
+                {
+                    foreach (var commit in pushEvent.Commits)
+                    {
+                        var desc = (commit.Message ?? "");
+                        var sha = commit.Sha;
+                        var firstNewLine = desc.IndexOf("\n");
+                        if (firstNewLine <= 0)
+                            firstNewLine = desc.Length;
 
-						desc = desc.Substring(0, firstNewLine);
-						var shortSha = commit.Sha;
-						if (shortSha.Length > 6)
-							shortSha = shortSha.Substring(0, 6);
+                        desc = desc.Substring(0, firstNewLine);
+                        var shortSha = commit.Sha;
+                        if (shortSha.Length > 6)
+                            shortSha = shortSha.Substring(0, 6);
 
-						eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, sha)));
-						eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
-					}
-				}
+                        eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, sha)));
+                        eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
+                    }
+                }
             }
 
 
@@ -527,20 +527,20 @@ namespace CodeHub.Core.ViewModels.Events
             var watchEvent = eventModel.PayloadObject as EventModel.WatchEvent;
             if (watchEvent != null)
             {
-				eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
+                eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
                 eventBlock.Header.Add(watchEvent.Action.Equals("started") ? 
-					new TextBlock(" starred ") : new TextBlock(" unstarred "));
+                    new TextBlock(" starred ") : new TextBlock(" unstarred "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 return eventBlock;
             }
 
-			var releaseEvent = eventModel.PayloadObject as EventModel.ReleaseEvent;
-			if (releaseEvent != null)
-			{
-				eventBlock.Tapped = () => GoToUrlCommand.Execute(releaseEvent.Release.HtmlUrl);
-				eventBlock.Header.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
-				return eventBlock;
-			}
+            var releaseEvent = eventModel.PayloadObject as EventModel.ReleaseEvent;
+            if (releaseEvent != null)
+            {
+                eventBlock.Tapped = () => GoToUrlCommand.Execute(releaseEvent.Release.HtmlUrl);
+                eventBlock.Header.Add(new TextBlock(" " + releaseEvent.Action + " release " + releaseEvent.Release.Name));
+                return eventBlock;
+            }
 
             return eventBlock;
         }
@@ -559,7 +559,7 @@ namespace CodeHub.Core.ViewModels.Events
 
 //            var repoOwner = repoSplit[0];
 //            var repoName = repoSplit[1];
-			return new AnchorBlock(repoModel.Name, () => GoToRepositoryCommand.Execute(repoModel));
+            return new AnchorBlock(repoModel.Name, () => GoToRepositoryCommand.Execute(repoModel));
         }
 
 

@@ -21,7 +21,7 @@ namespace CodeHub.iOS.Views.Source
         public new ChangesetViewModel ViewModel 
         {
             get { return (ChangesetViewModel)base.ViewModel; }
-			set { base.ViewModel = value; }
+            set { base.ViewModel = value; }
         }
 
         public override void ViewDidLoad()
@@ -97,26 +97,26 @@ namespace CodeHub.iOS.Views.Source
                 detailSection.Add(repo);
             }
 
-			var paths = commitModel.Files.GroupBy(y => {
-				var filename = "/" + y.Filename;
-				return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-			}).OrderBy(y => y.Key);
+            var paths = commitModel.Files.GroupBy(y => {
+                var filename = "/" + y.Filename;
+                return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+            }).OrderBy(y => y.Key);
 
-			foreach (var p in paths)
-			{
-				var fileSection = new Section(p.Key);
-				foreach (var x in p)
-				{
-					var y = x;
-					var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-					var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+            foreach (var p in paths)
+            {
+                var fileSection = new Section(p.Key);
+                foreach (var x in p)
+                {
+                    var y = x;
+                    var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+                    var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
                     sse.Clicked.Subscribe(_ => ViewModel.GoToFileCommand.Execute(y));
-					fileSection.Add(sse);
-				}
+                    fileSection.Add(sse);
+                }
                 sections.Add(fileSection);
-			}
+            }
 //
-//			var fileSection = new Section();
+//            var fileSection = new Section();
 //            commitModel.Files.ForEach(x => {
 //                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
 //                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
@@ -128,7 +128,7 @@ namespace CodeHub.iOS.Views.Source
 //                root.Add(fileSection);
 //
 
-			var commentSection = new Section();
+            var commentSection = new Section();
             foreach (var comment in ViewModel.Comments)
             {
                 //The path should be empty to indicate it's a comment on the entire commit, not a specific file
@@ -138,7 +138,7 @@ namespace CodeHub.iOS.Views.Source
                 commentSection.Add(new CommentElement(comment.User.Login, comment.Body, comment.CreatedAt, comment.User.AvatarUrl));
             }
 
-			if (commentSection.Elements.Count > 0)
+            if (commentSection.Elements.Count > 0)
                 sections.Add(commentSection);
 
             var addComment = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
@@ -150,11 +150,11 @@ namespace CodeHub.iOS.Views.Source
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-			composer.NewComment(this, async (text) => {
+            composer.NewComment(this, async (text) => {
                 try
                 {
-					await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
-					composer.CloseComposer();
+                    await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
+                    composer.CloseComposer();
                 }
                 catch (Exception e)
                 {
@@ -167,19 +167,19 @@ namespace CodeHub.iOS.Views.Source
             });
         }
 
-		private void ShowExtraMenu()
-		{
-			var changeset = ViewModel.Changeset;
-			if (changeset == null)
-				return;
+        private void ShowExtraMenu()
+        {
+            var changeset = ViewModel.Changeset;
+            if (changeset == null)
+                return;
 
             var sheet = new UIActionSheet();
-			var addComment = sheet.AddButton("Add Comment");
-			var copySha = sheet.AddButton("Copy Sha");
-			var shareButton = sheet.AddButton("Share");
-			//var showButton = sheet.AddButton("Show in GitHub");
-			var cancelButton = sheet.AddButton("Cancel");
-			sheet.CancelButtonIndex = cancelButton;
+            var addComment = sheet.AddButton("Add Comment");
+            var copySha = sheet.AddButton("Copy Sha");
+            var shareButton = sheet.AddButton("Share");
+            //var showButton = sheet.AddButton("Show in GitHub");
+            var cancelButton = sheet.AddButton("Cancel");
+            sheet.CancelButtonIndex = cancelButton;
             sheet.Dismissed += (s, e) =>
             {
                 BeginInvokeOnMainThread(() =>
@@ -203,10 +203,10 @@ namespace CodeHub.iOS.Views.Source
                             var activityController = new UIActivityViewController(activityItems, applicationActivities);
                             PresentViewController(activityController, true, null);
                         }
-                        //				else if (e.ButtonIndex == showButton)
-                        //				{
-                        //					ViewModel.GoToHtmlUrlCommand.Execute(null);
-                        //				}
+                        //                else if (e.ButtonIndex == showButton)
+                        //                {
+                        //                    ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        //                }
                     }
                     catch
                     {
@@ -216,8 +216,8 @@ namespace CodeHub.iOS.Views.Source
                 sheet.Dispose();
             };
 
-			sheet.ShowInView(this.View);
-		}
+            sheet.ShowInView(this.View);
+        }
 
         public override void ViewWillAppear(bool animated)
         {
