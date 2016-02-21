@@ -50,12 +50,14 @@ namespace CodeHub.iOS.Views.App
             if (appService.Account.IsPushNotificationsEnabled == null)
             {
                 var result = await alertDialogService.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
+                appService.Account.IsPushNotificationsEnabled = result;
+                appService.Accounts.Update(appService.Account);
+
                 if (result)
                 {
                     await pushNotifications.Register();
-                    appService.Account.IsPushNotificationsEnabled = true;
-                    appService.Accounts.Update(appService.Account);
                 }
+
             }
             else if (appService.Account.IsPushNotificationsEnabled.Value)
             {

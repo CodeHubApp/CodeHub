@@ -66,6 +66,11 @@ namespace CodeHub.iOS.Views.Repositories
                 d(ViewModel.Bind(x => x.Branches, true).Subscribe(_ => Render()));
                 d(ViewModel.Bind(x => x.Readme, true).Subscribe(_ => Render()));
 
+                d(_forkElement.Value.Clicked.Select(x => ViewModel.Repository.Parent).BindCommand(ViewModel.GoToForkParentCommand));
+                d(_issuesElement.Value.Clicked.BindCommand(ViewModel.GoToIssuesCommand));
+                d(_readmeElement.Value.Clicked.BindCommand(ViewModel.GoToReadmeCommand));
+                d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
+
                 d(ViewModel.Bind(x => x.Repository, true).Where(x => x != null).Subscribe(x =>
                 {
                     if (x.Private && !_featuresService.IsProEnabled)
@@ -134,11 +139,11 @@ namespace CodeHub.iOS.Views.Repositories
         SplitButtonElement.Button _stargazers;
         SplitButtonElement.Button _watchers;
         SplitButtonElement.Button _forks;
-        StringElement _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
-        StringElement _eventsElement = new StringElement("Events", Octicon.Rss.ToImage());
-        StringElement _commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage());
-        StringElement _pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
-        StringElement _sourceElement = new StringElement("Source", Octicon.Code.ToImage());
+        private readonly StringElement _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
+        private readonly StringElement _eventsElement = new StringElement("Events", Octicon.Rss.ToImage());
+        private readonly StringElement _commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage());
+        private readonly StringElement _pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
+        private readonly StringElement _sourceElement = new StringElement("Source", Octicon.Code.ToImage());
 
         private readonly Lazy<StringElement> _forkElement;
         private readonly Lazy<StringElement> _issuesElement;
@@ -148,33 +153,10 @@ namespace CodeHub.iOS.Views.Repositories
 
         public RepositoryView()
         {
-            _forkElement = new Lazy<StringElement>(() =>
-            {
-                var element = new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() };
-                OnActivation(d => d(element.Clicked.Select(x => ViewModel.Repository.Parent).BindCommand(ViewModel.GoToForkParentCommand)));
-                return element;
-            });
-
-            _issuesElement = new Lazy<StringElement>(() =>
-            {
-                var element = new StringElement("Issues", Octicon.IssueOpened.ToImage());
-                OnActivation(d => d(element.Clicked.BindCommand(ViewModel.GoToIssuesCommand)));
-                return element;
-            });
-
-            _readmeElement = new Lazy<StringElement>(() =>
-            {
-                var element = new StringElement("Readme", Octicon.Book.ToImage());
-                OnActivation(d => d(element.Clicked.BindCommand(ViewModel.GoToReadmeCommand)));
-                return element;
-            });
-
-            _websiteElement = new Lazy<StringElement>(() =>
-            {
-                var element = new StringElement("Website", Octicon.Globe.ToImage());
-                OnActivation(d => d(element.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand)));
-                return element;
-            });
+            _forkElement = new Lazy<StringElement>(() => new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() });
+            _issuesElement = new Lazy<StringElement>(() => new StringElement("Issues", Octicon.IssueOpened.ToImage()));
+            _readmeElement = new Lazy<StringElement>(() => new StringElement("Readme", Octicon.Book.ToImage()));
+            _websiteElement = new Lazy<StringElement>(() => new StringElement("Website", Octicon.Globe.ToImage()));
         }
 
         public void Render()
