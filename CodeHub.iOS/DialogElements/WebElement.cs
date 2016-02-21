@@ -70,7 +70,6 @@ namespace CodeHub.iOS.DialogElements
         }
 
         public WebElement (string content, string cellKey, bool rawContentLoad) 
-            : base (string.Empty)
         {
             Key = new NSString(cellKey);
             _rawContentLoad = rawContentLoad;
@@ -86,7 +85,7 @@ namespace CodeHub.iOS.DialogElements
 
             WebView.LoadHtmlString(content, new NSUrl(""));
             HeightChanged = (x) => {
-                GetRootElement()?.Reload(this, UITableViewRowAnimation.Fade);
+                GetRootElement()?.Reload(this);
             };
         }
 

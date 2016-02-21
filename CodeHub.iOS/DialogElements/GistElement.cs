@@ -12,24 +12,27 @@ namespace CodeHub.iOS.DialogElements
     {   
         private readonly Action _action;    
         private readonly GistModel _gist;
+        private readonly string _title;
 
         public GistElement(GistModel gist, Action action)
         {
             _gist = gist;
             _action = action;
+            _title = _gist.Files?.Select(x => x.Key).FirstOrDefault() ?? "Gist #" + _gist.Id;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
         {
             var c = tv.DequeueReusableCell(GistCellView.Key) as GistCellView ?? GistCellView.Create();
-            var title = _gist.Files?.Select(x => x.Key).FirstOrDefault() ?? "Gist #" + _gist.Id;
-            c.Set(title, _gist.Description, _gist.CreatedAt, new GitHubAvatar(_gist.Owner?.AvatarUrl));
+            c.Set(_title, _gist.Description, _gist.CreatedAt, new GitHubAvatar(_gist.Owner?.AvatarUrl));
             return c;
         }
 
         public override bool Matches(string text)
         {
-            return (_gist.Description ?? string.Empty).ToLower().Contains((text ?? string.Empty).ToLower());
+            var desc = _gist.Description ?? string.Empty;
+            var title = _title ?? string.Empty;
+            return title.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1 || desc.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1;
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)

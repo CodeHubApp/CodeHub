@@ -21,41 +21,8 @@ namespace CodeHub.iOS.DialogElements
             _weakSection = new WeakReference<Section>(section);
         }
 
-        private string _caption;
-        public string Caption
-        {
-            get { return _caption; }
-            set
-            {
-                if (_caption == value)
-                    return;
-
-                _caption = value;
-                ReloadThis();
-            }
-        }
-
-        private bool _hidden;
-        public bool Hidden
-        {
-            get { return _hidden; }
-            set
-            {
-                if (value != _hidden)
-                {
-                    _hidden = value;
-                    GetRootElement()?.Reload(this);
-                }
-            }
-        }
-
         protected Element()
         {
-        }
-
-        protected Element(string caption)
-        {
-            Caption = caption;
         }
 
         public abstract UITableViewCell GetCell(UITableView tv);
@@ -90,19 +57,6 @@ namespace CodeHub.iOS.DialogElements
             return path == null ? null : tv.CellAt(path);
         }
 
-        protected void ReloadThis()
-        {
-            var cell = GetActiveCell();
-            if (cell != null)
-            {
-                var el = GetRootElement();
-                if (el != null)
-                {
-                    el.Reload(this);
-                }
-            }
-        }
-
         public NSIndexPath IndexPath { 
             get 
             {
@@ -131,9 +85,7 @@ namespace CodeHub.iOS.DialogElements
 
         public virtual bool Matches (string text)
         {
-            if (Caption == null)
-                return false;
-            return Caption.IndexOf (text, StringComparison.CurrentCultureIgnoreCase) != -1;
+            return false;
         }
     }
 }

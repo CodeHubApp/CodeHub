@@ -12,7 +12,7 @@ namespace CodeHub.iOS.DialogElements
         private readonly Subject<object> _tapped = new Subject<object>();
 
         private string _caption;
-        public new string Caption
+        public string Caption
         {
             get
             {
@@ -22,8 +22,11 @@ namespace CodeHub.iOS.DialogElements
             {
                 if (_caption == value)
                     return;
+                
                 _caption = value;
-                ReloadThis();
+                var cell = GetActiveCell() as MultilinedCellView;
+                if (cell != null)
+                    cell.Caption = value;
             }
         }
 
@@ -39,7 +42,9 @@ namespace CodeHub.iOS.DialogElements
                 if (_details == value)
                     return;
                 _details = value;
-                ReloadThis();
+                var cell = GetActiveCell() as MultilinedCellView;
+                if (cell != null)
+                    cell.Details = value;
             }
         }
 

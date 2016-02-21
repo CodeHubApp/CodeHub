@@ -41,7 +41,8 @@ namespace CodeHub.iOS.DialogElements
         
         public override bool Matches(string text)
         {
-            return _name.ToLower().Contains(text.ToLower());
+            var name = _name ?? string.Empty;
+            return name.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1;
         }
         
         public override void Selected(UITableView tableView, NSIndexPath path)

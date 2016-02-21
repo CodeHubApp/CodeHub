@@ -52,7 +52,6 @@ namespace CodeHub.iOS.Views.Filters
                 _milestone.Value = "None";
             else
                 _milestone.Value = _milestoneHolder.Name;
-            Root.Reload(_milestone, UITableViewRowAnimation.None);
         }
 
         public override void ViewDidLoad()

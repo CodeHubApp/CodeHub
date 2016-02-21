@@ -34,7 +34,6 @@ namespace CodeHub.iOS.Views.App
                     return;
                 foreach (var m in Root[0].Elements.Cast<StringElement>())
                     m.Accessory = (string.Equals(m.Caption, x)) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                Root.Reload(Root[0], UITableViewRowAnimation.None);
             });
         }
     }

@@ -55,8 +55,10 @@ namespace CodeHub.iOS.DialogElements
 
         public override bool Matches(string text)
         {
-            var lowerText = text.ToLower();
-            return Id.ToLower().Equals(lowerText) || Title.ToLower().Contains(lowerText);
+            var id = Id ?? string.Empty;
+            var title = Title ?? string.Empty;
+
+            return id.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1 || title.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1;
         }
     }
 }

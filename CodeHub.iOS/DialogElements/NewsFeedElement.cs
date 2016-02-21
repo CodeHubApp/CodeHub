@@ -60,7 +60,6 @@ namespace CodeHub.iOS.DialogElements
         }
 
         public NewsFeedElement(string imageUrl, DateTimeOffset time, IEnumerable<TextBlock> headerBlocks, IEnumerable<TextBlock> bodyBlocks, UIImage littleImage, Action tapped)
-            : base(null)
         {
             Uri.TryCreate(imageUrl, UriKind.Absolute, out _imageUri);
             _time = time.Humanize();

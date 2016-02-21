@@ -44,7 +44,6 @@ namespace CodeHub.iOS.Views.Issues
                     return;
                 foreach (var m in Root[0].Elements.Cast<MilestoneElement>())
                     m.Accessory = (x != null && m.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                Root.Reload(Root[0], UITableViewRowAnimation.None);
             });
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");

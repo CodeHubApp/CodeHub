@@ -43,7 +43,6 @@ namespace CodeHub.iOS.Views.Issues
                 foreach (var m in Root[0].Elements.Cast<UserElement>())
                     m.Accessory = (x != null && string.Equals(vm.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
                                      UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-                Root.Reload(Root[0], UITableViewRowAnimation.None);
             });
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");

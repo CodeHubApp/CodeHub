@@ -37,7 +37,7 @@ namespace CodeHub.iOS.DialogElements
                 set
                 {
                     _text = value;
-                    _element.GetRootElement()?.Reload(_element, UITableViewRowAnimation.Automatic);
+                    _element.GetRootElement()?.Reload(_element);
                 }
             }
             public string Caption
@@ -46,7 +46,7 @@ namespace CodeHub.iOS.DialogElements
                 set
                 {
                     _caption = value;
-                    _element.GetRootElement()?.Reload(_element, UITableViewRowAnimation.Automatic);
+                    _element.GetRootElement()?.Reload(_element);
                 }
             }
         }
@@ -59,7 +59,6 @@ namespace CodeHub.iOS.DialogElements
         }
 
         public SplitButtonElement()
-            : base(null)
         {
         }
 

@@ -188,7 +188,6 @@ namespace CodeHub.iOS.Views.App
                 if (_notifications != null)
                 {
                     _notifications.NotificationNumber = x;
-                    Root.Reload(_notifications, UITableViewRowAnimation.None);
                 }
             });
 

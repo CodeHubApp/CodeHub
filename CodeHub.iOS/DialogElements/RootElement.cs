@@ -106,11 +106,6 @@ namespace CodeHub.iOS.DialogElements
             Insert (idx, UITableViewRowAnimation.None, section);
         }
 
-        public void RemoveAt (int idx)
-        {
-            RemoveAt (idx, UITableViewRowAnimation.Fade);
-        }
-
         public void RemoveAt (int idx, UITableViewRowAnimation anim)
         {
             if (idx < 0 || idx >= _sections.Count)
@@ -168,41 +163,42 @@ namespace CodeHub.iOS.DialogElements
             Reset((IEnumerable<Section>)sections);
         }
 
-        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
-        {
-            if (section == null)
-                throw new ArgumentNullException ("section");
-            if (section.Root == null || section.Root != this)
-                throw new ArgumentException ("Section is not attached to this root");
+//        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
+//        {
+//            if (section == null)
+//                throw new ArgumentNullException ("section");
+//            if (section.Root == null || section.Root != this)
+//                throw new ArgumentException ("Section is not attached to this root");
+//
+//            int idx = 0;
+//            foreach (var sect in _sections)
+//            {
+//                if (sect == section)
+//                {
+//                    try
+//                    {
+//                        _tableView.Get()?.BeginUpdates();
+//                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
+//                    }
+//                    finally
+//                    {
+//                        _tableView.Get()?.EndUpdates();
+//                    }
+//                    return;
+//                }
+//                idx++;
+//            }
+//        }
 
-            int idx = 0;
-            foreach (var sect in _sections)
-            {
-                if (sect == section)
-                {
-                    try
-                    {
-                        _tableView.Get()?.BeginUpdates();
-                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
-                    }
-                    finally
-                    {
-                        _tableView.Get()?.EndUpdates();
-                    }
-                    return;
-                }
-                idx++;
-            }
-        }
-
-        public void Reload (Element element, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
+        public void Reload (Element element)
         {
             if (element == null)
-                throw new ArgumentNullException ("element");
+                return;
             if (element.Section == null || element.Section.Root == null)
                 return;
             if (element.Section.Root != this)
                 throw new ArgumentException ("Element is not attached to this root");
+            
             var path = element.IndexPath;
             if (path == null)
                 return;
@@ -210,7 +206,7 @@ namespace CodeHub.iOS.DialogElements
             try
             {
                 _tableView.Get()?.BeginUpdates();
-                _tableView.Get()?.ReloadRows (new [] { path }, animation);
+                _tableView.Get()?.ReloadRows (new [] { path }, UITableViewRowAnimation.Automatic);
             }
             finally
             {

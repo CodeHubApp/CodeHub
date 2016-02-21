@@ -71,6 +71,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Button1.Text = x.User.Login;
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
+                HeaderView.Text = x.Title ?? Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();

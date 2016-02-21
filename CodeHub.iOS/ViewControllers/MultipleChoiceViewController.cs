@@ -12,14 +12,13 @@ namespace CodeHub.iOS.ViewControllers
         
         protected void OnValueSelected(System.Reflection.PropertyInfo field)
         {
-            var r = Root[0].Elements.FirstOrDefault(x => x.Caption.Equals(field.Name));
+            var r = Root[0].Elements.OfType<StringElement>().FirstOrDefault(x => x.Caption.Equals(field.Name));
             if (r == null)
                 return;
             var e = (StringElement)r;
             var value = (bool)field.GetValue(_obj);
             field.SetValue(_obj, !value);
             e.Accessory = !value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
-            Root.Reload(e, UITableViewRowAnimation.None);
         }
         
         public MultipleChoiceViewController(string title, object obj)

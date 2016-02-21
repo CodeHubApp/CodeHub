@@ -64,6 +64,22 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
+        private string _caption;
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                if (_caption == value)
+                    return;
+
+                _caption = value;
+                var cell = GetActiveCell();
+                if (cell != null && cell.TextLabel != null)
+                    cell.TextLabel.Text = value ?? string.Empty;
+            }
+        }
+
         public string Value
         {
             get { return _value; }
@@ -231,7 +247,9 @@ namespace CodeHub.iOS.DialogElements
 
         public override bool Matches (string text)
         {
-            return (Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1) || base.Matches (text);
+            var cap = Caption ?? string.Empty;
+            var val = Value ?? string.Empty;
+            return cap.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 || val.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
         }
     }
 }

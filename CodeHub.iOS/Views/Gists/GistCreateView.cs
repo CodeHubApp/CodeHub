@@ -155,8 +155,9 @@ namespace CodeHub.iOS.Views.Gists
 
         private void Delete(Element element)
         {
-            if (element != null)
-                ViewModel.Files.Remove(element.Caption);
+            var e = element as StringElement;
+            if (e != null)
+                ViewModel.Files.Remove(e.Caption);
         }
 
         private class EditSource : Source

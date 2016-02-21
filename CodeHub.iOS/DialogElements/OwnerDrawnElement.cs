@@ -17,7 +17,7 @@ namespace CodeHub.iOS.DialogElements
             get;set;    
         }
         
-        public OwnerDrawnElement (UITableViewCellStyle style, string cellIdentifier) : base(null)
+        public OwnerDrawnElement (UITableViewCellStyle style, string cellIdentifier)
         {
             this.CellReuseIdentifier = cellIdentifier;
             this.Style = style;

@@ -102,7 +102,20 @@ namespace CodeHub.iOS.ViewControllers
 
         protected class MenuElement : StringElement
         {
-            public int NotificationNumber { get; set; }
+            private int _notificationNumber;
+            public int NotificationNumber
+            {
+                get { return _notificationNumber; }
+                set
+                {
+                    if (value == _notificationNumber)
+                        return;
+                    _notificationNumber = value;
+                    var cell = GetActiveCell() as Cell;
+                    if (cell != null)
+                        cell.NotificationNumber = value;
+                }
+            }
 
             public MenuElement(string title, Action tapped, UIImage image, Uri imageUrl = null) : base(title)
             {
@@ -120,7 +133,17 @@ namespace CodeHub.iOS.ViewControllers
                 private const float ImageSize = 20f;
                 private UILabel _numberView;
 
-                public int NotificationNumber { get; set; }
+                private int _notificationNumber;
+                public int NotificationNumber 
+                {
+                    get { return _notificationNumber; }
+                    set
+                    {
+                        _notificationNumber = value;
+                        SetNeedsLayout();
+                        LayoutIfNeeded();
+                    }
+                }
 
                 public Cell(UITableViewCellStyle style, string key)
                     : base(style, key)

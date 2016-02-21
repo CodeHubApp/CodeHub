@@ -54,8 +54,6 @@ namespace CodeHub.iOS.Views.Issues
                                    UITableViewCellAccessory.Checkmark : 
                                    UITableViewCellAccessory.None;
                 }
-
-                Root.Reload(Root[0], UITableViewRowAnimation.None);
             });
 
             vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");

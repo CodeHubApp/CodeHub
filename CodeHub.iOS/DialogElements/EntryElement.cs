@@ -28,6 +28,22 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
+        private string _caption;
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                if (_caption == value)
+                    return;
+
+                _caption = value;
+                var cell = GetActiveCell();
+                if (cell != null && cell.TextLabel != null)
+                    cell.TextLabel.Text = value ?? string.Empty;
+            }
+        }
+
         public UIKeyboardType KeyboardType {
             get {
                 return keyboardType;

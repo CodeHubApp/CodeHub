@@ -19,7 +19,6 @@ namespace CodeHub.iOS.DialogElements
         public int Number { get; private set; }
 
         public MilestoneElement(int number, string title, int openIssues, int closedIssues, DateTimeOffset? dueDate)
-            : base(title)
         {
             Number = number;
             _title = title;

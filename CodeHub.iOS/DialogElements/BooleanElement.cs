@@ -16,6 +16,22 @@ namespace CodeHub.iOS.DialogElements
             get { return _changedSubject.AsObservable(); }
         }
 
+        private string _caption;
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                if (_caption == value)
+                    return;
+
+                _caption = value;
+                var cell = GetActiveCell();
+                if (cell != null && cell.TextLabel != null)
+                    cell.TextLabel.Text = value ?? string.Empty;
+            }
+        }
+
         public bool Value 
         {
             get 
