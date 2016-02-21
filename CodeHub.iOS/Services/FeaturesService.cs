@@ -64,6 +64,11 @@ namespace CodeHub.iOS.Services
             appDelegate?.RegisterUserForNotifications();
         }
 
+        public void ActivateProDirect()
+        {
+            _defaultValueService.Set(ProEdition, true);
+        }
+
         public Task RestorePro()
         {
             return _inAppPurchaseService.Restore();

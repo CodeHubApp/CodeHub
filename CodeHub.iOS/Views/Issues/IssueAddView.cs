@@ -46,22 +46,19 @@ namespace CodeHub.iOS.Views.Issues
 
                 d(vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
                     assignedTo.Value = x == null ? "Unassigned" : x.Login;
-                    Root.Reload(assignedTo, UITableViewRowAnimation.None);
                 }));
 
                 d(vm.Bind(x => x.Milestone, true).Subscribe(x => {
                     milestone.Value = x == null ? "None" : x.Title;
-                    Root.Reload(milestone, UITableViewRowAnimation.None);
+                }));
+
+                d(vm.BindCollection(x => x.Labels, true).Subscribe(_ => {
+                    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
                 }));
 
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
                     vm.SaveCommand.Execute(null);
-                }));
-
-                d(vm.BindCollection(x => x.Labels, true).Subscribe(_ => {
-                    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
-                    Root.Reload(labels, UITableViewRowAnimation.None);
                 }));
 
                 d(content.Clicked.Subscribe(_ => {

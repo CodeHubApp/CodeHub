@@ -24,6 +24,9 @@ namespace CodeHub.iOS.DialogElements
             }
             set 
             {
+                if (_value == value)
+                    return;
+                
                 _value = value;
                 _changedSubject.OnNext(value);
                 var cell = GetActiveCell() as BooleanCellView;

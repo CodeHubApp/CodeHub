@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using Humanizer;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.ViewControllers.Repositories;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -20,17 +22,15 @@ namespace CodeHub.iOS.Views.PullRequests
         private StringElement _assigneeElement;
         private StringElement _labelsElement;
         private StringElement _addCommentElement;
-        private UIBarButtonItem _actionButton;
+
+        private readonly SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
+        private readonly SplitViewElement _split2 = new SplitViewElement(Octicon.Person.ToImage(), Octicon.Calendar.ToImage());
 
         public new PullRequestViewModel ViewModel
         {
             get { return (PullRequestViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
         }
-
-        SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
-        SplitViewElement _split2 = new SplitViewElement(Octicon.Person.ToImage(), Octicon.Calendar.ToImage());
-
 
         public override void ViewDidLoad()
         {
@@ -39,6 +39,18 @@ namespace CodeHub.iOS.Views.PullRequests
             Title = "Pull Request #" + ViewModel.Id;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(_ => ViewModel.Bind(x => x.IsClosed, true).Where(x => x.HasValue).Select(x => x.Value))
+                .Switch()
+                .Subscribe(x => 
+                {
+                    HeaderView.SubImageView.TintColor = x ? UIColor.FromRGB(0xbd, 0x2c, 0) : UIColor.FromRGB(0x6c, 0xc6, 0x44);
+                    HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
+                });
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "body", false);
@@ -54,27 +66,24 @@ namespace CodeHub.iOS.Views.PullRequests
             ViewModel.Bind(x => x.PullRequest).Subscribe(x =>
             {
                 var merged = (x.Merged != null && x.Merged.Value);
-
                 _split1.Button1.Text = x.State;
                 _split1.Button2.Text = merged ? "Merged" : "Not Merged";
-
                 _split2.Button1.Text = x.User.Login;
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
-
                 _descriptionElement.Value = ViewModel.MarkdownDescription;
-
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
                 Render();
             });
 
-            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()) { Enabled = false };
+            var actionButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
+
             ViewModel.Bind(x => x.IsLoading).Subscribe(x =>
             {
                 if (!x)
                 {
-                    _actionButton.Enabled = ViewModel.PullRequest != null;
+                    actionButton.Enabled = ViewModel.PullRequest != null;
                 }
             });
 
@@ -82,36 +91,20 @@ namespace CodeHub.iOS.Views.PullRequests
                 if (x) this.ShowPrivateView();
             });
 
-            ViewModel.Bind(x => x.IsModifying).SubscribeStatus("Loading...");
             ViewModel.Bind(x => x.CanPush).Subscribe(_ => Render());
-            ViewModel.Bind(x => x.Issue).Subscribe(x =>
-            {
-                _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
-                _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
-                _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
-                Render();
-            });
+ 
 
             ViewModel.GoToLabelsCommand.CanExecuteChanged += (sender, e) =>
             {
-                var before = _labelsElement.Accessory;
                 _labelsElement.Accessory = ViewModel.GoToLabelsCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_labelsElement.Accessory != before && _labelsElement.GetRootElement() != null)
-                    Root.Reload(_labelsElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToAssigneeCommand.CanExecuteChanged += (sender, e) =>
             {
-                var before = _assigneeElement.Accessory;
                 _assigneeElement.Accessory = ViewModel.GoToAssigneeCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_assigneeElement.Accessory != before && _assigneeElement.GetRootElement() != null)
-                    Root.Reload(_assigneeElement, UITableViewRowAnimation.Fade);
             };
             ViewModel.GoToMilestoneCommand.CanExecuteChanged += (sender, e) =>
             {
-                var before = _milestoneElement.Accessory;
                 _milestoneElement.Accessory = ViewModel.GoToMilestoneCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
-                if (_milestoneElement.Accessory != before && _milestoneElement.GetRootElement() != null)
-                    Root.Reload(_milestoneElement, UITableViewRowAnimation.Fade);
             };
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
@@ -125,6 +118,17 @@ namespace CodeHub.iOS.Views.PullRequests
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
                 d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+
+                d(ViewModel.Bind(x => x.IsModifying).SubscribeStatus("Loading..."));
+
+                d(ViewModel.Bind(x => x.Issue, true).Where(x => x != null).Subscribe(x =>
+                {
+                    _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
+                    _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
+                    _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
+                    Render();
+                }));
             });
         }
 
@@ -250,11 +254,8 @@ namespace CodeHub.iOS.Views.PullRequests
         private class CommentModel
         {
             public string AvatarUrl { get; set; }
-
             public string Login { get; set; }
-
             public DateTime CreatedAt { get; set; }
-
             public string Body { get; set; }
         }
 
@@ -339,18 +340,6 @@ namespace CodeHub.iOS.Views.PullRequests
 
             Root.Reset(sections);
 
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem = _actionButton;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

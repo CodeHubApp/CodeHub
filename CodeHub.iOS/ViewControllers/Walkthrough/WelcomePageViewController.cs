@@ -21,6 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             yield return new AboutViewController();
             yield return new PromoteViewController();
+            yield return new OrgViewController();
             yield return new GoProViewController();
             yield return new FeedbackViewController();
             yield return _welcomeViewController;

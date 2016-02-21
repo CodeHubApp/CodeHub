@@ -10,11 +10,17 @@ namespace CodeHub.iOS.Views.Issues
 {
     public class IssueEditView : ViewModelDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public IssueEditView()
         {
             Title = "Edit Issue";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
+
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 44f;
 
             var vm = (IssueEditViewModel)ViewModel;
 
@@ -26,37 +32,7 @@ namespace CodeHub.iOS.Views.Issues
             var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
             var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);
             var content = new MultilinedElement("Description");
-
             var state = new BooleanElement("Open", true);
-
-            vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
-                assignedTo.Value = x == null ? "Unassigned" : x.Login;
-                if (assignedTo.GetRootElement() != null)
-                    Root.Reload(assignedTo);
-            });
-
-            vm.Bind(x => x.Milestone, true).Subscribe(x => {
-                milestone.Value = x == null ? "None" : x.Title;
-                if (assignedTo.GetRootElement() != null)
-                    Root.Reload(milestone);
-            });
-
-            vm.BindCollection(x => x.Labels, true).Subscribe(x => {
-                labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
-                if (assignedTo.GetRootElement() != null)
-                    Root.Reload(labels);
-            });
-
-            vm.Bind(x => x.IsOpen, true).Subscribe(x =>
-            {
-                if (state.Value == x)
-                    return;
-                state.Value = x;
-                if (assignedTo.GetRootElement() != null)
-                    Root.Reload(state);
-            });
-
-            vm.Bind(x => x.IsSaving).SubscribeStatus("Updating...");
 
             Root.Reset(new Section { title, assignedTo, milestone, labels }, new Section { state }, new Section { content });
 
@@ -67,9 +43,24 @@ namespace CodeHub.iOS.Views.Issues
                 d(milestone.Clicked.BindCommand(vm.GoToMilestonesCommand));
                 d(labels.Clicked.BindCommand(vm.GoToLabelsCommand));
 
+                d(vm.Bind(x => x.IsOpen, true).Subscribe(x => state.Value = x));
+                d(vm.Bind(x => x.IsSaving).SubscribeStatus("Updating..."));
+
                 d(state.Changed.Subscribe(x => vm.IsOpen = x));
                 d(vm.Bind(x => x.Title, true).Subscribe(x => title.Value = x));
                 d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
+
+                d(vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
+                    assignedTo.Value = x == null ? "Unassigned" : x.Login;
+                }));
+
+                d(vm.Bind(x => x.Milestone, true).Subscribe(x => {
+                    milestone.Value = x == null ? "None" : x.Title;
+                }));
+
+                d(vm.BindCollection(x => x.Labels, true).Subscribe(x => {
+                    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
+                }));
 
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);

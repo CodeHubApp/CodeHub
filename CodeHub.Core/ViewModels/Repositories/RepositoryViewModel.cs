@@ -40,11 +40,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         public bool? IsStarred
         {
             get { return _starred; }
-            private set
-            {
-                _starred = value;
-                RaisePropertyChanged(() => IsStarred);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
         public bool? IsWatched

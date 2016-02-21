@@ -54,6 +54,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _selectionStyle; }
             set
             {
+                if (_selectionStyle == value)
+                    return;
+                
                 _selectionStyle = value;
                 var cell = GetActiveCell();
                 if (cell != null)
@@ -66,6 +69,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _value; }
             set
             {
+                if (_value == value)
+                    return;
+                
                 _value = value;
                 var cell = GetActiveCell();
                 if (cell != null && cell.DetailTextLabel != null)
@@ -78,6 +84,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _accessory; }
             set
             {
+                if (_accessory == value)
+                    return;
+                
                 _accessory = value;
                 var cell = GetActiveCell();
                 if (cell != null)
@@ -91,6 +100,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _lines; }
             set
             {
+                if (_lines == value)
+                    return;
+                
                 _lines = value;
                 var cell = GetActiveCell();
                 if (cell != null)
@@ -104,6 +116,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _lineBreakMode; }
             set
             {
+                if (_lineBreakMode == value)
+                    return;
+                
                 _lineBreakMode = value;
                 var cell = GetActiveCell();
                 if (cell != null)

@@ -12,6 +12,8 @@ using CodeHub.Core.Services;
 using MvvmCross.Platform;
 using System.Collections.Generic;
 using CodeHub.iOS.Services;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Gists
 {
@@ -35,10 +37,20 @@ namespace CodeHub.iOS.Views.Gists
 
             Title = "Gist";
 
-            _editButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, ShareButtonTap);
+            var editButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action);
 
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = "Gist #" + ViewModel.Id;
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
+                .Switch()
+                .Select(_ => ViewModel.Bind(x => x.IsStarred, true))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HeaderView.SetSubImage(x ? Octicon.Star.ToImage() : null));
+
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
@@ -54,45 +66,31 @@ namespace CodeHub.iOS.Views.Gists
                 Accessory = UITableViewCellAccessory.DisclosureIndicator
             };
 
-            ViewModel.Bind(x => x.Gist).Subscribe(gist =>
-            {
-                _splitRow1.Button1.Text = (gist.Public ?? true) ? "Public" : "Private";
-                _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
-                _splitRow2.Button1.Text = gist.CreatedAt.Day + " Days Old";
-                _ownerElement.Value = gist.Owner?.Login ?? "Unknown";
-                files.Text = gist.Files.Count.ToString();
-                comments.Text = gist.Comments.ToString();
-                forks.Text = gist.Forks.Count.ToString();
-                HeaderView.SubText = gist.Description;
-                HeaderView.Text = gist.Files?.Select(x => x.Key).FirstOrDefault() ?? HeaderView.Text;
-                HeaderView.SetImage(gist.Owner?.AvatarUrl, Images.Avatar);
-                RenderGist();
-                RefreshHeaderView();
-            });
-
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderGist());
-
-            ViewModel.Bind(x => x.IsStarred).Subscribe(isStarred =>
-            {
-                _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred";
-            });
-
             OnActivation(d =>
             {
+                d(editButton.GetClickedObservable().Subscribe(_ => ShareButtonTap(editButton)));
                 d(_ownerElement.Clicked.BindCommand(ViewModel.GoToUserCommand));
+
+                d(ViewModel.Bind(x => x.IsStarred, true).Subscribe(isStarred => _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred"));
+
+                d(ViewModel.BindCollection(x => x.Comments, true).Subscribe(_ => RenderGist()));
+
+                d(ViewModel.Bind(x => x.Gist, true).Where(x => x != null).Subscribe(gist =>
+                {
+                    _splitRow1.Button1.Text = (gist.Public ?? true) ? "Public" : "Private";
+                    _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
+                    _splitRow2.Button1.Text = gist.CreatedAt.Day + " Days Old";
+                    _ownerElement.Value = gist.Owner?.Login ?? "Unknown";
+                    files.Text = gist.Files.Count.ToString();
+                    comments.Text = gist.Comments.ToString();
+                    forks.Text = gist.Forks.Count.ToString();
+                    HeaderView.SubText = gist.Description;
+                    HeaderView.Text = gist.Files?.Select(x => x.Key).FirstOrDefault() ?? HeaderView.Text;
+                    HeaderView.SetImage(gist.Owner?.AvatarUrl, Images.Avatar);
+                    RenderGist();
+                    RefreshHeaderView();
+                }));
             });
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem = _editButton;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
         }
 
         public void RenderGist()
@@ -106,6 +104,7 @@ namespace CodeHub.iOS.Views.Gists
 			var sec2 = new Section();
             sections.Add(sec2);
 
+            var weakVm = new WeakReference<GistViewModel>(ViewModel);
             foreach (var file in model.Files.Keys)
             {
                 var sse = new StringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
@@ -116,11 +115,7 @@ namespace CodeHub.iOS.Views.Gists
 
                 var fileSaved = file;
                 var gistFileModel = model.Files[fileSaved];
-                
-//				if (string.Equals(gistFileModel.Language, "markdown", StringComparison.OrdinalIgnoreCase))
-//					sse.Tapped += () => ViewModel.GoToViewableFileCommand.Execute(gistFileModel);
-//				else
-                sse.Clicked.Subscribe(_ => ViewModel.GoToFileSourceCommand.Execute(gistFileModel));
+                sse.Clicked.Subscribe(MakeCallback(weakVm, gistFileModel));
                 sec2.Add(sse);
             }
 
@@ -132,6 +127,11 @@ namespace CodeHub.iOS.Views.Gists
 			}
 
             Root.Reset(sections);
+        }
+
+        private static Action<object> MakeCallback(WeakReference<GistViewModel> weakVm, GistFileModel model)
+        {
+            return new Action<object>(_ => weakVm.Get()?.GoToFileSourceCommand.Execute(model));
         }
 
         private async Task Fork()
@@ -163,7 +163,7 @@ namespace CodeHub.iOS.Views.Gists
             }
         }
 
-        void ShareButtonTap (object sender, EventArgs args)
+        void ShareButtonTap (object sender)
         {
             if (ViewModel.Gist == null)
                 return;

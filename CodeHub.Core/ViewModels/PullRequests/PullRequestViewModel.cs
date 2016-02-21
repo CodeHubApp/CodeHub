@@ -8,6 +8,7 @@ using MvvmCross.Plugins.Messenger;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -44,69 +45,49 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public bool CanPush
         {
             get { return _canPush; }
-            set
-            {
-                _canPush = value;
-                RaisePropertyChanged(() => CanPush);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _canPush, value); }
         }
 
         private bool _isCollaborator;
         public bool IsCollaborator
         {
             get { return _isCollaborator; }
-            set
-            {
-                _isCollaborator = value;
-                RaisePropertyChanged(() => IsCollaborator);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
         private bool _merged;
         public bool Merged
         {
             get { return _merged; }
-            set
-            {
-                _merged = value;
-                RaisePropertyChanged(() => Merged);
-            }
+            set { this.RaiseAndSetIfChanged(ref _merged, value); }
         }
 
         private IssueModel _issueModel;
-
         public IssueModel Issue
         {
             get { return _issueModel; }
-            set
-            {
-                _issueModel = value;
-                RaisePropertyChanged(() => Issue);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
         private PullRequestModel _model;
-
         public PullRequestModel PullRequest
         { 
             get { return _model; }
-            set
-            {
-                _model = value;
-                RaisePropertyChanged(() => PullRequest);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _model, value); }
         }
 
         private bool _isModifying;
-
         public bool IsModifying
         {
             get { return _isModifying; }
-            set
-            {
-                _isModifying = value;
-                RaisePropertyChanged(() => IsModifying);
-            }
+            set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
+        }
+
+        private bool? _isClosed;
+        public bool? IsClosed
+        {
+            get { return _isClosed; }
+            private set { this.RaiseAndSetIfChanged(ref _isClosed, value); }
         }
 
         private ICommand _goToAssigneeCommand;
@@ -224,6 +205,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public PullRequestViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
+
+            this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
         }
 
         public void Init(NavObject navObject)

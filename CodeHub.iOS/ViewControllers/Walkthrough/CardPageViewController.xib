@@ -5,7 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9531"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CardPageViewController" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CardPageViewController" customModule="CodeHub_iOS" customModuleProvider="target">
             <connections>
                 <outlet property="contentView" destination="hhx-q8-WgW" id="EV8-bc-g43"/>
                 <outlet property="view" destination="HvQ-Sg-MG6" id="aAP-9j-fjP"/>

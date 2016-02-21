@@ -75,7 +75,14 @@ namespace CodeHub.iOS
             // Setup theme
             UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
             Theme.Setup();
-            this.StampInstallDate("CodeHub");
+
+            var features = Mvx.Resolve<IFeaturesService>();
+            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
+
+            var installedDate = this.StampInstallDate("CodeHub");
+            Console.WriteLine("CodeHub was installed on: " + installedDate);
+            if (installedDate < new DateTime(2016, 3, 10, 1, 1, 1))
+                features.ActivateProDirect();
 //
 //			options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
 //				new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
@@ -95,7 +102,6 @@ namespace CodeHub.iOS
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
 
             bool hasSeenWelcome;
-            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
             if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
             {
                 defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
@@ -111,7 +117,6 @@ namespace CodeHub.iOS
 			Window.MakeKeyAndVisible();
 
 			// Notifications don't work on teh simulator so don't bother
-            var features = Mvx.Resolve<IFeaturesService>();
             if (Runtime.Arch != Arch.SIMULATOR && features.IsPushNotificationsActivated)
                 RegisterUserForNotifications();
 

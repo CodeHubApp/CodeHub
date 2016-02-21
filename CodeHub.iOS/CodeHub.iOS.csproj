@@ -370,6 +370,9 @@
     <Compile Include="TableViewCells\MultilinedCellView.cs" />
     <Compile Include="TableViewCells\MultilinedCellView.designer.cs" />
     <InterfaceDefinition Include="TableViewCells\MultilinedCellView.xib" />
+    <Compile Include="ViewControllers\Walkthrough\OrgViewController.cs" />
+    <Compile Include="ViewControllers\Walkthrough\OrgViewController.designer.cs" />
+    <InterfaceDefinition Include="ViewControllers\Walkthrough\OrgViewController.xib" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -563,6 +566,7 @@
     <BundleResource Include="Briefcase.png" />
     <BundleResource Include="Images\down_chevron.png" />
     <BundleResource Include="Images\down_chevron%402x.png" />
+    <BundleResource Include="Organizations.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

@@ -7,6 +7,7 @@ using CodeHub.Core.Services;
 using System;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -43,48 +44,39 @@ namespace CodeHub.Core.ViewModels.Issues
 			}
 		}
 
+        private bool? _isClosed;
+        public bool? IsClosed
+        {
+            get { return _isClosed; }
+            private set { this.RaiseAndSetIfChanged(ref _isClosed, value); }
+        }
+
         private bool _shouldShowPro; 
         public bool ShouldShowPro
         {
             get { return _shouldShowPro; }
-            protected set
-            {
-                _shouldShowPro = value;
-                RaisePropertyChanged();
-            }
+            protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
         private bool _isCollaborator;
         public bool IsCollaborator
         {
             get { return _isCollaborator; }
-            set
-            {
-                _isCollaborator = value;
-                RaisePropertyChanged(() => IsCollaborator);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
 		private IssueModel _issueModel;
         public IssueModel Issue
         {
             get { return _issueModel; }
-            set
-            {
-                _issueModel = value;
-                RaisePropertyChanged(() => Issue);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
         private bool _isModifying;
         public bool IsModifying
         {
             get { return _isModifying; }
-            set
-            {
-                _isModifying = value;
-                RaisePropertyChanged(() => IsModifying);
-            }
+            set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
 
 		public ICommand GoToAssigneeCommand
@@ -174,6 +166,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public IssueViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
+            this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
         }
 
         public void Init(NavObject navObject)

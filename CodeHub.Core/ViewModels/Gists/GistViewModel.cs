@@ -5,7 +5,6 @@ using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -34,11 +33,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public bool IsStarred
         {
             get { return _starred; }
-            private set
-            {
-                _starred = value;
-                RaisePropertyChanged(() => IsStarred);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
 		public CollectionViewModel<GistCommentModel> Comments

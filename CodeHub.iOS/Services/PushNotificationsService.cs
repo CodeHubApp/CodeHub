@@ -38,7 +38,6 @@ namespace CodeHub.iOS.Services
             var response = await client.PostAsync(RegisterUri, content);
             if (response.StatusCode != System.Net.HttpStatusCode.OK && response.StatusCode != System.Net.HttpStatusCode.Conflict)
                 throw new InvalidOperationException("Unable to register! Server returned a " + response.StatusCode + " status code");
-            System.Diagnostics.Debug.WriteLine("Push notifications registered for: " + user.Username + " (" + user.OAuth + ") on device <" + del.DeviceToken + ">");
 		}
 
         public async Task Deregister()
@@ -64,7 +63,6 @@ namespace CodeHub.iOS.Services
             var response = await client.PostAsync(DeregisterUri, content);
             if (response.StatusCode != System.Net.HttpStatusCode.NotFound && response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new InvalidOperationException("Unable to deregister! Server returned a " + response.StatusCode + " status code");
-            System.Diagnostics.Debug.WriteLine("Push notifications deregistered for: " + user.Username + " (" + user.OAuth + ") on device <" + del.DeviceToken + ">");
 		}
     }
 }

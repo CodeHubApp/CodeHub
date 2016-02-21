@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using Humanizer;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.Services;
+using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -40,6 +42,18 @@ namespace CodeHub.iOS.Views.Issues
             Title = "Issue #" + ViewModel.Id;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(_ => ViewModel.Bind(x => x.IsClosed, true).Where(x => x.HasValue).Select(x => x.Value))
+                .Switch()
+                .Subscribe(x => 
+                {
+                    HeaderView.SubImageView.TintColor = x ? UIColor.FromRGB(0xbd, 0x2c, 0) : UIColor.FromRGB(0x6c, 0xc6, 0x44);
+                    HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
+                });
 
             var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
             _descriptionElement = new WebElement(content, "body", false);

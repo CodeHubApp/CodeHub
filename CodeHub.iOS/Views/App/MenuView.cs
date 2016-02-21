@@ -11,6 +11,7 @@ using CodeHub.iOS.DialogElements;
 using System.Collections.Generic;
 using CodeHub.iOS.ViewControllers.Accounts;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.App
 {
@@ -27,8 +28,39 @@ namespace CodeHub.iOS.Views.App
 
         public MenuView()
         {
-            ViewModel = new MenuViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<IFeaturesService>());
-//            Appeared.Take(1).Subscribe(_ => ViewModel.GoToDefaultTopView.Execute(null));
+            var appService = Mvx.Resolve<IApplicationService>();
+            var featuresService = Mvx.Resolve<IFeaturesService>();
+            ViewModel = new MenuViewModel(appService, featuresService);
+            Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
+        }
+
+        private static async Task PromptPushNotifications()
+        {
+            var appService = Mvx.Resolve<IApplicationService>();
+            if (appService.Account.IsEnterprise)
+                return;
+
+            var featuresService = Mvx.Resolve<IFeaturesService>();
+            if (!featuresService.IsPushNotificationsActivated)
+                return;
+
+            var alertDialogService = Mvx.Resolve<IAlertDialogService>();
+            var pushNotifications = Mvx.Resolve<IPushNotificationsService>();
+
+            if (appService.Account.IsPushNotificationsEnabled == null)
+            {
+                var result = await alertDialogService.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
+                if (result)
+                {
+                    await pushNotifications.Register();
+                    appService.Account.IsPushNotificationsEnabled = true;
+                    appService.Accounts.Update(appService.Account);
+                }
+            }
+            else if (appService.Account.IsPushNotificationsEnabled.Value)
+            {
+                pushNotifications.Register().ToBackground();
+            }
         }
 
 	    protected override void CreateMenuRoot()
@@ -62,7 +94,6 @@ namespace CodeHub.iOS.Views.App
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
             repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Octicon.Repo.ToImage()));
-			//repoSection.Add(new MenuElement("Watching", () => NavPush(new WatchedRepositoryController(Application.Accounts.ActiveAccount.Username)), Images.RepoFollow));
             repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Octicon.Star.ToImage()));
             repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Octicon.Pulse.ToImage()));
             repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Octicon.Globe.ToImage()));
@@ -224,37 +255,49 @@ namespace CodeHub.iOS.Views.App
 
         private class EditSource : Source
 		{
-			private readonly MenuView _parent;
+			private readonly WeakReference<MenuView> _parent;
 			public EditSource(MenuView dvc) 
 				: base (dvc)
 			{
-				_parent = dvc;
+                _parent = new WeakReference<MenuView>(dvc);
 			}
 
 			public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
-				if (_parent._favoriteRepoSection == null)
+                var view = _parent.Get();
+                if (view == null)
+                    return false;
+
+                if (view._favoriteRepoSection == null)
 					return false;
-				if (_parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+                if (view.Root[indexPath.Section] == view._favoriteRepoSection)
 					return true;
 				return false;
 			}
 
 			public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, Foundation.NSIndexPath indexPath)
 			{
-				if (_parent._favoriteRepoSection != null && _parent.Root[indexPath.Section] == _parent._favoriteRepoSection)
+                var view = _parent.Get();
+                if (view == null)
+                    return UITableViewCellEditingStyle.None;
+
+                if (view._favoriteRepoSection != null && view.Root[indexPath.Section] == view._favoriteRepoSection)
 					return UITableViewCellEditingStyle.Delete;
 				return UITableViewCellEditingStyle.None;
 			}
 
 			public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
 			{
+                var view = _parent.Get();
+                if (view == null)
+                    return;
+                
 				switch (editingStyle)
 				{
 					case UITableViewCellEditingStyle.Delete:
-						var section = _parent.Root[indexPath.Section];
+                        var section = view.Root[indexPath.Section];
 						var element = section[indexPath.Row];
-						_parent.DeletePinnedRepo(element as PinnedRepoElement);
+                        view.DeletePinnedRepo(element as PinnedRepoElement);
 						break;
 				}
 			}

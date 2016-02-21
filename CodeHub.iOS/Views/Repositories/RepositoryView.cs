@@ -10,6 +10,7 @@ using CodeHub.Core.Services;
 using System.Collections.Generic;
 using CodeHub.iOS.Utilities;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -31,11 +32,17 @@ namespace CodeHub.iOS.Views.Repositories
             Title = ViewModel.Username;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = ViewModel.RepositoryName;
+            HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
+
+            Appeared.Take(1)
+                .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
+                .Switch()
+                .Select(_ => ViewModel.Bind(x => x.IsStarred, true).Where(x => x.HasValue))
+                .Switch()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
 
             var actionButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
-
-            ViewModel.Bind(x => x.Branches).Subscribe(_ => Render());
-            ViewModel.Bind(x => x.Readme).Subscribe(_ => Render());
 
             _split = new SplitButtonElement();
             _stargazers = _split.AddButton("Stargazers", "-");
@@ -48,6 +55,16 @@ namespace CodeHub.iOS.Views.Repositories
                 d(_watchers.Clicked.BindCommand(ViewModel.GoToWatchersCommand));
                 d(_forks.Clicked.BindCommand(ViewModel.GoToForkedCommand));
                 d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+
+                d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
+                d(_ownerElement.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
+
+                d(_commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand));
+                d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
+                d(_sourceElement.Clicked.BindCommand(ViewModel.GoToSourceCommand));
+
+                d(ViewModel.Bind(x => x.Branches, true).Subscribe(_ => Render()));
+                d(ViewModel.Bind(x => x.Readme, true).Subscribe(_ => Render()));
 
                 d(ViewModel.Bind(x => x.Repository, true).Where(x => x != null).Subscribe(x =>
                 {
@@ -117,6 +134,48 @@ namespace CodeHub.iOS.Views.Repositories
         SplitButtonElement.Button _stargazers;
         SplitButtonElement.Button _watchers;
         SplitButtonElement.Button _forks;
+        StringElement _ownerElement = new StringElement("Owner", string.Empty) { Image = Octicon.Person.ToImage() };
+        StringElement _eventsElement = new StringElement("Events", Octicon.Rss.ToImage());
+        StringElement _commitsElement = new StringElement("Commits", Octicon.GitCommit.ToImage());
+        StringElement _pullRequestsElement = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
+        StringElement _sourceElement = new StringElement("Source", Octicon.Code.ToImage());
+
+        private readonly Lazy<StringElement> _forkElement;
+        private readonly Lazy<StringElement> _issuesElement;
+        private readonly Lazy<StringElement> _readmeElement;
+        private readonly Lazy<StringElement> _websiteElement;
+
+
+        public RepositoryView()
+        {
+            _forkElement = new Lazy<StringElement>(() =>
+            {
+                var element = new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() };
+                OnActivation(d => d(element.Clicked.Select(x => ViewModel.Repository.Parent).BindCommand(ViewModel.GoToForkParentCommand)));
+                return element;
+            });
+
+            _issuesElement = new Lazy<StringElement>(() =>
+            {
+                var element = new StringElement("Issues", Octicon.IssueOpened.ToImage());
+                OnActivation(d => d(element.Clicked.BindCommand(ViewModel.GoToIssuesCommand)));
+                return element;
+            });
+
+            _readmeElement = new Lazy<StringElement>(() =>
+            {
+                var element = new StringElement("Readme", Octicon.Book.ToImage());
+                OnActivation(d => d(element.Clicked.BindCommand(ViewModel.GoToReadmeCommand)));
+                return element;
+            });
+
+            _websiteElement = new Lazy<StringElement>(() =>
+            {
+                var element = new StringElement("Website", Octicon.Globe.ToImage());
+                OnActivation(d => d(element.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand)));
+                return element;
+            });
+        }
 
         public void Render()
         {
@@ -156,54 +215,26 @@ namespace CodeHub.iOS.Views.Repositories
             _split3.Button2.Text = size;
             sec1.Add(_split3);
 
-            var owner = new StringElement("Owner", model.Owner.Login) { Image = Octicon.Person.ToImage() };
-            owner.Clicked.BindCommand(ViewModel.GoToOwnerCommand);
-            sec1.Add(owner);
+            _ownerElement.Value = model.Owner.Login;
+            sec1.Add(_ownerElement);
 
             if (model.Parent != null)
-            {
-                var parent = new StringElement("Forked From", model.Parent.FullName) { Image = Octicon.RepoForked.ToImage() };
-                parent.Clicked.Subscribe(_ => ViewModel.GoToForkParentCommand.Execute(model.Parent));
-                sec1.Add(parent);
-            }
+                sec1.Add(_forkElement.Value);
 
-            var events = new StringElement("Events", Octicon.Rss.ToImage());
-            events.Clicked.BindCommand(ViewModel.GoToEventsCommand);
-            var sec2 = new Section { events };
+            var sec2 = new Section { _eventsElement };
 
             if (model.HasIssues)
-            {
-                var issues = new StringElement("Issues", Octicon.IssueOpened.ToImage());
-                issues.Clicked.BindCommand(ViewModel.GoToIssuesCommand);
-                sec2.Add(issues);
-            }
+                sec2.Add(_issuesElement.Value);
 
             if (ViewModel.Readme != null)
-            {
-                var readme = new StringElement("Readme", Octicon.Book.ToImage());
-                readme.Clicked.BindCommand(ViewModel.GoToReadmeCommand);
-                sec2.Add(readme);
-            }
-
-            var commits = new StringElement("Commits", Octicon.GitCommit.ToImage());
-            commits.Clicked.BindCommand(ViewModel.GoToCommitsCommand);
-
-            var pullRequests = new StringElement("Pull Requests", Octicon.GitPullRequest.ToImage());
-            pullRequests.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand);
-
-            var source = new StringElement("Source", Octicon.Code.ToImage());
-            source.Clicked.BindCommand(ViewModel.GoToSourceCommand);
+                sec2.Add(_readmeElement.Value);
 
             sections.Add(sec1);
             sections.Add(sec2);
-            sections.Add(new Section { commits, pullRequests, source });
+            sections.Add(new Section { _commitsElement, _pullRequestsElement, _sourceElement });
 
             if (!string.IsNullOrEmpty(model.Homepage))
-            {
-                var web = new StringElement("Website", Octicon.Globe.ToImage());
-                web.Clicked.Subscribe(_ => ViewModel.GoToUrlCommand.Execute(model.Homepage));
-                sections.Add(new Section { web });
-            }
+                sections.Add(new Section { _websiteElement.Value });
 
             Root.Reset(sections);
         }
