@@ -15,10 +15,20 @@ namespace CodeHub.iOS.Services
 
         public async Task Register()
         {
-            var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (string.IsNullOrEmpty(appDelegate.DeviceToken))
+            {
+                appDelegate.RegisterUserForNotifications();
+                for (var i = 0; i < 5; i++)
+                {
+                    if (!string.IsNullOrEmpty(appDelegate.DeviceToken))
+                        break;
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }
 
-            if (string.IsNullOrEmpty(del.DeviceToken))
-                throw new InvalidOperationException("Push notifications has not been enabled for this app!");
+            if (string.IsNullOrEmpty(appDelegate.DeviceToken))
+                throw new InvalidOperationException("Unable to activate push notifications. Please check your iOS notifications settings.");
 
             var applicationService = Mvx.Resolve<IApplicationService>();
             var user = applicationService.Account;
@@ -28,7 +38,7 @@ namespace CodeHub.iOS.Services
             var client = new HttpClient();
             var content = new FormUrlEncodedContent(new[] 
             {
-                new KeyValuePair<string, string>("token", del.DeviceToken),
+                new KeyValuePair<string, string>("token", appDelegate.DeviceToken),
                 new KeyValuePair<string, string>("user", user.Username),
                 new KeyValuePair<string, string>("domain", "https://api.github.com"),
                 new KeyValuePair<string, string>("oauth", user.OAuth)
@@ -45,7 +55,7 @@ namespace CodeHub.iOS.Services
             var del = (AppDelegate)UIApplication.SharedApplication.Delegate;
 
             if (string.IsNullOrEmpty(del.DeviceToken))
-                throw new InvalidOperationException("Push notifications has not been enabled for this app!");
+                return;
 
             var user = Mvx.Resolve<IApplicationService>().Account;
             if (user.IsEnterprise)

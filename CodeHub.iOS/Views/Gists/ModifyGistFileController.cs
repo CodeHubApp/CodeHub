@@ -4,10 +4,11 @@ using CodeHub.iOS;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views
 {
-    public partial class ModifyGistFileController : UIViewController
+    public partial class ModifyGistFileController : BaseViewController
     {
         public Action<string, string> Save;
         const float offsetSize = 44f + 8f + 1f;
@@ -21,30 +22,36 @@ namespace CodeHub.iOS.Views
             _content = content;
 
             Title = "New File";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => NavigationController.PopViewController(true));
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
+            var cancelButton = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.BackButton };
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
 
-                var newName = Name.Text;
-                var newContent = Text.Text;
-
-                if (String.IsNullOrEmpty(newContent))
-                {
-                    AlertDialogService.ShowAlert("No Content", "You cannot save a file without content!");
-                    return;
-                }
-
-                try
-                {
-                    if (Save != null)
-                        Save(newName, newContent);
-                    NavigationController.PopViewController(true);
-                }
-                catch (Exception ex)
-                {
-                    AlertDialogService.ShowAlert("Error", ex.Message);
-                    return;
-                }
+            OnActivation(d =>
+            {
+                d(cancelButton.GetClickedObservable().Subscribe(_ => NavigationController.PopViewController(true)));
+                d(saveButton.GetClickedObservable().Subscribe(_ => SaveClicked()));
             });
+        }
+
+        private void SaveClicked()
+        {
+            var newName = Name.Text;
+            var newContent = Text.Text;
+
+            if (String.IsNullOrEmpty(newContent))
+            {
+                AlertDialogService.ShowAlert("No Content", "You cannot save a file without content!");
+                return;
+            }
+
+            try
+            {
+                Save?.Invoke(newName, newContent);
+                NavigationController.PopViewController(true);
+            }
+            catch (Exception ex)
+            {
+                AlertDialogService.ShowAlert("Error", ex.Message);
+            }
         }
 
         public override void ViewDidLoad()
@@ -56,21 +63,16 @@ namespace CodeHub.iOS.Views
             if (!string.IsNullOrEmpty(_content))
                 Text.Text = _content;
 
-            Text.Changed += HandleChanged;
+            var weakThis = new WeakReference<ModifyGistFileController>(this);
+
+            Text.Changed += (sender, e) => weakThis.Get()?.UpdateScrollContentSize();
             UpdateScrollContentSize();
 
             var v = NameView as TappableView;
             if (v != null)
             {
-                v.Tapped = () => {
-                    Name.BecomeFirstResponder();
-                };
+                v.Tapped = () => weakThis.Get().Name.BecomeFirstResponder();
             }
-        }
-
-        void HandleChanged (object sender, EventArgs e)
-        {
-            UpdateScrollContentSize();
         }
 
         void UpdateScrollContentSize()
@@ -97,17 +99,20 @@ namespace CodeHub.iOS.Views
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
 
+        NSObject _showNotification;
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
             Name.BecomeFirstResponder();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+
+            if (_showNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
 
         public override void ViewWillLayoutSubviews()

@@ -28,7 +28,7 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(ProEdition);
+                return IsActivated(PushNotifications);
             }
         }
 
@@ -62,6 +62,8 @@ namespace CodeHub.iOS.Services
             if (productData == null)
                 throw new InvalidOperationException("Unable to activate CodeHub Pro");
             await _inAppPurchaseService.PurchaseProduct(productData);
+            _defaultValueService.Set(ProEdition, true);
+            _defaultValueService.Set(PushNotifications, true);
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             appDelegate?.RegisterUserForNotifications();
         }
@@ -69,6 +71,11 @@ namespace CodeHub.iOS.Services
         public void ActivateProDirect()
         {
             _defaultValueService.Set(ProEdition, true);
+        }
+
+        public void ActivatePush()
+        {
+            _defaultValueService.Set(PushNotifications, true);
         }
 
         public Task RestorePro()

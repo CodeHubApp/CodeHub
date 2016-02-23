@@ -48,28 +48,28 @@ namespace CodeHub.Core.ViewModels.App
         public bool IsSaving
         {
             get { return _isSaving; }
-            private set
-            {
-                _isSaving = value;
-                RaisePropertyChanged(() => IsSaving);
-            }
-        }
-
-        public bool PushNotificationsActivated
-        {
-            get { return _featuresService.IsPushNotificationsActivated; }
+            private set { this.RaiseAndSetIfChanged(ref _isSaving, value); }
         }
 
         public bool PushNotificationsEnabled
         {
             get 
             { 
-                return PushNotificationsActivated && this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; 
+                return this.GetApplication().Account.IsPushNotificationsEnabled.HasValue && this.GetApplication().Account.IsPushNotificationsEnabled.Value; 
             }
             set 
             { 
-                if (PushNotificationsActivated)
-                    RegisterPushNotifications(value);
+                var proEnabled = _featuresService.IsProEnabled;
+                var pushEnabled = _featuresService.IsPushNotificationsActivated;
+                if (pushEnabled || proEnabled)
+                {
+                    if (proEnabled && !pushEnabled)
+                    {
+                        _featuresService.ActivatePush();
+                    }
+
+                    RegisterPushNotifications(value).ToBackground();
+                }
                 else
                 {
                     GetService<IAlertDialogService>()

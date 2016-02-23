@@ -1,48 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="gray" indentationWidth="10" reuseIdentifier="NewsCellView" rowHeight="107" id="2" customClass="NewsCellView">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="107"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="gray" indentationWidth="10" reuseIdentifier="NewsCellView" rowHeight="106" id="2" customClass="NewsCellView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="106"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2" id="UoJ-D7-3PN">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="106"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="105"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="NX7-8T-3y3">
-                        <rect key="frame" x="8" y="28" width="32" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NX7-8T-3y3">
+                        <rect key="frame" x="8" y="30" width="32" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="32" id="TvC-LE-4uO"/>
+                            <constraint firstAttribute="height" constant="32" id="ecm-Jy-Sts"/>
+                        </constraints>
                     </imageView>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QpW-3s-LgQ" customClass="UILabelWithLinks">
-                        <rect key="frame" x="48" y="27" width="264" height="35"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" text="This is what a bunch of text looks like right here" lineBreakMode="clip" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QpW-3s-LgQ" customClass="UILabelWithLinks">
+                        <rect key="frame" x="48" y="25" width="264" height="47"/>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="751" constant="32" id="nBu-SL-m7P"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" text="3 years ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hu1-pJ-zF3">
+                        <rect key="frame" x="48" y="6" width="264" height="15"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                        <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" text="Whats good?" lineBreakMode="clip" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9K-I1-WdV" customClass="UILabelWithLinks">
+                        <rect key="frame" x="48" y="78" width="264" height="17"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3 years ago" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hu1-pJ-zF3">
-                        <rect key="frame" x="48" y="6" width="264" height="16"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="R9K-I1-WdV" customClass="UILabelWithLinks">
-                        <rect key="frame" x="48" y="66" width="264" height="34"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
-                        <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="QTS-HF-RsJ">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="QTS-HF-RsJ">
                         <rect key="frame" x="24" y="6" width="16" height="16"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="6vW-ZK-aI3"/>
+                            <constraint firstAttribute="width" constant="16" id="CJf-Ba-bFr"/>
+                        </constraints>
                     </imageView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="hu1-pJ-zF3" firstAttribute="leading" secondItem="QTS-HF-RsJ" secondAttribute="trailing" constant="8" id="1Kw-hA-npU"/>
+                    <constraint firstItem="QpW-3s-LgQ" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="3uy-jH-Kwc"/>
+                    <constraint firstItem="NX7-8T-3y3" firstAttribute="top" secondItem="QTS-HF-RsJ" secondAttribute="bottom" constant="8" id="6vC-D6-cFf"/>
+                    <constraint firstItem="hu1-pJ-zF3" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="EwU-6V-0Vz"/>
+                    <constraint firstItem="R9K-I1-WdV" firstAttribute="top" secondItem="QpW-3s-LgQ" secondAttribute="bottom" constant="6" id="FHf-VO-r86"/>
+                    <constraint firstItem="R9K-I1-WdV" firstAttribute="leading" secondItem="hu1-pJ-zF3" secondAttribute="leading" id="Gkb-Ch-kYR"/>
+                    <constraint firstItem="QpW-3s-LgQ" firstAttribute="top" secondItem="hu1-pJ-zF3" secondAttribute="bottom" constant="4" id="VFO-Rc-9LA"/>
+                    <constraint firstItem="QTS-HF-RsJ" firstAttribute="leading" secondItem="UoJ-D7-3PN" secondAttribute="leadingMargin" constant="16" id="WCI-SZ-kvF"/>
+                    <constraint firstItem="QTS-HF-RsJ" firstAttribute="top" secondItem="UoJ-D7-3PN" secondAttribute="topMargin" constant="-2" id="X0l-MK-H9k"/>
+                    <constraint firstItem="R9K-I1-WdV" firstAttribute="trailing" secondItem="UoJ-D7-3PN" secondAttribute="trailingMargin" id="YRO-zc-LCy"/>
+                    <constraint firstItem="NX7-8T-3y3" firstAttribute="leading" secondItem="UoJ-D7-3PN" secondAttribute="leadingMargin" id="ZFD-bd-JGk"/>
+                    <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="NX7-8T-3y3" secondAttribute="bottom" id="dJt-sr-pFP"/>
+                    <constraint firstItem="QpW-3s-LgQ" firstAttribute="leading" secondItem="hu1-pJ-zF3" secondAttribute="leading" id="g4h-vn-jy2"/>
+                    <constraint firstItem="hu1-pJ-zF3" firstAttribute="top" secondItem="UoJ-D7-3PN" secondAttribute="topMargin" constant="-2" id="hGb-98-xXK"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="R9K-I1-WdV" secondAttribute="bottom" constant="2" id="ilX-bJ-I2J"/>
+                </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="ActionImage" destination="QTS-HF-RsJ" id="RPu-pv-Guc"/>
@@ -51,6 +75,7 @@
                 <outlet property="Image" destination="NX7-8T-3y3" id="CL0-mM-tM2"/>
                 <outlet property="Time" destination="hu1-pJ-zF3" id="Htj-F1-Fff"/>
             </connections>
+            <point key="canvasLocation" x="544" y="419"/>
         </tableViewCell>
     </objects>
 </document>

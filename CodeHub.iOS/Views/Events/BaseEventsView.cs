@@ -41,6 +41,8 @@ namespace CodeHub.iOS.Views.Events
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+            TableView.RowHeight = UITableView.AutomaticDimension;
+            TableView.EstimatedRowHeight = 64f;
             TableView.CellLayoutMarginsFollowReadableWidth = false;
             TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
@@ -77,13 +79,12 @@ namespace CodeHub.iOS.Views.Events
                     if (anchorBlock != null)
                         act = anchorBlock.Tapped;
                     var block = new NewsFeedElement.TextBlock(h.Text, act);
-                    if (act == null) block.Color = UIColor.DarkGray;
                     bodyBlocks.Add(block);
                 }
 
                 var weakTapped = new WeakReference<Action>(e.Item2.Tapped);
                 var githubAvatar = new GitHubAvatar(avatar).ToUri(64)?.AbsoluteUri;
-                return new NewsFeedElement(githubAvatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), () => weakTapped.Get()?.Invoke());
+                return new NewsFeedElement(githubAvatar, e.Item1.CreatedAt, headerBlocks, bodyBlocks, img.ToImage(), () => weakTapped.Get()?.Invoke(), e.Item2.Multilined);
             }
             catch (Exception ex)
             {

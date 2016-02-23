@@ -17,6 +17,8 @@ namespace CodeHub.Core.Services
         Task ActivatePro();
 
         Task RestorePro();
+
+        void ActivatePush();
     }
 }
 

@@ -87,7 +87,6 @@ namespace CodeHub.iOS.Views
             {
                 var weakVm = new WeakReference<NotificationsViewModel>(parent.ViewModel as NotificationsViewModel);
                 TextLabel.Text = text;
-                TextLabel.Font = TextLabel.Font.WithSize(TextLabel.Font.PointSize * Theme.CurrentTheme.FontSizeRatio);
 
                 if (button)
                 {

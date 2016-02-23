@@ -239,7 +239,7 @@ namespace CodeHub.iOS
             var app = Mvx.Resolve<IApplicationService>();
             if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
             {
-                Task.Run(() => Mvx.Resolve<IPushNotificationsService>().Register());
+                Mvx.Resolve<IPushNotificationsService>().Register().ToBackground();
                 app.Account.IsPushNotificationsEnabled = true;
                 app.Accounts.Update(app.Account);
             }

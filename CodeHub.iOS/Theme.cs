@@ -30,11 +30,6 @@ namespace CodeHub.iOS
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);
 
-            bool largeFonts;
-            if (!defaultValues.TryGet("large_fonts", out largeFonts))
-                largeFonts = false;
-            Theme.CurrentTheme.FontSizeRatio = largeFonts ? 1.3f : 1.0f;
-
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
@@ -55,7 +50,7 @@ namespace CodeHub.iOS
 
             UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
             UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
-            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f * Theme.CurrentTheme.FontSizeRatio);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
@@ -74,7 +69,7 @@ namespace CodeHub.iOS
             {
                 return new UITextAttributes
                 { 
-                    Font = UIFont.SystemFontOfSize(14f * Theme.CurrentTheme.FontSizeRatio), 
+                    Font = UIFont.PreferredBody, 
                     TextColor = UIColor.FromRGB(87, 85, 85), 
                     TextShadowColor = UIColor.FromRGBA(255, 255, 255, 125), 
                     TextShadowOffset = new UIOffset(0, 1) 
@@ -93,41 +88,6 @@ namespace CodeHub.iOS
         public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
-
-        public UIImage IssueCellImage1
-        {
-            get { return Octicon.Gear.ToImage(); }
-        }
-
-        public UIImage IssueCellImage2
-        {
-            get { return Octicon.CommentDiscussion.ToImage(); }
-        }
-
-        public UIImage IssueCellImage3
-        {
-            get { return Octicon.Person.ToImage(); }
-        }
-
-        public UIImage IssueCellImage4
-        {
-            get { return Octicon.Pencil.ToImage(); }
-        }
-
-        public UIImage RepositoryCellFollowers
-        {
-            get { return Octicon.Star.ToImage(); }
-        }
-
-        public UIImage RepositoryCellForks
-        {
-            get { return Octicon.RepoForked.ToImage(); }
-        }
-
-        public UIImage RepositoryCellUser
-        {
-            get { return Octicon.Person.ToImage(); }
-        }
 
         public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
         public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
@@ -165,7 +125,5 @@ namespace CodeHub.iOS
                 return UIColor.Black;
             }
         }
-
-        public float FontSizeRatio { get; set; }
     }
 }

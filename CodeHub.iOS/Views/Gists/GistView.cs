@@ -150,7 +150,7 @@ namespace CodeHub.iOS.Views.Gists
         {
             try
             {
-                var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                var app = Mvx.Resolve<IApplicationService>();
                 var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
                 var gistController = new EditGistController(data.Data);
                 gistController.Created = editedGist => ViewModel.Gist = editedGist;

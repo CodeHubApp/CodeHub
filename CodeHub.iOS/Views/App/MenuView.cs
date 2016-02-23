@@ -41,7 +41,7 @@ namespace CodeHub.iOS.Views.App
                 return;
 
             var featuresService = Mvx.Resolve<IFeaturesService>();
-            if (!featuresService.IsPushNotificationsActivated)
+            if (!featuresService.IsPushNotificationsActivated && !featuresService.IsProEnabled)
                 return;
 
             var alertDialogService = Mvx.Resolve<IAlertDialogService>();
@@ -55,7 +55,7 @@ namespace CodeHub.iOS.Views.App
 
                 if (result)
                 {
-                    await pushNotifications.Register();
+                    pushNotifications.Register().ToBackground();
                 }
 
             }

@@ -13,7 +13,7 @@ namespace CodeHub.iOS.Services
         public MarkdownService()
         {
             _ctx = new JSContext(_vm);
-            var script = System.IO.File.ReadAllText("Markdown/marked.js", System.Text.Encoding.UTF8);
+            var script = System.IO.File.ReadAllText("WebResources/marked.js", System.Text.Encoding.UTF8);
             _ctx.EvaluateScript(script);
             _val = _ctx[new NSString("marked")];
         }

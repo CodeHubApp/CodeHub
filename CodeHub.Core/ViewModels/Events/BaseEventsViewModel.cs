@@ -15,6 +15,7 @@ using GitHubSharp;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
 using CodeHub.Core.ViewModels.Changesets;
+using System.Dynamic;
 
 namespace CodeHub.Core.ViewModels.Events
 {
@@ -338,6 +339,8 @@ namespace CodeHub.Core.ViewModels.Events
                         eventBlock.Body.Add(new AnchorBlock(page.PageName, () => GoToUrlCommand.Execute(p.HtmlUrl)));
                         eventBlock.Body.Add(new TextBlock(" - " + page.Action + "\n"));
                     }
+
+                    eventBlock.Multilined = true;
                 }
             }
             /*
@@ -500,6 +503,7 @@ namespace CodeHub.Core.ViewModels.Events
 
                         eventBlock.Body.Add(new AnchorBlock(shortSha, () => GoToChangeset(repoId, sha)));
                         eventBlock.Body.Add(new TextBlock(" - " + desc + "\n"));
+                        eventBlock.Multilined = true;
                     }
                 }
             }
@@ -568,6 +572,7 @@ namespace CodeHub.Core.ViewModels.Events
             public IList<TextBlock> Header { get; private set; }
             public IList<TextBlock> Body { get; private set; } 
             public Action Tapped { get; set; }
+            public bool Multilined { get; set; }
 
             public EventBlock()
             {

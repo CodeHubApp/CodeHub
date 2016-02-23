@@ -24,9 +24,9 @@ namespace CodeHub.iOS.TableViewCells
 
                 cell.Description.TextColor = Theme.CurrentTheme.MainTextColor;
 
-                cell.Image1.Image = Theme.CurrentTheme.RepositoryCellFollowers;
-                cell.Image3.Image = Theme.CurrentTheme.RepositoryCellForks;
-                cell.UserImage.Image = Theme.CurrentTheme.RepositoryCellUser;
+                cell.Image1.Image =  Octicon.Star.ToImage(12);
+                cell.Image3.Image = Octicon.RepoForked.ToImage(12);
+                cell.UserImage.Image = Octicon.Person.ToImage(12);
 
                 cell.BigImage.Layer.MasksToBounds = true;
                 cell.BigImage.Layer.CornerRadius = cell.BigImage.Bounds.Height / 2f;

@@ -363,7 +363,7 @@
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.cs" />
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Walkthrough\OrgViewController.xib" />
-    <Compile Include="LinkedPleaseInclude.cs" />
+    <Compile Include="LinkerPleaseInclude.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -558,6 +558,7 @@
     <BundleResource Include="Images\down_chevron.png" />
     <BundleResource Include="Images\down_chevron%402x.png" />
     <BundleResource Include="Organizations.png" />
+    <Content Include="WebResources\marked.js" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />

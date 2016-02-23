@@ -8,6 +8,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.DialogElements;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views
 {
@@ -37,7 +38,7 @@ namespace CodeHub.iOS.Views
             DismissViewController(true, null);
         }
 
-        protected virtual void Save()
+        private async Task Save()
         {
             if (_model.Files.Count(x => x.Value != null) == 0)
             {
@@ -45,14 +46,22 @@ namespace CodeHub.iOS.Views
                 return;
             }
 
-            this.DoWorkAsync("Saving...", async () =>
+            var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+            var hud = this.CreateHud();
+            NetworkActivity.PushNetworkActive();
+
+            try
             {
-                var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+                hud.Show("Saving...");
                 var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
-                if (Created != null)
-                    Created(newGist.Data);
+                Created?.Invoke(newGist.Data);
                 DismissViewController(true, null);
-            });
+            }
+            finally
+            {
+                hud.Hide();
+                NetworkActivity.PopNetworkActive();
+            }
         }
 
         private bool IsDuplicateName(string name)
@@ -107,6 +116,8 @@ namespace CodeHub.iOS.Views
             {
                 d(cancelButton.GetClickedObservable().Subscribe(_ => Discard()));
                 d(saveButton.GetClickedObservable().Subscribe(_ => Save()));
+                d(_descriptionElement.Clicked.Subscribe(_ => ChangeDescription()));
+                d(_addFileElement.Clicked.Subscribe(_ => AddFile()));
             });
         }
 
@@ -116,15 +127,17 @@ namespace CodeHub.iOS.Views
             UpdateView();
         }
 
+        private readonly MultilinedElement _descriptionElement = new MultilinedElement("Description");
+        private readonly StringElement _addFileElement = new StringElement("Add New File");
+
         protected void UpdateView()
         {
             ICollection<Section> sections = new LinkedList<Section>();
             var section = new Section();
             sections.Add(section);
 
-            var desc = new MultilinedElement("Description", _model.Description);
-            desc.Clicked.Subscribe(_ => ChangeDescription());
-            section.Add(desc);
+            _descriptionElement.Details = _model.Description;
+            section.Add(_descriptionElement);
 
             var fileSection = new Section();
             sections.Add(fileSection);
@@ -140,39 +153,47 @@ namespace CodeHub.iOS.Views
                     elName = _model.Files[key].Filename;
 
                 var el = new FileElement(elName, key, _model.Files[key]);
-                el.Clicked.Subscribe(_ => {
-                    if (!_model.Files.ContainsKey(key))
-                        return;
-                    var createController = new ModifyGistFileController(key, _model.Files[key].Content);
-                    createController.Save = (name, content) => {
-
-                        if (string.IsNullOrEmpty(name))
-                            throw new InvalidOperationException("Please enter a name for the file");
-
-                        //If different name & exists somewhere else
-                        if (!name.Equals(key))
-                            if (IsDuplicateName(name))
-                                throw new InvalidOperationException("A filename by that type already exists");
-
-                        if (_originalGist.Files.ContainsKey(key))
-                            _model.Files[key] = new GistEditModel.File { Content = content, Filename = name };
-                        else
-                        {
-                            _model.Files.Remove(key);
-                            _model.Files[name] = new GistEditModel.File { Content = content };
-                        }
-                    };
-
-                    NavigationController.PushViewController(createController, true);
-                });
+                el.Clicked.Subscribe(MakeCallback(this, key));
                 fileSection.Add(el);
             }
 
-            var addFile = new StringElement("Add New File");
-            addFile.Clicked.Subscribe(_ => AddFile());
-            fileSection.Add(addFile);
-
+            fileSection.Add(_addFileElement);
             Root.Reset(sections);
+        }
+
+        private static Action<object> MakeCallback(EditGistController ctrl, string key)
+        {
+            var weakCtrl = new WeakReference<EditGistController>(ctrl);
+            return new Action<object>(_ =>
+            {
+                var model = weakCtrl.Get()?._model;
+                if (model == null || !model.Files.ContainsKey(key))
+                    return;
+
+                var originalGist = weakCtrl.Get()?._originalGist;
+
+                var createController = new ModifyGistFileController(key, model.Files[key].Content);
+                createController.Save = (name, content) =>
+                {
+                    if (string.IsNullOrEmpty(name))
+                        throw new InvalidOperationException("Please enter a name for the file");
+
+                    //If different name & exists somewhere else
+                    if (!name.Equals(key))
+                    if (weakCtrl.Get()?.IsDuplicateName(name) == true)
+                        throw new InvalidOperationException("A filename by that type already exists");
+
+                    if (originalGist?.Files.ContainsKey(key) == true)
+                        model.Files[key] = new GistEditModel.File { Content = content, Filename = name };
+                    else
+                    {
+                        model.Files.Remove(key);
+                        model.Files[name] = new GistEditModel.File { Content = content };
+                    }
+                };
+
+                weakCtrl.Get()?.NavigationController.PushViewController(createController, true);
+            });
         }
 
         private void ChangeDescription()
@@ -213,10 +234,8 @@ namespace CodeHub.iOS.Views
             {
                 File = file;
                 Key = key;
-                Accessory = UITableViewCellAccessory.DisclosureIndicator;
-
                 if (file.Content != null)
-                    Value = System.Text.ASCIIEncoding.UTF8.GetByteCount(file.Content) + " bytes";
+                    Value = System.Text.Encoding.UTF8.GetByteCount(file.Content) + " bytes";
             }
         }
 

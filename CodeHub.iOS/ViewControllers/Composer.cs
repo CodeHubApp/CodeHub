@@ -182,18 +182,22 @@ namespace CodeHub.iOS.ViewControllers
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
 
+        NSObject _hideNotification, _showNotification;
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
             TextView.BecomeFirstResponder ();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+            if (_hideNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_hideNotification);
+            if (_showNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
         
         public void NewComment (UIViewController parent, Action<string> action)
