@@ -4,6 +4,8 @@ using UIKit;
 using WebKit;
 using System;
 using CodeHub.iOS.Services;
+using System.Reactive.Linq;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -26,7 +28,13 @@ namespace CodeHub.iOS.Views.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewModel.Bind(x => x.Path).Subscribe(x => LoadFile(x));
+
+            ViewModel.Bind(x => x.ContentText, true)
+                .IsNotNull()
+                .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
+                .Select(x => new MarkdownView { Model = x }.GenerateString())
+                .Subscribe(LoadContent);
+
             ViewModel.LoadCommand.Execute(false);
         }
 

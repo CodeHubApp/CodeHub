@@ -226,7 +226,6 @@
     <Compile Include="Utilities\UIImageExtensions.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
     <Compile Include="Utilities\Graphics.cs" />
-    <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
     <Compile Include="Octicons.cs" />
     <Compile Include="OcticonExtensions.cs" />

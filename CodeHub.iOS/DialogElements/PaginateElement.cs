@@ -13,7 +13,7 @@ namespace CodeHub.iOS.DialogElements
         {
             NormalCaption = normal;
             LoadingCaption = loading;
-            Font = StringElement.DefaultTitleFont;
+            Font = UIFont.PreferredBody;
             TextColor = StringElement.DefaultTitleColor;
         }
 

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using MonoTouch.UIKit;
 using CodeHub.iOS.Services;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -217,9 +218,10 @@ namespace CodeHub.iOS.ViewControllers
                 Add(_previewView);
 
                 var markdownService = Mvx.Resolve<IMarkdownService>();
-                var path = MarkdownHtmlGenerator.CreateFile(markdownService.Convert(Text));
-                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-                _previewView.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
+                var markdownText = markdownService.Convert(Text);
+                var model = new DescriptionModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
+                var view = new MarkdownView { Model = model }.GenerateString();
+                _previewView.LoadHtmlString(view, NSBundle.MainBundle.BundleUrl);
             }
         }
     }

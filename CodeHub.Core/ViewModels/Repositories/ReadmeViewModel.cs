@@ -4,40 +4,31 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Services;
-using CodeHub.Core.Utils;
 using MvvmCross.Core.ViewModels;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class ReadmeViewModel : LoadableViewModel
     {
         private readonly IMarkdownService _markdownService;
-        private string _data;
-        private string _path;
-        private GitHubSharp.Models.ContentModel _contentModel;
 
-        public string Username 
+        public string RepositoryOwner { get; private set; }
+
+        public string RepositoryName { get; private set; }
+
+        private string _contentText;
+        public string ContentText
         {
-            get;
-            private set; 
+            get { return _contentText; }
+            private set { this.RaiseAndSetIfChanged(ref _contentText, value); }
         }
 
-        public string Repository 
+        private ContentModel _contentModel;
+        public ContentModel ContentModel
         {
-            get;
-            private set; 
-        }
-
-        public string Data
-        {
-            get { return _data; }
-            set { _data = value; RaisePropertyChanged(() => Data); }
-        }
-
-        public string Path
-        {
-            get { return _path; }
-            set { _path = value; RaisePropertyChanged(() => Path); }
+            get { return _contentModel; }
+            set { this.RaiseAndSetIfChanged(ref _contentModel, value); }
         }
 
         public string HtmlUrl
@@ -57,23 +48,22 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ReadmeViewModel(IMarkdownService markdownService)
         {
+            Title = "Readme";
             _markdownService = markdownService;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override async Task Load(bool forceCacheInvalidation)
         {
-            return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].GetReadme(), forceCacheInvalidation, x =>
-            {
-                _contentModel = x.Data;
-                var data = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(x.Data.Content)));
-                Path = MarkdownHtmlGenerator.CreateFile(data);
-            });
+            var cmd = this.GetApplication().Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme();
+            var result = await this.GetApplication().Client.ExecuteAsync(cmd);
+            ContentModel = result.Data;
+            ContentText = _markdownService.Convert(Encoding.UTF8.GetString(Convert.FromBase64String(result.Data.Content)));
         }
 
         public void Init(NavObject navObject)
         {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
+            RepositoryOwner = navObject.Username;
+            RepositoryName = navObject.Repository;
         }
 
         public class NavObject

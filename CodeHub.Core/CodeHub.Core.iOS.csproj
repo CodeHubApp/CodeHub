@@ -114,7 +114,6 @@
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
-    <Compile Include="Utils\MarkdownHtmlGenerator.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
     <Compile Include="Factories\LoginFactory.cs" />
     <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
@@ -162,15 +161,19 @@
     <Compile Include="Utils\GitHubExtensions.cs" />
     <Compile Include="Utils\WeakReferenceExtensions.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="Utils\TaskExtensions.cs" />
     <Compile Include="ViewModels\App\UpgradeViewModel.cs" />
-    <Compile Include="Utils\ObservableExtensions.cs" />
     <Compile Include="Data\Language.cs" />
     <Compile Include="Data\LanguageRepository.cs" />
     <Compile Include="Data\TrendingRepository.cs" />
-    <Compile Include="Utils\FunctionalExtensions.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
+    <Compile Include="Extensions\ObservableExtensions.cs" />
+    <Compile Include="Extensions\FunctionalExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="Extensions\ReactiveExtensions.cs" />
+    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\ReactiveListExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -233,14 +236,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Markdown\marked.js" />
-    <Content Include="Markdown\markdown.html" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Factories\" />
     <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

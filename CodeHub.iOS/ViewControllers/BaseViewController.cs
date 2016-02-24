@@ -15,10 +15,12 @@ namespace CodeHub.iOS.ViewControllers
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
         private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
 
+        #if DEBUG
         ~BaseViewController()
         {
             Console.WriteLine("All done with " + GetType().Name);
         }
+        #endif
 
         public IObservable<bool> Appearing
         {
@@ -58,17 +60,20 @@ namespace CodeHub.iOS.ViewControllers
 
         private void CommonConstructor()
         {
-            Disappeared.Subscribe(_ => {
-                foreach (var a in _activations)
-                    a.Dispose();
-                _activations.Clear();
-            });
             this.WhenActivated(_ => { });
+        }
+
+        private void DisposeActivations()
+        {
+            foreach (var a in _activations)
+                a.Dispose();
+            _activations.Clear();
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
+            DisposeActivations();
             _appearingSubject.OnNext(animated);
         }
 
@@ -81,6 +86,7 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
+            DisposeActivations();
             _disappearingSubject.OnNext(animated);
         }
 

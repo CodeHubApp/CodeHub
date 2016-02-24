@@ -41,7 +41,7 @@ namespace CodeHub.iOS.Views.App
                 return;
 
             var featuresService = Mvx.Resolve<IFeaturesService>();
-            if (!featuresService.IsPushNotificationsActivated && !featuresService.IsProEnabled)
+            if (!featuresService.IsPushNotificationsActivated)
                 return;
 
             var alertDialogService = Mvx.Resolve<IAlertDialogService>();

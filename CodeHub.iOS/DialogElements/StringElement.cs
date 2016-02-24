@@ -25,8 +25,6 @@ namespace CodeHub.iOS.DialogElements
 
     public class StringElement : Element 
     {
-        public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
-        public static UIFont  DefaultDetailFont = UIFont.PreferredSubheadline;
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
         public static UIColor DefaultDetailColor = UIColor.FromRGB(80, 80, 80);
         public static UIColor BgColor = UIColor.White;
@@ -146,8 +144,8 @@ namespace CodeHub.iOS.DialogElements
 
         public StringElement()
         {
-            Font = DefaultTitleFont.WithSize(DefaultTitleFont.PointSize);
-            SubtitleFont = DefaultDetailFont.WithSize(DefaultDetailFont.PointSize);
+            Font = UIFont.PreferredBody;
+            SubtitleFont = UIFont.PreferredSubheadline;
             TextColor = DefaultTitleColor;
         }
 

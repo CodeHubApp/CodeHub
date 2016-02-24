@@ -62,7 +62,7 @@ namespace CodeHub.iOS.DialogElements
             var cell = tv.DequeueReusableCell("boolean_element") as BooleanCellView ?? new BooleanCellView();
             cell.Switch.On = Value;
             cell.BackgroundColor = StringElement.BgColor;
-            cell.TextLabel.Font = StringElement.DefaultTitleFont;
+            cell.TextLabel.Font = UIFont.PreferredBody;
             cell.TextLabel.TextColor = StringElement.DefaultTitleColor;
             cell.TextLabel.Text = Caption;
 

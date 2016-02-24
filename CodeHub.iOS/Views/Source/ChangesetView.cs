@@ -89,7 +89,7 @@ namespace CodeHub.iOS.Views.Source
                 var repo = new StringElement(ViewModel.Repository) { 
                     Accessory = UITableViewCellAccessory.DisclosureIndicator, 
                     Lines = 1, 
-                    Font = StringElement.DefaultDetailFont, 
+                    Font = UIFont.PreferredSubheadline, 
                     TextColor = StringElement.DefaultDetailColor,
                     Image = Octicon.Repo.ToImage()
                 };
