@@ -338,7 +338,6 @@
     <Compile Include="DialogElements\NewsFeedElement.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
-    <Compile Include="DialogElements\WebElement.cs" />
     <Compile Include="DialogElements\MultilinedElement.cs" />
     <Compile Include="DialogElements\OwnerDrawnElement.cs" />
     <Compile Include="DialogElements\LoadMoreElement.cs" />
@@ -363,6 +362,15 @@
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Walkthrough\OrgViewController.xib" />
     <Compile Include="LinkerPleaseInclude.cs" />
+    <Compile Include="WebViews\CommentModel.cs" />
+    <None Include="WebViews\CommentsView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsView.cs</LastGenOutput>
+    </None>
+    <Compile Include="WebViews\CommentsView.cs">
+      <DependentUpon>CommentsView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="DialogElements\HtmlElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -464,8 +472,6 @@
     <BundleResource Include="Images\Web\back%402x.png" />
     <BundleResource Include="Images\Web\forward.png" />
     <BundleResource Include="Images\Web\forward%402x.png" />
-    <Content Include="WebCell\body.html" />
-    <Content Include="WebCell\comments.html" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
     <BundleResource Include="Images\Buttons\back.png" />
     <BundleResource Include="Images\Buttons\cancel.png" />

@@ -3,6 +3,7 @@ using Foundation;
 using System.Collections.Generic;
 using UIKit;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -190,23 +191,16 @@ namespace CodeHub.iOS.DialogElements
 //            }
 //        }
 
-        public void Reload (Element element)
+        public void Reload (params Element[] elements)
         {
-            if (element == null)
-                return;
-            if (element.Section == null || element.Section.Root == null)
-                return;
-            if (element.Section.Root != this)
-                throw new ArgumentException ("Element is not attached to this root");
-            
-            var path = element.IndexPath;
-            if (path == null)
-                return;
+            var paths = (elements ?? Enumerable.Empty<Element>())
+                .Where(x => x.Section != null && x.Section.Root != null)
+                .Select(x => x.IndexPath);
 
             try
             {
                 _tableView.Get()?.BeginUpdates();
-                _tableView.Get()?.ReloadRows (new [] { path }, UITableViewRowAnimation.Automatic);
+                _tableView.Get()?.ReloadRows(paths.ToArray(), UITableViewRowAnimation.None);
             }
             finally
             {

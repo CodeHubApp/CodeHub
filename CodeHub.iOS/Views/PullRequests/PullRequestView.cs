@@ -11,20 +11,21 @@ using CodeHub.iOS.Services;
 using CodeHub.iOS.ViewControllers.Repositories;
 using System.Reactive.Linq;
 using ReactiveUI;
+using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
-        private WebElement _descriptionElement;
-        private WebElement _commentsElement;
+        private readonly HtmlElement _descriptionElement = new HtmlElement("description");
+        private readonly HtmlElement _commentsElement = new HtmlElement("comments");
+        private readonly SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
+        private readonly SplitViewElement _split2 = new SplitViewElement(Octicon.Person.ToImage(), Octicon.Calendar.ToImage());
         private StringElement _milestoneElement;
         private StringElement _assigneeElement;
         private StringElement _labelsElement;
         private StringElement _addCommentElement;
 
-        private readonly SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
-        private readonly SplitViewElement _split2 = new SplitViewElement(Octicon.Person.ToImage(), Octicon.Calendar.ToImage());
 
         public new PullRequestViewModel ViewModel
         {
@@ -52,12 +53,6 @@ namespace CodeHub.iOS.Views.PullRequests
                     HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
                 });
 
-            var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-            _descriptionElement = new WebElement(content, "body", false);
-
-            var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-            _commentsElement = new WebElement(content2, "comments", true);
-
             _milestoneElement = new StringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) { Image = Octicon.Milestone.ToImage() };
             _assigneeElement = new StringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) { Image = Octicon.Person.ToImage() };
             _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Octicon.Tag.ToImage() };
@@ -70,7 +65,14 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split1.Button2.Text = merged ? "Merged" : "Not Merged";
                 _split2.Button1.Text = x.User.Login;
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
-                _descriptionElement.Value = ViewModel.MarkdownDescription;
+
+
+                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize);
+                var markdown = new MarkdownView { Model = model };
+                var html = markdown.GenerateString();
+                _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
+
+
                 HeaderView.Text = x.Title ?? Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
@@ -133,27 +135,6 @@ namespace CodeHub.iOS.Views.PullRequests
             });
         }
 
-        private IEnumerable<CommentModel> CreateCommentList()
-        {
-            var items = ViewModel.Comments.Select(x => new CommentModel
-            { 
-                AvatarUrl = x.User.AvatarUrl, 
-                Login = x.User.Login, 
-                    CreatedAt = x.CreatedAt.UtcDateTime,
-                Body = ViewModel.ConvertToMarkdown(x.Body)
-            })
-                .Concat(ViewModel.Events.Select(x => new CommentModel
-            {
-                AvatarUrl = x.Actor.AvatarUrl, 
-                Login = x.Actor.Login, 
-                        CreatedAt = x.CreatedAt.UtcDateTime,
-                Body = CreateEventBody(x.Event, x.CommitId)
-            })
-                    .Where(x => !string.IsNullOrEmpty(x.Body)));
-
-            return items.OrderBy(x => x.CreatedAt);
-        }
-
         private static string CreateEventBody(string eventType, string commitId)
         {
             commitId = commitId ?? string.Empty;
@@ -176,20 +157,19 @@ namespace CodeHub.iOS.Views.PullRequests
 
         public void RenderComments()
         {
-            var s = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
-            var comments = CreateCommentList().Select(x => new {
-                avatarUrl = x.AvatarUrl,
-                login = x.Login,
-                created_at = x.CreatedAt.Humanize(),
-                body = x.Body
-            });
-            var data = s.Serialize(comments);
+            var comments = ViewModel.Comments
+                .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, ViewModel.ConvertToMarkdown(x.Body), x.CreatedAt))
+                .Concat(ViewModel.Events.Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt)))
+                .Where(x => !string.IsNullOrEmpty(x.Body))
+                .OrderBy(x => x.Date)
+                .ToList();
+            var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            var razorView = new CommentsView { Model = commentModel };
+            var html = razorView.GenerateString();
 
-            InvokeOnMainThread(() =>
-            {
-                _commentsElement.Value = !comments.Any() ? string.Empty : data;
-                if (_commentsElement.GetRootElement() == null)
-                    Render();
+            InvokeOnMainThread(() => {
+                _commentsElement.SetValue(!comments.Any() ? null : html);
+                Render();
             });
         }
 
@@ -252,14 +232,6 @@ namespace CodeHub.iOS.Views.PullRequests
             sheet.ShowInView(View);
         }
 
-        private class CommentModel
-        {
-            public string AvatarUrl { get; set; }
-            public string Login { get; set; }
-            public DateTime CreatedAt { get; set; }
-            public string Body { get; set; }
-        }
-
         private void Render()
         {
             //Wait for the issue to load
@@ -279,7 +251,7 @@ namespace CodeHub.iOS.Views.PullRequests
             sections.Add(new Section { split });
 
             var secDetails = new Section();
-            if (!string.IsNullOrEmpty(_descriptionElement.Value))
+            if (_descriptionElement.HasValue)
                 secDetails.Add(_descriptionElement);
 
             secDetails.Add(_split1);
@@ -333,7 +305,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 sections.Add(new Section { el });
             }
 
-            if (!string.IsNullOrEmpty(_commentsElement.Value))
+            if (_commentsElement.HasValue)
                 sections.Add(new Section { _commentsElement });
 
             sections.Add(new Section { _addCommentElement });

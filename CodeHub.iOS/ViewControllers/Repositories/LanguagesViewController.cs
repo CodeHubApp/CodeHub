@@ -7,6 +7,8 @@ using System.Reactive.Subjects;
 using System;
 using System.Reactive.Linq;
 using Foundation;
+using CodeHub.iOS.Utilities;
+using System.Net;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -31,7 +33,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            Load().ToBackground();
+
+            NetworkActivity.PushNetworkActive();
+            Load().ContinueWith(t => NetworkActivity.PopNetworkActive()).ToBackground();
         }
 
         private async Task Load()

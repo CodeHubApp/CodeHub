@@ -11,17 +11,19 @@ using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
+using CodeHub.iOS.WebViews;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueView : PrettyDialogViewController
     {
-        protected WebElement _descriptionElement;
-        protected WebElement _commentsElement;
-        protected StringElement _milestoneElement;
-        protected StringElement _assigneeElement;
-        protected StringElement _labelsElement;
-        protected StringElement _addCommentElement;
+        private readonly HtmlElement _descriptionElement = new HtmlElement("description");
+        private readonly HtmlElement _commentsElement = new HtmlElement("comments");
+        private StringElement _milestoneElement;
+        private StringElement _assigneeElement;
+        private StringElement _labelsElement;
+        private StringElement _addCommentElement;
         private SplitButtonElement _split = new SplitButtonElement();
         private SplitButtonElement.Button _splitButton1;
         private SplitButtonElement.Button _splitButton2;
@@ -55,12 +57,6 @@ namespace CodeHub.iOS.Views.Issues
                     HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
                 });
 
-            var content = System.IO.File.ReadAllText("WebCell/body.html", System.Text.Encoding.UTF8);
-            _descriptionElement = new WebElement(content, "body", false);
-
-            var content2 = System.IO.File.ReadAllText("WebCell/comments.html", System.Text.Encoding.UTF8);
-            _commentsElement = new WebElement(content2, "comments", true);
-
             _milestoneElement = new StringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
             _assigneeElement = new StringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator };
             _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
@@ -85,7 +81,11 @@ namespace CodeHub.iOS.Views.Issues
                 _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
-                _descriptionElement.Value = ViewModel.MarkdownDescription;
+
+                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize);
+                var markdown = new MarkdownView { Model = model };
+                var html = markdown.GenerateString();
+                _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
 
                 HeaderView.Text = x.Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
@@ -113,27 +113,6 @@ namespace CodeHub.iOS.Views.Issues
             });
         }
 
-        private IEnumerable<CommentModel> CreateCommentList()
-        {
-            var items = ViewModel.Comments.Select(x => new CommentModel 
-            { 
-                AvatarUrl = x.User.AvatarUrl, 
-                Login = x.User.Login, 
-                CreatedAt = x.CreatedAt.UtcDateTime,
-                Body = ViewModel.ConvertToMarkdown(x.Body)
-            })
-                .Concat(ViewModel.Events.Select(x => new CommentModel
-            {
-                AvatarUrl = x.Actor.AvatarUrl, 
-                Login = x.Actor.Login, 
-                CreatedAt = x.CreatedAt.UtcDateTime,
-                Body = CreateEventBody(x.Event, x.CommitId)
-            })
-                .Where(x => !string.IsNullOrEmpty(x.Body)));
-
-            return items.OrderBy(x => x.CreatedAt);
-        }
-
         private static string CreateEventBody(string eventType, string commitId)
         {
             commitId = commitId ?? string.Empty;
@@ -156,19 +135,19 @@ namespace CodeHub.iOS.Views.Issues
 
         public void RenderComments()
         {
-            var s = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
-            var comments = CreateCommentList().Select(x => new {
-                avatarUrl = x.AvatarUrl,
-                login = x.Login,
-                created_at = x.CreatedAt.Humanize(),
-                body = x.Body
-            });
-            var data = s.Serialize(comments);
+            var comments = ViewModel.Comments
+                .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, ViewModel.ConvertToMarkdown(x.Body), x.CreatedAt))
+                .Concat(ViewModel.Events.Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt)))
+                .Where(x => !string.IsNullOrEmpty(x.Body))
+                .OrderBy(x => x.Date)
+                .ToList();
+            var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            var razorView = new CommentsView { Model = commentModel };
+            var html = razorView.GenerateString();
 
             InvokeOnMainThread(() => {
-                _commentsElement.Value = !comments.Any() ? string.Empty : data;
-                if (_commentsElement.GetRootElement() == null)
-                    Render();
+                _commentsElement.SetValue(!comments.Any() ? null : html);
+                Render();
             });
         }
 
@@ -187,7 +166,7 @@ namespace CodeHub.iOS.Views.Issues
             sections.Add(new Section { _split });
 
             var secDetails = new Section();
-            if (!string.IsNullOrEmpty(_descriptionElement.Value))
+            if (_descriptionElement.HasValue)
                 secDetails.Add(_descriptionElement);
 
             foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
@@ -198,7 +177,7 @@ namespace CodeHub.iOS.Views.Issues
             secDetails.Add(_labelsElement);
             sections.Add(secDetails);
 
-            if (!string.IsNullOrEmpty(_commentsElement.Value))
+            if (_commentsElement.HasValue)
                 sections.Add(new Section { _commentsElement });
 
             sections.Add(new Section { _addCommentElement });
@@ -263,12 +242,10 @@ namespace CodeHub.iOS.Views.Issues
             sheet.ShowInView(this.View);
         }
 
-        private class CommentModel
+        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
-            public string AvatarUrl { get; set; }
-            public string Login { get; set; }
-            public DateTime CreatedAt { get; set; }
-            public string Body { get; set; }
+            Task.WhenAll(_descriptionElement.ForceResize(), _commentsElement.ForceResize())
+                .ContinueWith(t => Root.Reload(_commentsElement, _descriptionElement), TaskContinuationOptions.OnlyOnRanToCompletion);
         }
     }
 }

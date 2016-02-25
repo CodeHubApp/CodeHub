@@ -259,8 +259,8 @@ namespace CodeHub.iOS.ViewControllers
 
             public override UIView GetViewForFooter (UITableView tableView, nint sectionIdx)
             {
-                var section = Root[(int)sectionIdx];
-                return section.FooterView;
+                var section = Root?[(int)sectionIdx];
+                return section?.FooterView;
             }
 
             public override nfloat GetHeightForFooter (UITableView tableView, nint sectionIdx)
