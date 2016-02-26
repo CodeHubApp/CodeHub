@@ -5,83 +5,53 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public class LiteComposer : UIViewController
+    public class LiteComposer : BaseViewController
     {
-        readonly ComposerView _composerView;
-        internal UIBarButtonItem SendItem;
+        private readonly UITextView _textView;
+        private readonly UIBarButtonItem _sendButton;
 
         public event EventHandler<string> ReturnAction;
 
         public bool EnableSendButton
         {
-            get { return SendItem.Enabled; }
-            set { SendItem.Enabled = value; }
-        }
-
-        private class ComposerView : UIView 
-        {
-            internal readonly UITextView TextView;
-
-            public ComposerView (CGRect bounds) : base (bounds)
-            {
-                TextView = new UITextView (CGRect.Empty) {
-                    Font = UIFont.SystemFontOfSize (18),
-                };
-
-                // Work around an Apple bug in the UITextView that crashes
-                if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
-                    TextView.AutocorrectionType = UITextAutocorrectionType.No;
-
-                AddSubview (TextView);
-            }
-
-
-            internal void Reset (string text)
-            {
-                TextView.Text = text;
-            }
-
-            public override void LayoutSubviews ()
-            {
-                Resize (Bounds);
-            }
-
-            void Resize (CGRect bounds)
-            {
-                TextView.Frame = new CGRect (0, 0, bounds.Width, bounds.Height);
-            }
-
-            public string Text { 
-                get {
-                    return TextView.Text;
-                }
-                set {
-                    TextView.Text = value;
-                }
-            }
+            get { return _sendButton.Enabled; }
+            set { _sendButton.Enabled = value; }
         }
 
         public LiteComposer () : base (null, null)
         {
             Title = "New Comment";
             EdgesForExtendedLayout = UIRectEdge.None;
-            // Navigation Bar
 
-            var close = new UIBarButtonItem (Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => CloseComposer());
+            _textView = new UITextView()
+            {
+                Font = UIFont.PreferredBody
+            };
+
+            var close = new UIBarButtonItem { Image = Theme.CurrentTheme.BackButton };
             NavigationItem.LeftBarButtonItem = close;
-            SendItem = new UIBarButtonItem (Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => PostCallback());
-            NavigationItem.RightBarButtonItem = SendItem;
+            _sendButton = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+            NavigationItem.RightBarButtonItem = _sendButton;
 
-            // Composer
-            _composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
+            OnActivation(d =>
+            {
+                d(close.GetClickedObservable().Subscribe(_ => CloseComposer()));
+                d(_sendButton.GetClickedObservable().Subscribe(_ => PostCallback()));
+            });
+        }
 
-            View.AddSubview (_composerView);
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            _textView.Frame = ComputeComposerSize(CGRect.Empty);
+            View.AddSubview (_textView);
         }
 
         public string Text
         {
-            get { return _composerView.Text; }
-            set { _composerView.Text = value; }
+            get { return _textView.Text; }
+            set { _textView.Text = value; }
         }
 
         public string ActionButtonText 
@@ -92,13 +62,13 @@ namespace CodeHub.iOS.ViewControllers
 
         public void CloseComposer ()
         {
-            SendItem.Enabled = true;
+            _sendButton.Enabled = true;
             NavigationController.PopViewController(true);
         }
 
         void PostCallback ()
         {
-            SendItem.Enabled = false;
+            _sendButton.Enabled = false;
             var handler = ReturnAction;
             if (handler != null)
                 handler(this, Text);
@@ -109,7 +79,7 @@ namespace CodeHub.iOS.ViewControllers
             var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
             if (nsValue == null) return;
             var kbdBounds = nsValue.RectangleFValue;
-            _composerView.Frame = ComputeComposerSize (kbdBounds);
+            _textView.Frame = ComputeComposerSize (kbdBounds);
         }
 
         CGRect ComputeComposerSize (CGRect kbdBounds)
@@ -118,23 +88,19 @@ namespace CodeHub.iOS.ViewControllers
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
 
-        [Obsolete]
-        public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
-        {
-            return true;
-        }
-
+        NSObject _showNotification;
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            _composerView.TextView.BecomeFirstResponder ();
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _textView.BecomeFirstResponder ();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+            if (_showNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
     }
 }

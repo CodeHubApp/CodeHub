@@ -3,6 +3,7 @@ using System.Linq;
 using CodeHub.iOS.ViewControllers;
 using UIKit;
 using CodeHub.iOS.DialogElements;
+using Humanizer;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -12,10 +13,17 @@ namespace CodeHub.iOS.ViewControllers
             : base(UITableViewStyle.Grouped)
         {
             Title = "Filter & Sort";
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Plain, (s, e) => DismissViewController(true, null));
-            NavigationItem.RightBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.SaveButton, UIBarButtonItemStyle.Plain, (s, e) => {
-                ApplyButtonPressed();
-                DismissViewController(true, null); 
+
+            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+
+            OnActivation(d =>
+            {
+                d(cancel.GetClickedObservable().Subscribe(_ => DismissViewController(true, null)));
+                d(save.GetClickedObservable().Subscribe(_ => {
+                    ApplyButtonPressed();
+                    DismissViewController(true, null); 
+                }));
             });
         }
 
@@ -42,7 +50,7 @@ namespace CodeHub.iOS.ViewControllers
                 set
                 {
                     _value = value;
-                    base.Value = ((Enum)Enum.ToObject(typeof(T), value)).Description();
+                    base.Value = ((Enum)Enum.ToObject(typeof(T), value)).Humanize();
                 }
             }
 
@@ -66,7 +74,7 @@ namespace CodeHub.iOS.ViewControllers
                 var sec = new Section();
                 foreach (var x in Enum.GetValues(typeof(T)).Cast<Enum>())
                 {
-                    var e = new StringElement(x.Description())
+                    var e = new StringElement(x.Humanize())
                     { 
                         Accessory = object.Equals(x, element.Value) ? 
                             UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None 

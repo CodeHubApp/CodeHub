@@ -34,7 +34,7 @@ namespace CodeHub.iOS.ViewControllers
             NavigationItem.RightBarButtonItem = SendItem;
 
             TextView = new UITextView(ComputeComposerSize(CGRect.Empty));
-            TextView.Font = UIFont.SystemFontOfSize(18);
+            TextView.Font = UIFont.PreferredBody;
             TextView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
 
             // Work around an Apple bug in the UITextView that crashes
@@ -91,7 +91,7 @@ namespace CodeHub.iOS.ViewControllers
             btn.Layer.CornerRadius = 7f;
             btn.Layer.MasksToBounds = true;
             btn.AdjustsImageWhenHighlighted = false;
-            btn.TouchUpInside += (object sender, System.EventArgs e) => action();
+            btn.TouchUpInside += (sender, e) => action();
             return btn;
         }
 

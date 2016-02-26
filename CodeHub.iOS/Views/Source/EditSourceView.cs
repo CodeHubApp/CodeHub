@@ -12,7 +12,7 @@ namespace CodeHub.iOS.Views.Source
 {
     public class EditSourceView : BaseViewController
     {
-        ComposerView _composerView;
+        private readonly UITextView _textView;
 
         public EditSourceViewModel ViewModel { get; }
     
@@ -21,21 +21,32 @@ namespace CodeHub.iOS.Views.Source
             ViewModel = new EditSourceViewModel();
             EdgesForExtendedLayout = UIRectEdge.None;
             Title = "Edit";
+
+            _textView = new UITextView {
+                Font = UIFont.FromName("Courier", UIFont.PreferredBody.PointSize),
+                SpellCheckingType = UITextSpellCheckingType.No,
+                AutocorrectionType = UITextAutocorrectionType.No,
+                AutocapitalizationType = UITextAutocapitalizationType.None,
+                AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight 
+            };
         }
       
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            _composerView = new ComposerView (ComputeComposerSize (CGRect.Empty));
             var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
 
-            View.AddSubview (_composerView);
+            _textView.Frame = ComputeComposerSize(CGRect.Empty);
+            View.AddSubview(_textView);
 
             OnActivation(d =>
             {
                 d(saveButton.GetClickedObservable().Subscribe(_ => Commit()));
-                d(ViewModel.Bind(x => x.Text).Subscribe(x => _composerView.Text = x));
+                d(ViewModel.Bind(x => x.Text).Subscribe(x => {
+                    _textView.Text = x;
+                    _textView.SelectedRange = new NSRange(0, 0);
+                }));
             });
 
             ViewModel.LoadCommand.Execute(null);
@@ -45,9 +56,9 @@ namespace CodeHub.iOS.Views.Source
         {
             var composer = new LiteComposer { Title = "Commit Message" };
             composer.Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
-            var text = _composerView.Text;
+            var text = _textView.Text;
             composer.ReturnAction += (s, e) => CommitThis(ViewModel, composer, text, e);
-            _composerView.TextView.BecomeFirstResponder ();
+            _textView.BecomeFirstResponder ();
             NavigationController.PushViewController(composer, true);
         }
 
@@ -74,13 +85,13 @@ namespace CodeHub.iOS.Views.Source
             if (nsValue == null) return;
             var kbdBounds = nsValue.RectangleFValue;
             UIView.Animate(0.25f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-            _composerView.Frame = ComputeComposerSize(kbdBounds), null);
+                _textView.Frame = ComputeComposerSize(kbdBounds), null);
         }
 
         void KeyboardWillHide (NSNotification notification)
         {
             UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-            _composerView.Frame = ComputeComposerSize(CGRect.Empty), null);
+                _textView.Frame = ComputeComposerSize(CGRect.Empty), null);
         }
 
         CGRect ComputeComposerSize (CGRect kbdBounds)
@@ -89,65 +100,23 @@ namespace CodeHub.iOS.Views.Source
             return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
         }
 
+        NSObject _hideNotification, _showNotification;
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
-
-            _composerView.TextView.BecomeFirstResponder ();
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
+            _textView.BecomeFirstResponder ();
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            NSNotificationCenter.DefaultCenter.RemoveObserver(this);
+            if (_hideNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_hideNotification);
+            if (_showNotification != null)
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
-
-        private class ComposerView : UIView 
-        {
-            internal readonly UITextView TextView;
-
-            public ComposerView (CGRect bounds) : base (bounds)
-            {
-                TextView = new UITextView (CGRect.Empty) {
-                    Font = UIFont.SystemFontOfSize (14),
-                };
-
-                // Work around an Apple bug in the UITextView that crashes
-                if (ObjCRuntime.Runtime.Arch == ObjCRuntime.Arch.SIMULATOR)
-                    TextView.AutocorrectionType = UITextAutocorrectionType.No;
-
-                AddSubview (TextView);
-            }
-
-
-            internal void Reset (string text)
-            {
-                TextView.Text = text;
-            }
-
-            public override void LayoutSubviews ()
-            {
-                Resize (Bounds);
-            }
-
-            void Resize (CGRect bounds)
-            {
-                TextView.Frame = new CGRect (0, 0, bounds.Width, bounds.Height);
-            }
-
-            public string Text { 
-                get {
-                    return TextView.Text;
-                }
-                set {
-                    TextView.Text = value;
-                    TextView.SelectedRange = new NSRange(0, 0);
-                }
-            }
-        }
-
     }
 }
 

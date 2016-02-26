@@ -171,28 +171,6 @@ namespace CodeHub.iOS.Views.App
                 return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
             return UIInterfaceOrientationMask.All;
         }
-
-        /// <summary>
-        /// A custom navigation controller specifically for iOS6 that locks the orientations to what the StartupControler's is.
-        /// </summary>
-        protected class CustomNavigationController : UINavigationController
-        {
-            readonly StartupView _parent;
-            public CustomNavigationController(StartupView parent, UIViewController root) : base(root) 
-            { 
-                _parent = parent;
-            }
-
-            public override bool ShouldAutorotate()
-            {
-                return _parent.ShouldAutorotate();
-            }
-
-            public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
-            {
-                return _parent.GetSupportedInterfaceOrientations();
-            }
-        }
     }
 }
 

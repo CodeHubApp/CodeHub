@@ -496,7 +496,6 @@
     <Content Include="Diff\difflib.js" />
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
-    <Content Include="Diff\jquery.min.js" />
     <BundleResource Include="Images\avatar.png" />
     <BundleResource Include="Images\avatar%402x.png" />
     <BundleResource Include="Images\Logos\dotcom-mascot.png" />
