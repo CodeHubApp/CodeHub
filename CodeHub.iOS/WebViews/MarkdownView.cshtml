@@ -102,11 +102,13 @@ ul.task-list > li.task-list-item {
   vertical-align: middle;
 }
 </style>
-<script>
-function size() { return document.body.scrollHeight; }
-function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
-var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
-</script>
+@if (Model.ContinuousResize) {
+    <script>
+    function size() { return document.body.scrollHeight; }
+    function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
+    var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
+    </script>
+}
 <title>Readme</title></head>
 <body>@{WriteLiteral(Model.Body);}</body>
 </html>

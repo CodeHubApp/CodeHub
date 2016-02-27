@@ -2,15 +2,18 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Teams;
 using CodeHub.iOS.DialogElements;
 using System;
+using UIKit;
+using CodeHub.iOS.Views;
 
-namespace CodeHub.iOS.Views.Teams
+namespace CodeHub.iOS.ViewControllers.Teams
 {
-    public class TeamsView : ViewModelCollectionDrivenDialogViewController
+    public class TeamsViewController : ViewModelCollectionDrivenDialogViewController
     {
-        public TeamsView()
+        public TeamsViewController()
         {
             Title = "Teams";
-            NoItemsText = "No Teams";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
         }
 
         public override void ViewDidLoad()

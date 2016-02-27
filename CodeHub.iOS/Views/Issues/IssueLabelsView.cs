@@ -14,7 +14,9 @@ namespace CodeHub.iOS.Views.Issues
         {
             EnableSearch = false;
             Title = "Labels";
-            NoItemsText = "No Labels";
+          
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
         }
 
         public override void ViewDidLoad()

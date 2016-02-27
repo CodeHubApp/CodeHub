@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.DialogElements;
 using Foundation;
+using CoreGraphics;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public abstract class ViewModelCollectionDrivenDialogViewController : ViewModelDrivenDialogViewController
     {
         private static NSObject _dumb = new NSObject();
-        public string NoItemsText { get; set; }
+
+        public Lazy<UIView> EmptyView { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -24,7 +26,6 @@ namespace CodeHub.iOS.ViewControllers
         protected ViewModelCollectionDrivenDialogViewController(bool push = true)
             : base(push, UITableViewStyle.Plain)
         {
-            NoItemsText = "No Items";
             EnableSearch = true;
         }
 
@@ -58,10 +59,7 @@ namespace CodeHub.iOS.ViewControllers
                     else
                         newSections = RenderGroupedItems(groupedItems, element, weakVm.Get()?.MoreItems);
 
-                    var elements = newSections.Sum(s => s.Elements.Count);
-                    if (elements == 0)
-                        newSections.Add(new Section { new NoItemsElement(NoItemsText) });
-
+                    CreateEmptyHandler(newSections.Sum(s => s.Elements.Count) == 0);
                     weakRoot.Get()?.Reset(newSections);
                 }
                 catch
@@ -79,6 +77,38 @@ namespace CodeHub.iOS.ViewControllers
 
             if (activateNow)
                 updateDel();
+        }
+
+        private void CreateEmptyHandler(bool x)
+        {
+            if (EmptyView == null)
+            {
+                return;
+            }
+            if (x)
+            {
+                if (!EmptyView.IsValueCreated)
+                {
+                    EmptyView.Value.Alpha = 0f;
+                    TableView.AddSubview(EmptyView.Value);
+                }
+
+                EmptyView.Value.UserInteractionEnabled = true;
+                EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height);
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                TableView.BringSubviewToFront(EmptyView.Value);
+                TableView.TableHeaderView.Do(y => y.Hidden = true);
+                UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 1.0f, null);
+            }
+            else if (EmptyView.IsValueCreated)
+            {
+                EmptyView.Value.UserInteractionEnabled = false;
+                TableView.TableHeaderView.Do(y => y.Hidden = false);
+                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
+                UIView.Animate(0.1f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
+                    () => EmptyView.Value.Alpha = 0f, null);
+            }
         }
 
         protected ICollection<Section> RenderList<T>(IEnumerable<T> items, Func<T, Element> select, Action moreAction)

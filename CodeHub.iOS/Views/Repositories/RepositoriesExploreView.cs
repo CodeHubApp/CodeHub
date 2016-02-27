@@ -14,8 +14,10 @@ namespace CodeHub.iOS.Views.Repositories
         public RepositoriesExploreView()
         {
             AutoHideSearch = false;
-            NoItemsText = "No Repositories";
             Title = "Explore";
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories."));
         }
 
         protected override IUISearchBarDelegate CreateSearchDelegate()

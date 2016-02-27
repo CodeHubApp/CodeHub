@@ -1,17 +1,18 @@
-﻿using System;
-
-namespace CodeHub.iOS.WebViews
+﻿namespace CodeHub.iOS.WebViews
 {
     public class DescriptionModel
     {
-        public string Body { get; private set; }
+        public string Body { get; }
 
-        public int FontSize { get; private set; }
+        public int FontSize { get; }
 
-        public DescriptionModel(string body, int fontSize)
+        public bool ContinuousResize { get; }
+
+        public DescriptionModel(string body, int fontSize, bool continuousResize = false)
         {
             Body = body;
             FontSize = fontSize;
+            ContinuousResize = continuousResize;
         }
     }
 }

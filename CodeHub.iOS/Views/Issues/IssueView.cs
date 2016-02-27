@@ -82,7 +82,7 @@ namespace CodeHub.iOS.Views.Issues
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
 
-                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize);
+                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
                 var markdown = new MarkdownView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);

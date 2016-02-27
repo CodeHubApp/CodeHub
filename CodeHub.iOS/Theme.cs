@@ -1,4 +1,5 @@
 using UIKit;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS
 {
@@ -24,6 +25,8 @@ namespace CodeHub.iOS
             var primaryColor = Theme.CurrentTheme.PrimaryColor;
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);
+
+            EmptyListView.DefaultColor = primaryColor;
 
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;

@@ -2,12 +2,19 @@ using System;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.User;
-using GitHubSharp.Models;
+using UIKit;
+using CodeHub.iOS.Views;
 
-namespace CodeHub.iOS.Views.User
+namespace CodeHub.iOS.ViewControllers.Users
 {
-    public abstract class BaseUserCollectionView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseUserCollectionViewController : ViewModelCollectionDrivenDialogViewController
     {
+        protected BaseUserCollectionViewController(string emptyString)
+        {
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Person.ToEmptyListImage(), emptyString ?? "There are no users."));
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

@@ -14,7 +14,9 @@ namespace CodeHub.iOS.Views.PullRequests
         public PullRequestsView()
         {
             Title = "Pull Requests";
-            NoItemsText = "No Pull Requests";
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.GitPullRequest.ToImage(64f), "There are no pull requests.")); 
 
             _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed" });
             NavigationItem.TitleView = _viewSegment;

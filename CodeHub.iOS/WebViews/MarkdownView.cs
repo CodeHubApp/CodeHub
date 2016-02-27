@@ -50,29 +50,121 @@ WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -w
 
 #line default
 #line hidden
-WriteLiteral("px;\n    line-height: 1.7;\n    overflow: hidden;\n    word-wrap: break-word;\n}\nh1, " +
-"h2, h3, h4, h5, h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-weight: bold;\nline-hei" +
-"ght: 1.7;\ncursor: text;\nposition: relative;\n}\nh1 {\nfont-size: 1.8em;\nborder-bott" +
-"om: 1px solid #ddd;\n}\np, blockquote, ul, ol, dl, table, pre {\nmargin: 15px 0;\n}\n" +
-"h2 {\nfont-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\nul, ol {\npadding-left: 2" +
-"0px;\n}\na {\ncolor: #4183c4;\ntext-decoration: none;\ntext-decoration: none;\n}\n.high" +
-"light pre, pre {\nbackground-color: #f8f8f8;\nborder: 1px solid #ddd;\nline-height:" +
-" 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3px;\n}\npre {\nword-wrap:" +
-" normal;\n}\ndl {\npadding: 0;\n}\ndl dt {\nfont-weight: bold;\nfont-style: italic;\npad" +
-"ding: 0;\nmargin-top: 15px;\n}\ndl dd {\nmargin-bottom: 15px;\npadding: 0 15px;\n}\ntab" +
-"le {\nwidth: 100%;\noverflow: auto;\ndisplay: block;\n}\ntable tr {\nborder-top: 1px s" +
-"olid #ccc;\nbackground-color: #fff;\n}\ntable tr:nth-child(2n) {\nbackground-color: " +
-"#f8f8f8;\n}\ntable th, table td {\nborder: 1px solid #ddd;\npadding: 6px 13px;\n}\ntab" +
-"le th {\nfont-weight: bold;\n}\nimg {\nmax-width: 100%;\n-moz-box-sizing: border-box;" +
-"\nbox-sizing: border-box;\n}\nul.task-list > li.task-list-item {\n  list-style-type:" +
-" none;\n}\n.task-list-item-checkbox {\n  margin-left: -20px;\n  vertical-align: midd" +
-"le;\n}\n</style>\n<script>\nfunction size() { return document.body.scrollHeight; }\nf" +
-"unction rs() { document.location.href = \'app://resize\'; }; window.onsize = rs;\nv" +
-"ar h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300" +
-");\n</script>\n<title>Readme</title></head>\n<body>");
+WriteLiteral(@"px;
+    line-height: 1.7;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 20px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+</style>
+");
+
+
+#line 105 "MarkdownView.cshtml"
+ if (Model.ContinuousResize) {
+
+
+#line default
+#line hidden
+WriteLiteral(@"    <script>
+    function size() { return document.body.scrollHeight; }
+    function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
+    var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
+    </script>
+");
 
 
 #line 111 "MarkdownView.cshtml"
+}
+
+
+#line default
+#line hidden
+WriteLiteral("<title>Readme</title></head>\n<body>");
+
+
+#line 113 "MarkdownView.cshtml"
         WriteLiteral(Model.Body);
 
 #line default

@@ -2,16 +2,21 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.DialogElements;
 using System;
+using UIKit;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetBranchesView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public ChangesetBranchesView()
         {
             Title = "Changeset Branch";
-            NoItemsText = "No Branches";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), "There are no branches."));
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var vm = (ChangesetBranchesViewModel) ViewModel;

@@ -13,8 +13,10 @@ namespace CodeHub.iOS.Views.Source
         public BranchesAndTagsView()
         {
             Title = "Source";
-            NoItemsText = "No Items";
             NavigationItem.TitleView = _viewSegment;
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), "There are no items."));
         }
 
         public override void ViewDidLoad()

@@ -67,7 +67,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
 
-                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize);
+                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
                 var markdown = new MarkdownView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);

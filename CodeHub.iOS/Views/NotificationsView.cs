@@ -19,11 +19,13 @@ namespace CodeHub.iOS.Views
         {
             _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
         }
 
         public override void ViewDidLoad()
         {
-            NoItemsText = "No Notifications";
             Title = "Notifications";
 
             base.ViewDidLoad();

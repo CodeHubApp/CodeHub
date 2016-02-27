@@ -4,9 +4,9 @@ using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Views.User
+namespace CodeHub.iOS.ViewControllers.Users
 {
-    public class ProfileView : PrettyDialogViewController
+    public class ProfileViewController : PrettyDialogViewController
     {
         private readonly Lazy<UIBarButtonItem> _actionButton;
 
@@ -16,7 +16,7 @@ namespace CodeHub.iOS.Views.User
             set { base.ViewModel = value; }
         }
 
-        public ProfileView()
+        public ProfileViewController()
         {
             _actionButton = new Lazy<UIBarButtonItem>(() => new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
         }

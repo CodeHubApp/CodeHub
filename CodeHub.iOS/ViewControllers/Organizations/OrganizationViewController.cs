@@ -6,9 +6,9 @@ using CodeHub.iOS.DialogElements;
 using System;
 using System.Reactive.Linq;
 
-namespace CodeHub.iOS.Views.Organizations
+namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class OrganizationView : PrettyDialogViewController
+    public class OrganizationViewController : PrettyDialogViewController
     {
         public override void ViewDidLoad()
         {

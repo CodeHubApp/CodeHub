@@ -8,11 +8,15 @@ namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestFilesView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public PullRequestFilesView()
         {
             Title = "Files";
-            NoItemsText = "No Files";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.FileCode.ToEmptyListImage(), "There are no files."));
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var vm = (PullRequestFilesViewModel) ViewModel;

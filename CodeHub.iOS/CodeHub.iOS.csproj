@@ -133,7 +133,6 @@
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
-    <Compile Include="Views\Gists\GistsView.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Gists\ModifyGistFileController.cs" />
     <Compile Include="Views\Gists\ModifyGistFileController.designer.cs">
@@ -152,19 +151,11 @@
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
-    <Compile Include="Views\User\OrganizationMembersView.cs" />
     <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
-    <Compile Include="Views\Organizations\OrganizationsView.cs" />
-    <Compile Include="Views\Organizations\OrganizationView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
     <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
     <Compile Include="Views\Repositories\RepositoryView.cs" />
-    <Compile Include="Views\Repositories\StargazersView.cs" />
-    <Compile Include="Views\User\BaseUserCollectionView.cs" />
-    <Compile Include="Views\User\ProfileView.cs" />
-    <Compile Include="Views\User\UserFollowersView.cs" />
-    <Compile Include="Views\User\UserFollowingsView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
@@ -193,8 +184,6 @@
     <None Include="Entitlements.plist" />
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
-    <Compile Include="Views\Teams\TeamsView.cs" />
-    <Compile Include="Views\Teams\TeamMembersView.cs" />
     <None Include="packages.config" />
     <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
@@ -371,6 +360,18 @@
     </Compile>
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="Views\BlurredAlertView.cs" />
+    <Compile Include="Views\EmptyListView.cs" />
+    <Compile Include="Views\Gists\BaseGistsViewController.cs" />
+    <Compile Include="ViewControllers\Users\BaseUserCollectionViewController.cs" />
+    <Compile Include="ViewControllers\Users\OrganizationMembersViewController.cs" />
+    <Compile Include="ViewControllers\Users\ProfileViewController.cs" />
+    <Compile Include="ViewControllers\Users\UserFollowersViewController.cs" />
+    <Compile Include="ViewControllers\Users\UserFollowingsViewController.cs" />
+    <Compile Include="ViewControllers\Organizations\TeamMembersViewController.cs" />
+    <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
+    <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
+    <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoryStargazersViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -551,7 +552,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="ViewControllers\" />
-    <Folder Include="Views\Teams\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="WebViews\" />
     <Folder Include="WebResources\" />
@@ -561,6 +561,8 @@
     <Folder Include="DialogElements\" />
     <Folder Include="Transitions\" />
     <Folder Include="ViewControllers\Accounts\" />
+    <Folder Include="ViewControllers\Users\" />
+    <Folder Include="ViewControllers\Organizations\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -20,7 +20,8 @@ namespace CodeHub.iOS.Views.Repositories
         protected BaseRepositoriesView()
         {
             Title = "Repositories";
-            NoItemsText = "No Repositories"; 
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories."));
         }
 
         public override void ViewDidLoad()

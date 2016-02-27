@@ -4,7 +4,7 @@ using UIKit;
 
 namespace CodeHub.iOS.Views.Gists
 {
-    public class UserGistsView : GistsView
+    public class UserGistsView : BaseGistsViewController
     {
         public new UserGistsViewModel ViewModel
         {

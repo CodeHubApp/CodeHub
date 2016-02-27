@@ -1,6 +1,6 @@
 namespace CodeHub.iOS.Views.Gists
 {
-    public class PublicGistsView : GistsView
+    public class PublicGistsView : BaseGistsViewController
     {
         public PublicGistsView()
         {

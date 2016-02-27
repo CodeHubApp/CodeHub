@@ -2,15 +2,18 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.iOS.DialogElements;
 using System;
+using UIKit;
+using CodeHub.iOS.Views;
 
-namespace CodeHub.iOS.Views.Organizations
+namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class OrganizationsView : ViewModelCollectionDrivenDialogViewController
+    public class OrganizationsViewController : ViewModelCollectionDrivenDialogViewController
     {
-        public OrganizationsView()
+        public OrganizationsViewController()
         {
             Title = "Organizations";
-            NoItemsText = "No Organizations";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no organizations."));
         }
 
         public override void ViewDidLoad()

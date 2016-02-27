@@ -13,7 +13,8 @@ namespace CodeHub.iOS.Views.Issues
         public IssueAssignedToView()
         {
             Title = "Assignees";
-            NoItemsText = "No Assignees";
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Person.ToEmptyListImage(), "There are no assignees."));
         }
 
         public override void ViewDidLoad()

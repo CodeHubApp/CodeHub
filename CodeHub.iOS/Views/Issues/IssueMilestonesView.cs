@@ -13,8 +13,10 @@ namespace CodeHub.iOS.Views.Issues
         public IssueMilestonesView()
         {
             Title = "Milestones";
-            NoItemsText = "No Milestones";
             EnableSearch = false;
+
+            EmptyView = new Lazy<UIView>(() =>
+                new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
         }
 
         public override void ViewDidLoad()
