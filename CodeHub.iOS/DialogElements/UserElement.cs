@@ -7,12 +7,6 @@ namespace CodeHub.iOS.DialogElements
 {
     public class UserElement : StringElement
     {
-        /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="CodeHub.iOS.Elements.UserElement"/> use pinned image.
-        /// </summary>
-        /// <value><c>true</c> if use pinned image; otherwise, <c>false</c>.</value>
-        public bool UsePinnedImage { get; set; }
-
         public UserElement(string username, string firstName, string lastName, GitHubAvatar avatar)
             : base (username, string.Empty, UITableViewCellStyle.Subtitle)
         {
@@ -22,16 +16,12 @@ namespace CodeHub.iOS.DialogElements
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
             Image = Images.Avatar;
             ImageUri = avatar.ToUri(64);
-            UsePinnedImage = true;
         }
         
         // We need to create our own cell so we can position the image view appropriately
         protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
         {
-            if (UsePinnedImage)
-                return new PinnedImageTableViewCell(style, key);
-            else
-                return base.CreateTableViewCell(style, key);
+            return new PinnedImageTableViewCell(style, key);
         }
 
         /// <summary>

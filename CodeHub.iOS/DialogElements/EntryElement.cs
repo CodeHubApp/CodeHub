@@ -137,20 +137,15 @@ namespace CodeHub.iOS.DialogElements
         }
 
         public EntryElement (string caption, string placeholder, string value)
+            : this(caption, placeholder, value, false)
         { 
-            TitleFont = UIFont.PreferredBody;
-            EntryFont = UIFont.PreferredBody;
-            TitleColor = UIColor.Black;
-            Value = value;
-            Caption = caption;
-            this.placeholder = placeholder;
         }
 
         public EntryElement (string caption, string placeholder, string value, bool isPassword)
         {
             TitleFont = UIFont.PreferredBody;
             EntryFont = UIFont.PreferredBody;
-            TitleColor = UIColor.Black;
+            TitleColor = StringElement.DefaultTitleColor;
             Value = value;
             Caption = caption;
             this.isPassword = isPassword;

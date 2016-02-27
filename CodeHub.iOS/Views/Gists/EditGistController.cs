@@ -9,6 +9,7 @@ using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.DialogElements;
 using System.Threading.Tasks;
+using CodeHub.iOS.ViewControllers.Gists;
 
 namespace CodeHub.iOS.Views
 {
@@ -88,7 +89,8 @@ namespace CodeHub.iOS.Views
 
         private void AddFile()
         {
-            var createController = new ModifyGistFileController();
+            var createController = new GistFileAddViewController();
+            createController.SaveCommand.Subscribe(_ => NavigationController.PopToViewController(this, true));
             createController.Save = (name, content) => {
                 if (string.IsNullOrEmpty(name))
                     name = GenerateName();
@@ -172,7 +174,8 @@ namespace CodeHub.iOS.Views
 
                 var originalGist = weakCtrl.Get()?._originalGist;
 
-                var createController = new ModifyGistFileController(key, model.Files[key].Content);
+                var createController = new GistFileEditViewController { Filename = key, Content = model.Files[key].Content };
+                createController.SaveCommand.Subscribe(__ => weakCtrl.Get()?.NavigationController.PopToViewController(weakCtrl.Get(), true));
                 createController.Save = (name, content) =>
                 {
                     if (string.IsNullOrEmpty(name))

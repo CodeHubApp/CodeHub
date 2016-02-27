@@ -38,7 +38,7 @@ namespace CodeHub.iOS.DialogElements
         }
 
         /// Bastardized version. I'll redo this code later...
-        private class ChangesetCell : UIKit.UITableViewCell
+        private sealed class ChangesetCell : UIKit.UITableViewCell
         {
             public AddRemoveView AddRemoveView { get; private set; }
 
@@ -46,7 +46,7 @@ namespace CodeHub.iOS.DialogElements
                 : base(UIKit.UITableViewCellStyle.Subtitle, key)
             {
                 AddRemoveView = new AddRemoveView();
-                this.ContentView.AddSubview(AddRemoveView);
+                ContentView.AddSubview(AddRemoveView);
                 TextLabel.LineBreakMode = UIKit.UILineBreakMode.TailTruncation;
             }
 

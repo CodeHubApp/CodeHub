@@ -175,9 +175,6 @@ namespace CodeHub.iOS.DialogElements
                 _text.Font = TextFont;
                 this.Add(_text);
 
-                this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
-                this.TouchUpInside += (sender, e) => this.BackgroundColor = UIColor.White;
-                this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
                 this.TouchUpInside += (sender, e) => Touch?.Invoke();
             }
 

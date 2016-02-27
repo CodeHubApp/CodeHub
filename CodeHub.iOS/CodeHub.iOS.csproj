@@ -132,10 +132,6 @@
     <Compile Include="Views\Gists\UserGistsView.cs" />
     <Compile Include="Views\Gists\EditGistController.cs" />
     <Compile Include="Views\Gists\GistView.cs" />
-    <Compile Include="Views\Gists\ModifyGistFileController.cs" />
-    <Compile Include="Views\Gists\ModifyGistFileController.designer.cs">
-      <DependentUpon>ModifyGistFileController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
@@ -200,7 +196,6 @@
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
-    <InterfaceDefinition Include="Views\Gists\ModifyGistFileController.xib" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\SlideupTitleVIew.cs" />
@@ -323,7 +318,6 @@
     <Compile Include="DialogElements\OwnerDrawnElement.cs" />
     <Compile Include="DialogElements\LoadMoreElement.cs" />
     <Compile Include="DialogElements\PaginateElement.cs" />
-    <Compile Include="DialogElements\InputElement.cs" />
     <Compile Include="Transitions\SlideDownTransition.cs" />
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
@@ -372,6 +366,10 @@
     <Compile Include="Views\LoadingIndicatorView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileViewController.cs" />
     <Compile Include="DialogElements\MenuElement.cs" />
+    <Compile Include="DialogElements\ExpandingInputElement.cs" />
+    <Compile Include="DialogElements\DummyInputElement.cs" />
+    <Compile Include="Views\ExtendedUITextView.cs" />
+    <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

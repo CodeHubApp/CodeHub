@@ -56,7 +56,7 @@ namespace CodeHub.iOS.Views.Filters
                 new Section("Filter") {
                     (_filter = CreateEnumElement("Type", model.FilterType)),
                     (_open = new BooleanElement("Open?", model.Open)),
-                    (_labels = new InputElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
+                    (_labels = new EntryElement("Labels", "bug,ui,@user", model.Labels) { TextAlignment = UITextAlignment.Right, AutocorrectionType = UITextAutocorrectionType.No, AutocapitalizationType = UITextAutocapitalizationType.None }),
                 },
                 new Section("Order By") {
                     (_sort = CreateEnumElement("Field", model.SortType)),

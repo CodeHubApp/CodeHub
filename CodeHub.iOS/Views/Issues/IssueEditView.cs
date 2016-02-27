@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Issues
             var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
             NavigationItem.RightBarButtonItem = saveButton;
 
-            var title = new InputElement("Title", string.Empty, string.Empty);
+            var title = new EntryElement("Title", string.Empty, string.Empty);
             var assignedTo = new StringElement("Responsible", "Unassigned", UITableViewCellStyle.Value1);
             var milestone = new StringElement("Milestone", "None", UITableViewCellStyle.Value1);
             var labels = new StringElement("Labels", "None", UITableViewCellStyle.Value1);

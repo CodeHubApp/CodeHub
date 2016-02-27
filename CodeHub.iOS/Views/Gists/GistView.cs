@@ -73,6 +73,7 @@ namespace CodeHub.iOS.Views.Gists
                 d(ViewModel.Bind(x => x.IsStarred, true).Subscribe(isStarred => _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred"));
 
                 d(ViewModel.BindCollection(x => x.Comments, true).Subscribe(_ => RenderGist()));
+                d(HeaderView.Clicked.BindCommand(ViewModel.GoToUserCommand));
 
                 d(ViewModel.Bind(x => x.Gist, true).Where(x => x != null).Subscribe(gist =>
                 {
@@ -166,7 +167,7 @@ namespace CodeHub.iOS.Views.Gists
             if (ViewModel.Gist == null)
                 return;
 
-            var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+            var app = Mvx.Resolve<IApplicationService>();
             var isOwner = string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase);
 
             var sheet = new UIActionSheet();
