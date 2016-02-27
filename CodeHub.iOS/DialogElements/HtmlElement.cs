@@ -94,7 +94,7 @@ namespace CodeHub.iOS.DialogElements
         public HtmlElement (string cellKey) 
         {
             Key = new NSString(cellKey);
-            _height = 10f;
+            _height = 0f;
 
             _webView = new Lazy<WKWebView>(() =>
             {

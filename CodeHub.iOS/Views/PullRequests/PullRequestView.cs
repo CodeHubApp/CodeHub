@@ -306,11 +306,11 @@ namespace CodeHub.iOS.Views.PullRequests
                 sections.Add(new Section { el });
             }
 
+            var commentsSection = new Section();
             if (_commentsElement.HasValue)
-                sections.Add(new Section { _commentsElement });
-
-            sections.Add(new Section { _addCommentElement });
-
+                commentsSection.Add(_commentsElement);
+            commentsSection.Add(_addCommentElement);
+            sections.Add(commentsSection);
 
             Root.Reset(sections);
 

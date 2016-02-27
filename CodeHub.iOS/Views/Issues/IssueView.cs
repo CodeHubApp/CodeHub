@@ -178,10 +178,12 @@ namespace CodeHub.iOS.Views.Issues
             secDetails.Add(_labelsElement);
             sections.Add(secDetails);
 
+            var commentsSection = new Section();
             if (_commentsElement.HasValue)
-                sections.Add(new Section { _commentsElement });
+                commentsSection.Add(_commentsElement);
+            commentsSection.Add(_addCommentElement);
+            sections.Add(commentsSection);
 
-            sections.Add(new Section { _addCommentElement });
             Root.Reset(sections);
         }
 
