@@ -11,15 +11,15 @@ Additional information can be found on the [project's webpage](http://thedillonb
 Screenshots
 ------------------
 
-<img alt="Repository View" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image1.png" width="180">
+<img alt="Repository View" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image1.jpg" width="180">
 &nbsp;&nbsp;
-<img alt="Slideout" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image2.png" width="180">
+<img alt="Slideout" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image2.jpg" width="180">
 &nbsp;&nbsp;
-<img alt="Repositories" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image3.png" width="180">
+<img alt="Repositories" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image3.jpg" width="180">
 &nbsp;&nbsp;
-<img alt="Issues" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image4.png" width="180">
+<img alt="Issues" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image4.jpg" width="180">
 &nbsp;&nbsp;
-<img alt="Gists" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image5.png" width="180">
+<img alt="Gists" src="https://raw.github.com/thedillonb/CodeHub/master/Screenshots/Image5.jpg" width="180">
 
 
 
