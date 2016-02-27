@@ -2,9 +2,9 @@ using UIKit;
 using CoreGraphics;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
+using System.Linq;
 using System.Reactive;
-using ReactiveUI;
+using System.Reactive.Subjects;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -14,13 +14,52 @@ namespace CodeHub.iOS.DialogElements
         public static UIFont CaptionFont = UIFont.SystemFontOfSize(14f);
         public static UIColor TextColor = UIColor.FromRGB(100, 100, 100);
         public static UIFont TextFont = UIFont.BoldSystemFontOfSize(14f);
-        private readonly List<SplitButton> _buttons = new List<SplitButton>();
+        private readonly List<Button> _buttons = new List<Button>();
 
-        public SplitButton AddButton(string caption, string text = null)
+        public class Button
         {
-            var btn = new SplitButton(caption, text);
+            private readonly SplitButtonElement _element;
+            private string _text, _caption;
+
+            public Button(SplitButtonElement element, string text, string caption)
+            {
+                _element = element;
+                _text = text;
+                _caption = caption;
+                Clicked = new Subject<Unit>();
+            }
+
+            public ISubject<Unit> Clicked { get; }
+
+            public string Text
+            {
+                get { return _text; }
+                set
+                {
+                    _text = value;
+                    _element.GetRootElement()?.Reload(_element);
+                }
+            }
+            public string Caption
+            {
+                get { return _caption; }
+                set
+                {
+                    _caption = value;
+                    _element.GetRootElement()?.Reload(_element);
+                }
+            }
+        }
+
+        public Button AddButton(string caption, string text = null)
+        {
+            var btn = new Button(this, text, caption);
             _buttons.Add(btn);
             return btn;
+        }
+
+        public SplitButtonElement()
+        {
         }
 
         public override UITableViewCell GetCell(UITableView tv)
@@ -28,19 +67,19 @@ namespace CodeHub.iOS.DialogElements
             var cell = tv.DequeueReusableCell("splitbuttonelement") as SplitButtonCell;
             if (cell == null)
             {
-                cell = new SplitButtonCell();
+                cell = new SplitButtonCell(_buttons.Count);
                 cell.SelectionStyle = UITableViewCellSelectionStyle.None;
                 cell.SeparatorInset = UIEdgeInsets.Zero;
                 cell.BackgroundColor = tv.SeparatorColor;
             }
-            cell.SetButtons(tv, _buttons);
+            cell.SetButtons(_buttons);
             return cell;
         }
 
         private class SplitButtonCell : UITableViewCell
         {
             private readonly static float SeperatorWidth = 1.0f;
-            private UIButton[] _buttons;
+            private readonly SplitButton[] _buttons;
 
             static SplitButtonCell()
             {
@@ -49,27 +88,26 @@ namespace CodeHub.iOS.DialogElements
             }
 
 
-            public SplitButtonCell()
+            public SplitButtonCell(int buttons)
                 : base(UITableViewCellStyle.Default, "splitbuttonelement")
             {
+                _buttons = Enumerable.Range(0, buttons)
+                    .Select(x => new SplitButton())
+                    .ToArray();
+
+                foreach (var b in _buttons)
+                    ContentView.Add(b);
             }
 
-            public void SetButtons(UITableView tableView, List<SplitButton> items)
+            public void SetButtons(List<Button> items)
             {
-                if (_buttons != null)
+                foreach (var b in _buttons.Zip(items, (x, y) => new { Button = x, Data = y }))
                 {
-                    foreach (var btn in _buttons)
-                    {
-                        btn.RemoveFromSuperview();
-                    }
-                }
-
-                _buttons = new UIButton[items.Count];
-
-                for (var i = 0; i < items.Count; i++)
-                {
-                    _buttons[i] = items[i];
-                    ContentView.Add(_buttons[i]);
+                    b.Button.Caption = b.Data.Caption;
+                    b.Button.Text = b.Data.Text;
+                    b.Button.UserInteractionEnabled = true;
+                    var weakRef = new WeakReference<Button>(b.Data);
+                    b.Button.Touch = () => weakRef.Get()?.Clicked.OnNext(Unit.Default);
                 }
             }
 
@@ -78,45 +116,50 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
 
-                if (_buttons != null)
-                {
-                    var width = this.Bounds.Width;
-                    var space = width / (float)_buttons.Length;
+                var width = this.Bounds.Width;
+                var space = width / (float)_buttons.Length;
 
-                    for (var i = 0; i < _buttons.Length; i++)
-                    {
-                        _buttons[i].Frame = new CGRect(i * space, 0, space - SeperatorWidth, Bounds.Height);
-                        _buttons[i].LayoutSubviews();
-                    }
+                for (var i = 0; i < _buttons.Length; i++)
+                {
+                    _buttons[i].Frame = new CGRect(i * space, 0, space - SeperatorWidth, Bounds.Height);
+                    _buttons[i].LayoutSubviews();
                 }
             }
-
         }
 
 
-        public class SplitButton : UIButton
+        private class SplitButton : UIButton
         {
             private readonly UILabel _caption;
-            private readonly UILabel _label;
+            private readonly UILabel _text;
 
             public string Text
             {
-                get { return _label.Text; }
+                get { return _text.Text; }
                 set 
                 { 
-                    if (_label.Text == value)
+                    if (_text.Text == value)
                         return;
-                    _label.Text = value; 
+                    _text.Text = value; 
                     SetNeedsDisplay();
                 }
             }
 
-            public IObservable<Unit> Clicked
+            public string Caption
             {
-                get { return this.GetClickedObservable(); }
+                get { return _caption.Text; }
+                set 
+                { 
+                    if (_caption.Text == value)
+                        return;
+                    _caption.Text = value; 
+                    SetNeedsDisplay();
+                }
             }
 
-            public SplitButton(string caption, string text)
+            public Action Touch;
+
+            public SplitButton()
             {
                 AutosizesSubviews = true;
 
@@ -125,30 +168,28 @@ namespace CodeHub.iOS.DialogElements
                 _caption = new UILabel();
                 _caption.TextColor = CaptionColor;
                 _caption.Font = CaptionFont;
-                _caption.Text = caption;
                 this.Add(_caption);
 
-                _label = new UILabel();
-                _label.TextColor = TextColor;
-                _label.Font = TextFont;
-                _label.Text = text;
-                this.Add(_label);
+                _text = new UILabel();
+                _text.TextColor = TextColor;
+                _text.Font = TextFont;
+                this.Add(_text);
 
                 this.TouchDown += (sender, e) => this.BackgroundColor = UIColor.FromWhiteAlpha(0.95f, 1.0f);
                 this.TouchUpInside += (sender, e) => this.BackgroundColor = UIColor.White;
                 this.TouchUpOutside += (sender, e) => this.BackgroundColor = UIColor.White;
+                this.TouchUpInside += (sender, e) => Touch?.Invoke();
             }
 
             public override void LayoutSubviews()
             {
                 base.LayoutSubviews();
 
-                _label.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
-                _caption.Frame = new CGRect(12, _label.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
+                _text.Frame = new CGRect(12, 3, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(TextFont.LineHeight) + 1);
+                _caption.Frame = new CGRect(12, _text.Frame.Bottom, (int)Math.Floor(this.Bounds.Width) - 24f, (int)Math.Ceiling(CaptionFont.LineHeight));
             }
         }
 
     }
 
 }
-

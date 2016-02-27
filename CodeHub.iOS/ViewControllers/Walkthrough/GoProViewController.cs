@@ -1,6 +1,8 @@
 ﻿using UIKit;
-using CodeHub.iOS.ViewControllers.App;
 using System;
+using CodeHub.iOS.ViewControllers.Application;
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -19,24 +21,26 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             TellMeMoreButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             TellMeMoreButton.Layer.CornerRadius = 6f;
 
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            var isPro = appDelegate?.IsPro ?? false;
-
             OnActivation(d => d(TellMeMoreButton.GetClickedObservable().Subscribe(_ => TellMeMore())));
+        }
 
-            if (isPro)
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            var features = Mvx.Resolve<IFeaturesService>();
+            if (features.IsProEnabled)
             {
                 TitleLabel.Text = "Pro Enabled!";
-                DescriptionLabel.Text = "Thanks for your continued support! The following Pro features have been activated for your device:\n\n• Private Repositories\n• Enterprise Support\n• Push Notifications";
+                DescriptionLabel.Text = "Thank you for your continued support! The following Pro features have been activated for your device:\n\n• Private Repositories\n• Enterprise Support\n• Push Notifications";
             }
         }
 
         private void TellMeMore()
         {
             var view = new UpgradeViewController();
-            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Cancel };
-            view.OnActivation(d => d(view.NavigationItem.LeftBarButtonItem.GetClickedObservable()
-                .Subscribe(_ => view.DismissViewController(true, null))));
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             PresentViewController(new ThemedNavigationController(view), true, null);
         }
     }

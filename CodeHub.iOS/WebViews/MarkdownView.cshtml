@@ -1,0 +1,114 @@
+﻿@model DescriptionModel
+<html><head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0"/>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: none;
+}
+
+body {
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.42;
+    font-size: @(Model.FontSize)px;
+    line-height: 1.7;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 20px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+</style>
+@if (Model.ContinuousResize) {
+    <script>
+    function size() { return document.body.scrollHeight; }
+    function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
+    var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
+    </script>
+}
+<title>Readme</title></head>
+<body>@{WriteLiteral(Model.Body);}</body>
+</html>

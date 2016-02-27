@@ -9,18 +9,18 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-	[Register ("CardPageViewController")]
-	partial class CardPageViewController
-	{
-		[Outlet]
-		UIKit.UIView ContentView { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (ContentView != null) {
-				ContentView.Dispose ();
-				ContentView = null;
-			}
-		}
-	}
+    [Register ("CardPageViewController")]
+    partial class CardPageViewController
+    {
+        [Outlet]
+        UIKit.UIView ContentView { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (ContentView != null) {
+                ContentView.Dispose ();
+                ContentView = null;
+            }
+        }
+    }
 }

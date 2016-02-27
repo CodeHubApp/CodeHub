@@ -2,6 +2,7 @@ using CodeHub.Core.Services;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using UIKit;
 
 namespace CodeHub.iOS.Services
 {
@@ -14,6 +15,8 @@ namespace CodeHub.iOS.Services
         /// The pro edition identifier
         /// </summary>
         public const string ProEdition = "com.dillonbuchanan.codehub.pro";
+        public const string PushNotifications = "com.dillonbuchanan.codehub.push";
+        public const string EnterpriseSupport = "com.dillonbuchanan.codehub.enterprise_support";
 
         public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {
@@ -25,7 +28,7 @@ namespace CodeHub.iOS.Services
         {
             get
             {
-                return IsActivated(ProEdition);
+                return IsActivated(PushNotifications);
             }
         }
 
@@ -59,6 +62,20 @@ namespace CodeHub.iOS.Services
             if (productData == null)
                 throw new InvalidOperationException("Unable to activate CodeHub Pro");
             await _inAppPurchaseService.PurchaseProduct(productData);
+            _defaultValueService.Set(ProEdition, true);
+            _defaultValueService.Set(PushNotifications, true);
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            appDelegate?.RegisterUserForNotifications();
+        }
+
+        public void ActivateProDirect()
+        {
+            _defaultValueService.Set(ProEdition, true);
+        }
+
+        public void ActivatePush()
+        {
+            _defaultValueService.Set(PushNotifications, true);
         }
 
         public Task RestorePro()
@@ -69,7 +86,7 @@ namespace CodeHub.iOS.Services
         private bool IsActivated(string id)
         {
             bool value;
-            return _defaultValueService.TryGet<bool>(id, out value) && value;
+            return _defaultValueService.TryGet(id, out value) && value;
         }
     }
 }

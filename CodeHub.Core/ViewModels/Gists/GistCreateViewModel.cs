@@ -1,48 +1,80 @@
-﻿using CodeHub.Core.Services;
-using System.Reactive.Linq;
+using System;
+using CodeHub.Core.ViewModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using GitHubSharp.Models;
+using System.Linq;
+using CodeHub.Core.Messages;
 using ReactiveUI;
-using CodeHub.Core.Factories;
-using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class GistCreateViewModel : GistModifyViewModel
+    public class GistCreateViewModel : BaseViewModel 
     {
-        private readonly ISessionService _sessionService;
-        private readonly IAlertDialogFactory _alertDialogFactory;
+        private string _description;
+        private bool _public;
+        private IDictionary<string, string> _files = new Dictionary<string, string>();
+        private bool _saving;
 
-        private bool _isPublic;
-        public bool IsPublic
+        public bool IsSaving
         {
-            get { return _isPublic; }
-            set { this.RaiseAndSetIfChanged(ref _isPublic, value); }
+            get { return _saving; }
+            private set { this.RaiseAndSetIfChanged(ref _saving, value); }
         }
 
-        public GistCreateViewModel(ISessionService sessionService, IAlertDialogFactory alertDialogFactory)
+        public string Description
         {
-            _sessionService = sessionService;
-            _alertDialogFactory = alertDialogFactory;
-
-            Title = "Create Gist";
-            IsPublic = true;
+            get { return _description; }
+            set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
-        protected override async System.Threading.Tasks.Task<bool> Discard()
+        public bool Public
         {
-            if (string.IsNullOrEmpty(Description) && Files.Count == 0)
-                return true;
-            return await _alertDialogFactory.PromptYesNo("Discard Gist?", "Are you sure you want to discard this gist?");
+            get { return _public; }
+            set { this.RaiseAndSetIfChanged(ref _public, value); }
         }
 
-        protected override async System.Threading.Tasks.Task<Gist> SaveGist()
+        public IDictionary<string, string> Files
         {
-            var newGist = new NewGist { Description = Description ?? string.Empty, Public = IsPublic };
+            get { return _files; }
+            set { this.RaiseAndSetIfChanged(ref _files, value); }
+        }
 
-            foreach (var file in Files)
-                newGist.Files[file.Name.Trim()] = file.Content;
+        public IReactiveCommand<GistModel> SaveCommand { get; }
 
-            using (_alertDialogFactory.Activate("Creating Gist..."))
-                return await _sessionService.GitHubClient.Gist.Create(newGist);
+        public IReactiveCommand<object> CancelCommand { get; }
+
+
+        public GistCreateViewModel()
+        {
+            CancelCommand = ReactiveCommand.Create();
+            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => Save());
+            SaveCommand.ThrownExceptions.Subscribe(x => DisplayAlert(x.Message));
+        }
+
+        private async Task<GistModel> Save()
+        {
+            if (_files.Count == 0)
+                throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");
+
+            try
+            {
+                var createGist = new GistCreateModel
+                {
+                    Description = Description ?? string.Empty,
+                    Public = Public,
+                    Files = Files.ToDictionary(x => x.Key, x => new GistCreateModel.File { Content = x.Value })
+                };
+
+                IsSaving = true;
+                var newGist = (await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
+                Messenger.Publish(new GistAddMessage(this, newGist));
+                return newGist;
+            }
+            finally
+            {
+                IsSaving = false;
+            }
         }
     }
 }

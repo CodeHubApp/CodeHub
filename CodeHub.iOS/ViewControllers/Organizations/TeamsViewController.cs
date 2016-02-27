@@ -1,17 +1,17 @@
 using System;
-using ReactiveUI;
-using CodeHub.iOS.Cells;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Organizations;
-using UIKit;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class TeamsViewController : BaseTableViewController<TeamsViewModel>
+    public class TeamsViewController : ViewModelCollectionDrivenDialogViewController
     {
         public TeamsViewController()
         {
+            Title = "Teams";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
         }
@@ -19,11 +19,14 @@ namespace CodeHub.iOS.ViewControllers.Organizations
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.RegisterClassForCellReuse(typeof(TeamCellView), TeamCellView.Key);
-            var source = new ReactiveTableViewSource<TeamItemViewModel>(TableView, ViewModel.Items, TeamCellView.Key, (float)UITableView.AutomaticDimension);
-            TableView.Source = source;
 
-            this.WhenActivated(d => d(source.ElementSelected.OfType<TeamItemViewModel>().Subscribe(x => x.GoToCommand.ExecuteIfCan())));
+            var vm = (TeamsViewModel) ViewModel;
+            var weakVm = new WeakReference<TeamsViewModel>(vm);
+            this.BindCollection(vm.Teams, x => {
+                var e = new StringElement(x.Name);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToTeamCommand.Execute(x));
+                return e;
+            });
         }
     }
 }

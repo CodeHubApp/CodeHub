@@ -1,0 +1,238 @@
+﻿@model UpgradeDetailsModel
+<html><head>
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0"/>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: none;
+}
+
+body {
+    color: #333;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.42;
+    font-size: 16px;
+    line-height: 1.7;
+    word-wrap: break-word;
+}
+h1, h2, h3, h4, h5, h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+h1 {
+font-size: 1.8em;
+border-bottom: 1px solid #ddd;
+}
+p, blockquote, ul, ol, dl, table, pre {
+margin: 15px 0;
+}
+h2 {
+font-size: 1.4em;
+border-bottom: 1px solid #eee;
+}
+ul, ol {
+padding-left: 20px;
+}
+a {
+color: #4183c4;
+text-decoration: none;
+text-decoration: none;
+}
+.highlight pre, pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+}
+pre {
+word-wrap: normal;
+}
+dl {
+padding: 0;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+dl dd {
+margin-bottom: 15px;
+padding: 0 15px;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+table th, table td {
+border: 1px solid #ddd;
+padding: 6px 13px;
+}
+table th {
+font-weight: bold;
+}
+img {
+max-width: 100%;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+.btn {
+    margin-top: 1.50em;
+    margin-bottom: 1em;
+    padding: 1em 2em;
+    text-align: center;
+    display: inline-block;
+    border-radius: 15px;
+    border: none;
+    transform: translateY(1px);
+    color: #fff;
+}
+#buy {
+    background-color: #2ecc71;
+    box-shadow: 0 3px #27ae60;
+}
+#purchased {
+    background-color: #34495e;
+    box-shadow: 0 3px #2c3e50;
+}
+@@media (max-width: 640px) {
+    .btn, #restore {
+        display: block;
+    }
+    #restore {
+        text-align: center;
+    }
+}
+
+</style>
+    <title>Pro Version</title>
+</head>
+<body>
+    <p>
+        <b>CodeHub Pro</b> gives you access the all the great features below:
+    </p>
+
+    <ul>
+        <li><a href="#private">Private Repositories</a></li>
+        <li><a href="#enterprise">Enterprise Support</a></li>
+        <li><a href="#push">Push Notifications</a></li>
+    </ul>
+
+    <p>
+        Before you buy please take a look at the detailed description for each feature below. 
+        If you're unsure about any aspect of the Pro version, please feel free to 
+        <a href="#" onclick="window.location='mailto://codehubapp@gmail.com?Subject=CodeHub%20Pro%20Question'; return false;" target="_blank">contact me</a>!
+    </p>
+
+    @if (Model.IsPurchased)
+    {
+        <p>
+            <a id="purchased" class="btn">Pro Already Enabled!</a>
+        </p>
+    }
+    else
+    {
+        if (Model.Price != null)
+        {
+            <p>
+                <a id="buy" href="app://buy" class="btn">Purchase CodeHub Pro for @Model.Price</a>
+            </p>
+            <p id="restore">
+                <a href="app://restore">Click here</a> to restore a previous purchase.
+            </p>
+        }
+    }
+
+    <h2>Feature Details</h2>
+    <p>Below are the features that are available when purchasing CodeHub Pro.</p>
+
+    <h3 id="private">Private Repositories</h3>
+    <p>
+        While CodeHub is free for all public projects, private repositories are only availble with CodeHub Pro.
+        The Pro edition allows access to all your private repositories and any private repositories any of your organizations have.
+        Access to your private repositories is completely unrestricted. With CodeHub Pro, anything you are able to do with your open source repositories
+        you are also capable of doing with your private repositories. Even more, access to private repositories, with CodeHub Pro, is applied to
+        all your CodeHub accounts.
+    </p>
+
+    <h3 id="enterprise">Enterprise Support</h3>
+    <p>
+        With CodeHub Pro, access to GitHub Enterprise instances becomes available for use. 
+        Enterprise support allows for unlimited accounts, in CodeHub, accessing unlimited Enterprise instances - there are no restrictions!
+        You can authenticate with your GitHub Enterprise instance in two ways: Basic Auth, or OAuth token. Unlike authentication
+        with GitHub.com, there is no avilable web application flow, which means that you will be prompted for your credentials in a view that
+        is native to CodeHub, not GitHub. This method, also known as Basic Auth, is safe. The username and password pair is <b>NOT</b> saved on the device
+        nor is it ever sent anywhere but GitHub. Even more, the username and password is exchanged for an OAuth token on GitHub so you may revoke access
+        at any time.
+    </p>
+
+    <p>
+        If you feel unsafe authenticating with a username and password pair, you may choose to generate your own OAuth token on your enterprise instance and
+        use it in CodeHub directly. This completely removes the need to type in your username and password within CodeHub. 
+    </p>
+
+    <h3 id="push">Push Notifications</h3>
+    <p><b>Note: Push Notifications are only available for GitHub.com accounts. Details below</b></p>
+
+    <img width="400" src="http://codehub-app.com/assets/push-notification.png" />
+
+    <p>
+        Push notifications allow you to take your typical GitHub notifications and push them directly to your mobile device.
+        Users receive notifications for conversations in repositories they watch including:
+    </p>
+
+    <ul>
+        <li>Issues and their comments</li>
+        <li>Pull Requests and their comments</li>
+        <li>Comments on any commits</li>
+    </ul>
+
+    <p>Notifications are also sent for conversations in unwatched repositories when the user is involved including:</p>
+
+    <ul>
+        <li>Mentions</li>
+        <li>Issue assignments</li>
+        <li>Commits the user authors or commits</li>
+        <li>Any discussion in which the user actively participates</li>
+    </ul>
+
+    <p>
+        Notifications are generated via a service owned and operated by Dillon Buchanan, creator of CodeHub. 
+        These notifications are harvested from GitHub.com using a OAuth identification token generated just for 
+        querying notifications on behalf of the user. This service, aptly called CodeHub-Push, is also open source and 
+        <a href="https://github.com/thedillonb/CodeHub-Push">available for viewing on GitHub.</a>
+    </p>
+    <p>
+        As mentioned above, push notifications are only available for GitHub.com accounts. Push notifications for 
+        GitHub enterprise accounts are not available. This limitation is due to the fact that the notification service, 
+        <a href="https://github.com/thedillonb/CodeHub-Push">CodeHub-Push</a>, cannot retrieve information from a enterprise
+        instance. External access to a enterprise instance is almost always impossible due to network limitations as well as
+        permission. For this reason, push notifications are unavailable for enterprise users - sorry.
+    </p>
+        
+</body>
+</html>

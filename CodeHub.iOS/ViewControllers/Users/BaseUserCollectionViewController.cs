@@ -1,12 +1,14 @@
-using CodeHub.Core.ViewModels.Users;
-using CodeHub.iOS.TableViewSources;
-using UIKit;
 using System;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers;
+using CodeHub.Core.ViewModels.User;
+using UIKit;
 using CodeHub.iOS.Views;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
-    public abstract class BaseUserCollectionViewController<TViewModel> : BaseTableViewController<TViewModel> where TViewModel : BaseUsersViewModel
+    public abstract class BaseUserCollectionViewController : ViewModelCollectionDrivenDialogViewController
     {
         protected BaseUserCollectionViewController(string emptyString)
         {
@@ -17,7 +19,16 @@ namespace CodeHub.iOS.ViewControllers.Users
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new UserTableViewSource(TableView, ViewModel.Items);
+
+            var vm = (BaseUserCollectionViewModel)ViewModel;
+            var weakVm = new WeakReference<BaseUserCollectionViewModel>(vm);
+            BindCollection(vm.Users, x =>
+            {
+                var avatar = new GitHubAvatar(x.AvatarUrl);
+                var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToUserCommand.Execute(x));
+                return e;
+            });
         }
     }
 }

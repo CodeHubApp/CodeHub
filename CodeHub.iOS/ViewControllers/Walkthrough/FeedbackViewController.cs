@@ -32,9 +32,8 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 
         private void ShowWebPage(string url)
         {
-            var vm = new WebBrowserViewModel().Init(url);
-            var view = new WebBrowserViewController(true, true) { ViewModel = vm };
-            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Cancel, UIBarButtonItemStyle.Done, 
+            var view = new WebBrowserViewController(url);
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Buttons.CancelButton, UIBarButtonItemStyle.Done, 
                 (s, e) => DismissViewController(true, null));
             PresentViewController(new ThemedNavigationController(view), true, null);
         }

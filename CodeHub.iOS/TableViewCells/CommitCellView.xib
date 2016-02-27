@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="184" id="cxk-wN-pdQ" customClass="CommitCellView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="184"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cxk-wN-pdQ" id="YTl-1W-gDM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="183"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="User Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t8o-AX-aOj">
+                        <rect key="frame" x="48" y="7" width="264" height="20"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Time Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOS-3J-OAt">
+                        <rect key="frame" x="48" y="28" width="264" height="15"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="750" verticalCompressionResistancePriority="1000" text="Content" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OkK-9y-U4D">
+                        <rect key="frame" x="48" y="49" width="264" height="126"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="QEc-1F-ogM">
+                        <rect key="frame" x="8" y="8" width="32" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="32" id="FDD-ZS-YQg"/>
+                            <constraint firstAttribute="width" constant="32" id="b9S-L7-7cL"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="QEc-1F-ogM" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" constant="8" id="56b-yc-H0B"/>
+                    <constraint firstItem="t8o-AX-aOj" firstAttribute="top" secondItem="YTl-1W-gDM" secondAttribute="top" constant="7" id="DL8-YT-wOO"/>
+                    <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="KOS-3J-OAt" secondAttribute="leading" id="GLI-Pv-7pu"/>
+                    <constraint firstAttribute="trailing" secondItem="t8o-AX-aOj" secondAttribute="trailing" constant="8" id="Orf-4s-y46"/>
+                    <constraint firstItem="t8o-AX-aOj" firstAttribute="leading" secondItem="QEc-1F-ogM" secondAttribute="trailing" constant="8" id="Xow-LE-tBp"/>
+                    <constraint firstItem="OkK-9y-U4D" firstAttribute="top" secondItem="KOS-3J-OAt" secondAttribute="bottom" constant="6" id="Z5t-DH-Uft"/>
+                    <constraint firstAttribute="bottom" secondItem="OkK-9y-U4D" secondAttribute="bottom" constant="8" id="eeX-RN-QPu"/>
+                    <constraint firstItem="OkK-9y-U4D" firstAttribute="leading" secondItem="KOS-3J-OAt" secondAttribute="leading" id="mAH-Sq-iyS"/>
+                    <constraint firstItem="KOS-3J-OAt" firstAttribute="top" secondItem="t8o-AX-aOj" secondAttribute="bottom" constant="1" id="nsk-Cc-3Ma"/>
+                    <constraint firstItem="OkK-9y-U4D" firstAttribute="trailing" secondItem="KOS-3J-OAt" secondAttribute="trailing" id="oiC-2I-L7F"/>
+                    <constraint firstItem="QEc-1F-ogM" firstAttribute="leading" secondItem="YTl-1W-gDM" secondAttribute="leading" constant="8" id="qBH-3c-Ab3"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="QEc-1F-ogM" secondAttribute="bottom" constant="8" id="upH-tV-rBV"/>
+                    <constraint firstItem="t8o-AX-aOj" firstAttribute="trailing" secondItem="KOS-3J-OAt" secondAttribute="trailing" id="vhK-hi-jpc"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="ContentConstraint" destination="Z5t-DH-Uft" id="0B2-Cd-Gsi"/>
+                <outlet property="ContentLabel" destination="OkK-9y-U4D" id="JHo-No-foG"/>
+                <outlet property="MainImageView" destination="QEc-1F-ogM" id="hKO-Ko-teH"/>
+                <outlet property="TimeLabel" destination="KOS-3J-OAt" id="1y1-le-85X"/>
+                <outlet property="TitleLabel" destination="t8o-AX-aOj" id="tvX-cZ-BXq"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

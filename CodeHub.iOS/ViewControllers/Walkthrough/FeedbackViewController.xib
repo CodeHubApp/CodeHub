@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FeedbackViewController" customModule="CodeHub" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FeedbackViewController" customModule="CodeHub_iOS" customModuleProvider="target">
             <connections>
-                <outlet property="githubButton" destination="zHz-pv-YiY" id="Wwi-Jt-iqO"/>
-                <outlet property="userVoiceButton" destination="y7B-8k-KDh" id="2oB-Pp-LeB"/>
+                <outlet property="GitHubButton" destination="zHz-pv-YiY" id="kZ6-YY-9nz"/>
+                <outlet property="UserVoiceButton" destination="y7B-8k-KDh" id="wVz-8I-FTs"/>
                 <outlet property="view" destination="iN0-l3-epB" id="TUC-Dh-oEH"/>
             </connections>
         </placeholder>
@@ -29,7 +30,7 @@
                     <color key="textColor" red="0.086274509799999996" green="0.086274509799999996" blue="0.086274509799999996" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" image="Feedback" translatesAutoresizingMaskIntoConstraints="NO" id="6dn-z9-JDQ">
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" image="Feedback.png" translatesAutoresizingMaskIntoConstraints="NO" id="6dn-z9-JDQ">
                     <rect key="frame" x="56" y="152" width="208" height="211"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="208" id="FWd-B8-xLa"/>
@@ -80,6 +81,6 @@
         </view>
     </objects>
     <resources>
-        <image name="Feedback" width="512" height="512"/>
+        <image name="Feedback.png" width="512" height="512"/>
     </resources>
 </document>

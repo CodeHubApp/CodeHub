@@ -9,18 +9,12 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-	[Register ("AboutViewController")]
-	partial class AboutViewController
-	{
-		[Outlet]
-		UIKit.UIImageView IconImageView { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (IconImageView != null) {
-				IconImageView.Dispose ();
-				IconImageView = null;
-			}
-		}
-	}
+    [Register ("AboutViewController")]
+    partial class AboutViewController
+    {
+        
+        void ReleaseDesignerOutlets ()
+        {
+        }
+    }
 }

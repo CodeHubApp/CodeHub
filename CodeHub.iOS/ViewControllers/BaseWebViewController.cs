@@ -1,98 +1,142 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 using UIKit;
 using Foundation;
-using CodeHub.iOS.Services;
-using ReactiveUI;
-using System.Reactive.Linq;
-using CodeHub.Core.ViewModels;
+using WebKit;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class BaseWebViewController<TViewModel> : BaseViewController<TViewModel> where TViewModel : class
+    public abstract class BaseWebViewController : BaseViewController
     {
-        private bool _domLoaded;
-        private readonly List<string> _toBeExecuted = new List<string>();
-        private readonly Lazy<UIActivityIndicatorView> _activityIndicator;
+        protected UIBarButtonItem BackButton;
+        protected UIBarButtonItem RefreshButton;
+        protected UIBarButtonItem ForwardButton;
 
-        public UIWebView Web { get; private set; }
-
-        protected BaseWebViewController()
+        public WKWebView Web { get; private set; }
+        private readonly bool _navigationToolbar;
+        private readonly  bool _showPageAsTitle;
+   
+        protected virtual void GoBack()
         {
-            Web = new UIWebView {ScalesPageToFit = true};
-            Web.LoadFinished += OnLoadFinished;
-            Web.LoadStarted += OnLoadStarted;
-            Web.LoadError += OnLoadError;
-            Web.ShouldStartLoad = (w, r, n) => ShouldStartLoad(r, n);
-
-            _activityIndicator = new Lazy<UIActivityIndicatorView>(() => new UIActivityIndicatorView
-            {
-                Frame = new CoreGraphics.CGRect(0, 0, 320f, 88f),
-                Color = Theme.PrimaryNavigationBarColor,
-                AutoresizingMask = UIViewAutoresizing.FlexibleWidth,
-                Alpha = 0
-            });
-
-            this.WhenAnyValue(x => x.ViewModel)
-                .OfType<ILoadableViewModel>()
-                .Select(x => x.LoadCommand.IsExecuting)
-                .Switch()
-                .Subscribe(x => {
-                    Web.UserInteractionEnabled = !x;
-                    var activityView = _activityIndicator.Value;
-
-                    if (x && activityView.Superview == null)
-                    {
-                        View.Add(activityView);
-                        activityView.StartAnimating();
-                        UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
-                            () => activityView.Alpha = 1, null);
-                    }
-                    else if (!x)
-                    {
-                        UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
-                            () => activityView.Alpha = 0, () => {
-                            activityView.RemoveFromSuperview();
-                            activityView.StopAnimating();
-                        });
-                    }
-                });
+            Web.GoBack();
         }
 
-        protected virtual bool ShouldStartLoad (NSUrlRequest request, UIWebViewNavigationType navigationType)
+        protected virtual void Refresh()
         {
+            Web.Reload();
+        }
 
-            var url = request.Url;
-            if(url.Scheme.Equals("app")) {
-                var func = url.Host;
+        protected virtual void GoForward()
+        {
+            Web.GoForward();
+        }
 
-                if (func.Equals("ready"))
+        protected BaseWebViewController()
+            : this(true, true)
+        {
+        }
+
+        protected BaseWebViewController(bool navigationToolbar, bool showPageAsTitle = false)
+        {
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
+
+            _navigationToolbar = navigationToolbar;
+            _showPageAsTitle = showPageAsTitle;
+
+            if (_navigationToolbar)
+            {
+                BackButton = new UIBarButtonItem { Image = Images.Web.BackButton, Enabled = false };
+                ForwardButton = new UIBarButtonItem { Image = Images.Web.FowardButton, Enabled = false };
+                RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh) { Enabled = false };
+
+                BackButton.TintColor = Theme.CurrentTheme.WebButtonTint;
+                ForwardButton.TintColor = Theme.CurrentTheme.WebButtonTint;
+                RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
+
+                OnActivation(d =>
                 {
-                    _domLoaded = true;
-                    foreach (var e in _toBeExecuted)
-                        Web.EvaluateJavascript(e);
-                    _toBeExecuted.Clear();
-                }
-
-                return false;
+                    d(BackButton.GetClickedObservable().Subscribe(_ => GoBack()));
+                    d(ForwardButton.GetClickedObservable().Subscribe(_ => GoForward()));
+                    d(RefreshButton.GetClickedObservable().Subscribe(_ => Refresh()));
+                });
             }
 
+            EdgesForExtendedLayout = UIRectEdge.None;
+        }
+
+        private class NavigationDelegate : WKNavigationDelegate
+        {
+            private readonly WeakReference<BaseWebViewController> _webView;
+
+            public NavigationDelegate(BaseWebViewController webView)
+            {
+                _webView = new WeakReference<BaseWebViewController>(webView);
+            }
+
+            public override void DidFinishNavigation(WKWebView webView, WKNavigation navigation)
+            {
+                _webView.Get()?.OnLoadFinished(null, EventArgs.Empty);
+            }
+
+            public override void DidStartProvisionalNavigation(WKWebView webView, WKNavigation navigation)
+            {
+                _webView.Get()?.OnLoadStarted(null, EventArgs.Empty);
+            }
+
+            public override void DidFailNavigation(WKWebView webView, WKNavigation navigation, NSError error)
+            {
+                _webView.Get()?.OnLoadError(error);
+            }
+
+            public override void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, Action<WKNavigationActionPolicy> decisionHandler)
+            {
+                var ret = _webView.Get()?.ShouldStartLoad(webView, navigationAction) ?? true;
+                decisionHandler(ret ? WKNavigationActionPolicy.Allow : WKNavigationActionPolicy.Cancel);
+            }
+        }
+
+        protected virtual bool ShouldStartLoad (WKWebView webView, WKNavigationAction navigationAction)
+        {
             return true;
         }
 
-        protected virtual void OnLoadError (object sender, UIWebErrorArgs e)
+        protected virtual void OnLoadError (NSError error)
         {
-            NetworkActivityService.Instance.PopNetworkActive();
+            NetworkActivity.PopNetworkActive();
+
+            if (BackButton != null)
+            {
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
+                RefreshButton.Enabled = true;
+            }
         }
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            NetworkActivityService.Instance.PushNetworkActive();
+            NetworkActivity.PushNetworkActive();
+
+            if (RefreshButton != null)
+                RefreshButton.Enabled = false;
         }
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            NetworkActivityService.Instance.PopNetworkActive();
+            NetworkActivity.PopNetworkActive();
+
+            if (BackButton != null)
+            {
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
+                RefreshButton.Enabled = true;
+            }
+
+            if (_showPageAsTitle)
+            {
+                Web.EvaluateJavaScript("document.title", (o, _) => {
+                    Title = o as NSString;
+                });
+            }
         }
 
         public override void ViewWillDisappear(bool animated)
@@ -102,58 +146,88 @@ namespace CodeHub.iOS.ViewControllers
                 NavigationController.SetToolbarHidden(true, animated);
         }
 
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            Web = new WKWebView(View.Bounds, new WKWebViewConfiguration());
+            Web.NavigationDelegate = new NavigationDelegate(this);
+            Add(Web);
+        }
+
         public override void ViewWillLayoutSubviews()
         {
             base.ViewWillLayoutSubviews();
             Web.Frame = View.Bounds;
         }
 
-        protected void LoadFile(Uri uri)
+        protected static string JavaScriptStringEncode(string data)
         {
-            if (uri == null)
-                throw new ArgumentNullException("uri");
-            GoUrl(new NSUrl(uri.AbsoluteUri + "#" + Environment.TickCount));
+            return System.Web.HttpUtility.JavaScriptStringEncode(data);
         }
 
-        protected void LoadContent(string content, string contextPath)
+        protected static string UrlDecode(string data)
         {
-            contextPath = contextPath.Replace("/", "//").Replace(" ", "%20");
-            Web.LoadHtmlString(content, NSUrl.FromString("file:/" + contextPath + "//"));
+            return System.Web.HttpUtility.UrlDecode(data);
+        }
+
+        protected string LoadFile(string path)
+        {
+            if (path == null)
+                return string.Empty;
+
+            var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
+            InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
+            return uri;
         }
 
         protected void LoadContent(string content)
         {
-            Web.LoadHtmlString(content ?? string.Empty, NSBundle.MainBundle.BundleUrl);
-        }
-
-        protected void ExecuteJavascript(string data)
-        {
-            if (_domLoaded)
-                InvokeOnMainThread(() => Web.EvaluateJavascript(data));
-            else
-                _toBeExecuted.Add(data);
-        }
-
-        public void GoUrl(NSUrl url)
-        {
-            Web.LoadRequest(new NSUrlRequest(url));
+            Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
         }
 
         public override void ViewWillAppear(bool animated)
         {
-            if (ToolbarItems != null)
-                NavigationController.SetToolbarHidden(false, animated);
             base.ViewWillAppear(animated);
 
-            Add(Web);
             var bounds = View.Bounds;
+            if (_navigationToolbar)
+                bounds.Height -= NavigationController.Toolbar.Frame.Height;
             Web.Frame = bounds;
+
+            if (_navigationToolbar)
+            {
+                ToolbarItems = new []
+                { 
+                    BackButton,
+                    new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
+                    ForwardButton,
+                    new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                    RefreshButton
+                };
+
+                BackButton.Enabled = Web.CanGoBack;
+                ForwardButton.Enabled = Web.CanGoForward;
+                RefreshButton.Enabled = !Web.IsLoading;
+            }   
+
+            if (_showPageAsTitle)
+            {
+                Web.EvaluateJavaScript("document.title", (o, _) => {
+                    Title = o as NSString;
+                });
+            }
+
+            if (ToolbarItems != null)
+                NavigationController.SetToolbarHidden(false, animated);
         }
 
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            Web.RemoveFromSuperview();
+
+            if (_navigationToolbar)
+                ToolbarItems = null;
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

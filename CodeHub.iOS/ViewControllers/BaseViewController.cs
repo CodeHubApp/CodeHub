@@ -1,81 +1,12 @@
-using System;
+﻿using System;
 using ReactiveUI;
-using System.Reactive.Linq;
-using UIKit;
 using System.Reactive.Subjects;
-using Foundation;
-using CodeHub.Core.ViewModels;
-using Splat;
-using CodeHub.Core.Services;
-using CodeHub.iOS.ViewControllers;
+using System.Reactive.Linq;
 using System.Collections.Generic;
+using Foundation;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class BaseViewController<TViewModel> : BaseViewController, IViewFor<TViewModel> where TViewModel : class
-    {
-        private TViewModel _viewModel;
-        public TViewModel ViewModel
-        {
-            get { return _viewModel; }
-            set { this.RaiseAndSetIfChanged(ref _viewModel, value); }
-        }
-
-        object IViewFor.ViewModel
-        {
-            get { return _viewModel; }
-            set { ViewModel = (TViewModel)value; }
-        }
-
-        protected BaseViewController()
-        {
-            SetupRx();
-        }
-
-        protected BaseViewController(string nib, NSBundle bundle)
-            : base(nib, bundle)
-        {
-            SetupRx();
-        }
-
-        private void SetupRx()
-        {
-            OnActivation(d => {
-                d(this.WhenAnyValue(x => x.ViewModel)
-                    .OfType<IProvidesTitle>()
-                    .Select(x => x.WhenAnyValue(y => y.Title))
-                    .Switch().Subscribe(x => Title = x ?? string.Empty));
-
-                d(this.WhenAnyValue(x => x.ViewModel)
-                    .OfType<IRoutingViewModel>()
-                    .Select(x => x.RequestNavigation)
-                    .Switch()
-                    .Subscribe(x => {
-                        var viewModelViewService = Locator.Current.GetService<IViewModelViewService>();
-                        var serviceConstructor = Locator.Current.GetService<IServiceConstructor>();
-                        var viewType = viewModelViewService.GetViewFor(x.GetType());
-                        var view = (IViewFor)serviceConstructor.Construct(viewType);
-                        view.ViewModel = x;
-                        HandleNavigation(x, view as UIViewController);
-                    }));
-            });
-        }
-
-        protected virtual void HandleNavigation(IBaseViewModel viewModel, UIViewController view)
-        {
-            if (view is IModalViewController)
-            {
-                PresentViewController(new ThemedNavigationController(view), true, null);
-                viewModel.RequestDismiss.Subscribe(_ => DismissViewController(true, null));
-            }
-            else
-            {
-                NavigationController.PushViewController(view, true);
-                viewModel.RequestDismiss.Subscribe(_ => NavigationController.PopToViewController(this, true));
-            }
-        }
-    }
-
     public abstract class BaseViewController : ReactiveViewController, IActivatable
     {
         private readonly ISubject<bool> _appearingSubject = new Subject<bool>();
@@ -84,10 +15,12 @@ namespace CodeHub.iOS.ViewControllers
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
         private readonly ICollection<IDisposable> _activations = new LinkedList<IDisposable>();
 
+        #if DEBUG
         ~BaseViewController()
         {
             Console.WriteLine("All done with " + GetType().Name);
         }
+        #endif
 
         public IObservable<bool> Appearing
         {
@@ -127,18 +60,20 @@ namespace CodeHub.iOS.ViewControllers
 
         private void CommonConstructor()
         {
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
-            Disappeared.Subscribe(_ => {
-                foreach (var a in _activations)
-                    a.Dispose();
-                _activations.Clear();
-            });
             this.WhenActivated(_ => { });
+        }
+
+        private void DisposeActivations()
+        {
+            foreach (var a in _activations)
+                a.Dispose();
+            _activations.Clear();
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
+            DisposeActivations();
             _appearingSubject.OnNext(animated);
         }
 
@@ -151,6 +86,7 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
+            DisposeActivations();
             _disappearingSubject.OnNext(animated);
         }
 

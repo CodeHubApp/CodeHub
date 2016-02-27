@@ -1,6 +1,6 @@
-using System.Collections.Generic;
-using CoreGraphics;
 using UIKit;
+using CoreGraphics;
+using System.Collections.Generic;
 using System;
 
 namespace CodeHub.iOS.Views
@@ -67,7 +67,7 @@ namespace CodeHub.iOS.Views
                 }
                 else
                 {
-                    frame.Width = frame.Height + XPADDING;
+                    frame.Width = frame.Width + XPADDING;
                 }
 
                 button.Frame = frame;

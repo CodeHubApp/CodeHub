@@ -9,18 +9,18 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
-	[Register ("WelcomeViewController")]
-	partial class WelcomeViewController
-	{
-		[Outlet]
-		UIKit.UIButton GoButton { get; set; }
-		
-		void ReleaseDesignerOutlets ()
-		{
-			if (GoButton != null) {
-				GoButton.Dispose ();
-				GoButton = null;
-			}
-		}
-	}
+    [Register ("WelcomeViewController")]
+    partial class WelcomeViewController
+    {
+        [Outlet]
+        UIKit.UIButton GoButton { get; set; }
+        
+        void ReleaseDesignerOutlets ()
+        {
+            if (GoButton != null) {
+                GoButton.Dispose ();
+                GoButton = null;
+            }
+        }
+    }
 }

@@ -1,0 +1,208 @@
+﻿@model CommentModel
+@using Humanizer;
+<html><head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+<style>
+* {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+
+}
+
+html {
+    -webkit-text-size-adjust: none;
+}
+
+body{
+    font-family: "Helvetica Neue", Helvetica;
+    font-size: @(Model.FontSize)px;
+    margin: 0px;
+    word-wrap: break-word;
+}
+
+a {
+    color: #406fb9;
+    text-decoration: none;
+}
+
+#main > .comment:first-child {
+border-top: none;
+}
+
+#main > .comment {
+    border-top: 1px solid #c8c8c8;
+    padding: 8px 0 0 0;
+}
+
+#main > .comment > img {
+    position: absolute;
+    border-radius: 16px;
+    margin-left: 8px;
+    margin-top: 1px;
+    margin-bottom: 8px;
+    width: 32px;
+    height: 32px;
+}
+
+#main > .comment > div {
+margin-left: 48px;
+margin-right: 8px;
+}
+
+#main > .comment > div > h1 {
+font-size: @(Model.FontSize)px;
+margin: 0;
+color: #406fb9;
+white-space: nowrap;
+overflow: hidden;
+}
+
+#main > .comment > div > h2 {
+font-size: @(Model.FontSize - 2)px;
+margin: 0 0 4px 0;
+font-weight: normal;
+color: #404040;
+white-space: nowrap;
+overflow: hidden;
+}
+
+#main > .comment > div > div {
+margin: 0;
+word-wrap: break-word;
+}
+
+#main > .comment > div > .mark {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+
+#main > .comment > div > div img {
+max-width: 100%;
+}
+
+#main { width: 100%; }
+
+img { max-width: 100%; } 
+p { margin: 10px 0; white-space: pre-wrap; } 
+pre, li, ul { word-wrap: break-word; } 
+
+.mark h1, .mark h2, .mark h3, .mark h4, .mark h5, .mark h6 {
+margin: 1em 0 15px;
+padding: 0;
+font-weight: bold;
+line-height: 1.7;
+cursor: text;
+position: relative;
+}
+
+ul, ol {
+padding: 0;
+margin-top: 0;
+margin-bottom: 0;
+padding-left: 20px;
+}
+
+pre {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+line-height: 19px;
+overflow: auto;
+padding: 6px 10px;
+border-radius: 3px;
+word-wrap: normal;
+}
+dl dt {
+font-weight: bold;
+font-style: italic;
+padding: 0;
+margin-top: 15px;
+}
+blockquote {
+border-left: 4px solid #DDD;
+padding: 0 15px;
+color: #777;
+}
+table {
+width: 100%;
+overflow: auto;
+display: block;
+}
+table tr {
+border-top: 1px solid #ccc;
+background-color: #fff;
+}
+table th {
+font-weight: bold;
+}
+table th, table td {
+border: 1px solid #d9d9e0;
+border: 0.5px solid #d9d9d9;
+padding: 4px 11px;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+.mark h2 {
+font-size: 1.2em;
+border-bottom: 1px solid #eee;
+}
+.mark h1 {
+font-size: 1.6em;
+border-bottom: 1px solid #ddd;
+}
+
+.mark .label {
+display: inline;
+padding: .2em .6em .2em;
+font-size: 85%;
+font-weight: 700;
+line-height: 1;
+color: #fff;
+text-align: center;
+white-space: nowrap;
+vertical-align: baseline;
+border-radius: .25em;
+}
+.label-danger {
+background-color: #d9534f;
+}
+.label-success {
+background-color: #5cb85c;
+}
+.label-info {
+background-color: #6e5494;
+}
+.label-default {
+background-color: #999;
+}
+ul.task-list > li.task-list-item {
+  list-style-type: none;
+}
+.task-list-item-checkbox {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+</style>
+<script>
+function size() { return document.body.scrollHeight; }
+function rs() { document.location.href = 'app://resize'; }; window.onsize = rs;
+var h = 0; setInterval(function() { if (size() != h) { h = size(); rs(); } }, 300);
+</script>
+</head>
+<body>
+    <div id="main">
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="comment">
+                <img src="@comment.AvatarUrl">
+                <div>
+                    <h1>@comment.Name</h1>
+                    <h2>@comment.Date.Humanize()</h2>
+                    <div class="mark">@{WriteLiteral(comment.Body);}</div>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html

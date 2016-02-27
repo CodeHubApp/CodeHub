@@ -1,93 +1,127 @@
-﻿using System;
-using System.Reactive.Linq;
-using CodeHub.Core.Data;
-using ReactiveUI;
-using CodeHub.Core.Services;
-using CodeHub.Core.Messages;
-using CodeHub.Core.Factories;
+using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.Factories;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public abstract class AddAccountViewModel : BaseViewModel 
+    public class AddAccountViewModel : BaseViewModel 
     {
-        private readonly IAlertDialogFactory _alertDialogFactory;
-
-        public string TwoFactor { get; set; }
-
-        public IReactiveCommand<GitHubAccount> LoginCommand { get; private set; }
-
+        private GitHubAccount _attemptedAccount;
+        private readonly IApplicationService _application;
+        private readonly ILoginFactory _loginFactory;
         private string _username;
+        private string _password;
+        private string _domain;
+        private bool _isLoggingIn;
+
+        public bool IsLoggingIn
+        {
+            get { return _isLoggingIn; }
+            set { _isLoggingIn = value; RaisePropertyChanged(() => IsLoggingIn); }
+        }
+
         public string Username
         {
             get { return _username; }
             set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
-        private string _password;
         public string Password
         {
             get { return _password; }
             set { this.RaiseAndSetIfChanged(ref _password, value); }
         }
 
-        private string _domain;
         public string Domain
         {
             get { return _domain; }
             set { this.RaiseAndSetIfChanged(ref _domain, value); }
         }
 
-        private GitHubAccount _attemptedAccount;
-        public GitHubAccount AttemptedAccount
+        public string TwoFactor { get; set; }
+
+        public ICommand LoginCommand
         {
-            get { return _attemptedAccount; }
-            set { this.RaiseAndSetIfChanged(ref _attemptedAccount, value); }
+            get { return new MvxCommand(() => Login(), CanLogin);}
         }
 
-        protected AddAccountViewModel(IAlertDialogFactory alertDialogFactory)
+        public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
         {
-            _alertDialogFactory = alertDialogFactory;
+            _application = application;
+            _loginFactory = loginFactory;
+        }
 
-            Title = "Login";
+        public void Init(NavObject navObject)
+        {
+            if (navObject.AttemptedAccountId >= 0)
+                _attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
 
-            this.WhenAnyValue(x => x.AttemptedAccount).Where(x => x != null).Subscribe(x =>
+            if (_attemptedAccount != null)
             {
-                Username = x.Username;
-                Domain = x.Domain;
-            });
-
-            LoginCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                if (string.IsNullOrEmpty(Username))
-                    throw new ArgumentException("Must have a valid username!");
-                if (string.IsNullOrEmpty(Password))
-                    throw new ArgumentException("Must have a valid password!");
-                if (string.IsNullOrEmpty(Domain))
-                    throw new ArgumentException("Must have a valid GitHub domain!");
-                
-                using (alertDialogFactory.Activate("Logging in..."))
-                    return await Login();
-            });
-
-            LoginCommand.ThrownExceptions.Subscribe(x =>
-            {
-                if (x is LoginService.TwoFactorRequiredException)
-                    PromptForTwoFactor().ToBackground();
-                else
-                    _alertDialogFactory.Alert("Error", x.Message).ToBackground();
-            });
-
-            LoginCommand.Subscribe(x => MessageBus.Current.SendMessage(new LogoutMessage()));
+                Username = _attemptedAccount.Username;
+                Domain = _attemptedAccount.Domain;
+            }
         }
 
-        private async Task PromptForTwoFactor()
+        private bool CanLogin()
         {
-            var result = await _alertDialogFactory.PromptTextBox("Two Factor Authentication",
-                "This account requires a two factor authentication code", string.Empty, "Ok");
-            TwoFactor = result;
-            LoginCommand.ExecuteIfCan();
+            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+                return false;
+            return true;
         }
 
-        protected abstract Task<GitHubAccount> Login();
+        private async Task Login()
+        {
+            var apiUrl = Domain;
+            if (apiUrl != null)
+            {
+                if (!apiUrl.StartsWith("http://") && !apiUrl.StartsWith("https://"))
+                    apiUrl = "https://" + apiUrl;
+                if (!apiUrl.EndsWith("/"))
+                    apiUrl += "/";
+                if (!apiUrl.Contains("/api/"))
+                    apiUrl += "api/v3/";
+            }
+
+            try
+            {
+                IsLoggingIn = true;
+                var loginData = await _loginFactory.CreateLoginData(apiUrl, Username, Password, TwoFactor, true, _attemptedAccount);
+                var client = await _loginFactory.LoginAccount(loginData.Account);
+                _application.ActivateUser(loginData.Account, client);
+                ReactiveUI.MessageBus.Current.SendMessage(new LogoutMessage());
+            }
+            catch (Exception e)
+            {
+                TwoFactor = null;
+
+                // Don't log an error for a two factor warning
+                if (!(e is LoginFactory.TwoFactorRequiredException))
+                {
+                    Password = null;
+                    DisplayAlert(e.Message);
+                }
+            }
+            finally
+            {
+                IsLoggingIn = false;
+            }
+        }
+
+        public class NavObject
+        {
+            public int AttemptedAccountId { get; set; }
+
+            public NavObject()
+            {
+                AttemptedAccountId = int.MinValue;
+            }
+        }
     }
 }

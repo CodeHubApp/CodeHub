@@ -1,34 +1,34 @@
-﻿using System;
-using CodeHub.Core.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CodeHub.Core.ViewModels.Repositories;
+using GitHubSharp;
+using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels.Repositories
+namespace CodeHub.Core.ViewModels.User
 {
-    public class UserRepositoriesViewModel : BaseRepositoriesViewModel
+    public class UserRepositoriesViewModel : RepositoriesViewModel
     {
-        private readonly ISessionService _applicationService;
-
         public string Username { get; private set; }
 
-        public UserRepositoriesViewModel(ISessionService applicationService)
-            : base(applicationService)
+        public void Init(NavObject navObject)
         {
-            _applicationService = applicationService;
-            ShowRepositoryOwner = false;
+            Username = navObject.Username;
         }
 
-        protected override Uri RepositoryUri
+        protected override Task Load(bool forceCacheInvalidation)
         {
-            get
-            {
-                return string.Equals(_applicationService.Account.Username, Username, StringComparison.OrdinalIgnoreCase) ? 
-                    Octokit.ApiUrls.Repositories() : Octokit.ApiUrls.Repositories(Username);
-            }
+            GitHubRequest<List<RepositoryModel>> request;
+            if (string.Equals(this.GetApplication().Account.Username, Username, StringComparison.OrdinalIgnoreCase))
+                request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll();
+            else
+                request = this.GetApplication().Client.Users[Username].Repositories.GetAll();
+            return Repositories.SimpleCollectionLoad(request, forceCacheInvalidation);
         }
 
-        public UserRepositoriesViewModel Init(string username)
+        public class NavObject
         {
-            Username = username;
-            return this;
+            public string Username { get; set; }
         }
     }
 }

@@ -1,38 +1,76 @@
-using System;
-using System.Reactive.Subjects;
-using System.Reactive;
+using CodeHub.Core.Services;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
+using MvvmCross.Plugins.Messenger;
+using MvvmCross.Platform;
 using ReactiveUI;
+using System;
+using System.Reactive;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels
 {
-    public abstract class BaseViewModel : ReactiveObject, IBaseViewModel
+    public interface IProvidesTitle
+    {
+        string Title { get; }
+    }
+
+    public interface IRoutingViewModel
+    {
+        IObservable<IBaseViewModel> RequestNavigation { get; }
+
+        IObservable<Unit> RequestDismiss { get; }
+    }
+
+    public interface IBaseViewModel : ISupportsActivation, IProvidesTitle, IRoutingViewModel
+    {
+    }
+
+    /// <summary>
+    ///    Defines the BaseViewModel type.
+    /// </summary>
+    public abstract class BaseViewModel : MvxViewModel, IBaseViewModel, IReactiveObject
     {
         private readonly ViewModelActivator _viewModelActivator = new ViewModelActivator();
         private readonly ISubject<IBaseViewModel> _requestNavigationSubject = new Subject<IBaseViewModel>();
         private readonly ISubject<Unit> _requestDismissSubject = new Subject<Unit>();
 
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        public void RaisePropertyChanging(PropertyChangingEventArgs args)
+        {
+            this.RaisePropertyChanged(args.PropertyName);
+        }
+
+
+        ViewModelActivator ISupportsActivation.Activator
+        {
+            get { return _viewModelActivator; }
+        }
+
         private string _title;
         public string Title
         {
             get { return _title; }
-            protected set { this.RaiseAndSetIfChanged(ref _title, value); }
+            protected set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    this.RaisePropertyChanged();
+                }
+            }
         }
 
         protected void NavigateTo(IBaseViewModel viewModel)
         {
-            var loadableViewModel = viewModel as ILoadableViewModel;
             _requestNavigationSubject.OnNext(viewModel);
-            loadableViewModel?.LoadCommand.ExecuteIfCan();
         }
 
         protected void Dismiss()
         {
             _requestDismissSubject.OnNext(Unit.Default);
-        }
-
-        ViewModelActivator ISupportsActivation.Activator
-        {
-            get { return _viewModelActivator; }
         }
 
         IObservable<IBaseViewModel> IRoutingViewModel.RequestNavigation
@@ -43,6 +81,61 @@ namespace CodeHub.Core.ViewModels
         IObservable<Unit> IRoutingViewModel.RequestDismiss
         {
             get { return _requestDismissSubject; }
+        }
+
+        /// <summary>
+        /// Gets the go to URL command.
+        /// </summary>
+        /// <value>The go to URL command.</value>
+        public ICommand GoToUrlCommand
+        {
+            get { return new MvxCommand<string>(x => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = x })); }
+        }
+
+        /// <summary>
+        /// Gets the ViewModelTxService
+        /// </summary>
+        /// <value>The tx sevice.</value>
+        protected IViewModelTxService TxSevice
+        {
+            get { return GetService<IViewModelTxService>(); }
+        }
+
+        /// <summary>
+        /// Gets the messenger service
+        /// </summary>
+        /// <value>The messenger.</value>
+        protected IMvxMessenger Messenger
+        {
+            get { return GetService<IMvxMessenger>(); }
+        }
+
+        /// <summary>
+        /// Gets the alert service
+        /// </summary>
+        /// <value>The alert service.</value>
+        protected IAlertDialogService AlertService
+        {
+            get { return GetService<IAlertDialogService>(); }
+        }
+
+        /// <summary>
+        /// Gets the service.
+        /// </summary>
+        /// <typeparam name="TService">The type of the service.</typeparam>
+        /// <returns>An instance of the service.</returns>
+        protected TService GetService<TService>() where TService : class
+        {
+            return Mvx.Resolve<TService>();
+        }
+
+        /// <summary>
+        /// Display an error message to the user
+        /// </summary>
+        /// <param name="message">Message.</param>
+        protected void DisplayAlert(string message)
+        {
+            AlertService.Alert("Error!", message);
         }
     }
 }

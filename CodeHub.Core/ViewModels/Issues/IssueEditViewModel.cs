@@ -1,97 +1,123 @@
-using System.Linq;
-using System.Reactive.Linq;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeHub.Core.Services;
+using GitHubSharp.Models;
 using System;
-using ReactiveUI;
-using CodeHub.Core.Factories;
+using CodeHub.Core.Messages;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class IssueEditViewModel : IssueModifyViewModel
+    public class IssueEditViewModel : IssueModifyViewModel
     {
-        private readonly ISessionService _sessionService;
-        private readonly IAlertDialogFactory _alertDialogFactory;
-        private Octokit.Issue _issue;
-		private bool _open;
+        private IssueModel _issue;
+        private bool _open;
 
-		public bool IsOpen
-		{
-			get { return _open; }
-			set { this.RaiseAndSetIfChanged(ref _open, value); }
-		}
-
-        public Octokit.Issue Issue
-		{
-			get { return _issue; }
-			set { this.RaiseAndSetIfChanged(ref _issue, value); }
-		}
-
-		public int Id { get; set; }
-
-        public IssueEditViewModel(
-            ISessionService sessionService, 
-            IAlertDialogFactory alertDialogFactory)
-            : base(sessionService, alertDialogFactory)
-	    {
-            _sessionService = sessionService;
-            _alertDialogFactory = alertDialogFactory;
-
-            Title = "Edit Issue";
-
-	        this.WhenAnyValue(x => x.Issue)
-                .IsNotNull()
-                .Subscribe(x => {
-                    Title = string.Format("Edit Issue #{0}", x.Number);
-                    Subject = x.Title;
-                    Milestone = x.Milestone;
-                    Labels = x.Labels;
-                    Assignee = x.Assignee;
-                    Content = x.Body;
-                    IsOpen = x.State == Octokit.ItemState.Open;
-    	        });
-	    }
-
-        protected override async Task<bool> Discard()
+        public bool IsOpen
         {
-            if (string.IsNullOrEmpty(Subject) && string.IsNullOrEmpty(Content)) return true;
-            return await _alertDialogFactory.PromptYesNo("Discard Issue?", "Are you sure you want to discard this update?");
+            get { return _open; }
+            set { this.RaiseAndSetIfChanged(ref _open, value); }
         }
 
-        protected override Task<Octokit.Issue> Save()
-		{
+        public IssueModel Issue
+        {
+            get { return _issue; }
+            set { this.RaiseAndSetIfChanged(ref _issue, value); }
+        }
+
+        public long Id { get; private set; }
+
+        protected override async Task Save()
+        {
             try
             {
-//                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
-//                var milestone = Milestones.Selected?.Number;
-//                var user = Assignees.Selected?.Login;
-//                var issueUpdate = new Octokit.IssueUpdate {
-//                    Body = Content,
-//                    Assignee = user,
-//                    Milestone = milestone,
-//                    Title = Subject,
-//                };
-//
-//                if (labels != null && labels.Length > 0)
-//                {
-//                    foreach (var label in labels)
-//                        issueUpdate.AddLabel(label);
-//                }
-//
-                return _sessionService.GitHubClient.Issue.Update(RepositoryOwner, RepositoryName, Id, null);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Unable to update issue! Please try again.", e);
-            }
-		}
+                if (string.IsNullOrEmpty(IssueTitle))
+                    throw new Exception("Issue must have a title!");
 
-//		protected override Task Load(bool forceCacheInvalidation)
-//		{
-//			if (forceCacheInvalidation || Issue == null)
-//				return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data));
-//			return Task.Delay(0);
-//		}
+                string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+                int? milestone = null;
+                if (Milestone != null) 
+                    milestone = Milestone.Number;
+                string[] labels = Labels.Items.Select(x => x.Name).ToArray();
+                var content = Content ?? string.Empty;
+                var state = IsOpen ? "open" : "closed";
+                var retried = false;
+
+                IsSaving = true;
+
+                // For some reason github needs to try again during an internal server error
+                tryagain:
+
+                try
+                {
+                    var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(IssueTitle, content, state, assignedTo, milestone, labels)); 
+                    Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+                }
+                catch (GitHubSharp.InternalServerException)
+                {
+                    if (retried)
+                        throw;
+
+                    //Do nothing. Something is wrong with github's service
+                    retried = true;
+                    goto tryagain;
+                }
+
+                ChangePresentation(new MvxClosePresentationHint(this));
+            }
+            catch
+            {
+                DisplayAlert("Unable to save the issue! Please try again");
+            }
+            finally
+            {
+                IsSaving = false;
+            }
+
+//            //There is a wierd bug in GitHub when editing an existing issue and the assignedTo is null
+//            catch (GitHubSharp.InternalServerException)
+//            {
+//                if (ExistingIssue != null && assignedTo == null)
+//                    tryEditAgain = true;
+//                else
+//                    throw;
+//            }
+//
+//            if (tryEditAgain)
+//            {
+//                var response = await Application.Client.ExecuteAsync(Application.Client.Users[Username].Repositories[RepoSlug].Issues[ExistingIssue.Number].Update(title, content, state, assignedTo, milestone, labels)); 
+//                model = response.Data;
+//            }
+        }
+
+//        protected override Task Load(bool forceCacheInvalidation)
+//        {
+//            if (forceCacheInvalidation || Issue == null)
+//                return Task.Run(() => this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data));
+//            return Task.Delay(0);
+//        }
+
+        public void Init(NavObject navObject)
+        {
+            base.Init(navObject.Username, navObject.Repository);
+            Id = navObject.Id;
+            Issue = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IssueModel;
+            if (Issue != null)
+            {
+                IssueTitle = Issue.Title;
+                AssignedTo = Issue.Assignee;
+                Milestone = Issue.Milestone;
+                Labels.Items.Reset(Issue.Labels);
+                Content = Issue.Body;
+                IsOpen = string.Equals(Issue.State, "open");
+            }
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public long Id { get; set; }
+        }
     }
 }
 

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Akavache;
-using System.Text;
-using System.Reactive.Linq;
+using System.Net.Http;
+using GitHubSharp;
 
 namespace CodeHub.Core.Data
 {
@@ -14,10 +13,11 @@ namespace CodeHub.Core.Data
 
         public async Task<List<Language>> GetLanguages()
         {
-            var data = await BlobCache.LocalMachine.DownloadUrl(LanguagesUrl, absoluteExpiration: DateTimeOffset.Now.AddDays(1));
-            var serializer = new Octokit.Internal.SimpleJsonSerializer();
-            var decodedData = Encoding.UTF8.GetString(data, 0, data.Length);
-            return serializer.Deserialize<List<Language>>(decodedData);
+            var client = new HttpClient(new ModernHttpClient.NativeMessageHandler());
+            var serializer = new SimpleJsonSerializer();
+            var msg = await client.GetAsync(LanguagesUrl).ConfigureAwait(false);
+            var content = await msg.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return serializer.Deserialize<List<Language>>(content);
         }
     }
 }

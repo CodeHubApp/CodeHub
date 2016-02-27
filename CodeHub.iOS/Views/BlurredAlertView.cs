@@ -10,7 +10,7 @@ namespace CodeHub.iOS.Views
         private readonly UILabel _label;
         private readonly UIButton _button;
 
-        public static void Display(string text, Action dismissed)
+        public static void Display(string text, Action dismissed = null)
         {
             var window = ((AppDelegate)UIApplication.SharedApplication.Delegate).Window;
 
@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Views
                 UIView.Animate(0.3, 0, UIViewAnimationOptions.CurveEaseIn, () => blurView.Alpha = 0, () => {
                     blurView.RemoveFromSuperview();
                     alertView.View.RemoveFromSuperview();
-                    dismissed();
+                    dismissed?.Invoke();
                 });
             });
         }

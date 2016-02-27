@@ -1,204 +1,98 @@
 using System;
-using CodeHub.Core.Services;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using ReactiveUI;
-using CodeHub.Core.Utilities;
-using System.Reactive;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.Contents;
+using CodeHub.Core.Utils;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class SourceTreeViewModel : BaseViewModel, ILoadableViewModel, IProvidesSearchKeyword
+    public class SourceTreeViewModel : LoadableViewModel
     {
-        public IReadOnlyReactiveList<SourceItemViewModel> Content { get; private set; }
+        private readonly IFeaturesService _featuresService;
 
-		public string RepositoryOwner { get; private set; }
+        public CollectionViewModel<ContentModel> Content { get; }
 
-        private string _repositoryName;
-        public string RepositoryName 
-        {
-            get { return _repositoryName; }
-            private set { this.RaiseAndSetIfChanged(ref _repositoryName, value); }
-        }
+        public string Username { get; private set; }
+
+        public string Path { get; private set; }
 
         public string Branch { get; private set; }
 
-        private string _path;
-		public string Path
+        public bool TrueBranch { get; private set; }
+
+        public string Repository { get; private set; }
+
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
         {
-            get { return _path; }
-            private set { this.RaiseAndSetIfChanged(ref _path, value); }
-        }
-
-        private bool _trueBranch;
-        public bool TrueBranch
-        {
-            get { return _trueBranch; }
-            private set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
-        }
-
-        private string _searchKeyword;
-        public string SearchKeyword
-        {
-            get { return _searchKeyword; }
-            set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
-        }
-
-        private bool? _pushAccess;
-        public bool? PushAccess
-        {
-            get { return _pushAccess; }
-            private set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
-        }
-
-        private readonly ObservableAsPropertyHelper<bool> _canAddFile;
-        public bool CanAddFile
-        {
-            get { return _canAddFile.Value; }
-        }
-
-        public IReactiveCommand<object> GoToSourceCommand { get; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; }
-
-        public IReactiveCommand<object> GoToAddFileCommand { get; }
-
-        public SourceTreeViewModel(ISessionService applicationService)
-        {
-            Branch = "master";
-            Path = string.Empty;
-
-            var content = new ReactiveList<ContentModel>();
-            Content = content.CreateDerivedCollection(
-                x => CreateSourceItemViewModel(x),
-                filter: x => x.Name.ContainsKeyword(SearchKeyword),
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            _canAddFile = this.WhenAnyValue(x => x.TrueBranch, y => y.PushAccess)
-                .Select(x => x.Item1 && x.Item2.HasValue && x.Item2.Value)
-                .ToProperty(this, x => x.CanAddFile);
-
-            this.WhenAnyValue(x => x.Path, y => y.RepositoryName, (x, y) => new { Path = x, Repo = y })
-                .Subscribe(x =>
-                {
-                    if (string.IsNullOrEmpty(x.Path))
-                    {
-                        Title = string.IsNullOrEmpty(x.Repo) ? "Source" : x.Repo;
-                    }
-                    else
-                    {
-                        var split = x.Path.TrimEnd('/').Split('/');
-                        Title = split[split.Length - 1];
-                    }
-                });
-
-            GoToAddFileCommand = ReactiveCommand.Create(
-                this.WhenAnyValue(x => x.PushAccess, x => x.TrueBranch)
-                .Select(x => x.Item1.HasValue && x.Item1.Value && x.Item2))
-                .WithSubscription(_ => {
-                    var vm = this.CreateViewModel<CreateFileViewModel>();
-                    vm.Init(RepositoryOwner, RepositoryName, Path, Branch);
-                    vm.SaveCommand.Subscribe(z => LoadCommand.ExecuteIfCan());
-                    NavigateTo(vm);
-                });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                if (!PushAccess.HasValue)
-                {
-                    applicationService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
-                        .ToBackground(x => PushAccess = x.Permissions.Push);
-                }
-
-                var path = Path;
-                if (string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
-                    path = string.Empty;
-
-                var request = applicationService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContent(Path, Branch);
-                var data = new List<ContentModel>();
-                var response = await applicationService.Client.ExecuteAsync(request);
-                data.AddRange(response.Data);
-                while (response.More != null)
-                {
-                    response = await applicationService.Client.ExecuteAsync(response.More);
-                    data.AddRange(response.Data);
-                }
-                content.Reset(data.OrderBy(y => y.Type).ThenBy(y => y.Name));
-            });
-        }
-
-        public SourceTreeViewModel Init(string repositoryOwner, string repositoryName, string branch, string path = null, bool trueBranch = false, bool? pushAccess = null)
-        {
-            RepositoryOwner = repositoryOwner;
-            RepositoryName = repositoryName;
-            Branch = branch;
-            Path = path ?? string.Empty;
-            PushAccess = pushAccess;
-            TrueBranch = trueBranch;
-            return this;
-        }
-
-        private SourceItemViewModel CreateSourceItemViewModel(ContentModel content)
-        {
-            return new SourceItemViewModel(content.Name, GetSourceItemType(content), x =>
+            get { return _shouldShowPro; }
+            private set
             {
-                switch (x.Type)
-                {
-                    case SourceItemType.File:
-                    {
-                        var vm = this.CreateViewModel<SourceViewModel>();
-                        vm.Branch = Branch;
-                        vm.RepositoryOwner = RepositoryOwner;
-                        vm.RepositoryName = RepositoryName;
-                        vm.TrueBranch = TrueBranch;
-                        vm.Name = content.Name;
-                        vm.HtmlUrl = content.HtmlUrl;
-                        vm.Path = content.Path;
-                        vm.PushAccess = PushAccess;
-                        NavigateTo(vm);
-                        break;
-                    }
-                    case SourceItemType.Directory:
-                    {
-                        var vm = this.CreateViewModel<SourceTreeViewModel>();
-                        vm.RepositoryOwner = RepositoryOwner;
-                        vm.Branch = Branch;
-                        vm.RepositoryName = RepositoryName;
-                        vm.TrueBranch = TrueBranch;
-                        vm.Path = content.Path;
-                        vm.PushAccess = PushAccess;
-                        NavigateTo(vm);
-                        break;
-                    }
-                    case SourceItemType.Submodule:
-                    {
-                        var nameAndSlug = content.GitUrl.Substring(content.GitUrl.IndexOf("/repos/", StringComparison.OrdinalIgnoreCase) + 7);
-                        var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.OrdinalIgnoreCase)));
-                        var vm = this.CreateViewModel<SourceTreeViewModel>();
-                        vm.RepositoryOwner = repoId.Owner;
-                        vm.RepositoryName = repoId.Name;
-                        vm.Branch = content.Sha;
-                        NavigateTo(vm);
-                        break;
-                    }
-                }
-            });
-        }
-
-        private static SourceItemType GetSourceItemType(ContentModel content)
-        {
-            if (content.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
-                return SourceItemType.Directory;
-            if (content.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
-            {
-                var isTree = content.GitUrl.EndsWith("trees/" + content.Sha, StringComparison.OrdinalIgnoreCase);
-                if (content.Size == null || isTree)
-                    return SourceItemType.Submodule;
+                _shouldShowPro = value;
+                RaisePropertyChanged();
             }
+        }
 
-            return SourceItemType.File;
+        public ICommand GoToSourceTreeCommand
+        {
+            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
+        }
+
+        public ICommand GoToSubmoduleCommand
+        {
+            get { return new MvxCommand<ContentModel>(GoToSubmodule);}
+        }
+
+        public ICommand GoToSourceCommand
+        {
+            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
+        }
+
+        private void GoToSubmodule(ContentModel x)
+        {
+            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
+            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
+            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+        }
+
+        public SourceTreeViewModel(IFeaturesService featuresService)
+        {
+            _featuresService = featuresService;
+            Content = new CollectionViewModel<ContentModel>();
+        }
+
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            Branch = navObject.Branch ?? "master";
+            Path = navObject.Path ?? "";
+            TrueBranch = navObject.TrueBranch;
+        }
+
+        protected override Task Load(bool forceCacheInvalidation)
+        {
+            if (_featuresService.IsProEnabled)
+                ShouldShowPro = false;
+            else
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            
+            return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public string Branch { get; set; }
+            public string Path { get; set; }
+
+            // Whether the branch is a real branch and not a node
+            public bool TrueBranch { get; set; }
         }
     }
 }

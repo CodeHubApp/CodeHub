@@ -1,52 +1,113 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Linq;
+using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
-using Octokit;
-using ReactiveUI;
+using GitHubSharp.Models;
+using System.Collections.Generic;
+using CodeHub.Core.Messages;
+using System.Linq;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public class IssueLabelsViewModel : ReactiveObject, ILoadableViewModel
+    public class IssueLabelsViewModel : LoadableViewModel
     {
-        public IReadOnlyReactiveList<IssueLabelItemViewModel> Labels { get; }
+        private IEnumerable<LabelModel> _originalLables;
 
-        public IReactiveCommand<Unit> LoadCommand { get; }
+        private bool _isSaving;
+        public bool IsSaving
+        {
+            get { return _isSaving; }
+            private set {
+                _isSaving = value;
+                RaisePropertyChanged(() => IsSaving);
+            }
+        }
 
-        public IReactiveCommand<Unit> SaveCommand { get; }
+        private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
+        public CollectionViewModel<LabelModel> Labels
+        {
+            get { return _labels; }
+        }
 
-        public IssueLabelsViewModel(
-            Func<Task<IReadOnlyList<Label>>> loadAllLabelsFunc,
-            Func<Task<IReadOnlyList<Label>>> loadSelectedFunc,
-            Func<IEnumerable<Label>, Task> saveLabelsFunc)
-	    {
-            var labels = new ReactiveList<Label>();
-            var selected = new ReactiveList<Label>();
-            Labels = labels.CreateDerivedCollection(x => 
+        private readonly CollectionViewModel<LabelModel> _selectedLabels = new CollectionViewModel<LabelModel>();
+        public CollectionViewModel<LabelModel> SelectedLabels
+        {
+            get { return _selectedLabels; }
+        }
+
+        public string Username  { get; private set; }
+
+        public string Repository { get; private set; }
+
+        public long Id { get; private set; }
+
+        public bool SaveOnSelect { get; private set; }
+
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            Id = navObject.Id;
+            SaveOnSelect = navObject.SaveOnSelect;
+
+            _originalLables = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
+            SelectedLabels.Items.Reset(_originalLables);
+        }
+
+        public ICommand SaveLabelChoices
+        {
+            get { return new MvxCommand(() => SelectLabels(SelectedLabels)); }
+        }
+
+        private async Task SelectLabels(IEnumerable<LabelModel> x)
+        {
+            //If nothing has changed, dont do anything...
+            if (_originalLables != null && _originalLables.Count() == x.Count() && _originalLables.Intersect(x).Count() == x.Count())
             {
-                var vm = new IssueLabelItemViewModel(x);
-                vm.IsSelected = selected.Any(y => y.Url == x.Url);
-                return vm;
-            });
-
-            SaveCommand = ReactiveCommand.CreateAsyncTask(_ =>
+                ChangePresentation(new MvxClosePresentationHint(this));
+                return;
+            }
+                
+            if (SaveOnSelect)
             {
-                var currentlySelected = Labels.Where(x => x.IsSelected).ToList();
-                var selectedLabelsUrl = currentlySelected.Select(x => x.Label.Url).ToArray();
-                var prevSelectedLabelsUrl = selected.Select(x => x.Url).ToArray();
-                var intersect = selectedLabelsUrl.Intersect(prevSelectedLabelsUrl).ToArray();
-                var different = selectedLabelsUrl.Length != prevSelectedLabelsUrl.Length || intersect.Length != selectedLabelsUrl.Length;
-                return different ? saveLabelsFunc(currentlySelected.Select(x => x.Label)) : Task.FromResult(0);
-            });
+                try
+                {
+                    IsSaving = true;
+                    var labels = x != null ? x.Select(y => y.Name).ToArray() : null;
+                    var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateLabels(labels);
+                    var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
+                    Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
+                }
+                catch
+                {
+                    DisplayAlert("Unable to save labels! Please try again.");
+                }
+                finally
+                {
+                    IsSaving = false;
+                }
+            }
+            else
+            {
+                Messenger.Publish(new SelectIssueLabelsMessage(this) { Labels = SelectedLabels.Items.ToArray() });
+            }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                selected.Clear();
-                selected.AddRange((await loadSelectedFunc()) ?? Enumerable.Empty<Label>());
-                labels.Reset(await loadAllLabelsFunc());
-            });
-	    }
+            ChangePresentation(new MvxClosePresentationHint(this));
+        }
+
+        protected override Task Load(bool forceCacheInvalidation)
+        {
+            return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Labels.GetAll(), forceCacheInvalidation);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public long Id { get; set; }
+            public bool SaveOnSelect { get; set; }
+        }
     }
 }
 

@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using UIKit;
 using CoreGraphics;
 using SDWebImage;
 using Foundation;
+using System.Reactive.Subjects;
 using System.Reactive;
 using System.Reactive.Linq;
 
@@ -10,6 +11,7 @@ namespace CodeHub.iOS.Views
 {
     public class ImageAndTitleHeaderView : UIView
     {
+        private readonly ISubject<Unit> _clickedSubject = new Subject<Unit>();
         private readonly UIImageView _imageView;
         private readonly UILabel _label;
         private readonly UILabel _label2;
@@ -21,14 +23,14 @@ namespace CodeHub.iOS.Views
 
         public UIButton ImageButton { get; private set; }
 
+        public IObservable<Unit> Clicked
+        {
+            get { return _clickedSubject.AsObservable(); }
+        }
+
         public UIImageView SubImageView
         {
             get { return _subImageView; }
-        }
-
-        public IObservable<Unit> Clicked
-        {
-            get { return ImageButton.GetClickedObservable(); }
         }
 
         public UIImage Image
@@ -42,7 +44,6 @@ namespace CodeHub.iOS.Views
             get { return _label.Text; }
             set 
             { 
-                if (value == _label.Text) return;
                 _label.Text = value; 
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();
@@ -63,8 +64,8 @@ namespace CodeHub.iOS.Views
             get { return _label2.Text; }
             set
             {
-                if (value == _label2.Text) return;
-                if (!string.IsNullOrEmpty(value)) _label2.Hidden = false;
+                if (!string.IsNullOrEmpty(value))
+                    _label2.Hidden = false;
                 _label2.Text = value;
                 this.SetNeedsLayout();
                 this.LayoutIfNeeded();
@@ -131,8 +132,9 @@ namespace CodeHub.iOS.Views
         public ImageAndTitleHeaderView()
             : base(new CGRect(0, 0, 320f, 100f))
         {
-            ImageButton = new UIButton(UIButtonType.Custom);
+            ImageButton = new UIButton();
             ImageButton.Frame = new CGRect(0, 0, 80, 80);
+            ImageButton.TouchUpInside += MakeHandler(this);
             Add(ImageButton);
 
             _imageView = new UIImageView();
@@ -175,16 +177,29 @@ namespace CodeHub.iOS.Views
             RoundedImage = true;
         }
 
-        public void SetImage(Uri imageUri, UIImage placeholder)
+        public static EventHandler MakeHandler(ImageAndTitleHeaderView view)
+        {
+            var weakRef = new WeakReference<ImageAndTitleHeaderView>(view);
+            return new EventHandler((s, e) => weakRef.Get()._clickedSubject.OnNext(Unit.Default));
+        }
+
+        public void SetImage(string imageUri, UIImage placeholder)
         {
             if (imageUri == null)
                 _imageView.Image = placeholder;
             else
             {
-                _imageView.SetImage(new NSUrl(imageUri.AbsoluteUri), placeholder, (image, error, cacheType, imageUrl) => {
-                    if (image != null && error == null)
-                        UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null);
-                });
+                try
+                {
+                    _imageView.SetImage(new NSUrl(imageUri), placeholder, (image, error, cacheType, imageUrl) => {
+                        if (image != null && error == null)
+                            UIView.Transition(_imageView, 0.35f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imageView.Image = image, null);
+                    });
+                }
+                catch
+                {
+                    _imageView.Image = placeholder;
+                }
             }
         }
 
@@ -237,4 +252,3 @@ namespace CodeHub.iOS.Views
         }
     }
 }
-

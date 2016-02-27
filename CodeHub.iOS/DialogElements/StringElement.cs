@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using Foundation;
 using SDWebImage;
@@ -14,7 +14,6 @@ namespace CodeHub.iOS.DialogElements
         {
             Image = image;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            SelectionStyle = UITableViewCellSelectionStyle.Blue;
         }
 
         public ButtonElement (string caption, UIImage image = null) 
@@ -25,8 +24,6 @@ namespace CodeHub.iOS.DialogElements
 
     public class StringElement : Element 
     {
-        public static UIFont  DefaultTitleFont = UIFont.PreferredBody;
-        public static UIFont  DefaultDetailFont = UIFont.PreferredSubheadline;
         public static UIColor DefaultTitleColor = UIColor.FromRGB(41, 41, 41);
         public static UIColor DefaultDetailColor = UIColor.FromRGB(80, 80, 80);
         public static UIColor BgColor = UIColor.White;
@@ -40,9 +37,9 @@ namespace CodeHub.iOS.DialogElements
         private UIImage _image;
         private Uri _imageUri;
         private string _value;
-        private UITableViewCellAccessory _accessory = UITableViewCellAccessory.None;
+        private UITableViewCellAccessory _accessory = UITableViewCellAccessory.DisclosureIndicator;
         private readonly Subject<object> _tapped = new Subject<object>();
-        private UITableViewCellSelectionStyle _selectionStyle;
+        private UITableViewCellSelectionStyle _selectionStyle = UITableViewCellSelectionStyle.Default;
 
         public IObservable<object> Clicked
         {
@@ -54,8 +51,29 @@ namespace CodeHub.iOS.DialogElements
             get { return _selectionStyle; }
             set
             {
+                if (_selectionStyle == value)
+                    return;
+                
                 _selectionStyle = value;
-                GetActiveCell().Do(x => x.SelectionStyle = value);
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.SelectionStyle = value;
+            }
+        }
+
+        private string _caption;
+        public string Caption
+        {
+            get { return _caption; }
+            set
+            {
+                if (_caption == value)
+                    return;
+
+                _caption = value;
+                var cell = GetActiveCell();
+                if (cell != null && cell.TextLabel != null)
+                    cell.TextLabel.Text = value ?? string.Empty;
             }
         }
 
@@ -64,6 +82,9 @@ namespace CodeHub.iOS.DialogElements
             get { return _value; }
             set
             {
+                if (_value == value)
+                    return;
+                
                 _value = value;
                 var cell = GetActiveCell();
                 if (cell != null && cell.DetailTextLabel != null)
@@ -76,8 +97,45 @@ namespace CodeHub.iOS.DialogElements
             get { return _accessory; }
             set
             {
+                if (_accessory == value)
+                    return;
+                
                 _accessory = value;
-                GetActiveCell().Do(x => x.Accessory = value);
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.Accessory = value;
+            }
+        }
+
+        private int _lines;
+        public int Lines
+        {
+            get { return _lines; }
+            set
+            {
+                if (_lines == value)
+                    return;
+                
+                _lines = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.TextLabel.Lines = value;
+            }
+        }
+
+        private UILineBreakMode _lineBreakMode;
+        public UILineBreakMode LineBreakMode
+        {
+            get { return _lineBreakMode; }
+            set
+            {
+                if (_lineBreakMode == value)
+                    return;
+                
+                _lineBreakMode = value;
+                var cell = GetActiveCell();
+                if (cell != null)
+                    cell.TextLabel.LineBreakMode = value;
             }
         }
 
@@ -85,15 +143,9 @@ namespace CodeHub.iOS.DialogElements
 
         public StringElement()
         {
-            Font = DefaultTitleFont.WithSize(DefaultTitleFont.PointSize);
-            SubtitleFont = DefaultDetailFont.WithSize(DefaultDetailFont.PointSize);
+            Font = UIFont.PreferredBody;
+            SubtitleFont = UIFont.PreferredSubheadline;
             TextColor = DefaultTitleColor;
-        }
-
-        public StringElement (UIImage image)
-            : this()
-        {
-            Image = image;
         }
 
         public StringElement (string caption)
@@ -141,9 +193,12 @@ namespace CodeHub.iOS.DialogElements
         public Uri ImageUri {
             get { return _imageUri; }
             set {
+                if (_imageUri == value)
+                    return;
+                
                 _imageUri = value;
                 var cell = GetActiveCell();
-                if (cell != null)
+                if (cell != null && value != null)
                     cell.ImageView.SetImage(new NSUrl(value.AbsoluteUri));
             }
         }
@@ -192,7 +247,9 @@ namespace CodeHub.iOS.DialogElements
 
         public override bool Matches (string text)
         {
-            return (Value != null && Value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1) || base.Matches (text);
+            var cap = Caption ?? string.Empty;
+            var val = Value ?? string.Empty;
+            return cap.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1 || val.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) != -1;
         }
     }
 }

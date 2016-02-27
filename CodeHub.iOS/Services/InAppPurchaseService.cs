@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using StoreKit;
 using System.Threading.Tasks;
 using Foundation;
@@ -8,6 +8,17 @@ using CodeHub.Core.Services;
 
 namespace CodeHub.iOS.Services
 {
+    public interface IInAppPurchaseService
+    {
+        Task<SKProductsResponse> RequestProductData(params string[] productIds);
+
+        Task Restore();
+
+        Task PurchaseProduct(SKProduct productId);
+
+        IObservable<Exception> ThrownExceptions { get; }
+    }
+
     public class InAppPurchaseService : IInAppPurchaseService
     {
         private readonly TransactionObserver _observer;
@@ -20,14 +31,12 @@ namespace CodeHub.iOS.Services
 
         private void OnPurchaseError(SKPayment id, Exception e)
         {
-            if (_actionSource != null)
-                _actionSource.TrySetException(e);
+            _actionSource?.TrySetException(e);
         }
 
         private void OnPurchaseSuccess(SKPayment id)
         {
-            if (_actionSource != null)
-                _actionSource.TrySetResult(true);
+            _actionSource?.TrySetResult(true);
         }
 
         public InAppPurchaseService(IDefaultValueService defaultValueService)
@@ -137,8 +146,6 @@ namespace CodeHub.iOS.Services
                                 _inAppPurchases.RestoreTransaction(transaction);
                                 SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
                                 break;
-                            default:
-                                break;
                         }
                     }
                     catch (Exception e)
@@ -151,15 +158,13 @@ namespace CodeHub.iOS.Services
             public override void PaymentQueueRestoreCompletedTransactionsFinished (SKPaymentQueue queue)
             {
                 Console.WriteLine(" ** RESTORE PaymentQueueRestoreCompletedTransactionsFinished ");
-                if (_inAppPurchases._actionSource != null)
-                    _inAppPurchases._actionSource.TrySetResult(true);
+                _inAppPurchases._actionSource?.TrySetResult(true);
             }
 
             public override void RestoreCompletedTransactionsFailedWithError (SKPaymentQueue queue, NSError error)
             {
                 Console.WriteLine(" ** RESTORE RestoreCompletedTransactionsFailedWithError " + error.LocalizedDescription);
-                if (_inAppPurchases._actionSource != null)
-                    _inAppPurchases._actionSource.TrySetResult(true);
+                _inAppPurchases._actionSource?.TrySetResult(false);
             }
         }
     }

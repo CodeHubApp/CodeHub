@@ -2,7 +2,5 @@
 */obj
 *.suo
 *.userprefs
-*.csproj.user
-/packages
-/Components
-.vs
+packages
+Components/

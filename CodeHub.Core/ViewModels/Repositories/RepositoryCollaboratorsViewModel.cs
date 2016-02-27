@@ -1,30 +1,45 @@
-using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Users;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoryCollaboratorsViewModel : BaseUsersViewModel
+    public class RepositoryCollaboratorsViewModel : LoadableViewModel
     {
-        public string RepositoryOwner { get; private set; }
+        private readonly CollectionViewModel<BasicUserModel> _collaborators = new CollectionViewModel<BasicUserModel>();
 
-        public string RepositoryName { get; private set; }
-
-        public RepositoryCollaboratorsViewModel(ISessionService sessionService)
-            : base(sessionService)
+        public CollectionViewModel<BasicUserModel> Collaborators
         {
-            Title = "Collaborators";
+            get { return _collaborators; }
         }
 
-        protected override System.Uri RequestUri
+        public string Username { get; private set; }
+
+        public string Repository { get; private set; }
+
+        public ICommand GoToUserCommand
         {
-            get { return Octokit.ApiUrls.RepoCollaborators(RepositoryOwner, RepositoryName); }
+            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x.Login })); }
         }
 
-        public RepositoryCollaboratorsViewModel Init(string repositoryOwner, string repositoryName)
+        public void Init(NavObject navObject) 
         {
-            RepositoryOwner = repositoryOwner;
-            RepositoryName = repositoryName;
-            return this;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+        }
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Collaborators.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
         }
     }
 }

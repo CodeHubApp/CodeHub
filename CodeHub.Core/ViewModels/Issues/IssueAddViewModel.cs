@@ -1,54 +1,54 @@
 using System;
+using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
-using CodeHub.Core.Services;
-using CodeHub.Core.Factories;
+using CodeHub.Core.Messages;
 using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-	public class IssueAddViewModel : IssueModifyViewModel
-	{
-        private readonly ISessionService _sessionService;
-        private readonly IAlertDialogFactory _alertDialogFactory;
-
-        public IssueAddViewModel(
-            ISessionService applicationService, 
-            IAlertDialogFactory alertDialogService)
-            : base(applicationService, alertDialogService)
+    public class IssueAddViewModel : IssueModifyViewModel
+    {
+        protected override async Task Save()
         {
-            _sessionService = applicationService;
-            _alertDialogFactory = alertDialogService;
-            Title = "New Issue";
+            if (string.IsNullOrEmpty(IssueTitle))
+            {
+                DisplayAlert("Unable to save the issue: you must provide a title!");
+                return;
+            }
+
+            try
+            {
+                string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+                int? milestone = null;
+                if (Milestone != null) 
+                    milestone = Milestone.Number;
+                string[] labels = Labels.Items.Select(x => x.Name).ToArray();
+                var content = Content ?? string.Empty;
+
+                IsSaving = true;
+                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(IssueTitle, content, assignedTo, milestone, labels));
+                Messenger.Publish(new IssueAddMessage(this) { Issue = data.Data });
+                ChangePresentation(new MvxClosePresentationHint(this));
+            }
+            catch
+            {
+                DisplayAlert("Unable to save new issue! Please try again.");
+            }
+            finally
+            {
+                IsSaving = false;
+            }
         }
 
-        protected override Task<Octokit.Issue> Save()
-		{
-			try
-			{
-//                var labels = Labels.Selected?.Select(y => y.Name).ToArray();
-//                var milestone = Milestones.Selected?.Number;
-//                var user = Assignees.Selected?.Login;
-//                var newIssue = new Octokit.NewIssue(Subject) {
-//                    Body = Content,
-//                    Assignee = user,
-//                    Milestone = milestone
-//                };
-//
-//                foreach (var label in labels)
-//                    newIssue.Labels.Add(label);
-
-                return _sessionService.GitHubClient.Issue.Create(RepositoryOwner, RepositoryName, null);
-			}
-			catch (Exception e)
-			{
-                throw new Exception("Unable to save new issue! Please try again.", e);
-			}
-		}
-
-        protected override async Task<bool> Discard()
+        public void Init(NavObject navObject)
         {
-            if (string.IsNullOrEmpty(Subject) && string.IsNullOrEmpty(Content)) return true;
-            return await _alertDialogFactory.PromptYesNo("Discard Issue?", "Are you sure you want to discard this issue?");
+            base.Init(navObject.Username, navObject.Repository);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
         }
     }
 }

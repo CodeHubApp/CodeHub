@@ -1,30 +1,71 @@
-using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Users;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoryStargazersViewModel : BaseUsersViewModel
+    public class RepositoryStargazersViewModel : BaseUserCollectionViewModel
     {
-        public string RepositoryOwner { get; private set; }
-
-        public string RepositoryName { get; private set; }
-
-	    public RepositoryStargazersViewModel(ISessionService sessionService)
-            : base(sessionService)
-	    {
-            Title = "Stargazers";
-	    }
-
-        protected override System.Uri RequestUri
+        public string User
         {
-            get { return Octokit.ApiUrls.Stargazers(RepositoryOwner, RepositoryName); }
+            get;
+            private set;
         }
 
-        public RepositoryStargazersViewModel Init(string repositoryOwner, string repositoryName)
+        public string Repository
         {
-            RepositoryOwner = repositoryOwner;
-            RepositoryName = repositoryName;
-            return this;
+            get;
+            private set;
+        }
+
+        public void Init(NavObject navObject)
+        {
+            User = navObject.User;
+            Repository = navObject.Repository;
+        }
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string User { get; set; }
+            public string Repository { get; set; }
+        }
+    }
+
+    public class RepositoryWatchersViewModel : BaseUserCollectionViewModel
+    {
+        public string User
+        {
+            get;
+            private set;
+        }
+
+        public string Repository
+        {
+            get;
+            private set;
+        }
+
+        public void Init(NavObject navObject)
+        {
+            User = navObject.User;
+            Repository = navObject.Repository;
+        }
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetWatchers(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string User { get; set; }
+            public string Repository { get; set; }
         }
     }
 }

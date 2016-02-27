@@ -13,9 +13,9 @@ namespace CodeHub.Core.Data
             Slug = slug;
         }
 
-		public string Name { get; protected set; }
+        public string Name { get; set; }
 
-        public string Slug { get; protected set; }
+        public string Slug { get; set; }
 
         public override bool Equals(object obj)
         {

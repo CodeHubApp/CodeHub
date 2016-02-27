@@ -1,27 +1,212 @@
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
+using CodeHub.iOS.ViewControllers;
 using UIKit;
-using ReactiveUI;
-using CodeHub.iOS.TableViewSources;
+using Foundation;
+using System;
+using CodeHub.Core.Data;
+using CoreGraphics;
 using CodeHub.Core.ViewModels.Accounts;
+using CodeHub.iOS.DialogElements;
+using System.Linq;
+using ReactiveUI;
+using CodeHub.Core.Messages;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class AccountsViewController : BaseTableViewController<AccountsViewModel>, IModalViewController
-	{
-        public AccountsViewController()
-        {
-            OnActivation(d => {
-                d(this.WhenAnyValue(x => x.ViewModel.GoToAddAccountCommand)
-                    .ToBarButtonItem(UIBarButtonSystemItem.Add, x => NavigationItem.RightBarButtonItem = x));
+    public class AccountsViewController : DialogViewController
+    {
+        private readonly IAccountsService _accountsService = Mvx.Resolve<IAccountsService>();
 
-                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                    .ToBarButtonItem(Images.Cancel, x => NavigationItem.LeftBarButtonItem = x));
-            });
+        public AccountsViewController() : base(UITableViewStyle.Plain)
+        {
+            Title = "Accounts";
+
+            var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
+            NavigationItem.RightBarButtonItem = addButton;
+            OnActivation(d => d(addButton.GetClickedObservable().Subscribe(_ => AddAccount())));
+        }
+
+        private void AddAccount()
+        {
+            NavigationController.PushViewController(new NewAccountViewController(), true);
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            TableView.Source = new AccountTableViewSource(TableView, ViewModel.Items);
+            TableView.RowHeight = 74;
+        }
+
+        private void SelectAccount(GitHubAccount githubAccount)
+        {
+            var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
+
+            if (githubAccount.DontRemember)
+            {
+                //Hack for now
+                if (isEnterprise)
+                {
+                    var vc = new AddAccountViewController();
+                    vc.ViewModel.Init(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
+                    NavigationController.PushViewController(vc, true);
+                }
+                else
+                {
+                    var loginViewController = new LoginViewController();
+                    loginViewController.ViewModel.Init(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
+                    NavigationController.PushViewController(loginViewController, true);
+                }
+
+                return;
+            }
+
+            _accountsService.SetDefault(githubAccount);
+            MessageBus.Current.SendMessage(new LogoutMessage());
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+
+            var accountsService = Mvx.Resolve<IAccountsService>();
+            var weakVm = new WeakReference<AccountsViewController>(this);
+            var accountSection = new Section();
+            accountSection.AddAll(accountsService.Select(account =>
+            {
+                var t = new AccountElement(account, account.Equals(accountsService.ActiveAccount));
+                t.Tapped += () => weakVm.Get()?.SelectAccount(account);
+                return t;
+            }));
+            Root.Reset(accountSection);
+
+            if (NavigationItem.LeftBarButtonItem != null)
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
+        }
+
+        public override DialogViewController.Source CreateSizingSource()
+        {
+            return new EditSource(this);
+        }
+
+        private void Delete(Element element)
+        {
+            var accountElement = element as AccountElement;
+            if (accountElement == null)
+                return;
+
+            //Remove the designated username
+            _accountsService.Remove(accountElement.Account);
+
+            if (_accountsService.ActiveAccount != null && _accountsService.ActiveAccount.Equals(accountElement.Account))
+            {
+                _accountsService.SetActiveAccount(null);
+            }
+
+            if (NavigationItem.LeftBarButtonItem != null)
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
+        }
+
+        private class EditSource : DialogViewController.Source
+        {
+            public EditSource(AccountsViewController dvc) : base (dvc)
+            {
+            }
+
+            public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+            {
+                return true;
+            }
+
+            public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
+            {
+                return UITableViewCellEditingStyle.Delete;
+            }
+
+            public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+            {
+                if (indexPath == null)
+                    return;
+
+                switch (editingStyle)
+                {
+                    case UITableViewCellEditingStyle.Delete:
+                        var section = Container.Root[indexPath.Section];
+                        var element = section[indexPath.Row];
+                        section.Remove(element);
+                        (Container as AccountsViewController)?.Delete(element);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// An element that represents an account object
+        /// </summary>
+        protected class AccountElement : Element
+        {
+            public event Action Tapped;
+
+            private readonly bool _currentAccount;
+
+            public GitHubAccount Account { get; private set; }
+
+            public AccountElement(GitHubAccount account, bool currentAccount)
+            {
+                Account = account;
+                _currentAccount = currentAccount;
+            }
+
+            public override UITableViewCell GetCell(UITableView tv)
+            {
+                var cell = (tv.DequeueReusableCell(AccountCellView.Key) as AccountCellView) ?? new AccountCellView();
+                cell.Accessory = _currentAccount ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                cell.TextLabel.Text = Account.Username;
+                cell.DetailTextLabel.Text = Account.IsEnterprise ? Account.WebDomain : "GitHub.com";
+                cell.ImageView.SetAvatar(new CodeHub.Core.Utilities.GitHubAvatar(Account.AvatarUrl));
+                return cell;
+            }
+
+            public override void Selected (UITableView tableView, NSIndexPath indexPath)
+            {
+                base.Selected(tableView, indexPath);
+                Tapped?.Invoke();
+            }
+        }
+
+        public class AccountCellView : UITableViewCell
+        {
+            public static NSString Key = new NSString("ProfileCell");
+
+
+            public AccountCellView()
+                : base(UITableViewCellStyle.Subtitle, Key)
+            {
+                ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
+                ImageView.Layer.MinificationFilter = CoreAnimation.CALayer.FilterTrilinear;
+                ImageView.Layer.MasksToBounds = true;
+
+                TextLabel.TextColor = UIColor.FromWhiteAlpha(0.0f, 1f);
+                TextLabel.Font = UIFont.FromName("HelveticaNeue", 17f);
+
+                DetailTextLabel.TextColor = UIColor.FromWhiteAlpha(0.1f, 1f);
+                DetailTextLabel.Font = UIFont.FromName("HelveticaNeue-Thin", 14f);
+            }
+
+            public override void LayoutSubviews()
+            {
+                base.LayoutSubviews();
+
+                var imageSize = this.Bounds.Height - 30f;
+                ImageView.Layer.CornerRadius = imageSize / 2;
+                ImageView.Frame = new CGRect(15, 15, imageSize, imageSize);
+
+                var titlePoint = new CGPoint(ImageView.Frame.Right + 15f, 19f);
+                TextLabel.Frame = new CGRect(titlePoint.X, titlePoint.Y, this.ContentView.Bounds.Width - titlePoint.X - 10f, TextLabel.Font.LineHeight);
+                DetailTextLabel.Frame = new CGRect(titlePoint.X, TextLabel.Frame.Bottom, this.ContentView.Bounds.Width - titlePoint.X - 10f, DetailTextLabel.Font.LineHeight + 1);
+
+                SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.Left, 0, 0);
+            }
         }
     }
 }

@@ -1,145 +1,107 @@
+using System.Threading.Tasks;
 using System;
-using CodeHub.Core.Services;
-using ReactiveUI;
-using System.Reactive.Linq;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.Messages;
+using MvvmCross.Plugins.Messenger;
 using System.Linq;
-using System.IO;
-using System.Reactive;
-using CodeHub.Core.ViewModels.Contents;
-using CodeHub.Core.Factories;
 
 namespace CodeHub.Core.ViewModels.Source
 {
-    public class SourceViewModel : ContentViewModel, ILoadableViewModel
+    public class SourceViewModel : FileSourceViewModel
     {
+        private readonly MvxSubscriptionToken _editToken;
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
-        public string Branch { get; set; }
-
-        public string RepositoryOwner { get; set; }
-
-        public string RepositoryName { get; set; }
-
-        public string Path { get; set; }
-
-        public bool ForceBinary { get; set; }
-
-        public string GitUrl { get; set; }
-
-        public string HtmlUrl { get; set; }
-
-        private bool? _pushAccess;
-        public bool? PushAccess
-        {
-            get { return _pushAccess; }
-            set { this.RaiseAndSetIfChanged(ref _pushAccess, value); }
-        }
-
         private string _name;
-        public string Name
+        private string _gitUrl;
+        private bool _forceBinary;
+
+        public string Username { get; private set; }
+
+        public string Repository { get; private set; }
+
+        public string Branch { get; private set; }
+
+        public bool TrueBranch { get; private set; }
+
+        public string Path { get; private set; }
+
+        protected override async Task Load(bool forceCacheInvalidation)
         {
-            get { return _name; }
-            set { this.RaiseAndSetIfChanged(ref _name, value); }
+            var fileName = System.IO.Path.GetFileName(_name);
+            var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
+            string mime = string.Empty;
+
+            using (var stream = new System.IO.FileStream(filepath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+            {
+                mime = await this.GetApplication().Client.DownloadRawResource2(_gitUrl, stream) ?? string.Empty;
+            }
+
+            FilePath = filepath;
+
+            // We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
+            if (_forceBinary)
+                return;
+
+            var isText = mime.Contains("charset");
+            if (isText)
+            {
+                ContentPath = FilePath;
+            }
         }
 
-        private readonly ObservableAsPropertyHelper<bool> _isMarkdown;
-        public override bool IsMarkdown
+        public bool CanEdit
         {
-            get { return _isMarkdown.Value; }
+            get { return ContentPath != null && TrueBranch; }
         }
-
-        private bool _trueBranch;
-        public bool TrueBranch
+            
+        public SourceViewModel()
         {
-            get { return _trueBranch; }
-            set { this.RaiseAndSetIfChanged(ref _trueBranch, value); }
-        }
-
-        public IReactiveCommand<object> GoToEditCommand { get; }
-
-        public IReactiveCommand<object> OpenInGitHubCommand { get; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; }
-
-        public SourceViewModel(ISessionService sessionService, IActionMenuFactory actionMenuFactory,
-            IFilesystemService filesystemService)
-            : base(sessionService)
-	    {
-            var canEdit = this.WhenAnyValue(x => x.SourceItem, x => x.TrueBranch, x => x.PushAccess)
-                .Select(x => x.Item1 != null && x.Item2 && !x.Item1.IsBinary && x.Item3.HasValue && x.Item3.Value);
-            GoToEditCommand = ReactiveCommand.Create(canEdit);
-	        GoToEditCommand.Subscribe(_ => {
-	            var vm = this.CreateViewModel<EditFileViewModel>();
-                vm.Init(RepositoryOwner, RepositoryName, Path, null, Branch);
-                vm.SaveCommand.Subscribe(x => {
-                    GitUrl = x.Content.GitUrl.AbsoluteUri;
-                    LoadCommand.ExecuteIfCan();
-                });
-	            NavigateTo(vm);
+            _editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
+            {
+                if (x.OldSha == null || x.Update == null)
+                    return;
+                _gitUrl = x.Update.Content.GitUrl;
+                if (LoadCommand.CanExecute(null))
+                    LoadCommand.Execute(true);
             });
+        }
 
-            this.WhenAnyValue(x => x.Name).Subscribe(x => Title = x ?? string.Empty);
+        public void Init(NavObject navObject)
+        {
+            Path = navObject.Path;
+            HtmlUrl = navObject.HtmlUrl;
+            _name = navObject.Name;
+            _gitUrl = navObject.GitUrl;
+            _forceBinary = navObject.ForceBinary;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            Branch = navObject.Branch;
+            TrueBranch = navObject.TrueBranch;
 
-            _isMarkdown = this.WhenAnyValue(x => x.Path).IsNotNull().Select(x => 
-                MarkdownExtensions.Any(Path.EndsWith)).ToProperty(this, x => x.IsMarkdown);
+            //Create the filename
+            var fileName = System.IO.Path.GetFileName(Path);
+            if (fileName == null)
+                fileName = Path.Substring(Path.LastIndexOf('/') + 1);
 
-            OpenInGitHubCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.HtmlUrl).Select(x => !string.IsNullOrEmpty(x)));
-            OpenInGitHubCommand
-                .Select(_ => this.CreateViewModel<WebBrowserViewModel>())
-                .Select(x => x.Init(this.HtmlUrl))
-                .Subscribe(NavigateTo);
+            //Create the temp file path
+            Title = fileName;
 
-            var canShowMenu = this.WhenAnyValue(x => x.SourceItem).Select(x => x != null);
-            ShowMenuCommand = ReactiveCommand.CreateAsyncTask(canShowMenu, sender => {
-                var menu = actionMenuFactory.Create();
-                if (GoToEditCommand.CanExecute(null))
-                    menu.AddButton("Edit", GoToEditCommand);
-                menu.AddButton("Open With", OpenWithCommand);
-                if (OpenInGitHubCommand.CanExecute(null))
-                    menu.AddButton("Open in GitHub", OpenInGitHubCommand);
-                return menu.Show(sender);
-            });
+            var extension = System.IO.Path.GetExtension(Path);
+            IsMarkdown = MarkdownExtensions.Contains(extension);
+        }
 
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t =>
-	        {
-	            string filepath;
-                bool isBinary = false;
-
-                if (!PushAccess.HasValue)
-                {
-                    sessionService.GitHubClient.Repository.Get(RepositoryOwner, RepositoryName)
-                        .ToBackground(x => PushAccess = x.Permissions.Push);
-                }
-
-                using (var stream = filesystemService.CreateTempFile(out filepath, Name))
-                {
-                    if (MarkdownExtensions.Any(Path.EndsWith))
-                    {
-                        var renderedContent = await sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFileRendered(Path, Branch);
-                        using (var stringWriter = new StreamWriter(stream))
-                        {
-                            await stringWriter.WriteAsync(renderedContent);
-                        }
-                    } 
-                    else
-                    {
-                        if (string.IsNullOrEmpty(GitUrl) || string.IsNullOrEmpty(HtmlUrl))
-                        {
-                            var req = sessionService.Client.Users[RepositoryOwner].Repositories[RepositoryName].GetContentFile(Path, Branch);
-                            var data = (await sessionService.Client.ExecuteAsync(req)).Data;
-                            GitUrl = data.GitUrl;
-                            HtmlUrl = data.HtmlUrl;
-                        }
-
-                        var mime = await sessionService.Client.DownloadRawResource2(GitUrl, stream) ?? string.Empty;
-                        isBinary = !(mime ?? string.Empty).Contains("charset");
-                    }
-                }
-
-                // We can force a binary representation if it was passed during init. In which case we don't care to figure out via the mime.
-                var fileUri = new Uri(filepath);
-                SourceItem = new FileSourceItemViewModel(fileUri, ForceBinary || isBinary);
-	        });
-	    }
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public string Branch { get; set; }
+            public string Path { get; set; }
+            public string HtmlUrl { get; set; }
+            public string Name { get; set; }
+            public string GitUrl { get; set; }
+            public bool ForceBinary { get; set; }
+            public bool TrueBranch { get; set; }
+        }
     }
 }

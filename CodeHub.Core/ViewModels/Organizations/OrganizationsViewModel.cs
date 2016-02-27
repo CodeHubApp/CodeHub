@@ -1,37 +1,42 @@
-using CodeHub.Core.Services;
-using ReactiveUI;
-using CodeHub.Core.ViewModels.Users;
-using System;
-using Octokit;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CodeHub.Core.ViewModels;
+using GitHubSharp.Models;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
-    public class OrganizationsViewModel : BaseSearchableListViewModel<Organization, UserItemViewModel>
-	{
+    public class OrganizationsViewModel : LoadableViewModel
+    {
+        public CollectionViewModel<BasicUserModel> Organizations { get; }
+
         public string Username { get; private set; }
 
-        public OrganizationsViewModel(ISessionService applicationService)
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+        }
+
+        public OrganizationsViewModel()
         {
             Title = "Organizations";
-
-            Items = InternalItems.CreateDerivedCollection(
-                x => new UserItemViewModel(x.Login, x.AvatarUrl, true, () => {
-                    var vm = this.CreateViewModel<OrganizationViewModel>();
-                    vm.Init(x.Login, x);
-                    NavigateTo(vm);
-                }),
-                filter: x => x.Name.ContainsKeyword(SearchKeyword),
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ =>
-                InternalItems.Reset(await applicationService.GitHubClient.Organization.GetAll(Username)));
+            Organizations = new CollectionViewModel<BasicUserModel>();
         }
 
-        public OrganizationsViewModel Init(string username)
+        public ICommand GoToOrganizationCommand
         {
-            Username = username;
-            return this;
+            get { return new MvxCommand<BasicUserModel>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
         }
-	}
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+        }
+    }
 }
 

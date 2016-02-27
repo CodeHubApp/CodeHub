@@ -20,7 +20,8 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         private IEnumerable<UIViewController> GetPages()
         {
             yield return new AboutViewController();
-            yield return new PromoteView();
+            yield return new PromoteViewController();
+            yield return new OrgViewController();
             yield return new GoProViewController();
             yield return new FeedbackViewController();
             yield return _welcomeViewController;
@@ -35,7 +36,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             base.ViewDidLoad();
 
-            View.BackgroundColor = Theme.PrimaryMenuNavigationBarColor;
+            View.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
 
             _welcomePageController.DataSource = new PageDataSource(_pages);
             _welcomePageController.SetViewControllers(new [] { _pages[0] }, UIPageViewControllerNavigationDirection.Forward, true, null);
@@ -59,6 +60,13 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             _welcomePageController.WillTransition += WillTransition;
             _welcomeViewController.WantsToDimiss += OnWantsToDismiss;
 
+            UIApplication.SharedApplication.SetStatusBarHidden(true, UIStatusBarAnimation.Fade);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Fade);
         }
 
         public override void ViewDidDisappear(bool animated)

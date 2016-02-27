@@ -1,34 +1,19 @@
-﻿namespace CodeHub.Core.Services
+namespace CodeHub.Core.Services
 {
     public interface IDefaultValueService
     {
-        T Get<T>(string key);
+        bool TryGet(string key, out string value);
 
-        void Set(string key, object value);
-    }
+        bool TryGet(string key, out int value);
 
-    public static class DefaultValueServiceExtensions
-    {
-        public static bool TryGet<T>(this IDefaultValueService @this, string key, out T value)
-        {
-            try
-            {
-                value = @this.Get<T>(key);
-                return true;
-            }
-            catch
-            {
-                value = default(T);
-                return false;
-            }
-        }
+        bool TryGet(string key, out bool value);
 
-        public static T GetOrDefault<T>(this IDefaultValueService @this, string key, T defaultValue)
-        {
-            T val;
-            if (@this.TryGet(key, out val))
-                return val;
-            return defaultValue;
-        }
+        void Set(string key, string value);
+
+        void Set(string key, int? value);
+
+        void Set(string key, bool? value);
+
+        void Clear(string key);
     }
 }

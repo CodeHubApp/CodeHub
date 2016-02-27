@@ -1,30 +1,35 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
-using CodeHub.Core.Services;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
 using GitHubSharp;
 using System.Collections.Generic;
-using ReactiveUI;
-using Splat;
+using CodeHub.Core.Services;
+using System.ComponentModel;
+using System.Collections.Specialized;
+using MvvmCross.Platform;
 using System.Reactive.Linq;
-using System.Linq;
-using CodeHub.Core.Factories;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static T CreateViewModel<T>(this IBaseViewModel @this)
+        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
-            return Locator.Current.GetService<IServiceConstructor>().Construct<T>();
+            if (forceDataRefresh)
+            {
+                request.CheckIfModified = false;
+                request.RequestFromCache = false;
+            }
+
+            var application = Mvx.Resolve<IApplicationService>();
+            var result = await application.Client.ExecuteAsync(request);
+            update(result);
         }
 
-        public static Task ShowAlertDialog(this IBaseViewModel @this, string title, string message)
-        {
-            return Locator.Current.GetService<IAlertDialogFactory>().Alert(title, message);
-        }
-
-        public static void CreateMore<T>(this object viewModel, GitHubResponse<List<T>> response, 
-            Action<Func<Task>> assignMore, Action<List<T>> newDataAction) where T : new()
+        public static void CreateMore<T>(this MvxViewModel viewModel, GitHubResponse<T> response, 
+                                         Action<Action> assignMore, Action<T> newDataAction) where T : new()
         {
             if (response.More == null)
             {
@@ -32,26 +37,55 @@ namespace CodeHub.Core.ViewModels
                 return;
             }
 
-            assignMore(async () =>
+            Action task = () =>
             {
                 response.More.UseCache = false;
-                var moreResponse = await Locator.Current.GetService<ISessionService>().Client.ExecuteAsync(response.More);
+                var moreResponse = Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
-            });
+            };
+
+            assignMore(task);
         }
 
-        public static async Task SimpleCollectionLoad<T>(this IReactiveList<T> viewModel, GitHubRequest<List<T>> request, Action<Func<Task>> assignMore = null) where T : new()
+        public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
         {
-            if (assignMore == null)
-                assignMore = (x) => {};
-
-            var application = Locator.Current.GetService<ISessionService>();
-            var response = await application.Client.ExecuteAsync(request);
-
-            viewModel.CreateMore(response, assignMore, x => viewModel.AddRange(x));
-            viewModel.Reset(response.Data);
+            var weakVm = new WeakReference<CollectionViewModel<T>>(viewModel);
+            return viewModel.RequestModel(request, forceDataRefresh, response =>
+            {
+                weakVm.Get()?.CreateMore(response, m => {
+                    var weak = weakVm.Get();
+                    if (weak != null)
+                        weak.MoreItems = m;
+                }, viewModel.Items.AddRange);
+                weakVm.Get()?.Items.Reset(response.Data);
+            });
         }
     }
 }
 
+public static class BindExtensions
+{
+    public static IObservable<TR> Bind<T, TR>(this T viewModel, System.Linq.Expressions.Expression<Func<T, TR>> outExpr, bool activate = false) where T : INotifyPropertyChanged
+    {
+        var expr = (System.Linq.Expressions.MemberExpression) outExpr.Body;
+        var prop = (System.Reflection.PropertyInfo) expr.Member;
+        var name = prop.Name;
+        var comp = outExpr.Compile();
+
+        var ret = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(t => viewModel.PropertyChanged += t, t => viewModel.PropertyChanged -= t)
+            .Where(x => string.Equals(x.EventArgs.PropertyName, name))
+            .Select(x => comp(viewModel));
+        return activate ? ret.StartWith(comp(viewModel)) : ret;
+    }
+
+    public static IObservable<Unit> BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, bool activate = false) where T : INotifyPropertyChanged
+    {
+        var exp = outExpr.Compile();
+        var m = exp(viewModel);
+
+        var ret = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(t => m.CollectionChanged += t, t => m.CollectionChanged -= t)
+            .Select(_ => Unit.Default);
+        return activate ? ret.StartWith(Unit.Default) : ret;
+    }
+}

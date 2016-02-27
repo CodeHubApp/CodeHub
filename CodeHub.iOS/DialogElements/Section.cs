@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UIKit;
 using CoreGraphics;
 using Foundation;
+using System.Collections.ObjectModel;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -13,6 +14,11 @@ namespace CodeHub.iOS.DialogElements
         {
             get;
             internal set;
+        }
+
+        public IReadOnlyList<Element> Elements
+        {
+            get { return new ReadOnlyCollection<Element>(_elements); }
         }
 
         // X corresponds to the alignment, Y to the height of the password

@@ -1,13 +1,18 @@
-using System;
 using UIKit;
-using CodeHub.iOS.Cells;
+using CodeHub.iOS.TableViewCells;
+using System.Reactive.Subjects;
+using System;
+using System.Reactive.Linq;
+using Foundation;
 
 namespace CodeHub.iOS.DialogElements
 {
-    public class MultilinedElement : Element, IElementSizing
+    public class MultilinedElement : Element
     {
+        private readonly Subject<object> _tapped = new Subject<object>();
+
         private string _caption;
-        public new string Caption
+        public string Caption
         {
             get
             {
@@ -17,8 +22,11 @@ namespace CodeHub.iOS.DialogElements
             {
                 if (_caption == value)
                     return;
+                
                 _caption = value;
-                ReloadThis();
+                var cell = GetActiveCell() as MultilinedCellView;
+                if (cell != null)
+                    cell.Caption = value;
             }
         }
 
@@ -34,8 +42,21 @@ namespace CodeHub.iOS.DialogElements
                 if (_details == value)
                     return;
                 _details = value;
-                ReloadThis();
+                var cell = GetActiveCell() as MultilinedCellView;
+                if (cell != null)
+                    cell.Details = value;
             }
+        }
+
+        public IObservable<object> Clicked
+        {
+            get { return _tapped.AsObservable(); }
+        }
+
+        public MultilinedElement(string caption = null, string details = null)
+        {
+            Caption = caption;
+            Details = details;
         }
 
         public override UITableViewCell GetCell(UITableView tv)
@@ -43,33 +64,13 @@ namespace CodeHub.iOS.DialogElements
             var cell = tv.DequeueReusableCell(MultilinedCellView.Key) as MultilinedCellView ?? MultilinedCellView.Create();
             cell.Caption = Caption;
             cell.Details = Details;
-
-            cell.SetNeedsUpdateConstraints();
-            cell.UpdateConstraintsIfNeeded();
-
             return cell;
         }
 
-        public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath)
+        public override void Selected (UITableView tableView, NSIndexPath indexPath)
         {
-            var root = GetRootElement();
-            if (root == null)
-                return 44f;
-            var cell = root.GetOffscreenCell<MultilinedCellView>(MultilinedCellView.Key, MultilinedCellView.Create);
-            cell.Caption = Caption;
-            cell.Details = Details;
-
-            cell.SetNeedsUpdateConstraints();
-            cell.UpdateConstraintsIfNeeded();
-
-            cell.Bounds = new CoreGraphics.CGRect(0, 0, tableView.Bounds.Width, cell.Bounds.Height);
-
-            cell.SetNeedsLayout();
-            cell.LayoutIfNeeded();
-
-            var height = cell.ContentView.SystemLayoutSizeFittingSize(UIView.UILayoutFittingCompressedSize).Height;
-            height += 1.0f;
-            return height;
+            base.Selected(tableView, indexPath);
+            _tapped.OnNext(this);
         }
     }
 }

@@ -1,27 +1,38 @@
-using CodeHub.Core.Services;
+using GitHubSharp.Models;
+using GitHubSharp;
+using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Changesets;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestCommitsViewModel : BaseCommitsViewModel
+    public class PullRequestCommitsViewModel : ChangesetsViewModel
     {
-        public int PullRequestId { get; private set; }
+        public long PullRequestId 
+        { 
+            get; 
+            private set; 
+        }
 
-        public PullRequestCommitsViewModel(ISessionService sessionService)
-            : base(sessionService)
+        public PullRequestCommitsViewModel(IFeaturesService featuresService)
+            : base(featuresService)
         {
         }
 
-        protected override System.Uri RequestUri
+        public void Init(NavObject navObject)
         {
-            get { return Octokit.ApiUrls.PullRequestCommits(RepositoryOwner, RepositoryName, PullRequestId); }
+            base.Init(navObject);
+            PullRequestId = navObject.PullRequestId;
         }
 
-        public PullRequestCommitsViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId)
+        protected override GitHubRequest<List<CommitModel>> GetRequest()
         {
-            Init(repositoryOwner, repositoryName);
-            PullRequestId = pullRequestId;
-            return this;
+            return this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetCommits();
+        }
+
+        public new class NavObject : CommitsViewModel.NavObject
+        {
+            public long PullRequestId { get; set; }
         }
     }
 }

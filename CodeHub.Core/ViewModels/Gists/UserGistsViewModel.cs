@@ -1,67 +1,63 @@
-﻿using System;
-using CodeHub.Core.Services;
-using ReactiveUI;
-using System.Reactive.Linq;
+using System.Collections.Generic;
+using GitHubSharp;
+using GitHubSharp.Models;
+using CodeHub.Core.Messages;
+using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
-    public class UserGistsViewModel : BaseGistsViewModel
+    public class UserGistsViewModel : GistsViewModel
     {
-        private readonly ISessionService _sessionService;
+        private readonly MvxSubscriptionToken _addToken;
 
-        private string _username;
         public string Username
         {
-            get { return _username; }
-            private set { this.RaiseAndSetIfChanged(ref _username, value); }
+            get;
+            private set;
         }
 
         public bool IsMine
         {
-			get { return _sessionService.Account.Username.Equals(Username); }
+            get { return this.GetApplication().Account.Username.Equals(Username); }
         }
 
-        public IReactiveCommand<object> GoToCreateGistCommand { get; private set; }
-
-        public UserGistsViewModel(ISessionService sessionService)
-            : base(sessionService)
+        public UserGistsViewModel()
         {
-            _sessionService = sessionService;
-            Username = _sessionService.Account.Username;
+            _addToken = Messenger.SubscribeOnMainThread<GistAddMessage>(x => Gists.Items.Insert(0, x.Gist));
+        }
 
-            GoToCreateGistCommand = ReactiveCommand.Create();
-            GoToCreateGistCommand.Subscribe(_ =>
-            {
-                var vm = this.CreateViewModel<GistCreateViewModel>();
-                vm.SaveCommand
-                    .Delay(TimeSpan.FromMilliseconds(200))
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(x => InternalItems.Insert(0, x));
-                NavigateTo(vm);
-            });
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username ?? this.GetApplication().Account.Username;
 
-            this.WhenAnyValue(x => x.Username).Subscribe(x =>
+            //Assign some sort of title
+            if (Username != null)
             {
                 if (IsMine)
                     Title = "My Gists";
-                else if (x == null) 
-                    Title = "Gists";
-                else if (x.EndsWith("s", StringComparison.OrdinalIgnoreCase))
-                    Title = x + "' Gists";
                 else
-                    Title = x + "'s Gists";
-            });
+                {
+                    if (Username.EndsWith("s", System.StringComparison.Ordinal))
+                        Title = Username + "' Gists";
+                    else
+                        Title = Username + "'s Gists";
+                }
+            }
+            else
+            {
+                Title = "Gists";
+            }
         }
 
-        protected override Uri RequestUri
+        protected override GitHubRequest<List<GistModel>> CreateRequest()
         {
-            get { return Octokit.ApiUrls.UsersGists(Username); }
+            return this.GetApplication().Client.Users[Username].Gists.GetGists();
         }
 
-        public UserGistsViewModel Init(string username)
+        public class NavObject
         {
-            Username = username;
-            return this;
+            public string Username { get; set; }
         }
     }
+
 }

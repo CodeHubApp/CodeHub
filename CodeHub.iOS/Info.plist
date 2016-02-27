@@ -15,27 +15,13 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>9.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>CodeHub</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
-	<key>CFBundleIconFiles</key>
-	<array>
-		<string>Icon-60@2x</string>
-		<string>Icon-72</string>
-		<string>Icon</string>
-		<string>Icon@2x</string>
-		<string>Icon-Small-40@2x</string>
-		<string>Icon-Small-40</string>
-		<string>Icon-Small-50</string>
-		<string>Icon-Small@2x</string>
-		<string>Icon-Small-50@2x</string>
-		<string>Icon-Small</string>
-		<string>Icon-76@2x</string>
-		<string>Icon-72@2x</string>
-		<string>Icon-76</string>
-	</array>
+	<key>CFBundleShortVersionString</key>
+	<string>2.7.0</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -61,16 +47,15 @@
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>3.0.0</string>
-	<key>CFBundleShortVersionString</key>
-	<string>3.0.0</string>
-	<key>UIStatusBarHidden</key>
-	<true/>
-	<key>UIAppFonts</key>
+	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>octicons.ttf</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>2.7.0.1</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>NSAppTransportSecurity</key>
@@ -78,5 +63,13 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>XSAppIconAssets</key>
+	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>octicons.ttf</string>
+	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
 </dict>
 </plist>

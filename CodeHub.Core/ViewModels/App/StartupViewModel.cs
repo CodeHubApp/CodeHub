@@ -1,119 +1,129 @@
-﻿using System;
+using System;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.Data;
+using CodeHub.Core.Services;
 using System.Linq;
+using CodeHub.Core.Factories;
+using System.Windows.Input;
+using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using ReactiveUI;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Accounts;
-using System.Reactive;
-using CodeHub.Core.Data;
-using CodeHub.Core.Factories;
-using GitHubSharp;
-using System.Reactive.Threading.Tasks;
-using System.Reactive.Linq;
-using CodeHub.Core.Utilities;
-using CodeHub.Core.ViewModels.Users;
-
-public sealed class PreserveAttribute : System.Attribute {
-    public bool AllMembers;
-    public bool Conditional;
-}
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class StartupViewModel : BaseViewModel
     {
-        private readonly IAccountsRepository _accountsService;
-        private readonly ISessionService _sessionService;
-        private readonly IAlertDialogFactory _alertDialogFactory;
+        private bool _isLoggingIn;
+        private string _status;
+        private Uri _imageUrl;
+        private readonly ILoginFactory _loginFactory;
+        private readonly IApplicationService _applicationService;
         private readonly IDefaultValueService _defaultValueService;
 
-        public IReactiveCommand<Unit> StartupCommand { get; private set; }
-
-        private bool _isLoggingIn;
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
             private set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
-        private string _status;
         public string Status
         {
             get { return _status; }
             private set { this.RaiseAndSetIfChanged(ref _status, value); }
         }
 
-        private GitHubAvatar _avatar;
-        public GitHubAvatar Avatar
+        public Uri ImageUrl
         {
-            get { return _avatar; }
-            private set { this.RaiseAndSetIfChanged(ref _avatar, value); }
+            get { return _imageUrl; }
+            private set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
-        [Preserve]
+        public ICommand StartupCommand
+        {
+            get { return new Dumb.MvxAsyncCommand(Startup); }
+        }
+
+        public ReactiveCommand<object> GoToMenu { get; } = ReactiveCommand.Create();
+
+        public ReactiveCommand<object> GoToAccounts { get; } = ReactiveCommand.Create();
+
+        public ReactiveCommand<object> GoToNewAccount { get; } = ReactiveCommand.Create();
+
         public StartupViewModel(
-            ISessionService sessionService, 
-            IAccountsRepository accountsService, 
-            IAlertDialogFactory alertDialogFactory,
+            ILoginFactory loginFactory, 
+            IApplicationService applicationService, 
             IDefaultValueService defaultValueService)
         {
-            _sessionService = sessionService;
-            _accountsService = accountsService;
-            _alertDialogFactory = alertDialogFactory;
+            _loginFactory = loginFactory;
+            _applicationService = applicationService;
             _defaultValueService = defaultValueService;
-
-            StartupCommand = ReactiveCommand.CreateAsyncTask(x => Load());
         }
 
-        private async Task GoToAccountsOrNewUser()
+        protected async Task Startup()
         {
-            var accounts = await _accountsService.GetAll();
-            if (accounts.Any())
-                NavigateTo(this.CreateViewModel<AccountsViewModel>());
-            else
-                NavigateTo(this.CreateViewModel<NewAccountViewModel>());
-        }
-
-        private async Task Load()
-        {
-            var account = await _accountsService.GetDefault();
-
-            // Account no longer exists
-            if (account == null)
+            if (!_applicationService.Accounts.Any())
             {
-                await GoToAccountsOrNewUser();
+                GoToNewAccount.Execute(null);
                 return;
             }
 
+            var accounts = GetService<IAccountsService>();
+            var account = accounts.GetDefault();
+            if (account == null)
+            {
+                GoToAccounts.Execute(null);
+                return;
+            }
+
+            var isEnterprise = account.IsEnterprise || !string.IsNullOrEmpty(account.Password);
+            if (account.DontRemember)
+            {
+                GoToAccounts.Execute(null);
+                return;
+            }
+
+            //Lets login!
             try
             {
-                Status = string.Format("Logging in {0}", account.Username);
-                Avatar = new GitHubAvatar(account.AvatarUrl);
-
+                ImageUrl = null;
+                Status = null;
                 IsLoggingIn = true;
-                await _sessionService.SetSessionAccount(account);
-                //                NavigateTo(this.CreateViewModel<MenuViewModel>());
-                NavigateTo(this.CreateViewModel<UserViewModel>().Init("thedillonb"));
-                StarOrWatch();
+
+                Uri accountAvatarUri = null;
+                Uri.TryCreate(account.AvatarUrl, UriKind.Absolute, out accountAvatarUri);
+                ImageUrl = accountAvatarUri;
+                Status = "Logging in as " + account.Username;
+
+                var client = await _loginFactory.LoginAccount(account);
+                _applicationService.ActivateUser(account, client);
+
+                if (!isEnterprise)
+                    StarOrWatch();
+
+                GoToMenu.Execute(typeof(MenuViewModel));
             }
-            catch (UnauthorizedException)
+            catch (GitHubSharp.UnauthorizedException e)
             {
-                _alertDialogFactory.Alert("Unable to login!", "Your credentials are no longer valid for this account.")
-                    .ToObservable()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(_ => NavigateTo(this.CreateViewModel<AccountsViewModel>()));
+                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
+
+                if (isEnterprise)
+                    GoToUrlCommand.Execute(new AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
+                else
+                    GoToUrlCommand.Execute(LoginViewModel.NavObject.CreateDontRemember(account));
+
+                StarOrWatch();
             }
             catch (Exception e)
             {
-                _alertDialogFactory.Alert("Unable to login!", e.Message)
-                    .ToObservable()
-                    .ObserveOn(RxApp.MainThreadScheduler)
-                    .Subscribe(_ => NavigateTo(this.CreateViewModel<AccountsViewModel>()));
+                DisplayAlert(e.Message);
+                GoToAccounts.Execute(null);
             }
             finally
             {
                 IsLoggingIn = false;
             }
+
         }
 
         private void StarOrWatch()
@@ -121,18 +131,19 @@ namespace CodeHub.Core.ViewModels.App
             try
             {
                 bool shouldStar;
-                if (_defaultValueService.TryGet<bool>("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
+                if (_defaultValueService.TryGet("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
                 {
-                    _defaultValueService.Set("SHOULD_STAR_CODEHUB", false);
-                    _sessionService.GitHubClient.Activity.Starring.StarRepo("thedillonb", "codehub").ToBackground();
+                    _defaultValueService.Clear("SHOULD_STAR_CODEHUB");
+                    var starRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Star();
+                    _applicationService.Client.ExecuteAsync(starRequest).ToBackground();
                 }
 
                 bool shouldWatch;
-                if (_defaultValueService.TryGet<bool>("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
+                if (_defaultValueService.TryGet("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
                 {
-                    _defaultValueService.Set("SHOULD_WATCH_CODEHUB", false);
-                    var subscription = new Octokit.NewSubscription { Subscribed = true };
-                    _sessionService.GitHubClient.Activity.Watching.WatchRepo("thedillonb", "codehub", subscription).ToBackground();
+                    _defaultValueService.Clear("SHOULD_WATCH_CODEHUB");
+                    var watchRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Watch();
+                    _applicationService.Client.ExecuteAsync(watchRequest).ToBackground();
                 }
             }
             catch
@@ -141,3 +152,4 @@ namespace CodeHub.Core.ViewModels.App
         }
     }
 }
+

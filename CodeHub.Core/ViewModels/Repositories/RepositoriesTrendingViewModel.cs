@@ -1,97 +1,70 @@
-﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Collections.Generic;
-using CodeHub.Core.Services;
-using ReactiveUI;
+using System;
+using CodeHub.Core.ViewModels;
+using System.Windows.Input;
 using System.Threading.Tasks;
+using MvvmCross.Core.ViewModels;
+using System.Collections.Generic;
 using CodeHub.Core.Data;
-using System.Reactive;
+using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoriesTrendingViewModel : BaseViewModel, ILoadableViewModel
+    public class RepositoriesTrendingViewModel : LoadableViewModel
     {
-        private readonly TimeModel[] _times = 
-        {
-            new TimeModel { Name = "Daily", Slug = "daily" },
-            new TimeModel { Name = "Weekly", Slug = "weekly" },
-            new TimeModel { Name = "Monthly", Slug = "monthly" }
-        };
+        private readonly Language _defaultLanguage = new Language("All Languages", null);
 
-        private IReadOnlyList<GroupedCollection<RepositoryItemViewModel>> _repositories;
-        public IReadOnlyList<GroupedCollection<RepositoryItemViewModel>> Repositories 
+        private IList<Tuple<string, IList<RepositoryModel>>> _repos;
+        public IList<Tuple<string, IList<RepositoryModel>>> Repositories
         {
-            get { return _repositories; }
-            private set { this.RaiseAndSetIfChanged(ref _repositories, value); }
+            get { return _repos; }
+            private set { this.RaiseAndSetIfChanged(ref _repos, value); }
         }
 
-        private LanguageItemViewModel _selectedLanguage;
-        public LanguageItemViewModel SelectedLanguage
+        private Language _selectedLanguage;
+        public Language SelectedLanguage
         {
             get { return _selectedLanguage; }
             set { this.RaiseAndSetIfChanged(ref _selectedLanguage, value); }
         }
 
-        public bool ShowRepositoryDescription { get; }
-
-        public IReactiveCommand GoToLanguages { get; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; }
-
-        public RepositoriesTrendingViewModel(ISessionService applicationService, ITrendingRepository trendingRepository)
+        public bool ShowRepositoryDescription
         {
-            ShowRepositoryDescription = applicationService.Account.ShowRepositoryDescriptionInList;
-
-            Title = "Trending";
-
-            var defaultLanguage = LanguageRepository.DefaultLanguage;
-            SelectedLanguage = new LanguageItemViewModel(defaultLanguage.Name, defaultLanguage.Slug);
-
-            GoToLanguages = ReactiveCommand.Create().WithSubscription(_ =>
-            {
-                var vm = this.CreateViewModel<LanguagesViewModel>();
-                vm.SelectedLanguage = SelectedLanguage;
-                vm.WhenAnyValue(x => x.SelectedLanguage).Skip(1)
-                    .Subscribe(x => SelectedLanguage = x);
-                NavigateTo(vm);
-            });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-
-                var requests = _times.Select(t =>
-                {
-                    var language = (SelectedLanguage != null && SelectedLanguage.Slug != null) ? SelectedLanguage.Slug : null;
-                    return new { Time = t, Query = trendingRepository.GetTrendingRepositories(t.Slug, language) };
-                }).ToArray();
-
-                await Task.WhenAll(requests.Select(x => x.Query));
-
-                Repositories = requests.Select(r =>
-                {
-                    var transformedRepos = r.Query.Result.Select(x => new RepositoryItemViewModel(x, true, GoToRepository));
-                    return new GroupedCollection<RepositoryItemViewModel>(r.Time.Name, new ReactiveList<RepositoryItemViewModel>(transformedRepos));
-                }).ToList();
-            });
-
-            this.WhenAnyValue(x => x.SelectedLanguage).Skip(1).Subscribe(_ => 
-            {
-                Repositories = null;
-                LoadCommand.ExecuteIfCan();
-            });
+            get { return this.GetApplication().Account.ShowRepositoryDescriptionInList; }
         }
 
-        private void GoToRepository(RepositoryItemViewModel viewModel)
+        public RepositoriesTrendingViewModel()
         {
-            var vm = this.CreateViewModel<RepositoryViewModel>();
-            vm.Init(viewModel.Owner, viewModel.Name, viewModel.Repository);
-            NavigateTo(vm);
+            SelectedLanguage = _defaultLanguage;
         }
 
-        private class TimeModel
+        public void Init()
         {
-            public string Name { get; set; }
-            public string Slug { get; set; }
+            this.Bind(x => x.SelectedLanguage).Subscribe(_ => LoadCommand.Execute(null));
+        }
+
+        public ICommand GoToRepositoryCommand
+        {
+            get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner?.Login, Repository = x.Name })); }
+        }
+ 
+        protected override async Task Load(bool forceCacheInvalidation)
+        {
+            var trendingRepo = new TrendingRepository();
+            var repos = new List<Tuple<string, IList<RepositoryModel>>>();
+            var times = new []
+            {
+                Tuple.Create("Daily", "daily"),
+                Tuple.Create("Weekly", "weekly"),
+                Tuple.Create("Monthly", "monthly"),
+            };
+
+            foreach (var t in times)
+            {
+                var repo = await trendingRepo.GetTrendingRepositories(t.Item2, SelectedLanguage.Slug);
+                repos.Add(Tuple.Create(t.Item1, repo));
+            }
+
+            Repositories = repos;
         }
     }
 }

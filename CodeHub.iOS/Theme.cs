@@ -1,72 +1,17 @@
 using UIKit;
-using MonoTouch.SlideoutNavigation;
-using CodeHub.iOS.ViewControllers;
-using System.Linq;
 using CodeHub.iOS.Views;
-using System.Collections;
-using System.Collections.Generic;
-using System;
 
 namespace CodeHub.iOS
 {
-    public static class Theme
+    public class Theme
     {
-        public static UIColor PrimaryNavigationBarColor = UIColor.FromRGB(50, 50, 50);
-
-        public static UIColor PrimaryNavigationBarTextColor = UIColor.White;
-
-        public static UIColor MainTitleColor = UIColor.FromRGB(0x41, 0x83, 0xc4);
-
-        public static UIColor PrimaryMenuNavigationBarColor
-        {
-            get { return UIColor.FromRGB(50, 50, 50); }
-        }
-
-        public static UIColor PrimaryMenuNavigationBarTextColor
-        {
-            get { return UIColor.White; }
-        }
-
-        public static UIColor MainTextColor 
-        { 
-            get { return UIColor.FromRGB(41, 41, 41); } 
-        }
-
-        public static UIColor MainSubtitleColor 
-        { 
-            get { return UIColor.FromRGB(81, 81, 81); } 
-        }
-
-        public static UIColor MenuIconColor
-        {
-            get { return UIColor.FromRGB(0xd5, 0xd5, 0xd5); }
-        }
-
-        public static UIColor MenuSectionTextColor
-        {
-            get { return UIColor.FromRGB(171, 171, 171); }
-        }
-
-        public static UIColor MenuTextColor
-        {
-            get { return UIColor.FromRGB(0xd5, 0xd5, 0xd5); }
-        }
-
-        public static UIColor MenuBackgroundColor
-        {
-            get { return UIColor.FromRGB(0x22, 0x22, 0x22); }
-        }
-
-        public static UIColor MenuSelectedBackgroundColor
-        {
-            get { return UIColor.FromRGB(0x19, 0x19, 0x19); }
-        }
+        public static Theme CurrentTheme { get; private set; }
 
         private static UIImage CreateBackgroundImage(UIColor color)
         {
-            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 64f));
+            UIGraphics.BeginImageContext(new CoreGraphics.CGSize(1, 1f));
             color.SetFill();
-            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 64));
+            UIGraphics.RectFill(new CoreGraphics.CGRect(0, 0, 1, 1));
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return img;
@@ -74,99 +19,68 @@ namespace CodeHub.iOS
 
         public static void Setup()
         {
-            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+            var theme = new Theme();
+            CurrentTheme = theme;
 
-            var menuNavBarBackground = CreateBackgroundImage(Theme.PrimaryMenuNavigationBarColor);
-            var menuNavBarContainer = UINavigationBar.AppearanceWhenContainedIn(typeof(MenuNavigationController));
-            menuNavBarContainer.TintColor = Theme.PrimaryMenuNavigationBarTextColor;
-            menuNavBarContainer.BarTintColor = Theme.PrimaryMenuNavigationBarColor;
-            menuNavBarContainer.BackgroundColor = Theme.PrimaryMenuNavigationBarColor;
-            menuNavBarContainer.SetTitleTextAttributes(new UITextAttributes { TextColor = Theme.PrimaryMenuNavigationBarTextColor, Font = UIFont.SystemFontOfSize(18f) });
-            menuNavBarContainer.SetBackgroundImage(menuNavBarBackground, UIBarPosition.Any, UIBarMetrics.Default);
-            menuNavBarContainer.BackIndicatorImage = Images.BackButton;
-            menuNavBarContainer.BackIndicatorTransitionMaskImage = Images.BackButton;
+            var primaryColor = Theme.CurrentTheme.PrimaryColor;
+            var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
+            var backgroundImg = CreateBackgroundImage(primaryColor);
+
+            UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
+            UINavigationBar.Appearance.TintColor = UIColor.White;
+            UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
+            UINavigationBar.Appearance.BarTintColor = primaryColor;
+            UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
+            CodeHub.iOS.Utilities.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+            UINavigationBar.Appearance.BackIndicatorImage = Images.Buttons.BackButton;
+            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.Buttons.BackButton;
+
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
+            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;
 
             // Composer Input Accessory Buttons
-            UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = Theme.PrimaryNavigationBarColor;
+            UIButton.AppearanceWhenContainedIn(typeof(UIScrollView)).TintColor = UIColor.FromRGB(50, 50, 50);
 
-            //UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
-            var headerFooterContainers = new [] { typeof(UITableViewHeaderFooterView) };
-            foreach (var navbarAppearance in headerFooterContainers)
-            {
-                UILabel.AppearanceWhenContainedIn(navbarAppearance).TextColor = UIColor.FromRGB(110, 110, 117);
-                UILabel.AppearanceWhenContainedIn(navbarAppearance).Font = UIFont.SystemFontOfSize(14f);
-            }
-
-            MenuSectionView.DefaultBackgroundColor = Theme.PrimaryMenuNavigationBarColor;
-            MenuSectionView.DefaultTextColor = Theme.MenuSectionTextColor;
+            UITableViewHeaderFooterView.Appearance.TintColor = UIColor.FromRGB(228, 228, 228);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).TextColor = UIColor.FromRGB(136, 136, 136);
+            UILabel.AppearanceWhenContainedIn(typeof(UITableViewHeaderFooterView)).Font = UIFont.SystemFontOfSize(13f);
 
             UIToolbar.Appearance.BarTintColor = UIColor.FromRGB(245, 245, 245);
 
             UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor = UIColor.White}, UIControlState.Normal);
-        }
 
-        public class ThemeColors
-        {
-            public UIColor Primary { get; private set; }
-            public UIColor Icon { get; private set; }
-            public UIColor Secondary { get; private set; }
-            public ThemeColors(UIColor primary, UIColor icon, UIColor secondary)
-            {
-                Primary = primary;
-                Icon = icon;
-                Secondary = secondary;
-            }
-        }
+            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
 
-        public readonly static ThemeColors Default = new ThemeColors(
-            UIColor.FromRGB(50, 50, 50), 
-            UIColor.FromRGB(0x5B, 0x61, 0x65), 
-            UIColor.FromRGB(0x41, 0x83, 0xc4));
-
-//        public static readonly IDictionary<string, ThemeColors> Themes = new Dictionary<string, ThemeColors>(StringComparer.OrdinalIgnoreCase)
-//        {
-//            {"blue", new ThemeColors(UIColor.FromRGB(0x1D, 0x62, 0xF0), UIColor.FromRGB(0x1A, 0xD6, 0xFD))},
-//            {"red", new ThemeColors(UIColor.FromRGB(231, 76, 60), UIColor.FromRGB(192, 57, 43))},
-//        };
-// 
-        public static void SetPrimary(string colorName)
-        {
-            colorName = colorName ?? string.Empty;
-            var primaryColor = Default.Primary;
-            var secondaryColor = Default.Secondary;
-            var iconColor = Default.Icon;
-
-//            if (Themes.ContainsKey(colorName))
-//            {
-//                var a = Themes[colorName];
-//                primaryColor = a.Primary;
-//                secondaryColor = a.Secondary;
-//            }
-
-            PrimaryNavigationBarColor = primaryColor;
-            MainTitleColor = secondaryColor;
-            PrimaryNavigationBarTextColor = UIColor.White;
-
-            var navBarBackground = CreateBackgroundImage(primaryColor);
-            var navBarContainers = new [] { typeof(ThemedNavigationController), typeof(MainNavigationController) };
-            foreach (var navbarAppearance in navBarContainers.Select(x => UINavigationBar.AppearanceWhenContainedIn(x)))
-            {
-                navbarAppearance.TintColor = UIColor.White;
-                navbarAppearance.BarTintColor = primaryColor;
-                navbarAppearance.BackgroundColor = primaryColor;
-                navbarAppearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
-                navbarAppearance.SetBackgroundImage(navBarBackground, UIBarPosition.Any, UIBarMetrics.Default);
-                navbarAppearance.BackIndicatorImage = Images.BackButton;
-                navbarAppearance.BackIndicatorTransitionMaskImage = Images.BackButton;
-            }
-
-            UISwitch.Appearance.OnTintColor = secondaryColor;
-            UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MainNavigationController)).TintColor = iconColor;
-            LoadingIndicatorView.DefaultColor = primaryColor;
             EmptyListView.DefaultColor = primaryColor;
+            LoadingIndicatorView.DefaultColor = primaryColor;
         }
+
+        public UITextAttributes SegmentedControlText
+        {
+            get
+            {
+                return new UITextAttributes
+                { 
+                    Font = UIFont.PreferredBody, 
+                    TextColor = UIColor.FromRGB(87, 85, 85), 
+                    TextShadowColor = UIColor.FromRGBA(255, 255, 255, 125), 
+                    TextShadowOffset = new UIOffset(0, 1) 
+                };
+            }
+        }
+
+        public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
+        public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
+        public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
+        public UIColor MainTextColor { get { return UIColor.FromRGB(41, 41, 41); } }
+        public UIColor IssueTitleColor { get { return MainTitleColor; } }
+        public UIColor RepositoryTitleColor { get { return MainTitleColor; } }
+        public UIColor HeaderViewTitleColor { get { return MainTitleColor; } }
+        public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
+        public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
+        public UIColor PrimaryColor { get { return UIColor.FromRGB(50, 50, 50); } }
     }
 }

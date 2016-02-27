@@ -1,13 +1,13 @@
 using CodeHub.iOS.ViewControllers.Users;
-using CodeHub.Core.ViewModels.Organizations;
 
-namespace CodeHub.iOS.ViewControllers.Organizations
+namespace CodeHub.iOS.ViewControllers.Teams
 {
-    public class TeamMembersViewController : BaseUserCollectionViewController<TeamMembersViewModel>
+    public class TeamMembersViewController : BaseUserCollectionViewController
     {
         public TeamMembersViewController()
             : base("There are no team members.")
         {
+            Title = "Members";
         }
     }
 }

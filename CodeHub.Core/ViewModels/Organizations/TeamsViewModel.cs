@@ -1,36 +1,42 @@
-using CodeHub.Core.Services;
-using ReactiveUI;
-using System;
-using Octokit;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels;
+using CodeHub.Core.ViewModels.User;
+using GitHubSharp.Models;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
-    public class TeamsViewModel : BaseSearchableListViewModel<Team, TeamItemViewModel>
+    public class TeamsViewModel : LoadableViewModel
     {
+        public CollectionViewModel<TeamShortModel> Teams { get; }
+
         public string OrganizationName { get; private set; }
 
-        public TeamsViewModel(ISessionService applicationService)
+        public ICommand GoToTeamCommand
         {
-            Title = "Teams";
-
-            Items = InternalItems.CreateDerivedCollection(
-                x => new TeamItemViewModel(x.Name, () => 
-                {
-                    var vm = this.CreateViewModel<TeamMembersViewModel>();
-                    vm.Init(x.Id);
-                    NavigateTo(vm);
-                }),
-                filter: x => x.Name.ContainsKeyword(SearchKeyword),
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => 
-                InternalItems.Reset(await applicationService.GitHubClient.Organization.Team.GetAll(OrganizationName)));
+            get { return new MvxCommand<TeamShortModel>(x => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Id = x.Id })); }
         }
 
-        public TeamsViewModel Init(string organizationName)
+        public TeamsViewModel()
         {
-            OrganizationName = organizationName;
-            return this;
+            Title = "Teams";
+            Teams = new CollectionViewModel<TeamShortModel>();
+        }
+
+        public void Init(NavObject navObject)
+        {
+            OrganizationName = navObject.Name;
+        }
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Name { get; set; }
         }
     }
 }

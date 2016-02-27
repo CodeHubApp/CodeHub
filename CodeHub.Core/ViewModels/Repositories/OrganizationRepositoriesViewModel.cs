@@ -1,28 +1,33 @@
-using System;
-using CodeHub.Core.Services;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class OrganizationRepositoriesViewModel : BaseRepositoriesViewModel
+    public class OrganizationRepositoriesViewModel : RepositoriesViewModel
     {
-        public string Name { get; private set; }
+        public string Name
+        {
+            get;
+            private set;
+        }
 
-        public OrganizationRepositoriesViewModel(ISessionService applicationService)
-            : base(applicationService)
+        public OrganizationRepositoriesViewModel()
         {
             ShowRepositoryOwner = false;
         }
 
-        public OrganizationRepositoriesViewModel Init(string name)
+        public void Init(NavObject navObject)
         {
-            Name = name;
-            Title = name ?? "Repositories";
-            return this;
+            Name = navObject.Name;
         }
 
-        protected override Uri RepositoryUri
+        protected override Task Load(bool forceDataRefresh)
         {
-            get { return Octokit.ApiUrls.OrganizationRepositories(Name); }
+            return Repositories.SimpleCollectionLoad(this.GetApplication().Client.Organizations[Name].Repositories.GetAll(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Name { get; set; }
         }
     }
 }

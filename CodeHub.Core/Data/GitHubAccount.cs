@@ -1,13 +1,25 @@
-using System.Collections.Generic;
+using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Data
 {
-    public class GitHubAccount
+    public class GitHubAccount : Account
     {
         /// <summary>
         /// Gets or sets the OAuth string
         /// </summary>
         public string OAuth { get; set; }
+
+        /// <summary>
+        /// The password which is only used on Enterprise accounts since oAuth does not work.
+        /// </summary>
+        /// <value>The password.</value>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets the domain (API)
+        /// </summary>
+        /// <value>The domain.</value>
+        public string Domain { get; set; }
 
         /// <summary>
         /// Gets or sets the web domain. Sort of like the API domain with the API paths
@@ -32,7 +44,7 @@ namespace CodeHub.Core.Data
         public bool ExpandOrganizations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="GitHubAccount"/> hides the repository
+        /// Gets or sets a value indicating whether this <see cref="Account"/> hides the repository
         /// description in list.
         /// </summary>
         /// <value><c>true</c> if hide repository description in list; otherwise, <c>false</c>.</value>
@@ -45,98 +57,16 @@ namespace CodeHub.Core.Data
         public bool? IsPushNotificationsEnabled { get; set; }
 
         /// <summary>
-        /// Get or set the code editing theme
-        /// </summary>
-        /// <value>The code edit theme.</value>
-        public string CodeEditTheme { get; set; }
-
-        /// <summary>
-        /// The application theme name
-        /// </summary>
-        /// <value>The app theme.</value>
-        public string AppTheme { get; set; }
-
-        /// <summary>
-        /// Gets or sets the code hub theme.
-        /// </summary>
-        public string CodeHubTheme { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the user
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the email of the user
-        /// </summary>
-        /// <value>The email.</value>
-        public string Email { get; set; }
-
-        /// <summary>
-        /// The default view on startup
-        /// </summary>
-        /// <value>The default startup view.</value>
-        public string DefaultStartupView { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GitHubAccount"/> class.
+        /// Initializes a new instance of the <see cref="Account"/> class.
         /// </summary>
         public GitHubAccount()
         {
+            //Set some default values
+            DontRemember = false;
             ShowOrganizationsInEvents = true;
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;
-            DefaultStartupView = "News";
-            CodeHubTheme = "Default";
         }
-
-        public string Key
-        {
-            get { return Domain + Username; }
-        }
-
-        public string Username { get; set; }
-
-        public string AvatarUrl { get; set; }
-
-        public string Domain { get; set; }
-
-        private Dictionary<string, object> _filters = new Dictionary<string, object>();
-        public Dictionary<string, object> Filters 
-        {
-            get { return _filters; }
-            set { _filters = value ?? new Dictionary<string, object>(); }
-        }
-
-        private List<PinnedRepository> _pinnedRepositories = new List<PinnedRepository>();
-        public List<PinnedRepository> PinnnedRepositories
-        {
-            get { return _pinnedRepositories; }
-            set { _pinnedRepositories = value ?? new List<PinnedRepository>(); }
-        }
-
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-            if (ReferenceEquals(this, obj))
-                return true;
-            if (obj.GetType() != typeof(GitHubAccount))
-                return false;
-            var other = (GitHubAccount)obj;
-            return Username == other.Username && Domain == other.Domain;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Username != null ? Username.GetHashCode() : 0) ^ (Domain != null ? Domain.GetHashCode() : 0);
-            }
-        }
-        
     }
 }
 

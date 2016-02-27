@@ -1,32 +1,76 @@
-using CodeHub.Core.Services;
+using System;
+using CodeHub.Core.ViewModels;
+using GitHubSharp.Models;
+using System.Windows.Input;
+using System.Threading.Tasks;
+using GitHubSharp;
 using System.Collections.Generic;
+using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
-	public class CommitsViewModel : BaseCommitsViewModel
-	{
-	    public string Branch { get; private set; }
+    public abstract class CommitsViewModel : LoadableViewModel
+    {
+        private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
+        private readonly IFeaturesService _featuresService;
 
-        public CommitsViewModel(ISessionService sessionService)
-            : base(sessionService)
+        public string Username
         {
+            get;
+            private set;
         }
 
-        protected override System.Uri RequestUri
+        public string Repository
         {
-            get { return Octokit.ApiUrls.RepositoryCommits(RepositoryOwner, RepositoryName); }
+            get;
+            private set;
         }
 
-        protected override void AddRequestParameters(IDictionary<string, string> parameters)
+        private bool _shouldShowPro; 
+        public bool ShouldShowPro
         {
-            parameters["sha"] = Branch ?? "master";
+            get { return _shouldShowPro; }
+            protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-        public CommitsViewModel Init(string repositoryOwner, string repositoryName, string branch)
+        public ICommand GoToChangesetCommand
         {
-            Init(repositoryOwner, repositoryName);
-            Branch = branch;
-            return this;
+            get { return new MvxCommand<CommitModel>(x => ShowViewModel<ChangesetViewModel>(new ChangesetViewModel.NavObject { Username = Username, Repository = Repository, Node = x.Sha })); }
+        }
+
+        public CollectionViewModel<CommitModel> Commits
+        {
+            get { return _commits; }
+        }
+
+        protected CommitsViewModel(IFeaturesService featuresService)
+        {
+            _featuresService = featuresService;
+        }
+
+        public void Init(NavObject navObject)
+        {
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+        }
+
+        protected override Task Load(bool forceCacheInvalidation)
+        {
+            if (_featuresService.IsProEnabled)
+                ShouldShowPro = false;
+            else
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            
+            return Commits.SimpleCollectionLoad(GetRequest(), forceCacheInvalidation);
+        }
+
+        protected abstract GitHubRequest<List<CommitModel>> GetRequest();
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
         }
     }
 }

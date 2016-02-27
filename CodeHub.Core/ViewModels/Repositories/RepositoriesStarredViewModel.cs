@@ -1,19 +1,17 @@
-using CodeHub.Core.Services;
-using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoriesStarredViewModel : BaseRepositoriesViewModel
+    public class RepositoriesStarredViewModel : RepositoriesViewModel
     {
-        public RepositoriesStarredViewModel(ISessionService applicationService) 
-            : base(applicationService)
+        public RepositoriesStarredViewModel()
         {
-            Title = "Starred";
+            ShowRepositoryOwner = true;
         }
 
-        protected override Uri RepositoryUri
+        protected override Task Load(bool forceDataRefresh)
         {
-            get { return Octokit.ApiUrls.Starred(); }
+            return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetStarred(), forceDataRefresh);
         }
     }
 }

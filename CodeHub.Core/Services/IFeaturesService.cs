@@ -12,11 +12,13 @@ namespace CodeHub.Core.Services
 
         bool IsProEnabled { get; }
 
+        void ActivateProDirect();
+
         Task ActivatePro();
 
         Task RestorePro();
+
+        void ActivatePush();
     }
 }
-
-
 

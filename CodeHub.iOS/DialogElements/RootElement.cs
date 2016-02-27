@@ -1,44 +1,30 @@
-using System;
+﻿using System;
 using Foundation;
 using System.Collections.Generic;
 using UIKit;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class RootElement : IEnumerable<Section> 
     {
         private readonly List<Section> _sections = new List<Section>();
-        private readonly IDictionary<string, object> _offscreenCells = new Dictionary<string, object>();
-        private readonly UITableView _tableView;
+        private readonly WeakReference<UITableView> _tableView;
 
         public UITableView TableView
         {
-            get { return _tableView; }
+            get { return _tableView.Get(); }
         }
 
-        public IDictionary<string, object> OffscreenCells
+        public IReadOnlyList<Section> Sections
         {
-            get { return _offscreenCells; }
-        }
-
-        public TCell GetOffscreenCell<TCell>(string key, Func<TCell> create) where TCell : class
-        {
-            TCell cell = default(TCell);
-            if (_offscreenCells.ContainsKey(key))
-                cell = _offscreenCells[key] as TCell;
-
-            if (cell == default(TCell))
-            {
-                cell = create();
-                _offscreenCells[key] = cell;
-            }
-
-            return cell;
+            get { return new ReadOnlyCollection<Section>(_sections); }
         }
 
         public RootElement(UITableView tableView)
         {
-            _tableView = tableView;
+            _tableView = new WeakReference<UITableView>(tableView);
         }
 
         public int Count 
@@ -75,9 +61,9 @@ namespace CodeHub.iOS.DialogElements
 
             _sections.Add (section);
             section.Root = this;
-            _tableView.InsertSections (MakeIndexSet (_sections.Count-1, 1), UITableViewRowAnimation.None);
+            _tableView.Get()?.InsertSections (MakeIndexSet (_sections.Count-1, 1), UITableViewRowAnimation.None);
         }
- 
+
         public void Add (IEnumerable<Section> sections)
         {
             foreach (var s in sections)
@@ -96,7 +82,7 @@ namespace CodeHub.iOS.DialogElements
             range.Length = count;
             return NSIndexSet.FromNSRange (range);
         }
-   
+
         public void Insert (int idx, UITableViewRowAnimation anim, params Section [] newSections)
         {
             if (idx < 0 || idx > _sections.Count)
@@ -104,8 +90,7 @@ namespace CodeHub.iOS.DialogElements
             if (newSections == null)
                 return;
 
-            if (_tableView != null)
-                _tableView.BeginUpdates ();
+            _tableView.Get()?.BeginUpdates ();
 
             int pos = idx;
             foreach (var s in newSections){
@@ -113,21 +98,13 @@ namespace CodeHub.iOS.DialogElements
                 _sections.Insert (pos++, s);
             }
 
-            if (_tableView == null)
-                return;
-
-            _tableView.InsertSections (MakeIndexSet (idx, newSections.Length), anim);
-            _tableView.EndUpdates ();
+            _tableView.Get()?.InsertSections (MakeIndexSet (idx, newSections.Length), anim);
+            _tableView.Get()?.EndUpdates ();
         }
 
         public void Insert (int idx, Section section)
         {
             Insert (idx, UITableViewRowAnimation.None, section);
-        }
-
-        public void RemoveAt (int idx)
-        {
-            RemoveAt (idx, UITableViewRowAnimation.Fade);
         }
 
         public void RemoveAt (int idx, UITableViewRowAnimation anim)
@@ -136,11 +113,7 @@ namespace CodeHub.iOS.DialogElements
                 return;
 
             _sections.RemoveAt (idx);
-
-            if (_tableView == null)
-                return;
-
-            _tableView.DeleteSections (NSIndexSet.FromIndex (idx), anim);
+            _tableView.Get()?.DeleteSections (NSIndexSet.FromIndex (idx), anim);
         }
 
         public void Remove (Section s)
@@ -168,8 +141,7 @@ namespace CodeHub.iOS.DialogElements
             foreach (var s in _sections)
                 s.Root = null;
             _sections.Clear();
-            if (_tableView != null)
-                _tableView.ReloadData ();
+            _tableView.Get()?.ReloadData ();
         }
 
         public void Reset(IEnumerable<Section> sections)
@@ -184,8 +156,7 @@ namespace CodeHub.iOS.DialogElements
                 _sections.Add(s);
             }
 
-            if (_tableView != null)
-                _tableView.ReloadData();
+            _tableView.Get()?.ReloadData();
         }
 
         public void Reset(params Section[] sections)
@@ -193,53 +164,47 @@ namespace CodeHub.iOS.DialogElements
             Reset((IEnumerable<Section>)sections);
         }
 
-        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.None)
-        {
-            if (section == null)
-                throw new ArgumentNullException ("section");
-            if (section.Root == null || section.Root != this)
-                throw new ArgumentException ("Section is not attached to this root");
+//        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
+//        {
+//            if (section == null)
+//                throw new ArgumentNullException ("section");
+//            if (section.Root == null || section.Root != this)
+//                throw new ArgumentException ("Section is not attached to this root");
+//
+//            int idx = 0;
+//            foreach (var sect in _sections)
+//            {
+//                if (sect == section)
+//                {
+//                    try
+//                    {
+//                        _tableView.Get()?.BeginUpdates();
+//                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
+//                    }
+//                    finally
+//                    {
+//                        _tableView.Get()?.EndUpdates();
+//                    }
+//                    return;
+//                }
+//                idx++;
+//            }
+//        }
 
-            int idx = 0;
-            foreach (var sect in _sections)
-            {
-                if (sect == section)
-                {
-                    try
-                    {
-                        _tableView.BeginUpdates();
-                        _tableView.ReloadSections (new NSIndexSet ((uint) idx), animation);
-                    }
-                    finally
-                    {
-                        _tableView.EndUpdates();
-                    }
-                    return;
-                }
-                idx++;
-            }
-        }
-
-        public void Reload (Element element, UITableViewRowAnimation animation = UITableViewRowAnimation.None)
+        public void Reload (params Element[] elements)
         {
-            if (element == null)
-                throw new ArgumentNullException ("element");
-            if (element.Section == null || element.Section.Root == null)
-                return;
-            if (element.Section.Root != this)
-                throw new ArgumentException ("Element is not attached to this root");
-            var path = element.IndexPath;
-            if (path == null)
-                return;
+            var paths = (elements ?? Enumerable.Empty<Element>())
+                .Where(x => x.Section != null && x.Section.Root != null)
+                .Select(x => x.IndexPath);
 
             try
             {
-                _tableView.BeginUpdates();
-                _tableView.ReloadRows (new [] { path }, animation);
+                _tableView.Get()?.BeginUpdates();
+                _tableView.Get()?.ReloadRows(paths.ToArray(), UITableViewRowAnimation.None);
             }
             finally
             {
-                _tableView.EndUpdates();
+                _tableView.Get()?.EndUpdates();
             }
         }
 

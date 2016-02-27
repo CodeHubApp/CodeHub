@@ -1,44 +1,84 @@
-using System;
-using Foundation;
 using CodeHub.Core.Services;
+using Foundation;
 
 namespace CodeHub.iOS.Services
 {
     public class DefaultValueService : IDefaultValueService
     {
-        private static Lazy<DefaultValueService> _instance = new Lazy<DefaultValueService>(() => new DefaultValueService());
         public static NSUserDefaults Defaults = NSUserDefaults.StandardUserDefaults;
 
-        public static DefaultValueService Instance
+        public bool TryGet(string key, out string value)
         {
-            get { return _instance.Value; }
+            if (Defaults[key] == null)
+            {
+                value = default(string);
+                return false;
+            }
+
+            value = Defaults.StringForKey(key);
+            return true;
         }
 
-        public DefaultValueService()
+        public bool TryGet(string key, out int value)
         {
+            if (Defaults[key] == null)
+            {
+                value = default(int);
+                return false;
+            }
+
+            value = (int)Defaults.IntForKey(key);
+            return true;
         }
 
-        public T Get<T>(string key)
+        public bool TryGet(string key, out bool value)
         {
-            if (typeof (T) == typeof(int))
-                return (T)(object)Defaults.IntForKey(key);
-            if (typeof (T) == typeof(bool))
-                return (T)(object)Defaults.BoolForKey(key);
-            if (typeof (T) == typeof (string))
-                return (T) (object) Defaults.StringForKey(key);
-            throw new Exception("Key does not exist in Default database.");
+            if (Defaults[key] == null)
+            {
+                value = default(bool);
+                return false;
+            }
+
+            value = Defaults.BoolForKey(key);
+            return true;
         }
 
-        public void Set(string key, object value)
+        public void Set(string key, string value)
         {
             if (value == null)
-                Defaults.RemoveObject(key);
-            else if (value is int)
-                Defaults.SetInt((int)value, key);
-            else if (value is bool)
-                Defaults.SetBool((bool)value, key);
-            else if (value is string)
-                Defaults.SetString((string)value, key);
+                Clear(key);
+            else
+            {
+                Defaults.SetString(value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Set(string key, int? value)
+        {
+            if (!value.HasValue)
+                Clear(key);
+            else
+            {
+                Defaults.SetInt(value.Value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Set(string key, bool? value)
+        {
+            if (!value.HasValue)
+                Clear(key);
+            else
+            {
+                Defaults.SetBool(value.Value, key);
+                Defaults.Synchronize();
+            }
+        }
+
+        public void Clear(string key)
+        {
+            Defaults.RemoveObject(key);
             Defaults.Synchronize();
         }
     }

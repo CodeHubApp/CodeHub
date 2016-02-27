@@ -1,116 +1,102 @@
 using System;
-using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Accounts;
-using UIKit;
-using System.Text;
-using ReactiveUI;
-using CodeHub.Core.Factories;
+using MvvmCross.Platform;
+using CodeHub.iOS.Utilities;
+using Foundation;
+using WebKit;
 using CodeHub.Core.Services;
+using CodeHub.iOS.Services;
+using CodeHub.Core.Factories;
+using CodeHub.iOS.ViewControllers;
+using System.Reactive.Linq;
 using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class LoginViewController : BaseWebViewController<OAuthFlowLoginViewModel>
+    public class LoginViewController : BaseWebViewController
     {
-        private readonly IAlertDialogFactory _alertDialogService;
-        private static readonly string HasSeenWelcomeKey = "HAS_SEEN_WELCOME";
+        private static readonly string HasSeenWelcomeKey = "HAS_SEEN_OAUTH_INFO";
 
         private static readonly string OAuthWelcome = 
             "In the following screen you will be prompted for your GitHub credentials. This is done through GitHub's OAuth portal, " +
             "the recommended way to authenticate.\n\nCodeHub does not save your password. Instead, only the OAuth " + 
             "token is saved on the device which you may revoke at any time.";
+        
 
-        public LoginViewController(IAlertDialogFactory alertDialogService, IDefaultValueService defaultValueService)
+        public LoginViewModel ViewModel { get; }
+
+        public LoginViewController() 
+            : base(true)
         {
-            _alertDialogService = alertDialogService;
+            Title = "Login";
+            ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>());
+            ViewModel.Init(new LoginViewModel.NavObject());
 
-            this.Appearing
-                .Take(1)
-                .Select(_ => this.WhenAnyValue(x => x.ViewModel.LoginUrl))
-                .Switch()
-                .IsNotNull()
-                .Subscribe(LoadRequest);
+            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            LoadRequest();
 
             bool hasSeenWelcome = false;
-            if (!defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome))
-                hasSeenWelcome = false;
+            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
+            defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome);
 
-            this.Appeared
-//                .Where(_ => !hasSeenWelcome)
-                .Take(1)
-                .Subscribe(_ => 
-                    BlurredAlertView.Display(OAuthWelcome, () => defaultValueService.Set(HasSeenWelcomeKey, true)));
-
-            OnActivation(d => {
-                d(this.WhenAnyValue(x => x.ViewModel.ShowLoginOptionsCommand)
-                    .ToBarButtonItem(UIBarButtonSystemItem.Action, x => NavigationItem.RightBarButtonItem = x));
-            });
-        }
-
-		protected override bool ShouldStartLoad(Foundation.NSUrlRequest request, UIWebViewNavigationType navigationType)
-        {
-            //We're being redirected to our redirect URL so we must have been successful
-            if (request.Url.Host == "dillonbuchanan.com")
+            if (!hasSeenWelcome)
             {
-                ViewModel.Code = request.Url.Query.Split('=')[1];
-				ViewModel.LoginCommand.ExecuteIfCan();
-                return false;
+                Appeared
+                    .Take(1)
+                    .Subscribe(_ =>
+                    {
+                        defaultValueService.Set(HasSeenWelcomeKey, true);
+                        BlurredAlertView.Display(OAuthWelcome);
+                    });
             }
-
-            if (request.Url.AbsoluteString == "https://github.com/" || request.Url.AbsoluteString.StartsWith("https://github.com/join"))
-            {
-                return false;
-            }
-
-            return base.ShouldStartLoad(request, navigationType);
         }
 
-		protected override void OnLoadError(object sender, UIWebErrorArgs e)
-		{
-			base.OnLoadError(sender, e);
-
-			//Frame interrupted error
-            if (e.Error.Code == 102 || e.Error.Code == -999)
-				return;
-
-            _alertDialogService.Alert("Error", "Unable to communicate with GitHub. " + e.Error.LocalizedDescription).ToBackground();
-		}
-
-        protected override void OnLoadFinished(object sender, EventArgs e)
-        {
-            base.OnLoadFinished(sender, e);
-
-            var script = new StringBuilder();
-
-            //Apple is full of clowns. The GitHub login page has links that can ultimiately end you at a place where you can purchase something
-            //so we need to inject javascript that will remove these links. What a bunch of idiots...
-            script.Append("$('.switch-to-desktop').hide();");
-            script.Append("$('.header-button').hide();");
-            script.Append("$('.header').hide();");
-            script.Append("$('.site-footer').hide();");
-            script.Append("$('.brand-logo-wordmark').click(function(e) { e.preventDefault(); });");
-
-            //Inject some Javascript so we can set the username if there is an attempted account
-            if (ViewModel.AttemptedAccount != null)
-                script.Append("$('input[name=\"login\"]').val('" + ViewModel.AttemptedAccount.Username + "').attr('readonly', 'readonly');");
-
-            Web.EvaluateJavascript("(function(){setTimeout(function(){" + script +"}, 100); })();");
-        }
-
-        private void LoadRequest(string loginUrl)
+        protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
         {
             try
             {
-                //Remove all cookies & cache
-                foreach (var c in Foundation.NSHttpCookieStorage.SharedStorage.Cookies)
-                    Foundation.NSHttpCookieStorage.SharedStorage.DeleteCookie(c);
-                Foundation.NSUrlCache.SharedCache.RemoveAllCachedResponses();
-                GoUrl(new Foundation.NSUrl(loginUrl));
+                //We're being redirected to our redirect URL so we must have been successful
+                if (navigationAction.Request.Url.Host == "dillonbuchanan.com")
+                {
+                    var code = navigationAction.Request.Url.Query.Split('=')[1];
+                    ViewModel.Login(code);
+                    return false;
+                }
+    
+                if (navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
+                {
+                    Mvx.Resolve<IAlertDialogService>().Alert("Error", "Sorry, due to Apple restrictions, creating GitHub accounts cannot be done in CodeHub.");
+                    return false;
+                }
+
+                return base.ShouldStartLoad(webView, navigationAction);
             }
-            catch (Exception e)
+            catch 
             {
-                _alertDialogService.Alert("Unable to process request!", e.Message);
+                Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
+                return false;
             }
+        }
+
+        protected override void OnLoadError(NSError e)
+        {
+            base.OnLoadError(e);
+
+            //Frame interrupted error
+            if (e.Code == 102 || e.Code == -999) return;
+            AlertDialogService.ShowAlert("Error", "Unable to communicate with GitHub. " + e.LocalizedDescription);
+        }
+
+        private void LoadRequest()
+        {
+            //Remove all cookies & cache
+            WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), 
+                () => Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.LoginUrl))));
         }
     }
 }

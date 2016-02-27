@@ -1,124 +1,72 @@
 using System;
-using System.Reactive.Linq;
-using System.Linq;
-using ReactiveUI;
+using CodeHub.Core.ViewModels;
+using GitHubSharp.Models;
+using CodeHub.Core.Filters;
+using System.Windows.Input;
+using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.PullRequests;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Threading.Tasks;
-using CodeHub.Core.Services;
-using Octokit;
+using System.Linq;
+using CodeHub.Core.Utils;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
-    public abstract class BaseIssuesViewModel : BaseSearchableListViewModel<Issue, IssueItemViewModel>
+    public abstract class BaseIssuesViewModel<TFilterModel> : LoadableViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel<TFilterModel>, new()
     {
-        private readonly ISessionService _sessionService;
+        protected FilterableCollectionViewModel<IssueModel, TFilterModel> _issues;
 
-        private IList<IssueGroupViewModel> _groupedIssues;
-        public IList<IssueGroupViewModel> GroupedIssues
+        public FilterableCollectionViewModel<IssueModel, TFilterModel> Issues
         {
-            get { return _groupedIssues; }
-            private set { this.RaiseAndSetIfChanged(ref _groupedIssues, value); }
+            get { return _issues; }
         }
 
-        protected BaseIssuesViewModel(ISessionService sessionService)
-	    {
-            _sessionService = sessionService;
-
-            Items = InternalItems.CreateDerivedCollection(
-                x => CreateItemViewModel(x),
-                filter: IssueFilter, 
-                signalReset: this.WhenAnyValue(x => x.SearchKeyword));
-
-            Items.Changed.Subscribe(_ => {
-                GroupedIssues = Items.GroupBy(x => x.RepositoryFullName)
-                    .Select(x => new IssueGroupViewModel(x.Key, x)).ToList();
-            });
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async t => {
-                InternalItems.Reset(await RetrieveIssues());
-            });
-	    }
-
-        protected virtual bool IssueFilter(Issue issue)
+        public ICommand GoToIssueCommand
         {
-            return issue.Title.ContainsKeyword(SearchKeyword);
-        }
+            get 
+            { 
+                return new MvxCommand<IssueModel>(x =>
+                {
+                    var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
+                    var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
+                    var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
 
-        private IssueItemViewModel CreateItemViewModel(Issue issue)
-        {
-            var item = new IssueItemViewModel(issue);
-            if (item.IsPullRequest)
-            {
-                item.GoToCommand.Subscribe(_ => {
-                    var vm = this.CreateViewModel<PullRequestViewModel>();
-                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number, issue: issue);
-                    vm.IssueUpdated.Subscribe(x => UpdateIssue(x));
-                    NavigateTo(vm);
+                    if (isPullRequest)
+                        ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
+                    else
+                        ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
                 });
             }
-            else
+        }
+
+        protected virtual List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
+        {
+            var order = Issues.Filter.SortType;
+            if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Comments)
             {
-                item.GoToCommand.Subscribe(_ => {
-                    var vm = this.CreateViewModel<IssueViewModel>();
-                    vm.Init(item.RepositoryOwner, item.RepositoryName, item.Number, issue);
-                    vm.IssueUpdated.Subscribe(x => UpdateIssue(x));
-                    NavigateTo(vm);
-                });
+                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.Comments) : model.OrderByDescending(x => x.Comments);
+                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.Comments)).ToList();
+                return FilterGroup.CreateNumberedGroup(g, "Comments");
+            }
+            if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Updated)
+            {
+                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
+                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
+                return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
+            }
+            if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Created)
+            {
+                var a = Issues.Filter.Ascending ? model.OrderBy(x => x.CreatedAt) : model.OrderByDescending(x => x.CreatedAt);
+                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.CreatedAt.TotalDaysAgo()));
+                return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Created");
             }
 
-            return item;
+            return null;
         }
+    }
 
-        private async Task UpdateIssue(Issue issue)
-        {
-            var localIssue = InternalItems.FirstOrDefault(x => x.Url == issue.Url);
-            if (localIssue == null)
-                return;
-
-            var index = InternalItems.IndexOf(localIssue);
-            if (index < 0)
-                return;
-
-            var matches = System.Text.RegularExpressions.Regex.Matches(issue.Url.AbsolutePath, "/repos/([^/]+)/([^/]+)/.+");
-            if (matches.Count != 1 || matches[0].Groups.Count != 3)
-                return;
-
-            InternalItems[index] = await _sessionService.GitHubClient.Issue.Get(matches[0].Groups[1].Value, matches[0].Groups[2].Value, issue.Number);
-            InternalItems.Reset();
-        }
-
-        private async Task<IReadOnlyList<Issue>> RetrieveIssues(int page = 1)
-        {
-            var connection = _sessionService.GitHubClient.Connection;
-            var parameters = new Dictionary<string, string>();
-            parameters["page"] = page.ToString();
-            parameters["per_page"] = 50.ToString();
-            AddRequestParameters(parameters);
-
-            parameters = parameters.Where(x => x.Value != null).ToDictionary(x => x.Key, x => x.Value);
-            var ret = await connection.Get<IReadOnlyList<Issue>>(RequestUri, parameters, "application/json");
-
-            if (ret.HttpResponse.ApiInfo.Links.ContainsKey("next"))
-            {
-                LoadMoreCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                    InternalItems.AddRange(await RetrieveIssues(page + 1));
-                });
-            }
-            else
-            {
-                LoadMoreCommand = null;
-            }
-
-            return ret.Body;
-        }
-
-        protected virtual void AddRequestParameters(IDictionary<string, string> parameters)
-        {
-        }
-
-        protected abstract Uri RequestUri { get; }
+    public interface IBaseIssuesViewModel : IMvxViewModel
+    {
+        ICommand GoToIssueCommand { get; }
     }
 }
 

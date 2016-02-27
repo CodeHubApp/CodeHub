@@ -1,55 +1,48 @@
+using CodeHub.iOS.ViewControllers;
+using CodeHub.Core.ViewModels.Organizations;
+using UIKit;
+using CoreGraphics;
+using CodeHub.iOS.DialogElements;
 using System;
 using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.Organizations;
-using ReactiveUI;
-using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class OrganizationViewController : BaseDialogViewController<OrganizationViewModel>
+    public class OrganizationViewController : PrettyDialogViewController
     {
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            HeaderView.SubText = "Organization";
-            HeaderView.Image = Images.LoginUserUnknown;
+            var vm = (OrganizationViewModel) ViewModel;
 
-            var split = new SplitButtonElement();
-            var followers = split.AddButton("Followers", "-");
-            var following = split.AddButton("Following", "-");
-            var members = new ButtonElement("Members", Octicon.Person.ToImage());
-            var teams = new ButtonElement("Teams", Octicon.Organization.ToImage());
-            var events = new ButtonElement("Events", Octicon.Rss.ToImage());
-            var repos = new ButtonElement("Repositories", Octicon.Repo.ToImage());
-            var gists = new ButtonElement("Gists", Octicon.Gist.ToImage());
-            var membersAndTeams = new Section { members };
+            HeaderView.SetImage(null, Images.Avatar);
+            Title = vm.Name;
+            HeaderView.Text = vm.Name;
 
-            Root.Reset(new Section { split }, membersAndTeams, new Section { events }, new Section { repos, gists });
+            var members = new StringElement("Members", Octicon.Person.ToImage());
+            var teams = new StringElement("Teams", Octicon.Organization.ToImage());
+            var followers = new StringElement("Followers", Octicon.Heart.ToImage());
+            var events = new StringElement("Events", Octicon.Rss.ToImage());
+            var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
+            var gists = new StringElement("Gists", Octicon.Gist.ToImage());
+            Root.Reset(new Section(new UIView(new CGRect(0, 0, 0, 20f))) { members, teams }, new Section { events, followers }, new Section { repos, gists });
 
-            OnActivation(d => {
-                d(followers.Clicked.InvokeCommand(ViewModel.GoToFollowersCommand));
-                d(following.Clicked.InvokeCommand(ViewModel.GoToFollowingCommand));
-                d(members.Clicked.InvokeCommand(ViewModel.GoToMembersCommand));
-                d(teams.Clicked.InvokeCommand(ViewModel.GoToTeamsCommand));
-                d(events.Clicked.InvokeCommand(ViewModel.GoToEventsCommand));
-                d(repos.Clicked.InvokeCommand(ViewModel.GoToRepositoriesCommand));
-                d(gists.Clicked.InvokeCommand(ViewModel.GoToGistsCommand));
+            OnActivation(d =>
+            {
+                d(members.Clicked.BindCommand(vm.GoToMembersCommand));
+                d(teams.Clicked.BindCommand(vm.GoToTeamsCommand));
+                d(followers.Clicked.BindCommand(vm.GoToFollowersCommand));
+                d(events.Clicked.BindCommand(vm.GoToEventsCommand));
+                d(repos.Clicked.BindCommand(vm.GoToRepositoriesCommand));
+                d(gists.Clicked.BindCommand(vm.GoToGistsCommand));
 
-                d(this.WhenAnyValue(x => x.ViewModel.Avatar)
-                    .Subscribe(x => HeaderView.SetImage(x?.ToUri(128), Images.LoginUserUnknown)));
-
-                var orgObs = this.WhenAnyValue(x => x.ViewModel.Organization);
-                d(followers.BindText(orgObs.Select(x => x != null ? x.Followers.ToString() : "-")));
-                d(following.BindText(orgObs.Select(x => x != null ? x.Following.ToString() : "-")));
-
-                d(this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
-                    .Where(x => x && teams.Section == null)
-                    .Subscribe(x => membersAndTeams.Add(teams)));
-
-                d(this.WhenAnyValue(x => x.ViewModel.CanViewTeams)
-                    .Where(x => !x)
-                    .Subscribe(x => membersAndTeams.Remove(teams)));
+                d(vm.Bind(x => x.Organization, true).Where(x => x != null).Subscribe(x =>
+                {
+                    HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
+                    HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
+                    RefreshHeaderView();
+                }));
             });
         }
     }

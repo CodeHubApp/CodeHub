@@ -1,21 +1,28 @@
+using System;
 using CoreGraphics;
-using CodeHub.Core.ViewModels.Accounts;
 using UIKit;
-using ReactiveUI;
+using MvvmCross.Platform;
+using CodeHub.Core.Services;
+using CodeHub.iOS.ViewControllers.Application;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class NewAccountViewController : BaseViewController<NewAccountViewModel>
+    public class NewAccountViewController : BaseViewController
     {
         private readonly UIColor DotComBackgroundColor = UIColor.FromRGB(239, 239, 244);
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
+
+        public NewAccountViewController()
+        {
+            Title = "New Account";
+        }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var dotComButton = new AccountButton("GitHub.com", Images.Logos.GitHub);
-            var enterpriseButton = new AccountButton("Enterprise", Images.Logos.Enterprise);
+            var dotComButton = new AccountButton("GitHub.com", Images.Logos.DotComMascot);
+            var enterpriseButton = new AccountButton("Enterprise", Images.Logos.EnterpriseMascot);
 
             dotComButton.BackgroundColor = DotComBackgroundColor;
             dotComButton.Label.TextColor = EnterpriseBackgroundColor;
@@ -39,10 +46,29 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 enterpriseButton.Frame.Right == View.Frame.Right &&
                 enterpriseButton.Frame.Bottom == View.Frame.Bottom);
 
-            this.WhenActivated(d => {
-                d(enterpriseButton.GetClickedObservable().InvokeCommand(ViewModel.GoToEnterpriseLoginCommand));
-                d(dotComButton.GetClickedObservable().InvokeCommand(ViewModel.GoToDotComLoginCommand));
+            OnActivation(d =>
+            {
+                d(dotComButton.GetClickedObservable().Subscribe(_ => DotComButtonTouch()));
+                d(enterpriseButton.GetClickedObservable().Subscribe(_ => EnterpriseButtonTouch()));
             });
+        }
+
+        private void DotComButtonTouch ()
+        {
+            NavigationController.PushViewController(new LoginViewController(), true);
+        }
+
+        private void EnterpriseButtonTouch ()
+        {
+            var features = Mvx.Resolve<IFeaturesService>();
+            if (features.IsEnterpriseSupportActivated)
+            {
+                NavigationController.PushViewController(new AddAccountViewController(), true);
+            }
+            else
+            {
+                this.PresentUpgradeViewController();
+            }
         }
 
         private class AccountButton : UIButton
@@ -78,4 +104,3 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         }
     }
 }
-

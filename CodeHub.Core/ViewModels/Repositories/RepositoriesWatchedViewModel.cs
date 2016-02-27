@@ -1,19 +1,17 @@
-using CodeHub.Core.Services;
-using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class RepositoriesWatchedViewModel : BaseRepositoriesViewModel
+    public class RepositoriesWatchedViewModel : RepositoriesViewModel
     {
-        public RepositoriesWatchedViewModel(ISessionService applicationService) 
-            : base(applicationService)
+        public RepositoriesWatchedViewModel()
         {
-            Title = "Watched";
+            ShowRepositoryOwner = true;
         }
 
-        protected override Uri RepositoryUri
+        protected override Task Load(bool forceDataRefresh)
         {
-            get { return Octokit.ApiUrls.Watched(); }
+            return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetWatching(), forceDataRefresh);
         }
     }
 }

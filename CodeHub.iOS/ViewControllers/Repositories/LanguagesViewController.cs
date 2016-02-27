@@ -1,47 +1,69 @@
-using CodeHub.Core.ViewModels.Repositories;
+using System.Linq;
+using UIKit;
+using CodeHub.Core.Data;
+using System.Threading.Tasks;
+using CodeHub.iOS.DialogElements;
+using System.Reactive.Subjects;
 using System;
 using System.Reactive.Linq;
-using System.Linq;
-using CodeHub.iOS.TableViewSources;
 using Foundation;
-using ReactiveUI;
-using UIKit;
+using CodeHub.iOS.Utilities;
+using System.Net;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
-    public class LanguagesViewController : BaseTableViewController<LanguagesViewModel>
+    public class LanguagesViewController : DialogViewController
     {
+        private readonly ISubject<Language> _languageSubject = new Subject<Language>();
+
+        public IObservable<Language> Language
+        {
+            get { return _languageSubject.AsObservable(); }
+        }
+
+        public Language SelectedLanguage { get; set; }
+
+        public LanguagesViewController()
+            : base(UITableViewStyle.Plain)
+        {
+            Title = "Languages";
+            EnableSearch = true;
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var source = new LanguageTableViewSource(TableView, ViewModel.Items);
-            TableView.Source = source;
-
-            OnActivation(d => {
-                d(this.WhenAnyObservable(x => x.ViewModel.LoadCommand.IsExecuting)
-                    .Where(x => !x).Take(1).SubscribeSafe(_ => ScrollToSelected()));
-
-                d(source.ElementSelected.OfType<LanguageItemViewModel>()
-                    .Subscribe(y => ViewModel.SelectedLanguage = y));
-                
-                d(this.WhenAnyValue(x => x.ViewModel.DismissCommand)
-                    .ToBarButtonItem(UIBarButtonSystemItem.Done, x => NavigationItem.LeftBarButtonItem = x));
-            });
+            NetworkActivity.PushNetworkActive();
+            Load().ContinueWith(t => NetworkActivity.PopNetworkActive()).ToBackground();
         }
 
-        private void ScrollToSelected()
+        private async Task Load()
         {
-            var selectedLanguageSlug = ViewModel.SelectedLanguage.Slug;
-            var selectedLanguage = ViewModel.Items.Select((value, index) => new { value, index })
-                .Where(x => x.value.Slug == selectedLanguageSlug)
-                .Select(x => x.index + 1)
-                .FirstOrDefault() - 1;
+            var lRepo = new LanguageRepository();
+            var langs = await lRepo.GetLanguages();
 
-            if (selectedLanguage >= 0)
+            var sec = new Section();
+
+            langs.Insert(0, new Language("All Languages", null));
+            sec.AddAll(langs.Select(x =>
             {
-                var indexPath = NSIndexPath.FromRowSection(selectedLanguage, 0);
-                BeginInvokeOnMainThread(() => TableView.ScrollToRow(indexPath, UITableViewScrollPosition.Middle, true));
+                var el = new StringElement(x.Name) { Accessory = UITableViewCellAccessory.None };
+                el.Clicked.Subscribe(_ => _languageSubject.OnNext(x));
+                return el;
+            }));
+
+            Root.Reset(sec);
+
+            if (SelectedLanguage != null)
+            {
+                var el = sec.Elements.OfType<StringElement>().FirstOrDefault(x => string.Equals(x.Caption, SelectedLanguage.Name));
+                if (el != null)
+                    el.Accessory = UITableViewCellAccessory.Checkmark;
+
+                var indexPath = el?.IndexPath;
+                if (indexPath != null)
+                    TableView.ScrollToRow(indexPath, UITableViewScrollPosition.Middle, false);
             }
         }
     }

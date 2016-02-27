@@ -1,85 +1,62 @@
-using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Source;
-using ReactiveUI;
-using System.Reactive;
-using Octokit;
-using System;
 using System.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CodeHub.Core.ViewModels;
+using GitHubSharp.Models;
+using CodeHub.Core.ViewModels.Source;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
-    public class PullRequestFilesViewModel : BaseViewModel, ILoadableViewModel
+    public class PullRequestFilesViewModel : LoadableViewModel
     {
-        private readonly ISubject<PullRequestReviewComment> _commentCreatedObservable = new Subject<PullRequestReviewComment>();
+        private readonly CollectionViewModel<CommitModel.CommitFileModel> _files = new CollectionViewModel<CommitModel.CommitFileModel>();
 
-        public IObservable<PullRequestReviewComment> CommentCreated
+        public CollectionViewModel<CommitModel.CommitFileModel> Files
         {
-            get { return _commentCreatedObservable.AsObservable(); }
+            get { return _files; }
         }
 
-        public IReadOnlyReactiveList<CommitedFileItemViewModel> Files { get; }
+        public long PullRequestId { get; private set; }
 
-        public IReadOnlyReactiveList<PullRequestReviewComment> Comments { get; }
+        public string Username { get; private set; }
 
-        public int PullRequestId { get; private set; }
+        public string Repository { get; private set; }
 
-        public string RepositoryOwner { get; private set; }
-
-        public string RepositoryName { get; private set; }
-
-        public string HeadSha { get; private set; }
-
-        public IReactiveCommand<Unit> LoadCommand { get; private set; }
-
-        public PullRequestFilesViewModel(ISessionService applicationService)
+        public ICommand GoToSourceCommand
         {
-            Title = "Files Changed";
-
-            var comments = new ReactiveList<PullRequestReviewComment>();
-            Comments = comments.CreateDerivedCollection(x => x);
-
-            _commentCreatedObservable.Subscribe(comments.Add);
-
-            var files = new ReactiveList<PullRequestFile>();
-            Files = files.CreateDerivedCollection(x => new CommitedFileItemViewModel(x, Comments.Count(y => string.Equals(y.Path, x.FileName)), y => {
-                if (x.Patch == null)
+            get 
+            { 
+                return new MvxCommand<CommitModel.CommitFileModel>(x => 
                 {
-                    var vm = this.CreateViewModel<SourceViewModel>();
-                    vm.RepositoryOwner = RepositoryOwner;
-                    vm.RepositoryName = RepositoryName;
-                    vm.Branch = y.Ref;
-                    vm.Name = y.Name;
-                    vm.Path = x.FileName;
-                    vm.GitUrl = x.ContentsUrl.AbsoluteUri;
-                    vm.HtmlUrl = x.BlobUrl.AbsoluteUri;
-                    vm.ForceBinary = true;
-                    NavigateTo(vm);
-                }
-                else
-                {
-                    var vm = this.CreateViewModel<PullRequestDiffViewModel>();
-                    vm.Init(this, x);
-                    vm.CommentCreated.Subscribe(_commentCreatedObservable);
-                    NavigateTo(vm);
-                }
-            }), signalReset: comments.CountChanged);
-
-            LoadCommand = ReactiveCommand.CreateAsyncTask(async _ => {
-                applicationService.GitHubClient.Repository.PullRequest.Comment.GetAll(RepositoryOwner, RepositoryName, PullRequestId)
-                    .ToBackground(x => comments.Reset(x));
-                files.Reset(await applicationService.GitHubClient.Repository.PullRequest.Files(RepositoryOwner, RepositoryName, PullRequestId));
-            });
+                    var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
+                });
+            }
         }
 
-        public PullRequestFilesViewModel Init(string repositoryOwner, string repositoryName, int pullRequestId, string headSha)
+        public void Init(NavObject navObject)
         {
-            RepositoryOwner = repositoryOwner;
-            RepositoryName = repositoryName;
-            PullRequestId = pullRequestId;
-            HeadSha = headSha;
-            return this;
+            Username = navObject.Username;
+            Repository = navObject.Repository;
+            PullRequestId = navObject.PullRequestId;
+
+            _files.GroupingFunction = (x) => x.GroupBy(y => {
+                var filename = "/" + y.Filename;
+                return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
+            }).OrderBy(y => y.Key);
+        }
+
+        protected override Task Load(bool forceDataRefresh)
+        {
+            return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
+        }
+
+        public class NavObject
+        {
+            public string Username { get; set; }
+            public string Repository { get; set; }
+            public long PullRequestId { get; set; }
         }
     }
 }
