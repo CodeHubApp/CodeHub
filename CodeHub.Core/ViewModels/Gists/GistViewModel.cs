@@ -56,11 +56,6 @@ namespace CodeHub.Core.ViewModels.Gists
             }
         }
 
-        public ICommand GoToViewableFileCommand
-        {
-            get { return new MvxCommand<GistFileModel>(x => ShowViewModel<GistViewableFileViewModel>(new GistViewableFileViewModel.NavObject { GistFile = x }), x => x != null); }
-        }
-
         public ICommand GoToHtmlUrlCommand
         {
             get { return new MvxCommand(() => GoToUrlCommand.Execute(_gist.HtmlUrl), () => _gist != null); }

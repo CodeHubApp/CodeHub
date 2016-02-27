@@ -22,8 +22,8 @@ namespace CodeHub.iOS.Views
             _content = content;
 
             Title = "New File";
-            var cancelButton = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.BackButton };
-            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+            var cancelButton = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.BackButton };
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
 
             OnActivation(d =>
             {

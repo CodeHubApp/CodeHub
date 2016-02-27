@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Views
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
 
-            var checkButton = new UIBarButtonItem { Image = Theme.CurrentTheme.CheckButton };
+            var checkButton = new UIBarButtonItem { Image = Images.Buttons.CheckButton };
             NavigationItem.RightBarButtonItem = checkButton;
 
             var vm = (NotificationsViewModel)ViewModel;
@@ -91,7 +91,7 @@ namespace CodeHub.iOS.Views
                 if (button)
                 {
                     _button = new UIButton(UIButtonType.RoundedRect);
-                    _button.SetImage(Theme.CurrentTheme.CheckButton, UIControlState.Normal);
+                    _button.SetImage(Images.Buttons.CheckButton, UIControlState.Normal);
                     //_button.Frame = new System.Drawing.RectangleF(320f - 42f, 1f, 26f, 26f);
                     _button.TintColor = UIColor.FromRGB(50, 50, 50);
                     _button.TouchUpInside += (sender, e) => weakVm.Get()?.ReadRepositoriesCommand.Execute(text);

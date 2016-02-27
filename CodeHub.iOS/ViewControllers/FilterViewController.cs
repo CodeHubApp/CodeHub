@@ -14,8 +14,8 @@ namespace CodeHub.iOS.ViewControllers
         {
             Title = "Filter & Sort";
 
-            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
-            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+            var cancel = NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            var save = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
 
             OnActivation(d =>
             {

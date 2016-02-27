@@ -22,7 +22,6 @@ namespace CodeHub.iOS.Views.Gists
         private SplitViewElement _splitRow1, _splitRow2;
         private StringElement _ownerElement;
         private SplitButtonElement _split;
-        private UIBarButtonItem _editButton;
         private readonly IAlertDialogService _alertDialogService = Mvx.Resolve<IAlertDialogService>();
 
         public new GistViewModel ViewModel

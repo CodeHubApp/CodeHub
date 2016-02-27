@@ -46,7 +46,6 @@
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistViewableFileViewModel.cs" />
     <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\UserGistsViewModel.cs" />

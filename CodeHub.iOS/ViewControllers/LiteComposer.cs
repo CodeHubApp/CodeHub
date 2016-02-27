@@ -28,9 +28,9 @@ namespace CodeHub.iOS.ViewControllers
                 Font = UIFont.PreferredBody
             };
 
-            var close = new UIBarButtonItem { Image = Theme.CurrentTheme.BackButton };
+            var close = new UIBarButtonItem { Image = Images.Buttons.BackButton };
             NavigationItem.LeftBarButtonItem = close;
-            _sendButton = new UIBarButtonItem { Image = Theme.CurrentTheme.SaveButton };
+            _sendButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
             NavigationItem.RightBarButtonItem = _sendButton;
 
             OnActivation(d =>

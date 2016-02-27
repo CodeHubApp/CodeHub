@@ -24,7 +24,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             const string url = "https://help.github.com/articles/about-third-party-application-restrictions/";
             var view = new WebBrowserViewController(url);
-            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Done, 
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Buttons.CancelButton, UIBarButtonItemStyle.Done, 
                 (s, e) => DismissViewController(true, null));
             PresentViewController(new ThemedNavigationController(view), true, null);
         }

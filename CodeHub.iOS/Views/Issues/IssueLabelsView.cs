@@ -22,7 +22,7 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
             var vm = (IssueLabelsViewModel)ViewModel;
-            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SaveLabelChoices.Execute(null));
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Buttons.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SaveLabelChoices.Execute(null));
 
             BindCollection(vm.Labels, x => 
             {

@@ -61,8 +61,8 @@ namespace CodeHub.iOS.Views
 
             if (_navigationToolbar)
             {
-                BackButton = new UIBarButtonItem(Theme.CurrentTheme.WebBackButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false };
-                ForwardButton = new UIBarButtonItem(Theme.CurrentTheme.WebFowardButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false };
+                BackButton = new UIBarButtonItem(Images.Web.BackButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false };
+                ForwardButton = new UIBarButtonItem(Images.Web.FowardButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false };
                 RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()) { Enabled = false };
 
                 BackButton.TintColor = Theme.CurrentTheme.WebButtonTint;

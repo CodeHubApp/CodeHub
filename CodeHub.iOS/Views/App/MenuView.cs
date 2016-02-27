@@ -168,7 +168,7 @@ namespace CodeHub.iOS.Views.App
         protected override void ProfileButtonClicked()
         {
             var vc = new AccountsViewController();
-            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Theme.CurrentTheme.CancelButton };
+            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);
         }

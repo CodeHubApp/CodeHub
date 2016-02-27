@@ -1,7 +1,4 @@
-
 using UIKit;
-using MonoTouch.UIKit;
-using MvvmCross.Platform;
 
 namespace CodeHub.iOS
 {
@@ -34,8 +31,8 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.BarTintColor = primaryColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             CodeHub.iOS.Utilities.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
-            UINavigationBar.Appearance.BackIndicatorImage = Theme.CurrentTheme.BackButton;
-            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Theme.CurrentTheme.BackButton;
+            UINavigationBar.Appearance.BackIndicatorImage = Images.Buttons.BackButton;
+            UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.Buttons.BackButton;
 
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.LandscapePhone);
             UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -64), UIBarMetrics.Default);
@@ -55,10 +52,6 @@ namespace CodeHub.iOS
             UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor = UIColor.White}, UIControlState.Normal);
 
             UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
-
-//            CodeFramework.Elements.NewsFeedElement.LinkColor = theme.MainTitleColor;
-//            CodeFramework.Elements.NewsFeedElement.TextColor = theme.MainTextColor;
-//            CodeFramework.Elements.NewsFeedElement.NameColor = theme.MainTitleColor;
         }
 
         public UITextAttributes SegmentedControlText
@@ -74,54 +67,16 @@ namespace CodeHub.iOS
                 };
             }
         }
-        public UIImage CheckButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/check"); } }
-        public UIImage BackButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/back"); } }
-        public UIImage ThreeLinesButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/three_lines"); } }
-        public UIImage CancelButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/cancel"); } }
-        public UIImage SortButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/sort"); } }
-        public UIImage SaveButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/save"); } }
-        public UIImage ViewButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/view"); } }
-        public UIImage ForkButton { get { return UIImageHelper.FromFileAuto("Images/Buttons/fork"); } }
-        public UIImage WebBackButton { get { return UIImageHelper.FromFileAuto("Images/Web/back"); } }
-        public UIImage WebFowardButton { get { return UIImageHelper.FromFileAuto("Images/Web/forward"); } }
 
         public UIColor ViewBackgroundColor { get { return UIColor.FromRGB(238, 238, 238); } }
-
         public UIColor MainTitleColor { get { return UIColor.FromRGB(0x41, 0x83, 0xc4); } }
         public UIColor MainSubtitleColor { get { return UIColor.FromRGB(81, 81, 81); } }
         public UIColor MainTextColor { get { return UIColor.FromRGB(41, 41, 41); } }
-
         public UIColor IssueTitleColor { get { return MainTitleColor; } }
         public UIColor RepositoryTitleColor { get { return MainTitleColor; } }
         public UIColor HeaderViewTitleColor { get { return MainTitleColor; } }
         public UIColor HeaderViewDetailColor { get { return MainSubtitleColor; } }
-
         public UIColor WebButtonTint { get { return UIColor.FromRGB(127, 125, 125); } }
-
         public UIColor PrimaryColor { get { return UIColor.FromRGB(50, 50, 50); } }
-
-        public UIColor AccountsNavigationBarTint
-        {
-            get
-            {
-                return UIColor.Red;
-            }
-        }
-
-        public UIColor SlideoutNavigationBarTint
-        {
-            get
-            {
-                return UIColor.Black;
-            }
-        }
-
-        public UIColor ApplicationNavigationBarTint
-        {
-            get
-            {
-                return UIColor.Black;
-            }
-        }
     }
 }

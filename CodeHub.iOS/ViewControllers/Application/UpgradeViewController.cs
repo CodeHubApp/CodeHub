@@ -103,7 +103,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (url.Scheme.Equals("http") || url.Scheme.Equals("https"))
             {
                 var view = new WebBrowserViewController(url.AbsoluteString);
-                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Done, 
+                view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(Images.Buttons.CancelButton, UIBarButtonItemStyle.Done, 
                     (s, e) => DismissViewController(true, null));
                 PresentViewController(new ThemedNavigationController(view), true, null);
                 return false;
@@ -137,7 +137,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             var vc = new UpgradeViewController();
             var nav = new ThemedNavigationController(vc);
 
-            var navObj = new UIBarButtonItem(Theme.CurrentTheme.CancelButton, UIBarButtonItemStyle.Done, (_, __) => @this.DismissViewController(true, null));
+            var navObj = new UIBarButtonItem(Images.Buttons.CancelButton, UIBarButtonItemStyle.Done, (_, __) => @this.DismissViewController(true, null));
             vc.ViewWillAppearCalled += (sender, e) => vc.NavigationItem.LeftBarButtonItem = navObj;
             vc.ViewDidDisappearCalled += (sender, e) => vc.NavigationItem.LeftBarButtonItem = null;
             @this.PresentViewController(nav, true, null);

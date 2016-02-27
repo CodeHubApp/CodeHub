@@ -129,7 +129,6 @@
     <Compile Include="Views\Events\NewsView.cs" />
     <Compile Include="Views\Events\OrganizationEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
-    <Compile Include="Views\Gists\GistViewableFileView.cs" />
     <Compile Include="Views\Gists\PublicGistsView.cs" />
     <Compile Include="Views\Gists\StarredGistsView.cs" />
     <Compile Include="Views\Gists\UserGistsView.cs" />
@@ -541,6 +540,8 @@
     <BundleResource Include="Images\down_chevron%402x.png" />
     <BundleResource Include="Organizations.png" />
     <Content Include="WebResources\marked.js" />
+    <BundleResource Include="Images\Buttons\check%402x.png" />
+    <BundleResource Include="Images\Buttons\check.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
