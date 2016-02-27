@@ -5,6 +5,7 @@ using SDWebImage;
 using CodeHub.iOS;
 using MvvmCross.Binding.iOS.Views;
 using CodeHub.Core.Utilities;
+using UIKit;
 
 namespace CodeHub.iOS.TableViewCells
 {
@@ -20,8 +21,9 @@ namespace CodeHub.iOS.TableViewCells
 
             if (cell != null)
             {
-                cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
+                cell.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
 
+                cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
                 cell.Description.TextColor = Theme.CurrentTheme.MainTextColor;
 
                 cell.Image1.Image =  Octicon.Star.ToImage(12);

@@ -11,7 +11,6 @@ namespace CodeHub.iOS.TableViewCells
     {
         public static readonly UINib Nib = UINib.FromName("NewsCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("NewsCellView");
-        public static readonly UIEdgeInsets EdgeInsets = new UIEdgeInsets(0, 48f, 0, 0);
 
         public class Link
         {
@@ -94,7 +93,7 @@ namespace CodeHub.iOS.TableViewCells
         public static NewsCellView Create()
         {
             var cell = (NewsCellView)Nib.Instantiate(null, null)[0];
-            cell.SeparatorInset = EdgeInsets;
+            cell.SeparatorInset = new UIEdgeInsets(0, 48f, 0, 0);
             cell.Body.LinkAttributes = new NSDictionary();
             cell.Body.ActiveLinkAttributes = new NSMutableDictionary();
             cell.Body.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
