@@ -5,6 +5,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.iOS.Utilities;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -24,7 +25,8 @@ namespace CodeHub.iOS.Views.Issues
             var vm = (IssueAssignedToViewModel)ViewModel;
             BindCollection(vm.Users, x =>
             {
-                var el = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
+                var avatar = new GitHubAvatar(x.AvatarUrl);
+                var el = new UserElement(x.Login, string.Empty, string.Empty, avatar);
                 el.Clicked.Subscribe(_ => {
                     if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
                         vm.SelectedUser = null;

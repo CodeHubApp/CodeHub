@@ -80,7 +80,6 @@
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\StargazersViewModel.cs" />
     <Compile Include="ViewModels\User\TeamMembersViewModel.cs" />
     <Compile Include="ViewModels\User\UserFollowersViewModel.cs" />
     <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
@@ -172,6 +171,7 @@
     <Compile Include="Extensions\ReactiveListExtensions.cs" />
     <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
     <Compile Include="Secrets.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

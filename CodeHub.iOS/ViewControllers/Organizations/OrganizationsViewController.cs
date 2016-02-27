@@ -4,6 +4,7 @@ using CodeHub.iOS.DialogElements;
 using System;
 using UIKit;
 using CodeHub.iOS.Views;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
@@ -24,7 +25,8 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             var weakVm = new WeakReference<OrganizationsViewModel>(vm);
             BindCollection(vm.Organizations, x =>
             {
-                var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
+                var avatar = new GitHubAvatar(x.AvatarUrl);
+                var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
                 return e;
             });

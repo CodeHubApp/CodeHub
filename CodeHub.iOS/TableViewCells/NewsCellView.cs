@@ -88,6 +88,7 @@ namespace CodeHub.iOS.TableViewCells
             foreach (var b in bodyLinks)
                 Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
 
+            AdjustableConstraint.Constant = Body.Hidden ? 0f : 6f;
         }
 
         public static NewsCellView Create()

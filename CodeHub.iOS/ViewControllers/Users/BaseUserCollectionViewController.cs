@@ -4,6 +4,7 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.User;
 using UIKit;
 using CodeHub.iOS.Views;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
@@ -23,7 +24,8 @@ namespace CodeHub.iOS.ViewControllers.Users
             var weakVm = new WeakReference<BaseUserCollectionViewModel>(vm);
             BindCollection(vm.Users, x =>
             {
-                var e = new UserElement(x.Login, string.Empty, string.Empty, x.AvatarUrl);
+                var avatar = new GitHubAvatar(x.AvatarUrl);
+                var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
                 e.Clicked.Subscribe(_ => weakVm.Get()?.GoToUserCommand.Execute(x));
                 return e;
             });

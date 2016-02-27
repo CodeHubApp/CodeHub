@@ -1,6 +1,7 @@
 using System;
 using UIKit;
 using CodeHub.iOS;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -12,7 +13,7 @@ namespace CodeHub.iOS.DialogElements
         /// <value><c>true</c> if use pinned image; otherwise, <c>false</c>.</value>
         public bool UsePinnedImage { get; set; }
 
-        public UserElement(string username, string firstName, string lastName, string avatar)
+        public UserElement(string username, string firstName, string lastName, GitHubAvatar avatar)
             : base (username, string.Empty, UITableViewCellStyle.Subtitle)
         {
             var realName = firstName ?? "" + " " + (lastName ?? "");
@@ -20,8 +21,7 @@ namespace CodeHub.iOS.DialogElements
                 Value = realName;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
             Image = Images.Avatar;
-            if (avatar != null)
-                ImageUri = new Uri(avatar);
+            ImageUri = avatar.ToUri(64);
             UsePinnedImage = true;
         }
         

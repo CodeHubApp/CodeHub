@@ -193,9 +193,12 @@ namespace CodeHub.iOS.DialogElements
         public Uri ImageUri {
             get { return _imageUri; }
             set {
+                if (_imageUri == value)
+                    return;
+                
                 _imageUri = value;
                 var cell = GetActiveCell();
-                if (cell != null)
+                if (cell != null && value != null)
                     cell.ImageView.SetImage(new NSUrl(value.AbsoluteUri));
             }
         }

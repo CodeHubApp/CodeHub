@@ -2,11 +2,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.User;
-using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
-    public class StargazersViewModel : BaseUserCollectionViewModel
+    public class RepositoryStargazersViewModel : BaseUserCollectionViewModel
     {
         public string User
         {
@@ -38,7 +37,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         }
     }
 
-    public class WatchersViewModel : BaseUserCollectionViewModel
+    public class RepositoryWatchersViewModel : BaseUserCollectionViewModel
     {
         public string User
         {

@@ -36,8 +36,8 @@
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" text="Whats good?" lineBreakMode="clip" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9K-I1-WdV" customClass="UILabelWithLinks">
-                        <rect key="frame" x="48" y="78" width="264" height="17"/>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" misplaced="YES" text="Whats good?" lineBreakMode="clip" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R9K-I1-WdV" customClass="UILabelWithLinks">
+                        <rect key="frame" x="48" y="80" width="264" height="15"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                         <color key="textColor" red="0.50196081400000003" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -70,6 +70,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="ActionImage" destination="QTS-HF-RsJ" id="RPu-pv-Guc"/>
+                <outlet property="AdjustableConstraint" destination="FHf-VO-r86" id="swa-W4-bOm"/>
                 <outlet property="Body" destination="R9K-I1-WdV" id="5oS-Qe-kB2"/>
                 <outlet property="Header" destination="QpW-3s-LgQ" id="RKL-Jo-IRj"/>
                 <outlet property="Image" destination="NX7-8T-3y3" id="CL0-mM-tM2"/>

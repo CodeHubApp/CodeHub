@@ -9,50 +9,58 @@ using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.TableViewCells
 {
-    [Register ("NewsCellView")]
-    partial class NewsCellView
-    {
-        [Outlet]
-        UIKit.UIImageView ActionImage { get; set; }
+	[Register ("NewsCellView")]
+	partial class NewsCellView
+	{
+		[Outlet]
+		UIKit.UIImageView ActionImage { get; set; }
 
-        [Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
+		[Outlet]
+		UIKit.NSLayoutConstraint AdjustableConstraint { get; set; }
 
-        [Outlet]
-        MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
+		[Outlet]
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
 
-        [Outlet]
-        UIKit.UIImageView Image { get; set; }
+		[Outlet]
+		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
 
-        [Outlet]
-        UIKit.UILabel Time { get; set; }
-        
-        void ReleaseDesignerOutlets ()
-        {
-            if (Body != null) {
-                Body.Dispose ();
-                Body = null;
-            }
+		[Outlet]
+		UIKit.UIImageView Image { get; set; }
 
-            if (Header != null) {
-                Header.Dispose ();
-                Header = null;
-            }
+		[Outlet]
+		UIKit.UILabel Time { get; set; }
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (ActionImage != null) {
+				ActionImage.Dispose ();
+				ActionImage = null;
+			}
 
-            if (Image != null) {
-                Image.Dispose ();
-                Image = null;
-            }
+			if (Body != null) {
+				Body.Dispose ();
+				Body = null;
+			}
 
-            if (Time != null) {
-                Time.Dispose ();
-                Time = null;
-            }
+			if (Header != null) {
+				Header.Dispose ();
+				Header = null;
+			}
 
-            if (ActionImage != null) {
-                ActionImage.Dispose ();
-                ActionImage = null;
-            }
-        }
-    }
+			if (Image != null) {
+				Image.Dispose ();
+				Image = null;
+			}
+
+			if (Time != null) {
+				Time.Dispose ();
+				Time = null;
+			}
+
+			if (AdjustableConstraint != null) {
+				AdjustableConstraint.Dispose ();
+				AdjustableConstraint = null;
+			}
+		}
+	}
 }
