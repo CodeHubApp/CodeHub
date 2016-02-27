@@ -23,11 +23,7 @@ namespace CodeHub.Core.ViewModels.Gists
         public GistModel Gist
         {
             get { return _gist; }
-            set
-            {
-                _gist = value;
-                RaisePropertyChanged(() => Gist);
-            }
+            set { this.RaiseAndSetIfChanged(ref _gist, value); }
         }
 
         public bool IsStarred

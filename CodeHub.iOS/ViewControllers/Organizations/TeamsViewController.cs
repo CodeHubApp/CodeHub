@@ -1,11 +1,11 @@
-using CodeHub.iOS.ViewControllers;
-using CodeHub.Core.ViewModels.Teams;
-using CodeHub.iOS.DialogElements;
 using System;
-using UIKit;
+using CodeHub.Core.ViewModels.Organizations;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
+using UIKit;
 
-namespace CodeHub.iOS.ViewControllers.Teams
+namespace CodeHub.iOS.ViewControllers.Organizations
 {
     public class TeamsViewController : ViewModelCollectionDrivenDialogViewController
     {

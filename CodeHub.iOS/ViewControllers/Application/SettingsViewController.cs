@@ -8,11 +8,11 @@ using UIKit;
 using Foundation;
 using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Views.App
+namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class SettingsView : ViewModelDrivenDialogViewController
+    public class SettingsViewController : ViewModelDrivenDialogViewController
     {
-        public SettingsView()
+        public SettingsViewController()
         {
             Title = "Settings";
 

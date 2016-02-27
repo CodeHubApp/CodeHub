@@ -5,26 +5,23 @@ using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 
-namespace CodeHub.Core.ViewModels.Teams
+namespace CodeHub.Core.ViewModels.Organizations
 {
     public class TeamsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<TeamShortModel> _teams = new CollectionViewModel<TeamShortModel>();
+        public CollectionViewModel<TeamShortModel> Teams { get; }
 
-        public CollectionViewModel<TeamShortModel> Teams
-        {
-            get { return _teams; }
-        }
-
-        public string OrganizationName
-        {
-            get;
-            private set;
-        }
+        public string OrganizationName { get; private set; }
 
         public ICommand GoToTeamCommand
         {
             get { return new MvxCommand<TeamShortModel>(x => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Id = x.Id })); }
+        }
+
+        public TeamsViewModel()
+        {
+            Title = "Teams";
+            Teams = new CollectionViewModel<TeamShortModel>();
         }
 
         public void Init(NavObject navObject)

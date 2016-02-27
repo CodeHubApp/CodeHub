@@ -6,7 +6,6 @@ using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Factories;
 using MvvmCross.Core.ViewModels;
-using ReactiveUI;
 using CodeHub.Core.Messages;
 
 namespace CodeHub.Core.ViewModels.Accounts
@@ -30,19 +29,19 @@ namespace CodeHub.Core.ViewModels.Accounts
         public string Username
         {
             get { return _username; }
-            set { _username = value; RaisePropertyChanged(() => Username); }
+            set { this.RaiseAndSetIfChanged(ref _username, value); }
         }
 
         public string Password
         {
             get { return _password; }
-            set { _password = value; RaisePropertyChanged(() => Password); }
+            set { this.RaiseAndSetIfChanged(ref _password, value); }
         }
 
         public string Domain
         {
             get { return _domain; }
-            set { _domain = value; RaisePropertyChanged(() => Domain); }
+            set { this.RaiseAndSetIfChanged(ref _domain, value); }
         }
 
         public string TwoFactor { get; set; }
@@ -96,7 +95,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 var loginData = await _loginFactory.CreateLoginData(apiUrl, Username, Password, TwoFactor, true, _attemptedAccount);
                 var client = await _loginFactory.LoginAccount(loginData.Account);
                 _application.ActivateUser(loginData.Account, client);
-                MessageBus.Current.SendMessage(new LogoutMessage());
+                ReactiveUI.MessageBus.Current.SendMessage(new LogoutMessage());
             }
             catch (Exception e)
             {

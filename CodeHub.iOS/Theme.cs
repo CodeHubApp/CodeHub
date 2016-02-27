@@ -26,8 +26,6 @@ namespace CodeHub.iOS
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);
 
-            EmptyListView.DefaultColor = primaryColor;
-
             UIApplication.SharedApplication.StatusBarStyle = UIStatusBarStyle.LightContent;
             UINavigationBar.Appearance.TintColor = UIColor.White;
             UINavigationBar.Appearance.SetBackgroundImage(backgroundImg, UIBarMetrics.Default);
@@ -55,6 +53,9 @@ namespace CodeHub.iOS
             UIBarButtonItem.AppearanceWhenContainedIn(typeof(UISearchBar)).SetTitleTextAttributes(new UITextAttributes {TextColor = UIColor.White}, UIControlState.Normal);
 
             UIImageView.AppearanceWhenContainedIn(typeof(UITableViewCell), typeof(MonoTouch.SlideoutNavigation.MainNavigationController)).TintColor = iconColor;
+
+            EmptyListView.DefaultColor = primaryColor;
+            LoadingIndicatorView.DefaultColor = primaryColor;
         }
 
         public UITextAttributes SegmentedControlText

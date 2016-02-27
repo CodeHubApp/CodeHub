@@ -7,7 +7,7 @@ using SQLite;
 
 namespace CodeHub.Core.Data
 {
-    public abstract class Account : IAccount, IDisposable
+    public abstract class Account : IDisposable
     {
         private SQLiteConnection _database;
         private AccountFilters _filters;

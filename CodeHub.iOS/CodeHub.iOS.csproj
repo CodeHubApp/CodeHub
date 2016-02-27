@@ -124,8 +124,6 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
-    <Compile Include="Views\App\MenuView.cs" />
-    <Compile Include="Views\App\SettingsView.cs" />
     <Compile Include="Views\Events\NewsView.cs" />
     <Compile Include="Views\Events\OrganizationEventsView.cs" />
     <Compile Include="Views\Events\UserEventsView.cs" />
@@ -164,7 +162,6 @@
     <Compile Include="Views\Events\RepositoryEventsView.cs" />
     <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
-    <Compile Include="Views\Gists\GistFileView.cs" />
     <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
@@ -201,7 +198,6 @@
     <Compile Include="Views\ScrollingToolbarView.cs" />
     <Compile Include="Views\UILabelWithLinks.cs" />
     <Compile Include="Views\WebView.cs" />
-    <Compile Include="Views\App\DefaultStartupView.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
@@ -297,7 +293,6 @@
     <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
     <Compile Include="Services\InAppPurchaseService.cs" />
     <Compile Include="Utilities\UIWindowExtensions.cs" />
-    <Compile Include="Views\App\StartupView.cs" />
     <Compile Include="Utilities\NetworkActivity.cs" />
     <InterfaceDefinition Include="ViewControllers\Repositories\PrivateRepositoryViewController.xib" />
     <Compile Include="ViewControllers\Repositories\PrivateRepositoryViewController.cs" />
@@ -315,7 +310,6 @@
     <Compile Include="DialogElements\GistElement.cs" />
     <Compile Include="DialogElements\MilestoneElement.cs" />
     <Compile Include="DialogElements\LabelElement.cs" />
-    <Compile Include="DialogElements\NoItemsElement.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
     <Compile Include="DialogElements\PullRequestElement.cs" />
     <Compile Include="DialogElements\RepositoryElement.cs" />
@@ -372,6 +366,12 @@
     <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
     <Compile Include="ViewControllers\Repositories\RepositoryStargazersViewController.cs" />
+    <Compile Include="ViewControllers\Application\MenuViewController.cs" />
+    <Compile Include="ViewControllers\Application\SettingsViewController.cs" />
+    <Compile Include="ViewControllers\Application\StartupViewController.cs" />
+    <Compile Include="ViewControllers\Application\DefaultStartupViewController.cs" />
+    <Compile Include="Views\LoadingIndicatorView.cs" />
+    <Compile Include="ViewControllers\Gists\GistFileViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -563,6 +563,7 @@
     <Folder Include="ViewControllers\Accounts\" />
     <Folder Include="ViewControllers\Users\" />
     <Folder Include="ViewControllers\Organizations\" />
+    <Folder Include="ViewControllers\Gists\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

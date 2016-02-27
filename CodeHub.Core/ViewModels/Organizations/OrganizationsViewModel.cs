@@ -8,22 +8,19 @@ namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<BasicUserModel> _orgs = new CollectionViewModel<BasicUserModel>();
+        public CollectionViewModel<BasicUserModel> Organizations { get; }
 
-        public CollectionViewModel<BasicUserModel> Organizations
-        {
-            get { return _orgs; }
-        }
-
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; private set; }
 
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
+        }
+
+        public OrganizationsViewModel()
+        {
+            Title = "Organizations";
+            Organizations = new CollectionViewModel<BasicUserModel>();
         }
 
         public ICommand GoToOrganizationCommand

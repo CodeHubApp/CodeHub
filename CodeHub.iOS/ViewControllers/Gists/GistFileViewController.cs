@@ -1,14 +1,14 @@
 using UIKit;
 using System;
 using CodeHub.iOS.WebViews;
-using CodeHub.Core;
 using System.Threading.Tasks;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Gists;
 
-namespace CodeHub.iOS.ViewControllers
+namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistFileView : CodeHub.iOS.Views.Source.FileSourceView
+    public class GistFileViewController : CodeHub.iOS.Views.Source.FileSourceView
     {
         public override void ViewDidLoad()
         {

@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Services;
+using MvvmCross.Core.ViewModels;
 
-namespace CodeHub.Core
+namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistFileViewModel : FileSourceViewModel
     {
@@ -17,10 +18,7 @@ namespace CodeHub.Core
         public GistFileModel Gist
         {
             get { return _gist; }
-            private set {
-                _gist = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _gist, value); }
         }
 
         public void Init(NavObject navObject)

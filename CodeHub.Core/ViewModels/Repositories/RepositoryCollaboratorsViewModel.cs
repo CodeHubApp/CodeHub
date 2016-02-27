@@ -16,17 +16,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _collaborators; }
         }
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; private set; }
 
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
+        public string Repository { get; private set; }
 
         public ICommand GoToUserCommand
         {

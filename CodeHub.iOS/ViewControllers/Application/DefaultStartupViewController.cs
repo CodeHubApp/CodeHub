@@ -5,11 +5,11 @@ using UIKit;
 using System.Linq;
 using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Views.App
+namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class DefaultStartupView : ViewModelCollectionDrivenDialogViewController
+    public class DefaultStartupViewController : ViewModelCollectionDrivenDialogViewController
     {
-        public DefaultStartupView()
+        public DefaultStartupViewController()
         {
             Title = "Default Startup View";
             EnableSearch = false;

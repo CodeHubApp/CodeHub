@@ -1,5 +1,4 @@
 using CodeHub.Core.Data;
-using SQLite;
 
 namespace CodeHub.Core.Data
 {
@@ -56,19 +55,6 @@ namespace CodeHub.Core.Data
         /// </summary>
         /// <value><c>true</c> if push notifications enabled; otherwise, <c>false</c>.</value>
         public bool? IsPushNotificationsEnabled { get; set; }
-
-        /// <summary>
-        /// A transient record of the user's name
-        /// </summary>
-        [Ignore]
-        public string FullName { get; set; }
-
-        /// <summary>
-        /// A list of the current notifications
-        /// </summary>
-        /// <value>The notifications.</value>
-        [Ignore]
-        public int? Notifications { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Account"/> class.

@@ -115,7 +115,6 @@
     <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
     <Compile Include="Factories\LoginFactory.cs" />
-    <Compile Include="ViewModels\Teams\TeamsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
@@ -127,7 +126,6 @@
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\IAccount.cs" />
     <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Services\AccountsService.cs" />
     <Compile Include="Services\IAccountPreferencesService.cs" />
@@ -172,6 +170,8 @@
     <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ReactiveListExtensions.cs" />
+    <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
+    <Compile Include="Secrets.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -235,7 +235,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Factories\" />
-    <Folder Include="ViewModels\Teams\" />
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
     <Folder Include="Extensions\" />

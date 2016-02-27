@@ -13,80 +13,51 @@ namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryViewModel : LoadableViewModel
     {
+        public string Username { get; private set; }
+
+        public string RepositoryName { get; private set; }
+
+        public string ImageUrl { get; set; }
+
         private bool? _starred;
-        private bool? _watched;
-        private RepositoryModel _repository;
-        private ContentModel _readme;
-        private List<BranchModel> _branches;
-
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
-
-        public string RepositoryName 
-        { 
-            get; 
-            private set; 
-        }
-
-        public string ImageUrl
-        {
-            get;
-            set;
-        }
-
         public bool? IsStarred
         {
             get { return _starred; }
             private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
+        private bool? _watched;
         public bool? IsWatched
         {
             get { return _watched; }
-            private set
-            {
-                _watched = value;
-                RaisePropertyChanged(() => IsWatched);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _watched, value); }
         }
 
+        private RepositoryModel _repository;
         public RepositoryModel Repository
         {
             get { return _repository; }
-            private set
-            {
-                _repository = value;
-                RaisePropertyChanged(() => Repository);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
+        private ContentModel _readme;
         public ContentModel Readme
         {
             get { return _readme; }
-            private set
-            {
-                _readme = value;
-                RaisePropertyChanged(() => Readme);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _readme, value); }
         }
 
+        private List<BranchModel> _branches;
         public List<BranchModel> Branches
         {
             get { return _branches; }
-            private set
-            {
-                _branches = value;
-                RaisePropertyChanged(() => Branches);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
-            RepositoryName = navObject.Repository;
+            Title = RepositoryName = navObject.Repository;
         }
 
         public ICommand GoToOwnerCommand

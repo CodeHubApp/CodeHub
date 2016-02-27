@@ -13,9 +13,9 @@ using CodeHub.iOS.ViewControllers.Accounts;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-namespace CodeHub.iOS.Views.App
+namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class MenuView : MenuBaseViewController
+    public class MenuViewController : MenuBaseViewController
     {
         private MenuElement _notifications;
         private Section _favoriteRepoSection;
@@ -26,7 +26,7 @@ namespace CodeHub.iOS.Views.App
             set { base.ViewModel = value; }
         }
 
-        public MenuView()
+        public MenuViewController()
         {
             var appService = Mvx.Resolve<IApplicationService>();
             var featuresService = Mvx.Resolve<IFeaturesService>();
@@ -252,11 +252,11 @@ namespace CodeHub.iOS.Views.App
 
         private class EditSource : Source
         {
-            private readonly WeakReference<MenuView> _parent;
-            public EditSource(MenuView dvc) 
+            private readonly WeakReference<MenuViewController> _parent;
+            public EditSource(MenuViewController dvc) 
                 : base (dvc)
             {
-                _parent = new WeakReference<MenuView>(dvc);
+                _parent = new WeakReference<MenuViewController>(dvc);
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)

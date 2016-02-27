@@ -10,8 +10,6 @@ namespace CodeHub.Core.ViewModels.Accounts
 {
     public class LoginViewModel : BaseViewModel
     {
-        public const string ClientId = "72f4fb74bdba774b759d";
-        public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private readonly ILoginFactory _loginFactory;
 
@@ -29,7 +27,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                 var web = WebDomain.TrimEnd('/');
                 return string.Format(
                     web + "/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}", 
-                    LoginViewModel.ClientId, 
+                    Secrets.GithubOAuthId, 
                     Uri.EscapeDataString(LoginViewModel.RedirectUri),
                     Uri.EscapeDataString("user,repo,notifications,gist"));
             }
@@ -62,7 +60,8 @@ namespace CodeHub.Core.ViewModels.Accounts
             try
             {
                 IsLoggingIn = true;
-                loginData = await _loginFactory.LoginWithToken(ClientId, ClientSecret, code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
+                loginData = await _loginFactory.LoginWithToken(Secrets.GithubOAuthId, Secrets.GithubOAuthSecret, 
+                    code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
             }
             catch (Exception e)
             {

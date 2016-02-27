@@ -13,30 +13,14 @@ namespace CodeHub.Core.ViewModels.Source
         public int SelectedFilter
         {
             get { return _selectedFilter; }
-            set 
-            {
-                _selectedFilter = value;
-                RaisePropertyChanged(() => SelectedFilter);
-            }
+            set { this.RaiseAndSetIfChanged(ref _selectedFilter, value); }
         }
 
-        public string Username
-        {
-            get;
-            private set;
-        }
+        public string Username { get; private set; }
 
-        public string Repository
-        {
-            get;
-            private set;
-        }
+        public string Repository { get; private set; }
 
-        private readonly CollectionViewModel<ViewObject> _items = new CollectionViewModel<ViewObject>();
-        public CollectionViewModel<ViewObject> Items
-        {
-            get { return _items; }
-        }
+        public CollectionViewModel<ViewObject> Items { get; }
 
         public IMvxCommand GoToSourceCommand
         {
@@ -59,6 +43,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public BranchesAndTagsViewModel()
         {
+            Items = new CollectionViewModel<ViewObject>();
             this.Bind(x => x.SelectedFilter).Subscribe(x => LoadCommand.Execute(false));
         }
 

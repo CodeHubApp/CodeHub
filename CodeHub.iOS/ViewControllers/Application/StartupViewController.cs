@@ -11,9 +11,9 @@ using CodeHub.Core.Services;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers.Accounts;
 
-namespace CodeHub.iOS.Views.App
+namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class StartupView : BaseViewController
+    public class StartupViewController : BaseViewController
     {
         const float imageSize = 128f;
 
@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.App
 
         public StartupViewModel ViewModel { get; }
 
-        public StartupView()
+        public StartupViewController()
         {
             ViewModel = new StartupViewModel(
                 Mvx.Resolve<ILoginFactory>(),
@@ -84,7 +84,7 @@ namespace CodeHub.iOS.Views.App
 
         private void GoToMenu(object o)
         {
-            var vc = new MenuView();
+            var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
             (UIApplication.SharedApplication.Delegate as AppDelegate).Do(y => y.Presenter.SlideoutNavigationController = slideoutController);

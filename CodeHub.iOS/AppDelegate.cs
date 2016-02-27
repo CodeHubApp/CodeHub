@@ -21,7 +21,6 @@ using MvvmCross.Core.Views;
 using ModernHttpClient;
 using System.Net.Http;
 using CodeHub.iOS.Services;
-using CodeHub.iOS.Views.App;
 using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
@@ -81,7 +80,7 @@ namespace CodeHub.iOS
 
             var installedDate = this.StampInstallDate("CodeHub");
             Console.WriteLine("CodeHub was installed on: " + installedDate);
-            if (installedDate < new DateTime(2016, 3, 10, 1, 1, 1))
+            if (installedDate < new DateTime(2016, 3, 5, 1, 1, 1))
                 features.ActivateProDirect();
 
             if (!features.IsProEnabled)
@@ -140,7 +139,7 @@ namespace CodeHub.iOS
 
         private void GoToStartupView()
         {
-            var startup = new StartupView();
+            var startup = new CodeHub.iOS.ViewControllers.Application.StartupViewController();
             TransitionToViewController(startup);
             MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => startup.DismissViewController(true, null));
         }

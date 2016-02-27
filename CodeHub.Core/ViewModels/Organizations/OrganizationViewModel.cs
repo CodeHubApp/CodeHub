@@ -7,7 +7,6 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels;
-using CodeHub.Core.ViewModels.Teams;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -15,11 +14,7 @@ namespace CodeHub.Core.ViewModels.Organizations
     {
         private UserModel _userModel;
 
-        public string Name 
-        { 
-            get; 
-            private set; 
-        }
+        public string Name { get; private set; }
 
         public void Init(NavObject navObject) 
         {
@@ -29,11 +24,7 @@ namespace CodeHub.Core.ViewModels.Organizations
         public UserModel Organization
         {
             get { return _userModel; }
-            private set
-            {
-                _userModel = value;
-                RaisePropertyChanged(() => Organization);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
         }
 
         public ICommand GoToMembersCommand
