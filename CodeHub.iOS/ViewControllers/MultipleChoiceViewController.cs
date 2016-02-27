@@ -15,10 +15,9 @@ namespace CodeHub.iOS.ViewControllers
             var r = Root[0].Elements.OfType<StringElement>().FirstOrDefault(x => x.Caption.Equals(field.Name));
             if (r == null)
                 return;
-            var e = (StringElement)r;
             var value = (bool)field.GetValue(_obj);
             field.SetValue(_obj, !value);
-            e.Accessory = !value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+            r.Accessory = !value ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
         }
         
         public MultipleChoiceViewController(string title, object obj)
@@ -32,10 +31,8 @@ namespace CodeHub.iOS.ViewControllers
             foreach (var s in fields)
             {
                 var copy = s;
-                var e = new StringElement(s.Name)
-                { 
-                    Accessory = (bool)s.GetValue(_obj) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None 
-                };
+                var accessory = (bool)s.GetValue(_obj) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+                var e = new StringElement(s.Name) { Accessory = accessory };
                 e.Clicked.Subscribe(_ => OnValueSelected(copy));
                 sec.Add(e);
             }

@@ -448,24 +448,10 @@
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png" />
     <Content Include="Images\Buttons\black_button.png" />
-    <Content Include="Images\Buttons\fork%402x.png" />
-    <Content Include="Images\Buttons\fork.png" />
     <Content Include="Images\Buttons\grey_button%402x.png" />
     <Content Include="Images\Buttons\grey_button.png" />
     <Content Include="Images\Buttons\save%402x.png" />
     <Content Include="Images\Buttons\save.png" />
-    <Content Include="Images\Buttons\view%402x.png" />
-    <Content Include="Images\Buttons\view.png" />
-    <Content Include="Images\Gist\share%402x.png" />
-    <Content Include="Images\Gist\share.png" />
-    <Content Include="Images\Gist\star%402x.png" />
-    <Content Include="Images\Gist\star.png" />
-    <Content Include="Images\Gist\star_highlighted%402x.png" />
-    <Content Include="Images\Gist\star_highlighted.png" />
-    <Content Include="Images\Gist\user%402x.png" />
-    <Content Include="Images\Gist\user.png" />
-    <Content Include="Images\repository.png" />
-    <Content Include="Images\repository_fork.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\Web\back.png" />
@@ -478,16 +464,8 @@
     <BundleResource Include="Images\Buttons\cancel%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
-    <BundleResource Include="Images\Buttons\check.png" />
-    <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <BundleResource Include="Images\MarkdownComposer\link%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\link.png" />
-    <BundleResource Include="Images\MarkdownComposer\photo%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\photo.png" />
-    <BundleResource Include="Images\MarkdownComposer\picture%402x.png" />
-    <BundleResource Include="Images\MarkdownComposer\picture.png" />
     <BundleResource Include="Images\login_user_unknown%402x.png" />
     <BundleResource Include="Images\login_user_unknown.png" />
     <BundleResource Include="CodeHubLaunch.png" />
@@ -571,7 +549,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="ViewControllers\" />
-    <Folder Include="Images\MarkdownComposer\" />
     <Folder Include="Views\Teams\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="WebViews\" />
@@ -582,11 +559,6 @@
     <Folder Include="DialogElements\" />
     <Folder Include="Transitions\" />
     <Folder Include="ViewControllers\Accounts\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\arrow.png">
-      <LogicalName>arrow.png</LogicalName>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

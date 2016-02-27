@@ -3,23 +3,21 @@ using CodeHub.iOS.ViewControllers;
 using UIKit;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.Core.Utils;
 using Foundation;
 using System.Net;
 using System.Collections.Specialized;
-using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
-using MonoTouch.UIKit;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.WebViews;
+using WebKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public class MarkdownComposerViewController : Composer
     {
         private readonly UISegmentedControl _viewSegment;
-        private UIWebView _previewView;
+        private WKWebView _previewView;
 
         public MarkdownComposerViewController()
         {
@@ -28,9 +26,9 @@ namespace CodeHub.iOS.ViewControllers
             NavigationItem.TitleView = _viewSegment;
             _viewSegment.ValueChanged += SegmentValueChanged;
 
-            var pictureImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/picture");
-            var linkImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/link");
-            var photoImage = UIImageHelper.FromFileAuto("Images/MarkdownComposer/photo");
+            var cameraImage = Octicon.DeviceCamera.ToImage(25, false);
+            var linkImage = Octicon.Link.ToImage(25, false);
+            var pictureImage = Octicon.FileMedia.ToImage(25, false);
 
             var buttons = new []
             {
@@ -41,13 +39,13 @@ namespace CodeHub.iOS.ViewControllers
                 CreateAccessoryButton(pictureImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("![]()");
-                    TextView.SelectedRange = new Foundation.NSRange(range.Location + 4, 0);
+                    TextView.SelectedRange = new NSRange(range.Location + 4, 0);
                 }),
-                CreateAccessoryButton(photoImage, () => SelectImage()),
+                CreateAccessoryButton(cameraImage, SelectImage),
                 CreateAccessoryButton(linkImage, () => {
                     var range = TextView.SelectedRange;
                     TextView.InsertText("[]()");
-                    TextView.SelectedRange = new Foundation.NSRange(range.Location + 1, 0);
+                    TextView.SelectedRange = new NSRange(range.Location + 1, 0);
                 }),
                 CreateAccessoryButton("~", () => TextView.InsertText("~")),
                 CreateAccessoryButton("=", () => TextView.InsertText("=")),
@@ -212,7 +210,7 @@ namespace CodeHub.iOS.ViewControllers
             else
             {
                 if (_previewView == null)
-                    _previewView = new UIWebView(this.View.Bounds);
+                    _previewView = new WKWebView(this.View.Bounds, new WKWebViewConfiguration());
 
                 TextView.RemoveFromSuperview();
                 Add(_previewView);
