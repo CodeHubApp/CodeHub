@@ -106,10 +106,9 @@ namespace CodeHub.iOS.Views.Gists
             var weakVm = new WeakReference<GistViewModel>(ViewModel);
             foreach (var file in model.Files.Keys)
             {
-                var sse = new StringElement(file, model.Files[file].Size + " bytes", UITableViewCellStyle.Subtitle) { 
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
+                var sse = new ButtonElement(file, Octicon.FileCode.ToImage())
+                { 
                     LineBreakMode = UILineBreakMode.TailTruncation,
-                    Lines = 1 
                 };
 
                 var fileSaved = file;

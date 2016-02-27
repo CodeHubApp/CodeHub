@@ -45,13 +45,20 @@ namespace CodeHub.iOS.ViewControllers
 
             if (_navigationToolbar)
             {
-                BackButton = new UIBarButtonItem(Images.Web.BackButton, UIBarButtonItemStyle.Plain, (s, e) => GoBack()) { Enabled = false };
-                ForwardButton = new UIBarButtonItem(Images.Web.FowardButton, UIBarButtonItemStyle.Plain, (s, e) => GoForward()) { Enabled = false };
-                RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh, (s, e) => Refresh()) { Enabled = false };
+                BackButton = new UIBarButtonItem { Image = Images.Web.BackButton, Enabled = false };
+                ForwardButton = new UIBarButtonItem { Image = Images.Web.FowardButton, Enabled = false };
+                RefreshButton = new UIBarButtonItem(UIBarButtonSystemItem.Refresh) { Enabled = false };
 
                 BackButton.TintColor = Theme.CurrentTheme.WebButtonTint;
                 ForwardButton.TintColor = Theme.CurrentTheme.WebButtonTint;
                 RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
+
+                OnActivation(d =>
+                {
+                    d(BackButton.GetClickedObservable().Subscribe(_ => GoBack()));
+                    d(ForwardButton.GetClickedObservable().Subscribe(_ => GoForward()));
+                    d(RefreshButton.GetClickedObservable().Subscribe(_ => Refresh()));
+                });
             }
 
             EdgesForExtendedLayout = UIRectEdge.None;
@@ -170,7 +177,7 @@ namespace CodeHub.iOS.ViewControllers
                 return string.Empty;
 
             var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-            InvokeOnMainThread(() => Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri))));
+            InvokeOnMainThread(() => Web.LoadRequest(new NSUrlRequest(new NSUrl(uri))));
             return uri;
         }
 

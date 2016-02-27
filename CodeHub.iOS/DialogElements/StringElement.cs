@@ -14,7 +14,6 @@ namespace CodeHub.iOS.DialogElements
         {
             Image = image;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
-            SelectionStyle = UITableViewCellSelectionStyle.Blue;
         }
 
         public ButtonElement (string caption, UIImage image = null) 

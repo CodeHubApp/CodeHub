@@ -8,11 +8,21 @@ using CodeHub.Core.Services;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Factories;
 using CodeHub.iOS.ViewControllers;
+using System.Reactive.Linq;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public class LoginViewController : BaseWebViewController
     {
+        private static readonly string HasSeenWelcomeKey = "HAS_SEEN_OAUTH_INFO";
+
+        private static readonly string OAuthWelcome = 
+            "In the following screen you will be prompted for your GitHub credentials. This is done through GitHub's OAuth portal, " +
+            "the recommended way to authenticate.\n\nCodeHub does not save your password. Instead, only the OAuth " + 
+            "token is saved on the device which you may revoke at any time.";
+        
+
         public LoginViewModel ViewModel { get; }
 
         public LoginViewController() 
@@ -21,13 +31,29 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             Title = "Login";
             ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>());
             ViewModel.Init(new LoginViewModel.NavObject());
+
+            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
             LoadRequest();
+
+            bool hasSeenWelcome = false;
+            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
+            defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome);
+
+            if (!hasSeenWelcome)
+            {
+                Appeared
+                    .Take(1)
+                    .Subscribe(_ =>
+                    {
+                        defaultValueService.Set(HasSeenWelcomeKey, true);
+                        BlurredAlertView.Display(OAuthWelcome);
+                    });
+            }
         }
 
         protected override bool ShouldStartLoad(WKWebView webView, WKNavigationAction navigationAction)
@@ -68,17 +94,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
         private void LoadRequest()
         {
-            try
-            {
-                //Remove all cookies & cache
-                WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), () => {
-                    Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.LoginUrl)));
-                });
-            }
-            catch (Exception e)
-            {
-                Mvx.Resolve<IAlertDialogService>().Alert("Unable to process request!", e.Message);
-            }
+            //Remove all cookies & cache
+            WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), 
+                () => Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.LoginUrl))));
         }
     }
 }

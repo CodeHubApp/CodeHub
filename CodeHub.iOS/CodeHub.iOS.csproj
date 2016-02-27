@@ -370,6 +370,7 @@
       <DependentUpon>CommentsView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="DialogElements\HtmlElement.cs" />
+    <Compile Include="Views\BlurredAlertView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -47,5 +47,19 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
         }
     }
+
+    public static class UIFontExtensions
+    {
+        public static UIFont MakeBold(this UIFont font)
+        {
+            return UIFont.FromDescriptor(font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold), font.PointSize);
+        }
+
+        public static UIFont MakeItalic(this UIFont font)
+        {
+            return UIFont.FromDescriptor(font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Italic), font.PointSize);
+        }
+    }
+
 }
 
