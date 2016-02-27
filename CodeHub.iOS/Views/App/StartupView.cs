@@ -171,6 +171,18 @@ namespace CodeHub.iOS.Views.App
                 return UIInterfaceOrientationMask.Portrait | UIInterfaceOrientationMask.PortraitUpsideDown;
             return UIInterfaceOrientationMask.All;
         }
+
+        public override void PresentViewController(UIViewController viewControllerToPresent, bool animated, Action completionHandler)
+        {
+            if (PresentedViewController != null)
+            {
+                PresentedViewController.PresentViewController(viewControllerToPresent, animated, completionHandler);
+            }
+            else
+            {
+                base.PresentViewController(viewControllerToPresent, animated, completionHandler);
+            }
+        }
     }
 }
 
