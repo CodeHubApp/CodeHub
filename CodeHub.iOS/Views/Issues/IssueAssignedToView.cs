@@ -10,12 +10,14 @@ namespace CodeHub.iOS.Views.Issues
 {
     public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
     {
-
-        public override void ViewDidLoad()
+        public IssueAssignedToView()
         {
             Title = "Assignees";
             NoItemsText = "No Assignees";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var vm = (IssueAssignedToViewModel)ViewModel;

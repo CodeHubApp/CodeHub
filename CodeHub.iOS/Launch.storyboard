@@ -81,8 +81,6 @@
         <image name="Images/priority.png" width="16" height="16"/>
         <image name="Images/public.png" width="16" height="16"/>
         <image name="Images/repo.png" width="16" height="16"/>
-        <image name="Images/repository.png" width="72" height="72"/>
-        <image name="Images/repository_fork.png" width="72" height="72"/>
         <image name="Images/script.png" width="16" height="16"/>
         <image name="Images/size.png" width="16" height="16"/>
         <image name="Images/star.png" width="16" height="16"/>

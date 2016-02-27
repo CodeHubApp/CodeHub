@@ -11,29 +11,20 @@ namespace CodeHub.Core.ViewModels.User
 {
     public class ProfileViewModel : LoadableViewModel
     {
-        private UserModel _userModel;
-        private bool _isFollowing;
+        public string Username { get; private set; }
 
-        public string Username
-        {
-            get;
-            private set;
-        }
-
+        private UserModel _user;
         public UserModel User
         {
-            get { return _userModel; }
-            private set { _userModel = value; RaisePropertyChanged(() => User); }
+            get { return _user; }
+            private set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
+        private bool _isFollowing;
         public bool IsFollowing
         {
             get { return _isFollowing; }
-            private set
-            {
-                _isFollowing = value;
-                RaisePropertyChanged(() => IsFollowing);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isFollowing, value); }
         }
 
         public bool IsLoggedInUser
@@ -97,7 +88,7 @@ namespace CodeHub.Core.ViewModels.User
   
         public void Init(NavObject navObject)
         {
-            Username = navObject.Username;
+            Title = Username = navObject.Username;
         }
 
         protected override Task Load(bool forceCacheInvalidation)

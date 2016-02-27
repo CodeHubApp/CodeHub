@@ -1,9 +1,7 @@
 ﻿using System;
 using UIKit;
 using Foundation;
-using CodeHub.Core.ViewModels;
 using WebKit;
-using MvvmCross.iOS.Views;
 using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.ViewControllers

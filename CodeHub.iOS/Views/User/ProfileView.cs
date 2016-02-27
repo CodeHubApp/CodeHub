@@ -25,7 +25,6 @@ namespace CodeHub.iOS.Views.User
         {
             base.ViewDidLoad();
 
-            Title = ViewModel.Username;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = ViewModel.Username;
 
@@ -56,6 +55,7 @@ namespace CodeHub.iOS.Views.User
                 d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
                 d(repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand));
                 d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
+                d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
             });
         }
 

@@ -12,9 +12,13 @@ namespace CodeHub.iOS.Views.Gists
             set { base.ViewModel = value; }
         }
 
-        public override void ViewDidLoad()
+        public UserGistsView()
         {
             Title = "Gists";
+        }
+
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var button = new UIBarButtonItem(UIBarButtonSystemItem.Add);

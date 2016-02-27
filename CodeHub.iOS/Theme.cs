@@ -24,8 +24,6 @@ namespace CodeHub.iOS
             var theme = new Theme();
             CurrentTheme = theme;
 
-            var defaultValues = Mvx.Resolve<CodeHub.Core.Services.IDefaultValueService>();
-
             var primaryColor = Theme.CurrentTheme.PrimaryColor;
             var iconColor = UIColor.FromRGB(0x5B, 0x61, 0x65);
             var backgroundImg = CreateBackgroundImage(primaryColor);

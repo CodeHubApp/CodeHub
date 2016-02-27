@@ -30,9 +30,7 @@ namespace CodeHub.iOS.DialogElements
 
         public override bool Matches(string text)
         {
-            var desc = _gist.Description ?? string.Empty;
-            var title = _title ?? string.Empty;
-            return title.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1 || desc.IndexOf(text, StringComparison.OrdinalIgnoreCase) != -1;
+            return _title.ContainsKeyword(text) || _gist.Description.ContainsKeyword(text);
         }
 
         public override void Selected(UITableView tableView, NSIndexPath path)

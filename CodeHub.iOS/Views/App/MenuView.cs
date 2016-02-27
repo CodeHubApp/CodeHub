@@ -219,17 +219,13 @@ namespace CodeHub.iOS.Views.App
                 PinnedRepo = pinnedRepo;
 
                 // BUG FIX: App keeps getting relocated so the URLs become off
-                if (PinnedRepo.ImageUri.EndsWith("repository.png", System.StringComparison.Ordinal))
+                if (new [] { "repository.png", "repository_fork.png" }.Any(x => PinnedRepo.ImageUri.EndsWith(x, StringComparison.Ordinal)))
                 {
-                    Image = UIImage.FromFile("Images/repository.png");
-                }
-                else if (PinnedRepo.ImageUri.EndsWith("repository_fork.png", System.StringComparison.Ordinal))
-                {
-                    Image = UIImage.FromFile("Images/repository_fork.png");
+                    ImageUri = new Uri("http://codehub-app.com/assets/repository_icon.png");
                 }
                 else
                 {
-                    ImageUri = new System.Uri(PinnedRepo.ImageUri);
+                    ImageUri = new Uri(PinnedRepo.ImageUri);
                 }
             }
         }

@@ -3,14 +3,11 @@ using UIKit;
 
 namespace CodeHub.iOS.Views
 {
-    public class MenuSectionView : UIView
+    public sealed class MenuSectionView : UIView
     {
         public MenuSectionView(string caption)
             : base(new CGRect(0, 0, 320, 27))
         {
-            //var background = new UIImageView(Theme.CurrentTheme.MenuSectionBackground);
-            //background.Frame = this.Frame; 
-
             this.BackgroundColor = UIColor.FromRGB(50, 50, 50);
 
             var label = new UILabel(); 
@@ -20,11 +17,7 @@ namespace CodeHub.iOS.Views
             label.Font =  UIFont.BoldSystemFontOfSize(12.5f);
             label.Frame = new CGRect(8,1,200,23); 
             label.Text = caption; 
-//            label.ShadowColor = UIColor.FromRGB(0, 0, 0); 
-//            label.ShadowOffset = new SizeF(0, -1); 
-
-            //this.AddSubview(background); 
-            this.AddSubview(label); 
+            this.Add(label); 
         }
     }
 }

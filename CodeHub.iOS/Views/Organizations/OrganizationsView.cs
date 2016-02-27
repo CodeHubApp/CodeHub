@@ -7,11 +7,14 @@ namespace CodeHub.iOS.Views.Organizations
 {
     public class OrganizationsView : ViewModelCollectionDrivenDialogViewController
     {
-        public override void ViewDidLoad()
+        public OrganizationsView()
         {
             Title = "Organizations";
             NoItemsText = "No Organizations";
+        }
 
+        public override void ViewDidLoad()
+        {
             base.ViewDidLoad();
 
             var vm = (OrganizationsViewModel) ViewModel;
