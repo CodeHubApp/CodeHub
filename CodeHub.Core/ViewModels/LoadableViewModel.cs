@@ -10,18 +10,13 @@ namespace CodeHub.Core.ViewModels
 {
     public abstract class LoadableViewModel : BaseViewModel
     {
-        private readonly ICommand _loadCommand;
+        public ICommand LoadCommand { get; }
+
         private bool _isLoading;
-
-            public ICommand LoadCommand
-        {
-            get { return _loadCommand; }
-        }
-
         public bool IsLoading
         {
             get { return _isLoading; }
-            set { _isLoading = value; RaisePropertyChanged(() => IsLoading); }
+            private set { this.RaiseAndSetIfChanged(ref _isLoading, value); }
         }
 
         private async Task LoadResource(bool forceCacheInvalidation)
@@ -60,15 +55,12 @@ namespace CodeHub.Core.ViewModels
             catch (StatusCodeException e)
             {
                 DisplayAlert(e.Message);
-
-                if (e is NotFoundException)
-                    ChangePresentation(new MvxClosePresentationHint(this));
             }
         }
 
         protected LoadableViewModel()
         {
-            _loadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(x), _ => !IsLoading);
+            LoadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(x), _ => !IsLoading);
         }
 
         private async Task HandleLoadCommand(bool? forceCacheInvalidation)

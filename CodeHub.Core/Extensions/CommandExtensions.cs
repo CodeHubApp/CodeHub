@@ -1,13 +1,12 @@
 using System;
-using System.Reactive.Linq;
-using CodeHub.Core.Services;
+using System.Windows.Input;
 
 // ReSharper disable once CheckNamespace
 namespace ReactiveUI
 {
     public static class ReactiveCommandExtensions
     {
-        public static void ExecuteIfCan(this IReactiveCommand @this, object o)
+        public static void ExecuteIfCan(this ICommand @this, object o)
         {
             if (@this == null)
                 return;
@@ -16,12 +15,12 @@ namespace ReactiveUI
                 @this.Execute(o);
         }
 
-        public static void ExecuteIfCan(this IReactiveCommand @this)
+        public static void ExecuteIfCan(this ICommand @this)
         {
             ExecuteIfCan(@this, null);
         }
 
-        public static IReactiveCommand<object> WithSubscription(this IReactiveCommand<object> @this, Action<object> action)
+        public static IReactiveCommand<T> WithSubscription<T>(this IReactiveCommand<T> @this, Action<T> action)
         {
             @this.Subscribe(action);
             return @this;

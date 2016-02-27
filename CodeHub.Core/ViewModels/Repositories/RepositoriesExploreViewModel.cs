@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Repositories;
 using System;
 
-namespace CodeHub.Core.ViewModels
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoriesExploreViewModel : BaseViewModel
     {
@@ -26,18 +26,14 @@ namespace CodeHub.Core.ViewModels
         public string SearchText
         {
             get { return _searchText; }
-            set { _searchText = value; RaisePropertyChanged(() => SearchText); }
+            set { this.RaiseAndSetIfChanged(ref _searchText, value); }
         }
 
         private bool _isSearching;
         public bool IsSearching
         {
             get { return _isSearching; }
-            private set
-            {
-                _isSearching = value;
-                RaisePropertyChanged(() => IsSearching);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _isSearching, value); }
         }
 
         public ICommand GoToRepositoryCommand

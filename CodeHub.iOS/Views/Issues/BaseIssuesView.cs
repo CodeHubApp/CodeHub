@@ -1,7 +1,6 @@
 using CodeHub.iOS.ViewControllers;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.Issues;
-using UIKit;
 using CodeHub.iOS.DialogElements;
 using System;
 
@@ -18,12 +17,6 @@ namespace CodeHub.iOS.Views.Issues
         protected BaseIssuesView()
         {
             Title = "Issues";
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            TableView.CellLayoutMarginsFollowReadableWidth = false;
         }
 
         protected IssueElement CreateElement(IssueModel x)

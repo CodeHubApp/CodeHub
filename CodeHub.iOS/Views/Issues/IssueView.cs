@@ -57,23 +57,14 @@ namespace CodeHub.iOS.Views.Issues
                     HeaderView.SetSubImage((x ? Octicon.IssueClosed :Octicon.IssueOpened).ToImage());
                 });
 
-            _milestoneElement = new StringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
-            _assigneeElement = new StringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator };
-            _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage(), Accessory = UITableViewCellAccessory.DisclosureIndicator};
+            _milestoneElement = new StringElement("Milestone", "No Milestone", UITableViewCellStyle.Value1) {Image = Octicon.Milestone.ToImage() };
+            _assigneeElement = new StringElement("Assigned", "Unassigned", UITableViewCellStyle.Value1) {Image = Octicon.Person.ToImage() };
+            _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) {Image = Octicon.Tag.ToImage() };
             _addCommentElement = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
 
             var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
             NavigationItem.RightBarButtonItem = actionButton;
 
-            ViewModel.Bind(x => x.IsLoading).Subscribe(x => 
-            {
-                if (!x)
-                {
-                    actionButton.Enabled = ViewModel.Issue != null;
-                }
-            });
-
-            ViewModel.Bind(x => x.IsCollaborator).Subscribe(_ => Render());
             ViewModel.Bind(x => x.IsModifying).SubscribeStatus("Loading...");
 
             ViewModel.Bind(x => x.Issue).Subscribe(x =>
@@ -109,8 +100,15 @@ namespace CodeHub.iOS.Views.Issues
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
                 d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
-                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+                d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
+
+                d(ViewModel.Bind(x => x.IsCollaborator, true).Subscribe(x => {
+                    foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
+                        i.Accessory = x ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
+                }));
+
+                d(ViewModel.Bind(x => x.IsLoading).Subscribe(x => actionButton.Enabled = !x));
             });
         }
 
@@ -170,8 +168,6 @@ namespace CodeHub.iOS.Views.Issues
             if (_descriptionElement.HasValue)
                 secDetails.Add(_descriptionElement);
 
-            foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
-                i.Accessory = ViewModel.IsCollaborator ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);
@@ -210,7 +206,7 @@ namespace CodeHub.iOS.Views.Issues
             }
         }
 
-        private void ShowExtraMenu()
+        private void ShowExtraMenu(UIBarButtonItem item)
         {
             if (ViewModel.Issue == null)
                 return;
@@ -242,7 +238,7 @@ namespace CodeHub.iOS.Views.Issues
                 sheet.Dispose();
             };
 
-            sheet.ShowInView(this.View);
+            sheet.ShowFrom(item, true);
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

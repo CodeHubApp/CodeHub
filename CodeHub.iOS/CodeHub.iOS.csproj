@@ -187,7 +187,6 @@
     <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
-    <Compile Include="ViewControllers\MenuBaseViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
     <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
@@ -372,6 +371,7 @@
     <Compile Include="ViewControllers\Application\DefaultStartupViewController.cs" />
     <Compile Include="Views\LoadingIndicatorView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileViewController.cs" />
+    <Compile Include="DialogElements\MenuElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

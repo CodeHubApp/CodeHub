@@ -166,12 +166,12 @@
     <Compile Include="Extensions\FunctionalExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\ReactiveExtensions.cs" />
-    <Compile Include="Extensions\ReactiveCommandExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ReactiveListExtensions.cs" />
     <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
     <Compile Include="Secrets.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
+    <Compile Include="Extensions\CommandExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

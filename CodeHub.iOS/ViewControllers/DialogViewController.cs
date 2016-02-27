@@ -26,7 +26,7 @@ namespace CodeHub.iOS.ViewControllers
     public class DialogViewController : TableViewController
     {
         private readonly Lazy<RootElement> _rootElement;
-        public UISearchBar searchBar;
+        private UISearchBar _searchBar;
         bool pushing;
 
         /// <summary>
@@ -39,22 +39,7 @@ namespace CodeHub.iOS.ViewControllers
             }
         } 
 
-        // If the value is true, we are enabled, used in the source for quick computation
-        bool enableSearch;
-        public bool EnableSearch {
-            get {
-                return enableSearch;
-            }
-            set {
-                if (enableSearch == value)
-                    return;
-                enableSearch = value;
-            }
-        }
-
-        // If set, we automatically scroll the content to avoid showing the search bar until 
-        // the user manually pulls it down.
-        public bool AutoHideSearch { get; set; }
+        public bool EnableSearch { get; set; }
 
         public string SearchPlaceholder { get; set; }
 
@@ -75,7 +60,7 @@ namespace CodeHub.iOS.ViewControllers
             if (originalSections != null)
                 return;
 
-            searchBar.BecomeFirstResponder ();
+            _searchBar.BecomeFirstResponder ();
             CreateOriginals(Root);
         }
 
@@ -95,12 +80,12 @@ namespace CodeHub.iOS.ViewControllers
             if (originalSections == null)
                 return;
 
-            searchBar.Text = "";
+            _searchBar.Text = "";
 
             Root.Reset(originalSections);
             originalSections = null;
             originalElements = null;
-            searchBar.ResignFirstResponder ();
+            _searchBar.ResignFirstResponder ();
             ReloadData ();
         }
 
@@ -136,7 +121,7 @@ namespace CodeHub.iOS.ViewControllers
 
         public virtual void SearchButtonClicked (string text)
         {
-            searchBar.ResignFirstResponder();
+            _searchBar.ResignFirstResponder();
         }
 
         protected class SearchDelegate : UISearchBarDelegate {
@@ -170,7 +155,7 @@ namespace CodeHub.iOS.ViewControllers
                 searchBar.ShowsCancelButton = false;
                 if (r != null)
                 {
-                    r.searchBar.Text = "";
+                    r._searchBar.Text = "";
                     r.FinishSearch();
                 }
                 searchBar.ResignFirstResponder ();
@@ -291,13 +276,13 @@ namespace CodeHub.iOS.ViewControllers
 
         void SetupSearch ()
         {
-            if (enableSearch){
-                searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
+            if (EnableSearch){
+                _searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
                     Delegate = CreateSearchDelegate()
                 };
                 if (SearchPlaceholder != null)
-                    searchBar.Placeholder = this.SearchPlaceholder;
-                TableView.TableHeaderView = searchBar;                    
+                    _searchBar.Placeholder = this.SearchPlaceholder;
+                TableView.TableHeaderView = _searchBar;                    
             } else {
                 // Does not work with current Monotouch, will work with 3.0
                 // tableView.TableHeaderView = null;
@@ -336,13 +321,6 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            if (AutoHideSearch){
-                if (enableSearch){
-                    if (TableView.ContentOffset.Y < 44)
-                        TableView.ContentOffset = new CGPoint (0, 44);
-                }
-            }
-
             NavigationItem.HidesBackButton = !pushing;
             TableView.ReloadData ();
         }
@@ -360,13 +338,7 @@ namespace CodeHub.iOS.ViewControllers
 
         public void ReloadData ()
         {
-            TableView.ReloadData ();
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            TableView.CellLayoutMarginsFollowReadableWidth = false;
+            TableView.ReloadData();
         }
 
         public DialogViewController (UITableViewStyle style, bool pushing = true) 

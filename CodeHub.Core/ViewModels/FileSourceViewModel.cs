@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Windows.Input;
-using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
 using MvvmCross.Core.ViewModels;
 
@@ -14,28 +13,19 @@ namespace CodeHub.Core.ViewModels
         };
 
         private string _filePath;
-        private string _contentPath;
-
         public string FilePath
         {
             get { return _filePath; }
-            protected set 
-            {
-                _filePath = value;
-                RaisePropertyChanged(() => FilePath);
-            }
+            protected set { this.RaiseAndSetIfChanged(ref _filePath, value); }
         }
 
         public bool IsMarkdown { get; protected set; }
 
+        private string _contentPath;
         public string ContentPath
         {
             get { return _contentPath; }
-            protected set 
-            {
-                _contentPath = value;
-                RaisePropertyChanged(() => ContentPath);
-            }
+            protected set { this.RaiseAndSetIfChanged(ref _contentPath, value); }
         }
 
         public string HtmlUrl

@@ -37,6 +37,7 @@ namespace CodeHub.iOS.ViewControllers
             TableView.Frame = View.Bounds;
             TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
             TableView.AutosizesSubviews = true;
+            TableView.CellLayoutMarginsFollowReadableWidth = false;
             Add(TableView);
         }
 

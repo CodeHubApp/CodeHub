@@ -43,7 +43,6 @@ namespace CodeHub.iOS.Views.Events
             base.ViewDidLoad();
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 64f;
-            TableView.CellLayoutMarginsFollowReadableWidth = false;
             TableView.SeparatorInset = CodeHub.iOS.TableViewCells.NewsCellView.EdgeInsets;
             BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
         }

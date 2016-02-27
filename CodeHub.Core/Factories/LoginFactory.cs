@@ -95,7 +95,7 @@ namespace CodeHub.Core.Factories
                 }
                 else
                 {
-                    var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate("72f4fb74bdba774b759d", "9253ab615f8c00738fff5d1c665ca81e581875cb", new System.Collections.Generic.List<string>(Scopes), "CodeHub", null));
+                    var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate(Secrets.GithubOAuthId, Secrets.GithubOAuthSecret, new System.Collections.Generic.List<string>(Scopes), "CodeHub", null));
                     account.OAuth = auth.Data.Token;
                 }
 

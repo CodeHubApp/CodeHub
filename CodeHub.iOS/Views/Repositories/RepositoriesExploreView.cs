@@ -1,11 +1,11 @@
 using System;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.Core.ViewModels;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using CodeHub.Core.Utilities;
 using GitHubSharp.Models;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -13,7 +13,6 @@ namespace CodeHub.iOS.Views.Repositories
     {
         public RepositoriesExploreView()
         {
-            AutoHideSearch = false;
             Title = "Explore";
 
             EmptyView = new Lazy<UIView>(() =>

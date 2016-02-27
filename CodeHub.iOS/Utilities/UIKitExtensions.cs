@@ -27,9 +27,9 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.TouchUpInside += t, t => @this.TouchUpInside -= t).Select(_ => Unit.Default);
         }
 
-        public static IObservable<Unit> GetClickedObservable(this UIBarButtonItem @this)
+        public static IObservable<UIBarButtonItem> GetClickedObservable(this UIBarButtonItem @this)
         {
-            return Observable.FromEventPattern(t => @this.Clicked += t, t => @this.Clicked -= t).Select(_ => Unit.Default);
+            return Observable.FromEventPattern(t => @this.Clicked += t, t => @this.Clicked -= t).Select(_ => @this);
         }
 
         public static IObservable<Unit> GetChangedObservable(this UIRefreshControl @this)

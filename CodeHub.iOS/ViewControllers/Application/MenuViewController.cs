@@ -12,11 +12,14 @@ using System.Collections.Generic;
 using CodeHub.iOS.ViewControllers.Accounts;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CoreGraphics;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class MenuViewController : MenuBaseViewController
+    public class MenuViewController : ViewModelDrivenDialogViewController
     {
+        private readonly ProfileButton _profileButton = new ProfileButton();
+        private readonly UILabel _title;
         private MenuElement _notifications;
         private Section _favoriteRepoSection;
 
@@ -26,12 +29,40 @@ namespace CodeHub.iOS.ViewControllers.Application
             set { base.ViewModel = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        /// <value>The title.</value>
+        public override string Title {
+            get {
+                return _title == null ? base.Title : " " + _title.Text;
+            }
+            set {
+                if (_title != null)
+                    _title.Text = " " + value;
+                base.Title = value;
+            }
+        }
+
         public MenuViewController()
+            : base(false, UITableViewStyle.Plain)
         {
             var appService = Mvx.Resolve<IApplicationService>();
             var featuresService = Mvx.Resolve<IFeaturesService>();
             ViewModel = new MenuViewModel(appService, featuresService);
             Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
+
+            _title = new UILabel(new CGRect(0, 40, 320, 40));
+            _title.TextAlignment = UITextAlignment.Left;
+            _title.BackgroundColor = UIColor.Clear;
+            _title.Font = UIFont.SystemFontOfSize(16f);
+            _title.TextColor = UIColor.FromRGB(246, 246, 246);
+            NavigationItem.TitleView = _title;
+
+            OnActivation(d =>
+            {
+                d(_profileButton.GetClickedObservable().Subscribe(_ => ProfileButtonClicked()));
+            });
         }
 
         private static async Task PromptPushNotifications()
@@ -65,7 +96,22 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
         }
 
-        protected override void CreateMenuRoot()
+
+        private void UpdateProfilePicture()
+        {
+            var size = new CGSize(32, 32);
+            if (UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeLeft ||
+                UIApplication.SharedApplication.StatusBarOrientation == UIInterfaceOrientation.LandscapeRight)
+            {
+                size = new CGSize(24, 24);
+            }
+
+            _profileButton.Frame = new CGRect(new CGPoint(0, 4), size);
+
+            NavigationItem.LeftBarButtonItem = new UIBarButtonItem(_profileButton);
+        }
+
+        private void CreateMenuRoot()
         {
             var username = ViewModel.Account.Username;
             Title = username;
@@ -148,10 +194,12 @@ namespace CodeHub.iOS.ViewControllers.Application
             Root.Reset(sections);
         }
 
-
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
+
+            UpdateProfilePicture();
+            CreateMenuRoot();
 
             #if DEBUG
             GC.Collect();
@@ -160,12 +208,18 @@ namespace CodeHub.iOS.ViewControllers.Application
             #endif
         }
 
+        public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
+        {
+            base.DidRotate(fromInterfaceOrientation);
+            UpdateProfilePicture();
+        }
+
         private void PresentUserVoice()
         {
             ViewModel.GoToSupport.Execute(null);
         }
 
-        protected override void ProfileButtonClicked()
+        private void ProfileButtonClicked()
         {
             var vc = new AccountsViewController();
             vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
@@ -179,9 +233,12 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             TableView.SeparatorInset = UIEdgeInsets.Zero;
             TableView.SeparatorColor = UIColor.FromRGB(50, 50, 50);
+            TableView.TableFooterView = new UIView(new CGRect(0, 0, View.Bounds.Width, 0));
+            TableView.BackgroundColor = UIColor.FromRGB(34, 34, 34);
+            TableView.ScrollsToTop = false;
 
             if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
-                ProfileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
+                _profileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
 
             ViewModel.Bind(x => x.Notifications).Subscribe(x =>
             {
