@@ -1,4 +1,4 @@
-<img alt="CodeHub" src="https://github.com/thedillonb/CodeHub/blob/master/CodeHub.iOS/CodeHubRound.png" width="175">
+<img alt="CodeHub" src="https://raw.githubusercontent.com/thedillonb/CodeHub/master/CodeHub.iOS/CodeHubRound.png" width="175">
 [CodeHub](http://thedillonb.github.io/CodeHub/)
 =======
 
