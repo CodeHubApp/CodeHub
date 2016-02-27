@@ -9,7 +9,6 @@ using MvvmCross.iOS.Views;
 using MvvmCross.Binding.BindingContext;
 using MvvmCross.Platform.Core;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.ViewControllers.Repositories;
 using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers

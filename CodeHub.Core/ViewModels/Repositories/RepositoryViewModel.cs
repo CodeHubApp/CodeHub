@@ -213,7 +213,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                     await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
                 IsWatched = !IsWatched;
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to toggle repository as " + (IsWatched.Value ? "unwatched" : "watched") + "! Please try again.");
             }
@@ -242,7 +242,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                     await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
                 IsStarred = !IsStarred;
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to " + (IsStarred.Value ? "unstar" : "star") + " this repository! Please try again.");
             }

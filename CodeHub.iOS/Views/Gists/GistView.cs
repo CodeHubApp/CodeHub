@@ -141,7 +141,7 @@ namespace CodeHub.iOS.Views.Gists
             }
             catch (Exception ex)
             {
-                _alertDialogService.Alert("Error", ex.Message);
+                _alertDialogService.Alert("Error", ex.Message).ToBackground();
             }
         }
 
@@ -158,7 +158,7 @@ namespace CodeHub.iOS.Views.Gists
             }
             catch (Exception ex)
             {
-                _alertDialogService.Alert("Error", ex.Message);
+                _alertDialogService.Alert("Error", ex.Message).ToBackground();
             }
         }
 
@@ -191,7 +191,7 @@ namespace CodeHub.iOS.Views.Gists
                         else if (e.ButtonIndex == starButton)
                             ViewModel.ToggleStarCommand.Execute(null);
                         else if (e.ButtonIndex == editButton)
-                            Compose();
+                            Compose().ToBackground();
                     }
                     catch
                     {

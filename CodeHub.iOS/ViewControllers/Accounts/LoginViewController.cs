@@ -19,7 +19,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             : base(true)
         {
             Title = "Login";
-            ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>(), Mvx.Resolve<IFeaturesService>());
+            ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>());
             ViewModel.Init(new LoginViewModel.NavObject());
         }
 

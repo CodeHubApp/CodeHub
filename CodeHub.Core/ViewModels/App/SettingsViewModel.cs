@@ -11,12 +11,10 @@ namespace CodeHub.Core.ViewModels.App
     public class SettingsViewModel : BaseViewModel
     {
         private readonly IFeaturesService _featuresService;
-        private readonly IDefaultValueService _defaultValueService;
 
-        public SettingsViewModel(IFeaturesService featuresService, IDefaultValueService defaultValueService)
+        public SettingsViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
-            _defaultValueService = defaultValueService;
         }
 
         public string DefaultStartupViewName

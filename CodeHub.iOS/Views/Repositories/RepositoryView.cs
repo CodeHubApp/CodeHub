@@ -71,6 +71,8 @@ namespace CodeHub.iOS.Views.Repositories
                 d(_readmeElement.Value.Clicked.BindCommand(ViewModel.GoToReadmeCommand));
                 d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
 
+                d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
+
                 d(ViewModel.Bind(x => x.Repository, true).Where(x => x != null).Subscribe(x =>
                 {
                     if (x.Private && !_featuresService.IsProEnabled)

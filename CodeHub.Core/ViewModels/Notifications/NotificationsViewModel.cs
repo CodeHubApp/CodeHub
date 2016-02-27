@@ -140,7 +140,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                     UpdateAccountNotificationsCount();
                 }
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to mark notification as read. Please try again.");
             }
@@ -156,7 +156,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 Notifications.Items.RemoveRange(Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 UpdateAccountNotificationsCount();
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to mark repositories' notifications as read. Please try again.");
             }

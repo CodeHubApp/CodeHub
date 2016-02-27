@@ -1,7 +1,6 @@
 using System;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Data;
-using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
 using ReactiveUI;
@@ -15,17 +14,12 @@ namespace CodeHub.Core.ViewModels.Accounts
         public const string ClientSecret = "9253ab615f8c00738fff5d1c665ca81e581875cb";
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
         private readonly ILoginFactory _loginFactory;
-        private readonly IFeaturesService _featuresService;
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
         {
             get { return _isLoggingIn; }
-            set
-            {
-                _isLoggingIn = value;
-                RaisePropertyChanged(() => IsLoggingIn);
-            }
+            set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
         }
 
         public string LoginUrl
@@ -45,11 +39,9 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string WebDomain { get; set; }
 
-        public LoginViewModel(ILoginFactory loginFactory, IFeaturesService featuresService)
+        public LoginViewModel(ILoginFactory loginFactory)
         {
             _loginFactory = loginFactory;
-            _featuresService = featuresService;
-
             Title = "Login";
         }
 

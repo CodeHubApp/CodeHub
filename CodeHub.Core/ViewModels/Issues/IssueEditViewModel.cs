@@ -64,7 +64,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 ChangePresentation(new MvxClosePresentationHint(this));
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to save the issue! Please try again");
             }

@@ -79,7 +79,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
                     Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
                 }
-                catch (Exception e)
+                catch
                 {
                     DisplayAlert("Unable to save labels! Please try again.");
                 }

@@ -108,7 +108,7 @@ namespace CodeHub.iOS.DialogElements
             });
         }
 
-        public async Task CheckHeight()
+        public void CheckHeight()
         {
 //            var f = WebView.Frame;
 //            f.Height = 1;
@@ -147,14 +147,14 @@ namespace CodeHub.iOS.DialogElements
 
         private void OnLoadFinished()
         {
-            RefreshSize();
+            RefreshSize().ToBackground();
         }
 
         private bool OnLoadStart(WKNavigationAction navigation)
         {
             if (navigation.Request.Url.AbsoluteString.StartsWith("app://resize"))
             {
-                RefreshSize();
+                RefreshSize().ToBackground();
                 return false;
             }
 

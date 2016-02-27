@@ -9,6 +9,7 @@ using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -173,6 +174,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return new MvxCommand(() => ToggleState(PullRequest.State == "open")); }
         }
 
+        public ReactiveUI.ReactiveCommand<object> GoToOwner { get; }
+
         public ICommand GoToCommitsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
@@ -207,6 +210,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             _featuresService = featuresService;
 
             this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
+            GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Issue, true).Select(x => x != null));
+            GoToOwner.Subscribe(_ => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue?.User?.Login }));
         }
 
         public void Init(NavObject navObject)

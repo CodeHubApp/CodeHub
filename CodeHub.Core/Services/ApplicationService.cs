@@ -2,32 +2,20 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using GitHubSharp;
 using System;
-using MvvmCross.Core.Views;
 
 namespace CodeHub.Core.Services
 {
     public class ApplicationService : IApplicationService
     {
-        private readonly IMvxViewDispatcher _viewDispatcher;
-        private readonly IPushNotificationsService _pushNotifications;
-        private readonly IFeaturesService _features;
-        private readonly IAlertDialogService _alertDialogService;
-
         public Client Client { get; private set; }
         public GitHubAccount Account { get; private set; }
         public IAccountsService Accounts { get; private set; }
 
         public Action ActivationAction { get; set; }
 
-        public ApplicationService(IAccountsService accounts, IMvxViewDispatcher viewDispatcher, 
-            IFeaturesService features, IPushNotificationsService pushNotifications,
-            IAlertDialogService alertDialogService)
+        public ApplicationService(IAccountsService accountsService)
         {
-            _viewDispatcher = viewDispatcher;
-            _pushNotifications = pushNotifications;
-            Accounts = accounts;
-            _features = features;
-            _alertDialogService = alertDialogService;
+            Accounts = accountsService;
         }
 
         public void DeactivateUser()

@@ -68,7 +68,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     var regex = new System.Text.RegularExpressions.Regex("repos/(.+)/issues/");
                     return model.GroupBy(x => regex.Match(x.Url).Groups[1].Value).ToList();
                 }
-                catch (Exception e)
+                catch
                 {
                     return null;
                 }

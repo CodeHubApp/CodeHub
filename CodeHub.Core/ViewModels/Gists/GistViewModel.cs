@@ -90,7 +90,7 @@ namespace CodeHub.Core.ViewModels.Gists
                 await this.GetApplication().Client.ExecuteAsync(request);
                 IsStarred = !IsStarred;
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to start gist. Please try again.");
             }

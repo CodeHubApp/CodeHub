@@ -72,7 +72,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
         
                 }
-                catch (Exception e)
+                catch
                 {
                     DisplayAlert("Unable to assign issue to selected user! Please try again.");
                 }

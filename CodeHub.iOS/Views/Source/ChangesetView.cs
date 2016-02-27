@@ -16,8 +16,6 @@ namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : PrettyDialogViewController
     {
-        private UIBarButtonItem _actionButton;
-
         public new ChangesetViewModel ViewModel 
         {
             get { return (ChangesetViewModel)base.ViewModel; }
@@ -31,9 +29,7 @@ namespace CodeHub.iOS.Views.Source
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu());
-
-            Title = "Commit " + (ViewModel.Node.Length > 6 ? ViewModel.Node.Substring(0, 6) : ViewModel.Node);
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
 
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = Title;
@@ -52,6 +48,13 @@ namespace CodeHub.iOS.Views.Source
             ViewModel.Bind(x => x.Changeset).Subscribe(_ => Render());
             ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
             ViewModel.Bind(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
+
+            OnActivation(d =>
+            {
+                d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
+                d(ViewModel.Bind(x => x.Title).Subscribe(x => Title = x));
+                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+            });
         }
 
         public void Render()
@@ -217,18 +220,6 @@ namespace CodeHub.iOS.Views.Source
             };
 
             sheet.ShowInView(this.View);
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-            NavigationItem.RightBarButtonItem = _actionButton;
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

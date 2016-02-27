@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
@@ -7,6 +8,8 @@ using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Source;
 using MvvmCross.Platform;
+using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -28,22 +31,14 @@ namespace CodeHub.Core.ViewModels.Changesets
         public CommitModel Changeset
         {
             get { return _commitModel; }
-            private set
-            {
-                _commitModel = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _commitModel, value); }
         }
 
         private bool _shouldShowPro; 
         public bool ShouldShowPro
         {
             get { return _shouldShowPro; }
-            protected set
-            {
-                _shouldShowPro = value;
-                RaisePropertyChanged();
-            }
+            protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
         public ICommand GoToRepositoryCommand
@@ -81,10 +76,15 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _comments; }
         }
 
+        public ReactiveUI.ReactiveCommand<object> GoToOwner { get; }
+
         public ChangesetViewModel(IApplicationService application, IFeaturesService featuresService)
         {
             _application = application;
             _featuresService = featuresService;
+
+            GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Changeset, true).Select(x => x?.Author?.Login != null));
+            GoToOwner.Subscribe(_ => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Changeset?.Author?.Login }));
         }
 
         public void Init(NavObject navObject)
@@ -93,6 +93,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             Repository = navObject.Repository;
             Node = navObject.Node;
             ShowRepository = navObject.ShowRepository;
+            Title = "Commit " + (Node.Length > 6 ? Node.Substring(0, 6) : Node);
         }
 
         protected override Task Load(bool forceCacheInvalidation)

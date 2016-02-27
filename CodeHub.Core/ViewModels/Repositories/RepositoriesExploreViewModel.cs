@@ -61,7 +61,7 @@ namespace CodeHub.Core.ViewModels
                 var response = await this.GetApplication().Client.ExecuteAsync(request);
                 Repositories.Items.Reset(response.Data.Items);
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to search for repositories. Please try again.");
             }

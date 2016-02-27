@@ -20,7 +20,7 @@ namespace CodeHub.iOS.Views.Source
                 if (x) return;
                 if (!string.IsNullOrEmpty(ViewModel.ContentPath))
                 {
-                    LoadSource(new Uri("file://" + ViewModel.ContentPath));
+                    LoadSource(new Uri("file://" + ViewModel.ContentPath)).ToBackground();
                 }
                 else if (!string.IsNullOrEmpty(ViewModel.FilePath))
                 {

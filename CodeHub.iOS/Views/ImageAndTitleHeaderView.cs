@@ -3,11 +3,15 @@ using UIKit;
 using CoreGraphics;
 using SDWebImage;
 using Foundation;
+using System.Reactive.Subjects;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
 {
     public class ImageAndTitleHeaderView : UIView
     {
+        private readonly ISubject<Unit> _clickedSubject = new Subject<Unit>();
         private readonly UIImageView _imageView;
         private readonly UILabel _label;
         private readonly UILabel _label2;
@@ -19,12 +23,15 @@ namespace CodeHub.iOS.Views
 
         public UIButton ImageButton { get; private set; }
 
+        public IObservable<Unit> Clicked
+        {
+            get { return _clickedSubject.AsObservable(); }
+        }
+
         public UIImageView SubImageView
         {
             get { return _subImageView; }
         }
-
-        public Action ImageButtonAction { get; set; }
 
         public UIImage Image
         {
@@ -127,11 +134,7 @@ namespace CodeHub.iOS.Views
         {
             ImageButton = new UIButton();
             ImageButton.Frame = new CGRect(0, 0, 80, 80);
-            var weakRef = new WeakReference<ImageAndTitleHeaderView>(this);
-            ImageButton.TouchUpInside += (sender, e) =>
-            {
-                weakRef.Get()?.ImageButtonAction?.Invoke();
-            };
+            ImageButton.TouchUpInside += MakeHandler(this);
             Add(ImageButton);
 
             _imageView = new UIImageView();
@@ -172,6 +175,12 @@ namespace CodeHub.iOS.Views
 
             EnableSeperator = false;
             RoundedImage = true;
+        }
+
+        public static EventHandler MakeHandler(ImageAndTitleHeaderView view)
+        {
+            var weakRef = new WeakReference<ImageAndTitleHeaderView>(view);
+            return new EventHandler((s, e) => weakRef.Get()._clickedSubject.OnNext(Unit.Default));
         }
 
         public void SetImage(string imageUri, UIImage placeholder)

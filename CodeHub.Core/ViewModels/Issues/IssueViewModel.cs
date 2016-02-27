@@ -8,6 +8,7 @@ using System;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.User;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -78,6 +79,8 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _isModifying; }
             set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
+
+        public ReactiveUI.ReactiveCommand<object> GoToOwner { get; }
 
         public ICommand GoToAssigneeCommand
         {
@@ -167,6 +170,9 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             _featuresService = featuresService;
             this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
+
+            GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Issue, true).Select(x => x != null));
+            GoToOwner.Subscribe(_ => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue?.User?.Login }));
         }
 
         public void Init(NavObject navObject)

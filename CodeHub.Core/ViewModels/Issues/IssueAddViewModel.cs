@@ -30,7 +30,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 Messenger.Publish(new IssueAddMessage(this) { Issue = data.Data });
                 ChangePresentation(new MvxClosePresentationHint(this));
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to save new issue! Please try again.");
             }

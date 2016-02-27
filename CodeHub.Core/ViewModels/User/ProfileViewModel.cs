@@ -80,7 +80,7 @@ namespace CodeHub.Core.ViewModels.User
                     await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
                 IsFollowing = !IsFollowing;
             }
-            catch (System.Exception e)
+            catch
             {
                 DisplayAlert("Unable to follow user! Please try again.");
             }
