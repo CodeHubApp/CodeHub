@@ -1,4 +1,4 @@
-using UIKit;
+﻿using UIKit;
 using CoreGraphics;
 using System;
 
@@ -57,4 +57,3 @@ namespace CodeHub.iOS.Views
         }
     }
 }
-
