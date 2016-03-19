@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using CodeHub.iOS.Utilities;
 using System.Reactive.Linq;
 using ReactiveUI;
+using CodeHub.iOS.Services;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -107,6 +108,7 @@ namespace CodeHub.iOS.Views.Repositories
             var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
             var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
             var showButton = sheet.AddButton("Show in GitHub");
+            var shareButton = sheet.AddButton("Share");
             var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
             sheet.Dismissed += (s, e) => {
@@ -127,11 +129,15 @@ namespace CodeHub.iOS.Views.Repositories
                 {
                     ViewModel.GoToHtmlUrlCommand.Execute(null);
                 }
+                else if (e.ButtonIndex == shareButton)
+                {
+                    AlertDialogService.ShareUrl(ViewModel.Repository.HtmlUrl, NavigationItem.RightBarButtonItem);
+                }
 
                 sheet.Dispose();
             };
 
-            sheet.ShowInView(this.View);
+            sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
         }
 
         SplitViewElement _split1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());
