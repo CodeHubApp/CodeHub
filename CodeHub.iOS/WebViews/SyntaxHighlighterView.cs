@@ -36,7 +36,7 @@ WriteLiteral("<html>\n<head>\n<meta");
 
 WriteLiteral(" name=\"viewport\"");
 
-WriteLiteral(" content=\"width=device-width, initial-scale=1.0\"");
+WriteLiteral(" content=\"width=device-width, minimum-scale=0.25, maximum-scale=4.0\"");
 
 WriteLiteral(">\n<link");
 
@@ -67,12 +67,22 @@ WriteLiteral(" />\n<style>\nhtml { height: 100%; width: 100%; }\nbody { \n    ma
 WriteLiteral(@"px;
 }
 
-body > pre { margin: 0em; min-width: 100%; min-height: 100%; }
+body > pre { 
+    margin: 0em; 
+    min-width: 100%; 
+    min-height: 100%; 
+    overflow: none;
+}
+
+body > pre * {
+    overflow: none;
+}
+
 .hljs { 
+    width: 100%;
     min-width: 100%; min-height: 100%; 
     box-sizing: border-box; 
-    overflow: scroll;
-    -webkit-overflow-scrolling: touch;
+    overflow: none;
     padding: 0;
 }
 
@@ -101,12 +111,10 @@ code {
 
 WriteLiteral(" id=\"code\"");
 
-WriteLiteral(" style=\"display: none;\"");
-
 WriteAttribute ("class", " class=\"", "\""
 
-#line 47 "SyntaxHighlighterView.cshtml"
-                , Tuple.Create<string,object,bool> ("", Model.Language
+#line 57 "SyntaxHighlighterView.cshtml"
+, Tuple.Create<string,object,bool> ("", Model.Language
 
 #line default
 #line hidden
@@ -115,8 +123,8 @@ WriteAttribute ("class", " class=\"", "\""
 WriteLiteral(">");
 
 
-#line 47 "SyntaxHighlighterView.cshtml"
-                                                                   Write(Model.Content);
+#line 57 "SyntaxHighlighterView.cshtml"
+                                            Write(Model.Content);
 
 
 #line default
@@ -135,6 +143,8 @@ WriteLiteral(@"></script>
             hljs.configure({
               tabReplace: '    '
             });
+
+            $('body').css('width', $(document).width() + 75 + 'px');
 
             hljs.initHighlighting();
             document.getElementById(""code"").style.display = 'block';
