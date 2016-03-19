@@ -70,7 +70,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
     
                 if (navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
                 {
-                    Mvx.Resolve<IAlertDialogService>().Alert("Error", "Sorry, due to Apple restrictions, creating GitHub accounts cannot be done in CodeHub.");
+                    Mvx.Resolve<IAlertDialogService>().Alert("Error", "Sorry, due to restrictions, creating GitHub accounts cannot be done in CodeHub.");
                     return false;
                 }
 
