@@ -36,8 +36,17 @@ WriteLiteral("<html>\n<head>\n<meta");
 
 WriteLiteral(" name=\"viewport\"");
 
-WriteLiteral(" content=\"width=device-width, minimum-scale=0.25, maximum-scale=4.0\"");
+WriteAttribute ("content", " content=\"", "\""
+, Tuple.Create<string,object,bool> ("", "minimum-scale=", true)
 
+#line 4 "SyntaxHighlighterView.cshtml"
+       , Tuple.Create<string,object,bool> ("", Model.Scale
+
+#line default
+#line hidden
+, false)
+, Tuple.Create<string,object,bool> (" ", "maximum-scale=4.0", true)
+);
 WriteLiteral(">\n<link");
 
 WriteLiteral(" rel=\"stylesheet\"");

@@ -2,16 +2,18 @@
 {
     public class SourceBrowserModel
     {
-        public string Content { get; private set; }
-        public string Theme { get; private set; }
-        public string Language { get; private set; }
-        public int FontSize { get; private set; }
+        public string Content { get; }
+        public string Theme { get; }
+        public string Language { get; }
+        public int FontSize { get; }
+        public decimal Scale { get; }
 
-        public SourceBrowserModel(string content, string theme, int fontSize, string file = null)
+        public SourceBrowserModel(string content, string theme, int fontSize, bool shouldZoom, string file = null)
         {
             Content = content;
             Theme = theme;
             FontSize = fontSize;
+            Scale = shouldZoom ? 1.0m : 0.4m;
 
             if (file != null)
                 Language = CalculateLanguage(System.IO.Path.GetExtension(file));

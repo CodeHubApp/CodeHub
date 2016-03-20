@@ -67,7 +67,8 @@ namespace CodeHub.iOS.Views.Source
             }
             else
             {
-                var model = new SourceBrowserModel(content, "idea", fontSize, fileUri.LocalPath);
+                var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
+                var model = new SourceBrowserModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
                 var contentView = new SyntaxHighlighterView { Model = model };
                 LoadContent(contentView.GenerateString());
             }
