@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
+using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -10,11 +11,7 @@ namespace CodeHub.Core.ViewModels.Source
         public string Text
         {
             get { return _text; }
-            private set
-            {
-                _text = value; 
-                RaisePropertyChanged(() => Text);
-            }
+            private set { this.RaiseAndSetIfChanged(ref _text, value); }
         }
 
         public string Username { get; private set; }

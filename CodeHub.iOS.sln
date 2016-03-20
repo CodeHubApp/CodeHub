@@ -120,13 +120,12 @@ Global
 		$2.inheritsSet = VisualStudio
 		$2.inheritsScope = text/plain
 		$0.TextStylePolicy = $3
-		$3.FileWidth = 120
-		$3.EolMarker = Windows
 		$3.inheritsSet = VisualStudio
 		$3.inheritsScope = text/plain
 		$3.scope = text/x-csharp
 		$0.CSharpFormattingPolicy = $4
 		$4.IndentSwitchBody = True
+		$4.IndentBlocksInsideExpressions = True
 		$4.AnonymousMethodBraceStyle = NextLine
 		$4.PropertyBraceStyle = NextLine
 		$4.PropertyGetBraceStyle = NextLine
@@ -144,6 +143,8 @@ Global
 		$4.BeforeMethodDeclarationParentheses = False
 		$4.BeforeMethodCallParentheses = False
 		$4.BeforeConstructorDeclarationParentheses = False
+		$4.NewLineBeforeConstructorInitializerColon = NewLine
+		$4.NewLineAfterConstructorInitializerColon = SameLine
 		$4.BeforeDelegateDeclarationParentheses = False
 		$4.NewParentheses = False
 		$4.SpacesBeforeBrackets = False

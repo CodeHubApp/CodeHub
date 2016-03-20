@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -13,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Source
     {
         private readonly IFeaturesService _featuresService;
 
-        public CollectionViewModel<ContentModel> Content { get; }
+        public CollectionViewModel<ContentModel> Content { get; } = new CollectionViewModel<ContentModel>();
 
         public string Username { get; private set; }
 
@@ -29,40 +29,40 @@ namespace CodeHub.Core.ViewModels.Source
         public bool ShouldShowPro
         {
             get { return _shouldShowPro; }
-            private set
-            {
-                _shouldShowPro = value;
-                RaisePropertyChanged();
-            }
+            private set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-        public ICommand GoToSourceTreeCommand
-        {
-            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, Repository = Repository, Path = x.Path, TrueBranch = TrueBranch })); }
-        }
-
-        public ICommand GoToSubmoduleCommand
-        {
-            get { return new MvxCommand<ContentModel>(GoToSubmodule);}
-        }
-
-        public ICommand GoToSourceCommand
-        {
-            get { return new MvxCommand<ContentModel>(x => ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch }));}
-        }
-
-        private void GoToSubmodule(ContentModel x)
-        {
-            var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", System.StringComparison.Ordinal) + 7);
-            var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", System.StringComparison.Ordinal)));
-            var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-            ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
-        }
-
+        public ReactiveUI.IReactiveCommand<object> GoToItemCommand { get; }
+            
         public SourceTreeViewModel(IFeaturesService featuresService)
         {
             _featuresService = featuresService;
-            Content = new CollectionViewModel<ContentModel>();
+
+            GoToItemCommand = ReactiveUI.ReactiveCommand.Create();
+            GoToItemCommand.OfType<ContentModel>().Subscribe(x =>
+            {
+                if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
+                {
+                    ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, 
+                        Repository = Repository, Path = x.Path, TrueBranch = TrueBranch });
+                }
+                if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (x.DownloadUrl == null)
+                    {
+                        var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", StringComparison.Ordinal) + 7);
+                        var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.Ordinal)));
+                        var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", StringComparison.Ordinal) + 1);
+                        ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+                    }
+                    else
+                    {
+                        ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { 
+                            Name = x.Name, Username = Username, Repository = Repository, Branch = Branch, 
+                            Path = x.Path, HtmlUrl = x.HtmlUrl, GitUrl = x.GitUrl, TrueBranch = TrueBranch });
+                    }
+                }
+            });
         }
 
         public void Init(NavObject navObject)

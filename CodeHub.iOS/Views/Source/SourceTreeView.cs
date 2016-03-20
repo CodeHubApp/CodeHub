@@ -48,23 +48,21 @@ namespace CodeHub.iOS.Views.Source
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
             {
                 var e = new StringElement(x.Name, Octicon.FileDirectory.ToImage());
-                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToSourceTreeCommand.Execute(x));
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
                 return e;
             }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
             {
-                //If there's a size, it's a file
-                if (x.Size != null)
+                if (x.DownloadUrl != null)
                 {
                     var e = new StringElement(x.Name, Octicon.FileCode.ToImage());
-                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToSourceCommand.Execute(x));
+                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
                     return e;
                 }
                 else
                 {
-                    //If there is no size, it's most likey a submodule
                     var e = new StringElement(x.Name, Octicon.FileSubmodule.ToImage());
-                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToSubmoduleCommand.Execute(x));
+                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
                     return e;
                 }
             }
