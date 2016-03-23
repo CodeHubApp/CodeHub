@@ -60,7 +60,7 @@ namespace CodeHub.iOS.Services
         {
             var productData = (await _inAppPurchaseService.RequestProductData(ProEdition)).Products.FirstOrDefault();
             if (productData == null)
-                throw new InvalidOperationException("Unable to activate CodeHub Pro");
+                throw new InvalidOperationException("Unable to activate CodeHub Pro. iTunes returns no products to purchase!");
             await _inAppPurchaseService.PurchaseProduct(productData);
             _defaultValueService.Set(ProEdition, true);
             _defaultValueService.Set(PushNotifications, true);

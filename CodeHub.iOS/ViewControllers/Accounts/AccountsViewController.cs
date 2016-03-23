@@ -17,6 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
     public class AccountsViewController : DialogViewController
     {
         private readonly IAccountsService _accountsService = Mvx.Resolve<IAccountsService>();
+        private readonly IApplicationService _applicationService = Mvx.Resolve<IApplicationService>();
 
         public AccountsViewController() : base(UITableViewStyle.Plain)
         {
@@ -61,7 +62,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 return;
             }
 
-            _accountsService.SetDefault(githubAccount);
+            _applicationService.ActivateUser(githubAccount, null);
             MessageBus.Current.SendMessage(new LogoutMessage());
         }
 
@@ -80,8 +81,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             }));
             Root.Reset(accountSection);
 
-            if (NavigationItem.LeftBarButtonItem != null)
-                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
+            SetCancelButton();
         }
 
         public override DialogViewController.Source CreateSizingSource()
@@ -100,11 +100,18 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
             if (_accountsService.ActiveAccount != null && _accountsService.ActiveAccount.Equals(accountElement.Account))
             {
-                _accountsService.SetActiveAccount(null);
+                _applicationService.DeactivateUser();   
             }
 
+            SetCancelButton();
+        }
+
+        private void SetCancelButton()
+        {
             if (NavigationItem.LeftBarButtonItem != null)
-                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0;
+            {
+                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0 && _applicationService.Account != null;
+            }
         }
 
         private class EditSource : DialogViewController.Source
@@ -163,6 +170,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 cell.Accessory = _currentAccount ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
                 cell.TextLabel.Text = Account.Username;
                 cell.DetailTextLabel.Text = Account.IsEnterprise ? Account.WebDomain : "GitHub.com";
+                cell.ImageView.TintColor = Theme.CurrentTheme.PrimaryColor;
                 cell.ImageView.SetAvatar(new CodeHub.Core.Utilities.GitHubAvatar(Account.AvatarUrl));
                 return cell;
             }

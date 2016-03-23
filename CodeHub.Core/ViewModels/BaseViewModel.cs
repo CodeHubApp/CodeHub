@@ -8,6 +8,7 @@ using ReactiveUI;
 using System;
 using System.Reactive;
 using System.Reactive.Subjects;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -133,9 +134,9 @@ namespace CodeHub.Core.ViewModels
         /// Display an error message to the user
         /// </summary>
         /// <param name="message">Message.</param>
-        protected void DisplayAlert(string message)
+        protected Task DisplayAlert(string message)
         {
-            AlertService.Alert("Error!", message);
+            return AlertService.Alert("Error!", message);
         }
     }
 }

@@ -8,6 +8,10 @@ using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.Core.Factories;
 using System;
+using GitHubSharp;
+using System.Linq;
+using System.Reactive.Threading.Tasks;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -30,7 +34,6 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
             Title = "Login";
 
-            ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...");
 
             View.BackgroundColor = EnterpriseBackgroundColor;
             Logo.Image = Images.Logos.EnterpriseMascot;
@@ -74,12 +77,34 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             };
 
             OnActivation(d =>
+                {
+                    d(User.GetChangedObservable().Subscribe(x => ViewModel.Username = x));
+                    d(Password.GetChangedObservable().Subscribe(x => ViewModel.Password = x));
+                    d(Domain.GetChangedObservable().Subscribe(x => ViewModel.Domain = x));
+                    d(LoginButton.GetClickedObservable().BindCommand(ViewModel.LoginCommand));
+                    d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in..."));
+                    d(ViewModel.LoginCommand.ThrownExceptions.Subscribe(HandleLoginException));
+                });
+        }
+
+        private void HandleLoginException(Exception e)
+        {
+            var alert = Mvx.Resolve<IAlertDialogService>();
+
+            var authException = e as UnauthorizedException;
+            if (authException != null && authException.Headers.Contains("X-GitHub-OTP"))
             {
-                d(User.GetChangedObservable().Subscribe(x => ViewModel.Username = x));
-                d(Password.GetChangedObservable().Subscribe(x => ViewModel.Password = x));
-                d(Domain.GetChangedObservable().Subscribe(x => ViewModel.Domain = x));
-                d(LoginButton.GetClickedObservable().BindCommand(ViewModel.LoginCommand));
-            });
+                alert.PromptTextBox("Authentication Error", "Please provide the two-factor authentication code for this account.", string.Empty, "Login")
+                    .ToObservable()
+                    .Subscribe(x => {
+                        ViewModel.TwoFactor = x;
+                        ViewModel.LoginCommand.ExecuteIfCan();
+                    });
+            }
+            else
+            {
+                alert.Alert("Unable to Login!", "Unable to login user " + ViewModel.Username + ": " + e.Message);
+            }
         }
 
         NSObject _hideNotification, _showNotification;

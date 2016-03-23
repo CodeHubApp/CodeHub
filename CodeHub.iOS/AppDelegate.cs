@@ -24,6 +24,7 @@ using CodeHub.iOS.Services;
 using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS
 {
@@ -78,10 +79,14 @@ namespace CodeHub.iOS
             var features = Mvx.Resolve<IFeaturesService>();
             var defaultValueService = Mvx.Resolve<IDefaultValueService>();
 
-            var installedDate = this.StampInstallDate("CodeHub");
-            Console.WriteLine("CodeHub was installed on: " + installedDate);
-            if (installedDate < new DateTime(2016, 3, 5, 1, 1, 1))
-                features.ActivateProDirect();
+//            var installedDate = this.StampInstallDate("CodeHub");
+//            Console.WriteLine("CodeHub was installed on: " + installedDate);
+//            if (installedDate < new DateTime(2016, 3, 5, 1, 1, 1))
+//                features.ActivateProDirect();
+
+            #if DEBUG
+            features.ActivateProDirect();
+            #endif 
 
             if (!features.IsProEnabled)
             {
@@ -141,7 +146,9 @@ namespace CodeHub.iOS
         {
             var startup = new CodeHub.iOS.ViewControllers.Application.StartupViewController();
             TransitionToViewController(startup);
-            MessageBus.Current.Listen<LogoutMessage>().Subscribe(_ => startup.DismissViewController(true, null));
+            MessageBus.Current.Listen<LogoutMessage>()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(_ => startup.DismissViewController(true, null));
         }
 
         private void TransitionToViewController(UIViewController viewController)

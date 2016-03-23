@@ -4,6 +4,7 @@ using CodeHub.Core.Data;
 using GitHubSharp;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.Factories
 {
@@ -69,57 +70,32 @@ namespace CodeHub.Core.Factories
             return client;
         }
 
-        public async Task<LoginData> CreateLoginData(string domain, string user, string pass, string twoFactor, bool enterprise, GitHubAccount account)
+        public async Task<GitHubAccount> LoginWithBasic(string domain, string user, string pass, string twoFactor = null)
         {
             //Fill these variables in during the proceeding try/catch
             var apiUrl = domain;
 
-            try
-            {
-                //Make some valid checks
-                if (string.IsNullOrEmpty(user))
-                    throw new ArgumentException("Username is invalid");
-                if (string.IsNullOrEmpty(pass))
-                    throw new ArgumentException("Password is invalid");
-                if (apiUrl != null && !Uri.IsWellFormedUriString(apiUrl, UriKind.Absolute))
-                    throw new ArgumentException("Domain is invalid");
+            //Make some valid checks
+            if (string.IsNullOrEmpty(user))
+                throw new ArgumentException("Username is invalid");
+            if (string.IsNullOrEmpty(pass))
+                throw new ArgumentException("Password is invalid");
+            if (apiUrl != null && !Uri.IsWellFormedUriString(apiUrl, UriKind.Absolute))
+                throw new ArgumentException("Domain is invalid");
 
-                account = account ?? new GitHubAccount { Username = user };
-                account.Domain = apiUrl;
-                account.IsEnterprise = enterprise;
-                var client = twoFactor == null ? Client.Basic(user, pass, apiUrl) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiUrl);
 
-                if (enterprise)
-                {
-                    account.Password = pass;
-                }
-                else
-                {
-                    var auth = await client.ExecuteAsync(client.Authorizations.GetOrCreate(Secrets.GithubOAuthId, Secrets.GithubOAuthSecret, new System.Collections.Generic.List<string>(Scopes), "CodeHub", null));
-                    account.OAuth = auth.Data.Token;
-                }
+            var client = twoFactor == null ? Client.Basic(user, pass, apiUrl) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiUrl);
+            var authorization = await client.ExecuteAsync(client.Authorizations.Create(new List<string>(Scopes), "CodeHub: " + user, null, Guid.NewGuid().ToString()));
+            var existingAccount = _accounts.FirstOrDefault(x => string.Equals(x.Username, user) && string.Equals(x.Domain, apiUrl));
+            var account = existingAccount ?? new GitHubAccount { 
+                Username = user, 
+                IsEnterprise = true, 
+                WebDomain = apiUrl, 
+                Domain = apiUrl 
+            };
 
-                return new LoginData { Client = client, Account = account };
-            }
-            catch (StatusCodeException ex)
-            {
-                //Looks like we need to ask for the key!
-                if (ex.Headers.ContainsKey("X-GitHub-OTP"))
-                    throw new TwoFactorRequiredException();
-                throw new Exception("Unable to login as user " + user + ". Please check your credentials and try again.");
-            }
-        }
-
-        /// <summary>
-        /// Goofy exception so we can catch and do two factor auth
-        /// </summary>
-        [Serializable]
-        public class TwoFactorRequiredException : Exception
-        {
-            public TwoFactorRequiredException()
-                : base("Two Factor Authentication is Required!")
-            {
-            }
+            account.OAuth = authorization.Data.Token;
+            return account;
         }
     }
 }

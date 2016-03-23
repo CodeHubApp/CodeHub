@@ -9,6 +9,7 @@ using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using ReactiveUI;
 using CodeHub.Core.ViewModels.Accounts;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -105,14 +106,9 @@ namespace CodeHub.Core.ViewModels.App
             }
             catch (GitHubSharp.UnauthorizedException e)
             {
-                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message);
-
-                if (isEnterprise)
-                    GoToUrlCommand.Execute(new AddAccountViewModel.NavObject { AttemptedAccountId = account.Id });
-                else
-                    GoToUrlCommand.Execute(LoginViewModel.NavObject.CreateDontRemember(account));
-
-                StarOrWatch();
+                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message)
+                    .ToObservable()
+                    .BindCommand(GoToAccounts);
             }
             catch (Exception e)
             {
