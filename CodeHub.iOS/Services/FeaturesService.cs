@@ -29,10 +29,7 @@ namespace CodeHub.iOS.Services
 
         public async Task ActivatePro()
         {
-            var productData = (await _inAppPurchaseService.RequestProductData(ProEdition)).Products.FirstOrDefault();
-            if (productData == null)
-                throw new InvalidOperationException("Unable to activate CodeHub Pro. iTunes returns no products to purchase!");
-            await _inAppPurchaseService.PurchaseProduct(productData);
+            await _inAppPurchaseService.PurchaseProduct(ProEdition);
             _defaultValueService.Set(ProEdition, true);
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             appDelegate?.RegisterUserForNotifications();

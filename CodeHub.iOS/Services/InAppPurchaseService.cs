@@ -14,7 +14,7 @@ namespace CodeHub.iOS.Services
 
         Task Restore();
 
-        Task PurchaseProduct(SKProduct productId);
+        Task PurchaseProduct(string productId);
 
         IObservable<Exception> ThrownExceptions { get; }
     }
@@ -86,10 +86,10 @@ namespace CodeHub.iOS.Services
             return _actionSource.Task;
         }
 
-        public async Task PurchaseProduct(SKProduct productId)
+        public async Task PurchaseProduct(string productId)
         {
             _actionSource = new TaskCompletionSource<bool>();
-            SKPayment payment = SKPayment.PaymentWithProduct(productId);
+            var payment = SKMutablePayment.PaymentWithProduct(productId);
             SKPaymentQueue.DefaultQueue.AddPayment (payment);
             await _actionSource.Task;
         }
@@ -112,6 +112,12 @@ namespace CodeHub.iOS.Services
         {
             var errorString = transaction.Error != null ? transaction.Error.LocalizedDescription : "Unable to process transaction!";
             OnPurchaseError(transaction.Payment, new Exception(errorString));
+        }
+
+        private void DeferedTransaction(SKPaymentTransaction transaction)
+        {
+            const string msgString = "Parental controls are active. After approval, the purchase will be complete.";
+            OnPurchaseError(transaction.Payment, new Exception(msgString));
         }
 
         private class TransactionObserver : SKPaymentTransactionObserver
@@ -144,6 +150,10 @@ namespace CodeHub.iOS.Services
                                 _inAppPurchases.RestoreTransaction(transaction);
                                 SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
                                 break;
+                            case SKPaymentTransactionState.Deferred:
+                                _inAppPurchases.DeferedTransaction(transaction);
+                                SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
+                                break;
                         }
                     }
                     catch (Exception e)
@@ -155,7 +165,10 @@ namespace CodeHub.iOS.Services
 
             public override void RestoreCompletedTransactionsFailedWithError (SKPaymentQueue queue, NSError error)
             {
-                _inAppPurchases._actionSource?.TrySetResult(false);
+                if (error.Code != 2)
+                {
+                    _inAppPurchases._actionSource?.TrySetException(new Exception(error.LocalizedDescription));
+                }
             }
         }
     }
