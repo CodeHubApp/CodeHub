@@ -77,6 +77,10 @@ namespace CodeHub.iOS
 
             var features = Mvx.Resolve<IFeaturesService>();
             var defaultValueService = Mvx.Resolve<IDefaultValueService>();
+            var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
+            purchaseService.ThrownExceptions.Subscribe(ex => {
+                AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
+            });
 
             #if DEBUG
             features.ActivateProDirect();

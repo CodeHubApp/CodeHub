@@ -153,11 +153,6 @@ namespace CodeHub.iOS.Services
                 }
             }
 
-            public override void PaymentQueueRestoreCompletedTransactionsFinished (SKPaymentQueue queue)
-            {
-                _inAppPurchases._actionSource?.TrySetResult(true);
-            }
-
             public override void RestoreCompletedTransactionsFailedWithError (SKPaymentQueue queue, NSError error)
             {
                 _inAppPurchases._actionSource?.TrySetResult(false);
