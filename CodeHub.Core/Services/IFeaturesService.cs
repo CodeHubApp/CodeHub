@@ -4,12 +4,6 @@ namespace CodeHub.Core.Services
 {
     public interface IFeaturesService
     {
-        bool IsPushNotificationsActivated { get; }
-
-        bool IsEnterpriseSupportActivated { get; }
-
-        bool IsPrivateRepositoriesEnabled { get; }
-
         bool IsProEnabled { get; }
 
         void ActivateProDirect();
@@ -17,8 +11,6 @@ namespace CodeHub.Core.Services
         Task ActivatePro();
 
         Task RestorePro();
-
-        void ActivatePush();
     }
 }
 

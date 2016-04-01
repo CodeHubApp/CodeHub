@@ -61,7 +61,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         private void EnterpriseButtonTouch ()
         {
             var features = Mvx.Resolve<IFeaturesService>();
-            if (features.IsEnterpriseSupportActivated)
+            if (features.IsProEnabled)
             {
                 NavigationController.PushViewController(new AddAccountViewController(), true);
             }

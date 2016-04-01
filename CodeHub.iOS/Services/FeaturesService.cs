@@ -10,42 +10,13 @@ namespace CodeHub.iOS.Services
     {
         private readonly IDefaultValueService _defaultValueService;
         private readonly IInAppPurchaseService _inAppPurchaseService;
-
-        /// <summary>
-        /// The pro edition identifier
-        /// </summary>
+   
         public const string ProEdition = "com.dillonbuchanan.codehub.pro";
-        public const string PushNotifications = "com.dillonbuchanan.codehub.push";
-        public const string EnterpriseSupport = "com.dillonbuchanan.codehub.enterprise_support";
 
         public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {
             _defaultValueService = defaultValueService;
             _inAppPurchaseService = inAppPurchaseService;
-        }
-
-        public bool IsPushNotificationsActivated
-        {
-            get
-            {
-                return IsActivated(PushNotifications);
-            }
-        }
-
-        public bool IsEnterpriseSupportActivated
-        {
-            get
-            {
-                return IsActivated(ProEdition);
-            }
-        }
-
-        public bool IsPrivateRepositoriesEnabled
-        {
-            get
-            {
-                return IsActivated(ProEdition);
-            }
         }
 
         public bool IsProEnabled
@@ -63,7 +34,6 @@ namespace CodeHub.iOS.Services
                 throw new InvalidOperationException("Unable to activate CodeHub Pro. iTunes returns no products to purchase!");
             await _inAppPurchaseService.PurchaseProduct(productData);
             _defaultValueService.Set(ProEdition, true);
-            _defaultValueService.Set(PushNotifications, true);
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             appDelegate?.RegisterUserForNotifications();
         }
@@ -71,11 +41,6 @@ namespace CodeHub.iOS.Services
         public void ActivateProDirect()
         {
             _defaultValueService.Set(ProEdition, true);
-        }
-
-        public void ActivatePush()
-        {
-            _defaultValueService.Set(PushNotifications, true);
         }
 
         public Task RestorePro()

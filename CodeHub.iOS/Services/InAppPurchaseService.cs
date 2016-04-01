@@ -98,7 +98,6 @@ namespace CodeHub.iOS.Services
         {
             var productId = transaction.Payment.ProductIdentifier;
             _defaultValueService.Set(productId, true);
-            Console.WriteLine ("CompleteTransaction " + productId);
             OnPurchaseSuccess(transaction.Payment);
         }
 
@@ -106,7 +105,6 @@ namespace CodeHub.iOS.Services
         {
             var productId = transaction.OriginalTransaction.Payment.ProductIdentifier;;
             _defaultValueService.Set(productId, true);
-            Console.WriteLine("RestoreTransaction " + productId);
             OnPurchaseSuccess(transaction.OriginalTransaction.Payment);
         }
 
@@ -157,13 +155,11 @@ namespace CodeHub.iOS.Services
 
             public override void PaymentQueueRestoreCompletedTransactionsFinished (SKPaymentQueue queue)
             {
-                Console.WriteLine(" ** RESTORE PaymentQueueRestoreCompletedTransactionsFinished ");
                 _inAppPurchases._actionSource?.TrySetResult(true);
             }
 
             public override void RestoreCompletedTransactionsFailedWithError (SKPaymentQueue queue, NSError error)
             {
-                Console.WriteLine(" ** RESTORE RestoreCompletedTransactionsFailedWithError " + error.LocalizedDescription);
                 _inAppPurchases._actionSource?.TrySetResult(false);
             }
         }

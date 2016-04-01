@@ -13,7 +13,6 @@ using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
 using System.Threading.Tasks;
 using System.Linq;
-using Security;
 using ObjCRuntime;
 using MvvmCross.iOS.Platform;
 using MvvmCross.Platform;
@@ -79,24 +78,10 @@ namespace CodeHub.iOS
             var features = Mvx.Resolve<IFeaturesService>();
             var defaultValueService = Mvx.Resolve<IDefaultValueService>();
 
-//            var installedDate = this.StampInstallDate("CodeHub");
-//            Console.WriteLine("CodeHub was installed on: " + installedDate);
-//            if (installedDate < new DateTime(2016, 3, 5, 1, 1, 1))
-//                features.ActivateProDirect();
-
             #if DEBUG
             features.ActivateProDirect();
             #endif 
 
-            if (!features.IsProEnabled)
-            {
-                bool isActive;
-                if (defaultValueService.TryGet(FeaturesService.EnterpriseSupport, out isActive) && isActive)
-                    features.ActivateProDirect();
-                else if (defaultValueService.TryGet(FeaturesService.PushNotifications, out isActive) && isActive)
-                    features.ActivateProDirect();
-            }
-//
 //            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
 //                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
 //
@@ -130,7 +115,7 @@ namespace CodeHub.iOS
             Window.MakeKeyAndVisible();
 
             // Notifications don't work on teh simulator so don't bother
-            if (Runtime.Arch != Arch.SIMULATOR && features.IsPushNotificationsActivated)
+            if (Runtime.Arch != Arch.SIMULATOR && features.IsProEnabled)
                 RegisterUserForNotifications();
 
             return true;
@@ -276,51 +261,6 @@ namespace CodeHub.iOS
                     path += "/";
                 var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
                 return UrlRouteProvider.Handle(path);
-            }
-        }
-    }
-
-    public static class UIApplicationDelegateExtensions
-    {
-        /// <summary>
-        /// Record the date this application was installed (or the date that we started recording installation date).
-        /// </summary>
-        public static DateTime StampInstallDate(this UIApplicationDelegate @this, string name)
-        {
-            try
-            {
-                var query = new SecRecord(SecKind.GenericPassword) { Service = name, Account = "account" };
-
-                SecStatusCode secStatusCode;
-                var queriedRecord = SecKeyChain.QueryAsRecord(query, out secStatusCode);
-                if (secStatusCode != SecStatusCode.Success)
-                {
-                    queriedRecord = new SecRecord(SecKind.GenericPassword)
-                    {
-                        Label = name + " Install Date",
-                        Service = name,
-                        Account = query.Account,
-                        Description = string.Format("The first date {0} was installed", name),
-                        Generic = NSData.FromString(DateTime.UtcNow.ToString())
-                    };
-
-                    var err = SecKeyChain.Add(queriedRecord);
-                    if (err != SecStatusCode.Success)
-                        System.Diagnostics.Debug.WriteLine("Unable to save stamp date!");
-                }
-                else
-                {
-                    DateTime time;
-                    if (!DateTime.TryParse(queriedRecord.Generic.ToString(), out time))
-                        SecKeyChain.Remove(query);
-                }
-
-                return DateTime.Parse(NSString.FromData(queriedRecord.Generic, NSStringEncoding.UTF8));
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
-                return DateTime.Now;
             }
         }
     }

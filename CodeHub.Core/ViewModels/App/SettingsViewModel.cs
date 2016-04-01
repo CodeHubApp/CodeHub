@@ -57,15 +57,8 @@ namespace CodeHub.Core.ViewModels.App
             }
             set 
             { 
-                var proEnabled = _featuresService.IsProEnabled;
-                var pushEnabled = _featuresService.IsPushNotificationsActivated;
-                if (pushEnabled || proEnabled)
+                if (_featuresService.IsProEnabled)
                 {
-                    if (proEnabled && !pushEnabled)
-                    {
-                        _featuresService.ActivatePush();
-                    }
-
                     RegisterPushNotifications(value).ToBackground();
                 }
                 else
