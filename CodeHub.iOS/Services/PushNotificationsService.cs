@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MvvmCross.Platform;
+using ObjCRuntime;
 
 namespace CodeHub.iOS.Services
 {
@@ -15,6 +16,9 @@ namespace CodeHub.iOS.Services
 
         public async Task Register()
         {
+            if (Runtime.Arch == Arch.SIMULATOR)
+                return;
+
             var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
             if (string.IsNullOrEmpty(appDelegate.DeviceToken))
             {

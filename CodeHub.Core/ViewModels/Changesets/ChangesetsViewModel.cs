@@ -17,7 +17,7 @@ namespace CodeHub.Core.ViewModels.Changesets
         public void Init(NavObject navObject)
         {
             base.Init(navObject);
-            Branch = navObject.Branch ?? "master";
+            Branch = navObject.Branch;
         }
 
         protected override GitHubRequest<List<CommitModel>> GetRequest()

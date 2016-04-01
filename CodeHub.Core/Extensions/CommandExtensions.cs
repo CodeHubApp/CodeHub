@@ -1,13 +1,12 @@
 using System;
-using System.Windows.Input;
-
-// ReSharper disable once CheckNamespace
-using UIKit;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive;
+using System.Windows.Input;
+using UIKit;
 
 
+// ReSharper disable once CheckNamespace
 namespace ReactiveUI
 {
     public static class ReactiveCommandExtensions

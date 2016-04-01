@@ -1,6 +1,6 @@
 using CodeHub.iOS.ViewControllers.Users;
 
-namespace CodeHub.iOS.ViewControllers.Teams
+namespace CodeHub.iOS.ViewControllers.Organizations
 {
     public class TeamMembersViewController : BaseUserCollectionViewController
     {
