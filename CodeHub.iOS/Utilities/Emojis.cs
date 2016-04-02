@@ -887,6 +887,9 @@ namespace CodeHub.iOS.Utilities
 
         public static string FindAndReplace(string text)
         {
+            if (string.IsNullOrEmpty(text))
+                return text;
+            
             var match = Regex.Match(text, @":(\w+):");
             if (match.Success)
             {
