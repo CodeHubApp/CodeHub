@@ -77,7 +77,7 @@ namespace CodeHub.Core.ViewModels.Issues
             return group;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             string filter = Issues.Filter.FilterType.ToString().ToLower();
             string direction = Issues.Filter.Ascending ? "asc" : "desc";
@@ -86,7 +86,7 @@ namespace CodeHub.Core.ViewModels.Issues
             string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
 
             var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
-            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
+            return Issues.SimpleCollectionLoad(request);
         }
     }
 }

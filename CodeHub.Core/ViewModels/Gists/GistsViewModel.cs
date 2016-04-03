@@ -19,9 +19,9 @@ namespace CodeHub.Core.ViewModels.Gists
             get { return new MvxCommand<GistModel>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Id }));}
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Gists.SimpleCollectionLoad(CreateRequest(), forceDataRefresh);
+            return Gists.SimpleCollectionLoad(CreateRequest());
         }
 
         protected abstract GitHubRequest<List<GistModel>> CreateRequest();

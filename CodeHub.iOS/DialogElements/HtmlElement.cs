@@ -49,18 +49,21 @@ namespace CodeHub.iOS.DialogElements
 
         private async Task<nfloat> GetSize()
         {
-            try
+            if (HasValue)
             {
-                var size = await WebView.EvaluateJavaScriptAsync("size();");
-                if (size != null)
+                try
                 {
-                    nfloat newsize;
-                    if (nfloat.TryParse(size.ToString(), out newsize))
-                        return newsize;
+                    var size = await WebView.EvaluateJavaScriptAsync("size();");
+                    if (size != null)
+                    {
+                        nfloat newsize;
+                        if (nfloat.TryParse(size.ToString(), out newsize))
+                            return newsize;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             return _height;

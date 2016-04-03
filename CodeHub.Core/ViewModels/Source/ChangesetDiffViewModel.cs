@@ -44,7 +44,7 @@ namespace CodeHub.Core.ViewModels.Source
             _commitFileModel = Mvx.Resolve<IViewModelTxService>().Get() as CommitModel.CommitFileModel;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             //Make sure we have this information. If not, go get it
             if (_commitFileModel == null)
@@ -54,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Source
             }
 
             FilePath = CreatePlainContentFile(_commitFileModel.Patch, _actualFilename);
-            await Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.GetAll(), forceCacheInvalidation);
+            await Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Commits[Branch].Comments.GetAll());
         }
 
         public async Task PostComment(string comment, int line)

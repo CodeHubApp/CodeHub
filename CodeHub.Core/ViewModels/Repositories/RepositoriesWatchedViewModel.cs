@@ -9,9 +9,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             ShowRepositoryOwner = true;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetWatching(), forceDataRefresh);
+            return Repositories.SimpleCollectionLoad(this.GetApplication().Client.AuthenticatedUser.Repositories.GetWatching());
         }
     }
 }

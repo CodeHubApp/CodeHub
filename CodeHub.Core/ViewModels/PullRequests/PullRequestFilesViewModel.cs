@@ -47,9 +47,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }).OrderBy(y => y.Key);
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles(), forceDataRefresh);
+            return Files.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[PullRequestId].GetFiles());
         }
 
         public class NavObject

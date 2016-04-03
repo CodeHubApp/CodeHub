@@ -5,7 +5,7 @@ using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp;
 using GitHubSharp.Models;
 
-namespace CodeHub.Core.ViewModels.User
+namespace CodeHub.Core.ViewModels.Repositories
 {
     public class UserRepositoriesViewModel : RepositoriesViewModel
     {
@@ -16,14 +16,14 @@ namespace CodeHub.Core.ViewModels.User
             Username = navObject.Username;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             GitHubRequest<List<RepositoryModel>> request;
             if (string.Equals(this.GetApplication().Account.Username, Username, StringComparison.OrdinalIgnoreCase))
                 request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll();
             else
                 request = this.GetApplication().Client.Users[Username].Repositories.GetAll();
-            return Repositories.SimpleCollectionLoad(request, forceCacheInvalidation);
+            return Repositories.SimpleCollectionLoad(request);
         }
 
         public class NavObject

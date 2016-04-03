@@ -53,7 +53,6 @@ namespace CodeHub.Core.ViewModels.Repositories
                 IsSearching = true;
 
                 var request = this.GetApplication().Client.Repositories.SearchRepositories(new [] { SearchText }, new string[] { });
-                request.UseCache = false;
                 var response = await this.GetApplication().Client.ExecuteAsync(request);
                 Repositories.Items.Reset(response.Data.Items);
             }

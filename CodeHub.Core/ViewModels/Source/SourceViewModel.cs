@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Source
 
         public string Path { get; private set; }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var fileName = System.IO.Path.GetFileName(_name);
             var filepath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);

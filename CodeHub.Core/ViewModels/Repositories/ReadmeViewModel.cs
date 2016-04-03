@@ -52,7 +52,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             _markdownService = markdownService;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var cmd = this.GetApplication().Client.Users[RepositoryOwner].Repositories[RepositoryName].GetReadme();
             var result = await this.GetApplication().Client.ExecuteAsync(cmd);

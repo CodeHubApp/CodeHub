@@ -31,9 +31,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Collaborators.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetCollaborators(), forceDataRefresh);
+            return Collaborators.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetCollaborators());
         }
 
         public class NavObject

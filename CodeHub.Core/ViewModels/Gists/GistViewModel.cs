@@ -99,11 +99,11 @@ namespace CodeHub.Core.ViewModels.Gists
             ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = forkedGist.Id });
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            var t1 = this.RequestModel(this.GetApplication().Client.Gists[Id].Get(), forceCacheInvalidation, response => Gist = response.Data);
-            this.RequestModel(this.GetApplication().Client.Gists[Id].IsGistStarred(), forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Gists[Id].GetComments(), forceCacheInvalidation).FireAndForget();
+            var t1 = this.RequestModel(this.GetApplication().Client.Gists[Id].Get(), response => Gist = response.Data);
+            this.RequestModel(this.GetApplication().Client.Gists[Id].IsGistStarred(), response => IsStarred = response.Data).FireAndForget();
+            Comments.SimpleCollectionLoad(this.GetApplication().Client.Gists[Id].GetComments()).FireAndForget();
             return t1;
         }
 

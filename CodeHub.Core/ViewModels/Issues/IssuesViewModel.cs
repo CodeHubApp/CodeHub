@@ -58,7 +58,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             string direction = _issues.Filter.Ascending ? "asc" : "desc";
             string state = _issues.Filter.Open ? "open" : "closed";
@@ -71,7 +71,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
             var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
                                                                                           assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
-            return Issues.SimpleCollectionLoad(request, forceCacheInvalidation);
+            return Issues.SimpleCollectionLoad(request);
         }
 
         public void CreateIssue(IssueModel issue)

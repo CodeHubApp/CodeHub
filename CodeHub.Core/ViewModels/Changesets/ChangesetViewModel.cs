@@ -96,15 +96,15 @@ namespace CodeHub.Core.ViewModels.Changesets
             Title = "Commit " + (Node.Length > 6 ? Node.Substring(0, 6) : Node);
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[User].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+                this.RequestModel(this.GetApplication().Client.Users[User].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
 
-            var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), forceCacheInvalidation, response => Changeset = response.Data);
-            Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll(), forceCacheInvalidation).FireAndForget();
+            var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), response => Changeset = response.Data);
+            Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll()).FireAndForget();
             return t1;
         }
 

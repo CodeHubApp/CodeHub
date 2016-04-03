@@ -28,9 +28,9 @@ namespace CodeHub.Core.ViewModels.Organizations
             get { return new MvxCommand<BasicUserModel>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations(), forceDataRefresh);
+            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations());
         }
 
         public class NavObject

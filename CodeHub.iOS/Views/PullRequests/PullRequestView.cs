@@ -274,7 +274,10 @@ namespace CodeHub.iOS.Views.PullRequests
 
             sections.Add(new Section { commits, files });
 
-            if (ViewModel.CanPush && !(ViewModel.PullRequest.Merged != null && ViewModel.PullRequest.Merged.Value))
+            var isClosed = string.Equals(ViewModel.PullRequest.State, "closed", StringComparison.OrdinalIgnoreCase);
+            var isMerged = ViewModel.PullRequest.Merged.GetValueOrDefault();
+
+            if (ViewModel.CanPush && !isClosed && !isMerged)
             {
                 Action mergeAction = async () =>
                 {
@@ -289,19 +292,16 @@ namespace CodeHub.iOS.Views.PullRequests
                 };
 
                 StringElement el;
-                if (ViewModel.PullRequest.Mergable == null)
-                {
-                    el = new StringElement("Merge This Pull Request!", Octicon.GitMerge.ToImage());
-                    el.Clicked.Subscribe(_ => mergeAction());
-                }
-                else if (ViewModel.PullRequest.Mergable.Value)
+                if (!ViewModel.PullRequest.Mergeable.HasValue || ViewModel.PullRequest.Mergeable.Value)
                 {
                     el = new StringElement("Merge This Pull Request!", Octicon.GitMerge.ToImage());
                     el.Clicked.Subscribe(_ => mergeAction());
                 }
                 else
-                    el = new StringElement("Unable to merge!") { Image = Octicon.GitMerge.ToImage() };
-                el.Accessory = UITableViewCellAccessory.None;
+                {
+                    el = new StringElement("Merge Conflicted!", Octicon.GitMerge.ToImage());
+                    el.Accessory = UITableViewCellAccessory.None;
+                }
 
                 sections.Add(new Section { el });
             }

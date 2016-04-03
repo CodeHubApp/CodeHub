@@ -147,21 +147,21 @@ namespace CodeHub.Core.ViewModels.Repositories
         }
 
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), forceCacheInvalidation, response => Repository = response.Data);
+            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), response => Repository = response.Data);
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
-                forceCacheInvalidation, response => Readme = response.Data).FireAndForget();
+                response => Readme = response.Data).FireAndForget();
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
-                forceCacheInvalidation, response => Branches = response.Data).FireAndForget();
+                response => Branches = response.Data).FireAndForget();
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-                forceCacheInvalidation, response => IsWatched = response.Data).FireAndForget();
+                response => IsWatched = response.Data).FireAndForget();
          
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-                forceCacheInvalidation, response => IsStarred = response.Data).FireAndForget();
+                response => IsStarred = response.Data).FireAndForget();
 
             return t1;
         }

@@ -39,7 +39,7 @@ namespace CodeHub.Core.ViewModels.Gists
             Gist = GetService<IViewModelTxService>().Get() as GistFileModel;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             
             if (Gist == null)

@@ -68,11 +68,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             var state = SelectedFilter == 0 ? "open" : "closed";
             var request = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
-            return PullRequests.SimpleCollectionLoad(request, forceCacheInvalidation);
+            return PullRequests.SimpleCollectionLoad(request);
         }
 
         public class NavObject

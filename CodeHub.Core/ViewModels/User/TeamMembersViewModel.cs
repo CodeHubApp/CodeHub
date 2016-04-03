@@ -11,9 +11,9 @@ namespace CodeHub.Core.ViewModels.User
             Id = navObject.Id;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Users.SimpleCollectionLoad(this.GetApplication().Client.Teams[Id].GetMembers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Teams[Id].GetMembers());
         }
 
         public class NavObject

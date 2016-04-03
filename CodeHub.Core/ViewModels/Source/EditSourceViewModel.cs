@@ -35,10 +35,9 @@ namespace CodeHub.Core.ViewModels.Source
                 Path = "/" + Path;
         }
 
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetContentFile(Path, Branch);
-            request.UseCache = false;
             var data = await this.GetApplication().Client.ExecuteAsync(request);
             BlobSha = data.Data.Sha;
             Text = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(data.Data.Content));

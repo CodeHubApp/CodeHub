@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.Filters
             {
                 NetworkActivity.PushNetworkActive();
                 var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
-                await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll(), false);
+                await _milestones.SimpleCollectionLoad(app.Client.Users[_username].Repositories[_repository].Milestones.GetAll());
             }
             catch {
             }

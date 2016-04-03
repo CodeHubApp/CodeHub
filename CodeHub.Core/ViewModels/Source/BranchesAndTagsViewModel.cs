@@ -54,12 +54,12 @@ namespace CodeHub.Core.ViewModels.Source
             _selectedFilter = navObject.IsShowingBranches ? 0 : 1;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             if (SelectedFilter == 0)
             {
                 var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetBranches();
-                return this.RequestModel(request, forceCacheInvalidation, response =>
+                return this.RequestModel(request, response =>
                 {
                     this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
                     Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));
@@ -68,7 +68,7 @@ namespace CodeHub.Core.ViewModels.Source
             else
             {
                 var request = this.GetApplication().Client.Users[Username].Repositories[Repository].GetTags();
-                return this.RequestModel(request, forceCacheInvalidation, response => 
+                return this.RequestModel(request, response => 
                 {
                     this.CreateMore(response, m => Items.MoreItems = m, d => Items.Items.AddRange(d.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x })));
                     Items.Items.Reset(response.Data.Where(x => x != null).Select(x => new ViewObject { Name = x.Name, Object = x }));

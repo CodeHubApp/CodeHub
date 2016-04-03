@@ -55,14 +55,14 @@ namespace CodeHub.Core.ViewModels.Changesets
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
             
-            return Commits.SimpleCollectionLoad(GetRequest(), forceCacheInvalidation);
+            return Commits.SimpleCollectionLoad(GetRequest());
         }
 
         protected abstract GitHubRequest<List<CommitModel>> GetRequest();

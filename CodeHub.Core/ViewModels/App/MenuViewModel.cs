@@ -181,8 +181,6 @@ namespace CodeHub.Core.ViewModels.App
         private void Load()
         {
             var notificationRequest = this.GetApplication().Client.Notifications.GetAll();
-            notificationRequest.RequestFromCache = false;
-            notificationRequest.CheckIfModified = false;
             this.GetApplication().Client.ExecuteAsync(notificationRequest).ContinueWith(t =>
             {
                 Notifications = t.Result.Data.Count;

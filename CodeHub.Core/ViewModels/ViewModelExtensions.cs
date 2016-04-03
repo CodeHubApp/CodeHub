@@ -15,14 +15,8 @@ namespace CodeHub.Core.ViewModels
 {
     public static class ViewModelExtensions
     {
-        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, bool forceDataRefresh, Action<GitHubResponse<TRequest>> update) where TRequest : new()
+        public static async Task RequestModel<TRequest>(this MvxViewModel viewModel, GitHubRequest<TRequest> request, Action<GitHubResponse<TRequest>> update) where TRequest : new()
         {
-            if (forceDataRefresh)
-            {
-                request.CheckIfModified = false;
-                request.RequestFromCache = false;
-            }
-
             var application = Mvx.Resolve<IApplicationService>();
             var result = await application.Client.ExecuteAsync(request);
             update(result);
@@ -39,7 +33,6 @@ namespace CodeHub.Core.ViewModels
 
             Action task = () =>
             {
-                response.More.UseCache = false;
                 var moreResponse = Mvx.Resolve<IApplicationService>().Client.ExecuteAsync(response.More).Result;
                 viewModel.CreateMore(moreResponse, assignMore, newDataAction);
                 newDataAction(moreResponse.Data);
@@ -48,10 +41,10 @@ namespace CodeHub.Core.ViewModels
             assignMore(task);
         }
 
-        public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request, bool forceDataRefresh) where T : new()
+        public static Task SimpleCollectionLoad<T>(this CollectionViewModel<T> viewModel, GitHubRequest<List<T>> request) where T : new()
         {
             var weakVm = new WeakReference<CollectionViewModel<T>>(viewModel);
-            return viewModel.RequestModel(request, forceDataRefresh, response =>
+            return viewModel.RequestModel(request, response =>
             {
                 weakVm.Get()?.CreateMore(response, m => {
                     var weak = weakVm.Get();

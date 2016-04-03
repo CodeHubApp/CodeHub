@@ -74,14 +74,14 @@ namespace CodeHub.Core.ViewModels.Source
             TrueBranch = navObject.TrueBranch;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), false, x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
             
-            return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch), forceCacheInvalidation);
+            return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch));
         }
 
         public class NavObject

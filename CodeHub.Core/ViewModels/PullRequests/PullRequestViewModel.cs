@@ -209,7 +209,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             _featuresService = featuresService;
 
-            this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
+            this.Bind(x => x.PullRequest, true).IsNotNull().Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
             GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Issue, true).Select(x => x != null));
             GoToOwner.Subscribe(_ => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Issue?.User?.Login }));
         }
@@ -272,28 +272,24 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public bool ShouldShowPro
         {
             get { return _shouldShowPro; }
-            protected set
-            {
-                _shouldShowPro = value;
-                RaisePropertyChanged();
-            }
+            protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
             ShouldShowPro = false;
 
             var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
-            var t1 = this.RequestModel(pullRequest, forceCacheInvalidation, response => PullRequest = response.Data);
-            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents(), forceCacheInvalidation).FireAndForget();
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments(), forceCacheInvalidation).FireAndForget();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), forceCacheInvalidation, response => Issue = response.Data).FireAndForget();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), forceCacheInvalidation, response => {
+            var t1 = this.RequestModel(pullRequest, response => PullRequest = response.Data);
+            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).FireAndForget();
+            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), response => {
                 CanPush = response.Data.Permissions.Push;
                 ShouldShowPro = response.Data.Private && !_featuresService.IsProEnabled;
             }).FireAndForget();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
-                forceCacheInvalidation, response => IsCollaborator = response.Data).FireAndForget();
+                response => IsCollaborator = response.Data).FireAndForget();
             return t1;
         }
 
@@ -305,13 +301,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 if (!response.Data.Merged)
                     throw new Exception(response.Data.Message);
 
-                var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
-                await this.RequestModel(pullRequest, true, r => PullRequest = r.Data);
             }
             catch (Exception e)
             {
                 this.AlertService.Alert("Unable to Merge!", e.Message);
             }
+
+            await Load().FireAndForget();
         }
 
         public ICommand MergeCommand
@@ -323,7 +319,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             if (PullRequest == null)
                 return false;
-            return (PullRequest.Merged != null && PullRequest.Merged.Value == false && (PullRequest.Mergable == null || PullRequest.Mergable.Value));
+            
+            var isClosed = string.Equals(PullRequest.State, "closed", StringComparison.OrdinalIgnoreCase);
+            var isMerged = PullRequest.Merged.GetValueOrDefault();
+
+            return CanPush && !isClosed && !isMerged;
         }
 
         public class NavObject

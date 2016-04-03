@@ -20,9 +20,9 @@ namespace CodeHub.Core.ViewModels.User
             public string Name { get; set; }
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Users.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetMembers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetMembers());
         }
     }
 }

@@ -29,9 +29,9 @@ namespace CodeHub.Core.ViewModels.Organizations
             OrganizationName = navObject.Name;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams(), forceDataRefresh);
+            return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams());
         }
 
         public class NavObject

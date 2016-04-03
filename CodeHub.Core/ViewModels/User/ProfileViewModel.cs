@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels.Organizations;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels;
 using MvvmCross.Core.ViewModels;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.User
 {
@@ -91,10 +92,10 @@ namespace CodeHub.Core.ViewModels.User
             Title = Username = navObject.Username;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), forceCacheInvalidation, x => IsFollowing = x.Data).FireAndForget();
-            return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), forceCacheInvalidation, response => User = response.Data);
+            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), x => IsFollowing = x.Data).FireAndForget();
+            return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), response => User = response.Data);
         }
 
         public class NavObject

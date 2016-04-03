@@ -113,9 +113,9 @@ namespace CodeHub.Core.ViewModels.Notifications
 
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), forceCacheInvalidation, response => {
+            return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), response => {
                 Notifications.Items.Reset(response.Data);
                 UpdateAccountNotificationsCount();
             });

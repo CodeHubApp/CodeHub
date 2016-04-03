@@ -19,7 +19,7 @@ namespace CodeHub.Core.ViewModels
             private set { this.RaiseAndSetIfChanged(ref _isLoading, value); }
         }
 
-        private async Task LoadResource(bool forceCacheInvalidation)
+        private async Task LoadResource()
         {
             var retry = false;
             while (true)
@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels
 
                 try
                 {
-                    await Load(forceCacheInvalidation);
+                    await Load();
                     return;
                 }
                 catch (WebException)
@@ -42,11 +42,11 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-        protected async Task ExecuteLoadResource(bool forceCacheInvalidation)
+        protected async Task ExecuteLoadResource()
         {
             try
             {
-                await LoadResource(forceCacheInvalidation);
+                await LoadResource();
             }
             catch (System.IO.IOException)
             {
@@ -60,15 +60,15 @@ namespace CodeHub.Core.ViewModels
 
         protected LoadableViewModel()
         {
-            LoadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(x), _ => !IsLoading);
+            LoadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(), _ => !IsLoading);
         }
 
-        private async Task HandleLoadCommand(bool? forceCacheInvalidation)
+        private async Task HandleLoadCommand()
         {
             try
             {
                 IsLoading = true;
-                await ExecuteLoadResource(forceCacheInvalidation ?? false);
+                await ExecuteLoadResource();
             }
             catch (OperationCanceledException e)
             {
@@ -85,7 +85,7 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-        protected abstract Task Load(bool forceCacheInvalidation);
+        protected abstract Task Load();
     }
 }
 

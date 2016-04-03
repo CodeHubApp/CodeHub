@@ -25,9 +25,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetStargazers());
         }
 
         public class NavObject
@@ -57,9 +57,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             Repository = navObject.Repository;
         }
 
-        protected override Task Load(bool forceDataRefresh)
+        protected override Task Load()
         {
-            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetWatchers(), forceDataRefresh);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[User].Repositories[Repository].GetWatchers());
         }
 
         public class NavObject

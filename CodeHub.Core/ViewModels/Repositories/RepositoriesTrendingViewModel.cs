@@ -47,7 +47,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner?.Login, Repository = x.Name })); }
         }
  
-        protected override async Task Load(bool forceCacheInvalidation)
+        protected override async Task Load()
         {
             var trendingRepo = new TrendingRepository();
             var repos = new List<Tuple<string, IList<RepositoryModel>>>();

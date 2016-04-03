@@ -416,9 +416,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="GitHubSharp">
-      <HintPath>..\packages\GitHubClient.1.0.12.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
-    </Reference>
     <Reference Include="MvvmCross.Platform.iOS">
       <HintPath>..\packages\MvvmCross.Platform.4.1.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
     </Reference>
@@ -442,6 +439,9 @@
     </Reference>
     <Reference Include="MvvmCross.Localization">
       <HintPath>..\packages\MvvmCross.Binding.4.1.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="GitHubSharp">
+      <HintPath>..\packages\GitHubClient.1.0.14.0\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\GitHubSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -39,9 +39,9 @@ namespace CodeHub.Core.ViewModels.Events
             ReportRepository = true;
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            return this.RequestModel(CreateRequest(0, 100), forceCacheInvalidation, response => {
+            return this.RequestModel(CreateRequest(0, 100), response => {
                 this.CreateMore(response, m => Events.MoreItems = m, d => Events.Items.AddRange(CreateDataFromLoad(d)));
                 Events.Items.Reset(CreateDataFromLoad(response.Data));
             });

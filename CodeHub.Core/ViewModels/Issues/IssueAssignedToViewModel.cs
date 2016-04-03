@@ -89,9 +89,9 @@ namespace CodeHub.Core.ViewModels.Issues
             ChangePresentation(new MvxClosePresentationHint(this));
         }
 
-        protected override Task Load(bool forceCacheInvalidation)
+        protected override Task Load()
         {
-            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetAssignees(), forceCacheInvalidation);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetAssignees());
         }
 
         public class NavObject
