@@ -6,17 +6,17 @@ using CodeHub.iOS.DialogElements;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
-    public class ProfileViewController : PrettyDialogViewController
+    public class UserViewController : PrettyDialogViewController
     {
         private readonly Lazy<UIBarButtonItem> _actionButton;
 
-        public new ProfileViewModel ViewModel
+        public new UserViewModel ViewModel
         {
-            get { return (ProfileViewModel)base.ViewModel; }
+            get { return (UserViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
         }
 
-        public ProfileViewController()
+        public UserViewController()
         {
             _actionButton = new Lazy<UIBarButtonItem>(() => new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
         }
@@ -56,6 +56,8 @@ namespace CodeHub.iOS.ViewControllers.Users
                 d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
                 d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
             });
+
+            throw new Exception("SHIT!");
         }
 
         public override void ViewWillAppear(bool animated)

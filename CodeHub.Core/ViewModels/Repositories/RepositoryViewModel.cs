@@ -62,7 +62,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ICommand GoToOwnerCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = Username })); }
+            get { return new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Username })); }
         }
 
         public ICommand GoToForkParentCommand

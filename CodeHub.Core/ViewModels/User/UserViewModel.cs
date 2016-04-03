@@ -10,7 +10,7 @@ using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.User
 {
-    public class ProfileViewModel : LoadableViewModel
+    public class UserViewModel : LoadableViewModel
     {
         public string Username { get; private set; }
 

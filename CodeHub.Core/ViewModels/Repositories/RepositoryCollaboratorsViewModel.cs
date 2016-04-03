@@ -22,7 +22,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ICommand GoToUserCommand
         {
-            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = x.Login })); }
+            get { return new MvxCommand<BasicUserModel>(x => this.ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = x.Login })); }
         }
 
         public void Init(NavObject navObject) 

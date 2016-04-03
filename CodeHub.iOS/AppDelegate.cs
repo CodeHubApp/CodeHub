@@ -53,8 +53,6 @@ namespace CodeHub.iOS
         /// <param name="args">The args.</param>
         public static void Main(string[] args)
         {
-            // if you want to use a different Application Delegate class from "AppDelegate"
-            // you can specify it here.
             UIApplication.Main(args, null, "AppDelegate");
         }
 
@@ -70,6 +68,9 @@ namespace CodeHub.iOS
             Presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, Presenter);
             setup.Initialize();
+
+            // Initialize the error service!
+            Mvx.Resolve<IErrorService>().Init();
 
             // Setup theme
             UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);

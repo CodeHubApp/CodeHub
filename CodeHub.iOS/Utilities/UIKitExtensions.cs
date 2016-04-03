@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 using System.Reactive;
+using Foundation;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -45,6 +46,29 @@ namespace UIKit
         public static IObservable<Unit> GetSearchObservable(this UISearchBar @this)
         {
             return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
+        }
+
+        public static string GetVersion(this UIApplication _) 
+        {
+            string shortVersion = string.Empty;
+            string bundleVersion = string.Empty;
+
+            try
+            {
+                shortVersion = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            }
+            catch { }
+
+            try
+            {
+                bundleVersion = NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
+            }
+            catch { }
+
+            if (string.Equals(shortVersion, bundleVersion))
+                return shortVersion;
+
+            return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
         }
     }
 

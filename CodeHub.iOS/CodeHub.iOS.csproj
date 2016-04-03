@@ -349,7 +349,6 @@
     <Compile Include="Views\Gists\BaseGistsViewController.cs" />
     <Compile Include="ViewControllers\Users\BaseUserCollectionViewController.cs" />
     <Compile Include="ViewControllers\Users\OrganizationMembersViewController.cs" />
-    <Compile Include="ViewControllers\Users\ProfileViewController.cs" />
     <Compile Include="ViewControllers\Users\UserFollowersViewController.cs" />
     <Compile Include="ViewControllers\Users\UserFollowingsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\TeamMembersViewController.cs" />
@@ -370,6 +369,8 @@
     <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
     <None Include="WebResources\LICENSE" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="Services\ErrorService.cs" />
+    <Compile Include="ViewControllers\Users\UserViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

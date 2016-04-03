@@ -85,7 +85,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                 aboutSection.Add(upgrades);
             }
 
-            var appVersion = new StringElement("App Version", GetApplicationVersion())
+            var appVersion = new StringElement("App Version", UIApplication.SharedApplication.GetVersion())
             { 
                 Accessory = UITableViewCellAccessory.None,
                 SelectionStyle = UITableViewCellSelectionStyle.None
@@ -95,29 +95,6 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             //Assign the root
             Root.Reset(accountSection, new Section("Appearance") { showOrganizationsInEvents, showOrganizations, repoDescriptions, startupView }, aboutSection);
-        }
-
-        private static string GetApplicationVersion() 
-        {
-            string shortVersion = string.Empty;
-            string bundleVersion = string.Empty;
-
-            try
-            {
-                shortVersion = NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
-            }
-            catch { }
-
-            try
-            {
-                bundleVersion = NSBundle.MainBundle.InfoDictionary["CFBundleVersion"].ToString();
-            }
-            catch { }
-
-            if (string.Equals(shortVersion, bundleVersion))
-                return shortVersion;
-
-            return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
         }
     }
 }

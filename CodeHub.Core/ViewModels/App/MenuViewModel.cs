@@ -67,7 +67,7 @@ namespace CodeHub.Core.ViewModels.App
         [PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<ProfileViewModel>(new ProfileViewModel.NavObject { Username = _application.Account.Username })); }
+            get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _application.Account.Username })); }
         }
 
         [PotentialStartupViewAttribute("Notifications")]
