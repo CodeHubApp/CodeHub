@@ -191,7 +191,12 @@ namespace CodeHub.iOS.DialogElements
 //            }
 //        }
 
-        public void Reload (params Element[] elements)
+        public void Reload (Element element)
+        {
+            Reload(new [] { element });
+        }
+
+        public void Reload (Element[] elements)
         {
             var paths = (elements ?? Enumerable.Empty<Element>())
                 .Where(x => x.Section != null && x.Section.Root != null)

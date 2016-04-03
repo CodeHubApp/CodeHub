@@ -244,7 +244,7 @@ namespace CodeHub.iOS.Views.Issues
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             Task.WhenAll(_descriptionElement.ForceResize(), _commentsElement.ForceResize())
-                .ContinueWith(t => Root.Reload(_commentsElement, _descriptionElement), TaskContinuationOptions.OnlyOnRanToCompletion);
+                .ContinueWith(t => Root.Reload(new [] { _commentsElement, _descriptionElement }), TaskContinuationOptions.OnlyOnRanToCompletion);
         }
     }
 }
