@@ -56,8 +56,6 @@ namespace CodeHub.iOS.ViewControllers.Users
                 d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
                 d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
             });
-
-            throw new Exception("SHIT!");
         }
 
         public override void ViewWillAppear(bool animated)
