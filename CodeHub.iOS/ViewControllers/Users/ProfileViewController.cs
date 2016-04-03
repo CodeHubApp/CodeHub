@@ -38,12 +38,11 @@ namespace CodeHub.iOS.ViewControllers.Users
             var gists = new StringElement("Gists", Octicon.Gist.ToImage());
             Root.Add(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
-            ViewModel.Bind(x => x.User).Subscribe(x =>
-            {
-                followers.Text = x.Followers.ToString();
-                following.Text = x.Following.ToString();
-                HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? null : x.Name;
-                HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
+            ViewModel.Bind(x => x.User).Subscribe(x => {
+                followers.Text = x?.Followers.ToString() ?? "-";
+                following.Text = x?.Following.ToString() ?? "-";
+                HeaderView.SubText = string.IsNullOrWhiteSpace(x?.Name) ? null : x.Name;
+                HeaderView.SetImage(x?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
             });
 

@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using MvvmCross.Platform;
 using System.Reactive.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -69,7 +70,26 @@ public static class BindExtensions
         var ret = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(t => viewModel.PropertyChanged += t, t => viewModel.PropertyChanged -= t)
             .Where(x => string.Equals(x.EventArgs.PropertyName, name))
             .Select(x => comp(viewModel));
-        return activate ? ret.StartWith(comp(viewModel)) : ret;
+
+        if (!activate)
+            return ret;
+
+        var o = Observable.Create<TR>(obs => {
+            try
+            {
+                obs.OnNext(comp(viewModel));
+            }
+            catch (Exception e)
+            {
+                obs.OnError(e);
+            }
+
+            obs.OnCompleted();
+
+            return Disposable.Empty;
+        });
+
+        return o.Concat(ret);
     }
 
     public static IObservable<Unit> BindCollection<T>(this T viewModel, System.Linq.Expressions.Expression<Func<T, INotifyCollectionChanged>> outExpr, bool activate = false) where T : INotifyPropertyChanged

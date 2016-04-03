@@ -9,6 +9,7 @@ using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.Transitions;
 using GitHubSharp.Models;
+using System.Collections.Generic;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -32,9 +33,9 @@ namespace CodeHub.iOS.Views.Repositories
             TableView.EstimatedRowHeight = 64f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
 
-            vm.Bind(x => x.Repositories).Subscribe(repos =>
-            {
-                Root.Reset(repos.Select(x => {
+            vm.Bind(x => x.Repositories).Subscribe(repos => {
+                var repositories = repos ?? Enumerable.Empty<Tuple<string, IList<RepositoryModel>>>();
+                Root.Reset(repositories.Select(x => {
                     var s = new Section(CreateHeaderView(x.Item1));
                     s.Reset(x.Item2.Select(repo => {
                         var description = vm.ShowRepositoryDescription ? repo.Description : string.Empty;
