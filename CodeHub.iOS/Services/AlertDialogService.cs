@@ -1,3 +1,4 @@
+
 using System;
 using CodeHub.Core.Services;
 using UIKit;
@@ -15,7 +16,7 @@ namespace CodeHub.iOS.Services
             var alert = new UIAlertView {Title = title, Message = message};
             alert.CancelButtonIndex = alert.AddButton("No");
             var ok = alert.AddButton("Yes");
-            alert.Clicked += (sender, e) => tcs.SetResult(e.ButtonIndex == ok);
+            alert.Clicked += (sender, e) => tcs.TrySetResult(e.ButtonIndex == ok);
             alert.Show();
             return tcs.Task;
         }
@@ -23,7 +24,7 @@ namespace CodeHub.iOS.Services
         public Task Alert(string title, string message)
         {
             var tcs = new TaskCompletionSource<object>();
-            ShowAlert(title, message, () => tcs.SetResult(null));
+            ShowAlert(title, message, () => tcs.TrySetResult(null));
             return tcs.Task;
         }
 
