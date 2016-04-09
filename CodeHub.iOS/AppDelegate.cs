@@ -268,7 +268,7 @@ namespace CodeHub.iOS
 
                 if (!path.EndsWith("/", StringComparison.Ordinal))
                     path += "/";
-                var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
+//                var first = path.Substring(0, path.IndexOf("/", StringComparison.Ordinal));
                 return UrlRouteProvider.Handle(path);
             }
         }

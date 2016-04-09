@@ -14,8 +14,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             private set; 
         }
 
-        public PullRequestCommitsViewModel(IFeaturesService featuresService)
-            : base(featuresService)
+        public PullRequestCommitsViewModel(IApplicationService applicationService, IFeaturesService featuresService)
+            : base(applicationService, featuresService)
         {
         }
 

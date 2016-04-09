@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Services
             TaskScheduler.UnobservedTaskException += (sender, e) => {
                 if (!e.Observed)
                 {
-                    SendError(e.Exception);
+                    SendError(e.Exception, true);
                     e.SetObserved();
                 }
             };
@@ -41,9 +41,9 @@ namespace CodeHub.iOS.Services
                 if (ex == null) return;
 
                 if (e.IsTerminating)
-                    WriteFile(ex);
+                    WriteFile(ex, true);
                 else
-                    SendError(ex);
+                    SendError(ex, false);
             };
 
             Task.Run(SendPersistedError);
@@ -53,17 +53,17 @@ namespace CodeHub.iOS.Services
         {
             if (fatal)
             {
-                WriteFile(e);
+                WriteFile(e, fatal);
             }
             else
             {
-                SendError(e);
+                SendError(e, fatal);
             }
         }
 
-        private void SendError(Exception e)
+        private void SendError(Exception e, bool fatal)
         {
-            SendError(Serialize(e));
+            SendError(Serialize(e, fatal));
         }
 
 
@@ -76,9 +76,9 @@ namespace CodeHub.iOS.Services
             client.SendAsync(request).ToBackground();
         }
 
-        private void WriteFile(Exception e)
+        private void WriteFile(Exception e, bool fatal)
         {
-            var body = Serialize(e);
+            var body = Serialize(e, fatal);
             File.WriteAllText(GetFilePath(), body, Encoding.UTF8);
         }
 
@@ -93,7 +93,7 @@ namespace CodeHub.iOS.Services
             }
         }
 
-        private string Serialize(Exception e)
+        private string Serialize(Exception e, bool fatal)
         {
             var sb = new StringBuilder();
             var ex = e;
@@ -110,7 +110,8 @@ namespace CodeHub.iOS.Services
                 Stack = sb.ToString(),
                 ApplicationVersion = _appVersion,
                 SystemVersion = _systemVersion,
-                TargetName = e.TargetSite?.Name
+                TargetName = e.TargetSite?.Name,
+                Fatal = fatal.ToString()
             };
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(error);
