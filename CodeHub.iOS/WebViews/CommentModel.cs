@@ -6,13 +6,13 @@ namespace CodeHub.iOS.WebViews
 {
     public class Comment
     {
-        public string AvatarUrl { get; private set; }
+        public string AvatarUrl { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        public DateTimeOffset Date { get; private set; }
+        public DateTimeOffset Date { get; set; }
 
-        public string Body { get; private set; }
+        public string Body { get; set; }
 
         public Comment(string avatar, string name, string body, DateTimeOffset date)
         {
@@ -25,9 +25,9 @@ namespace CodeHub.iOS.WebViews
 
     public class CommentModel
     {
-        public IList<Comment> Comments { get; private set; }
+        public IList<Comment> Comments { get; set; }
 
-        public int FontSize { get; private set; }
+        public int FontSize { get; set; }
 
         public CommentModel(IEnumerable<Comment> comments, int fontSize)
         {
