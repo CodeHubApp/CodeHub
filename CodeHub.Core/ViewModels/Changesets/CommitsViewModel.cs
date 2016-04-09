@@ -14,6 +14,7 @@ namespace CodeHub.Core.ViewModels.Changesets
     {
         private readonly CollectionViewModel<CommitModel> _commits = new CollectionViewModel<CommitModel>();
         private readonly IFeaturesService _featuresService;
+        private readonly IApplicationService _applicationService;
 
         public string Username
         {
@@ -44,8 +45,9 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _commits; }
         }
 
-        protected CommitsViewModel(IFeaturesService featuresService)
+        protected CommitsViewModel(IApplicationService applicationService, IFeaturesService featuresService)
         {
+            _applicationService = applicationService;
             _featuresService = featuresService;
         }
 
@@ -60,7 +62,11 @@ namespace CodeHub.Core.ViewModels.Changesets
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            {
+                var repoRequest = _applicationService.Client.Users[Username].Repositories[Repository].Get();
+                _applicationService.Client.ExecuteAsync(repoRequest)
+                    .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            }
             
             return Commits.SimpleCollectionLoad(GetRequest());
         }

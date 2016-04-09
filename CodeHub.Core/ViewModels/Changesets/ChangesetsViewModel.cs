@@ -9,8 +9,8 @@ namespace CodeHub.Core.ViewModels.Changesets
     {
         public string Branch { get; private set; }
 
-        public ChangesetsViewModel(IFeaturesService featuresService)
-            : base(featuresService)
+        public ChangesetsViewModel(IApplicationService applicationService,IFeaturesService featuresService)
+            : base(applicationService, featuresService)
         {
         }
 

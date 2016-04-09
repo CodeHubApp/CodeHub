@@ -181,15 +181,12 @@ namespace CodeHub.Core.ViewModels.App
         private void Load()
         {
             var notificationRequest = this.GetApplication().Client.Notifications.GetAll();
-            this.GetApplication().Client.ExecuteAsync(notificationRequest).ContinueWith(t =>
-            {
-                Notifications = t.Result.Data.Count;
-            });
+            this.GetApplication().Client.ExecuteAsync(notificationRequest)
+                .ToBackground(x => Notifications = x.Data.Count);
 
-            this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.GetOrganizations()).ContinueWith(t =>
-            {
-                Organizations = t.Result.Data.ToList();
-            });
+            var organizationsRequest = this.GetApplication().Client.AuthenticatedUser.GetOrganizations();
+            this.GetApplication().Client.ExecuteAsync(organizationsRequest)
+                .ToBackground(x => Organizations = x.Data.ToList());
         }
 
 //

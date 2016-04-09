@@ -16,7 +16,7 @@ namespace CodeHub.Core.ViewModels.Changesets
     public class ChangesetViewModel : LoadableViewModel
     {
         private readonly CollectionViewModel<CommentModel> _comments = new CollectionViewModel<CommentModel>();
-        private readonly IApplicationService _application;
+        private readonly IApplicationService _applicationService;
         private readonly IFeaturesService _featuresService;
         private CommitModel _commitModel;
 
@@ -80,7 +80,7 @@ namespace CodeHub.Core.ViewModels.Changesets
 
         public ChangesetViewModel(IApplicationService application, IFeaturesService featuresService)
         {
-            _application = application;
+            _applicationService = application;
             _featuresService = featuresService;
 
             GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Changeset, true).Select(x => x?.Author?.Login != null));
@@ -101,16 +101,20 @@ namespace CodeHub.Core.ViewModels.Changesets
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[User].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            {
+                var request = _applicationService.Client.Users[User].Repositories[Repository].Get();
+                _applicationService.Client.ExecuteAsync(request)
+                    .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            }
 
-            var t1 = this.RequestModel(_application.Client.Users[User].Repositories[Repository].Commits[Node].Get(), response => Changeset = response.Data);
-            Comments.SimpleCollectionLoad(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll()).FireAndForget();
+            var t1 = this.RequestModel(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Get(), response => Changeset = response.Data);
+            Comments.SimpleCollectionLoad(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll()).FireAndForget();
             return t1;
         }
 
         public async Task AddComment(string text)
         {
-            var c = await _application.Client.ExecuteAsync(_application.Client.Users[User].Repositories[Repository].Commits[Node].Comments.Create(text));
+            var c = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Comments.Create(text));
             Comments.Items.Add(c.Data);
         }
 

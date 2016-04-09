@@ -16,6 +16,7 @@ namespace CodeHub.Core.ViewModels.Issues
     {
         private MvxSubscriptionToken _editToken;
         private readonly IFeaturesService _featuresService;
+        private readonly IApplicationService _applicationService;
 
         public long Id 
         { 
@@ -151,7 +152,11 @@ namespace CodeHub.Core.ViewModels.Issues
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            {
+                var request = _applicationService.Client.Users[Username].Repositories[Repository].Get();
+                _applicationService.Client.ExecuteAsync(request)
+                    .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            }
 
             var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data);
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).FireAndForget();
@@ -165,8 +170,9 @@ namespace CodeHub.Core.ViewModels.Issues
             return (GetService<IMarkdownService>().Convert(str));
         }
 
-        public IssueViewModel(IFeaturesService featuresService)
+        public IssueViewModel(IApplicationService applicationService, IFeaturesService featuresService)
         {
+            _applicationService = applicationService;
             _featuresService = featuresService;
             this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
 

@@ -12,6 +12,7 @@ namespace CodeHub.Core.ViewModels.Source
     public class SourceTreeViewModel : LoadableViewModel
     {
         private readonly IFeaturesService _featuresService;
+        private readonly IApplicationService _applicationService;
 
         public CollectionViewModel<ContentModel> Content { get; } = new CollectionViewModel<ContentModel>();
 
@@ -34,8 +35,9 @@ namespace CodeHub.Core.ViewModels.Source
 
         public ReactiveUI.IReactiveCommand<object> GoToItemCommand { get; }
             
-        public SourceTreeViewModel(IFeaturesService featuresService)
+        public SourceTreeViewModel(IApplicationService applicationService, IFeaturesService featuresService)
         {
+            _applicationService = applicationService;
             _featuresService = featuresService;
 
             GoToItemCommand = ReactiveUI.ReactiveCommand.Create();
@@ -79,7 +81,11 @@ namespace CodeHub.Core.ViewModels.Source
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
-                this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            {
+                var request = _applicationService.Client.Users[Username].Repositories[Repository].Get();
+                _applicationService.Client.ExecuteAsync(request)
+                    .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+            }
             
             return Content.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetContent(Path, Branch));
         }
