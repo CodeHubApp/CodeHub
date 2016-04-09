@@ -106,7 +106,7 @@ namespace CodeHub.Core.ViewModels.App
             }
             catch (GitHubSharp.UnauthorizedException e)
             {
-                DisplayAlert("The credentials for the selected account are incorrect. " + e.Message)
+                DisplayAlertAsync("The credentials for the selected account are incorrect. " + e.Message)
                     .ToObservable()
                     .BindCommand(GoToAccounts);
             }

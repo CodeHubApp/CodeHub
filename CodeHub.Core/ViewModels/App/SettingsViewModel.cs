@@ -96,8 +96,9 @@ namespace CodeHub.Core.ViewModels.App
             }
             catch (Exception e)
             {
-                GetService<IAlertDialogService> ().Alert ("Unable to register for push notifications!", e.Message);
-                //ReportException(e);
+                GetService<IAlertDialogService>()
+                    .Alert("Unable to register for push notifications!", e.Message)
+                    .ToBackground();
             }
             finally
             {

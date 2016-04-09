@@ -134,7 +134,16 @@ namespace CodeHub.Core.ViewModels
         /// Display an error message to the user
         /// </summary>
         /// <param name="message">Message.</param>
-        protected Task DisplayAlert(string message)
+        protected void DisplayAlert(string message)
+        {
+            AlertService.Alert("Error!", message).ToBackground();
+        }
+
+        /// <summary>
+        /// Display an error message to the user
+        /// </summary>
+        /// <param name="message">Message.</param>
+        protected Task DisplayAlertAsync(string message)
         {
             return AlertService.Alert("Error!", message);
         }

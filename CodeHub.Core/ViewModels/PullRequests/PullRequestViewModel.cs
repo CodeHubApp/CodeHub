@@ -304,7 +304,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }
             catch (Exception e)
             {
-                this.AlertService.Alert("Unable to Merge!", e.Message);
+                this.AlertService.Alert("Unable to Merge!", e.Message).ToBackground();
             }
 
             await Load().FireAndForget();

@@ -179,7 +179,7 @@ namespace CodeHub.Core.ViewModels.Notifications
                 Notifications.Items.Clear();
                 UpdateAccountNotificationsCount();
             }
-            catch (Exception e)
+            catch
             {
                 DisplayAlert("Unable to mark all notifications as read. Please try again.");
             }
