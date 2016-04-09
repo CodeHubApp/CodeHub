@@ -29,6 +29,14 @@ public static class TaskExtensions
             .Catch(Observable.Empty<Unit>())
             .Subscribe(a => {}, e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
     }
+
+    public static IDisposable ToBackground(this Task task, Action action)
+    {
+        return task.ToObservable()
+            .Catch(Observable.Empty<Unit>())
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(_ => action(), e => System.Diagnostics.Debug.WriteLine("Unable to process background task: " + e.Message));
+    }
 }
 
 

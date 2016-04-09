@@ -72,6 +72,10 @@ namespace CodeHub.iOS
             // Initialize the error service!
             Mvx.Resolve<IErrorService>().Init();
 
+            var culture = new System.Globalization.CultureInfo("en");
+            System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             // Setup theme
             UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
             Theme.Setup();
