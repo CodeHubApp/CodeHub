@@ -51,12 +51,17 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             try
             {
-                var productData = (await _inAppPurchaseService.RequestProductData(FeaturesService.ProEdition)).Products.FirstOrDefault();
+                var request = _inAppPurchaseService.RequestProductData(FeaturesService.ProEdition).WithTimeout(TimeSpan.FromSeconds(30));
+                var productData = (await request).Products.FirstOrDefault();
                 var enabled = _featuresService.IsProEnabled;
                 var model = new UpgradeDetailsModel(productData != null ? productData.LocalizedPrice() : null, enabled);
                 var content = new UpgradeDetailsRazorView { Model = model }.GenerateString();
                 LoadContent(content);
                 Web.UserInteractionEnabled = true;
+            }
+            catch (Exception e)
+            {
+                AlertDialogService.ShowAlert("Error Loading Upgrades", e.Message);
             }
             finally
             {
@@ -119,8 +124,6 @@ namespace CodeHub.iOS.ViewControllers.Application
                 BTProgressHUD.ShowContinuousProgress("Activating...", ProgressHUD.MaskType.Gradient);
                 using (Disposable.Create(BTProgressHUD.Dismiss))
                     await activation();
-                
-                BTProgressHUD.ShowSuccessWithStatus("Activated!");
                 Load().ToBackground();
             }
             catch (Exception e)

@@ -1,7 +1,6 @@
 using CodeHub.Core.Services;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
 using UIKit;
 
 namespace CodeHub.iOS.Services
@@ -29,10 +28,8 @@ namespace CodeHub.iOS.Services
 
         public async Task ActivatePro()
         {
-            await _inAppPurchaseService.PurchaseProduct(ProEdition);
-            _defaultValueService.Set(ProEdition, true);
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            appDelegate?.RegisterUserForNotifications();
+            await _inAppPurchaseService.PurchaseProduct(ProEdition).WithTimeout(TimeSpan.FromSeconds(30));
+            ActivateUserNotifications();
         }
 
         public void ActivateProDirect()
@@ -40,15 +37,25 @@ namespace CodeHub.iOS.Services
             _defaultValueService.Set(ProEdition, true);
         }
 
-        public Task RestorePro()
+        public async Task RestorePro()
         {
-            return _inAppPurchaseService.Restore();
+            await _inAppPurchaseService.Restore().WithTimeout(TimeSpan.FromSeconds(30));
+            ActivateUserNotifications();
         }
 
         private bool IsActivated(string id)
         {
             bool value;
             return _defaultValueService.TryGet(id, out value) && value;
+        }
+
+        private void ActivateUserNotifications()
+        {
+            if (IsProEnabled)
+            {
+                var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+                appDelegate?.RegisterUserForNotifications();
+            }
         }
     }
 }

@@ -35,15 +35,9 @@ namespace CodeHub.iOS
     [Register("AppDelegate")]
     public class AppDelegate : MvxApplicationDelegate
     {
-        /// <summary>
-        /// The window.
-        /// </summary>
         public string DeviceToken;
 
-        public override UIWindow Window {
-            get;
-            set;
-        }
+        public override UIWindow Window { get; set; }
 
         public IosViewPresenter Presenter { get; private set; }
 
@@ -70,7 +64,8 @@ namespace CodeHub.iOS
             setup.Initialize();
 
             // Initialize the error service!
-            Mvx.Resolve<IErrorService>().Init();
+            var errorService = Mvx.Resolve<IErrorService>();
+            errorService.Init();
 
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
@@ -85,6 +80,7 @@ namespace CodeHub.iOS
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
             purchaseService.ThrownExceptions.Subscribe(ex => {
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
+                errorService.Log(ex);
             });
 
             #if DEBUG

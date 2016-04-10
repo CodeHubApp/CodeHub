@@ -33,6 +33,15 @@ namespace CodeHub.iOS
         {
         }
 
+        protected override MvvmCross.Platform.Platform.IMvxTrace CreateDebugTrace()
+        {
+            #if DEBUG
+            return base.CreateDebugTrace();
+            #else
+            return new EmptyTrace();
+            #endif
+        }
+
         protected override IEnumerable<Assembly> GetViewModelAssemblies()
         {
             var list = new List<Assembly>();
@@ -75,6 +84,19 @@ namespace CodeHub.iOS
                 .RegisterAsDynamic();
 
             return new Core.App();
+        }
+
+        private class EmptyTrace : MvvmCross.Platform.Platform.IMvxTrace
+        {
+            public void Trace(MvvmCross.Platform.Platform.MvxTraceLevel level, string tag, System.Func<string> message)
+            {
+            }
+            public void Trace(MvvmCross.Platform.Platform.MvxTraceLevel level, string tag, string message)
+            {
+            }
+            public void Trace(MvvmCross.Platform.Platform.MvxTraceLevel level, string tag, string message, params object[] args)
+            {
+            }
         }
     }
 }

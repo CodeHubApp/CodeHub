@@ -5,6 +5,8 @@ using Foundation;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
 using CodeHub.Core.Services;
+using System.Linq;
+using Splat;
 
 namespace CodeHub.iOS.Services
 {
@@ -19,25 +21,16 @@ namespace CodeHub.iOS.Services
         IObservable<Exception> ThrownExceptions { get; }
     }
 
-    public class InAppPurchaseService : IInAppPurchaseService
+    public class InAppPurchaseService : IInAppPurchaseService, IEnableLogger
     {
         private readonly TransactionObserver _observer;
         private TaskCompletionSource<bool> _actionSource;
+        private TaskCompletionSource<bool> _restoreSource;
         private readonly LinkedList<object> _productDataRequests = new LinkedList<object>();
         private readonly ISubject<Exception> _errorSubject = new Subject<Exception>();
         private readonly IDefaultValueService _defaultValueService;
 
         public IObservable<Exception> ThrownExceptions { get { return _errorSubject; } }
-
-        private void OnPurchaseError(SKPayment id, Exception e)
-        {
-            _actionSource?.TrySetException(e);
-        }
-
-        private void OnPurchaseSuccess(SKPayment id)
-        {
-            _actionSource?.TrySetResult(true);
-        }
 
         public InAppPurchaseService(IDefaultValueService defaultValueService)
         {
@@ -81,13 +74,15 @@ namespace CodeHub.iOS.Services
 
         public Task Restore()
         {
-            _actionSource = new TaskCompletionSource<bool>();
+            this.Log().Debug("Preparing to restore purchases");
+            _restoreSource = new TaskCompletionSource<bool>();
             SKPaymentQueue.DefaultQueue.RestoreCompletedTransactions();
-            return _actionSource.Task;
+            return _restoreSource.Task;
         }
 
         public async Task PurchaseProduct(string productId)
         {
+            this.Log().Debug("Preparing to purchase: " + productId);
             _actionSource = new TaskCompletionSource<bool>();
             var payment = SKMutablePayment.PaymentWithProduct(productId);
             SKPaymentQueue.DefaultQueue.AddPayment (payment);
@@ -96,31 +91,36 @@ namespace CodeHub.iOS.Services
 
         private void CompleteTransaction (SKPaymentTransaction transaction)
         {
-            var productId = transaction.Payment.ProductIdentifier;
+            var productId = transaction?.Payment?.ProductIdentifier;
+            if (productId == null)
+                throw new Exception("Unable to complete transaction as iTunes returned an empty product identifier!");
+            
             _defaultValueService.Set(productId, true);
-            OnPurchaseSuccess(transaction.Payment);
+            _actionSource?.TrySetResult(true);
         }
 
         private void RestoreTransaction (SKPaymentTransaction transaction)
         {
-            var productId = transaction.OriginalTransaction.Payment.ProductIdentifier;;
+            var productId = transaction?.OriginalTransaction?.Payment?.ProductIdentifier;
+            if (productId == null)
+                throw new Exception("Unable to restore transaction as iTunes returned an empty product identifier!");
+            
             _defaultValueService.Set(productId, true);
-            OnPurchaseSuccess(transaction.OriginalTransaction.Payment);
         }
 
         private void FailedTransaction (SKPaymentTransaction transaction)
         {
-            var errorString = transaction.Error != null ? transaction.Error.LocalizedDescription : "Unable to process transaction!";
-            OnPurchaseError(transaction.Payment, new Exception(errorString));
+            var errorString = transaction?.Error?.LocalizedDescription ?? "Unable to process transaction!";
+            _actionSource?.TrySetException(new Exception(errorString));
         }
 
-        private void DeferedTransaction(SKPaymentTransaction transaction)
+        private void DeferedTransaction()
         {
-            const string msgString = "Parental controls are active. After approval, the purchase will be complete.";
-            OnPurchaseError(transaction.Payment, new Exception(msgString));
+            const string errorString = "Parental controls are active. After approval, the purchase will be complete.";
+            _actionSource?.TrySetException(new Exception(errorString));
         }
 
-        private class TransactionObserver : SKPaymentTransactionObserver
+        private class TransactionObserver : SKPaymentTransactionObserver, IEnableLogger
         {
             private readonly InAppPurchaseService _inAppPurchases;
 
@@ -131,11 +131,12 @@ namespace CodeHub.iOS.Services
 
             public override void UpdatedTransactions(SKPaymentQueue queue, SKPaymentTransaction[] transactions)
             {
-                foreach (SKPaymentTransaction transaction in transactions)
+                foreach (var transaction in transactions.Where(x => x != null))
                 {
+                    this.Log().Debug("UpdatedTransactions: " + transaction.TransactionState);
+
                     try
                     {
-
                         switch (transaction.TransactionState)
                         {
                             case SKPaymentTransactionState.Purchased:
@@ -151,7 +152,7 @@ namespace CodeHub.iOS.Services
                                 SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
                                 break;
                             case SKPaymentTransactionState.Deferred:
-                                _inAppPurchases.DeferedTransaction(transaction);
+                                _inAppPurchases.DeferedTransaction();
                                 SKPaymentQueue.DefaultQueue.FinishTransaction(transaction);
                                 break;
                         }
@@ -163,11 +164,24 @@ namespace CodeHub.iOS.Services
                 }
             }
 
+            public override void PaymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue queue)
+            {
+                this.Log().Debug("Payment queue restore complete");
+                _inAppPurchases._restoreSource?.TrySetResult(true);
+            }
+
             public override void RestoreCompletedTransactionsFailedWithError (SKPaymentQueue queue, NSError error)
             {
-                if (error.Code != 2)
+                this.Log().Debug("Restore completed with error: " + error);
+
+                if (error.Code == 2)
                 {
-                    _inAppPurchases._actionSource?.TrySetException(new Exception(error.LocalizedDescription));
+                    _inAppPurchases._restoreSource?.TrySetCanceled();
+                }
+                else
+                {
+                    var errorMessage = error.LocalizedDescription ?? "Unable to restore purchase due to unknown reason.";
+                    _inAppPurchases._restoreSource?.TrySetException(new Exception(errorMessage));
                 }
             }
         }
