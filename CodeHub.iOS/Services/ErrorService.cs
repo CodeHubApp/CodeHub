@@ -7,6 +7,7 @@ using UIKit;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Foundation;
 
 namespace CodeHub.iOS.Services
 {
@@ -111,7 +112,8 @@ namespace CodeHub.iOS.Services
                 ApplicationVersion = _appVersion,
                 SystemVersion = _systemVersion,
                 TargetName = e.TargetSite?.Name,
-                Fatal = fatal.ToString()
+                Fatal = fatal.ToString(),
+                Name = NSBundle.MainBundle.BundleIdentifier
             };
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(error);
