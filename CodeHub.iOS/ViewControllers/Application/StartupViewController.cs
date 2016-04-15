@@ -10,6 +10,8 @@ using CodeHub.Core.Factories;
 using CodeHub.Core.Services;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers.Accounts;
+using CodeHub.Core.Utilities;
+using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -113,9 +115,19 @@ namespace CodeHub.iOS.ViewControllers.Application
                 AssignUnknownUserImage();
             else
             {
-                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, url) => {
+                // Wipe out old avatars
+                var avatar = new GitHubAvatar(uri);
+                var avatarSizes = new [] { avatar.ToUri(), avatar.ToUri(64) };
+                foreach (var avatarUrl in avatarSizes.Select(x => new NSUrl(x.AbsoluteUri)) )
+                {
+                    var cacheKey = SDWebImageManager.SharedManager.CacheKey(avatarUrl);
+                    if (cacheKey != null)
+                        SDWebImageManager.SharedManager.ImageCache.RemoveImage(cacheKey);
+                }
+
+                _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, _) => {
                     _imgView.Image = Images.LoginUserUnknown;
-                    UIView.Transition(_imgView, 0.50f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
+                    UIView.Transition(_imgView, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
                 });
             }
         }
