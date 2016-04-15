@@ -11,6 +11,8 @@ namespace CodeHub.iOS.Services
         private readonly IInAppPurchaseService _inAppPurchaseService;
    
         public const string ProEdition = "com.dillonbuchanan.codehub.pro";
+        public const string EnterpriseEdition = "com.dillonbuchanan.codehub.enterprise_support";
+        public const string PushNotifications = "com.dillonbuchanan.codehub.push";
 
         public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
         {

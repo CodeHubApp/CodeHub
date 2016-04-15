@@ -104,8 +104,12 @@ namespace CodeHub.iOS.Services
             var productId = transaction?.OriginalTransaction?.Payment?.ProductIdentifier;
             if (productId == null)
                 throw new Exception("Unable to restore transaction as iTunes returned an empty product identifier!");
-            
+
             _defaultValueService.Set(productId, true);
+
+            if (productId == FeaturesService.EnterpriseEdition ||
+                productId == FeaturesService.PushNotifications)
+                _defaultValueService.Set(FeaturesService.ProEdition, true);
         }
 
         private void FailedTransaction (SKPaymentTransaction transaction)
