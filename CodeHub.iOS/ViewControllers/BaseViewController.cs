@@ -72,6 +72,9 @@ namespace CodeHub.iOS.ViewControllers
 
         public override void ViewWillAppear(bool animated)
         {
+            MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IAnalyticsService>()
+                .LogScreen(GetType().Name);
+
             base.ViewWillAppear(animated);
             DisposeActivations();
             _appearingSubject.OnNext(animated);

@@ -40,11 +40,11 @@ namespace CodeHub.iOS.ViewControllers.Gists
         protected GistFileModifyViewController()
             : base(UITableViewStyle.Plain)
         {
-            SaveCommand = ReactiveCommand.CreateAsyncTask(async t =>
-            {
+            SaveCommand = ReactiveCommand.CreateAsyncTask(t => {
                 if (String.IsNullOrEmpty(Content))
                     throw new Exception("You cannot save a file without content!");
                 Save?.Invoke(Filename, Content);
+                return Task.FromResult(Unit.Default);
             });
 
             SaveCommand.ThrownExceptions.Subscribe(x => AlertDialogService.ShowAlert("Error", x.Message));

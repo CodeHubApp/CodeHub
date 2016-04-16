@@ -68,11 +68,11 @@ namespace CodeHub.Core.ViewModels.Events
 
         private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {
-            var repoId = new RepositoryIdentifier(repoModel.Name);
+            var repoId = RepositoryIdentifier.FromFullName(repoModel.Name);
             ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
             {
-                Username = repoId.Owner,
-                Repository = repoId.Name,
+                Username = repoId?.Owner,
+                Repository = repoId?.Name,
                 Branch = branch
             });
         }
@@ -84,11 +84,11 @@ namespace CodeHub.Core.ViewModels.Events
 
         private void GoToRepository(EventModel.RepoModel eventModel)
         {
-            var repoId = new RepositoryIdentifier(eventModel.Name);
+            var repoId = RepositoryIdentifier.FromFullName(eventModel.Name);
             ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
             {
-                Username = repoId.Owner,
-                Repository = repoId.Name
+                Username = repoId?.Owner,
+                Repository = repoId?.Name
             });
         }
 
@@ -111,11 +111,11 @@ namespace CodeHub.Core.ViewModels.Events
 
         private void GoToTags(EventModel.RepoModel eventModel)
         {
-            var repoId = new RepositoryIdentifier(eventModel.Name);
+            var repoId = RepositoryIdentifier.FromFullName(eventModel.Name);
             ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
-                Username = repoId.Owner,
-                Repository = repoId.Name,
+                Username = repoId?.Owner,
+                Repository = repoId?.Name,
                 IsShowingBranches = false
             });
         }
@@ -175,7 +175,8 @@ namespace CodeHub.Core.ViewModels.Events
         private EventBlock CreateEventTextBlocks(EventModel eventModel)
         {
             var eventBlock = new EventBlock();
-            var repoId = eventModel.Repo != null ? new RepositoryIdentifier(eventModel.Repo.Name) : new RepositoryIdentifier();
+            var repoId = eventModel.Repo != null ? RepositoryIdentifier.FromFullName(eventModel.Repo.Name) 
+                : new RepositoryIdentifier(string.Empty, string.Empty);
             var username = eventModel.Actor != null ? eventModel.Actor.Login : null;
 
             // Insert the actor

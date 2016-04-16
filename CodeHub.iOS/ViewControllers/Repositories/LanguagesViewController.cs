@@ -33,12 +33,24 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            NetworkActivity.PushNetworkActive();
-            Load().ContinueWith(t => NetworkActivity.PopNetworkActive()).ToBackground();
+            Load().ToBackground();
         }
 
         private async Task Load()
+        {
+            NetworkActivity.PushNetworkActive();
+
+            try
+            {
+                await LoadLanguages();
+            }
+            finally
+            {
+                NetworkActivity.PopNetworkActive();
+            }
+        }
+
+        private async Task LoadLanguages()
         {
             var lRepo = new LanguageRepository();
             var langs = await lRepo.GetLanguages();

@@ -173,6 +173,8 @@
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
     <Compile Include="Services\IErrorService.cs" />
     <Compile Include="ViewModels\User\UserViewModel.cs" />
+    <Compile Include="Services\AnalyticsService.cs" />
+    <Compile Include="Services\IAnalyticsService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

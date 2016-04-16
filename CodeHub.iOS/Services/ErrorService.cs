@@ -12,6 +12,7 @@ namespace CodeHub.iOS.Services
 {
     public class ErrorService : IErrorService
     {
+        private readonly IAnalyticsService _analyticsService;
         private readonly string _appVersion, _systemVersion;
 
         private static string GetFilePath()
@@ -20,8 +21,9 @@ namespace CodeHub.iOS.Services
             return Path.Combine (documents, "..", "tmp", "crash.log");
         }
         
-        public ErrorService()
+        public ErrorService(IAnalyticsService analyticsService)
         {
+            _analyticsService = analyticsService;
             _appVersion = UIApplication.SharedApplication.GetVersion();
             _systemVersion = UIDevice.CurrentDevice.SystemVersion;
         }
@@ -112,7 +114,8 @@ namespace CodeHub.iOS.Services
                 SystemVersion = _systemVersion,
                 TargetName = e.TargetSite?.Name,
                 Fatal = fatal.ToString(),
-                Name = NSBundle.MainBundle.BundleIdentifier
+                Name = NSBundle.MainBundle.BundleIdentifier,
+                Trace = string.Join(" -> ", _analyticsService.GetVisitedScreens())
             };
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(error);

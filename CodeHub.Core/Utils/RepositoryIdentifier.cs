@@ -2,18 +2,19 @@ namespace CodeHub.Core.Utils
 {
     public class RepositoryIdentifier
     {
-        public string Owner { get; set; }
-        public string Name { get; set; }
+        public string Owner { get; }
+        public string Name { get; }
 
-        public RepositoryIdentifier()
+        public RepositoryIdentifier(string owner, string name)
         {
+            Owner = owner;
+            Name = name;
         }
 
-        public RepositoryIdentifier(string id)
+        public static RepositoryIdentifier FromFullName(string id)
         {
-            var split = id.Split('/');
-            Owner = split[0];
-            Name = split[1];
+            var split = id.Split(new [] { '/' }, 2);
+            return split.Length != 2 ? null : new RepositoryIdentifier(split[0], split[1]);
         }
     }
 }

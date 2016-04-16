@@ -41,8 +41,7 @@ namespace CodeHub.Core.ViewModels.Source
             _featuresService = featuresService;
 
             GoToItemCommand = ReactiveUI.ReactiveCommand.Create();
-            GoToItemCommand.OfType<ContentModel>().Subscribe(x =>
-            {
+            GoToItemCommand.OfType<ContentModel>().Subscribe(x => {
                 if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
                 {
                     ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, 
@@ -53,9 +52,11 @@ namespace CodeHub.Core.ViewModels.Source
                     if (x.DownloadUrl == null)
                     {
                         var nameAndSlug = x.GitUrl.Substring(x.GitUrl.IndexOf("/repos/", StringComparison.Ordinal) + 7);
-                        var repoId = new RepositoryIdentifier(nameAndSlug.Substring(0, nameAndSlug.IndexOf("/git", StringComparison.Ordinal)));
+                        var indexOfGit = nameAndSlug.LastIndexOf("/git", StringComparison.Ordinal);
+                        indexOfGit = indexOfGit < 0 ? 0 : indexOfGit;
+                        var repoId = RepositoryIdentifier.FromFullName(nameAndSlug.Substring(0, indexOfGit));
                         var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", StringComparison.Ordinal) + 1);
-                        ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId.Owner, Repository = repoId.Name, Branch = sha});
+                        ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId?.Owner, Repository = repoId?.Name, Branch = sha});
                     }
                     else
                     {

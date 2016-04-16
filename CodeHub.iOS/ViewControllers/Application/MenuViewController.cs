@@ -271,7 +271,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
 
             public PinnedRepoElement(CodeHub.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier { Owner = pinnedRepo.Owner, Name = pinnedRepo.Name }), Octicon.Repo.ToImage())
+                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier(pinnedRepo.Owner, pinnedRepo.Name)), Octicon.Repo.ToImage())
             {
                 PinnedRepo = pinnedRepo;
 

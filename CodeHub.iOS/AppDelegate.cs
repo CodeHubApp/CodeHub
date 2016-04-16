@@ -170,8 +170,8 @@ namespace CodeHub.iOS
             {
                 var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
                 var appService = Mvx.Resolve<IApplicationService>();
-                var repoId = new RepositoryIdentifier(data["r"].ToString());
-                var parameters = new Dictionary<string, string>() {{"Username", repoId.Owner}, {"Repository", repoId.Name}};
+                var repoId = RepositoryIdentifier.FromFullName(data["r"].ToString());
+                var parameters = new Dictionary<string, string>() {{"Username", repoId?.Owner}, {"Repository", repoId?.Name}};
 
                 MvxViewModelRequest request;
                 if (data.ContainsKey(new NSString("c")))

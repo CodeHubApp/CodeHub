@@ -13,6 +13,7 @@ using CodeHub.Core.Messages;
 using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
+using CodeHub.Core.Utils;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
@@ -151,7 +152,8 @@ namespace CodeHub.Core.ViewModels.Notifications
             try
             {
                 IsMarking = true;
-                var repoId = new CodeHub.Core.Utils.RepositoryIdentifier(repo);
+                var repoId = RepositoryIdentifier.FromFullName(repo);
+                if (repoId == null) return;
                 await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications.MarkRepoAsRead(repoId.Owner, repoId.Name));
                 Notifications.Items.RemoveRange(Notifications.Items.Where(x => string.Equals(x.Repository.FullName, repo, StringComparison.OrdinalIgnoreCase)).ToList());
                 UpdateAccountNotificationsCount();

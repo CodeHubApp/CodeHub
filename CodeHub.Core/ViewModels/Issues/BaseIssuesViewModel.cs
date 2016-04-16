@@ -24,11 +24,15 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             get 
             { 
-                return new MvxCommand<IssueModel>(x =>
-                {
+                return new MvxCommand<IssueModel>(x => {
                     var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
                     var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
-                    var repoId = new RepositoryIdentifier(s1.Substring(0, s1.IndexOf("/issues")));
+                    var issuesIndex = s1.LastIndexOf("/issues");
+                    issuesIndex = issuesIndex < 0 ? 0 : issuesIndex;
+                    var repoId = RepositoryIdentifier.FromFullName(s1.Substring(0, issuesIndex));
+
+                    if (repoId == null)
+                        return;
 
                     if (isPullRequest)
                         ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = repoId.Owner, Repository = repoId.Name, Id = x.Number });
