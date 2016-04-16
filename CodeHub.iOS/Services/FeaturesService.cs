@@ -30,7 +30,7 @@ namespace CodeHub.iOS.Services
 
         public async Task ActivatePro()
         {
-            await _inAppPurchaseService.PurchaseProduct(ProEdition).WithTimeout(TimeSpan.FromSeconds(30));
+            await _inAppPurchaseService.PurchaseProduct(ProEdition);
             ActivateUserNotifications();
         }
 
@@ -41,7 +41,7 @@ namespace CodeHub.iOS.Services
 
         public async Task RestorePro()
         {
-            await _inAppPurchaseService.Restore().WithTimeout(TimeSpan.FromSeconds(30));
+            await _inAppPurchaseService.Restore();
             ActivateUserNotifications();
         }
 
