@@ -17,7 +17,6 @@ using ObjCRuntime;
 using MvvmCross.iOS.Platform;
 using MvvmCross.Platform;
 using MvvmCross.Core.Views;
-using ModernHttpClient;
 using System.Net.Http;
 using CodeHub.iOS.Services;
 using ReactiveUI;
@@ -102,7 +101,7 @@ namespace CodeHub.iOS
             }
 
             // Set the client constructor
-            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new HttpMessageHandler());
+            GitHubSharp.Client.ClientConstructor = () => new HttpClient(new CustomHttpMessageHandler());
 
             bool hasSeenWelcome;
             if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
@@ -147,9 +146,14 @@ namespace CodeHub.iOS
                 Window.RootViewController = viewController, null);
         }
 
-        class HttpMessageHandler : NativeMessageHandler
+        class CustomHttpMessageHandler : DelegatingHandler
         {
-            protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+            public CustomHttpMessageHandler()
+                : base(new HttpClientHandler())
+            {
+            }
+
+            protected override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
             {
                 if (!string.Equals(request.Method.ToString(), "get", StringComparison.OrdinalIgnoreCase))
                     NSUrlCache.SharedCache.RemoveAllCachedResponses();

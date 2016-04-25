@@ -21,7 +21,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.9.2</string>
+	<string>2.9.3</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -55,7 +55,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.9.2.0</string>
+	<string>2.9.3.0</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>NSAppTransportSecurity</key>
@@ -71,5 +71,7 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>CFBundleName</key>
+	<string>CodeHub</string>
 </dict>
 </plist>

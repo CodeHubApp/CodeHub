@@ -101,7 +101,7 @@ namespace CodeHub.iOS.Services
 
         private void RestoreTransaction (SKPaymentTransaction transaction)
         {
-            var productId = transaction?.OriginalTransaction?.Payment?.ProductIdentifier;
+            var productId = transaction?.Payment?.ProductIdentifier;
             if (productId == null)
                 throw new Exception("Unable to restore transaction as iTunes returned an empty product identifier!");
 
