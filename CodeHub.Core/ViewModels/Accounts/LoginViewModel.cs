@@ -29,7 +29,7 @@ namespace CodeHub.Core.ViewModels.Accounts
                     web + "/login/oauth/authorize?client_id={0}&redirect_uri={1}&scope={2}", 
                     Secrets.GithubOAuthId, 
                     Uri.EscapeDataString(LoginViewModel.RedirectUri),
-                    Uri.EscapeDataString("user,repo,notifications,gist"));
+                    Uri.EscapeDataString("user:follow,repo,notifications,gist,read:org"));
             }
         }
 
