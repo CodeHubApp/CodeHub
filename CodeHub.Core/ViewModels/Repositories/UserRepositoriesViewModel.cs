@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp;
 using GitHubSharp.Models;
 
@@ -20,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             GitHubRequest<List<RepositoryModel>> request;
             if (string.Equals(this.GetApplication().Account.Username, Username, StringComparison.OrdinalIgnoreCase))
-                request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll();
+                request = this.GetApplication().Client.AuthenticatedUser.Repositories.GetAll("owner");
             else
                 request = this.GetApplication().Client.Users[Username].Repositories.GetAll();
             return Repositories.SimpleCollectionLoad(request);
