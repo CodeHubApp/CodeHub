@@ -168,7 +168,7 @@ namespace CodeHub.iOS.Views.Gists
                 return;
 
             var app = Mvx.Resolve<IApplicationService>();
-            var isOwner = string.Equals(app.Account.Username, ViewModel.Gist.Owner.Login, StringComparison.OrdinalIgnoreCase);
+            var isOwner = string.Equals(app.Account.Username, ViewModel.Gist?.Owner?.Login, StringComparison.OrdinalIgnoreCase);
 
             var sheet = new UIActionSheet();
             var editButton = sheet.AddButton(isOwner ? "Edit" : "Fork");

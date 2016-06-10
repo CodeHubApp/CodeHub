@@ -5,10 +5,11 @@ using CodeHub.Core.ViewModels;
 using WebKit;
 using MvvmCross.iOS.Views;
 using CodeHub.iOS.Utilities;
+using Splat;
 
 namespace CodeHub.iOS.Views
 {
-    public class WebView : MvxViewController
+    public class WebView : MvxViewController, IEnableLogger
     {
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;

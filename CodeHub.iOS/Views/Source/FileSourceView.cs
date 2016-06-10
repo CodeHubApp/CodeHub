@@ -1,5 +1,4 @@
 using System;
-using CodeHub.iOS.Views;
 using UIKit;
 using CodeHub.Core.ViewModels;
 using Foundation;

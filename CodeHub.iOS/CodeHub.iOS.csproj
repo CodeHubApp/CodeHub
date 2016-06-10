@@ -31,7 +31,7 @@
     <MtouchProfiling>true</MtouchProfiling>
     <MtouchUseSGen>true</MtouchUseSGen>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchTlsProvider>AppleTLS</MtouchTlsProvider>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
     <DeviceSpecificBuild>false</DeviceSpecificBuild>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
   </PropertyGroup>
@@ -46,7 +46,7 @@
     <MtouchUseThumb>true</MtouchUseThumb>
     <MtouchI18n>
     </MtouchI18n>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>i386</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
@@ -103,7 +103,7 @@
     <MtouchExtraArgs>--linkskip=CodeHubiOS --linkskip=CodeHub.Core --linkskip=GitHubSharp</MtouchExtraArgs>
     <MtouchLink>Full</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchTlsProvider>AppleTLS</MtouchTlsProvider>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>

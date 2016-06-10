@@ -1,5 +1,4 @@
 using System;
-using CodeHub.iOS.Views.Source;
 using UIKit;
 using Foundation;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using CodeHub.iOS.Utilities;
 using CodeHub.Core.Services;
 using WebKit;
 using CodeHub.iOS.Services;
+using Splat;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -57,10 +57,17 @@ namespace CodeHub.iOS.Views.Source
 
             if (!_isLoaded)
             {
-                var path = System.IO.Path.Combine(NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
-                var uri = Uri.EscapeUriString("file://" + path) + "#" + Environment.TickCount;
-                Web.LoadRequest(new Foundation.NSUrlRequest(new Foundation.NSUrl(uri)));
-                _isLoaded = true;
+                try 
+                {
+                    var path = System.IO.Path.Combine (NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
+                    var uri = Uri.EscapeUriString ("file://" + path) + "#" + Environment.TickCount;
+                    Web.LoadRequest (new NSUrlRequest (new NSUrl (uri)));
+                    _isLoaded = true;
+                } 
+                catch (Exception e)
+                {
+                    this.Log().ErrorException("Unable to load ChangesetDiffView", e);
+                }
             }
         }
 
