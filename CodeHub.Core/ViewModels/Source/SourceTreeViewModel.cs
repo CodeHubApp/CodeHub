@@ -55,6 +55,9 @@ namespace CodeHub.Core.ViewModels.Source
                         var indexOfGit = nameAndSlug.LastIndexOf("/git", StringComparison.Ordinal);
                         indexOfGit = indexOfGit < 0 ? 0 : indexOfGit;
                         var repoId = RepositoryIdentifier.FromFullName(nameAndSlug.Substring(0, indexOfGit));
+                        if (repoId == null)
+                            return;
+
                         var sha = x.GitUrl.Substring(x.GitUrl.LastIndexOf("/", StringComparison.Ordinal) + 1);
                         ShowViewModel<SourceTreeViewModel>(new NavObject {Username = repoId?.Owner, Repository = repoId?.Name, Branch = sha});
                     }

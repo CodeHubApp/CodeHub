@@ -35,21 +35,6 @@
     <DeviceSpecificBuild>false</DeviceSpecificBuild>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <MtouchUseLlvm>true</MtouchUseLlvm>
-    <MtouchUseThumb>true</MtouchUseThumb>
-    <MtouchI18n>
-    </MtouchI18n>
-    <MtouchArch>i386</MtouchArch>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -68,21 +53,6 @@
     </IpaPackageName>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\iPhone\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchUseThumb>true</MtouchUseThumb>
-    <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <IpaPackageName>
-    </IpaPackageName>
-    <MtouchUseSGen>true</MtouchUseSGen>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -123,6 +93,7 @@
     <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchExtraArgs>--linkskip=CodeHubiOS --linkskip=CodeHub.Core --linkskip=GitHubSharp</MtouchExtraArgs>
     <MtouchLink>Full</MtouchLink>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Images\Images.cs" />

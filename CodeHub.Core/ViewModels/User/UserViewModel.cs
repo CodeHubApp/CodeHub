@@ -68,7 +68,7 @@ namespace CodeHub.Core.ViewModels.User
 
         public ICommand ToggleFollowingCommand
         {
-            get { return new MvxCommand(() => ToggleFollowing()); }
+            get { return new MvxCommand(() => ToggleFollowing().ToBackground()); }
         }
 
         private async Task ToggleFollowing()

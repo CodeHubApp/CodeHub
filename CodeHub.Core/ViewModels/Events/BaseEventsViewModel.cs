@@ -69,6 +69,9 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToCommits(EventModel.RepoModel repoModel, string branch)
         {
             var repoId = RepositoryIdentifier.FromFullName(repoModel.Name);
+            if (repoId == null)
+                return;
+            
             ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
             {
                 Username = repoId?.Owner,
@@ -85,6 +88,9 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToRepository(EventModel.RepoModel eventModel)
         {
             var repoId = RepositoryIdentifier.FromFullName(eventModel.Name);
+            if (repoId == null)
+                return;
+
             ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject
             {
                 Username = repoId?.Owner,
@@ -112,6 +118,9 @@ namespace CodeHub.Core.ViewModels.Events
         private void GoToTags(EventModel.RepoModel eventModel)
         {
             var repoId = RepositoryIdentifier.FromFullName(eventModel.Name);
+            if (repoId == null)
+                return;
+            
             ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
             {
                 Username = repoId?.Owner,

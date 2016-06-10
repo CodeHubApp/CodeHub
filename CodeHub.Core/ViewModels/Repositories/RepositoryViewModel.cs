@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.User;
 using CodeHub.Core.ViewModels.Events;

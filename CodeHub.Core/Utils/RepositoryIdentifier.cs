@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace CodeHub.Core.Utils
 {
     public class RepositoryIdentifier
@@ -14,7 +16,9 @@ namespace CodeHub.Core.Utils
         public static RepositoryIdentifier FromFullName(string id)
         {
             var split = id.Split(new [] { '/' }, 2);
-            return split.Length != 2 ? null : new RepositoryIdentifier(split[0], split[1]);
+            if (split.Length != 2 || split.Any(string.IsNullOrEmpty))
+                return null;
+            return new RepositoryIdentifier(split[0], split[1]);
         }
     }
 }
