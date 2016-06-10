@@ -47,7 +47,7 @@ namespace CodeHub.iOS.Views
                 return;
             }
 
-            var app = MvvmCross.Platform.Mvx.Resolve<CodeHub.Core.Services.IApplicationService>();
+            var app = MvvmCross.Platform.Mvx.Resolve<Core.Services.IApplicationService>();
             var hud = this.CreateHud();
             NetworkActivity.PushNetworkActive();
 
@@ -57,6 +57,10 @@ namespace CodeHub.iOS.Views
                 var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
                 Created?.Invoke(newGist.Data);
                 DismissViewController(true, null);
+            }
+            catch (Exception e)
+            {
+                AlertDialogService.ShowAlert("Error", "Unable to save gist: " + e.Message);
             }
             finally
             {
@@ -117,7 +121,7 @@ namespace CodeHub.iOS.Views
             OnActivation(d =>
             {
                 d(cancelButton.GetClickedObservable().Subscribe(_ => Discard()));
-                d(saveButton.GetClickedObservable().Subscribe(_ => Save()));
+                d(saveButton.GetClickedObservable().Subscribe(_ => Save().ToBackground()));
                 d(_descriptionElement.Clicked.Subscribe(_ => ChangeDescription()));
                 d(_addFileElement.Clicked.Subscribe(_ => AddFile()));
             });
