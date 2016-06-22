@@ -62,7 +62,6 @@ namespace CodeHub.Core.Data
         public GitHubAccount()
         {
             //Set some default values
-            DontRemember = false;
             ShowOrganizationsInEvents = true;
             ExpandOrganizations = true;
             ShowRepositoryDescriptionInList = true;

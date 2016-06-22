@@ -32,13 +32,6 @@ namespace CodeHub.iOS.ViewControllers.Application
             var currentAccount = application.Account;
             var accountSection = new Section("Account");
 
-            var saveCredentials = new BooleanElement("Save Credentials", !currentAccount.DontRemember);
-            saveCredentials.Changed.Subscribe(x => { 
-                currentAccount.DontRemember = !x;
-                application.Accounts.Update(currentAccount);
-            });
-            accountSection.Add(saveCredentials);
-
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", currentAccount.ShowOrganizationsInEvents);
             showOrganizationsInEvents.Changed.Subscribe(x => {
                 currentAccount.ShowOrganizationsInEvents = x;

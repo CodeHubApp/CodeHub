@@ -42,26 +42,6 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         private void SelectAccount(GitHubAccount githubAccount)
         {
             var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
-
-            if (githubAccount.DontRemember)
-            {
-                //Hack for now
-                if (isEnterprise)
-                {
-                    var vc = new AddAccountViewController();
-                    vc.ViewModel.Init(new AddAccountViewModel.NavObject { AttemptedAccountId = githubAccount.Id });
-                    NavigationController.PushViewController(vc, true);
-                }
-                else
-                {
-                    var loginViewController = new LoginViewController();
-                    loginViewController.ViewModel.Init(LoginViewModel.NavObject.CreateDontRemember(githubAccount));
-                    NavigationController.PushViewController(loginViewController, true);
-                }
-
-                return;
-            }
-
             _applicationService.ActivateUser(githubAccount, null);
             MessageBus.Current.SendMessage(new LogoutMessage());
         }

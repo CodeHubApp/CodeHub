@@ -78,11 +78,6 @@ namespace CodeHub.Core.ViewModels.App
             }
 
             var isEnterprise = account.IsEnterprise || !string.IsNullOrEmpty(account.Password);
-            if (account.DontRemember)
-            {
-                GoToAccounts.Execute(null);
-                return;
-            }
 
             //Lets login!
             try
