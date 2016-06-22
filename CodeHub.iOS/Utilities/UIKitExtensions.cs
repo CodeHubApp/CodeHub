@@ -76,12 +76,20 @@ namespace UIKit
     {
         public static UIFont MakeBold(this UIFont font)
         {
-            return UIFont.FromDescriptor(font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold), font.PointSize);
+            var descriptor = font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Bold);
+            if (descriptor == null)
+                return font;
+
+            return UIFont.FromDescriptor(descriptor, font.PointSize);
         }
 
         public static UIFont MakeItalic(this UIFont font)
         {
-            return UIFont.FromDescriptor(font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Italic), font.PointSize);
+            var descriptor = font.FontDescriptor.CreateWithTraits(UIFontDescriptorSymbolicTraits.Italic);
+            if (descriptor == null)
+                return font;
+            
+            return UIFont.FromDescriptor(descriptor, font.PointSize);
         }
     }
 
