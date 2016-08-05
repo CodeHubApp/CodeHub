@@ -51,6 +51,12 @@ namespace CodeHub.iOS
             if (uiView == null)
                 throw new InvalidOperationException("Asking to show a view which is not a UIViewController!");
 
+            if (uiView is IMvxModalIosView)
+            {
+                _window?.GetVisibleViewController()?.PresentViewController(uiView, true, null);
+                return;
+            }
+
             if (request.PresentationValues != null && request.PresentationValues.ContainsKey(PresentationValues.SlideoutRootPresentation))
             {
                 var openButton = new UIBarButtonItem { Image = Images.Buttons.ThreeLinesButton };
