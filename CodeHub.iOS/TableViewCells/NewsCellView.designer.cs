@@ -19,10 +19,10 @@ namespace CodeHub.iOS.TableViewCells
 		UIKit.NSLayoutConstraint AdjustableConstraint { get; set; }
 
 		[Outlet]
-		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
+		Xamarin.TTTAttributedLabel.TTTAttributedLabel Body { get; set; }
 
 		[Outlet]
-		MonoTouch.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
+		Xamarin.TTTAttributedLabel.TTTAttributedLabel Header { get; set; }
 
 		[Outlet]
 		UIKit.UIImageView Image { get; set; }

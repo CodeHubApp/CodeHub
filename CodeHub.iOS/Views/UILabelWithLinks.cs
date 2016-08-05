@@ -4,7 +4,7 @@ using System;
 namespace CodeHub.iOS.Views
 {
     [Register("UILabelWithLinks")]
-    public class UILabelWithLinks : MonoTouch.TTTAttributedLabel.TTTAttributedLabel
+    public class UILabelWithLinks : Xamarin.TTTAttributedLabel.TTTAttributedLabel
     {
         public UILabelWithLinks()
         {

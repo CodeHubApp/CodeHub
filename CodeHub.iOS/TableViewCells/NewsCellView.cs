@@ -23,7 +23,7 @@ namespace CodeHub.iOS.TableViewCells
         {
         }
 
-        class LabelDelegate : MonoTouch.TTTAttributedLabel.TTTAttributedLabelDelegate {
+        class LabelDelegate : Xamarin.TTTAttributedLabel.TTTAttributedLabelDelegate {
 
             private readonly List<Link> _links;
             private readonly Action<NSUrl> _webLinkClicked;
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.TableViewCells
                 _webLinkClicked = webLinkClicked;
             }
 
-            public override void DidSelectLinkWithURL (MonoTouch.TTTAttributedLabel.TTTAttributedLabel label, NSUrl url)
+            public override void DidSelectLinkWithURL (Xamarin.TTTAttributedLabel.TTTAttributedLabel label, NSUrl url)
             {
                 try
                 {
@@ -92,17 +92,18 @@ namespace CodeHub.iOS.TableViewCells
 
         public static NewsCellView Create()
         {
+            var linkAttributes = new NSMutableDictionary();
+            linkAttributes.Add(UIStringAttributeKey.UnderlineStyle, NSNumber.FromBoolean(true));
+
             var cell = (NewsCellView)Nib.Instantiate(null, null)[0];
             cell.SeparatorInset = new UIEdgeInsets(0, 48f, 0, 0);
             cell.Body.LinkAttributes = new NSDictionary();
-            cell.Body.ActiveLinkAttributes = new NSMutableDictionary();
-            cell.Body.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+            cell.Body.ActiveLinkAttributes = linkAttributes;
             cell.Body.Lines = 4;
             cell.Body.LineBreakMode = UILineBreakMode.TailTruncation;
 
             cell.Header.LinkAttributes = new NSDictionary();
-            cell.Header.ActiveLinkAttributes = new NSMutableDictionary();
-            cell.Header.ActiveLinkAttributes[CoreText.CTStringAttributeKey.UnderlineStyle] = NSNumber.FromBoolean(true);
+            cell.Header.ActiveLinkAttributes = linkAttributes;
             cell.Header.Lines = 2;
             cell.Header.LineBreakMode = UILineBreakMode.TailTruncation;
 
