@@ -1,7 +1,5 @@
 ﻿using UIKit;
 using System;
-using CodeHub.Core.Services;
-using MvvmCross.Platform;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -9,7 +7,6 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
     {
         private bool _shouldWatch;
         private bool _shouldStar;
-        private Lazy<IDefaultValueService> _defaultValueService = new Lazy<IDefaultValueService>(() => Mvx.Resolve<IDefaultValueService>());
 
         public PromoteViewController()
             : base("PromoteViewController", null)
@@ -37,7 +34,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         private void StarCodeHub()
         {
             _shouldStar = !_shouldStar;
-            _defaultValueService.Value.Set("SHOULD_STAR_CODEHUB", _shouldStar);
+            Core.Settings.ShouldStar = _shouldStar;
             var color = _shouldStar ? UIColor.FromRGB(0xbd, 0xc3, 0xc7) : UIColor.FromRGB(0x2c, 0x3e, 0x50);
             StarButton.SetTitle(_shouldStar ? "Good Choice!" : "Star", UIControlState.Normal);
             UIView.Animate(0.3f, () => StarButton.BackgroundColor = color);
@@ -47,7 +44,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         private void WatchCodeHub()
         {
             _shouldWatch = !_shouldWatch;
-            _defaultValueService.Value.Set("SHOULD_WATCH_CODEHUB", _shouldWatch);
+            Core.Settings.ShouldWatch = _shouldWatch;
             var color = _shouldWatch ? UIColor.FromRGB(0xbd, 0xc3, 0xc7) : UIColor.FromRGB(0x7f, 0x8c, 0x8d);
             WatchButton.SetTitle(_shouldWatch ? "Very Nice!" : "Watch", UIControlState.Normal);
             UIView.Animate(0.3f, () => WatchButton.BackgroundColor = color);

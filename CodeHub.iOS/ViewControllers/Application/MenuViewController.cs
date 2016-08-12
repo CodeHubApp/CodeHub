@@ -1,4 +1,3 @@
-using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.App;
 using UIKit;
@@ -67,6 +66,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private static async Task PromptPushNotifications()
         {
+
             var appService = Mvx.Resolve<IApplicationService>();
             if (appService.Account.IsEnterprise)
                 return;
@@ -81,8 +81,9 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (appService.Account.IsPushNotificationsEnabled == null)
             {
                 var result = await alertDialogService.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
+                var accountsService = Mvx.Resolve<IAccountsService>();
                 appService.Account.IsPushNotificationsEnabled = result;
-                appService.Accounts.Update(appService.Account);
+                await accountsService.Save(appService.Account);
 
                 if (result)
                 {

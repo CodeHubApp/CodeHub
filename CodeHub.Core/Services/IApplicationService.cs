@@ -1,5 +1,5 @@
 using System;
-using CodeHub.Core.Services;
+using System.Threading.Tasks;
 using CodeHub.Core.Data;
 
 namespace CodeHub.Core.Services
@@ -8,13 +8,13 @@ namespace CodeHub.Core.Services
     {
         GitHubSharp.Client Client { get; }
  
-        GitHubAccount Account { get; }
+        Account Account { get; }
 
-        IAccountsService Accounts { get; }
+        Task UpdateActiveAccount();
 
         void DeactivateUser();
 
-        void ActivateUser(GitHubAccount account, GitHubSharp.Client client);
+        void ActivateUser(Account account, GitHubSharp.Client client);
 
         void SetUserActivationAction(Action action);
 

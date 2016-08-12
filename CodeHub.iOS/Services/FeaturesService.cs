@@ -1,22 +1,23 @@
 using CodeHub.Core.Services;
-using System;
 using System.Threading.Tasks;
 using UIKit;
+using Plugin.Settings.Abstractions;
+using Plugin.Settings;
 
 namespace CodeHub.iOS.Services
 {
     public class FeaturesService : IFeaturesService
     {
-        private readonly IDefaultValueService _defaultValueService;
+        private readonly ISettings _defaultValueService;
         private readonly IInAppPurchaseService _inAppPurchaseService;
    
         public const string ProEdition = "com.dillonbuchanan.codehub.pro";
         public const string EnterpriseEdition = "com.dillonbuchanan.codehub.enterprise_support";
         public const string PushNotifications = "com.dillonbuchanan.codehub.push";
 
-        public FeaturesService(IDefaultValueService defaultValueService, IInAppPurchaseService inAppPurchaseService)
+        public FeaturesService(IInAppPurchaseService inAppPurchaseService)
         {
-            _defaultValueService = defaultValueService;
+            _defaultValueService = CrossSettings.Current;
             _inAppPurchaseService = inAppPurchaseService;
         }
 
@@ -36,7 +37,7 @@ namespace CodeHub.iOS.Services
 
         public void ActivateProDirect()
         {
-            _defaultValueService.Set(ProEdition, true);
+            _defaultValueService.AddOrUpdateValue(ProEdition, true);
         }
 
         public async Task RestorePro()
@@ -47,8 +48,7 @@ namespace CodeHub.iOS.Services
 
         private bool IsActivated(string id)
         {
-            bool value;
-            return _defaultValueService.TryGet(id, out value) && value;
+            return _defaultValueService.GetValueOrDefault(id, false);
         }
 
         private void ActivateUserNotifications()

@@ -1,10 +1,8 @@
-﻿using System;
-using MvvmCross.Platform.IoC;
-using Foundation;
+﻿using MvvmCross.Platform.IoC;
 
 namespace CodeHub.iOS
 {
-    [Preserve(AllMembers = true)]
+    [Preserve]
     public class LinkerPleaseInclude
     {
         public void Include(MvxPropertyInjector injector){

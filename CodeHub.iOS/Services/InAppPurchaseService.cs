@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using CodeHub.Core.Services;
 using System.Linq;
 using Splat;
+using Plugin.Settings;
 
 namespace CodeHub.iOS.Services
 {
@@ -28,13 +29,11 @@ namespace CodeHub.iOS.Services
         private TaskCompletionSource<bool> _restoreSource;
         private readonly LinkedList<object> _productDataRequests = new LinkedList<object>();
         private readonly ISubject<Exception> _errorSubject = new Subject<Exception>();
-        private readonly IDefaultValueService _defaultValueService;
 
         public IObservable<Exception> ThrownExceptions { get { return _errorSubject; } }
 
-        public InAppPurchaseService(IDefaultValueService defaultValueService)
+        public InAppPurchaseService()
         {
-            _defaultValueService = defaultValueService;
             _observer = new TransactionObserver(this);
             SKPaymentQueue.DefaultQueue.AddTransactionObserver(_observer);
         }
@@ -94,8 +93,8 @@ namespace CodeHub.iOS.Services
             var productId = transaction?.Payment?.ProductIdentifier;
             if (productId == null)
                 throw new Exception("Unable to complete transaction as iTunes returned an empty product identifier!");
-            
-            _defaultValueService.Set(productId, true);
+
+            CrossSettings.Current.AddOrUpdateValue(productId, true);
             _actionSource?.TrySetResult(true);
         }
 
@@ -105,11 +104,11 @@ namespace CodeHub.iOS.Services
             if (productId == null)
                 throw new Exception("Unable to restore transaction as iTunes returned an empty product identifier!");
 
-            _defaultValueService.Set(productId, true);
+            CrossSettings.Current.AddOrUpdateValue(productId, true);
 
             if (productId == FeaturesService.EnterpriseEdition ||
                 productId == FeaturesService.PushNotifications)
-                _defaultValueService.Set(FeaturesService.ProEdition, true);
+                Core.Settings.IsProEnabled = true;
         }
 
         private void FailedTransaction (SKPaymentTransaction transaction)
@@ -168,7 +167,7 @@ namespace CodeHub.iOS.Services
                 }
             }
 
-            public override void PaymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue queue)
+            public override void RestoreCompletedTransactionsFinished(SKPaymentQueue queue)
             {
                 this.Log().Debug("Payment queue restore complete");
                 _inAppPurchases._restoreSource?.TrySetResult(true);

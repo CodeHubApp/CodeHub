@@ -55,7 +55,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.9.6.1</string>
+	<string>2.9.6.2</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>NSAppTransportSecurity</key>

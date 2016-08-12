@@ -9,10 +9,8 @@ using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using System.Linq;
 using CodeHub.Core.Utils;
-using CodeHub.Core.ViewModels.App;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Notifications;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
@@ -20,9 +18,9 @@ using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.App
 {
-    public class MenuViewModel : BaseMenuViewModel
+    public class MenuViewModel : BaseViewModel
     {
-        private readonly IApplicationService _application;
+        private readonly IApplicationService _applicationService;
         private readonly IFeaturesService _featuresService;
         private int _notifications;
         private List<BasicUserModel> _organizations;
@@ -40,9 +38,9 @@ namespace CodeHub.Core.ViewModels.App
             set { _organizations = value; RaisePropertyChanged(); }
         }
         
-        public GitHubAccount Account
+        public Account Account
         {
-            get { return _application.Account; }
+            get { return _applicationService.Account; }
         }
 
         public bool ShouldShowUpgrades
@@ -52,7 +50,7 @@ namespace CodeHub.Core.ViewModels.App
         
         public MenuViewModel(IApplicationService application, IFeaturesService featuresService)
         {
-            _application = application;
+            _applicationService = application;
             _featuresService = featuresService;
             _notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
         }
@@ -67,7 +65,7 @@ namespace CodeHub.Core.ViewModels.App
         [PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
         {
-            get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _application.Account.Username })); }
+            get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _applicationService.Account.Username })); }
         }
 
         [PotentialStartupViewAttribute("Notifications")]
@@ -189,37 +187,94 @@ namespace CodeHub.Core.ViewModels.App
                 .ToBackground(x => Organizations = x.Data.ToList());
         }
 
-//
-//        private async Task PromptForPushNotifications()
-//        {
-//            // Push notifications are not enabled for enterprise
-//            if (Account.IsEnterprise)
-//                return;
-//
-//            try
-//            {
-//                var features = Mvx.Resolve<IFeaturesService>();
-//                var alertDialog = Mvx.Resolve<IAlertDialogService>();
-//                var push = Mvx.Resolve<IPushNotificationsService>();
-//                var 
-//                // Check for push notifications
-//                if (Account.IsPushNotificationsEnabled == null && features.IsPushNotificationsActivated)
-//                {
-//                    var result = await alertDialog.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
-//                    if (result)
-//                        Task.Run(() => push.Register()).FireAndForget();
-//                    Account.IsPushNotificationsEnabled = result;
-//                    Accounts.Update(Account);
-//                }
-//                else if (Account.IsPushNotificationsEnabled.HasValue && Account.IsPushNotificationsEnabled.Value)
-//                {
-//                    Task.Run(() => push.Register()).FireAndForget();
-//                }
-//            }
-//            catch (Exception e)
-//            {
-//                _alertDialogService.Alert("Error", e.Message);
-//            }
-//        }
+        //
+        //        private async Task PromptForPushNotifications()
+        //        {
+        //            // Push notifications are not enabled for enterprise
+        //            if (Account.IsEnterprise)
+        //                return;
+        //
+        //            try
+        //            {
+        //                var features = Mvx.Resolve<IFeaturesService>();
+        //                var alertDialog = Mvx.Resolve<IAlertDialogService>();
+        //                var push = Mvx.Resolve<IPushNotificationsService>();
+        //                var 
+        //                // Check for push notifications
+        //                if (Account.IsPushNotificationsEnabled == null && features.IsPushNotificationsActivated)
+        //                {
+        //                    var result = await alertDialog.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
+        //                    if (result)
+        //                        Task.Run(() => push.Register()).FireAndForget();
+        //                    Account.IsPushNotificationsEnabled = result;
+        //                    Accounts.Update(Account);
+        //                }
+        //                else if (Account.IsPushNotificationsEnabled.HasValue && Account.IsPushNotificationsEnabled.Value)
+        //                {
+        //                    Task.Run(() => push.Register()).FireAndForget();
+        //                }
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                _alertDialogService.Alert("Error", e.Message);
+        //            }
+        //        }
+
+        private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> { { PresentationValues.SlideoutRootPresentation, string.Empty } };
+
+        public ICommand GoToDefaultTopView
+        {
+            get
+            {
+                var startupViewName = Account.DefaultStartupView;
+                if (!string.IsNullOrEmpty(startupViewName))
+                {
+                    var props = from p in GetType().GetProperties()
+                                let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
+                                where attr.Length == 1
+                                select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute };
+
+                    foreach (var p in props)
+                    {
+                        if (string.Equals(startupViewName, p.Attribute.Name))
+                            return p.Property.GetValue(this) as ICommand;
+                    }
+                }
+
+                //Oh no... Look for the last resort DefaultStartupViewAttribute
+                var deprop = (from p in GetType().GetProperties()
+                              let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true)
+                              where attr.Length == 1
+                              select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
+
+                //That shouldn't happen...
+                if (deprop == null)
+                    return null;
+                var val = deprop.Property.GetValue(this);
+                return val as ICommand;
+            }
+        }
+
+        public ICommand DeletePinnedRepositoryCommand
+        {
+            get
+            {
+                return new MvxCommand<PinnedRepository>(x =>
+                {
+                    Account.PinnedRepositories.Remove(x);
+                    _applicationService.UpdateActiveAccount().ToBackground();
+                }, x => x != null);
+            }
+        }
+
+        protected bool ShowMenuViewModel<T>(object data) where T : IMvxViewModel
+        {
+            return this.ShowViewModel<T>(data, new MvxBundle(Presentation));
+        }
+
+        public IEnumerable<PinnedRepository> PinnedRepositories
+        {
+            get { return Account.PinnedRepositories; }
+        }
     }
 }

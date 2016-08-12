@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System;    
+using System;
 using MvvmCross.Core.ViewModels;
 using Foundation;
 using UIKit;
@@ -23,6 +23,8 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
+using System.IO;
+using CodeHub.iOS.Data;
 
 namespace CodeHub.iOS
 {
@@ -62,6 +64,8 @@ namespace CodeHub.iOS
             var setup = new Setup(this, Presenter);
             setup.Initialize();
 
+            Migration.Migrate();
+
             // Initialize the error service!
             var errorService = Mvx.Resolve<IErrorService>();
             errorService.Init();
@@ -75,7 +79,6 @@ namespace CodeHub.iOS
             Theme.Setup();
 
             var features = Mvx.Resolve<IFeaturesService>();
-            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
             purchaseService.ThrownExceptions.Subscribe(ex => {
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
@@ -103,10 +106,9 @@ namespace CodeHub.iOS
             // Set the client constructor
             GitHubSharp.Client.ClientConstructor = () => new HttpClient(new CustomHttpMessageHandler());
 
-            bool hasSeenWelcome;
-            if (!defaultValueService.TryGet("HAS_SEEN_WELCOME_INTRO", out hasSeenWelcome) || !hasSeenWelcome)
+            if (!Core.Settings.HasSeenWelcome)
             {
-                defaultValueService.Set("HAS_SEEN_WELCOME_INTRO", true);
+                Core.Settings.HasSeenWelcome = true;
                 var welcomeViewController = new CodeHub.iOS.ViewControllers.Walkthrough.WelcomePageViewController();
                 welcomeViewController.WantsToDimiss += GoToStartupView;
                 TransitionToViewController(welcomeViewController);
@@ -174,6 +176,7 @@ namespace CodeHub.iOS
             {
                 var viewDispatcher = Mvx.Resolve<IMvxViewDispatcher>();
                 var appService = Mvx.Resolve<IApplicationService>();
+                var accountsService = Mvx.Resolve<IAccountsService>();
                 var repoId = RepositoryIdentifier.FromFullName(data["r"].ToString());
                 var parameters = new Dictionary<string, string>() {{"Username", repoId?.Owner}, {"Repository", repoId?.Name}};
 
@@ -205,11 +208,13 @@ namespace CodeHub.iOS
 
                 if (appService.Account == null || !appService.Account.Username.Equals(username))
                 {
-                    var user = appService.Accounts.FirstOrDefault(x => x.Username.Equals(username));
+                    var accounts = accountsService.GetAccounts().Result.ToList();
+
+                    var user = accounts.FirstOrDefault(x => x.Username.Equals(username));
                     if (user != null)
                     {
                         appService.DeactivateUser();
-                        appService.Accounts.SetDefault(user);
+                        accountsService.SetActiveAccount(user).Wait();
                     }
                 }
 
@@ -217,8 +222,7 @@ namespace CodeHub.iOS
 
                 if (appService.Account == null && !fromBootup)
                 {
-                    var startupViewModelRequest = MvxViewModelRequest<CodeHub.Core.ViewModels.App.StartupViewModel>.GetDefaultRequest();
-                    viewDispatcher.ShowViewModel(startupViewModelRequest);
+                    MessageBus.Current.SendMessage(new LogoutMessage());
                 }
             }
             catch (Exception e)
@@ -237,11 +241,12 @@ namespace CodeHub.iOS
             DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");
 
             var app = Mvx.Resolve<IApplicationService>();
+            var accounts = Mvx.Resolve<IAccountsService>();
             if (app.Account != null && !app.Account.IsPushNotificationsEnabled.HasValue)
             {
                 Mvx.Resolve<IPushNotificationsService>().Register().ToBackground();
                 app.Account.IsPushNotificationsEnabled = true;
-                app.Accounts.Update(app.Account);
+                accounts.Save(app.Account);
             }
         }
 

@@ -1,4 +1,3 @@
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 using System;
 using UIKit;
@@ -19,7 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         {
             base.ViewDidLoad();
 
-            var vm = (BaseDefaultStartupViewModel)ViewModel;
+            var vm = (DefaultStartupViewModel)ViewModel;
             BindCollection(vm.StartupViews, x => {
                 var e = new StringElement(x);
                 e.Clicked.Subscribe(_ => vm.SelectedStartupView = x);

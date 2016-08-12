@@ -155,9 +155,7 @@
     <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
     <None Include="packages.config" />
-    <Compile Include="Services\AccountPreferencesService.cs" />
     <Compile Include="Services\AlertDialogService.cs" />
-    <Compile Include="Services\DefaultValueService.cs" />
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
@@ -348,6 +346,14 @@
     <Compile Include="Services\ErrorService.cs" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Data\SQLite.cs" />
+    <Compile Include="Data\AccountFilters.cs" />
+    <Compile Include="Data\Filter.cs" />
+    <Compile Include="Data\PinnedRepository.cs" />
+    <Compile Include="Data\GitHubAccount.cs" />
+    <Compile Include="Data\AccountPinnedRepositories.cs" />
+    <Compile Include="Data\Migration.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -416,7 +422,28 @@
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.TTTAttributedLabel">
-      <HintPath>..\packages\Xamarin.TTTAttributedLabel.2.0.0\lib\Xamarin.iOS\Xamarin.TTTAttributedLabel.dll</HintPath>
+      <HintPath>lib\Xamarin.TTTAttributedLabel.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.1.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings.Abstractions">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -559,6 +586,7 @@
     <Folder Include="ViewControllers\Users\" />
     <Folder Include="ViewControllers\Organizations\" />
     <Folder Include="ViewControllers\Gists\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -590,10 +618,6 @@
   <ItemGroup>
     <XamarinComponentReference Include="sdwebimage">
       <Version>3.7.5</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="TTTAttributedLabel">
-      <Version>2.0.0</Version>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>

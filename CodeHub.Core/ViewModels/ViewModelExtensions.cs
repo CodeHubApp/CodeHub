@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using GitHubSharp;
 using System.Collections.Generic;
 using CodeHub.Core.Services;

@@ -69,7 +69,7 @@ namespace CodeHub.iOS.Views.Repositories
             view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             view.Language.Subscribe(x => {
                 Root.Clear();
-                vm.Get().Do(y => y.SelectedLanguage = x);
+                vm.Get().With(y => y.SelectedLanguage = x);
                 DismissViewController(true, null);
             });
             var ctrlToPresent = new ThemedNavigationController(view);

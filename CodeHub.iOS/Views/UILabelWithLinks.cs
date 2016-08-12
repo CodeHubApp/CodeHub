@@ -6,10 +6,6 @@ namespace CodeHub.iOS.Views
     [Register("UILabelWithLinks")]
     public class UILabelWithLinks : Xamarin.TTTAttributedLabel.TTTAttributedLabel
     {
-        public UILabelWithLinks()
-        {
-        }
-
         public UILabelWithLinks(IntPtr ptr)
             : base(ptr)
         {

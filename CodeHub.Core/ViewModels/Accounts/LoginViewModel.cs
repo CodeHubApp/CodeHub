@@ -1,5 +1,4 @@
 using System;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Data;
 using System.Threading.Tasks;
 using CodeHub.Core.Factories;
@@ -33,7 +32,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
-        public GitHubAccount AttemptedAccount { get; private set; }
+        public Account AttemptedAccount { get; private set; }
 
         public string WebDomain { get; set; }
 
@@ -46,11 +45,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         public void Init(NavObject navObject)
         {
             WebDomain = navObject.WebDomain ?? GitHubSharp.Client.AccessTokenUri;
-
-            if (navObject.AttemptedAccountId >= 0)
-            {
-                AttemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
-            }
         }
 
         public async Task Login(string code)
@@ -81,22 +75,6 @@ namespace CodeHub.Core.ViewModels.Accounts
         {
             public string Username { get; set; }
             public string WebDomain { get; set; }
-            public int AttemptedAccountId { get; set; }
-
-            public NavObject()
-            {
-                AttemptedAccountId = int.MinValue;
-            }
-
-            public static NavObject CreateDontRemember(GitHubAccount account)
-            {
-                return new NavObject
-                { 
-                    WebDomain = account.WebDomain, 
-                    Username = account.Username,
-                    AttemptedAccountId = account.Id
-                };
-            }
         }
     }
 }

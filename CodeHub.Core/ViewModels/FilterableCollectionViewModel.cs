@@ -1,3 +1,4 @@
+using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using MvvmCross.Platform;
 
@@ -21,8 +22,10 @@ namespace CodeHub.Core.ViewModels
         public FilterableCollectionViewModel(string filterKey)
         {
             _filterKey = filterKey;
+            var application = Mvx.Resolve<IApplicationService>();
             var accounts = Mvx.Resolve<IAccountsService>();
-            _filter = accounts.ActiveAccount.Filters.GetFilter<TF>(_filterKey);
+            _filter = application.Account.GetFilter<TF>(_filterKey) ?? new TF();
+            accounts.Save(application.Account).ToBackground();
         }
 
         public void ApplyFilter(TF filter, bool saveAsDefault = false)
@@ -30,8 +33,9 @@ namespace CodeHub.Core.ViewModels
             Filter = filter;
             if (saveAsDefault)
             {
-                var accounts = Mvx.Resolve<IAccountsService>();
-                accounts.ActiveAccount.Filters.AddFilter(_filterKey, filter);
+                var application = Mvx.Resolve<IApplicationService>();
+                application.Account.SetFilter(_filterKey, _filter);
+                application.UpdateActiveAccount().ToBackground();
             }
         }
     }

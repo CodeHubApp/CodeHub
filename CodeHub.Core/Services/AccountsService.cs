@@ -1,116 +1,46 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
+using Akavache;
 using CodeHub.Core.Data;
-using SQLite;
 
 namespace CodeHub.Core.Services
 {
     public class AccountsService : IAccountsService
     {
-        private readonly SQLiteConnection _userDatabase;
-        private readonly IDefaultValueService _defaults;
-        private readonly string _accountsPath;
+        public Task<Account> GetActiveAccount() 
+            => Get(Settings.DefaultAccount);
 
-        public GitHubAccount ActiveAccount { get; private set; }
-
-        public AccountsService(IDefaultValueService defaults, IAccountPreferencesService accountPreferences)
+        public Task SetActiveAccount(Account account)
         {
-            _defaults = defaults;
-            _accountsPath = accountPreferences.AccountsDir;
-
-            // Assure creation of the accounts path
-            if (!Directory.Exists(_accountsPath))
-                Directory.CreateDirectory(_accountsPath);
-
-            _userDatabase = new SQLiteConnection(Path.Combine(_accountsPath, "accounts.db"));
-            _userDatabase.CreateTable<GitHubAccount>();
+            Settings.DefaultAccount = account == null ? null : GetKey(account);
+            return Task.FromResult(false);
         }
 
-        public GitHubAccount GetDefault()
-        {
-            int id;
-            return !_defaults.TryGet("DEFAULT_ACCOUNT", out id) ? null : Find(id);
-        }
+        public Task<IEnumerable<Account>> GetAccounts()
+            => BlobCache.LocalMachine.GetAllObjects<Account>()
+                        .Select(x => x.OrderBy(y => y.Username).AsEnumerable())
+                        .ToTask();
 
-        public void SetDefault(GitHubAccount account)
-        {
-            if (account == null)
-                _defaults.Clear("DEFAULT_ACCOUNT");
-            else
-                _defaults.Set("DEFAULT_ACCOUNT", account.Id);
-        }
+        public Task Save(Account account)
+            => BlobCache.LocalMachine.InsertObject(GetKey(account), account).ToTask();
 
-        public void SetActiveAccount(GitHubAccount account)
-        {
-            if (account != null)
-            {
-                var accountDir = CreateAccountDirectory(account);
-                if (!Directory.Exists(accountDir))
-                    Directory.CreateDirectory(accountDir);
-            }
+        public Task Remove(Account account)
+            => BlobCache.LocalMachine.Invalidate(GetKey(account)).ToTask();
 
-            ActiveAccount = account;
-        }
+        public Task<Account> Get(string domain, string username) => Get(GetKey(username, domain));
 
-        protected string CreateAccountDirectory(GitHubAccount account)
-        {
-            return Path.Combine(_accountsPath, account.Id.ToString(CultureInfo.InvariantCulture));
-        }
+        public Task<Account> Get(string key)
+            => BlobCache.LocalMachine.GetObject<Account>(key)
+                        .Catch(Observable.Return<Account>(null))
+                        .ToTask();
 
-        public void Insert(GitHubAccount account)
-        {
-            lock (_userDatabase)
-            {
-                _userDatabase.Insert(account);
-            }
-        }
+        private string GetKey(Account account) 
+            => GetKey(account.Username, account.Domain);
 
-        public void Remove(GitHubAccount account)
-        {
-            lock (_userDatabase)
-            {
-                _userDatabase.Delete(account);
-            }
-            var accountDir = CreateAccountDirectory(account);
-
-            if (!Directory.Exists(accountDir))
-                return;
-            Directory.Delete(accountDir, true);
-        }
-
-        public void Update(GitHubAccount account)
-        {
-            lock (_userDatabase)
-            {
-                _userDatabase.Update(account);
-            }
-        }
-
-        public bool Exists(GitHubAccount account)
-        {
-            return Find(account.Id) != null;
-        }
-
-        public GitHubAccount Find(int id)
-        {
-            lock (_userDatabase)
-            {
-                var query = _userDatabase.Find<GitHubAccount>(x => x.Id == id);
-                return query;
-            }
-        }
-
-        public IEnumerator<GitHubAccount> GetEnumerator()
-        {
-            foreach (var account in _userDatabase.Table<GitHubAccount>())
-                yield return account;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        private string GetKey(string username, string domain) 
+            => "account_" + username + domain;
     }
 }

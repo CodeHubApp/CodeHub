@@ -3,7 +3,6 @@ using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.ViewControllers;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.Core.Factories;

@@ -1,39 +1,37 @@
 using CodeHub.Core.Data;
-using CodeHub.Core.Services;
 using GitHubSharp;
 using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
     public class ApplicationService : IApplicationService
     {
+        private readonly IAccountsService _accountsService;
+
         public Client Client { get; private set; }
-        public GitHubAccount Account { get; private set; }
-        public IAccountsService Accounts { get; private set; }
+
+        public Account Account { get; private set; }
 
         public Action ActivationAction { get; set; }
 
         public ApplicationService(IAccountsService accountsService)
         {
-            Accounts = accountsService;
+            _accountsService = accountsService;
         }
 
         public void DeactivateUser()
         {
-            Accounts.SetActiveAccount(null);
-            Accounts.SetDefault(null);
+            _accountsService.SetActiveAccount(null).Wait();
             Account = null;
             Client = null;
         }
 
-        public void ActivateUser(GitHubAccount account, Client client)
+        public void ActivateUser(Account account, Client client)
         {
-            Accounts.SetActiveAccount(account);
+            _accountsService.SetActiveAccount(account).Wait();
             Account = account;
             Client = client;
-
-            //Set the default account
-            Accounts.SetDefault(account);
         }
 
         public void SetUserActivationAction(Action action)
@@ -44,5 +42,6 @@ namespace CodeHub.Core.Services
                 ActivationAction = action;
         }
 
+        public Task UpdateActiveAccount() => _accountsService.Save(Account);
     }
 }

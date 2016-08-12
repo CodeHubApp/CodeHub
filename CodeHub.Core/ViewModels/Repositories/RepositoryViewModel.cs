@@ -6,11 +6,17 @@ using GitHubSharp.Models;
 using CodeHub.Core.ViewModels.User;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Changesets;
+using System.Linq;
+using System;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
     public class RepositoryViewModel : LoadableViewModel
     {
+        private readonly IApplicationService _applicationService;
+        private readonly IAccountsService _accounts;
+        
         public string Username { get; private set; }
 
         public string RepositoryName { get; private set; }
@@ -135,13 +141,27 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             var repoOwner = Repository.Owner.Login;
             var repoName = Repository.Name;
+            var account = this.GetApplication().Account;
+            var pinnedRepository = 
+                account.PinnedRepositories
+                    .FirstOrDefault(x => string.Equals(repoName, x.Name, StringComparison.OrdinalIgnoreCase) &&
+                                         string.Equals(repoOwner, x.Owner, StringComparison.OrdinalIgnoreCase));
 
             //Is it pinned already or not?
-            var pinnedRepo = this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(repoOwner, repoName);
-            if (pinnedRepo == null)
-                this.GetApplication().Account.PinnnedRepositories.AddPinnedRepository(repoOwner, repoName, repoName, ImageUrl);
+            if (pinnedRepository == null)
+            {
+                account.PinnedRepositories.Add(new Data.PinnedRepository
+                {
+                    Name = repoName,
+                    Owner = repoOwner,
+                    ImageUri = ImageUrl,
+                    Slug = repoName
+                });
+            }
             else
-                this.GetApplication().Account.PinnnedRepositories.RemovePinnedRepository(pinnedRepo.Id);
+            {
+                account.PinnedRepositories.Remove(pinnedRepository);
+            }
         }
 
 
@@ -195,7 +215,12 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public bool IsPinned
         {
-            get { return this.GetApplication().Account.PinnnedRepositories.GetPinnedRepository(Username, RepositoryName) != null; }
+            get 
+            {
+                var repos = this.GetApplication().Account.PinnedRepositories;
+                return repos.Any(x => string.Equals(x.Owner, Username, StringComparison.OrdinalIgnoreCase) &&
+                                 string.Equals(x.Slug, RepositoryName, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         private async Task ToggleStar()

@@ -1,10 +1,8 @@
 using System;
 using UIKit;
-using CodeHub.iOS;
 using SDWebImage;
 using Foundation;
 using CodeHub.Core.ViewModels.App;
-using CodeHub.iOS.ViewControllers;
 using MvvmCross.Platform;
 using CodeHub.Core.Factories;
 using CodeHub.Core.Services;
@@ -30,7 +28,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             ViewModel = new StartupViewModel(
                 Mvx.Resolve<ILoginFactory>(),
                 Mvx.Resolve<IApplicationService>(),
-                Mvx.Resolve<IDefaultValueService>());
+                Mvx.Resolve<IAccountsService>());
         }
 
         public override void ViewWillLayoutSubviews()
@@ -89,7 +87,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            (UIApplication.SharedApplication.Delegate as AppDelegate).Do(y => y.Presenter.SlideoutNavigationController = slideoutController);
+            (UIApplication.SharedApplication.Delegate as AppDelegate).With(y => y.Presenter.SlideoutNavigationController = slideoutController);
             vc.ViewModel.GoToDefaultTopView.Execute(null);
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);

@@ -40,19 +40,12 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             base.ViewDidLoad();
             LoadRequest();
 
-            bool hasSeenWelcome = false;
-            var defaultValueService = Mvx.Resolve<IDefaultValueService>();
-            defaultValueService.TryGet(HasSeenWelcomeKey, out hasSeenWelcome);
-
-            if (!hasSeenWelcome)
+            if (!Core.Settings.HasSeenOAuthWelcome)
             {
                 Appeared
                     .Take(1)
-                    .Subscribe(_ =>
-                    {
-                        defaultValueService.Set(HasSeenWelcomeKey, true);
-                        BlurredAlertView.Display(OAuthWelcome);
-                    });
+                    .Do(_ => Core.Settings.HasSeenOAuthWelcome = true)
+                    .Subscribe(_ => BlurredAlertView.Display(OAuthWelcome));
             }
         }
 

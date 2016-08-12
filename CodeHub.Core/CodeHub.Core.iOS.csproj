@@ -35,7 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Data\GitHubAccount.cs" />
     <Compile Include="Filters\IssuesFilterModel.cs" />
     <Compile Include="Filters\MyIssuesFilterModel.cs" />
     <Compile Include="Filters\NotificationsFilterModel.cs" />
@@ -120,16 +119,9 @@
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
     <Compile Include="ViewModels\LoadableViewModel.cs" />
     <Compile Include="Messages\PullRequestEditMessage.cs" />
-    <Compile Include="Data\Account.cs" />
-    <Compile Include="Data\AccountFilters.cs" />
-    <Compile Include="Data\AccountPinnedRepositories.cs" />
-    <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\PinnedRepository.cs" />
     <Compile Include="Services\AccountsService.cs" />
-    <Compile Include="Services\IAccountPreferencesService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
-    <Compile Include="Services\IDefaultValueService.cs" />
     <Compile Include="Services\IJsonSerializationService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
@@ -139,8 +131,6 @@
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
-    <Compile Include="ViewModels\App\BaseDefaultStartupViewModel.cs" />
-    <Compile Include="ViewModels\App\BaseMenuViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
     <Compile Include="ViewModels\FileSourceViewModel.cs" />
@@ -158,7 +148,6 @@
     <Compile Include="Data\Language.cs" />
     <Compile Include="Data\LanguageRepository.cs" />
     <Compile Include="Data\TrendingRepository.cs" />
-    <Compile Include="Data\SQLite.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
     <Compile Include="Extensions\FunctionalExtensions.cs" />
@@ -175,6 +164,9 @@
     <Compile Include="Services\AnalyticsService.cs" />
     <Compile Include="Services\IAnalyticsService.cs" />
     <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -230,6 +222,27 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
+    </Reference>
+    <Reference Include="PCLStorage.Abstractions">
+      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache">
+      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
+    </Reference>
+    <Reference Include="Akavache.Sqlite3">
+      <HintPath>..\packages\akavache.sqlite3.4.1.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings.Abstractions">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

@@ -1,7 +1,7 @@
 using MvvmCross.Platform;
 using SQLite;
 
-namespace CodeHub.Core.Data
+namespace CodeHub.iOS.Data
 {
     public class Filter
     {

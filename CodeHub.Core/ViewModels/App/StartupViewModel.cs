@@ -1,6 +1,4 @@
 using System;
-using CodeHub.Core.ViewModels;
-using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using System.Linq;
 using CodeHub.Core.Factories;
@@ -8,7 +6,6 @@ using System.Windows.Input;
 using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using ReactiveUI;
-using CodeHub.Core.ViewModels.Accounts;
 using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.App
@@ -20,7 +17,7 @@ namespace CodeHub.Core.ViewModels.App
         private Uri _imageUrl;
         private readonly ILoginFactory _loginFactory;
         private readonly IApplicationService _applicationService;
-        private readonly IDefaultValueService _defaultValueService;
+        private readonly IAccountsService _accountsService;
 
         public bool IsLoggingIn
         {
@@ -53,24 +50,24 @@ namespace CodeHub.Core.ViewModels.App
 
         public StartupViewModel(
             ILoginFactory loginFactory, 
-            IApplicationService applicationService, 
-            IDefaultValueService defaultValueService)
+            IApplicationService applicationService,
+            IAccountsService accountsService)
         {
             _loginFactory = loginFactory;
             _applicationService = applicationService;
-            _defaultValueService = defaultValueService;
+            _accountsService = accountsService;
         }
 
         protected async Task Startup()
         {
-            if (!_applicationService.Accounts.Any())
+            var accounts = (await _accountsService.GetAccounts()).ToList();
+            if (!accounts.Any())
             {
                 GoToNewAccount.Execute(null);
                 return;
             }
 
-            var accounts = GetService<IAccountsService>();
-            var account = accounts.GetDefault();
+            var account = await _accountsService.GetActiveAccount();
             if (account == null)
             {
                 GoToAccounts.Execute(null);
@@ -121,18 +118,16 @@ namespace CodeHub.Core.ViewModels.App
         {
             try
             {
-                bool shouldStar;
-                if (_defaultValueService.TryGet("SHOULD_STAR_CODEHUB", out shouldStar) && shouldStar)
+                if (Settings.ShouldStar)
                 {
-                    _defaultValueService.Clear("SHOULD_STAR_CODEHUB");
+                    Settings.ShouldStar = false;
                     var starRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Star();
                     _applicationService.Client.ExecuteAsync(starRequest).ToBackground();
                 }
 
-                bool shouldWatch;
-                if (_defaultValueService.TryGet("SHOULD_WATCH_CODEHUB", out shouldWatch) && shouldWatch)
+                if (Settings.ShouldWatch)
                 {
-                    _defaultValueService.Clear("SHOULD_WATCH_CODEHUB");
+                    Settings.ShouldWatch = false;
                     var watchRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Watch();
                     _applicationService.Client.ExecuteAsync(watchRequest).ToBackground();
                 }

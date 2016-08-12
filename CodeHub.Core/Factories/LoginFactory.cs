@@ -27,24 +27,20 @@ namespace CodeHub.Core.Factories
 
             //Does this user exist?
 
-            var account = _accounts.FirstOrDefault(x => string.Equals(x.Username, username) && string.Equals(x.Domain, apiDomain));
-            var exists = account != null;
-            account = account ?? new GitHubAccount { Username = username };
 
+            var account = await _accounts.Get(apiDomain, username);
+            var exists = account != null;
+            account = account ?? new Account { Username = username };
             account.OAuth = token.AccessToken;
             account.AvatarUrl = info.Data.AvatarUrl;
             account.Domain = apiDomain;
             account.WebDomain = requestDomain;
             client.Username = username;
-
-            if (exists)
-                _accounts.Update(account);
-            else
-                _accounts.Insert(account);
+            await _accounts.Save(account);
             return new LoginData { Client = client, Account = account };
         }
 
-        public async Task<Client> LoginAccount(GitHubAccount account)
+        public async Task<Client> LoginAccount(Account account)
         {
             //Create the client
             Client client = null;
@@ -62,15 +58,11 @@ namespace CodeHub.Core.Factories
             account.Username = userInfo.Login;
             account.AvatarUrl = userInfo.AvatarUrl;
             client.Username = userInfo.Login;
-
-            if (_accounts.Exists(account))
-                _accounts.Update(account);
-            else
-                _accounts.Insert(account);
+            await _accounts.Save(account);
             return client;
         }
 
-        public async Task<GitHubAccount> LoginWithBasic(string domain, string user, string pass, string twoFactor = null)
+        public async Task<Account> LoginWithBasic(string domain, string user, string pass, string twoFactor = null)
         {
             //Fill these variables in during the proceeding try/catch
             var apiUrl = domain;
@@ -86,8 +78,9 @@ namespace CodeHub.Core.Factories
 
             var client = twoFactor == null ? Client.Basic(user, pass, apiUrl) : Client.BasicTwoFactorAuthentication(user, pass, twoFactor, apiUrl);
             var authorization = await client.ExecuteAsync(client.Authorizations.Create(new List<string>(Scopes), "CodeHub: " + user, null, Guid.NewGuid().ToString()));
-            var existingAccount = _accounts.FirstOrDefault(x => string.Equals(x.Username, user) && string.Equals(x.Domain, apiUrl));
-            var account = existingAccount ?? new GitHubAccount { 
+
+            var existingAccount = await _accounts.Get(apiUrl, user);
+            var account = existingAccount ?? new Account { 
                 Username = user, 
                 IsEnterprise = true, 
                 WebDomain = apiUrl, 

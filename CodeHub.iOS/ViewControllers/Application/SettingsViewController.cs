@@ -1,7 +1,6 @@
 using System;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.Utilities;
 using UIKit;
@@ -28,6 +27,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void CreateTable()
         {
             var application = Mvx.Resolve<IApplicationService>();
+            var accounts = Mvx.Resolve<IAccountsService>();
             var vm = (SettingsViewModel)ViewModel;
             var currentAccount = application.Account;
             var accountSection = new Section("Account");
@@ -35,19 +35,19 @@ namespace CodeHub.iOS.ViewControllers.Application
             var showOrganizationsInEvents = new BooleanElement("Show Organizations in Events", currentAccount.ShowOrganizationsInEvents);
             showOrganizationsInEvents.Changed.Subscribe(x => {
                 currentAccount.ShowOrganizationsInEvents = x;
-                application.Accounts.Update(currentAccount);
+                accounts.Save(currentAccount).ToBackground();
             });
 
             var showOrganizations = new BooleanElement("List Organizations in Menu", currentAccount.ExpandOrganizations);
             showOrganizations.Changed.Subscribe(x => { 
                 currentAccount.ExpandOrganizations = x;
-                application.Accounts.Update(currentAccount);
+                accounts.Save(currentAccount).ToBackground();
             });
 
             var repoDescriptions = new BooleanElement("Show Repo Descriptions", currentAccount.ShowRepositoryDescriptionInList);
             repoDescriptions.Changed.Subscribe(x => {
                 currentAccount.ShowRepositoryDescriptionInList = x;
-                application.Accounts.Update(currentAccount);
+                accounts.Save(currentAccount).ToBackground();
             });
 
             var startupView = new StringElement("Startup View", vm.DefaultStartupViewName, UITableViewCellStyle.Value1)

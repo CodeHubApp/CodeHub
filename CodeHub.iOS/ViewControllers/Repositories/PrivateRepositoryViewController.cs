@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             vc.View.BackgroundColor = Theme.CurrentTheme.PrimaryColor;
 
-            @this.NavigationItem.RightBarButtonItem.Do(x => x.Enabled = false);
+            @this.NavigationItem.RightBarButtonItem.With(x => x.Enabled = false);
 
             return Disposable.Create(() =>
             {

@@ -1,12 +1,10 @@
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.iOS.ViewControllers;
 using UIKit;
 using Foundation;
 using System;
 using CodeHub.Core.Data;
 using CoreGraphics;
-using CodeHub.Core.ViewModels.Accounts;
 using CodeHub.iOS.DialogElements;
 using System.Linq;
 using ReactiveUI;
@@ -39,9 +37,8 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             TableView.RowHeight = 74;
         }
 
-        private void SelectAccount(GitHubAccount githubAccount)
+        private void SelectAccount(Account githubAccount)
         {
-            var isEnterprise = githubAccount.IsEnterprise || !string.IsNullOrEmpty(githubAccount.Password);
             _applicationService.ActivateUser(githubAccount, null);
             MessageBus.Current.SendMessage(new LogoutMessage());
         }
@@ -53,9 +50,12 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             var accountsService = Mvx.Resolve<IAccountsService>();
             var weakVm = new WeakReference<AccountsViewController>(this);
             var accountSection = new Section();
-            accountSection.AddAll(accountsService.Select(account =>
+
+            var activeAccount = accountsService.GetActiveAccount().Result;
+            accountSection.AddAll(accountsService.GetAccounts().Result.Select(account =>
             {
-                var t = new AccountElement(account, account.Equals(accountsService.ActiveAccount));
+                var isEqual = account.Id == activeAccount?.Id;
+                var t = new AccountElement(account, isEqual);
                 t.Tapped += () => weakVm.Get()?.SelectAccount(account);
                 return t;
             }));
@@ -77,8 +77,10 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
             //Remove the designated username
             _accountsService.Remove(accountElement.Account);
+            var accountsService = Mvx.Resolve<IAccountsService>();
+            var activeAccount = accountsService.GetActiveAccount().Result;
 
-            if (_accountsService.ActiveAccount != null && _accountsService.ActiveAccount.Equals(accountElement.Account))
+            if (activeAccount != null && activeAccount.Equals(accountElement.Account))
             {
                 _applicationService.DeactivateUser();   
             }
@@ -136,9 +138,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
             private readonly bool _currentAccount;
 
-            public GitHubAccount Account { get; private set; }
+            public Account Account { get; private set; }
 
-            public AccountElement(GitHubAccount account, bool currentAccount)
+            public AccountElement(Account account, bool currentAccount)
             {
                 Account = account;
                 _currentAccount = currentAccount;

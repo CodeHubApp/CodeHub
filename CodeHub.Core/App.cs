@@ -1,4 +1,3 @@
-using CodeHub.Core.ViewModels.App;
 using System.Net;
 using MvvmCross.Core.ViewModels;
 

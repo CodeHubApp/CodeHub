@@ -1,19 +1,15 @@
 using System;
 using System.Threading.Tasks;
-using CodeHub.Core.Data;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Factories;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
-using GitHubSharp;
 using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AddAccountViewModel : BaseViewModel 
     {
-        private GitHubAccount _attemptedAccount;
         private readonly IApplicationService _application;
         private readonly ILoginFactory _loginFactory;
 
@@ -56,18 +52,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             LoginCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ => Login());
         }
 
-        public void Init(NavObject navObject)
-        {
-            if (navObject.AttemptedAccountId >= 0)
-                _attemptedAccount = this.GetApplication().Accounts.Find(navObject.AttemptedAccountId);
-
-            if (_attemptedAccount != null)
-            {
-                Username = _attemptedAccount.Username;
-                Domain = _attemptedAccount.Domain;
-            }
-        }
-
         private async Task Login()
         {
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
@@ -103,14 +87,12 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
+        public void Init(NavObject nav)
+        {
+        }
+
         public class NavObject
         {
-            public int AttemptedAccountId { get; set; }
-
-            public NavObject()
-            {
-                AttemptedAccountId = int.MinValue;
-            }
         }
     }
 }

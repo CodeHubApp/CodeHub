@@ -1,4 +1,3 @@
-using CodeHub.Core.ViewModels;
 using System.Windows.Input;
 using CodeHub.Core.Services;
 using System;
@@ -92,7 +91,7 @@ namespace CodeHub.Core.ViewModels.App
                 }
 
                 this.GetApplication().Account.IsPushNotificationsEnabled = enabled;
-                this.GetApplication().Accounts.Update(this.GetApplication().Account);
+                await this.GetApplication().UpdateActiveAccount();
             }
             catch (Exception e)
             {
