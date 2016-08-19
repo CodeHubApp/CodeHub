@@ -1,4 +1,5 @@
 ﻿using CodeHub.Core.ViewModels;
+using CodeHub.iOS.Services;
 using Foundation;
 using MvvmCross.iOS.Views;
 using UIKit;
@@ -7,6 +8,11 @@ namespace CodeHub.iOS.ViewControllers
 {
     public class WebBrowserViewController : MvxViewController, IMvxModalIosView
     {
+        void HandleAction()
+        {
+
+        }
+
         private UIStatusBarStyle _statusBarStyle;
 
         public WebBrowserViewController()
@@ -66,13 +72,21 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
             var vm = ViewModel as WebBrowserViewModel;
-            var safariBrowser = new SafariServices.SFSafariViewController(new NSUrl(vm.Url));
-            safariBrowser.View.Frame = View.Bounds;
-            safariBrowser.View.AutoresizingMask = UIViewAutoresizing.All;
-            AddChildViewController(safariBrowser);
-            Add(safariBrowser.View);
+
+            System.Uri uri;
+            if (!System.Uri.TryCreate(vm.Url, System.UriKind.Absolute, out uri))
+            {
+                AlertDialogService.ShowAlert("Error", "Unable to display webpage as the provided link (" + vm.Url + ") was invalid");
+            }
+            else
+            {
+                var safariBrowser = new SafariServices.SFSafariViewController(new NSUrl(vm.Url));
+                safariBrowser.View.Frame = View.Bounds;
+                safariBrowser.View.AutoresizingMask = UIViewAutoresizing.All;
+                AddChildViewController(safariBrowser);
+                Add(safariBrowser.View);
+            }
         }
     }
 }

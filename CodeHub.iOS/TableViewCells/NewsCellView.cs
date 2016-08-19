@@ -88,6 +88,8 @@ namespace CodeHub.iOS.TableViewCells
                 Body.AddLinkToURL(new NSUrl(b.Id.ToString()), b.Range);
 
             AdjustableConstraint.Constant = Body.Hidden ? 0f : 6f;
+
+            AccessibilityHint = header.Value;
         }
 
         public static NewsCellView Create()
@@ -96,11 +98,13 @@ namespace CodeHub.iOS.TableViewCells
             linkAttributes.Add(UIStringAttributeKey.UnderlineStyle, NSNumber.FromBoolean(true));
 
             var cell = (NewsCellView)Nib.Instantiate(null, null)[0];
+
             cell.SeparatorInset = new UIEdgeInsets(0, 48f, 0, 0);
             cell.Body.LinkAttributes = new NSDictionary();
             cell.Body.ActiveLinkAttributes = linkAttributes;
             cell.Body.Lines = 4;
             cell.Body.LineBreakMode = UILineBreakMode.TailTruncation;
+            cell.Body.AccessibilityElementsHidden = true;
 
             cell.Header.LinkAttributes = new NSDictionary();
             cell.Header.ActiveLinkAttributes = linkAttributes;

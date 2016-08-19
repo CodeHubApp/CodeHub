@@ -107,7 +107,7 @@ namespace CodeHub.iOS.Views.Repositories
             var pinButton = sheet.AddButton(ViewModel.IsPinned ? "Unpin from Slideout Menu" : "Pin to Slideout Menu");
             var starButton = sheet.AddButton(ViewModel.IsStarred.Value ? "Unstar This Repo" : "Star This Repo");
             var watchButton = sheet.AddButton(ViewModel.IsWatched.Value ? "Unwatch This Repo" : "Watch This Repo");
-            var showButton = sheet.AddButton("Show in GitHub");
+            var showButton = ViewModel?.Repository?.HtmlUrl != null ? sheet.AddButton("Show in GitHub") : -1;
             var shareButton = sheet.AddButton("Share");
             var cancelButton = sheet.AddButton("Cancel");
             sheet.CancelButtonIndex = cancelButton;
