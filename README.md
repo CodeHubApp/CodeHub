@@ -21,7 +21,7 @@ Additional information can be found on the [project's webpage](http://thedillonb
 
 ## Contributing
 
-Contributions are absolutely welcome. Unfortunately, Xamarin is a paid framework which makes it hard for contributors but if you'd like to create a PR I would be happen to test it. 
+Contributions are absolutely welcome. Unfortunately, Xamarin is a paid framework which makes it hard for contributors but if you'd like to create a PR I would be happy to test it. 
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
