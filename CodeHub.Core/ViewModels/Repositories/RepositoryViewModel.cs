@@ -15,7 +15,6 @@ namespace CodeHub.Core.ViewModels.Repositories
     public class RepositoryViewModel : LoadableViewModel
     {
         private readonly IApplicationService _applicationService;
-        private readonly IAccountsService _accounts;
         
         public string Username { get; private set; }
 
@@ -56,6 +55,11 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
+        }
+
+        public RepositoryViewModel(IApplicationService applicationService)
+        {
+            _applicationService = applicationService;
         }
 
         public void Init(NavObject navObject)
@@ -157,10 +161,14 @@ namespace CodeHub.Core.ViewModels.Repositories
                     ImageUri = ImageUrl,
                     Slug = repoName
                 });
+
+                _applicationService.UpdateActiveAccount().ToBackground();
+                
             }
             else
             {
                 account.PinnedRepositories.Remove(pinnedRepository);
+                _applicationService.UpdateActiveAccount().ToBackground();
             }
         }
 
