@@ -17,11 +17,11 @@ namespace CodeHub.Core.Data
 
         public bool IsEnterprise { get; set; }
 
-        public bool ShowOrganizationsInEvents { get; set; }
+        public bool ShowOrganizationsInEvents { get; set; } = true;
 
-        public bool ExpandOrganizations { get; set; }
+        public bool ExpandOrganizations { get; set; } = true;
 
-        public bool ShowRepositoryDescriptionInList { get; set; }
+        public bool ShowRepositoryDescriptionInList { get; set; } = true;
 
         public bool? IsPushNotificationsEnabled { get; set; }
 
