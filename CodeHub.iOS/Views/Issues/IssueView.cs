@@ -34,6 +34,14 @@ namespace CodeHub.iOS.Views.Issues
             set { base.ViewModel = value; }
         }
 
+        protected override void DidScroll(CoreGraphics.CGPoint p)
+        {
+            base.DidScroll(p);
+
+            _descriptionElement.SetLayout();
+            _commentsElement.SetLayout();
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

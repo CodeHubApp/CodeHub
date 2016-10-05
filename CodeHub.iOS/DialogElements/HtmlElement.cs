@@ -47,6 +47,11 @@ namespace CodeHub.iOS.DialogElements
             HasValue = value != null;
         }
 
+        public void SetLayout()
+        {
+            WebView.SetNeedsLayout();
+        }
+
         private async Task<nfloat> GetSize()
         {
             if (HasValue)
