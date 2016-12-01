@@ -20,20 +20,20 @@ namespace CodeHub.Core.Services
         }
 
         public Task<IEnumerable<Account>> GetAccounts()
-            => BlobCache.LocalMachine.GetAllObjects<Account>()
+            => BlobCache.UserAccount.GetAllObjects<Account>()
                         .Select(x => x.OrderBy(y => y.Username).AsEnumerable())
                         .ToTask();
 
         public Task Save(Account account)
-            => BlobCache.LocalMachine.InsertObject(GetKey(account), account).ToTask();
+            => BlobCache.UserAccount.InsertObject(GetKey(account), account).ToTask();
 
         public Task Remove(Account account)
-            => BlobCache.LocalMachine.Invalidate(GetKey(account)).ToTask();
+            => BlobCache.UserAccount.Invalidate(GetKey(account)).ToTask();
 
         public Task<Account> Get(string domain, string username) => Get(GetKey(username, domain));
 
         public Task<Account> Get(string key)
-            => BlobCache.LocalMachine.GetObject<Account>(key)
+            => BlobCache.UserAccount.GetObject<Account>(key)
                         .Catch(Observable.Return<Account>(null))
                         .ToTask();
 
