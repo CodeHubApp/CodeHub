@@ -70,6 +70,7 @@ namespace CodeHub.iOS.Services
             {
                 new KeyValuePair<string, string>("token", del.DeviceToken),
                 new KeyValuePair<string, string>("oauth", user.OAuth),
+                new KeyValuePair<string, string>("user", user.Username),
                 new KeyValuePair<string, string>("domain", "https://api.github.com"),
             });
 
