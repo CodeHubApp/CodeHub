@@ -21,7 +21,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.dillonbuchanan.codehub</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.9.7</string>
+	<string>2.9.8</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
@@ -55,7 +55,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.9.7.0</string>
+	<string>2.9.8.1</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>NSAppTransportSecurity</key>
@@ -73,5 +73,7 @@
 	<true/>
 	<key>CFBundleName</key>
 	<string>CodeHub</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photos can be uploaded to  comments created within the app.</string>
 </dict>
 </plist>
