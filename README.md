@@ -41,4 +41,4 @@ A lot of thanks to many who contribute to open-source projects. The following we
 
 ## Copyright
 
-Copyright 2016 Dillon Buchanan
+Copyright © 2016 Dillon Buchanan
