@@ -71,7 +71,9 @@ namespace CodeHub.iOS
             errorService.Init();
 
             var culture = new System.Globalization.CultureInfo("en");
+            System.Threading.Thread.CurrentThread.CurrentCulture = culture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
             System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
 
             // Setup theme
