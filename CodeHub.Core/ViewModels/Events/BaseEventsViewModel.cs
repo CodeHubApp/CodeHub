@@ -406,9 +406,17 @@ namespace CodeHub.Core.ViewModels.Events
                 eventBlock.Tapped = () => GoToRepositoryCommand.Execute(eventModel.Repo);
 
                 if (memberEvent.Action.Equals("added"))
-                    eventBlock.Header.Add(new TextBlock(" added as a collaborator"));
+                    eventBlock.Header.Add(new TextBlock(" added "));
                 else if (memberEvent.Action.Equals("removed"))
-                    eventBlock.Header.Add(new TextBlock(" removed as a collaborator"));
+                    eventBlock.Header.Add(new TextBlock(" removed "));
+
+                var memberName = memberEvent.Member?.Login;
+                if (memberName != null)
+                    eventBlock.Header.Add(new AnchorBlock(memberName, () => GoToUser(memberName)));
+                else
+                    eventBlock.Header.Add(new TextBlock("<deleted user>"));
+
+                eventBlock.Header.Add(new TextBlock(" as a collaborator"));
 
                 if (ReportRepository)
                 {
