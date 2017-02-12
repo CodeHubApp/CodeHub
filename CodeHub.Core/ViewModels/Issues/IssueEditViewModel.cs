@@ -4,11 +4,13 @@ using GitHubSharp.Models;
 using System;
 using CodeHub.Core.Messages;
 using System.Linq;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueEditViewModel : IssueModifyViewModel
     {
+        private readonly IMessageService _messageService;
         private IssueModel _issue;
         private bool _open;
 
@@ -25,6 +27,12 @@ namespace CodeHub.Core.ViewModels.Issues
         }
 
         public long Id { get; private set; }
+
+        public IssueEditViewModel(IMessageService messageService)
+            : base(messageService)
+        {
+            _messageService = messageService;
+        }
 
         protected override async Task Save()
         {
@@ -50,7 +58,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 try
                 {
                     var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(IssueTitle, content, state, assignedTo, milestone, labels)); 
-                    Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+                    _messageService.Send(new IssueEditMessage(data.Data));
                 }
                 catch (GitHubSharp.InternalServerException)
                 {

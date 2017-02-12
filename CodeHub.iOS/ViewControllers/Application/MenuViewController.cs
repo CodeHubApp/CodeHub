@@ -46,9 +46,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         public MenuViewController()
             : base(false, UITableViewStyle.Plain)
         {
-            var appService = Mvx.Resolve<IApplicationService>();
-            var featuresService = Mvx.Resolve<IFeaturesService>();
-            ViewModel = new MenuViewModel(appService, featuresService);
+            ViewModel = new MenuViewModel();
             Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
 
             _title = new UILabel(new CGRect(0, 40, 320, 40));

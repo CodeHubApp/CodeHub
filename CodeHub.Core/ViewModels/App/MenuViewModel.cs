@@ -12,9 +12,8 @@ using CodeHub.Core.Utils;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Notifications;
 using GitHubSharp.Models;
-using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
-using ReactiveUI;
+using System;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -24,7 +23,7 @@ namespace CodeHub.Core.ViewModels.App
         private readonly IFeaturesService _featuresService;
         private int _notifications;
         private List<BasicUserModel> _organizations;
-        private readonly MvxSubscriptionToken _notificationCountToken;
+        private readonly IDisposable _notificationCountToken;
 
         public int Notifications
         {
@@ -48,19 +47,21 @@ namespace CodeHub.Core.ViewModels.App
             get { return !_featuresService.IsProEnabled; }
         }
         
-        public MenuViewModel(IApplicationService application, IFeaturesService featuresService)
+        public MenuViewModel(IApplicationService application = null,
+                             IFeaturesService featuresService = null,
+                             IMessageService messageService = null)
         {
-            _applicationService = application;
-            _featuresService = featuresService;
-            _notificationCountToken = Messenger.SubscribeOnMainThread<NotificationCountMessage>(OnNotificationCountMessage);
+            _applicationService = application ?? GetService<IApplicationService>();
+            _featuresService = featuresService ?? GetService<IFeaturesService>();
+            messageService = messageService ?? GetService<IMessageService>();
+
+            _notificationCountToken = messageService.Listen<NotificationCountMessage>(OnNotificationCountMessage);
         }
 
         private void OnNotificationCountMessage(NotificationCountMessage msg)
         {
             Notifications = msg.Count;
         }
-
-        public IReactiveCommand<object> GoToAccountsCommand { get; } = ReactiveCommand.Create();
 
         [PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand

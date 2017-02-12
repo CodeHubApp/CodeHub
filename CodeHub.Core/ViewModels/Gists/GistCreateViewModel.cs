@@ -1,16 +1,18 @@
 using System;
-using CodeHub.Core.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System.Linq;
 using CodeHub.Core.Messages;
 using ReactiveUI;
+using System.Reactive;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistCreateViewModel : BaseViewModel 
     {
+        private readonly IMessageService _messageService;
         private string _description;
         private bool _public;
         private IDictionary<string, string> _files = new Dictionary<string, string>();
@@ -40,15 +42,17 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _files, value); }
         }
 
-        public IReactiveCommand<GistModel> SaveCommand { get; }
+        public ReactiveCommand<Unit, GistModel> SaveCommand { get; }
 
-        public IReactiveCommand<object> CancelCommand { get; }
+        public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
 
-        public GistCreateViewModel()
+        public GistCreateViewModel(IMessageService messageService = null)
         {
-            CancelCommand = ReactiveCommand.Create();
-            SaveCommand = ReactiveCommand.CreateAsyncTask(_ => Save());
+            _messageService = messageService ?? GetService<IMessageService>();
+
+            CancelCommand = ReactiveCommand.Create(() => { });
+            SaveCommand = ReactiveCommand.CreateFromTask(Save);
             SaveCommand.ThrownExceptions.Subscribe(x => DisplayAlert(x.Message));
         }
 
@@ -68,7 +72,7 @@ namespace CodeHub.Core.ViewModels.Gists
 
                 IsSaving = true;
                 var newGist = (await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
-                Messenger.Publish(new GistAddMessage(this, newGist));
+                _messageService.Send(new GistAddMessage(newGist));
                 return newGist;
             }
             finally

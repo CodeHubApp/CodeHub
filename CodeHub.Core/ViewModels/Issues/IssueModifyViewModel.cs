@@ -1,22 +1,22 @@
 using System;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using MvvmCross.Plugins.Messenger;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class IssueModifyViewModel : BaseViewModel
     {
+        private readonly IMessageService _messageService;
         private string _title;
         private string _content;
         private BasicUserModel _assignedTo;
         private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
         private MilestoneModel _milestone;
-        private MvxSubscriptionToken _labelsToken, _milestoneToken, _assignedToken;
+        private IDisposable _labelsToken, _milestoneToken, _assignedToken;
         private bool _isSaving;
 
         public string IssueTitle
@@ -96,15 +96,19 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return new MvxCommand(() => Save()); }
         }
 
+        public IssueModifyViewModel(IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
         protected void Init(string username, string repository)
         {
             Username = username;
             Repository = repository;
 
-            var messenger = GetService<IMvxMessenger>();
-            _labelsToken = messenger.SubscribeOnMainThread<SelectIssueLabelsMessage>(x => Labels.Items.Reset(x.Labels));
-            _milestoneToken = messenger.SubscribeOnMainThread<SelectedMilestoneMessage>(x => Milestone = x.Milestone);
-            _assignedToken = messenger.SubscribeOnMainThread<SelectedAssignedToMessage>(x => AssignedTo = x.User);
+            _labelsToken = _messageService.Listen<SelectIssueLabelsMessage>(x => Labels.Items.Reset(x.Labels));
+            _milestoneToken = _messageService.Listen<SelectedMilestoneMessage>(x => Milestone = x.Milestone);
+            _assignedToken = _messageService.Listen<SelectedAssignedToMessage>(x => AssignedTo = x.User);
         }
 
         protected abstract Task Save();

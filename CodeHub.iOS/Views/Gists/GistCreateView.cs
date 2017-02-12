@@ -27,7 +27,7 @@ namespace CodeHub.iOS.Views.Gists
             ctrl.ViewModel.SaveCommand.Subscribe(_ => parent.DismissViewController(true, null));
             ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
             ctrl.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => {
-                weakVm.Get()?.CancelCommand.Execute(null);
+                weakVm.Get()?.CancelCommand.Execute().Subscribe();
                 parent.DismissViewController(true, null);
             });
             parent.PresentViewController(new ThemedNavigationController(ctrl), true, null);

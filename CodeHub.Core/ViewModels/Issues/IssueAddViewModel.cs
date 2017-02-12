@@ -3,11 +3,20 @@ using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using System.Linq;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAddViewModel : IssueModifyViewModel
     {
+        private readonly IMessageService _messageService;
+
+        public IssueAddViewModel(IMessageService messageService)
+            : base(messageService)
+        {
+            _messageService = messageService;
+        }
+
         protected override async Task Save()
         {
             if (string.IsNullOrEmpty(IssueTitle))
@@ -27,7 +36,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 IsSaving = true;
                 var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(IssueTitle, content, assignedTo, milestone, labels));
-                Messenger.Publish(new IssueAddMessage(this) { Issue = data.Data });
+                _messageService.Send(new IssueAddMessage(data.Data));
                 ChangePresentation(new MvxClosePresentationHint(this));
             }
             catch

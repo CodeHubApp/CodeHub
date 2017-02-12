@@ -1,7 +1,5 @@
-using System;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Repositories;
 using GitHubSharp.Models;
@@ -10,6 +8,7 @@ using CodeHub.Core.ViewModels.Source;
 using MvvmCross.Platform;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -76,15 +75,16 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _comments; }
         }
 
-        public ReactiveUI.ReactiveCommand<object> GoToOwner { get; }
+        public ReactiveUI.ReactiveCommand<Unit, bool> GoToOwner { get; }
 
         public ChangesetViewModel(IApplicationService application, IFeaturesService featuresService)
         {
             _applicationService = application;
             _featuresService = featuresService;
 
-            GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Changeset, true).Select(x => x?.Author?.Login != null));
-            GoToOwner.Subscribe(_ => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Changeset?.Author?.Login }));
+            GoToOwner = ReactiveUI.ReactiveCommand.Create(
+                () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Changeset?.Author?.Login }),
+                this.Bind(x => x.Changeset, true).Select(x => x?.Author?.Login != null));
         }
 
         public void Init(NavObject navObject)

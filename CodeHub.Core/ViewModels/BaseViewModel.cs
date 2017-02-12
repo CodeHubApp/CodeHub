@@ -1,8 +1,6 @@
 using CodeHub.Core.Services;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
-using MvvmCross.Plugins.Messenger;
 using MvvmCross.Platform;
 using ReactiveUI;
 using System;
@@ -100,15 +98,6 @@ namespace CodeHub.Core.ViewModels
         protected IViewModelTxService TxSevice
         {
             get { return GetService<IViewModelTxService>(); }
-        }
-
-        /// <summary>
-        /// Gets the messenger service
-        /// </summary>
-        /// <value>The messenger.</value>
-        protected IMvxMessenger Messenger
-        {
-            get { return GetService<IMvxMessenger>(); }
         }
 
         /// <summary>

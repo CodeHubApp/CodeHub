@@ -25,23 +25,22 @@ namespace ReactiveUI
             ExecuteIfCan(@this, null);
         }
 
-        public static IReactiveCommand<T> WithSubscription<T>(this IReactiveCommand<T> @this, Action<T> action)
+        public static IDisposable ExecuteNow<TParam, TResult>(this ReactiveCommand<TParam, TResult> cmd, TParam param = default(TParam))
         {
-            @this.Subscribe(action);
-            return @this;
+            return cmd.Execute(param).Subscribe();
         }
 
-        public static IDisposable ToBarButtonItem(this IObservable<IReactiveCommand> @this, UIImage image, Action<UIBarButtonItem> assignment)
+        public static IDisposable ToBarButtonItem(this IObservable<ReactiveCommand> @this, UIImage image, Action<UIBarButtonItem> assignment)
         {
             return ToBarButtonItem(@this, () => new UIBarButtonItem { Image = image }, assignment);
         }
 
-        public static IDisposable ToBarButtonItem(this IObservable<IReactiveCommand> @this, UIBarButtonSystemItem systemItem, Action<UIBarButtonItem> assignment)
+        public static IDisposable ToBarButtonItem(this IObservable<ReactiveCommand> @this, UIBarButtonSystemItem systemItem, Action<UIBarButtonItem> assignment)
         {
             return ToBarButtonItem(@this, () => new UIBarButtonItem(systemItem), assignment);
         }
 
-        public static IDisposable ToBarButtonItem(this IObservable<IReactiveCommand> @this, Func<UIBarButtonItem> creator, Action<UIBarButtonItem> assignment)
+        public static IDisposable ToBarButtonItem(this IObservable<ReactiveCommand> @this, Func<UIBarButtonItem> creator, Action<UIBarButtonItem> assignment)
         {
             var unassignDisposable = Disposable.Create(() => assignment(null));
             IDisposable recentEventDisposable = Disposable.Empty;
@@ -50,7 +49,7 @@ namespace ReactiveUI
                 recentEventDisposable?.Dispose();
 
                 var button = creator();
-                var canExecuteDisposable = x.CanExecuteObservable.Subscribe(t => button.Enabled = t);
+                var canExecuteDisposable = x.CanExecute.Subscribe(t => button.Enabled = t);
                 var clickDisposable = Observable.FromEventPattern(t => button.Clicked += t, t => button.Clicked -= t)
                     .Select(_ => Unit.Default)
                     .InvokeCommand(x);

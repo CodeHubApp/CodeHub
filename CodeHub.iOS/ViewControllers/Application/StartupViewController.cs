@@ -21,15 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
 
-        public StartupViewModel ViewModel { get; }
-
-        public StartupViewController()
-        {
-            ViewModel = new StartupViewModel(
-                Mvx.Resolve<ILoginFactory>(),
-                Mvx.Resolve<IApplicationService>(),
-                Mvx.Resolve<IAccountsService>());
-        }
+        public StartupViewModel ViewModel { get; } = new StartupViewModel();
 
         public override void ViewWillLayoutSubviews()
         {
@@ -67,9 +59,9 @@ namespace CodeHub.iOS.ViewControllers.Application
             {
                 d(ViewModel.Bind(x => x.ImageUrl).Subscribe(UpdatedImage));
                 d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
-                d(ViewModel.GoToMenu.Subscribe(GoToMenu));
-                d(ViewModel.GoToAccounts.Subscribe(GoToAccounts));
-                d(ViewModel.GoToNewAccount.Subscribe(GoToNewAccount));
+                d(ViewModel.GoToMenu.Subscribe(_ => GoToMenu()));
+                d(ViewModel.GoToAccounts.Subscribe(_ => GoToAccounts()));
+                d(ViewModel.GoToNewAccount.Subscribe(_ => GoToNewAccount()));
                 d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
@@ -82,7 +74,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             });
         }
 
-        private void GoToMenu(object o)
+        private void GoToMenu()
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
@@ -93,14 +85,14 @@ namespace CodeHub.iOS.ViewControllers.Application
             PresentViewController(slideoutController, true, null);
         }
 
-        private void GoToNewAccount(object o)
+        private void GoToNewAccount()
         {
             var vc = new NewAccountViewController();
             var nav = new ThemedNavigationController(vc);
             PresentViewController(nav, true, null);
         }
 
-        private void GoToAccounts(object o)
+        private void GoToAccounts()
         {
             var vc = new AccountsViewController();
             var nav = new ThemedNavigationController(vc);

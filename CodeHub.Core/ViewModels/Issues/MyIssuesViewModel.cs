@@ -1,18 +1,17 @@
 using System.Threading.Tasks;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using CodeHub.Core.Messages;
-using MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
-        private MvxSubscriptionToken _editToken;
+        private IDisposable _editToken;
 
         private int _selectedFilter;
         public int SelectedFilter
@@ -25,7 +24,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        public MyIssuesViewModel()
+        public MyIssuesViewModel(IMessageService messageService)
         {
             _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
@@ -39,7 +38,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     _issues.Filter = MyIssuesFilterModel.CreateClosedFilter();
             });
 
-            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            _editToken = messageService.Listen<IssueEditMessage>(x =>
             {
                 if (x.Issue == null)
                     return;

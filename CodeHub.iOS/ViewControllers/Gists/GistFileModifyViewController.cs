@@ -35,12 +35,12 @@ namespace CodeHub.iOS.ViewControllers.Gists
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        public IReactiveCommand<Unit> SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         protected GistFileModifyViewController()
             : base(UITableViewStyle.Plain)
         {
-            SaveCommand = ReactiveCommand.CreateAsyncTask(t => {
+            SaveCommand = ReactiveCommand.CreateFromTask(t => {
                 if (String.IsNullOrEmpty(Content))
                     throw new Exception("You cannot save a file without content!");
                 Save?.Invoke(Filename, Content);

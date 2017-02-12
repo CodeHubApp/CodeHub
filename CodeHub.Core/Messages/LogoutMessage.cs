@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CodeHub.Core.Messages
+﻿namespace CodeHub.Core.Messages
 {
     public class LogoutMessage
     {

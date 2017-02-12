@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using GitHubSharp;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
-using MvvmCross.Plugins.Messenger;
+using System;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class UserGistsViewModel : GistsViewModel
     {
-        private readonly MvxSubscriptionToken _addToken;
+        private readonly IDisposable _addToken;
 
         public string Username
         {
@@ -21,9 +22,9 @@ namespace CodeHub.Core.ViewModels.Gists
             get { return this.GetApplication().Account.Username.Equals(Username); }
         }
 
-        public UserGistsViewModel()
+        public UserGistsViewModel(IMessageService messageService)
         {
-            _addToken = Messenger.SubscribeOnMainThread<GistAddMessage>(x => Gists.Items.Insert(0, x.Gist));
+            _addToken = messageService.Listen<GistAddMessage>(x => Gists.Items.Insert(0, x.Gist));
         }
 
         public void Init(NavObject navObject)
