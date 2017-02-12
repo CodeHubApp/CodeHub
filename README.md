@@ -3,7 +3,7 @@
 CodeHub is the best way to browse and maintain your GitHub repositories on any iPhone, iPod Touch, and iPad device! Keep an eye on your projects with the ability to view everything from pull requests to commenting on individual file diffs in the latest change set. CodeHub brings GitHub to your finger tips in a sleek and efficient design. 
 
 Follow the project on twitter: [@CodeHubApp](http://www.twitter.com/CodeHubApp)<br />
-Feature requests can be made on GitHub or on [UserVoice](http://codehub.uservoice.com/)<br />
+Feature requests can be made on [GitHub](https://github.com/thedillonb/CodeHub/issues)<br />
 Additional information can be found on the [project's webpage](http://thedillonb.github.io/CodeHub/)
 
 ## Screenshots
@@ -21,13 +21,25 @@ Additional information can be found on the [project's webpage](http://thedillonb
 
 ## Contributing
 
-Contributions are absolutely welcome. Unfortunately, Xamarin is a paid framework which makes it hard for contributors but if you'd like to create a PR I would be happy to test it. 
+Contributions are absolutely welcome! The project is built on [Xamarin](https://www.xamarin.com/), a free C# framework for iOS applications. You'll need to download this to build the project.  
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
+
+## Troubleshooting
+
+### I Can't Find My Organization
+
+CodeHub can see all organizations *if they are granted access*. GitHub, by default, disables [third-party access](https://help.github.com/articles/about-third-party-application-restrictions/) for new organizations. Because of this, CodeHub has no knowledge that those organizations even exist. GitHub keeps that information from the app. There are several ways to correct this. If you own the organization follow [these instructions](https://help.github.com/articles/enabling-third-party-application-restrictions-for-your-organization/). If you do not own the organization you can request access for CodeHub by following [these instructions](https://help.github.com/articles/requesting-organization-approval-for-third-party-applications/).
+
+### I Can't Find My Repository
+
+If these repositories belong to an organization then your problem is most likely due to the issue above. Please consult it for a remedy.
+
+If they do not belong to an organization then something is not right. Please file a ticket.
 
 ## Credits
 
@@ -39,6 +51,3 @@ A lot of thanks to many who contribute to open-source projects. The following we
 * [Marked.js](https://github.com/chjj/marked)
 * [ModernHttpClient](https://github.com/paulcbetts/ModernHttpClient)
 
-## Copyright
-
-Copyright © 2016 Dillon Buchanan
