@@ -19,6 +19,8 @@ namespace CodeHub.iOS.Views
         private readonly bool _navigationToolbar;
         private readonly  bool _showPageAsTitle;
 
+        protected string CurrentContent { get; private set; }
+
         ~WebView()
         {
             Console.WriteLine("All done with " + GetType().Name);
@@ -203,6 +205,7 @@ namespace CodeHub.iOS.Views
 
         protected void LoadContent(string content)
         {
+            CurrentContent = content;
             Web.LoadHtmlString(content, NSBundle.MainBundle.BundleUrl);
         }
         

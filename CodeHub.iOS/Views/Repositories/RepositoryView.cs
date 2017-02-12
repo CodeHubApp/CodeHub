@@ -131,7 +131,11 @@ namespace CodeHub.iOS.Views.Repositories
                 }
                 else if (e.ButtonIndex == shareButton)
                 {
-                    AlertDialogService.ShareUrl(ViewModel.Repository.HtmlUrl, NavigationItem.RightBarButtonItem);
+                    AlertDialogService.Share(
+                        repoModel.FullName,
+                        repoModel.Description,
+                        repoModel.HtmlUrl,
+                        NavigationItem.RightBarButtonItem);
                 }
 
                 sheet.Dispose();

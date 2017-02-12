@@ -169,6 +169,7 @@ namespace CodeHub.iOS.Views.Gists
 
             var app = Mvx.Resolve<IApplicationService>();
             var isOwner = string.Equals(app.Account.Username, ViewModel.Gist?.Owner?.Login, StringComparison.OrdinalIgnoreCase);
+            var gist = ViewModel.Gist;
 
             var sheet = new UIActionSheet();
             var editButton = sheet.AddButton(isOwner ? "Edit" : "Fork");
@@ -185,7 +186,13 @@ namespace CodeHub.iOS.Views.Gists
                     try
                     {
                         if (e.ButtonIndex == shareButton)
-                            AlertDialogService.ShareUrl(ViewModel.Gist?.HtmlUrl, sender as UIBarButtonItem);
+                        {
+                            AlertDialogService.Share(
+                                $"Gist {gist.Files?.Select(x => x.Key).FirstOrDefault() ?? gist.Id}",
+                                gist.Description,
+                                gist.HtmlUrl,
+                                sender as UIBarButtonItem);
+                        }
                         else if (e.ButtonIndex == showButton)
                             ViewModel.GoToHtmlUrlCommand.Execute(null);
                         else if (e.ButtonIndex == starButton)
