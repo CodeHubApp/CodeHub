@@ -25,6 +25,8 @@ using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
 using System.IO;
 using CodeHub.iOS.Data;
+using CrashlyticsKit;
+using FabricSdk;
 
 namespace CodeHub.iOS
 {
@@ -59,6 +61,13 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Crashlytics.Instance.Initialize();
+            Fabric.Instance.Initialize();
+
+#if DEBUG
+            Fabric.Instance.Debug = true;
+#endif
+
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
             Presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, Presenter);
