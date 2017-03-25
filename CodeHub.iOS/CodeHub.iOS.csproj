@@ -344,7 +344,6 @@
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
     <None Include="WebResources\LICENSE" />
-    <Compile Include="Services\ErrorService.cs" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Data\AccountFilters.cs" />

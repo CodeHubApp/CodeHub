@@ -66,10 +66,6 @@ namespace CodeHub.iOS
 
             Migration.Migrate();
 
-            // Initialize the error service!
-            var errorService = Mvx.Resolve<IErrorService>();
-            errorService.Init();
-
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentCulture = culture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
@@ -84,7 +80,6 @@ namespace CodeHub.iOS
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
             purchaseService.ThrownExceptions.Subscribe(ex => {
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
-                errorService.Log(ex);
             });
 
             #if DEBUG

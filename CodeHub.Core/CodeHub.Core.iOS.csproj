@@ -159,7 +159,6 @@
     <Compile Include="Secrets.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
-    <Compile Include="Services\IErrorService.cs" />
     <Compile Include="ViewModels\User\UserViewModel.cs" />
     <Compile Include="Services\AnalyticsService.cs" />
     <Compile Include="Services\IAnalyticsService.cs" />
