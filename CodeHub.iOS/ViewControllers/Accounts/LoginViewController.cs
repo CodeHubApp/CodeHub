@@ -10,6 +10,7 @@ using CodeHub.Core.Factories;
 using CodeHub.iOS.ViewControllers;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
+using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -56,8 +57,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 //We're being redirected to our redirect URL so we must have been successful
                 if (navigationAction.Request.Url.Host == "dillonbuchanan.com")
                 {
-                    var code = navigationAction.Request.Url.Query.Split('=')[1];
-                    ViewModel.Login(code);
+                    var queryParameters = navigationAction.Request.Url.Query.Split('&');
+
+                    var code = queryParameters.FirstOrDefault(x => x.StartsWith("code=", StringComparison.OrdinalIgnoreCase));
+                    var codeValue = code?.Replace("code=", String.Empty);
+                    ViewModel.Login(codeValue);
                     return false;
                 }
     
