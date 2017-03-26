@@ -295,7 +295,6 @@
     <Compile Include="Transitions\SlideDownTransition.cs" />
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
-    <Compile Include="Utilities\Emojis.cs" />
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
     <Compile Include="ViewControllers\BaseWebViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
@@ -470,6 +469,15 @@
     </Reference>
     <Reference Include="Plugin.Settings">
       <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -648,4 +656,5 @@
     </XamarinComponentReference>
   </ItemGroup>
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>

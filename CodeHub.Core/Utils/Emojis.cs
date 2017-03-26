@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace CodeHub.iOS.Utilities
+namespace CodeHub.Core.Utilities
 {
     public static class Emojis
     {

@@ -1,17 +1,16 @@
 using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
-using GitHubSharp.Models;
 using UIKit;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers.Repositories;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
-using CodeHub.iOS.Utilities;
 using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.iOS.Services;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.Views.Repositories
 {

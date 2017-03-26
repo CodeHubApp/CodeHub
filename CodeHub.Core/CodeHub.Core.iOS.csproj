@@ -160,13 +160,17 @@
     <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="ViewModels\User\UserViewModel.cs" />
-    <Compile Include="Services\AnalyticsService.cs" />
-    <Compile Include="Services\IAnalyticsService.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\MessageService.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
+    <Compile Include="Utils\Emojis.cs" />
+    <Compile Include="ViewModels\ICanGoToViewModel.cs" />
+    <Compile Include="Utils\OctokitClientFactory.cs" />
+    <Compile Include="Utils\OctokitNetworkClient.cs" />
+    <Compile Include="Services\INetworkActivityService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -253,6 +257,15 @@
     <Reference Include="Plugin.Settings">
       <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -266,4 +279,5 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>
