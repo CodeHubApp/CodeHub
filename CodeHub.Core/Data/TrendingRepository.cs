@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
-using GitHubSharp;
 
 namespace CodeHub.Core.Data
 {
@@ -17,9 +16,9 @@ namespace CodeHub.Core.Data
 
         public async Task<IList<Octokit.Repository>> GetTrendingRepositories(string since, string language = null)
         {
-            var query = "?since=" + since;
+            var query = "?since=" + Uri.EscapeDataString(since);
             if (!string.IsNullOrEmpty(language))
-                query += string.Format("&language={0}", language);
+                query += string.Format("&language={0}", Uri.EscapeDataString(language));
 
             var client = new HttpClient();
             var serializer = new Octokit.Internal.SimpleJsonSerializer();
