@@ -437,24 +437,6 @@
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.7.2.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="FabricSdk">
-      <HintPath>..\packages\Fabric.1.1\lib\Xamarin.iOS10\FabricSdk.dll</HintPath>
-    </Reference>
-    <Reference Include="FabricSdk.Platform">
-      <HintPath>..\packages\Fabric.1.1\lib\Xamarin.iOS10\FabricSdk.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="AnswersKit">
-      <HintPath>..\packages\Crashlytics.1.1\lib\Xamarin.iOS10\AnswersKit.dll</HintPath>
-    </Reference>
-    <Reference Include="AnswersKit.Platform">
-      <HintPath>..\packages\Crashlytics.1.1\lib\Xamarin.iOS10\AnswersKit.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="CrashlyticsKit">
-      <HintPath>..\packages\Crashlytics.1.1\lib\Xamarin.iOS10\CrashlyticsKit.dll</HintPath>
-    </Reference>
-    <Reference Include="CrashlyticsKit.Platform">
-      <HintPath>..\packages\Crashlytics.1.1\lib\Xamarin.iOS10\CrashlyticsKit.Platform.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.Settings.Abstractions">
       <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
     </Reference>
@@ -469,6 +451,24 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="FabricSdk">
+      <HintPath>..\packages\Fabric.1.2\lib\Xamarin.iOS10\FabricSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="FabricSdk.Platform">
+      <HintPath>..\packages\Fabric.1.2\lib\Xamarin.iOS10\FabricSdk.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="AnswersKit">
+      <HintPath>..\packages\Crashlytics.1.2\lib\Xamarin.iOS10\AnswersKit.dll</HintPath>
+    </Reference>
+    <Reference Include="AnswersKit.Platform">
+      <HintPath>..\packages\Crashlytics.1.2\lib\Xamarin.iOS10\AnswersKit.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="CrashlyticsKit">
+      <HintPath>..\packages\Crashlytics.1.2\lib\Xamarin.iOS10\CrashlyticsKit.dll</HintPath>
+    </Reference>
+    <Reference Include="CrashlyticsKit.Platform">
+      <HintPath>..\packages\Crashlytics.1.2\lib\Xamarin.iOS10\CrashlyticsKit.Platform.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
