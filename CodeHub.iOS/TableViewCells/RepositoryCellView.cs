@@ -1,83 +1,66 @@
 using System;
 using Foundation;
-using ObjCRuntime;
-using SDWebImage;
-using CodeHub.iOS;
-using MvvmCross.Binding.iOS.Views;
-using CodeHub.Core.Utilities;
 using UIKit;
+using CodeHub.Core.ViewModels.Repositories;
+using ReactiveUI;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.TableViewCells
 {
-    public partial class RepositoryCellView : MvxTableViewCell
+    public partial class RepositoryCellView : ReactiveTableViewCell<RepositoryItemViewModel>
     {
+        public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
-
-        public static RepositoryCellView Create()
-        {
-            var cell = new RepositoryCellView();
-            var views = NSBundle.MainBundle.LoadNib("RepositoryCellView", cell, null);
-            cell = Runtime.GetNSObject( views.ValueAt(0) ) as RepositoryCellView;
-
-            if (cell != null)
-            {
-                cell.SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
-
-                cell.Caption.TextColor = Theme.CurrentTheme.MainTitleColor;
-                cell.Description.TextColor = Theme.CurrentTheme.MainTextColor;
-
-                cell.Image1.Image =  Octicon.Star.ToImage(12);
-                cell.Image3.Image = Octicon.RepoForked.ToImage(12);
-                cell.UserImage.Image = Octicon.Person.ToImage(12);
-
-                cell.BigImage.Layer.MasksToBounds = true;
-                cell.BigImage.Layer.CornerRadius = cell.BigImage.Bounds.Height / 2f;
-            }
-
-            //Create the icons
-            return cell;
-        }
-
-        public override NSString ReuseIdentifier
-        {
-            get
-            {
-                return Key;
-            }
-        }
-
-        public RepositoryCellView()
-        {
-        }
+        private static nfloat DefaultConstraintSize = 0.0f;
 
         public RepositoryCellView(IntPtr handle)
             : base(handle)
         {
+            SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
         }
 
-        public void Bind(string name, string name2, string name3, string description, string repoOwner, GitHubAvatar imageUrl)
+        public override void AwakeFromNib()
         {
-            Caption.Text = name;
-            Label1.Text = name2;
-            Label3.Text = name3;
-            Description.Hidden = description == null;
-            Description.Text = description ?? string.Empty;
+            base.AwakeFromNib();
 
-            RepoName.Hidden = repoOwner == null;
-            UserImage.Hidden = RepoName.Hidden;
-            RepoName.Text = repoOwner ?? string.Empty;
+            CaptionLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
+            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
 
-            BigImage.Image = Images.Avatar;
+            FollowersImageVIew.TintColor = FollowersLabel.TextColor;
+            ForksImageView.TintColor = ForksLabel.TextColor;
+            UserImageView.TintColor = UserLabel.TextColor;
 
-            try
-            {
-                var uri = imageUrl.ToUri(64)?.AbsoluteUri;
-                if (uri != null)
-                    BigImage.SetImage(new NSUrl(uri), Images.Avatar);
-            }
-            catch
-            {
-            }
+            FollowersImageVIew.Image = Octicon.Star.ToImage(FollowersImageVIew.Frame.Height);
+            ForksImageView.Image = Octicon.RepoForked.ToImage(ForksImageView.Frame.Height);
+            UserImageView.Image = Octicon.Person.ToImage(UserImageView.Frame.Height);
+
+            OwnerImageView.Layer.CornerRadius = OwnerImageView.Bounds.Height / 2f;
+            OwnerImageView.Layer.MasksToBounds = true;
+            OwnerImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
+
+            DefaultConstraintSize = ContentConstraint.Constant;
+
+            this.WhenAnyValue(x => x.ViewModel)
+                .IsNotNull()
+                .Subscribe(x =>
+                {
+                    CaptionLabel.Text = x.Name;
+                    FollowersLabel.Text = x.Stars;
+                    ForksLabel.Text = x.Forks;
+                    ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
+                    ContentLabel.Text = x.Description ?? string.Empty;
+                    UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);
+                    UserImageView.Hidden = UserLabel.Hidden;
+                    UserLabel.Text = x.Owner ?? string.Empty;
+                    ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
+                    OwnerImageView.SetAvatar(x.Avatar);
+                });
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            ReleaseDesignerOutlets();
+            base.Dispose(disposing);
         }
     }
 }

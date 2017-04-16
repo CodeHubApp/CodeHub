@@ -1,9 +1,7 @@
 using System;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Repositories;
 using UIKit;
 using CodeHub.iOS.DialogElements;
-using CodeHub.iOS.ViewControllers.Repositories;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
@@ -12,11 +10,11 @@ using ReactiveUI;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
 
-namespace CodeHub.iOS.Views.Repositories
+namespace CodeHub.iOS.ViewControllers.Repositories
 {
-    public class RepositoryView : PrettyDialogViewController
+    public class RepositoryViewController : PrettyDialogViewController
     {
-        private readonly IFeaturesService _featuresService = Mvx.Resolve<IFeaturesService>();
+        private readonly IFeaturesService _featuresService;
         private IDisposable _privateView;
 
         public new RepositoryViewModel ViewModel
@@ -53,8 +51,13 @@ namespace CodeHub.iOS.Views.Repositories
             {
                 d(_stargazers.Clicked.BindCommand(ViewModel.GoToStargazersCommand));
                 d(_watchers.Clicked.BindCommand(ViewModel.GoToWatchersCommand));
-                d(_forks.Clicked.BindCommand(ViewModel.GoToForkedCommand));
                 d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+
+                d(_forks.Clicked.Subscribe(_ =>
+                {
+                    var vc = RepositoriesViewController.CreateForkedViewController(ViewModel.Username, ViewModel.RepositoryName);
+                    NavigationController?.PushViewController(vc, true);
+                }));
 
                 d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
                 d(_ownerElement.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
@@ -161,9 +164,17 @@ namespace CodeHub.iOS.Views.Repositories
         private readonly Lazy<StringElement> _readmeElement;
         private readonly Lazy<StringElement> _websiteElement;
 
-
-        public RepositoryView()
+        public RepositoryViewController(string owner, string repository)
+            : this()
         {
+            ViewModel = new RepositoryViewModel();
+            ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repository });
+        }
+
+        public RepositoryViewController(IFeaturesService featuresService = null)
+        {
+            _featuresService = featuresService ?? Mvx.Resolve<IFeaturesService>();
+
             _forkElement = new Lazy<StringElement>(() => new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() });
             _issuesElement = new Lazy<StringElement>(() => new StringElement("Issues", Octicon.IssueOpened.ToImage()));
             _readmeElement = new Lazy<StringElement>(() => new StringElement("Readme", Octicon.Book.ToImage()));

@@ -34,7 +34,12 @@ namespace CodeHub.iOS.ViewControllers.Organizations
                 d(teams.Clicked.BindCommand(vm.GoToTeamsCommand));
                 d(followers.Clicked.BindCommand(vm.GoToFollowersCommand));
                 d(events.Clicked.BindCommand(vm.GoToEventsCommand));
-                d(repos.Clicked.BindCommand(vm.GoToRepositoriesCommand));
+
+                d(repos.Clicked.Subscribe(_ => {
+                    var vc = Repositories.RepositoriesViewController.CreateOrganizationViewController(vm.Name);
+                    NavigationController?.PushViewController(vc, true);
+                }));
+                  
                 d(gists.Clicked.BindCommand(vm.GoToGistsCommand));
 
                 d(vm.Bind(x => x.Organization, true).Where(x => x != null).Subscribe(x =>

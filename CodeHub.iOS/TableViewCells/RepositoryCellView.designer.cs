@@ -1,89 +1,107 @@
 // WARNING
 //
 // This file has been generated automatically by Xamarin Studio to store outlets and
-// actions made in the Xcode designer. If it is removed, they will be lost.
+// actions made in the UI designer. If it is removed, they will be lost.
 // Manual changes to this file may not be handled correctly.
 //
-
 using Foundation;
+using System.CodeDom.Compiler;
 
 namespace CodeHub.iOS.TableViewCells
 {
-    [Register ("RepositoryCellView")]
+    [Register("RepositoryCellView")]
     partial class RepositoryCellView
     {
         [Outlet]
-        UIKit.UIImageView BigImage { get; set; }
+        UIKit.UILabel CaptionLabel { get; set; }
 
         [Outlet]
-        UIKit.UILabel Caption { get; set; }
+        UIKit.NSLayoutConstraint ContentConstraint { get; set; }
 
         [Outlet]
-        UIKit.UILabel Description { get; set; }
+        UIKit.UILabel ContentLabel { get; set; }
 
         [Outlet]
-        UIKit.UIImageView Image1 { get; set; }
+        UIKit.UIImageView FollowersImageVIew { get; set; }
 
         [Outlet]
-        UIKit.UIImageView Image3 { get; set; }
+        UIKit.UILabel FollowersLabel { get; set; }
 
         [Outlet]
-        UIKit.UILabel Label1 { get; set; }
+        UIKit.UIImageView ForksImageView { get; set; }
 
         [Outlet]
-        UIKit.UILabel Label3 { get; set; }
+        UIKit.UILabel ForksLabel { get; set; }
 
         [Outlet]
-        UIKit.UILabel RepoName { get; set; }
+        UIKit.UIImageView OwnerImageView { get; set; }
 
         [Outlet]
-        UIKit.UIImageView UserImage { get; set; }
-        
-        void ReleaseDesignerOutlets ()
+        UIKit.UIImageView UserImageView { get; set; }
+
+        [Outlet]
+        UIKit.UILabel UserLabel { get; set; }
+
+        void ReleaseDesignerOutlets()
         {
-            if (BigImage != null) {
-                BigImage.Dispose ();
-                BigImage = null;
+            if (CaptionLabel != null)
+            {
+                CaptionLabel.Dispose();
+                CaptionLabel = null;
             }
 
-            if (Caption != null) {
-                Caption.Dispose ();
-                Caption = null;
+            if (ContentLabel != null)
+            {
+                ContentLabel.Dispose();
+                ContentLabel = null;
             }
 
-            if (Description != null) {
-                Description.Dispose ();
-                Description = null;
+            if (FollowersImageVIew != null)
+            {
+                FollowersImageVIew.Dispose();
+                FollowersImageVIew = null;
             }
 
-            if (Image1 != null) {
-                Image1.Dispose ();
-                Image1 = null;
+            if (FollowersLabel != null)
+            {
+                FollowersLabel.Dispose();
+                FollowersLabel = null;
             }
 
-            if (Image3 != null) {
-                Image3.Dispose ();
-                Image3 = null;
+            if (ForksImageView != null)
+            {
+                ForksImageView.Dispose();
+                ForksImageView = null;
             }
 
-            if (Label1 != null) {
-                Label1.Dispose ();
-                Label1 = null;
+            if (ForksLabel != null)
+            {
+                ForksLabel.Dispose();
+                ForksLabel = null;
             }
 
-            if (Label3 != null) {
-                Label3.Dispose ();
-                Label3 = null;
+            if (OwnerImageView != null)
+            {
+                OwnerImageView.Dispose();
+                OwnerImageView = null;
             }
 
-            if (RepoName != null) {
-                RepoName.Dispose ();
-                RepoName = null;
+            if (UserImageView != null)
+            {
+                UserImageView.Dispose();
+                UserImageView = null;
             }
 
-            if (UserImage != null) {
-                UserImage.Dispose ();
-                UserImage = null;
+            if (UserLabel != null)
+            {
+                UserLabel.Dispose();
+                UserLabel = null;
+            }
+
+            if (ContentConstraint != null)
+            {
+                ContentConstraint.Dispose();
+                ContentConstraint = null;
             }
         }
     }

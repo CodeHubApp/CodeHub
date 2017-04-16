@@ -6,16 +6,15 @@ using System.Linq;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Utilities;
-using CodeHub.Core.Services;
 using WebKit;
 using CodeHub.iOS.Services;
 using Splat;
+using Newtonsoft.Json;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetDiffView : FileSourceView
     {
-        private readonly IJsonSerializationService _serializationService = MvvmCross.Platform.Mvx.Resolve<IJsonSerializationService>();
         private bool _domLoaded = false;
         private List<string> _toBeExecuted = new List<string>();
 
@@ -45,7 +44,7 @@ namespace CodeHub.iOS.Views.Source
                     Content = x.Body, Date = x.UpdatedAt
                 }).ToList();
 
-                var c = _serializationService.Serialize(slimComments);
+                var c = JsonConvert.SerializeObject(slimComments);
                 ExecuteJavascript("var a = " + c + "; setComments(a);");
             });
         }
@@ -91,7 +90,7 @@ namespace CodeHub.iOS.Views.Source
                 }
                 else if(func.Equals("comment")) 
                 {
-                    var commentModel = _serializationService.Deserialize<JavascriptCommentModel>(UrlDecode(url.Fragment));
+                    var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
                     PromptForComment(commentModel);
                 }
 

@@ -14,11 +14,9 @@ namespace CodeHub.Core.Utilities
 
         public static GitHubClient Create(Uri domain, Credentials credentials)
         {
-            // Decorate the HttpClient
-            //IHttpClient httpClient = new HttpClientAdapter();
-            //httpClient = new OctokitCacheClient(httpClient);
+            var networkActivityService = Locator.Current.GetService<INetworkActivityService>();
             var client = new HttpClientAdapter(CreateMessageHandler);
-            var httpClient = new OctokitNetworkClient(client, Locator.Current.GetService<INetworkActivityService>());
+            var httpClient = new OctokitNetworkClient(client, networkActivityService);
 
             var connection = new Connection(
                 new ProductHeaderValue("CodeHub"),

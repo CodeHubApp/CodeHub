@@ -1,6 +1,5 @@
 using System;
 using CodeHub.iOS.DialogElements;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.User;
 using UIKit;
 using CodeHub.iOS.Views;

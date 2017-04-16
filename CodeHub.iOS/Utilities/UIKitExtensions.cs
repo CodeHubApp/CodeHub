@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using System.Reactive;
 using Foundation;
+using System.Linq;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -48,6 +49,14 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.SearchButtonClicked += t, t => @this.SearchButtonClicked -= t).Select(_ => Unit.Default);
         }
 
+        public static void SetLoading(this UIActivityIndicatorView @this, bool loading)
+        {
+            if (loading)
+                @this.StartAnimating();
+            else
+                @this.StopAnimating();
+        }
+
         public static string GetVersion(this UIApplication _) 
         {
             string shortVersion = string.Empty;
@@ -69,6 +78,21 @@ namespace UIKit
                 return shortVersion;
 
             return string.IsNullOrEmpty(bundleVersion) ? shortVersion : string.Format("{0} ({1})", shortVersion, bundleVersion);
+        }
+
+        public static bool LastItemVisible(this UITableView tableView)
+        {
+            var paths = tableView.IndexPathsForVisibleRows;
+            var sections = tableView.NumberOfSections();
+            if (sections == 0)
+                return true;
+
+            var rows = tableView.NumberOfRowsInSection(sections - 1);
+            if (rows == 0)
+                return true;
+
+            var indexPath = NSIndexPath.FromItemSection(rows - 1, sections - 1);
+            return paths.Contains(indexPath);
         }
     }
 

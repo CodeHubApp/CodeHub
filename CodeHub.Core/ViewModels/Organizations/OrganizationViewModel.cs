@@ -52,11 +52,6 @@ namespace CodeHub.Core.ViewModels.Organizations
             get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Name })); }
         }
 
-        public ICommand GoToRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<OrganizationRepositoriesViewModel>(new OrganizationRepositoriesViewModel.NavObject { Name = Name })); }
-        }
-
         protected override Task Load()
         {
             return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), response => Organization = response.Data);

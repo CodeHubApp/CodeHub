@@ -11,6 +11,7 @@ using System.Linq;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.WebViews;
 using WebKit;
+using Newtonsoft.Json;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -82,12 +83,12 @@ namespace CodeHub.iOS.ViewControllers
 
         private async void UploadImage(UIImage img)
         {
-            var hud = new CodeHub.iOS.Utilities.Hud(null);
+            var hud = new Utilities.Hud(null);
             hud.Show("Uploading...");
 
             try
             {
-                var returnData = await Task.Run<byte[]>(() => 
+                var returnData = await Task.Run(() =>
                 {
                     using (var w = new WebClient())
                     {
@@ -106,9 +107,7 @@ namespace CodeHub.iOS.ViewControllers
                     }
                 });
 
-
-                var json = Mvx.Resolve<IJsonSerializationService>();
-                var imgurModel = json.Deserialize<ImgurModel>(System.Text.Encoding.UTF8.GetString(returnData));
+                var imgurModel = JsonConvert.DeserializeObject<ImgurModel>(System.Text.Encoding.UTF8.GetString(returnData));
                 TextView.InsertText("![](" + imgurModel.Data.Link + ")");
             }
             catch (Exception e)

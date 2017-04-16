@@ -52,9 +52,14 @@ namespace CodeHub.iOS.ViewControllers.Users
                 d(following.Clicked.BindCommand(ViewModel.GoToFollowingCommand));
                 d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
                 d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
-                d(repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand));
                 d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
                 d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
+
+                d(repos.Clicked.Subscribe(_ =>
+                {
+                    var vc = Repositories.RepositoriesViewController.CreateUserViewController(ViewModel.Username);
+                    NavigationController?.PushViewController(vc, true);
+                }));
             });
         }
 

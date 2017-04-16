@@ -27,7 +27,7 @@ namespace ReactiveUI
 
         public static IDisposable ExecuteNow<TParam, TResult>(this ReactiveCommand<TParam, TResult> cmd, TParam param = default(TParam))
         {
-            return cmd.Execute(param).Subscribe();
+            return cmd.CanExecute.Take(1).Where(x => x).Select(_ => param).InvokeCommand(cmd);
         }
 
         public static IDisposable ToBarButtonItem(this IObservable<ReactiveCommand> @this, UIImage image, Action<UIBarButtonItem> assignment)

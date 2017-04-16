@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MvvmCross.Platform;
+using Newtonsoft.Json;
 
 namespace CodeHub.Core.Data
 {
@@ -88,8 +88,7 @@ namespace CodeHub.Core.Data
         {
             try
             {
-                var serializer = Mvx.Resolve<Services.IJsonSerializationService>();
-                return serializer.Deserialize<T>(filter.RawData);
+                return JsonConvert.DeserializeObject<T>(filter.RawData);
             }
             catch
             {
@@ -99,8 +98,7 @@ namespace CodeHub.Core.Data
 
         public static void SetData(this Filter filter, object o)
         {
-            var serializer = Mvx.Resolve<Services.IJsonSerializationService>();
-            filter.RawData = serializer.Serialize(o);
+            filter.RawData = JsonConvert.SerializeObject(o);
         }
     }
 }

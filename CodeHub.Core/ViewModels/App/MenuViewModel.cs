@@ -105,29 +105,29 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand(() => ShowMenuViewModel<PublicGistsViewModel>(null)); }
         }
 
-        [PotentialStartupViewAttribute("Starred Repositories")]
-        public ICommand GoToStarredRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
-        }
+        //[PotentialStartupViewAttribute("Starred Repositories")]
+        //public ICommand GoToStarredRepositoriesCommand
+        //{
+        //    get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
+        //}
 
-        [PotentialStartupViewAttribute("Owned Repositories")]
-        public ICommand GoToOwnedRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
-        }
+        //[PotentialStartupViewAttribute("Owned Repositories")]
+        //public ICommand GoToOwnedRepositoriesCommand
+        //{
+        //    get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
+        //}
 
-        [PotentialStartupViewAttribute("Explore Repositories")]
-        public ICommand GoToExploreRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
-        }
+        //[PotentialStartupViewAttribute("Explore Repositories")]
+        //public ICommand GoToExploreRepositoriesCommand
+        //{
+        //    get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
+        //}
 
-        [PotentialStartupViewAttribute("Trending Repositories")]
-        public ICommand GoToTrendingRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesTrendingViewModel>(null));}
-        }
+        //[PotentialStartupViewAttribute("Trending Repositories")]
+        //public ICommand GoToTrendingRepositoriesCommand
+        //{
+        //    get { return new MvxCommand(() => ShowMenuViewModel<TrendingRepositoriesViewModel>(null));}
+        //}
 
         public ICommand GoToOrganizationEventsCommand
         {

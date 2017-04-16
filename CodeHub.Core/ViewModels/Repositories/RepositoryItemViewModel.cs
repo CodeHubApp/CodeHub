@@ -25,23 +25,27 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ReactiveCommand<Unit, Unit> GoToCommand { get; }
 
-        internal Octokit.Repository Repository { get; }
-
-        internal RepositoryItemViewModel(Octokit.Repository repository, bool showOwner, Action<RepositoryItemViewModel> gotoCommand)
+        public RepositoryItemViewModel(Octokit.Repository repository, bool showOwner, bool showDescription, Action<RepositoryItemViewModel> gotoCommand)
         {
-            if (!string.IsNullOrEmpty(repository.Description) && repository.Description.IndexOf(':') >= 0)
-                Description = Emojis.FindAndReplace(repository.Description);
+            if (showDescription)
+            {
+                if (!string.IsNullOrEmpty(repository.Description) && repository.Description.IndexOf(':') >= 0)
+                    Description = Emojis.FindAndReplace(repository.Description);
+                else
+                    Description = repository.Description;
+            }
             else
-                Description = repository.Description;
+            {
+                Description = null;
+            }
 
-            Repository = repository;
             Name = repository.Name;
             Owner = repository.Owner?.Login ?? string.Empty;
             Avatar = new GitHubAvatar(repository.Owner?.AvatarUrl);
             Stars = repository.StargazersCount.ToString();
             Forks = repository.ForksCount.ToString();
             ShowOwner = showOwner;
-            GoToCommand = ReactiveCommand.Create(() => gotoCommand(this));
+            GoToCommand = ReactiveCommand.Create(() => gotoCommand?.Invoke(this));
         }
     }
 }

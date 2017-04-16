@@ -27,6 +27,7 @@ using System.IO;
 using CodeHub.iOS.Data;
 using CrashlyticsKit;
 using FabricSdk;
+using Splat;
 
 namespace CodeHub.iOS
 {
@@ -84,6 +85,10 @@ namespace CodeHub.iOS
             // Setup theme
             UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
             Theme.Setup();
+
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IApplicationService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();

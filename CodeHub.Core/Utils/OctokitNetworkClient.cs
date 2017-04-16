@@ -20,11 +20,10 @@ namespace CodeHub.Core.Utilities
             _networkActivity = networkActivity;
         }
 
-        public Task<IResponse> Send(IRequest request, System.Threading.CancellationToken cancellationToken)
+        public async Task<IResponse> Send(IRequest request, System.Threading.CancellationToken cancellationToken)
         {
-            request.Headers["Accept"] = "application/vnd.github.v3+json; charset=utf-8";
             using (_networkActivity.ActivateNetwork())
-                return _httpClient.Send(request, cancellationToken);
+                return await _httpClient.Send(request, cancellationToken);
         }
 
         public void Dispose()

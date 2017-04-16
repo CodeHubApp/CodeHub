@@ -56,11 +56,6 @@ namespace CodeHub.Core.ViewModels.User
             get { return new MvxCommand(() => ShowViewModel<OrganizationsViewModel>(new OrganizationsViewModel.NavObject { Username = Username })); }
         }
 
-        public ICommand GoToRepositoriesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Username })); }
-        }
-
         public ICommand GoToGistsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Username })); }

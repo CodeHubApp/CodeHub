@@ -12,6 +12,8 @@ namespace CodeHub.iOS.ViewControllers
 
         public UITableView TableView { get { return _tableView.Value; } }
 
+        public bool ClearSelectionOnAppear { get; set; } = true;
+
         public virtual UIRefreshControl RefreshControl
         {
             get { return _refreshControl; }
@@ -47,6 +49,10 @@ namespace CodeHub.iOS.ViewControllers
             base.ViewWillAppear(animated);
             _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardHideNotification);
             _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
+
+            var index = TableView.IndexPathForSelectedRow;
+            if (ClearSelectionOnAppear && index != null)
+                TableView.DeselectRow(index, true);
         }
 
         public override void ViewWillDisappear(bool animated)
