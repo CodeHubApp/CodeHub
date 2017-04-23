@@ -16,13 +16,12 @@ namespace CodeHub.iOS.TableViewCells
         public UserTableViewCell(IntPtr handle)
 			: base(handle)
 		{
-			SeparatorInset = new UIEdgeInsets(0, ImageFrame.Right + ImageSpacing, 0, 0);
 			ImageView.Layer.CornerRadius = ImageFrame.Height / 2f;
 			ImageView.Layer.MasksToBounds = true;
 			ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
 			ContentView.Opaque = true;
 
-			SeparatorInset = new UIEdgeInsets(0, TextLabel.Frame.X, 0, 0);
+            SeparatorInset = new UIEdgeInsets(0, ImageFrame.Right + ImageSpacing, 0, 0);
 
 			this.WhenActivated(d =>
 			{
