@@ -3,10 +3,7 @@ using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
-using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.Core.ViewModels.User;
 using GitHubSharp.Models;
-using CodeHub.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
@@ -16,7 +13,7 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public string Name { get; private set; }
 
-        public void Init(NavObject navObject) 
+        public void Init(NavObject navObject)
         {
             Name = navObject.Name;
         }
@@ -27,19 +24,9 @@ namespace CodeHub.Core.ViewModels.Organizations
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
         }
 
-        public ICommand GoToMembersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<OrganizationMembersViewModel>(new OrganizationMembersViewModel.NavObject { Name = Name }));}
-        }
-
         public ICommand GoToTeamsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<TeamsViewModel>(new TeamsViewModel.NavObject { Name = Name })); }
-        }
-
-        public ICommand GoToFollowersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowersViewModel>(new UserFollowersViewModel.NavObject { Username = Name })); }
         }
 
         public ICommand GoToEventsCommand

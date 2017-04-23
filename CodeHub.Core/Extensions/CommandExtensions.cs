@@ -11,20 +11,6 @@ namespace ReactiveUI
 {
     public static class ReactiveCommandExtensions
     {
-        public static void ExecuteIfCan(this ICommand @this, object o)
-        {
-            if (@this == null)
-                return;
-
-            if (@this.CanExecute(o))
-                @this.Execute(o);
-        }
-
-        public static void ExecuteIfCan(this ICommand @this)
-        {
-            ExecuteIfCan(@this, null);
-        }
-
         public static IDisposable ExecuteNow<TParam, TResult>(this ReactiveCommand<TParam, TResult> cmd, TParam param = default(TParam))
         {
             return cmd.CanExecute.Take(1).Where(x => x).Select(_ => param).InvokeCommand(cmd);

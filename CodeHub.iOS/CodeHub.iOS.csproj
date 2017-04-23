@@ -306,15 +306,8 @@
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\EmptyListView.cs" />
     <Compile Include="Views\Gists\BaseGistsViewController.cs" />
-    <Compile Include="ViewControllers\Users\BaseUserCollectionViewController.cs" />
-    <Compile Include="ViewControllers\Users\OrganizationMembersViewController.cs" />
-    <Compile Include="ViewControllers\Users\UserFollowersViewController.cs" />
-    <Compile Include="ViewControllers\Users\UserFollowingsViewController.cs" />
-    <Compile Include="ViewControllers\Organizations\TeamMembersViewController.cs" />
-    <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
-    <Compile Include="ViewControllers\Repositories\RepositoryStargazersViewController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
     <Compile Include="ViewControllers\Application\SettingsViewController.cs" />
     <Compile Include="ViewControllers\Application\StartupViewController.cs" />
@@ -343,6 +336,9 @@
     <Compile Include="ViewControllers\Repositories\RepositoriesViewController.cs" />
     <Compile Include="ViewControllers\Repositories\TrendingRepositoriesViewController.cs" />
     <Compile Include="Services\NetworkActivityService.cs" />
+    <Compile Include="TableViewSources\UserTableViewSource.cs" />
+    <Compile Include="TableViewCells\UserTableViewCell.cs" />
+    <Compile Include="ViewControllers\Users\UsersViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

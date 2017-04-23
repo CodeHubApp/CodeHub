@@ -78,7 +78,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
             view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             view.Language.Subscribe(x => {
-                vm.Get().With(y => y.SelectedLanguage = x);
+                var viewModel = vm.Get();
+                if (viewModel != null)
+                    viewModel.SelectedLanguage = x;
                 DismissViewController(true, null);
             });
             var ctrlToPresent = new ThemedNavigationController(view);

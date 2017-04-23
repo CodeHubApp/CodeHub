@@ -41,7 +41,8 @@ namespace CodeHub.iOS.ViewControllers.Search
                 d(_repositorySearchBar.GetSearchObservable()
                   .InvokeCommand(ViewModel.SearchCommand));
 
-                d(ViewModel.SearchCommand.IsExecuting.Subscribe(Searching));
+                d(ViewModel.SearchCommand.IsExecuting
+                  .Subscribe(Searching));
 
                 d(ViewModel.RepositoryItemSelected
                   .Select(x => new RepositoryViewController(x.Owner, x.Name))

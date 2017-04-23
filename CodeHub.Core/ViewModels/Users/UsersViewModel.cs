@@ -1,31 +1,30 @@
-using ReactiveUI;
+﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using Octokit;
+using ReactiveUI;
 using Splat;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Linq;
 
-namespace CodeHub.Core.ViewModels.Repositories
+namespace CodeHub.Core.ViewModels.Users
 {
-    public class RepositoriesViewModel : ReactiveObject
+    public class UsersViewModel : ReactiveObject
     {
         private readonly IApplicationService _applicationService;
         private readonly IAlertDialogService _dialogService;
-        private readonly ReactiveList<Repository> _internalItems
-            = new ReactiveList<Repository>(resetChangeThreshold: double.MaxValue);
+        private readonly ReactiveList<Octokit.User> _internalItems
+            = new ReactiveList<Octokit.User>(resetChangeThreshold: double.MaxValue);
 
         public ReactiveCommand<Unit, bool> LoadCommand { get; }
 
         public ReactiveCommand<Unit, bool> LoadMoreCommand { get; }
 
-        public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; private set; }
+        public IReadOnlyReactiveList<UserItemViewModel> Items { get; private set; }
 
-        public ReactiveCommand<RepositoryItemViewModel, RepositoryItemViewModel> RepositoryItemSelected { get; }
-        
+        public ReactiveCommand<UserItemViewModel, UserItemViewModel> ItemSelected { get; }
+
         private ObservableAsPropertyHelper<bool> _hasMore;
         public bool HasMore => _hasMore.Value;
 
@@ -46,58 +45,53 @@ namespace CodeHub.Core.ViewModels.Repositories
         private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         public bool IsEmpty => _isEmpty.Value;
 
-        public static RepositoriesViewModel CreateWatchedViewModel()
-            => new RepositoriesViewModel(ApiUrls.Watched());
+        public static UsersViewModel CreateWatchersViewModel(string owner, string name)
+            => new UsersViewModel(ApiUrls.Watchers(owner, name));
 
-        public static RepositoriesViewModel CreateStarredViewModel()
-            => new RepositoriesViewModel(ApiUrls.Starred());
+        public static UsersViewModel CreateFollowersViewModel(string user)
+            => new UsersViewModel(ApiUrls.Followers(user));
 
-        public static RepositoriesViewModel CreateForkedViewModel(string username, string repository)
-            => new RepositoriesViewModel(ApiUrls.RepositoryForks(username, repository));
+        public static UsersViewModel CreateFollowingViewModel(string user)
+            => new UsersViewModel(ApiUrls.Following(user));
 
-        public static RepositoriesViewModel CreateOrganizationViewModel(string org)
-            => new RepositoriesViewModel(ApiUrls.OrganizationRepositories(org));
+        public static UsersViewModel CreateTeamMembersViewModel(int id)
+            => new UsersViewModel(ApiUrls.TeamMembers(id));
 
-        public static RepositoriesViewModel CreateTeamViewModel(int id)
-            => new RepositoriesViewModel(ApiUrls.TeamRepositories(id));
+        public static UsersViewModel CreateOrgMembersViewModel(string org)
+            => new UsersViewModel(ApiUrls.Members(org));
 
-        public static RepositoriesViewModel CreateMineViewModel()
-            => new RepositoriesViewModel(ApiUrls.Repositories(), false);
+        public static UsersViewModel CreateStargazersViewModel(string owner, string name)
+            => new UsersViewModel(ApiUrls.Stargazers(owner, name));
 
-        public static RepositoriesViewModel CreateUsersViewModel(string username)
-        {
-            var applicationService = Locator.Current.GetService<IApplicationService>();
-            var isCurrent = string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase);
-            return new RepositoriesViewModel(isCurrent ? ApiUrls.Repositories() : ApiUrls.Repositories(username));
-        }
+        public static UsersViewModel CreateCollaboratorsViewModel(string owner, string name)
+            => new UsersViewModel(ApiUrls.RepoCollaborators(owner, name));
 
-        public RepositoriesViewModel(
-            Uri repositoriesUri,
-            bool showOwner = true,
-            IApplicationService applicationService = null,
-            IAlertDialogService dialogService = null)
+        public UsersViewModel(
+           Uri uri,
+           IApplicationService applicationService = null,
+           IAlertDialogService dialogService = null)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _dialogService = dialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            NextPage = repositoriesUri;
+            NextPage = uri;
 
             var showDescription = _applicationService.Account.ShowRepositoryDescriptionInList;
 
-            RepositoryItemSelected = ReactiveCommand.Create<RepositoryItemViewModel, RepositoryItemViewModel>(x => x);
+            ItemSelected = ReactiveCommand.Create<UserItemViewModel, UserItemViewModel>(x => x);
 
             Items = _internalItems
                 .CreateDerivedCollection(
-                    x => new RepositoryItemViewModel(x, showOwner, showDescription, GoToRepository),
-                    x => x.Name.ContainsKeyword(SearchText),
+                    x => new UserItemViewModel(x, GoToUser),
+                    x => x.Login.ContainsKeyword(SearchText),
                     signalReset: this.WhenAnyValue(x => x.SearchText));
 
             LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 _internalItems.Clear();
                 var parameters = new Dictionary<string, string>();
-                parameters["per_page"] = 75.ToString();
-                var items = await RetrieveRepositories(repositoriesUri, parameters);
+                parameters["per_page"] = 100.ToString();
+                var items = await RetrieveItems(uri, parameters);
                 _internalItems.AddRange(items);
                 return items.Count > 0;
             });
@@ -105,7 +99,7 @@ namespace CodeHub.Core.ViewModels.Repositories
             var canLoadMore = this.WhenAnyValue(x => x.NextPage).Select(x => x != null);
             LoadMoreCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
-                var items = await RetrieveRepositories(NextPage);
+                var items = await RetrieveItems(NextPage);
                 _internalItems.AddRange(items);
                 return items.Count > 0;
             }, canLoadMore);
@@ -127,16 +121,16 @@ namespace CodeHub.Core.ViewModels.Repositories
             _dialogService.Alert("Error Loading", err.Message).ToBackground();
         }
 
-        private void GoToRepository(RepositoryItemViewModel item)
+        private void GoToUser(UserItemViewModel item)
         {
-            RepositoryItemSelected.ExecuteNow(item);
+            ItemSelected.ExecuteNow(item);
         }
 
-        private async Task<IReadOnlyList<Repository>> RetrieveRepositories(
+        private async Task<IReadOnlyList<Octokit.User>> RetrieveItems(
             Uri repositoriesUri, IDictionary<string, string> parameters = null)
         {
             var connection = _applicationService.GitHubClient.Connection;
-            var ret = await connection.Get<IReadOnlyList<Repository>>(repositoriesUri, parameters, "application/json");
+            var ret = await connection.Get<IReadOnlyList<Octokit.User>>(repositoriesUri, parameters, "application/json");
             NextPage = ret.HttpResponse.ApiInfo.Links.ContainsKey("next")
                           ? ret.HttpResponse.ApiInfo.Links["next"]
                           : null;

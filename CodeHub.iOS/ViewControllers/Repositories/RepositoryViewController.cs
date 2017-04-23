@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
+using CodeHub.iOS.ViewControllers.Users;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -49,8 +50,16 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             OnActivation(d =>
             {
-                d(_stargazers.Clicked.BindCommand(ViewModel.GoToStargazersCommand));
-                d(_watchers.Clicked.BindCommand(ViewModel.GoToWatchersCommand));
+                d(_watchers.Clicked
+				  .Select(_ => ViewModel)
+                  .Select(x => UsersViewController.CreateWatchersViewController(x.Username, x.RepositoryName))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+
+                d(_stargazers.Clicked
+                  .Select(_ => ViewModel)
+                  .Select(x => UsersViewController.CreateStargazersViewController(x.Username, x.RepositoryName))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+
                 d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
 
                 d(_forks.Clicked.Subscribe(_ =>
@@ -171,9 +180,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repository });
         }
 
-        public RepositoryViewController(IFeaturesService featuresService = null)
+        public RepositoryViewController()
         {
-            _featuresService = featuresService ?? Mvx.Resolve<IFeaturesService>();
+            _featuresService = Mvx.Resolve<IFeaturesService>();
 
             _forkElement = new Lazy<StringElement>(() => new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() });
             _issuesElement = new Lazy<StringElement>(() => new StringElement("Issues", Octicon.IssueOpened.ToImage()));

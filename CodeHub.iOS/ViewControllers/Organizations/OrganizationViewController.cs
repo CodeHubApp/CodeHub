@@ -5,6 +5,7 @@ using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 using System;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers.Users;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
@@ -30,10 +31,16 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
             OnActivation(d =>
             {
-                d(members.Clicked.BindCommand(vm.GoToMembersCommand));
                 d(teams.Clicked.BindCommand(vm.GoToTeamsCommand));
-                d(followers.Clicked.BindCommand(vm.GoToFollowersCommand));
                 d(events.Clicked.BindCommand(vm.GoToEventsCommand));
+
+                d(members.Clicked
+                  .Select(_ => UsersViewController.CreateOrganizationMembersViewController(vm.Name))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+                
+                d(followers.Clicked
+                  .Select(_ => UsersViewController.CreateFollowersViewController(vm.Name))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(repos.Clicked.Subscribe(_ => {
                     var vc = Repositories.RepositoriesViewController.CreateOrganizationViewController(vm.Name);

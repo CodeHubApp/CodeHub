@@ -97,14 +97,16 @@ namespace CodeHub.iOS.ViewControllers
                 EmptyView.Value.Frame = new CGRect(0, 0, TableView.Bounds.Width, TableView.Bounds.Height);
                 TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
                 TableView.BringSubviewToFront(EmptyView.Value);
-                TableView.TableHeaderView.With(y => y.Hidden = true);
+                if (TableView.TableHeaderView != null)
+                    TableView.TableHeaderView.Hidden = true;
                 UIView.Animate(0.2f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
                     () => EmptyView.Value.Alpha = 1.0f, null);
             }
             else if (EmptyView.IsValueCreated)
             {
                 EmptyView.Value.UserInteractionEnabled = false;
-                TableView.TableHeaderView.With(y => y.Hidden = false);
+                if (TableView.TableHeaderView != null)
+                    TableView.TableHeaderView.Hidden = false;
                 TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
                 UIView.Animate(0.1f, 0f, UIViewAnimationOptions.AllowUserInteraction | UIViewAnimationOptions.CurveEaseIn | UIViewAnimationOptions.BeginFromCurrentState,
                     () => EmptyView.Value.Alpha = 0f, null);

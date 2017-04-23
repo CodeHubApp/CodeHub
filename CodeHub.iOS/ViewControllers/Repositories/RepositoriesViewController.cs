@@ -72,30 +72,23 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             Appearing
                 .Take(1)
-                .Select(_ => Unit.Default)
-                .InvokeCommand(ViewModel.LoadCommand);
+                .Select(_ => ViewModel.LoadCommand.Execute())
+                .Switch()
+                .Take(1)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(SetItemsPresent);
 
 			this.WhenActivated(d =>
 			{
 				d(_repositorySearchBar.GetChangedObservable()
 				  .Subscribe(x => ViewModel.SearchText = x));
 
-                d(ViewModel.WhenAnyValue(x => x.IsEmpty)
-                  .Skip(1)
-                  .Subscribe(SetEmpty));
-
 				d(ViewModel.RepositoryItemSelected
 				  .Select(x => new RepositoryViewController(x.Owner, x.Name))
 				  .Subscribe(x => NavigationController.PushViewController(x, true)));
 
-                d(ViewModel.LoadCommand.IsExecuting
-                  .Subscribe(Loading));
-
-                d(ViewModel.LoadCommand
-				  .Select(_ => ViewModel.LoadMoreCommand.IsExecuting)
-                  .Switch()
-                  .Throttle(TimeSpan.FromMilliseconds(150), RxApp.MainThreadScheduler)
-                  .Subscribe(Loading));
+                d(ViewModel.WhenAnyValue(x => x.HasMore)
+                  .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
 
                 d(tableViewSource.RequestMore
                   .InvokeCommand(ViewModel.LoadMoreCommand));
@@ -115,29 +108,25 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 			});
 		}
 
-        private void SetEmpty(bool empty)
+        private void SetItemsPresent(bool hasItems)
         {
-            TableView.TableHeaderView = empty ? null : _repositorySearchBar;
-            TableView.BackgroundView = empty ? emptyView.Value : null;
-            TableView.SeparatorStyle = empty 
-                ? UITableViewCellSeparatorStyle.None 
-                : UITableViewCellSeparatorStyle.SingleLine;
+            TableView.TableHeaderView = hasItems ? _repositorySearchBar : null;
+            TableView.SeparatorStyle = hasItems 
+                ? UITableViewCellSeparatorStyle.SingleLine 
+                : UITableViewCellSeparatorStyle.None;
+
+            if (hasItems)
+            {
+                TableView.BackgroundView = null;
+            }
+            else
+            {
+                emptyView.Value.Alpha = 0;
+                TableView.BackgroundView = emptyView.Value;
+                UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+                               () => emptyView.Value.Alpha = 1, null);
+            }
         }
-
-		private void Loading(bool searching)
-		{
-			_loading.SetLoading(searching);
-
-			if (searching)
-			{
-				TableView.TableFooterView = _loading;
-				TableView.BackgroundView = null;
-			}
-			else
-			{
-				TableView.TableFooterView = null;
-			}
-		}
 	}
 }
 

@@ -79,16 +79,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
         }
 
-        public ICommand GoToStargazersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryStargazersViewModel>(new RepositoryStargazersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToWatchersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryWatchersViewModel>(new RepositoryWatchersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
-        }
-
         public ICommand GoToEventsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }

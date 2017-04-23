@@ -13,11 +13,6 @@ namespace CodeHub.Core.ViewModels.Organizations
 
         public string OrganizationName { get; private set; }
 
-        public ICommand GoToTeamCommand
-        {
-            get { return new MvxCommand<TeamShortModel>(x => ShowViewModel<TeamMembersViewModel>(new TeamMembersViewModel.NavObject { Id = x.Id })); }
-        }
-
         public TeamsViewModel()
         {
             Title = "Teams";

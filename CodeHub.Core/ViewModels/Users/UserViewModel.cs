@@ -4,9 +4,7 @@ using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Organizations;
 using GitHubSharp.Models;
-using CodeHub.Core.ViewModels;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.User
 {
@@ -34,16 +32,6 @@ namespace CodeHub.Core.ViewModels.User
             {
                 return string.Equals(Username, this.GetApplication().Account.Username);
             }
-        }
-
-        public ICommand GoToFollowersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowersViewModel>(new UserFollowersViewModel.NavObject { Username = Username })); }
-        }
-
-        public ICommand GoToFollowingCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserFollowingsViewModel>(new UserFollowingsViewModel.NavObject { Name = Username })); }
         }
 
         public ICommand GoToEventsCommand
