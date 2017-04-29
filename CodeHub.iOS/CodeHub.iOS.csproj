@@ -50,7 +50,7 @@
     <IpaPackageName>
     </IpaPackageName>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-<CodesignProvision>64d8708a-8dcc-4079-a467-1c8c649892cf</CodesignProvision>
+<CodesignProvision></CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>

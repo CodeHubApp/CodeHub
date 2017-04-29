@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Reactive.Concurrency;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

@@ -108,6 +108,7 @@ namespace CodeHub.iOS.ViewControllers.Users
                   .InvokeCommand(ViewModel.LoadMoreCommand));
 
                 d(ViewModel.LoadCommand.Merge(ViewModel.LoadMoreCommand)
+                  .Select(_ => Unit.Default)
                   .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
                   .Where(_ => TableView.LastItemVisible())
                   .InvokeCommand(ViewModel.LoadMoreCommand));
