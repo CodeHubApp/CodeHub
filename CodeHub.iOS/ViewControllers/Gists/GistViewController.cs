@@ -1,8 +1,5 @@
 using System;
-using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.Views;
 using CodeHub.Core.ViewModels.Gists;
-using GitHubSharp.Models;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using System.Linq;
@@ -14,10 +11,11 @@ using System.Collections.Generic;
 using CodeHub.iOS.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
+using Octokit;
 
-namespace CodeHub.iOS.Views.Gists
+namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistView : PrettyDialogViewController
+    public class GistViewController : PrettyDialogViewController
     {
         private SplitViewElement _splitRow1, _splitRow2;
         private StringElement _ownerElement;
@@ -28,6 +26,18 @@ namespace CodeHub.iOS.Views.Gists
         {
             get { return (GistViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
+        }
+
+        public static GistViewController FromGist(Gist gist)
+        {
+            return new GistViewController
+            {
+                ViewModel = GistViewModel.FromGist(gist)
+            };
+        }
+
+        public GistViewController()
+        {
         }
 
         public override void ViewDidLoad()
@@ -77,13 +87,14 @@ namespace CodeHub.iOS.Views.Gists
 
                 d(ViewModel.Bind(x => x.Gist, true).Where(x => x != null).Subscribe(gist =>
                 {
-                    _splitRow1.Button1.Text = (gist.Public ?? true) ? "Public" : "Private";
+                    Console.WriteLine(string.Join(", ", gist.Files.Keys));
+                    _splitRow1.Button1.Text = gist.Public ? "Public" : "Private";
                     _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
                     _splitRow2.Button1.Text = gist.CreatedAt.Day + " Days Old";
                     _ownerElement.Value = gist.Owner?.Login ?? "Unknown";
-                    files.Text = gist.Files.Count.ToString();
+                    files.Text = gist.Files?.Count.ToString() ?? "-";
                     comments.Text = gist.Comments.ToString();
-                    forks.Text = gist.Forks.Count.ToString();
+                    forks.Text = gist.Forks?.Count.ToString() ?? "-";
                     HeaderView.SubText = gist.Description;
                     HeaderView.Text = gist.Files?.Select(x => x.Key).FirstOrDefault() ?? HeaderView.Text;
                     HeaderView.SetImage(gist.Owner?.AvatarUrl, Images.Avatar);
@@ -128,7 +139,7 @@ namespace CodeHub.iOS.Views.Gists
             Root.Reset(sections);
         }
 
-        private static Action<object> MakeCallback(WeakReference<GistViewModel> weakVm, GistFileModel model)
+        private static Action<object> MakeCallback(WeakReference<GistViewModel> weakVm, GistFile model)
         {
             return new Action<object>(_ => weakVm.Get()?.GoToFileSourceCommand.Execute(model));
         }
@@ -150,8 +161,8 @@ namespace CodeHub.iOS.Views.Gists
             try
             {
                 var app = Mvx.Resolve<IApplicationService>();
-                var data = await this.DoWorkAsync("Loading...", () => app.Client.ExecuteAsync(app.Client.Gists[ViewModel.Id].Get()));
-                var gistController = new EditGistController(data.Data);
+                var data = await this.DoWorkAsync("Loading...", () => app.GitHubClient.Gist.Get(ViewModel.Id));
+                var gistController = new GistEditViewController(data);
                 gistController.Created = editedGist => ViewModel.Gist = editedGist;
                 var navController = new UINavigationController(gistController);
                 PresentViewController(navController, true, null);

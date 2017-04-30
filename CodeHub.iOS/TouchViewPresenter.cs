@@ -20,6 +20,17 @@ namespace CodeHub.iOS
             _window = window;
         }
 
+        public override void ChangePresentation(MvxPresentationHint hint)
+        {
+            if (hint is MvxClosePresentationHint)
+            {
+                var navController = SlideoutNavigationController.MainViewController as UINavigationController;
+                navController?.PopViewController(true);
+            }
+
+            base.ChangePresentation(hint);
+        }
+
         public override void Show(MvxViewModelRequest request)
         {
             var viewCreator = Mvx.Resolve<IMvxIosViewCreator>();

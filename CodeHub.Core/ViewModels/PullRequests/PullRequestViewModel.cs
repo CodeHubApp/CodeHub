@@ -210,7 +210,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             _featuresService = featuresService;
             _messageService = messageService;
 
-            this.Bind(x => x.PullRequest, true).IsNotNull().Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
+            this.Bind(x => x.PullRequest, true)
+                .Where(x => x != null)
+                .Select(x => string.Equals(x.State, "closed"))
+                .Subscribe(x => IsClosed = x);
+            
             GoToOwner = ReactiveUI.ReactiveCommand.Create(
                 () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),
                 this.Bind(x => x.Issue, true).Select(x => x != null));

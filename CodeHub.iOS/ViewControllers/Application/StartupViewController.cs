@@ -84,9 +84,47 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (appDelegate != null)
                 appDelegate.Presenter.SlideoutNavigationController = slideoutController;
             
-            vc.ViewModel.GoToDefaultTopView.Execute(null);
+            var openButton = new UIBarButtonItem { Image = Images.Buttons.ThreeLinesButton };
+            var mainNavigationController = new MainNavigationController(GetInitialMenuViewController(), slideoutController, openButton);
+            slideoutController.SetMainViewController(mainNavigationController, false);
+
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);
+        }
+
+        private UIViewController GetInitialMenuViewController()
+        {
+            var username = ViewModel.Account.Username;
+            switch (ViewModel.Account.DefaultStartupView)
+            {
+                case "Organizations":
+                    return new Organizations.OrganizationsViewController(username);
+                case "Trending Repositories":
+                    return new Repositories.TrendingRepositoriesViewController();
+                case "Explore Repositories":
+                    return new Search.ExploreViewController();
+                case "Owned Repositories":
+                    return Repositories.RepositoriesViewController.CreateMineViewController();
+                case "Starred Repositories":
+                    return Repositories.RepositoriesViewController.CreateStarredViewController();
+                case "Public Gists":
+                    return Gists.GistsViewController.CreatePublicGistsViewController();
+                case "Starred Gists":
+                    return Gists.GistsViewController.CreateStarredGistsViewController();
+                case "My Gists":
+                    return Gists.GistsViewController.CreateUserGistsViewController(username);
+                case "Profile":
+                    return new Users.UserViewController(username);
+                case "My Events":
+                    return new Events.UserEventsViewController(username);
+                case "My Issues":
+                    return Views.Issues.MyIssuesView.Create();
+                case "Notifications":
+                    return Views.NotificationsView.Create();
+                default:
+                    return Events.NewsViewController.Create();
+                    
+            }
         }
 
         private void GoToNewAccount()

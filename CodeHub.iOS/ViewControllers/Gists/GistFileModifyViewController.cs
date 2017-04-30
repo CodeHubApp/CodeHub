@@ -60,18 +60,31 @@ namespace CodeHub.iOS.ViewControllers.Gists
             Root.Add(new Section { titleElement, contentElement });
             TableView.TableFooterView = new UIView();
 
-            OnActivation(d => {
-                d(this.Bind(x => x.Filename, true).Subscribe(x => {
+            var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            NavigationItem.RightBarButtonItem = saveButton;
+
+            OnActivation(d =>
+            {
+                d(this.Bind(x => x.Filename, true).Subscribe(x =>
+                {
                     Title = string.IsNullOrEmpty(x) ? "Gist File" : x;
                     titleElement.Value = x;
                 }));
+
                 d(titleElement.Changed.Subscribe(x => Filename = x));
 
                 d(this.Bind(x => x.Content, true).Subscribe(x => contentElement.Value = x));
+
                 d(contentElement.Changed.Subscribe(x => Content = x));
 
                 d(SaveCommand.Subscribe(_ => ResignFirstResponder()));
-                d(this.Bind(x => x.SaveCommand, true).ToBarButtonItem(Images.Buttons.SaveButton, x => NavigationItem.RightBarButtonItem = x));
+
+                d(saveButton.GetClickedObservable()
+                  .Select(_ => Unit.Default)
+                  .InvokeCommand(SaveCommand));
+
+                d(SaveCommand.IsExecuting
+                  .Subscribe(x => saveButton.Enabled = !x));
             });
         }
     }

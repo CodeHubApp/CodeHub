@@ -2,16 +2,15 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CodeHub.Core.ViewModels.User;
-using GitHubSharp.Models;
-using CodeHub.Core.ViewModels;
 using MvvmCross.Core.ViewModels;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<GistCommentModel> _comments = new CollectionViewModel<GistCommentModel>();
-        private GistModel _gist;
+        private readonly CollectionViewModel<GistComment> _comments = new CollectionViewModel<GistComment>();
+        private Gist _gist;
         private bool _starred;
 
         public string Id
@@ -20,7 +19,7 @@ namespace CodeHub.Core.ViewModels.Gists
             private set;
         }
 
-        public GistModel Gist
+        public Gist Gist
         {
             get { return _gist; }
             set { this.RaiseAndSetIfChanged(ref _gist, value); }
@@ -32,7 +31,7 @@ namespace CodeHub.Core.ViewModels.Gists
             private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
-        public CollectionViewModel<GistCommentModel> Comments
+        public CollectionViewModel<GistComment> Comments
         {
             get { return _comments; }
         }
@@ -45,8 +44,8 @@ namespace CodeHub.Core.ViewModels.Gists
         public ICommand GoToFileSourceCommand
         {
             get { 
-                return new MvxCommand<GistFileModel>(x => {
-                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(x);
+                return new MvxCommand<GistFile>(x => {
+                    GetService<Services.IViewModelTxService>().Add(x);
                     ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistId = Id, Filename = x.Filename });
                 });
             }
@@ -71,6 +70,15 @@ namespace CodeHub.Core.ViewModels.Gists
             {
                 return new MvxCommand(() => ToggleStarred(), () => Gist != null);
             }
+        }
+
+        public static GistViewModel FromGist(Gist gist)
+        {
+            return new GistViewModel
+            {
+                Gist = gist,
+                Id = gist.Id
+            };
         }
 
         public void Init(NavObject navObject)
@@ -99,18 +107,22 @@ namespace CodeHub.Core.ViewModels.Gists
             ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = forkedGist.Id });
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            var t1 = this.RequestModel(this.GetApplication().Client.Gists[Id].Get(), response => Gist = response.Data);
-            this.RequestModel(this.GetApplication().Client.Gists[Id].IsGistStarred(), response => IsStarred = response.Data).FireAndForget();
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Gists[Id].GetComments()).FireAndForget();
-            return t1;
+            Comments.Items.Clear();
+
+            this.GetApplication().GitHubClient.Gist.IsStarred(Id)
+                .ToBackground(x => IsStarred = x);
+
+            this.GetApplication().GitHubClient.Gist.Comment.GetAllForGist(Id)
+                .ToBackground(Comments.Items.AddRange);
+
+            Gist = await this.GetApplication().GitHubClient.Gist.Get(Id);
         }
 
-        public async Task Edit(GistEditModel editModel)
+        public async Task Edit(GistUpdate editModel)
         {
-            var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[Id].EditGist(editModel));
-            Gist = response.Data;
+            Gist = await this.GetApplication().GitHubClient.Gist.Edit(Id, editModel);
         }
 
         public class NavObject

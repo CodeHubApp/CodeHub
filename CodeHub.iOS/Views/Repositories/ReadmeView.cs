@@ -31,7 +31,7 @@ namespace CodeHub.iOS.Views.Repositories
             base.ViewDidLoad();
 
             ViewModel.Bind(x => x.ContentText, true)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
                 .Select(x => new MarkdownView { Model = x }.GenerateString())
                 .Subscribe(LoadContent);

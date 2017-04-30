@@ -41,7 +41,7 @@ namespace CodeHub.iOS.TableViewCells
             DefaultConstraintSize = ContentConstraint.Constant;
 
             this.WhenAnyValue(x => x.ViewModel)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Subscribe(x =>
                 {
                     CaptionLabel.Text = x.Name;

@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GitHubSharp.Models;
-using System.Linq;
 using CodeHub.Core.Messages;
 using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Services;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
@@ -42,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Gists
             set { this.RaiseAndSetIfChanged(ref _files, value); }
         }
 
-        public ReactiveCommand<Unit, GistModel> SaveCommand { get; }
+        public ReactiveCommand<Unit, Gist> SaveCommand { get; }
 
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
 
@@ -56,24 +55,26 @@ namespace CodeHub.Core.ViewModels.Gists
             SaveCommand.ThrownExceptions.Subscribe(x => DisplayAlert(x.Message));
         }
 
-        private async Task<GistModel> Save()
+        private async Task<Gist> Save()
         {
             if (_files.Count == 0)
                 throw new Exception("You cannot create a Gist without atleast one file! Please correct and try again.");
 
             try
             {
-                var createGist = new GistCreateModel
+                var newGist = new NewGist()
                 {
                     Description = Description ?? string.Empty,
-                    Public = Public,
-                    Files = Files.ToDictionary(x => x.Key, x => new GistCreateModel.File { Content = x.Value })
+                    Public = Public
                 };
 
+                foreach (var kv in Files)
+                    newGist.Files.Add(kv.Key, kv.Value);
+
                 IsSaving = true;
-                var newGist = (await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Gists.CreateGist(createGist))).Data;
-                _messageService.Send(new GistAddMessage(newGist));
-                return newGist;
+                var gist = await this.GetApplication().GitHubClient.Gist.Create(newGist);
+                _messageService.Send(new GistAddMessage(gist));
+                return gist;
             }
             finally
             {

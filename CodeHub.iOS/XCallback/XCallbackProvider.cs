@@ -4,8 +4,8 @@ using CodeHub.Core.Services;
 using System.Collections.Generic;
 using UIKit;
 using Foundation;
-using CodeHub.iOS.Views.Gists;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers.Gists;
 
 namespace CodeHub.iOS.XCallback
 {
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.XCallback
                     if (ctrl == null)
                         return;
                     
-                    var view = GistCreateView.Show(ctrl);
+                    var view = GistCreateViewController.Show(ctrl);
                     view.ViewModel.Description = description;
                     view.ViewModel.Public = isPublic;
                     view.ViewModel.Files = files;

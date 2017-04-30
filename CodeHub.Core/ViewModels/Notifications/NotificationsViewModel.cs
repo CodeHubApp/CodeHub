@@ -90,9 +90,9 @@ namespace CodeHub.Core.ViewModels.Notifications
             }
         }
 
-        public NotificationsViewModel(IMessageService messageService)
+        public NotificationsViewModel(IMessageService messageService = null)
         {
-            _messageService = messageService;
+            _messageService = messageService ?? GetService<IMessageService>();
             _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
             _notifications.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));

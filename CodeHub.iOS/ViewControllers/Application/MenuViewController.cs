@@ -176,9 +176,9 @@ namespace CodeHub.iOS.ViewControllers.Application
                 sections.Add(orgSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Octicon.Gist.ToImage()));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Octicon.Star.ToImage()));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Octicon.Globe.ToImage()));
+            gistsSection.Add(new MenuElement("My Gists", GoToOwnedGists, Octicon.Gist.ToImage()));
+            gistsSection.Add(new MenuElement("Starred", GoToStarredGists, Octicon.Star.ToImage()));
+            gistsSection.Add(new MenuElement("Public", GoToPublicGists, Octicon.Globe.ToImage()));
             sections.Add(gistsSection);
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
@@ -223,6 +223,25 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void GoToTrendingRepositories()
         {
             var vc = new Repositories.TrendingRepositoriesViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToOwnedGists()
+        {
+            var username = ViewModel.Account.Username;
+            var vc = Gists.GistsViewController.CreateUserGistsViewController(username);
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToStarredGists()
+        {
+            var vc = Gists.GistsViewController.CreateStarredGistsViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToPublicGists()
+        {
+            var vc = Gists.GistsViewController.CreatePublicGistsViewController();
             NavigationController?.PushViewController(vc, true);
         }
 

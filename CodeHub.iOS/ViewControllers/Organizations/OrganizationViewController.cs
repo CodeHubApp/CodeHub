@@ -6,6 +6,7 @@ using CodeHub.iOS.DialogElements;
 using System;
 using System.Reactive.Linq;
 using CodeHub.iOS.ViewControllers.Users;
+using CodeHub.iOS.ViewControllers.Gists;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
@@ -46,8 +47,10 @@ namespace CodeHub.iOS.ViewControllers.Organizations
                     var vc = Repositories.RepositoriesViewController.CreateOrganizationViewController(vm.Name);
                     NavigationController?.PushViewController(vc, true);
                 }));
-                  
-                d(gists.Clicked.BindCommand(vm.GoToGistsCommand));
+
+                d(gists.Clicked
+                  .Select(x => GistsViewController.CreateUserGistsViewController(vm.Name))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(vm.Bind(x => x.Organization, true).Where(x => x != null).Subscribe(x =>
                 {

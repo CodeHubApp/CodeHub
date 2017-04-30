@@ -4,6 +4,7 @@ using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers.Gists;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
@@ -17,8 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Users
             set { base.ViewModel = value; }
         }
 
-        public UserViewController(string username)
-            : this()
+        public UserViewController(string username) : this()
         {
             ViewModel = new UserViewModel();
             ViewModel.Init(new UserViewModel.NavObject { Username = username });
@@ -67,7 +67,11 @@ namespace CodeHub.iOS.ViewControllers.Users
                
                 d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
                 d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
-                d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
+
+                d(gists.Clicked
+                  .Select(x => GistsViewController.CreateUserGistsViewController(ViewModel.Username))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+
                 d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
 
                 d(repos.Clicked.Subscribe(_ =>

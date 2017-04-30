@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Linq;
-using System.Reactive.Concurrency;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -87,11 +86,17 @@ namespace CodeHub.Core.ViewModels.Repositories
 
             RepositoryItemSelected = ReactiveCommand.Create<RepositoryItemViewModel, RepositoryItemViewModel>(x => x);
 
-            Items = _internalItems
+            var repositoryItems = _internalItems.CreateDerivedCollection(
+                x => new RepositoryItemViewModel(x, showOwner, showDescription, GoToRepository));
+
+            var searchUpdated = this.WhenAnyValue(x => x.SearchText)
+                .Throttle(TimeSpan.FromMilliseconds(400), RxApp.MainThreadScheduler);
+
+            Items = repositoryItems
                 .CreateDerivedCollection(
-                    x => new RepositoryItemViewModel(x, showOwner, showDescription, GoToRepository),
+                    x => x,
                     x => x.Name.ContainsKeyword(SearchText),
-                    signalReset: this.WhenAnyValue(x => x.SearchText));
+                    signalReset: searchUpdated);
 
             LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {

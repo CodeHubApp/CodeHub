@@ -1,37 +1,34 @@
 using System;
-using CodeHub.iOS;
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using UIKit;
 using System.Linq;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.DialogElements;
 using System.Threading.Tasks;
 using CodeHub.iOS.ViewControllers.Gists;
+using Octokit;
 
-namespace CodeHub.iOS.Views
+namespace CodeHub.iOS.ViewControllers
 {
-    public class EditGistController : DialogViewController
+    public class GistEditViewController : DialogViewController
     {
-        private GistEditModel _model;
-        public Action<GistModel> Created;
-        private GistModel _originalGist;
+        private GistUpdate _model;
+        public Action<Gist> Created;
+        private Gist _originalGist;
 
-        public EditGistController(GistModel gist)
+        public GistEditViewController(Gist gist)
             : base(UITableViewStyle.Grouped, true)
         {
             Title = "Edit Gist";
             _originalGist = gist;
 
-            _model = new GistEditModel();
+            _model = new GistUpdate();
             _model.Description = gist.Description;
-            _model.Files = new Dictionary<string, GistEditModel.File>();
 
             if (gist.Files != null)
                 foreach (var f in gist.Files)
-                    _model.Files.Add(f.Key, new GistEditModel.File() { Content = f.Value.Content });
+                    _model.Files.Add(f.Key, new GistFileUpdate { Content = f.Value.Content });
         }
 
         private void Discard()
@@ -54,8 +51,8 @@ namespace CodeHub.iOS.Views
             try
             {
                 hud.Show("Saving...");
-                var newGist = await app.Client.ExecuteAsync(app.Client.Gists[_originalGist.Id].EditGist(_model));
-                Created?.Invoke(newGist.Data);
+                var newGist = await app.GitHubClient.Gist.Edit(_originalGist.Id, _model);
+                Created?.Invoke(newGist);
                 DismissViewController(true, null);
             }
             catch (Exception e)
@@ -73,7 +70,7 @@ namespace CodeHub.iOS.Views
         {
             if (_model.Files.Count(x => x.Key.Equals(name) && x.Value != null) > 0)
                 return true;
-            return _model.Files.Count(x => x.Value != null && name.Equals(x.Value.Filename)) > 0;
+            return _model.Files.Count(x => x.Value != null && name.Equals(x.Value.NewFileName)) > 0;
         }
 
         int _gistFileCounter = 0;
@@ -101,7 +98,7 @@ namespace CodeHub.iOS.Views
 
                 if (IsDuplicateName(name))
                     throw new InvalidOperationException("A filename by that type already exists");
-                _model.Files[name] = new GistEditModel.File { Content = content };
+                _model.Files[name] = new GistFileUpdate { Content = content };
             };
             NavigationController.PushViewController(createController, true);
         }
@@ -155,8 +152,8 @@ namespace CodeHub.iOS.Views
                     continue;
 
                 var elName = key;
-                if (_model.Files[key].Filename != null)
-                    elName = _model.Files[key].Filename;
+                if (_model.Files[key].NewFileName != null)
+                    elName = _model.Files[key].NewFileName;
 
                 var el = new FileElement(elName, key, _model.Files[key]);
                 el.Clicked.Subscribe(MakeCallback(this, key));
@@ -167,9 +164,9 @@ namespace CodeHub.iOS.Views
             Root.Reset(sections);
         }
 
-        private static Action<object> MakeCallback(EditGistController ctrl, string key)
+        private static Action<object> MakeCallback(GistEditViewController ctrl, string key)
         {
-            var weakCtrl = new WeakReference<EditGistController>(ctrl);
+            var weakCtrl = new WeakReference<GistEditViewController>(ctrl);
             return new Action<object>(_ =>
             {
                 var model = weakCtrl.Get()?._model;
@@ -191,11 +188,11 @@ namespace CodeHub.iOS.Views
                         throw new InvalidOperationException("A filename by that type already exists");
 
                     if (originalGist?.Files.ContainsKey(key) == true)
-                        model.Files[key] = new GistEditModel.File { Content = content, Filename = name };
+                        model.Files[key] = new GistFileUpdate { Content = content, NewFileName = name };
                     else
                     {
                         model.Files.Remove(key);
-                        model.Files[name] = new GistEditModel.File { Content = content };
+                        model.Files[name] = new GistFileUpdate { Content = content };
                     }
                 };
 
@@ -234,9 +231,9 @@ namespace CodeHub.iOS.Views
 
         private class FileElement : StringElement
         {
-            public readonly GistEditModel.File File;
+            public readonly GistFileUpdate File;
             public readonly string Key;
-            public FileElement(string name, string key, GistEditModel.File file)
+            public FileElement(string name, string key, GistFileUpdate file)
                 : base(name, String.Empty, UITableViewCellStyle.Subtitle)
             {
                 File = file;
@@ -248,7 +245,7 @@ namespace CodeHub.iOS.Views
 
         private class EditSource : Source
         {
-            public EditSource(EditGistController dvc) 
+            public EditSource(GistEditViewController dvc) 
                 : base (dvc)
             {
             }
@@ -272,7 +269,7 @@ namespace CodeHub.iOS.Views
                     case UITableViewCellEditingStyle.Delete:
                         var section = Root?[indexPath.Section];
                         var element = section?[indexPath.Row];
-                        (Container as EditGistController)?.Delete(element, section);
+                        (Container as GistEditViewController)?.Delete(element, section);
                         break;
                 }
             }

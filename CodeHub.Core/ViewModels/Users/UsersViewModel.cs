@@ -80,11 +80,17 @@ namespace CodeHub.Core.ViewModels.Users
 
             ItemSelected = ReactiveCommand.Create<UserItemViewModel, UserItemViewModel>(x => x);
 
-            Items = _internalItems
+            var userItems = _internalItems.CreateDerivedCollection(
+                x => new UserItemViewModel(x, GoToUser));
+
+            var searchUpdated = this.WhenAnyValue(x => x.SearchText)
+                .Throttle(TimeSpan.FromMilliseconds(400), RxApp.MainThreadScheduler);
+
+            Items = userItems
                 .CreateDerivedCollection(
-                    x => new UserItemViewModel(x, GoToUser),
+                    x => x,
                     x => x.Login.ContainsKeyword(SearchText),
-                    signalReset: this.WhenAnyValue(x => x.SearchText));
+                    signalReset: searchUpdated);
 
             LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {

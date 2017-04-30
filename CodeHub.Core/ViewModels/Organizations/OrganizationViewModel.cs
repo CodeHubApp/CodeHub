@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.Events;
-using CodeHub.Core.ViewModels.Gists;
 using GitHubSharp.Models;
 
 namespace CodeHub.Core.ViewModels.Organizations
@@ -32,11 +31,6 @@ namespace CodeHub.Core.ViewModels.Organizations
         public ICommand GoToEventsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Name })); }
-        }
-
-        public ICommand GoToGistsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Name })); }
         }
 
         protected override Task Load()

@@ -43,6 +43,8 @@ namespace CodeHub.Core.ViewModels.App
             get { return new Dumb.MvxAsyncCommand(Startup); }
         }
 
+        public Data.Account Account => _applicationService.Account;
+
         public ReactiveCommand<Unit, Unit> GoToMenu { get; } = ReactiveCommand.Create(() => { });
 
         public ReactiveCommand<Unit, Unit> GoToAccounts { get; } = ReactiveCommand.Create(() => { });

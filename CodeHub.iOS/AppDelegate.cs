@@ -89,6 +89,7 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IApplicationService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMessageService>());
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();

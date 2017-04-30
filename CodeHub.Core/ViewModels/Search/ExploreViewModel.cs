@@ -11,6 +11,8 @@ namespace CodeHub.Core.ViewModels.Search
 {
     public class ExploreViewModel : ReactiveObject
     {
+        private readonly IApplicationService _applicationService;
+
         public ReactiveCommand<Unit, Unit> SearchCommand { get; }
 
         public IReadOnlyReactiveList<RepositoryItemViewModel> Items { get; private set; }
@@ -28,19 +30,16 @@ namespace CodeHub.Core.ViewModels.Search
             IApplicationService applicationService = null,
             IAlertDialogService dialogService = null)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             dialogService = dialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
             RepositoryItemSelected = ReactiveCommand.Create<RepositoryItemViewModel, RepositoryItemViewModel>(x => x);
-            var showDescription = applicationService.Account.ShowRepositoryDescriptionInList;
+            var showDescription = _applicationService.Account.ShowRepositoryDescriptionInList;
 
             var internalItems = new ReactiveList<Repository>(resetChangeThreshold: double.MaxValue);
 
-            Items = internalItems
-                .CreateDerivedCollection(x =>
-                {
-                    return new RepositoryItemViewModel(x, true, showDescription, y => RepositoryItemSelected.ExecuteNow(y));
-                });
+            Items = internalItems.CreateDerivedCollection(x =>
+                new RepositoryItemViewModel(x, true, showDescription, y => RepositoryItemSelected.ExecuteNow(y)));
 
             var canSearch = this.WhenAnyValue(x => x.SearchText).Select(x => !string.IsNullOrEmpty(x));
             SearchCommand = ReactiveCommand.CreateFromTask(async t =>
@@ -49,7 +48,7 @@ namespace CodeHub.Core.ViewModels.Search
                 {
                     internalItems.Clear();
                     var request = new SearchRepositoriesRequest(SearchText);
-                    var response = await applicationService.GitHubClient.Search.SearchRepo(request);
+                    var response = await _applicationService.GitHubClient.Search.SearchRepo(request);
                     internalItems.Reset(response.Items);
                 }
                 catch (Exception e)

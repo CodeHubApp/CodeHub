@@ -1,28 +1,28 @@
 using System;
-using CodeHub.iOS;
 using UIKit;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.DialogElements;
 using System.Collections.Generic;
-using CodeHub.iOS.ViewControllers.Gists;
+using System.Reactive;
+using System.Reactive.Linq;
+using ReactiveUI;
 
-namespace CodeHub.iOS.Views.Gists
+namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistCreateView : DialogViewController
+    public class GistCreateViewController : DialogViewController
     {
         public GistCreateViewModel ViewModel { get; }
 
-        public GistCreateView() : base(UITableViewStyle.Grouped)
+        public GistCreateViewController() : base(UITableViewStyle.Grouped)
         {
             Title = "Create Gist";
             ViewModel = new GistCreateViewModel();
         }
 
-        public static GistCreateView Show(UIViewController parent)
+        public static GistCreateViewController Show(UIViewController parent)
         {
-            var ctrl = new GistCreateView();
+            var ctrl = new GistCreateViewController();
             var weakVm = new WeakReference<GistCreateViewModel>(ctrl.ViewModel);
             ctrl.ViewModel.SaveCommand.Subscribe(_ => parent.DismissViewController(true, null));
             ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
@@ -45,11 +45,14 @@ namespace CodeHub.iOS.Views.Gists
 
             OnActivation(d =>
             {
-                d(saveButton.GetClickedObservable().BindCommand(ViewModel.SaveCommand));
                 d(ViewModel.Bind(x => x.Description).Subscribe(_ => UpdateView()));
                 d(ViewModel.Bind(x => x.Files).Subscribe(_ => UpdateView()));
                 d(ViewModel.Bind(x => x.Public).Subscribe(_ => UpdateView()));
                 d(ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
+
+	            d(saveButton.GetClickedObservable()
+	              .Select(_ => Unit.Default)
+	              .InvokeCommand(ViewModel.SaveCommand));
             });
         }
 
@@ -165,7 +168,7 @@ namespace CodeHub.iOS.Views.Gists
 
         private class EditSource : Source
         {
-            public EditSource(GistCreateView dvc) 
+            public EditSource(GistCreateViewController dvc) 
                 : base (dvc)
             {
             }
@@ -189,7 +192,7 @@ namespace CodeHub.iOS.Views.Gists
                     case UITableViewCellEditingStyle.Delete:
                         var section = Root?[indexPath.Section];
                         var element = section?[indexPath.Row];
-                        (Container as GistCreateView)?.Delete(element);
+                        (Container as GistCreateViewController)?.Delete(element);
                         section?.Remove(element);
                         break;
                 }

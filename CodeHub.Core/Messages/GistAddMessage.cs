@@ -1,12 +1,10 @@
-using GitHubSharp.Models;
-
 namespace CodeHub.Core.Messages
 {
     public class GistAddMessage
     {
-        public GistModel Gist { get; private set; }
+        public Octokit.Gist Gist { get; private set; }
 
-        public GistAddMessage(GistModel gist)
+        public GistAddMessage(Octokit.Gist gist)
         {
             Gist = gist;
         }

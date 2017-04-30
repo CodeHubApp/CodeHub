@@ -95,17 +95,8 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
-    <Compile Include="Views\Events\NewsView.cs" />
-    <Compile Include="Views\Events\OrganizationEventsView.cs" />
-    <Compile Include="Views\Events\UserEventsView.cs" />
-    <Compile Include="Views\Gists\PublicGistsView.cs" />
-    <Compile Include="Views\Gists\StarredGistsView.cs" />
-    <Compile Include="Views\Gists\UserGistsView.cs" />
-    <Compile Include="Views\Gists\EditGistController.cs" />
-    <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
-    <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\Issues\IssueMilestonesView.cs" />
     <Compile Include="Views\Issues\IssuesView.cs" />
     <Compile Include="Views\Issues\IssueView.cs" />
@@ -121,8 +112,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
-    <Compile Include="Views\Events\RepositoryEventsView.cs" />
-    <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
@@ -138,7 +127,6 @@
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="UrlRouterProvider.cs" />
-    <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
     <None Include="packages.config" />
@@ -260,7 +248,6 @@
     <Compile Include="DialogElements\StringElement.cs" />
     <Compile Include="DialogElements\CommitElement.cs" />
     <Compile Include="DialogElements\ChangesetElement.cs" />
-    <Compile Include="DialogElements\GistElement.cs" />
     <Compile Include="DialogElements\MilestoneElement.cs" />
     <Compile Include="DialogElements\LabelElement.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
@@ -305,7 +292,6 @@
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\EmptyListView.cs" />
-    <Compile Include="Views\Gists\BaseGistsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
@@ -339,6 +325,18 @@
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
     <Compile Include="TableViewCells\UserTableViewCell.cs" />
     <Compile Include="ViewControllers\Users\UsersViewController.cs" />
+    <Compile Include="TableViewSources\GistTableViewSource.cs" />
+    <Compile Include="ViewControllers\Gists\GistsViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistCreateViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistEditViewController.cs" />
+    <Compile Include="TableViewSources\DialogTableViewSource.cs" />
+    <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\NewsViewController.cs" />
+    <Compile Include="ViewControllers\Events\OrganizationEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
+    <Compile Include="Views\Issues\IssueLabelsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -610,6 +608,7 @@
     <Folder Include="Data\" />
     <Folder Include="TableViewSources\" />
     <Folder Include="ViewControllers\Search\" />
+    <Folder Include="ViewControllers\Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -24,8 +24,10 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        public MyIssuesViewModel(IMessageService messageService)
+        public MyIssuesViewModel(IMessageService messageService = null)
         {
+            messageService = messageService ?? GetService<IMessageService>();
+            
             _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
             _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));

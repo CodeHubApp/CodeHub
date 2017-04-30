@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
-using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
@@ -63,71 +62,25 @@ namespace CodeHub.Core.ViewModels.App
             Notifications = msg.Count;
         }
 
-        [PotentialStartupViewAttribute("Profile")]
         public ICommand GoToProfileCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<UserViewModel>(new UserViewModel.NavObject { Username = _applicationService.Account.Username })); }
         }
 
-        [PotentialStartupViewAttribute("Notifications")]
         public ICommand GoToNotificationsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<NotificationsViewModel>(null)); }
         }
 
-        [PotentialStartupViewAttribute("My Issues")]
         public ICommand GoToMyIssuesCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<MyIssuesViewModel>(null)); }
         }
 
-        [PotentialStartupViewAttribute("My Events")]
         public ICommand GoToMyEvents
         {
             get { return new MvxCommand(() => ShowMenuViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Account.Username })); }
         }
-
-        [PotentialStartupViewAttribute("My Gists")]
-        public ICommand GoToMyGistsCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<UserGistsViewModel>(new UserGistsViewModel.NavObject { Username = Account.Username}));}
-        }
-
-        [PotentialStartupViewAttribute("Starred Gists")]
-        public ICommand GoToStarredGistsCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<StarredGistsViewModel>(null)); }
-        }
-
-        [PotentialStartupViewAttribute("Public Gists")]
-        public ICommand GoToPublicGistsCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<PublicGistsViewModel>(null)); }
-        }
-
-        //[PotentialStartupViewAttribute("Starred Repositories")]
-        //public ICommand GoToStarredRepositoriesCommand
-        //{
-        //    get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesStarredViewModel>(null));}
-        //}
-
-        //[PotentialStartupViewAttribute("Owned Repositories")]
-        //public ICommand GoToOwnedRepositoriesCommand
-        //{
-        //    get { return new MvxCommand(() => ShowMenuViewModel<UserRepositoriesViewModel>(new UserRepositoriesViewModel.NavObject { Username = Account.Username }));}
-        //}
-
-        //[PotentialStartupViewAttribute("Explore Repositories")]
-        //public ICommand GoToExploreRepositoriesCommand
-        //{
-        //    get { return new MvxCommand(() => ShowMenuViewModel<RepositoriesExploreViewModel>(null));}
-        //}
-
-        //[PotentialStartupViewAttribute("Trending Repositories")]
-        //public ICommand GoToTrendingRepositoriesCommand
-        //{
-        //    get { return new MvxCommand(() => ShowMenuViewModel<TrendingRepositoriesViewModel>(null));}
-        //}
 
         public ICommand GoToOrganizationEventsCommand
         {
@@ -139,14 +92,11 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand<string>(x => ShowMenuViewModel<Organizations.OrganizationViewModel>(new Organizations.OrganizationViewModel.NavObject { Name = x }));}
         }
 
-        [PotentialStartupViewAttribute("Organizations")]
         public ICommand GoToOrganizationsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<Organizations.OrganizationsViewModel>(new Organizations.OrganizationsViewModel.NavObject { Username = Account.Username }));}
         }
 
-        [DefaultStartupViewAttribute]
-        [PotentialStartupViewAttribute("News")]
         public ICommand GoToNewsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<NewsViewModel>(null));}
@@ -222,39 +172,6 @@ namespace CodeHub.Core.ViewModels.App
         //        }
 
         private static readonly IDictionary<string, string> Presentation = new Dictionary<string, string> { { PresentationValues.SlideoutRootPresentation, string.Empty } };
-
-        public ICommand GoToDefaultTopView
-        {
-            get
-            {
-                var startupViewName = Account.DefaultStartupView;
-                if (!string.IsNullOrEmpty(startupViewName))
-                {
-                    var props = from p in GetType().GetProperties()
-                                let attr = p.GetCustomAttributes(typeof(PotentialStartupViewAttribute), true)
-                                where attr.Length == 1
-                                select new { Property = p, Attribute = attr[0] as PotentialStartupViewAttribute };
-
-                    foreach (var p in props)
-                    {
-                        if (string.Equals(startupViewName, p.Attribute.Name))
-                            return p.Property.GetValue(this) as ICommand;
-                    }
-                }
-
-                //Oh no... Look for the last resort DefaultStartupViewAttribute
-                var deprop = (from p in GetType().GetProperties()
-                              let attr = p.GetCustomAttributes(typeof(DefaultStartupViewAttribute), true)
-                              where attr.Length == 1
-                              select new { Property = p, Attribute = attr[0] as DefaultStartupViewAttribute }).FirstOrDefault();
-
-                //That shouldn't happen...
-                if (deprop == null)
-                    return null;
-                var val = deprop.Property.GetValue(this);
-                return val as ICommand;
-            }
-        }
 
         public ICommand DeletePinnedRepositoryCommand
         {

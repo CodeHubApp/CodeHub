@@ -45,9 +45,6 @@
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\UserGistsViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
@@ -78,7 +75,6 @@
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
     <Compile Include="Messages\SelectIssueLabelsMessage.cs" />
@@ -88,7 +84,6 @@
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
-    <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
@@ -113,7 +108,6 @@
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
-    <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
@@ -157,6 +151,8 @@
     <Compile Include="ViewModels\Repositories\TrendingRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Users\UsersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -251,6 +247,9 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />
