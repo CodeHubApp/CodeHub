@@ -23,7 +23,6 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
-using System.IO;
 using CodeHub.iOS.Data;
 using CrashlyticsKit;
 using FabricSdk;

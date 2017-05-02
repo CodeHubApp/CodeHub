@@ -3,9 +3,6 @@ using UIKit;
 using SDWebImage;
 using Foundation;
 using CodeHub.Core.ViewModels.App;
-using MvvmCross.Platform;
-using CodeHub.Core.Factories;
-using CodeHub.Core.Services;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers.Accounts;
 using CodeHub.Core.Utilities;
@@ -159,7 +156,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
                 _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, _) => {
                     _imgView.Image = Images.LoginUserUnknown;
-                    UIView.Transition(_imgView, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
+                    UIView.Transition(_imgView, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve , () => _imgView.Image = img, null);
                 });
             }
         }
