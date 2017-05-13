@@ -78,8 +78,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignKey>iPhone Distribution: Dillon Buchanan (T39PW4C23Z)</CodesignKey>
+    <CodesignProvision></CodesignProvision>
     <IpaPackageName>
     </IpaPackageName>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
