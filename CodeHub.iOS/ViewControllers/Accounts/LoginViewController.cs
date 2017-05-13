@@ -7,7 +7,6 @@ using WebKit;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Factories;
-using CodeHub.iOS.ViewControllers;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
 using System.Linq;
@@ -16,14 +15,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public class LoginViewController : BaseWebViewController
     {
-        private static readonly string HasSeenWelcomeKey = "HAS_SEEN_OAUTH_INFO";
-
         private static readonly string OAuthWelcome = 
             "In the following screen you will be prompted for your GitHub credentials. This is done through GitHub's OAuth portal, " +
             "the recommended way to authenticate.\n\nCodeHub does not save your password. Instead, only the OAuth " + 
             "token is saved on the device which you may revoke at any time.";
         
-
         public LoginViewModel ViewModel { get; }
 
         public LoginViewController() 

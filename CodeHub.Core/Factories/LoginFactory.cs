@@ -25,9 +25,6 @@ namespace CodeHub.Core.Factories
             var info = await client.ExecuteAsync(client.AuthenticatedUser.GetInfo());
             var username = info.Data.Login;
 
-            //Does this user exist?
-
-
             var account = await _accounts.Get(apiDomain, username);
             var exists = account != null;
             account = account ?? new Account { Username = username };
