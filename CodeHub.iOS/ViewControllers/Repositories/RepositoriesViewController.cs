@@ -15,8 +15,10 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 		private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
 		private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
 
-		private readonly Lazy<UIView> emptyView = new Lazy<UIView>((() =>
-			new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories.")));
+        private readonly Lazy<UIView> _emptyView = new Lazy<UIView>((() =>
+            new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories.")));
+
+        private readonly Lazy<UIView> _retryView;
 
         public RepositoriesViewModel ViewModel { get; }
 
@@ -61,6 +63,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 		{
             ViewModel = viewModel;
             Title = "Repositories";
+
+            _retryView = new Lazy<UIView>((() =>
+                new RetryListView(Octicon.Repo.ToEmptyListImage(), "Error loading repositories.", LoadData)));
 		}
 
 		public override void ViewDidLoad()
@@ -72,11 +77,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             Appearing
                 .Take(1)
-                .Select(_ => ViewModel.LoadCommand.Execute())
-                .Switch()
-                .Take(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(SetItemsPresent);
+                .Subscribe(_ => LoadData());
 
 			this.WhenActivated(d =>
 			{
@@ -109,23 +110,39 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 			});
 		}
 
-        private void SetItemsPresent(bool hasItems)
+        private void LoadData()
+        {
+            if (_emptyView.IsValueCreated)
+                _emptyView.Value.RemoveFromSuperview();
+            if (_retryView.IsValueCreated)
+                _retryView.Value.RemoveFromSuperview();
+
+            ViewModel.LoadCommand.Execute()
+                .Take(1)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(SetHasItems, setHasError);
+        }
+
+        private void setHasError(Exception error)
+        {
+            _retryView.Value.Alpha = 0;
+            _retryView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
+            View.Add(_retryView.Value);
+            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+                           () => _retryView.Value.Alpha = 1, null);
+        }
+
+        private void SetHasItems(bool hasItems)
         {
             TableView.TableHeaderView = hasItems ? _repositorySearchBar : null;
-            TableView.SeparatorStyle = hasItems 
-                ? UITableViewCellSeparatorStyle.SingleLine 
-                : UITableViewCellSeparatorStyle.None;
 
-            if (hasItems)
+            if (!hasItems)
             {
-                TableView.BackgroundView = null;
-            }
-            else
-            {
-                emptyView.Value.Alpha = 0;
-                TableView.BackgroundView = emptyView.Value;
+                _emptyView.Value.Alpha = 0;
+                _emptyView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
+                View.Add(_emptyView.Value);
                 UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
-                               () => emptyView.Value.Alpha = 1, null);
+                               () => _emptyView.Value.Alpha = 1, null);
             }
         }
 	}

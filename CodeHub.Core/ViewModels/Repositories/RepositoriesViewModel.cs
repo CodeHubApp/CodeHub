@@ -130,7 +130,14 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         private void LoadingError(Exception err)
         {
-            _dialogService.Alert("Error Loading", err.Message).ToBackground();
+            var message = err.Message;
+            var baseException = err.GetInnerException();
+            if (baseException is System.Net.Sockets.SocketException)
+            {
+                message = "Unable to communicate with GitHub. " + baseException.Message;
+            }
+
+            _dialogService.Alert("Error Loading", message).ToBackground();
         }
 
         private void GoToRepository(RepositoryItemViewModel item)
