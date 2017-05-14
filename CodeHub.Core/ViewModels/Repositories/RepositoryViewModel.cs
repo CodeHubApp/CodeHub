@@ -9,6 +9,7 @@ using CodeHub.Core.ViewModels.Changesets;
 using System.Linq;
 using System;
 using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -57,9 +58,9 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
-        public RepositoryViewModel(IApplicationService applicationService)
+        public RepositoryViewModel(IApplicationService applicationService = null)
         {
-            _applicationService = applicationService;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
         }
 
         public void Init(NavObject navObject)
@@ -76,21 +77,6 @@ namespace CodeHub.Core.ViewModels.Repositories
         public ICommand GoToForkParentCommand
         {
             get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
-        }
-
-        public ICommand GoToStargazersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryStargazersViewModel>(new RepositoryStargazersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToWatchersCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryWatchersViewModel>(new RepositoryWatchersViewModel.NavObject { User = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToForkedCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoriesForkedViewModel>(new RepositoriesForkedViewModel.NavObject { User = Username, Repository = RepositoryName })); }
         }
 
         public ICommand GoToEventsCommand

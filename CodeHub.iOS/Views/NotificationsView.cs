@@ -15,6 +15,9 @@ namespace CodeHub.iOS.Views
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
 
+        public static NotificationsView Create()
+            => new NotificationsView { ViewModel = new NotificationsViewModel() };
+
         public NotificationsView()
         {
             _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });

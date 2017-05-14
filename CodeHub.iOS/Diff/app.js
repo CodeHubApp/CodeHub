@@ -17,7 +17,7 @@ function diff(base_text, new_text) {
     
     $('td').each(function(i, el) {
         $(el).click(function() {
-            invokeNative("comment", {"line_to": $(el).parent().data('to'), "line_from": $(el).parent().data('from')});
+            invokeNative("comment", {"lineTo": $(el).parent().data('to'), "lineFrom": $(el).parent().data('from')});
         });
     });
 }
@@ -73,7 +73,7 @@ function patch(p) {
         	var fileLine = $(el).parent().data('y');
         	if (fileLine === "")
         		fileLine = $(el).parent().data('x')
-            invokeNative("comment", {"patch_line": $(el).parent().data('to'), "file_line": fileLine});
+            invokeNative("comment", {"patchLine": $(el).parent().data('to'), "fileLine": fileLine});
         });
     });
 }
@@ -99,7 +99,7 @@ function setComments(comments) {
 
     for (var i = 0; i < comments.length; i++) {
         var comment = comments[i];
-        var $comment = $("<tr data-id='" + comment.id + "' class='comment'><td colspan='3'><div class='inner'><header><img src='" + comment.avatar + "' />" + comment.user + "</header><div class='content'>" + comment.content + "</div></div></td></tr>");
+        var $comment = $("<tr data-id='" + comment.id + "' class='comment'><td colspan='3'><div class='inner'><header><img src='" + comment.Avatar + "' />" + comment.User + "</header><div class='content'>" + comment.Content + "</div></div></td></tr>");
         
         if (comment['line_to'] != null) {
             $("tr[data-to='" + comment.line_to + "']").after($comment);

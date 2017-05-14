@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Source
 {
@@ -33,15 +33,14 @@ namespace CodeHub.Core.ViewModels.Source
             private set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-        public ReactiveUI.IReactiveCommand<object> GoToItemCommand { get; }
+        public ReactiveUI.ReactiveCommand<ContentModel, Unit> GoToItemCommand { get; }
             
         public SourceTreeViewModel(IApplicationService applicationService, IFeaturesService featuresService)
         {
             _applicationService = applicationService;
             _featuresService = featuresService;
 
-            GoToItemCommand = ReactiveUI.ReactiveCommand.Create();
-            GoToItemCommand.OfType<ContentModel>().Subscribe(x => {
+            GoToItemCommand = ReactiveUI.ReactiveCommand.Create<ContentModel>(x => {
                 if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
                 {
                     ShowViewModel<SourceTreeViewModel>(new NavObject { Username = Username, Branch = Branch, 

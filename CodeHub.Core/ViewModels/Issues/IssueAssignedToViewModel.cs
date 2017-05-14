@@ -1,15 +1,16 @@
 using System;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
-using System.Linq;
 using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAssignedToViewModel : LoadableViewModel
     {
+        private readonly IMessageService _messageService;
+
         private BasicUserModel _selectedUser;
         public BasicUserModel SelectedUser
         {
@@ -48,6 +49,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public bool SaveOnSelect { get; private set; }
 
+        public IssueAssignedToViewModel(IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
         public void Init(NavObject navObject) 
         {
             Username = navObject.Username;
@@ -69,7 +75,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     var assignee = x != null ? x.Login : null;
                     var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateAssignee(assignee);
                     var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-                    Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
+                    _messageService.Send(new IssueEditMessage(newIssue.Data));
         
                 }
                 catch
@@ -83,7 +89,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
             else
             {
-                Messenger.Publish(new SelectedAssignedToMessage(this) { User = x });
+                _messageService.Send(new SelectedAssignedToMessage { User = x });
             }
 
             ChangePresentation(new MvxClosePresentationHint(this));

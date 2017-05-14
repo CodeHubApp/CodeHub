@@ -1,15 +1,10 @@
-using System;
-using GitHubSharp.Models;
-using MvvmCross.Plugins.Messenger;
-
 namespace CodeHub.Core.Messages
 {
-    public class GistAddMessage : MvxMessage
+    public class GistAddMessage
     {
-        public GistModel Gist { get; private set; }
+        public Octokit.Gist Gist { get; private set; }
 
-        public GistAddMessage(object sender, GistModel gist) 
-            : base(sender)
+        public GistAddMessage(Octokit.Gist gist)
         {
             Gist = gist;
         }

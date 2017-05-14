@@ -219,6 +219,8 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
+            var issue = ViewModel.Issue;
+
             var sheet = new UIActionSheet();
             var editButton = ViewModel.IsCollaborator ? sheet.AddButton("Edit") : -1;
             var openButton = ViewModel.IsCollaborator ? sheet.AddButton(ViewModel.Issue.State == "open" ? "Close" : "Open") : -1;
@@ -236,7 +238,13 @@ namespace CodeHub.iOS.Views.Issues
                     else if (e.ButtonIndex == openButton)
                         ViewModel.ToggleStateCommand.Execute(null);
                     else if (e.ButtonIndex == shareButton)
-                        AlertDialogService.ShareUrl(ViewModel.Issue?.HtmlUrl, NavigationItem.RightBarButtonItem);
+                    {
+                        AlertDialogService.Share(
+                            Title,
+                            issue.Body,
+                            issue.HtmlUrl,
+                            NavigationItem.RightBarButtonItem);
+                    }
                     else if (e.ButtonIndex == showButton)
                         ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
                     else if (e.ButtonIndex == commentButton)

@@ -1,22 +1,22 @@
 using System.Threading.Tasks;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Windows.Input;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Services;
 using System;
-using MvvmCross.Plugins.Messenger;
 using MvvmCross.Core.ViewModels;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueViewModel : LoadableViewModel
     {
-        private MvxSubscriptionToken _editToken;
+        private IDisposable _editToken;
         private readonly IFeaturesService _featuresService;
         private readonly IApplicationService _applicationService;
+        private readonly IMessageService _messageService;
 
         public long Id 
         { 
@@ -81,7 +81,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
 
-        public ReactiveUI.ReactiveCommand<object> GoToOwner { get; }
+        public ReactiveUI.ReactiveCommand<Unit, bool> GoToOwner { get; }
 
         public ICommand GoToAssigneeCommand
         {
@@ -170,14 +170,18 @@ namespace CodeHub.Core.ViewModels.Issues
             return (GetService<IMarkdownService>().Convert(str));
         }
 
-        public IssueViewModel(IApplicationService applicationService, IFeaturesService featuresService)
+        public IssueViewModel(IApplicationService applicationService,
+                              IFeaturesService featuresService,
+                              IMessageService messageService)
         {
             _applicationService = applicationService;
             _featuresService = featuresService;
+            _messageService = messageService;
             this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
 
-            GoToOwner = ReactiveUI.ReactiveCommand.Create(this.Bind(x => x.Issue, true).Select(x => x != null));
-            GoToOwner.Subscribe(_ => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }));
+            GoToOwner = ReactiveUI.ReactiveCommand.Create(
+                () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),
+                this.Bind(x => x.Issue, true).Select(x => x != null));
         }
 
         public void Init(NavObject navObject)
@@ -186,7 +190,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Repository = navObject.Repository;
             Id = navObject.Id;
 
-            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            _editToken = _messageService.Listen<IssueEditMessage>(x =>
             {
                 if (x.Issue == null || x.Issue.Number != Issue.Number)
                     return;
@@ -215,7 +219,7 @@ namespace CodeHub.Core.ViewModels.Issues
             {
                 IsModifying = true;
                 var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].UpdateState(closed ? "closed" : "open")); 
-                Messenger.Publish(new IssueEditMessage(this) { Issue = data.Data });
+                _messageService.Send(new IssueEditMessage(data.Data));
             }
             catch (Exception e)
             {

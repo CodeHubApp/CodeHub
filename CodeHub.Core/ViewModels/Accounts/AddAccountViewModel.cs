@@ -43,13 +43,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string TwoFactor { get; set; }
 
-        public ReactiveUI.IReactiveCommand<Unit> LoginCommand { get; }
+        public ReactiveUI.ReactiveCommand<Unit, Unit> LoginCommand { get; }
 
         public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
         {
             _application = application;
             _loginFactory = loginFactory;
-            LoginCommand = ReactiveUI.ReactiveCommand.CreateAsyncTask(_ => Login());
+            LoginCommand = ReactiveUI.ReactiveCommand.CreateFromTask(Login);
         }
 
         private async Task Login()

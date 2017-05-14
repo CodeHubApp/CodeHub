@@ -1,15 +1,14 @@
 using System.Threading.Tasks;
 using System;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Messages;
-using MvvmCross.Plugins.Messenger;
 using System.Linq;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class SourceViewModel : FileSourceViewModel
     {
-        private readonly MvxSubscriptionToken _editToken;
+        private readonly IDisposable _editToken;
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
         private string _name;
@@ -55,9 +54,9 @@ namespace CodeHub.Core.ViewModels.Source
             get { return ContentPath != null && TrueBranch; }
         }
             
-        public SourceViewModel()
+        public SourceViewModel(IMessageService messageService)
         {
-            _editToken = Messenger.SubscribeOnMainThread<SourceEditMessage>(x =>
+            _editToken = messageService.Listen<SourceEditMessage>(x =>
             {
                 if (x.OldSha == null || x.Update == null)
                     return;

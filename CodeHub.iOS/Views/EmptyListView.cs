@@ -22,13 +22,10 @@ namespace CodeHub.iOS.Views
             ImageView.Frame = new CGRect(0, 0, 64f, 64f);
             ImageView.TintColor = DefaultColor;
             ImageView.ContentMode = UIViewContentMode.ScaleAspectFit;
-//            ImageView.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | UIViewAutoresizing.FlexibleBottomMargin;
             ImageView.Image = image;
             Add(ImageView);
 
             Title.Frame = new CGRect(0, 0, 256f, 20f);
-//            Title.AutoresizingMask = UIViewAutoresizing.FlexibleLeftMargin | UIViewAutoresizing.FlexibleRightMargin | 
-//                                     UIViewAutoresizing.FlexibleBottomMargin | UIViewAutoresizing.FlexibleWidth;
             Title.Text = emptyText;
             Title.TextAlignment = UITextAlignment.Center;
             Title.Font = UIFont.PreferredHeadline;

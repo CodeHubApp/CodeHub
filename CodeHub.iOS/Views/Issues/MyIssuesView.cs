@@ -9,6 +9,9 @@ namespace CodeHub.iOS.Views.Issues
         private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Open", "Closed", "Custom" });
         private UIBarButtonItem _segmentBarButton;
 
+        public static MyIssuesView Create()
+            => new MyIssuesView { ViewModel = new MyIssuesViewModel() };
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();

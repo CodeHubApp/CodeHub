@@ -97,7 +97,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                     .ToObservable()
                     .Subscribe(x => {
                         ViewModel.TwoFactor = x;
-                        ViewModel.LoginCommand.ExecuteIfCan();
+                        ViewModel.LoginCommand.ExecuteNow();
                     });
             }
             else

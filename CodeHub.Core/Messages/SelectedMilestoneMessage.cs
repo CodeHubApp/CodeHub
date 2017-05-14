@@ -1,12 +1,15 @@
 using GitHubSharp.Models;
-using MvvmCross.Plugins.Messenger;
 
 namespace CodeHub.Core.Messages
 {
-    public class SelectedMilestoneMessage : MvxMessage
+    public class SelectedMilestoneMessage
     {
-        public SelectedMilestoneMessage(object sender) : base(sender) {}
-        public MilestoneModel Milestone;
+        public MilestoneModel Milestone { get; }
+
+        public SelectedMilestoneMessage(MilestoneModel milestone)
+        {
+            Milestone = milestone;
+        }
     }
 }
 

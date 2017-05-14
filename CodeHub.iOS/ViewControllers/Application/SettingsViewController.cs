@@ -54,7 +54,13 @@ namespace CodeHub.iOS.ViewControllers.Application
             { 
                 Accessory = UITableViewCellAccessory.DisclosureIndicator,
             };
-            startupView.Clicked.BindCommand(vm.GoToDefaultStartupViewCommand);
+
+            startupView.Clicked.Subscribe(_ =>
+            {
+                var viewController = new DefaultStartupViewController(
+                    () => NavigationController.PopToViewController(this, true));
+                NavigationController.PushViewController(viewController, true);
+            });
 
             var pushNotifications = new BooleanElement("Push Notifications", vm.PushNotificationsEnabled);
             pushNotifications.Changed.Subscribe(e => vm.PushNotificationsEnabled = e);

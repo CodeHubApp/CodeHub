@@ -1,5 +1,3 @@
-using System;
-using CodeHub.Core.ViewModels;
 using System.Threading.Tasks;
 using GitHubSharp.Models;
 using System.Collections.Generic;
@@ -7,11 +5,13 @@ using CodeHub.Core.Messages;
 using System.Linq;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueLabelsViewModel : LoadableViewModel
     {
+        private readonly IMessageService _messageService;
         private IEnumerable<LabelModel> _originalLables;
 
         private bool _isSaving;
@@ -60,6 +60,11 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return new MvxCommand(() => SelectLabels(SelectedLabels)); }
         }
 
+        public IssueLabelsViewModel(IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
         private async Task SelectLabels(IEnumerable<LabelModel> x)
         {
             //If nothing has changed, dont do anything...
@@ -77,7 +82,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     var labels = x != null ? x.Select(y => y.Name).ToArray() : null;
                     var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateLabels(labels);
                     var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-                    Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
+                    _messageService.Send(new IssueEditMessage(newIssue.Data));
                 }
                 catch
                 {
@@ -90,7 +95,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
             else
             {
-                Messenger.Publish(new SelectIssueLabelsMessage(this) { Labels = SelectedLabels.Items.ToArray() });
+                _messageService.Send(new SelectIssueLabelsMessage { Labels = SelectedLabels.Items.ToArray() });
             }
 
             ChangePresentation(new MvxClosePresentationHint(this));

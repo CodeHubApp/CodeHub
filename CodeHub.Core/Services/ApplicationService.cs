@@ -2,6 +2,7 @@ using CodeHub.Core.Data;
 using GitHubSharp;
 using System;
 using System.Threading.Tasks;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.Core.Services
 {
@@ -10,6 +11,8 @@ namespace CodeHub.Core.Services
         private readonly IAccountsService _accountsService;
 
         public Client Client { get; private set; }
+
+        public Octokit.GitHubClient GitHubClient { get; private set; }
 
         public Account Account { get; private set; }
 
@@ -32,6 +35,11 @@ namespace CodeHub.Core.Services
             _accountsService.SetActiveAccount(account).Wait();
             Account = account;
             Client = client;
+
+            var domain = account.Domain ?? Client.DefaultApi;
+            var credentials = new Octokit.Credentials(account.OAuth);
+            var oldClient = Client.BasicOAuth(account.OAuth, domain);
+            GitHubClient = OctokitClientFactory.Create(new Uri(domain), credentials);
         }
 
         public void SetUserActivationAction(Action action)

@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
-using System.Linq;
 using System;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueMilestonesViewModel : LoadableViewModel
     {
+        private readonly IMessageService _messageService;
+
         private MilestoneModel _selectedMilestone;
         public MilestoneModel SelectedMilestone
         {
@@ -47,6 +48,11 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public bool SaveOnSelect { get; private set; }
 
+        public IssueMilestonesViewModel(IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;
@@ -69,7 +75,7 @@ namespace CodeHub.Core.ViewModels.Issues
                     if (x != null) milestone = x.Number;
                     var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(milestone);
                     var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-                    Messenger.Publish(new IssueEditMessage(this) { Issue = newIssue.Data });
+                    _messageService.Send(new IssueEditMessage(newIssue.Data));
                 }
                 catch
                 {
@@ -82,7 +88,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
             else
             {
-                Messenger.Publish(new SelectedMilestoneMessage(this) { Milestone = x });
+                _messageService.Send(new SelectedMilestoneMessage(x));
             }
 
             ChangePresentation(new MvvmCross.Core.ViewModels.MvxClosePresentationHint(this));

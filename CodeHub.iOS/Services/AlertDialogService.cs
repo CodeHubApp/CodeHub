@@ -5,6 +5,8 @@ using UIKit;
 using System.Threading.Tasks;
 using Foundation;
 using CoreGraphics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeHub.iOS.Services
 {
@@ -30,22 +32,38 @@ namespace CodeHub.iOS.Services
 
         public static void ShowAlert(string title, string message, Action dismissed = null)
         {
+            var window = new UIWindow(UIScreen.MainScreen.Bounds);
+            window.RootViewController = new UIViewController();
+
             var alert = UIAlertController.Create(title, message, UIAlertControllerStyle.Alert);
             alert.AddAction(UIAlertAction.Create("Ok", UIAlertActionStyle.Default, x => {
                 dismissed?.Invoke();
                 alert.Dispose();
+                window.Dispose();
             }));
-            UIApplication.SharedApplication.KeyWindow.GetVisibleViewController().PresentViewController(alert, true, null);
+
+            var topWindow = UIApplication.SharedApplication.Windows.Last();
+            window.WindowLevel = topWindow.WindowLevel + 1;
+
+            window.MakeKeyAndVisible();
+            window.RootViewController.PresentViewController(alert, true, null);
         }
 
-        public static void ShareUrl(string url, UIBarButtonItem barButtonItem = null)
+        public static void Share(string title = null, string body = null, string url = null, UIBarButtonItem barButtonItem = null)
         {
             try
             {
-                var item = new NSUrl(url);
-                var activityItems = new NSObject[] { item };
+                var activityItems = new List<NSObject>();
+                if (body != null)
+                    activityItems.Add(new NSString(body));
+                if (url != null)
+                    activityItems.Add(new NSUrl(url));
+
                 UIActivity[] applicationActivities = null;
-                var activityController = new UIActivityViewController (activityItems, applicationActivities);
+                var activityController = new UIActivityViewController (activityItems.ToArray(), applicationActivities);
+
+                if (title != null)
+                activityController.SetValueForKey(new NSString(title), new NSString("subject"));
 
                 if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad) 
                 {

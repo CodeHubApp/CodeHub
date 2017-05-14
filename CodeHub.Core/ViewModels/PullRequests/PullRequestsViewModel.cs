@@ -2,17 +2,17 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
-using MvvmCross.Plugins.Messenger;
 using CodeHub.Core.Messages;
 using System.Linq;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestsViewModel : LoadableViewModel
     {
-        private MvxSubscriptionToken _pullRequestEditSubscription;
+        private readonly IMessageService _messageService;
+        private IDisposable _pullRequestEditSubscription;
 
         private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
         public CollectionViewModel<PullRequestModel> PullRequests
@@ -40,8 +40,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
         }
 
-        public PullRequestsViewModel()
+        public PullRequestsViewModel(IMessageService messageService)
         {
+            _messageService = messageService;
             this.Bind(x => x.SelectedFilter).Subscribe(_ => LoadCommand.Execute(null));
         }
 
@@ -55,7 +56,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 return x.Where(y => y.State == state);
             };
 
-            _pullRequestEditSubscription = Messenger.SubscribeOnMainThread<PullRequestEditMessage>(x =>
+            _pullRequestEditSubscription = _messageService.Listen<PullRequestEditMessage>(x =>
             {
                 if (x.PullRequest == null)
                     return;

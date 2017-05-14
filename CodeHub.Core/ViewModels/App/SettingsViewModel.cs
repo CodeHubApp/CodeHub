@@ -26,11 +26,6 @@ namespace CodeHub.Core.ViewModels.App
             get { return _featuresService.IsProEnabled; }
         }
 
-        public ICommand GoToDefaultStartupViewCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<DefaultStartupViewModel>()); }
-        }
-
         public ICommand GoToSourceCodeCommand
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }

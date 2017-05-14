@@ -12,10 +12,10 @@ namespace CodeHub.iOS
     public static class UrlRouteProvider
     {
         private static Route[] Routes = {
-            new Route("^gist.github.com/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
-            new Route("^gist.github.com/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
+            //new Route("^gist.github.com/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
+            //new Route("^gist.github.com/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.UserGistsViewModel)),
             new Route("^gist.github.com/(?<Username>[^/]*)/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Gists.GistViewModel)),
-            new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
+            //new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.User.UserViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoryViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),

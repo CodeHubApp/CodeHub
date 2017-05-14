@@ -1,4 +1,4 @@
-using MvvmCross.Platform;
+using Newtonsoft.Json;
 using SQLite;
 
 namespace CodeHub.iOS.Data
@@ -23,8 +23,7 @@ namespace CodeHub.iOS.Data
         {
             try
             {
-                var serializer = Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
-                return serializer.Deserialize<T>(RawData);
+                return JsonConvert.DeserializeObject<T>(RawData);
             }
             catch
             {
@@ -38,8 +37,7 @@ namespace CodeHub.iOS.Data
         /// <param name="o">O.</param>
         public void SetData(object o)
         {
-            var serializer = Mvx.Resolve<CodeHub.Core.Services.IJsonSerializationService>();
-            RawData = serializer.Serialize(o);
+            RawData = JsonConvert.SerializeObject(o);
         }
     }
 }

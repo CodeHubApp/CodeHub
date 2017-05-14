@@ -3,9 +3,6 @@ using UIKit;
 using SDWebImage;
 using Foundation;
 using CodeHub.Core.ViewModels.App;
-using MvvmCross.Platform;
-using CodeHub.Core.Factories;
-using CodeHub.Core.Services;
 using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers.Accounts;
 using CodeHub.Core.Utilities;
@@ -21,15 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         private UILabel _statusLabel;
         private UIActivityIndicatorView _activityView;
 
-        public StartupViewModel ViewModel { get; }
-
-        public StartupViewController()
-        {
-            ViewModel = new StartupViewModel(
-                Mvx.Resolve<ILoginFactory>(),
-                Mvx.Resolve<IApplicationService>(),
-                Mvx.Resolve<IAccountsService>());
-        }
+        public StartupViewModel ViewModel { get; } = new StartupViewModel();
 
         public override void ViewWillLayoutSubviews()
         {
@@ -67,9 +56,9 @@ namespace CodeHub.iOS.ViewControllers.Application
             {
                 d(ViewModel.Bind(x => x.ImageUrl).Subscribe(UpdatedImage));
                 d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
-                d(ViewModel.GoToMenu.Subscribe(GoToMenu));
-                d(ViewModel.GoToAccounts.Subscribe(GoToAccounts));
-                d(ViewModel.GoToNewAccount.Subscribe(GoToNewAccount));
+                d(ViewModel.GoToMenu.Subscribe(_ => GoToMenu()));
+                d(ViewModel.GoToAccounts.Subscribe(_ => GoToAccounts()));
+                d(ViewModel.GoToNewAccount.Subscribe(_ => GoToNewAccount()));
                 d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
@@ -82,25 +71,67 @@ namespace CodeHub.iOS.ViewControllers.Application
             });
         }
 
-        private void GoToMenu(object o)
+        private void GoToMenu()
         {
             var vc = new MenuViewController();
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
-            (UIApplication.SharedApplication.Delegate as AppDelegate).With(y => y.Presenter.SlideoutNavigationController = slideoutController);
-            vc.ViewModel.GoToDefaultTopView.Execute(null);
+
+            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
+            if (appDelegate != null)
+                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
+            
+            var openButton = new UIBarButtonItem { Image = Images.Buttons.ThreeLinesButton };
+            var mainNavigationController = new MainNavigationController(GetInitialMenuViewController(), slideoutController, openButton);
+            slideoutController.SetMainViewController(mainNavigationController, false);
+
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
             PresentViewController(slideoutController, true, null);
         }
 
-        private void GoToNewAccount(object o)
+        private UIViewController GetInitialMenuViewController()
+        {
+            var username = ViewModel.Account.Username;
+            switch (ViewModel.Account.DefaultStartupView)
+            {
+                case "Organizations":
+                    return new Organizations.OrganizationsViewController(username);
+                case "Trending Repositories":
+                    return new Repositories.TrendingRepositoriesViewController();
+                case "Explore Repositories":
+                    return new Search.ExploreViewController();
+                case "Owned Repositories":
+                    return Repositories.RepositoriesViewController.CreateMineViewController();
+                case "Starred Repositories":
+                    return Repositories.RepositoriesViewController.CreateStarredViewController();
+                case "Public Gists":
+                    return Gists.GistsViewController.CreatePublicGistsViewController();
+                case "Starred Gists":
+                    return Gists.GistsViewController.CreateStarredGistsViewController();
+                case "My Gists":
+                    return Gists.GistsViewController.CreateUserGistsViewController(username);
+                case "Profile":
+                    return new Users.UserViewController(username);
+                case "My Events":
+                    return new Events.UserEventsViewController(username);
+                case "My Issues":
+                    return Views.Issues.MyIssuesView.Create();
+                case "Notifications":
+                    return Views.NotificationsView.Create();
+                default:
+                    return Events.NewsViewController.Create();
+                    
+            }
+        }
+
+        private void GoToNewAccount()
         {
             var vc = new NewAccountViewController();
             var nav = new ThemedNavigationController(vc);
             PresentViewController(nav, true, null);
         }
 
-        private void GoToAccounts(object o)
+        private void GoToAccounts()
         {
             var vc = new AccountsViewController();
             var nav = new ThemedNavigationController(vc);
@@ -125,7 +156,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
                 _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, _) => {
                     _imgView.Image = Images.LoginUserUnknown;
-                    UIView.Transition(_imgView, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve, () => _imgView.Image = img, null);
+                    UIView.Transition(_imgView, 0.25f, UIViewAnimationOptions.TransitionCrossDissolve , () => _imgView.Image = img, null);
                 });
             }
         }

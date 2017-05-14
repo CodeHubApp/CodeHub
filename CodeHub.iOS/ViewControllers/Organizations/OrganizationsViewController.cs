@@ -1,4 +1,3 @@
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Organizations;
 using CodeHub.iOS.DialogElements;
 using System;
@@ -15,6 +14,13 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             Title = "Organizations";
             EmptyView = new Lazy<UIView>(() =>
                 new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no organizations."));
+        }
+
+        public OrganizationsViewController(string username) : this()
+        {
+            var viewModel = new OrganizationsViewModel();
+            viewModel.Init(new OrganizationsViewModel.NavObject { Username = username });
+            ViewModel = viewModel;
         }
 
         public override void ViewDidLoad()

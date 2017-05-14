@@ -78,7 +78,10 @@ namespace CodeHub.iOS.Views.Source
                     }
                     else if (e.ButtonIndex == shareButton)
                     {
-                        AlertDialogService.ShareUrl(ViewModel?.HtmlUrl, o as UIBarButtonItem);
+                        AlertDialogService.Share(
+                            ViewModel.Title,
+                            url: ViewModel?.HtmlUrl,
+                            barButtonItem: o as UIBarButtonItem);
                     }
                     else if (e.ButtonIndex == showButton)
                     {

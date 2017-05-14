@@ -251,12 +251,19 @@ namespace CodeHub.iOS.ViewControllers
             base.Dispose(disposing);
         }
 
+        public override void ViewDidLayoutSubviews()
+        {
+            base.ViewDidLayoutSubviews();
+            ViewDidLayoutSubviewsCalled.Raise(this);
+        }
+
         public event EventHandler DisposeCalled;
         public event EventHandler ViewDidLoadCalled;
         public event EventHandler<MvxValueEventArgs<bool>> ViewWillAppearCalled;
         public event EventHandler<MvxValueEventArgs<bool>> ViewDidAppearCalled;
         public event EventHandler<MvxValueEventArgs<bool>> ViewDidDisappearCalled;
         public event EventHandler<MvxValueEventArgs<bool>> ViewWillDisappearCalled;
+        public event EventHandler ViewDidLayoutSubviewsCalled;
     }
 }
 

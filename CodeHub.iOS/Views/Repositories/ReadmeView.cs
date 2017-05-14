@@ -12,6 +12,7 @@ namespace CodeHub.iOS.Views.Repositories
     public class ReadmeView : WebView
     {
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+        private string _currentContent;
 
         public new ReadmeViewModel ViewModel
         {
@@ -30,7 +31,7 @@ namespace CodeHub.iOS.Views.Repositories
             base.ViewDidLoad();
 
             ViewModel.Bind(x => x.ContentText, true)
-                .IsNotNull()
+                .Where(x => x != null)
                 .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
                 .Select(x => new MarkdownView { Model = x }.GenerateString())
                 .Subscribe(LoadContent);
@@ -76,7 +77,13 @@ namespace CodeHub.iOS.Views.Repositories
                     if (e.ButtonIndex == showButton)
                         ViewModel.GoToGitHubCommand.Execute(null);
                     else if (e.ButtonIndex == shareButton)
-                        AlertDialogService.ShareUrl(ViewModel.HtmlUrl, o as UIBarButtonItem);
+                    {
+                        AlertDialogService.Share(
+                            $"{ViewModel.RepositoryOwner}/{ViewModel.RepositoryName} Readme",
+                            CurrentContent,
+                            ViewModel.HtmlUrl,
+                            o as UIBarButtonItem);
+                    }
                 });
 
                 sheet.Dispose();

@@ -7,6 +7,7 @@ using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive.Threading.Tasks;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -42,20 +43,22 @@ namespace CodeHub.Core.ViewModels.App
             get { return new Dumb.MvxAsyncCommand(Startup); }
         }
 
-        public ReactiveCommand<object> GoToMenu { get; } = ReactiveCommand.Create();
+        public Data.Account Account => _applicationService.Account;
 
-        public ReactiveCommand<object> GoToAccounts { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToMenu { get; } = ReactiveCommand.Create(() => { });
 
-        public ReactiveCommand<object> GoToNewAccount { get; } = ReactiveCommand.Create();
+        public ReactiveCommand<Unit, Unit> GoToAccounts { get; } = ReactiveCommand.Create(() => { });
+
+        public ReactiveCommand<Unit, Unit> GoToNewAccount { get; } = ReactiveCommand.Create(() => { });
 
         public StartupViewModel(
-            ILoginFactory loginFactory, 
-            IApplicationService applicationService,
-            IAccountsService accountsService)
+            ILoginFactory loginFactory = null, 
+            IApplicationService applicationService = null,
+            IAccountsService accountsService = null)
         {
-            _loginFactory = loginFactory;
-            _applicationService = applicationService;
-            _accountsService = accountsService;
+            _loginFactory = loginFactory ?? GetService<ILoginFactory>();
+            _applicationService = applicationService ?? GetService<IApplicationService>();
+            _accountsService = accountsService ?? GetService<IAccountsService>();
         }
 
         protected async Task Startup()
@@ -63,14 +66,14 @@ namespace CodeHub.Core.ViewModels.App
             var accounts = (await _accountsService.GetAccounts()).ToList();
             if (!accounts.Any())
             {
-                GoToNewAccount.Execute(null);
+                GoToNewAccount.ExecuteNow();
                 return;
             }
 
             var account = await _accountsService.GetActiveAccount();
             if (account == null)
             {
-                GoToAccounts.Execute(null);
+                GoToAccounts.ExecuteNow();
                 return;
             }
 
@@ -94,7 +97,7 @@ namespace CodeHub.Core.ViewModels.App
                 if (!isEnterprise)
                     StarOrWatch();
 
-                GoToMenu.Execute(typeof(MenuViewModel));
+                GoToMenu.ExecuteNow();
             }
             catch (GitHubSharp.UnauthorizedException e)
             {
@@ -105,7 +108,7 @@ namespace CodeHub.Core.ViewModels.App
             catch (Exception e)
             {
                 DisplayAlert(e.Message);
-                GoToAccounts.Execute(null);
+                GoToAccounts.ExecuteNow();
             }
             finally
             {

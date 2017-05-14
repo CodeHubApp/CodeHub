@@ -3,6 +3,8 @@ using CodeHub.Core.ViewModels.User;
 using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
+using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers.Gists;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
@@ -16,9 +18,16 @@ namespace CodeHub.iOS.ViewControllers.Users
             set { base.ViewModel = value; }
         }
 
+        public UserViewController(string username) : this()
+        {
+            ViewModel = new UserViewModel();
+            ViewModel.Init(new UserViewModel.NavObject { Username = username });
+        }
+
         public UserViewController()
         {
-            _actionButton = new Lazy<UIBarButtonItem>(() => new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
+            _actionButton = new Lazy<UIBarButtonItem>(() =>
+                new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
         }
             
         public override void ViewDidLoad()
@@ -48,13 +57,28 @@ namespace CodeHub.iOS.ViewControllers.Users
 
             OnActivation(d =>
             {
-                d(followers.Clicked.BindCommand(ViewModel.GoToFollowersCommand));
-                d(following.Clicked.BindCommand(ViewModel.GoToFollowingCommand));
+                d(followers.Clicked
+                  .Select(x => UsersViewController.CreateFollowersViewController(ViewModel.Username))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+
+                d(following.Clicked
+                  .Select(x => UsersViewController.CreateFollowingViewController(ViewModel.Username))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+               
                 d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
                 d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
-                d(repos.Clicked.BindCommand(ViewModel.GoToRepositoriesCommand));
-                d(gists.Clicked.BindCommand(ViewModel.GoToGistsCommand));
+
+                d(gists.Clicked
+                  .Select(x => GistsViewController.CreateUserGistsViewController(ViewModel.Username))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
+
                 d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
+
+                d(repos.Clicked.Subscribe(_ =>
+                {
+                    var vc = Repositories.RepositoriesViewController.CreateUserViewController(ViewModel.Username);
+                    NavigationController?.PushViewController(vc, true);
+                }));
             });
         }
 

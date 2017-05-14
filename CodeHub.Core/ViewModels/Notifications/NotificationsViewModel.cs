@@ -1,24 +1,23 @@
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using GitHubSharp.Models;
 using CodeHub.Core.Messages;
-using System.Collections.Generic;
 using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using CodeHub.Core.Utils;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
     public class NotificationsViewModel : LoadableViewModel
     {
+        private readonly IMessageService _messageService;
         private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
         private ICommand _readAllCommand;
         private ICommand _readCommand;
@@ -91,8 +90,9 @@ namespace CodeHub.Core.ViewModels.Notifications
             }
         }
 
-        public NotificationsViewModel()
+        public NotificationsViewModel(IMessageService messageService = null)
         {
+            _messageService = messageService ?? GetService<IMessageService>();
             _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
             _notifications.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
@@ -195,7 +195,7 @@ namespace CodeHub.Core.ViewModels.Notifications
         {
             // Only update if we're looking at 
             if (!Notifications.Filter.All && !Notifications.Filter.Participating)
-                Messenger.Publish<NotificationCountMessage>(new NotificationCountMessage(this) { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
+                _messageService.Send<NotificationCountMessage>(new NotificationCountMessage { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
         }
     }
 }

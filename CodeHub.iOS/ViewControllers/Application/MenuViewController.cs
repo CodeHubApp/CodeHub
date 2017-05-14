@@ -12,6 +12,7 @@ using CodeHub.iOS.ViewControllers.Accounts;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
+using CodeHub.iOS.ViewControllers.Search;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -46,9 +47,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         public MenuViewController()
             : base(false, UITableViewStyle.Plain)
         {
-            var appService = Mvx.Resolve<IApplicationService>();
-            var featuresService = Mvx.Resolve<IFeaturesService>();
-            ViewModel = new MenuViewModel(appService, featuresService);
+            ViewModel = new MenuViewModel();
             Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
 
             _title = new UILabel(new CGRect(0, 40, 320, 40));
@@ -142,10 +141,10 @@ namespace CodeHub.iOS.ViewControllers.Application
             sections.Add(eventsSection);
 
             var repoSection = new Section() { HeaderView = new MenuSectionView("Repositories") };
-            repoSection.Add(new MenuElement("Owned", () => ViewModel.GoToOwnedRepositoriesCommand.Execute(null), Octicon.Repo.ToImage()));
-            repoSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredRepositoriesCommand.Execute(null), Octicon.Star.ToImage()));
-            repoSection.Add(new MenuElement("Trending", () => ViewModel.GoToTrendingRepositoriesCommand.Execute(null), Octicon.Pulse.ToImage()));
-            repoSection.Add(new MenuElement("Explore", () => ViewModel.GoToExploreRepositoriesCommand.Execute(null), Octicon.Globe.ToImage()));
+            repoSection.Add(new MenuElement("Owned", GoToOwnedRepositories, Octicon.Repo.ToImage()));
+            repoSection.Add(new MenuElement("Starred", GoToStarredRepositories, Octicon.Star.ToImage()));
+            repoSection.Add(new MenuElement("Trending", GoToTrendingRepositories, Octicon.Pulse.ToImage()));
+            repoSection.Add(new MenuElement("Explore", () => NavigationController.PushViewController(new ExploreViewController(), true), Octicon.Globe.ToImage()));
             sections.Add(repoSection);
             
             if (ViewModel.PinnedRepositories.Any())
@@ -177,9 +176,9 @@ namespace CodeHub.iOS.ViewControllers.Application
                 sections.Add(orgSection);
 
             var gistsSection = new Section() { HeaderView = new MenuSectionView("Gists") };
-            gistsSection.Add(new MenuElement("My Gists", () => ViewModel.GoToMyGistsCommand.Execute(null), Octicon.Gist.ToImage()));
-            gistsSection.Add(new MenuElement("Starred", () => ViewModel.GoToStarredGistsCommand.Execute(null), Octicon.Star.ToImage()));
-            gistsSection.Add(new MenuElement("Public", () => ViewModel.GoToPublicGistsCommand.Execute(null), Octicon.Globe.ToImage()));
+            gistsSection.Add(new MenuElement("My Gists", GoToOwnedGists, Octicon.Gist.ToImage()));
+            gistsSection.Add(new MenuElement("Starred", GoToStarredGists, Octicon.Star.ToImage()));
+            gistsSection.Add(new MenuElement("Public", GoToPublicGists, Octicon.Globe.ToImage()));
             sections.Add(gistsSection);
 //
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
@@ -207,6 +206,43 @@ namespace CodeHub.iOS.ViewControllers.Application
             GC.Collect();
             GC.Collect();
             #endif
+        }
+
+        private void GoToOwnedRepositories()
+        {
+            var vc = Repositories.RepositoriesViewController.CreateMineViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToStarredRepositories()
+        {
+            var vc = Repositories.RepositoriesViewController.CreateStarredViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToTrendingRepositories()
+        {
+            var vc = new Repositories.TrendingRepositoriesViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToOwnedGists()
+        {
+            var username = ViewModel.Account.Username;
+            var vc = Gists.GistsViewController.CreateUserGistsViewController(username);
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToStarredGists()
+        {
+            var vc = Gists.GistsViewController.CreateStarredGistsViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToPublicGists()
+        {
+            var vc = Gists.GistsViewController.CreatePublicGistsViewController();
+            NavigationController?.PushViewController(vc, true);
         }
 
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)

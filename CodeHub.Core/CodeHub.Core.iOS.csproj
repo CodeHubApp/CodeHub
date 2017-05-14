@@ -45,15 +45,10 @@
     <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\PublicGistsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\StarredGistsViewModel.cs" />
-    <Compile Include="ViewModels\Gists\UserGistsViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\UserRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceViewModel.cs" />
-    <Compile Include="ViewModels\User\BaseUserCollectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
@@ -63,24 +58,16 @@
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
     <Compile Include="ViewModels\Events\NewsViewModel.cs" />
-    <Compile Include="ViewModels\User\OrganizationMembersViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\OrganizationRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesExploreViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesStarredViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesWatchedViewModel.cs" />
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
-    <Compile Include="ViewModels\User\TeamMembersViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowersViewModel.cs" />
-    <Compile Include="ViewModels\User\UserFollowingsViewModel.cs" />
     <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
@@ -88,7 +75,6 @@
     <Compile Include="ViewModels\App\StartupViewModel.cs" />
     <Compile Include="ViewModels\Issues\BaseIssuesViewModel.cs" />
     <Compile Include="Filters\BaseIssuesFilterModel.cs" />
-    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueEditViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueAddViewModel.cs" />
     <Compile Include="Messages\SelectIssueLabelsMessage.cs" />
@@ -98,21 +84,17 @@
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
-    <Compile Include="ViewModels\App\DefaultStartupViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
     <Compile Include="Messages\SourceEditMessage.cs" />
-    <Compile Include="Services\JsonSerializationService.cs" />
     <Compile Include="Services\IMarkdownService.cs" />
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesTrendingViewModel.cs" />
     <Compile Include="Factories\ILoginFactory.cs" />
     <Compile Include="Factories\LoginFactory.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoryCollaboratorsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
@@ -122,12 +104,10 @@
     <Compile Include="Services\AccountsService.cs" />
     <Compile Include="Services\IAccountsService.cs" />
     <Compile Include="Services\IAlertDialogService.cs" />
-    <Compile Include="Services\IJsonSerializationService.cs" />
     <Compile Include="Services\IViewModelTxService.cs" />
     <Compile Include="Services\ViewModelTxService.cs" />
     <Compile Include="Utils\CustomObservableCollection.cs" />
     <Compile Include="Utils\DateTimeExtensions.cs" />
-    <Compile Include="Utils\DefaultStartupViewCommand.cs" />
     <Compile Include="Utils\FilterGroup.cs" />
     <Compile Include="Utils\FireAndForgetTask.cs" />
     <Compile Include="Utils\RepositoryIdentifier.cs" />
@@ -140,7 +120,6 @@
     <Compile Include="ViewModels\IFilterableViewModel.cs" />
     <Compile Include="ViewModels\WebBrowserViewModel.cs" />
     <Compile Include="PresentationValues.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesForkedViewModel.cs" />
     <Compile Include="Utils\GitHubAvatar.cs" />
     <Compile Include="Utils\GitHubExtensions.cs" />
     <Compile Include="Utils\WeakReferenceExtensions.cs" />
@@ -150,23 +129,31 @@
     <Compile Include="Data\TrendingRepository.cs" />
     <Compile Include="Messages\LogoutMessage.cs" />
     <Compile Include="Extensions\ObservableExtensions.cs" />
-    <Compile Include="Extensions\FunctionalExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
-    <Compile Include="Extensions\ReactiveExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ReactiveListExtensions.cs" />
     <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
     <Compile Include="Secrets.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoryStargazersViewModel.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
-    <Compile Include="Services\IErrorService.cs" />
-    <Compile Include="ViewModels\User\UserViewModel.cs" />
-    <Compile Include="Services\AnalyticsService.cs" />
-    <Compile Include="Services\IAnalyticsService.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="Services\IMessageService.cs" />
+    <Compile Include="Services\MessageService.cs" />
+    <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
+    <Compile Include="Utils\Emojis.cs" />
+    <Compile Include="ViewModels\ICanGoToViewModel.cs" />
+    <Compile Include="Utils\OctokitClientFactory.cs" />
+    <Compile Include="Utils\OctokitNetworkClient.cs" />
+    <Compile Include="Services\INetworkActivityService.cs" />
+    <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
+    <Compile Include="ViewModels\Repositories\TrendingRepositoriesViewModel.cs" />
+    <Compile Include="ViewModels\Users\UsersViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
+    <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
+    <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -190,35 +177,8 @@
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="GitHubSharp">
       <HintPath>..\packages\GitHubClient.1.0.15\lib\portable45-net45+win8+wpa81\GitHubSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.2.2\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.2.2\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.2.2\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.2.2\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding.iOS">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Localization">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.2.2\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
@@ -230,19 +190,67 @@
       <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
+      <HintPath>..\packages\akavache.core.5.0.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
     </Reference>
     <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.1.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+      <HintPath>..\packages\akavache.sqlite3.5.0.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.Settings">
-      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    <Reference Include="MvvmCross.Platform">
+      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform.iOS">
+      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core">
+      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.iOS">
+      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding.iOS">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Localization">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
     </Reference>
     <Reference Include="Plugin.Settings.Abstractions">
-      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.7.3.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.core">
+      <HintPath>..\packages\SQLitePCLRaw.core.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.lib.e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.lib.e_sqlite3.ios_unified.static.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.lib.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.provider.internal">
+      <HintPath>..\packages\SQLitePCLRaw.provider.internal.ios_unified.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.provider.internal.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_v2">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />
@@ -251,9 +259,12 @@
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
     <Folder Include="Extensions\" />
+    <Folder Include="ViewModels\Search\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>

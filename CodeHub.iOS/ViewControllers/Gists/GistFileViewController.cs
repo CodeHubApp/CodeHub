@@ -17,7 +17,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             var vm = ViewModel as GistFileViewModel;
             vm.Bind(x => x.ContentPath)
-              .IsNotNull()
+              .Where(x => x != null)
               .Subscribe(x => LoadSource(new Uri("file://" + x)).ToBackground());
         }
 

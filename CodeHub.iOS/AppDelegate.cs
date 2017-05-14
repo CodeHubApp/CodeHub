@@ -23,8 +23,10 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
-using System.IO;
 using CodeHub.iOS.Data;
+using CrashlyticsKit;
+using FabricSdk;
+using Splat;
 
 namespace CodeHub.iOS
 {
@@ -59,16 +61,19 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Crashlytics.Instance.Initialize();
+            Fabric.Instance.Initialize();
+
+#if DEBUG
+            Fabric.Instance.Debug = true;
+#endif
+
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
             Presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, Presenter);
             setup.Initialize();
 
             Migration.Migrate();
-
-            // Initialize the error service!
-            var errorService = Mvx.Resolve<IErrorService>();
-            errorService.Init();
 
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentCulture = culture;
@@ -80,11 +85,15 @@ namespace CodeHub.iOS
             UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.LightContent, true);
             Theme.Setup();
 
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IApplicationService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMessageService>());
+
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
             purchaseService.ThrownExceptions.Subscribe(ex => {
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
-                errorService.Log(ex);
             });
 
             #if DEBUG

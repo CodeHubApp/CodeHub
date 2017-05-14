@@ -14,9 +14,6 @@ namespace CodeHub.Core
         public override void Initialize()
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-
-            //Ensure this is loaded
-            MvvmCross.Plugins.Messenger.PluginLoader.Instance.EnsureLoaded();
         }
     }
 }

@@ -1,19 +1,19 @@
 using System;
 using System.Threading.Tasks;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using GitHubSharp.Models;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
 using System.Linq;
-using MvvmCross.Plugins.Messenger;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>
     {
-        private MvxSubscriptionToken _addToken, _editToken;
+        private readonly IMessageService _messageService;
+        private IDisposable _addToken, _editToken;
 
         public string Username { get; private set; }
 
@@ -24,6 +24,11 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return new MvxCommand(() => ShowViewModel<IssueAddViewModel>(new IssueAddViewModel.NavObject { Username = Username, Repository = Repository })); }
         }
 
+        public IssuesViewModel(IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
         public void Init(NavObject nav)
         {
             Username = nav.Username;
@@ -32,14 +37,14 @@ namespace CodeHub.Core.ViewModels.Issues
             _issues.GroupingFunction = Group;
             _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(true));
 
-            _addToken = Messenger.SubscribeOnMainThread<IssueAddMessage>(x =>
+            _addToken = _messageService.Listen<IssueAddMessage>(x =>
             {
                 if (x.Issue == null || !DoesIssueBelong(x.Issue))
                     return;
                 Issues.Items.Insert(0, x.Issue);
             });
 
-            _editToken = Messenger.SubscribeOnMainThread<IssueEditMessage>(x =>
+            _editToken = _messageService.Listen<IssueEditMessage>(x =>
             {
                 if (x.Issue == null || !DoesIssueBelong(x.Issue))
                     return;

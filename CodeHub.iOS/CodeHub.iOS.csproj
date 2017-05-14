@@ -27,9 +27,7 @@
     <MtouchArch>i386</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchProfiling>true</MtouchProfiling>
-    <MtouchUseSGen>true</MtouchUseSGen>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <MtouchTlsProvider>Default</MtouchTlsProvider>
     <DeviceSpecificBuild>false</DeviceSpecificBuild>
@@ -52,7 +50,7 @@
     <IpaPackageName>
     </IpaPackageName>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+<CodesignProvision></CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -68,8 +66,6 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchUseSGen>true</MtouchUseSGen>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchExtraArgs>--linkskip=CodeHubiOS --linkskip=CodeHub.Core --linkskip=GitHubSharp</MtouchExtraArgs>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
@@ -82,15 +78,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignKey>iPhone Distribution: Dillon Buchanan (T39PW4C23Z)</CodesignKey>
+    <CodesignProvision></CodesignProvision>
     <IpaPackageName>
     </IpaPackageName>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <BuildIpa>true</BuildIpa>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchUseSGen>true</MtouchUseSGen>
-    <MtouchUseRefCounting>true</MtouchUseRefCounting>
     <MtouchExtraArgs>--linkskip=CodeHubiOS --linkskip=CodeHub.Core --linkskip=GitHubSharp</MtouchExtraArgs>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
@@ -101,17 +95,8 @@
     <Compile Include="Services\MarkdownService.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
-    <Compile Include="Views\Events\NewsView.cs" />
-    <Compile Include="Views\Events\OrganizationEventsView.cs" />
-    <Compile Include="Views\Events\UserEventsView.cs" />
-    <Compile Include="Views\Gists\PublicGistsView.cs" />
-    <Compile Include="Views\Gists\StarredGistsView.cs" />
-    <Compile Include="Views\Gists\UserGistsView.cs" />
-    <Compile Include="Views\Gists\EditGistController.cs" />
-    <Compile Include="Views\Gists\GistView.cs" />
     <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
-    <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\Issues\IssueMilestonesView.cs" />
     <Compile Include="Views\Issues\IssuesView.cs" />
     <Compile Include="Views\Issues\IssueView.cs" />
@@ -122,20 +107,12 @@
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
     <Compile Include="Views\Source\SourceTreeView.cs" />
-    <Compile Include="Views\Repositories\OrganizationRepositoriesView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesExploreView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesStarredView.cs" />
-    <Compile Include="Views\Repositories\RepositoryView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Repositories\UserRepositoriesView.cs" />
     <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
-    <Compile Include="Views\Events\RepositoryEventsView.cs" />
-    <Compile Include="Views\Events\BaseEventsView.cs" />
     <Compile Include="Views\Source\SourceView.cs" />
-    <Compile Include="Views\Repositories\BaseRepositoriesView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
@@ -150,9 +127,7 @@
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="UrlRouterProvider.cs" />
-    <Compile Include="Views\Gists\GistCreateView.cs" />
     <None Include="Entitlements.plist" />
-    <Compile Include="Views\Repositories\RepositoriesTrendingView.cs" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
     <None Include="packages.config" />
     <Compile Include="Services\AlertDialogService.cs" />
@@ -174,7 +149,6 @@
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
     <Compile Include="Views\SlideupTitleView.cs" />
-    <Compile Include="Views\Repositories\RepositoriesForkedView.cs" />
     <Compile Include="Utilities\Hud.cs" />
     <Compile Include="Utilities\UIImageExtensions.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
@@ -274,12 +248,10 @@
     <Compile Include="DialogElements\StringElement.cs" />
     <Compile Include="DialogElements\CommitElement.cs" />
     <Compile Include="DialogElements\ChangesetElement.cs" />
-    <Compile Include="DialogElements\GistElement.cs" />
     <Compile Include="DialogElements\MilestoneElement.cs" />
     <Compile Include="DialogElements\LabelElement.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
     <Compile Include="DialogElements\PullRequestElement.cs" />
-    <Compile Include="DialogElements\RepositoryElement.cs" />
     <Compile Include="DialogElements\SplitViewElement.cs" />
     <Compile Include="DialogElements\CommentElement.cs" />
     <Compile Include="DialogElements\IssueElement.cs" />
@@ -294,7 +266,6 @@
     <Compile Include="Transitions\SlideDownTransition.cs" />
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
-    <Compile Include="Utilities\Emojis.cs" />
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
     <Compile Include="ViewControllers\BaseWebViewController.cs" />
     <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
@@ -321,16 +292,8 @@
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\EmptyListView.cs" />
-    <Compile Include="Views\Gists\BaseGistsViewController.cs" />
-    <Compile Include="ViewControllers\Users\BaseUserCollectionViewController.cs" />
-    <Compile Include="ViewControllers\Users\OrganizationMembersViewController.cs" />
-    <Compile Include="ViewControllers\Users\UserFollowersViewController.cs" />
-    <Compile Include="ViewControllers\Users\UserFollowingsViewController.cs" />
-    <Compile Include="ViewControllers\Organizations\TeamMembersViewController.cs" />
-    <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
-    <Compile Include="ViewControllers\Repositories\RepositoryStargazersViewController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
     <Compile Include="ViewControllers\Application\SettingsViewController.cs" />
     <Compile Include="ViewControllers\Application\StartupViewController.cs" />
@@ -343,10 +306,7 @@
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
     <None Include="WebResources\LICENSE" />
-    <Compile Include="Services\ErrorService.cs" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
-    <Compile Include="Bootstrap\MessengerPluginBootstrap.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Data\SQLite.cs" />
     <Compile Include="Data\AccountFilters.cs" />
     <Compile Include="Data\Filter.cs" />
@@ -354,6 +314,30 @@
     <Compile Include="Data\GitHubAccount.cs" />
     <Compile Include="Data\AccountPinnedRepositories.cs" />
     <Compile Include="Data\Migration.cs" />
+    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
+    <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
+    <Compile Include="TableViewSources\ReactiveTableViewSource.cs" />
+    <Compile Include="ViewControllers\Search\ExploreViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoryViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\RepositoriesViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\TrendingRepositoriesViewController.cs" />
+    <Compile Include="Services\NetworkActivityService.cs" />
+    <Compile Include="TableViewSources\UserTableViewSource.cs" />
+    <Compile Include="TableViewCells\UserTableViewCell.cs" />
+    <Compile Include="ViewControllers\Users\UsersViewController.cs" />
+    <Compile Include="TableViewSources\GistTableViewSource.cs" />
+    <Compile Include="ViewControllers\Gists\GistsViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistCreateViewController.cs" />
+    <Compile Include="ViewControllers\Gists\GistEditViewController.cs" />
+    <Compile Include="TableViewSources\DialogTableViewSource.cs" />
+    <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\NewsViewController.cs" />
+    <Compile Include="ViewControllers\Events\OrganizationEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
+    <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
+    <Compile Include="Views\Issues\IssueLabelsView.cs" />
+    <Compile Include="Views\RetryListView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -382,44 +366,14 @@
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="ReactiveUI">
-      <HintPath>..\packages\reactiveui-core.6.5.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
-    </Reference>
     <Reference Include="BTProgressHUD">
       <HintPath>..\packages\BTProgressHUD.1.2.0.3\lib\Xamarin.iOS10\BTProgressHUD.dll</HintPath>
     </Reference>
     <Reference Include="GitHubSharp">
       <HintPath>..\packages\GitHubClient.1.0.15\lib\portable45-net45+win8+wpa81\GitHubSharp.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.2.2\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.2.2\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.2.2\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.2.2\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding.iOS">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Localization">
-      <HintPath>..\packages\MvvmCross.Binding.4.2.2\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Plugins.Messenger">
-      <HintPath>..\packages\MvvmCross.Plugin.Messenger.4.2.2\lib\Xamarin.iOS10\MvvmCross.Plugins.Messenger.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Humanizer">
-      <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.TTTAttributedLabel">
       <HintPath>lib\Xamarin.TTTAttributedLabel.dll</HintPath>
@@ -431,19 +385,85 @@
       <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Akavache">
-      <HintPath>..\packages\akavache.core.4.1.2\lib\Xamarin.iOS10\Akavache.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\packages\SQLitePCL.raw_basic.0.7.0\lib\Xamarin.iOS10\SQLitePCL.raw.dll</HintPath>
+      <HintPath>..\packages\akavache.core.5.0.0\lib\Xamarin.iOS10\Akavache.dll</HintPath>
     </Reference>
     <Reference Include="Akavache.Sqlite3">
-      <HintPath>..\packages\akavache.sqlite3.4.1.2\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
+      <HintPath>..\packages\akavache.sqlite3.5.0.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.Settings">
-      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    <Reference Include="MvvmCross.Platform">
+      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Platform.iOS">
+      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Core">
+      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.iOS">
+      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Binding.iOS">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="MvvmCross.Localization">
+      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
     </Reference>
     <Reference Include="Plugin.Settings.Abstractions">
-      <HintPath>..\packages\Xam.Plugins.Settings.2.1.0\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Settings">
+      <HintPath>..\packages\Xam.Plugins.Settings.2.5.4\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="FabricSdk">
+      <HintPath>..\packages\Fabric.1.4\lib\Xamarin.iOS10\FabricSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="FabricSdk.Platform">
+      <HintPath>..\packages\Fabric.1.4\lib\Xamarin.iOS10\FabricSdk.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="AnswersKit">
+      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\AnswersKit.dll</HintPath>
+    </Reference>
+    <Reference Include="AnswersKit.Platform">
+      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\AnswersKit.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="CrashlyticsKit">
+      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\CrashlyticsKit.dll</HintPath>
+    </Reference>
+    <Reference Include="CrashlyticsKit.Platform">
+      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\CrashlyticsKit.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="ReactiveUI">
+      <HintPath>..\packages\reactiveui-core.7.3.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.core">
+      <HintPath>..\packages\SQLitePCLRaw.core.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.lib.e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.lib.e_sqlite3.ios_unified.static.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.lib.e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.provider.internal">
+      <HintPath>..\packages\SQLitePCLRaw.provider.internal.ios_unified.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.provider.internal.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_e_sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_e_sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_v2">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.5\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -587,6 +607,9 @@
     <Folder Include="ViewControllers\Organizations\" />
     <Folder Include="ViewControllers\Gists\" />
     <Folder Include="Data\" />
+    <Folder Include="TableViewSources\" />
+    <Folder Include="ViewControllers\Search\" />
+    <Folder Include="ViewControllers\Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -621,4 +644,6 @@
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
+  <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>

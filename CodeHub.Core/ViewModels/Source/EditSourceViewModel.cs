@@ -1,12 +1,15 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
 using MvvmCross.Core.ViewModels;
 
 namespace CodeHub.Core.ViewModels.Source
 {
     public class EditSourceViewModel : LoadableViewModel
     {
+        private readonly IMessageService _messageService;
+
         private string _text;
         public string Text
         {
@@ -23,6 +26,11 @@ namespace CodeHub.Core.ViewModels.Source
         public string BlobSha { get; private set; }
 
         public string Branch { get; private set; }
+
+        public EditSourceViewModel(IMessageService messageService = null)
+        {
+            _messageService = messageService ?? GetService<IMessageService>();
+        }
 
         public void Init(NavObject navObject)
         {
@@ -47,7 +55,7 @@ namespace CodeHub.Core.ViewModels.Source
         {
             var request = this.GetApplication().Client.Users[Username].Repositories[Repository].UpdateContentFile(Path, message, data, BlobSha, Branch);
             var response = await this.GetApplication().Client.ExecuteAsync(request);
-            Messenger.Publish(new SourceEditMessage(this) { OldSha = BlobSha, Data = data, Update = response.Data });
+            _messageService.Send(new SourceEditMessage { OldSha = BlobSha, Data = data, Update = response.Data });
         }
 
         public class NavObject
