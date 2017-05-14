@@ -12,7 +12,6 @@ namespace CodeHub.iOS.Views.Repositories
     public class ReadmeView : WebView
     {
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
-        private string _currentContent;
 
         public new ReadmeViewModel ViewModel
         {

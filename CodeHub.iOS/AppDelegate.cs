@@ -23,7 +23,6 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
-using CodeHub.iOS.Data;
 using CrashlyticsKit;
 using FabricSdk;
 using Splat;
@@ -72,8 +71,6 @@ namespace CodeHub.iOS
             Presenter = new IosViewPresenter(this.Window);
             var setup = new Setup(this, Presenter);
             setup.Initialize();
-
-            Migration.Migrate();
 
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentCulture = culture;

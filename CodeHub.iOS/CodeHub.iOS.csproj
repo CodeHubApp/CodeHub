@@ -307,13 +307,6 @@
     <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
     <None Include="WebResources\LICENSE" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
-    <Compile Include="Data\SQLite.cs" />
-    <Compile Include="Data\AccountFilters.cs" />
-    <Compile Include="Data\Filter.cs" />
-    <Compile Include="Data\PinnedRepository.cs" />
-    <Compile Include="Data\GitHubAccount.cs" />
-    <Compile Include="Data\AccountPinnedRepositories.cs" />
-    <Compile Include="Data\Migration.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
     <Compile Include="TableViewSources\ReactiveTableViewSource.cs" />
@@ -606,7 +599,6 @@
     <Folder Include="ViewControllers\Users\" />
     <Folder Include="ViewControllers\Organizations\" />
     <Folder Include="ViewControllers\Gists\" />
-    <Folder Include="Data\" />
     <Folder Include="TableViewSources\" />
     <Folder Include="ViewControllers\Search\" />
     <Folder Include="ViewControllers\Events\" />
