@@ -4,12 +4,18 @@ using System;
 using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Repositories;
 using MvvmCross.Core.ViewModels;
+using System.Reactive.Subjects;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.App
 {
     public class SettingsViewModel : BaseViewModel
     {
         private readonly IFeaturesService _featuresService;
+        private readonly ISubject<Unit> _showUpgrades = new Subject<Unit>();
+
+        public IObservable<Unit> ShowUpgrades => _showUpgrades.AsObservable();
 
         public SettingsViewModel(IFeaturesService featuresService)
         {
@@ -29,11 +35,6 @@ namespace CodeHub.Core.ViewModels.App
         public ICommand GoToSourceCodeCommand
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }
-        }
-
-        public ICommand GoToUpgradesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UpgradeViewModel>()); }
         }
 
         private bool _isSaving;
@@ -57,16 +58,22 @@ namespace CodeHub.Core.ViewModels.App
                 }
                 else
                 {
-                    GetService<IAlertDialogService>()
-                        .PromptYesNo("Requires Activation", "Push notifications require activation. Would you like to go there now to activate push notifications?")
-                        .ContinueWith(t =>
-                        {
-                            if (t.Status == TaskStatus.RanToCompletion && t.Result)
-                                ShowViewModel<UpgradeViewModel>();
-                        });
+                    PromptNotificationActivation().ToBackground();
                     RaisePropertyChanged(() => PushNotificationsEnabled);
                 }
             }
+        }
+
+        private async Task PromptNotificationActivation()
+        {
+            var alertDialogService = GetService<IAlertDialogService>();
+
+            var response = await alertDialogService.PromptYesNo(
+                "Requires Activation",
+                "Push notifications require activation. Would you like to go there now to activate push notifications?");
+
+            if (response)
+                _showUpgrades.OnNext(Unit.Default);
         }
 
         private async Task RegisterPushNotifications(bool enabled)

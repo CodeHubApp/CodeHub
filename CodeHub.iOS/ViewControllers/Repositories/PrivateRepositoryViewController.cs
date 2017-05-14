@@ -2,6 +2,7 @@
 using UIKit;
 using CodeHub.iOS.ViewControllers.Application;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -14,13 +15,16 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            // Perform any additional setup after loading the view, typically from a nib.
 
             Button.BackgroundColor = UIColor.FromRGB(0x27, 0xae, 0x60);
             Button.SetTitleColor(UIColor.White, UIControlState.Normal);
             Button.Layer.CornerRadius = 6f;
 
-            OnActivation(d => d(Button.GetClickedObservable().Subscribe(_ => this.PresentUpgradeViewController())));
+            OnActivation(d =>
+            {
+                d(Button.GetClickedObservable()
+                  .Subscribe(_ => UpgradeViewController.Present(this)));   
+            });
         }
     }
 

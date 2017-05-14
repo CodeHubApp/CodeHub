@@ -123,7 +123,6 @@
     <Compile Include="Utils\GitHubAvatar.cs" />
     <Compile Include="Utils\GitHubExtensions.cs" />
     <Compile Include="Utils\WeakReferenceExtensions.cs" />
-    <Compile Include="ViewModels\App\UpgradeViewModel.cs" />
     <Compile Include="Data\Language.cs" />
     <Compile Include="Data\LanguageRepository.cs" />
     <Compile Include="Data\TrendingRepository.cs" />

@@ -21,6 +21,8 @@ namespace CodeHub.iOS.ViewControllers.Application
                 d(vm.Bind(x => x.PushNotificationsEnabled).Subscribe(_ => CreateTable()));
                 d(vm.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
                 CreateTable();
+
+                d(vm.ShowUpgrades.Subscribe(_ => UpgradeViewController.Present(this)));
             });
         }
 
@@ -80,7 +82,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (vm.ShouldShowUpgrades)
             {
                 var upgrades = new StringElement("Upgrades");
-                upgrades.Clicked.BindCommand(vm.GoToUpgradesCommand);
+                upgrades.Clicked.Subscribe(_ => UpgradeViewController.Present(this));
                 aboutSection.Add(upgrades);
             }
 

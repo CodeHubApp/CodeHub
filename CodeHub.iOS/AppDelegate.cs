@@ -86,6 +86,8 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMessageService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IInAppPurchaseService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IFeaturesService>());
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
@@ -93,9 +95,9 @@ namespace CodeHub.iOS
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
             });
 
-            #if DEBUG
-            features.ActivateProDirect();
-            #endif 
+//#if DEBUG
+//            features.ActivateProDirect();
+//#endif 
 
 //            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
 //                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));

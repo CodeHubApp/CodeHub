@@ -5,25 +5,24 @@ using CodeHub.iOS.Services;
 using System.Threading.Tasks;
 using System.Linq;
 using CodeHub.Core.Services;
-using CodeHub.iOS.ViewControllers;
 using BigTed;
 using System.Reactive.Disposables;
 using CodeHub.iOS.WebViews;
-using CodeHub.iOS.Views;
-using MvvmCross.Platform;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class UpgradeViewController : WebView
+    public class UpgradeViewController : BaseWebViewController
     {
-        private readonly IFeaturesService _featuresService = Mvx.Resolve<IFeaturesService>();
-        private readonly IInAppPurchaseService _inAppPurchaseService = Mvx.Resolve<IInAppPurchaseService>();
+        private readonly IFeaturesService _featuresService 
+            = Locator.Current.GetService<IFeaturesService>();
+        private readonly IInAppPurchaseService _inAppPurchaseService
+            = Locator.Current.GetService<IInAppPurchaseService>();
         private UIActivityIndicatorView _activityView;
 
         public UpgradeViewController() : base(false, false)
         {
             Title = "Pro Upgrade";
-            ViewModel = new CodeHub.Core.ViewModels.App.UpgradeViewModel();
         }
 
         public override void ViewDidLoad()
@@ -51,13 +50,15 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             try
             {
-                var request = _inAppPurchaseService.RequestProductData(FeaturesService.ProEdition).WithTimeout(TimeSpan.FromSeconds(30));
-                var productData = (await request).Products.FirstOrDefault();
+                var response = await _inAppPurchaseService
+                    .RequestProductData(FeaturesService.ProEdition)
+                    .WithTimeout(TimeSpan.FromSeconds(30));
+                
+                var productData = response.Products.FirstOrDefault();
                 var enabled = _featuresService.IsProEnabled;
-                var model = new UpgradeDetailsModel(productData != null ? productData.LocalizedPrice() : null, enabled);
-                var content = new UpgradeDetailsRazorView { Model = model }.GenerateString();
-                LoadContent(content);
-                Web.UserInteractionEnabled = true;
+                var model = new UpgradeDetailsModel(productData?.LocalizedPrice(), enabled);
+                var viewModel = new UpgradeDetailsRazorView { Model = model };
+                LoadContent(viewModel.GenerateString());
             }
             catch (Exception e)
             {
@@ -65,6 +66,8 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
             finally
             {
+                Web.UserInteractionEnabled = true;
+
                 UIView.Animate(0.2f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseInOut,
                     () => _activityView.Alpha = 0, () =>
                     {
@@ -129,19 +132,21 @@ namespace CodeHub.iOS.ViewControllers.Application
                 AlertDialogService.ShowAlert("Error", e.Message);
             }
         }
-    }
 
-    public static class UpgradeViewControllerExtensions
-    {
-        public static UIViewController PresentUpgradeViewController(this UIViewController @this)
+        public static UpgradeViewController Present(UIViewController parent)
         {
             var vc = new UpgradeViewController();
             var nav = new ThemedNavigationController(vc);
 
-            var navObj = new UIBarButtonItem(Images.Buttons.CancelButton, UIBarButtonItemStyle.Done, (_, __) => @this.DismissViewController(true, null));
-            vc.ViewWillAppearCalled += (sender, e) => vc.NavigationItem.LeftBarButtonItem = navObj;
-            vc.ViewDidDisappearCalled += (sender, e) => vc.NavigationItem.LeftBarButtonItem = null;
-            @this.PresentViewController(nav, true, null);
+            var navObj = new UIBarButtonItem(
+                Images.Buttons.CancelButton,
+                UIBarButtonItemStyle.Done,
+                (_, __) => parent.DismissViewController(true, null));
+
+            vc.Appearing.Subscribe(_ => vc.NavigationItem.LeftBarButtonItem = navObj);
+            vc.Disappeared.Subscribe(_ => vc.NavigationItem.LeftBarButtonItem = null);
+
+            parent.PresentViewController(nav, true, null);
             return vc;
         }
     }
