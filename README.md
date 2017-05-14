@@ -47,5 +47,4 @@ A lot of thanks to many who contribute to open-source projects. The following we
 * [ReactiveUI](https://github.com/reactiveui/ReactiveUI)
 * [MVVMCross](https://github.com/MvvmCross/MvvmCross)
 * [Marked.js](https://github.com/chjj/marked)
-* [ModernHttpClient](https://github.com/paulcbetts/ModernHttpClient)
 
