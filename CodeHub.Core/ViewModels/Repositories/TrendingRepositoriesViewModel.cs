@@ -6,6 +6,8 @@ using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Linq;
+using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -13,6 +15,7 @@ namespace CodeHub.Core.ViewModels.Repositories
     {
         private readonly Language _defaultLanguage = new Language("All Languages", null);
         private readonly ITrendingRepository _trendingRepository;
+        private readonly IAlertDialogService _dialogService;
 
         private static readonly Tuple<string, string>[] Times = {
             Tuple.Create("Daily", "daily"),
@@ -38,13 +41,17 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ReactiveCommand<RepositoryItemViewModel, RepositoryItemViewModel> RepositoryItemSelected { get; }
 
-        public RepositoriesTrendingViewModel(ITrendingRepository trendingRepository = null)
+        public RepositoriesTrendingViewModel(
+            ITrendingRepository trendingRepository = null, 
+            IAlertDialogService dialogService = null)
         {
             _trendingRepository = trendingRepository ?? new TrendingRepository();
+            _dialogService = dialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
             RepositoryItemSelected = ReactiveCommand.Create<RepositoryItemViewModel, RepositoryItemViewModel>(x => x);
 
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
+            LoadCommand.ThrownExceptions.Subscribe(LoadingError);
 
             SelectedLanguage = _defaultLanguage;
 
@@ -53,6 +60,18 @@ namespace CodeHub.Core.ViewModels.Repositories
                 .Select(_ => Unit.Default)
                 .Do(_ => Items = null)
                 .InvokeCommand(LoadCommand);
+        }
+
+        private void LoadingError(Exception err)
+        {
+            var message = err.Message;
+            var baseException = err.GetInnerException();
+            if (baseException is System.Net.Sockets.SocketException)
+            {
+                message = "Unable to communicate with GitHub. " + baseException.Message;
+            }
+
+            _dialogService.Alert("Error Loading", message).ToBackground();
         }
 
         private async Task Load()

@@ -81,6 +81,7 @@ namespace CodeHub.iOS.ViewControllers.Users
                 .Select(_ => ViewModel.LoadCommand.Execute())
                 .Switch()
                 .Take(1)
+                .Catch(Observable.Return(false))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(SetItemsPresent);
 

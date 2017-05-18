@@ -5,6 +5,7 @@ using GitHubSharp.Models;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -48,7 +49,7 @@ namespace CodeHub.iOS.Views.Source
             if (x.Type.Equals("dir", StringComparison.OrdinalIgnoreCase))
             {
                 var e = new StringElement(x.Name, Octicon.FileDirectory.ToImage());
-                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
+                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.ExecuteNow(x));
                 return e;
             }
             if (x.Type.Equals("file", StringComparison.OrdinalIgnoreCase))
@@ -56,13 +57,13 @@ namespace CodeHub.iOS.Views.Source
                 if (x.DownloadUrl != null)
                 {
                     var e = new StringElement(x.Name, Octicon.FileCode.ToImage());
-                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
+                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.ExecuteNow(x));
                     return e;
                 }
                 else
                 {
                     var e = new StringElement(x.Name, Octicon.FileSubmodule.ToImage());
-                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.Execute(x));
+                    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToItemCommand.ExecuteNow(x));
                     return e;
                 }
             }

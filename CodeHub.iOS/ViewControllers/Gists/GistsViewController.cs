@@ -89,6 +89,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 .Select(_ => ViewModel.LoadCommand.Execute())
                 .Switch()
                 .Take(1)
+                .Catch(Observable.Return(false))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(SetItemsPresent);
 
