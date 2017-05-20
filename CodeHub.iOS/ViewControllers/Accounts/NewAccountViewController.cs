@@ -1,19 +1,22 @@
 using System;
 using CoreGraphics;
 using UIKit;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using CodeHub.iOS.ViewControllers.Application;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public class NewAccountViewController : BaseViewController
     {
+        private readonly IFeaturesService _featuresService;
         private readonly UIColor DotComBackgroundColor = UIColor.FromRGB(239, 239, 244);
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
 
-        public NewAccountViewController()
+        public NewAccountViewController(IFeaturesService featuresService = null)
         {
+            _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
+
             Title = "New Account";
         }
 
@@ -55,13 +58,12 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
         private void DotComButtonTouch ()
         {
-            NavigationController.PushViewController(new LoginViewController(), true);
+            NavigationController.PushViewController(new OAuthLoginViewController(), true);
         }
 
         private void EnterpriseButtonTouch ()
         {
-            var features = Mvx.Resolve<IFeaturesService>();
-            if (features.IsProEnabled)
+            if (_featuresService.IsProEnabled)
             {
                 NavigationController.PushViewController(new AddAccountViewController(), true);
             }

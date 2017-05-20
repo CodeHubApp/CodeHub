@@ -268,7 +268,7 @@
     <Compile Include="Views\TrendingTitleButton.cs" />
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
     <Compile Include="ViewControllers\BaseWebViewController.cs" />
-    <Compile Include="ViewControllers\Accounts\LoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\OAuthLoginViewController.cs" />
     <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
     <InterfaceDefinition Include="ViewControllers\Accounts\AddAccountView.xib" />
     <Compile Include="ViewControllers\Accounts\AddAccountViewController.designer.cs" />

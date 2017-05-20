@@ -1,35 +1,41 @@
 using System;
 using CodeHub.Core.ViewModels.Accounts;
-using MvvmCross.Platform;
 using CodeHub.iOS.Utilities;
 using Foundation;
 using WebKit;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Services;
-using CodeHub.Core.Factories;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
 using System.Linq;
+using ReactiveUI;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class LoginViewController : BaseWebViewController
+    public class OAuthLoginViewController : BaseWebViewController
     {
+        private readonly IAlertDialogService _alertDialogService;
+
         private static readonly string OAuthWelcome = 
             "In the following screen you will be prompted for your GitHub credentials. This is done through GitHub's OAuth portal, " +
             "the recommended way to authenticate.\n\nCodeHub does not save your password. Instead, only the OAuth " + 
             "token is saved on the device which you may revoke at any time.";
-        
-        public LoginViewModel ViewModel { get; }
 
-        public LoginViewController() 
+        public OAuthLoginViewModel ViewModel { get; } = new OAuthLoginViewModel();
+
+        public OAuthLoginViewController(IAlertDialogService alertDialogService = null) 
             : base(true)
         {
-            Title = "Login";
-            ViewModel = new LoginViewModel(Mvx.Resolve<ILoginFactory>());
-            ViewModel.Init(new LoginViewModel.NavObject());
+            _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            OnActivation(d => d(ViewModel.Bind(x => x.IsLoggingIn).SubscribeStatus("Logging in...")));
+            Title = "Login";
+
+            OnActivation(d =>
+            {
+                d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.IsExecuting)
+                      .SubscribeStatus("Logging in..."));
+            });
         }
 
         public override void ViewDidLoad()
@@ -57,13 +63,13 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
                     var code = queryParameters.FirstOrDefault(x => x.StartsWith("code=", StringComparison.OrdinalIgnoreCase));
                     var codeValue = code?.Replace("code=", String.Empty);
-                    ViewModel.Login(codeValue);
+                    ViewModel.LoginCommand.ExecuteNow(codeValue);
                     return false;
                 }
     
                 if (navigationAction.Request.Url.AbsoluteString.StartsWith("https://github.com/join"))
                 {
-                    Mvx.Resolve<IAlertDialogService>().Alert("Error", "Sorry, due to restrictions, creating GitHub accounts cannot be done in CodeHub.");
+                    _alertDialogService.Alert("Error", "Sorry, due to restrictions, creating GitHub accounts cannot be done in CodeHub.");
                     return false;
                 }
 
@@ -71,7 +77,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             }
             catch 
             {
-                Mvx.Resolve<IAlertDialogService>().Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
+                _alertDialogService.Alert("Error Logging in!", "CodeHub is unable to login you in due to an unexpected error. Please try again.");
                 return false;
             }
         }

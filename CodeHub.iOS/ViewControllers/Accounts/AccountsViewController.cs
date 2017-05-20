@@ -1,4 +1,3 @@
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using UIKit;
 using Foundation;
@@ -9,13 +8,14 @@ using CodeHub.iOS.DialogElements;
 using System.Linq;
 using ReactiveUI;
 using CodeHub.Core.Messages;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public class AccountsViewController : DialogViewController
     {
-        private readonly IAccountsService _accountsService = Mvx.Resolve<IAccountsService>();
-        private readonly IApplicationService _applicationService = Mvx.Resolve<IApplicationService>();
+        private readonly IAccountsService _accountsService = Locator.Current.GetService<IAccountsService>();
+        private readonly IApplicationService _applicationService = Locator.Current.GetService<IApplicationService>();
 
         public AccountsViewController() : base(UITableViewStyle.Plain)
         {
@@ -47,12 +47,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         {
             base.ViewWillAppear(animated);
 
-            var accountsService = Mvx.Resolve<IAccountsService>();
             var weakVm = new WeakReference<AccountsViewController>(this);
             var accountSection = new Section();
 
-            var activeAccount = accountsService.GetActiveAccount().Result;
-            accountSection.AddAll(accountsService.GetAccounts().Result.Select(account =>
+            var activeAccount = _accountsService.GetActiveAccount().Result;
+            accountSection.AddAll(_accountsService.GetAccounts().Result.Select(account =>
             {
                 var isEqual = account.Id == activeAccount?.Id;
                 var t = new AccountElement(account, isEqual);
@@ -77,8 +76,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
             //Remove the designated username
             _accountsService.Remove(accountElement.Account);
-            var accountsService = Mvx.Resolve<IAccountsService>();
-            var activeAccount = accountsService.GetActiveAccount().Result;
+            var activeAccount = _accountsService.GetActiveAccount().Result;
 
             if (activeAccount != null && activeAccount.Equals(accountElement.Account))
             {

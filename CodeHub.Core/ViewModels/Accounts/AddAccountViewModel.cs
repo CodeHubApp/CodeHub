@@ -1,17 +1,16 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
-using CodeHub.Core.Factories;
-using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
 using System.Reactive;
+using ReactiveUI;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
-    public class AddAccountViewModel : BaseViewModel 
+    public class AddAccountViewModel : ReactiveObject 
     {
         private readonly IApplicationService _application;
-        private readonly ILoginFactory _loginFactory;
 
         private bool _isLoggingIn;
         public bool IsLoggingIn
@@ -43,13 +42,12 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public string TwoFactor { get; set; }
 
-        public ReactiveUI.ReactiveCommand<Unit, Unit> LoginCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoginCommand { get; }
 
-        public AddAccountViewModel(IApplicationService application, ILoginFactory loginFactory)
+        public AddAccountViewModel(IApplicationService application = null)
         {
-            _application = application;
-            _loginFactory = loginFactory;
-            LoginCommand = ReactiveUI.ReactiveCommand.CreateFromTask(Login);
+            _application = application ?? Locator.Current.GetService<IApplicationService>();
+            LoginCommand = ReactiveCommand.CreateFromTask(Login);
         }
 
         private async Task Login()
@@ -71,10 +69,10 @@ namespace CodeHub.Core.ViewModels.Accounts
             try
             {
                 IsLoggingIn = true;
-                var account = await _loginFactory.LoginWithBasic(apiUrl, Username, Password, TwoFactor);
-                var client = await _loginFactory.LoginAccount(account);
+                var account = await _application.LoginWithBasic(apiUrl, Username, Password, TwoFactor);
+                var client = await _application.LoginAccount(account);
                 _application.ActivateUser(account, client);
-                ReactiveUI.MessageBus.Current.SendMessage(new LogoutMessage());
+                MessageBus.Current.SendMessage(new LogoutMessage());
             }
             catch (Exception)
             {
@@ -85,14 +83,6 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 IsLoggingIn = false;
             }
-        }
-
-        public void Init(NavObject nav)
-        {
-        }
-
-        public class NavObject
-        {
         }
     }
 }

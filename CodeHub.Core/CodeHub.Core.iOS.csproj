@@ -84,7 +84,7 @@
     <Compile Include="Messages\IssueAddMessage.cs" />
     <Compile Include="ViewModels\Issues\IssueModifyViewModel.cs" />
     <Compile Include="Messages\IssueEditMessage.cs" />
-    <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\OAuthLoginViewModel.cs" />
     <Compile Include="Messages\NotificationCountMessage.cs" />
     <Compile Include="Services\IPushNotificationsService.cs" />
     <Compile Include="ViewModels\Source\EditSourceViewModel.cs" />
@@ -93,8 +93,6 @@
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
-    <Compile Include="Factories\ILoginFactory.cs" />
-    <Compile Include="Factories\LoginFactory.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
@@ -254,7 +252,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Folder Include="Factories\" />
     <Folder Include="ViewModels\Changesets\" />
     <Folder Include="ViewModels\Notifications\" />
     <Folder Include="Extensions\" />

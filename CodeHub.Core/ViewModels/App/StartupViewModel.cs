@@ -1,7 +1,6 @@
 using System;
 using CodeHub.Core.Services;
 using System.Linq;
-using CodeHub.Core.Factories;
 using System.Windows.Input;
 using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
@@ -16,7 +15,6 @@ namespace CodeHub.Core.ViewModels.App
         private bool _isLoggingIn;
         private string _status;
         private Uri _imageUrl;
-        private readonly ILoginFactory _loginFactory;
         private readonly IApplicationService _applicationService;
         private readonly IAccountsService _accountsService;
 
@@ -52,11 +50,9 @@ namespace CodeHub.Core.ViewModels.App
         public ReactiveCommand<Unit, Unit> GoToNewAccount { get; } = ReactiveCommand.Create(() => { });
 
         public StartupViewModel(
-            ILoginFactory loginFactory = null, 
             IApplicationService applicationService = null,
             IAccountsService accountsService = null)
         {
-            _loginFactory = loginFactory ?? GetService<ILoginFactory>();
             _applicationService = applicationService ?? GetService<IApplicationService>();
             _accountsService = accountsService ?? GetService<IAccountsService>();
         }
@@ -91,7 +87,7 @@ namespace CodeHub.Core.ViewModels.App
                 ImageUrl = accountAvatarUri;
                 Status = "Logging in as " + account.Username;
 
-                var client = await _loginFactory.LoginAccount(account);
+                var client = await _applicationService.LoginAccount(account);
                 _applicationService.ActivateUser(account, client);
 
                 if (!isEnterprise)

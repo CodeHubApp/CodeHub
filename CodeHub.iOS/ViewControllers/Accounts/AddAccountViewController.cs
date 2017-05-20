@@ -3,29 +3,27 @@ using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.Utilities;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.Core.Factories;
 using System;
 using GitHubSharp;
-using System.Linq;
 using System.Reactive.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive.Linq;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public partial class AddAccountViewController : BaseViewController
     {
+        private readonly IAlertDialogService _alertDialogService;
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
 
-        public AddAccountViewModel ViewModel { get; }
+        public AddAccountViewModel ViewModel { get; } = new AddAccountViewModel();
 
-        public AddAccountViewController()
+        public AddAccountViewController(IAlertDialogService alertDialogService = null)
             : base("AddAccountView", null)
         {
-            ViewModel = new AddAccountViewModel(Mvx.Resolve<IApplicationService>(), Mvx.Resolve<ILoginFactory>());
-            ViewModel.Init(new AddAccountViewModel.NavObject());
+            _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
         }
 
         public override void ViewDidLoad()
@@ -89,19 +87,19 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
         private void HandleLoginException(Exception e)
         {
-            var alert = Mvx.Resolve<IAlertDialogService>();
-
-            var authException = e as UnauthorizedException;
-            if (authException != null && authException.Headers.Contains("X-GitHub-OTP"))
+            if (e is UnauthorizedException authException && authException.Headers.Contains("X-GitHub-OTP"))
             {
-                alert.PromptTextBox("Authentication Error", "Please provide the two-factor authentication code for this account.", string.Empty, "Login")
+                _alertDialogService
+                    .PromptTextBox("Authentication Error", "Please provide the two-factor authentication code for this account.", string.Empty, "Login")
                     .ToObservable()
                     .Do(x => ViewModel.TwoFactor = x)
                     .InvokeCommand(ViewModel.LoginCommand);
             }
             else
             {
-                alert.Alert("Unable to Login!", "Unable to login user " + ViewModel.Username + ": " + e.Message);
+                _alertDialogService
+                    .Alert("Unable to Login!", "Unable to login user " + ViewModel.Username + ": " + e.Message)
+                    .ToBackground();
             }
         }
 
