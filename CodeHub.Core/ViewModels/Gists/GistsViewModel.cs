@@ -136,12 +136,20 @@ namespace CodeHub.Core.ViewModels.Gists
         private async Task<IReadOnlyList<Gist>> RetrieveItems(
             Uri repositoriesUri, IDictionary<string, string> parameters = null)
         {
-            var connection = _applicationService.GitHubClient.Connection;
-            var ret = await connection.Get<IReadOnlyList<Gist>>(repositoriesUri, parameters, "application/json");
-            NextPage = ret.HttpResponse.ApiInfo.Links.ContainsKey("next")
-                          ? ret.HttpResponse.ApiInfo.Links["next"]
-                          : null;
-            return ret.Body;
+            try
+            {
+                var connection = _applicationService.GitHubClient.Connection;
+                var ret = await connection.Get<IReadOnlyList<Gist>>(repositoriesUri, parameters, "application/json");
+                NextPage = ret.HttpResponse.ApiInfo.Links.ContainsKey("next")
+                              ? ret.HttpResponse.ApiInfo.Links["next"]
+                              : null;
+                return ret.Body;
+            }
+            catch
+            {
+                NextPage = null;
+                throw;
+            }
         }
     }
 }

@@ -23,7 +23,6 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
-using CodeHub.iOS.Data;
 using CrashlyticsKit;
 using FabricSdk;
 using Splat;
@@ -73,8 +72,6 @@ namespace CodeHub.iOS
             var setup = new Setup(this, Presenter);
             setup.Initialize();
 
-            Migration.Migrate();
-
             var culture = new System.Globalization.CultureInfo("en");
             System.Threading.Thread.CurrentThread.CurrentCulture = culture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
@@ -89,6 +86,8 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMessageService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IInAppPurchaseService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IFeaturesService>());
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
@@ -96,9 +95,9 @@ namespace CodeHub.iOS
                 AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
             });
 
-            #if DEBUG
-            features.ActivateProDirect();
-            #endif 
+//#if DEBUG
+//            features.ActivateProDirect();
+//#endif 
 
 //            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
 //                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));

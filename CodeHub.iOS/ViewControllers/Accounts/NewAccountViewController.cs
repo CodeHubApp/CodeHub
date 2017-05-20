@@ -67,7 +67,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             }
             else
             {
-                this.PresentUpgradeViewController();
+                UpgradeViewController.Present(this);
             }
         }
 

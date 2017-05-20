@@ -186,7 +186,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
 
             if (ViewModel.ShouldShowUpgrades)
-                infoSection.Add(new MenuElement("Upgrades", () => ViewModel.GoToUpgradesCommand.Execute(null), Octicon.Lock.ToImage()));
+                infoSection.Add(new MenuElement("Upgrades", GoToUpgrades, Octicon.Lock.ToImage()));
             
             infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
             infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, Octicon.Person.ToImage()));
@@ -242,6 +242,12 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void GoToPublicGists()
         {
             var vc = Gists.GistsViewController.CreatePublicGistsViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToUpgrades()
+        {
+            var vc = new UpgradeViewController();
             NavigationController?.PushViewController(vc, true);
         }
 
