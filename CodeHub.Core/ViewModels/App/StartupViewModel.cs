@@ -94,9 +94,9 @@ namespace CodeHub.Core.ViewModels.App
 
                 GoToMenu.ExecuteNow();
             }
-            catch (GitHubSharp.UnauthorizedException e)
+            catch (Octokit.AuthorizationException e)
             {
-                DisplayAlertAsync("The credentials for the selected account are incorrect. " + e.Message)
+                DisplayAlertAsync("The credentials for the selected account are not valid. " + e.Message)
                     .ToObservable()
                     .BindCommand(GoToAccounts);
             }
@@ -109,29 +109,33 @@ namespace CodeHub.Core.ViewModels.App
             {
                 IsLoggingIn = false;
             }
-
         }
 
         private void StarOrWatch()
         {
-            try
+            if (Settings.ShouldStar)
             {
-                if (Settings.ShouldStar)
-                {
-                    Settings.ShouldStar = false;
-                    var starRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Star();
-                    _applicationService.Client.ExecuteAsync(starRequest).ToBackground();
-                }
+                Settings.ShouldStar = false;
 
-                if (Settings.ShouldWatch)
-                {
-                    Settings.ShouldWatch = false;
-                    var watchRequest = _applicationService.Client.Users["thedillonb"].Repositories["codehub"].Watch();
-                    _applicationService.Client.ExecuteAsync(watchRequest).ToBackground();
-                }
+                _applicationService
+                    .GitHubClient.Activity.Starring
+                    .StarRepo("thedillonb", "codehub")
+                    .ToBackground();
             }
-            catch
+
+            if (Settings.ShouldWatch)
             {
+                Settings.ShouldWatch = false;
+
+                var subscription = new Octokit.NewSubscription
+                {
+                    Subscribed = true
+                };
+
+                _applicationService
+                    .GitHubClient.Activity.Watching
+                    .WatchRepo("thedillonb", "codehub", subscription)
+                    .ToBackground();
             }
         }
     }
