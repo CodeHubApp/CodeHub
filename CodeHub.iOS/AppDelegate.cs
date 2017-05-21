@@ -83,11 +83,13 @@ namespace CodeHub.iOS
             Theme.Setup();
 
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IApplicationService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAccountsService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IAlertDialogService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<INetworkActivityService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMessageService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IInAppPurchaseService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IFeaturesService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<ILoginService>());
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();

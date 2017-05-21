@@ -11,6 +11,7 @@ namespace CodeHub.Core.Utilities
     {
         public static Func<HttpClientHandler> CreateMessageHandler = () => new HttpClientHandler();
         public static readonly string[] Scopes = { "user", "repo", "gist", "notifications" };
+        public static readonly ProductHeaderValue UserAgent = new ProductHeaderValue("CodeHub");
 
         public static GitHubClient Create(Uri domain, Credentials credentials)
         {
@@ -19,7 +20,7 @@ namespace CodeHub.Core.Utilities
             var httpClient = new OctokitNetworkClient(client, networkActivityService);
 
             var connection = new Connection(
-                new ProductHeaderValue("CodeHub"),
+                UserAgent,
                 domain,
                 new InMemoryCredentialStore(credentials),
                 httpClient,

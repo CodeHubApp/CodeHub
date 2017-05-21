@@ -151,6 +151,7 @@
     <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Services\LoginService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

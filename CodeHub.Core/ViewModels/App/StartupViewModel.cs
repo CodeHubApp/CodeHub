@@ -87,8 +87,7 @@ namespace CodeHub.Core.ViewModels.App
                 ImageUrl = accountAvatarUri;
                 Status = "Logging in as " + account.Username;
 
-                var client = await _applicationService.LoginAccount(account);
-                _applicationService.ActivateUser(account, client);
+                await _applicationService.LoginAccount(account);
 
                 if (!isEnterprise)
                     StarOrWatch();

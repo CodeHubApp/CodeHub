@@ -5,19 +5,16 @@ using CodeHub.Core.Messages;
 using System.Reactive;
 using ReactiveUI;
 using Splat;
+using System.Reactive.Linq;
+using GitHubSharp;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Accounts
 {
     public class AddAccountViewModel : ReactiveObject 
     {
-        private readonly IApplicationService _application;
-
-        private bool _isLoggingIn;
-        public bool IsLoggingIn
-        {
-            get { return _isLoggingIn; }
-            set { this.RaiseAndSetIfChanged(ref _isLoggingIn, value); }
-        }
+        private readonly ILoginService _loginService;
+        private readonly IAlertDialogService _alertDialogService;
 
         private string _username;
         public string Username
@@ -44,17 +41,42 @@ namespace CodeHub.Core.ViewModels.Accounts
 
         public ReactiveCommand<Unit, Unit> LoginCommand { get; }
 
-        public AddAccountViewModel(IApplicationService application = null)
+        public AddAccountViewModel(
+            ILoginService loginService = null,
+            IAlertDialogService alertDialogService = null)
         {
-            _application = application ?? Locator.Current.GetService<IApplicationService>();
-            LoginCommand = ReactiveCommand.CreateFromTask(Login);
+            _loginService = loginService ?? Locator.Current.GetService<ILoginService>();
+            _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
+
+            var canLogin = this
+                .WhenAnyValue(x => x.Username, x => x.Password)
+                .Select(x => !String.IsNullOrEmpty(x.Item1) && !String.IsNullOrEmpty(x.Item2));
+
+            LoginCommand = ReactiveCommand.CreateFromTask(Login, canLogin);
+
+            LoginCommand.ThrownExceptions.Subscribe(HandleLoginException);
+        }
+
+        private void HandleLoginException(Exception e)
+        {
+            if (e is UnauthorizedException authException && authException.Headers.Contains("X-GitHub-OTP"))
+            {
+                _alertDialogService
+                    .PromptTextBox("Authentication Error", "Please provide the two-factor authentication code for this account.", string.Empty, "Login")
+                    .ToObservable()
+                    .Do(x => TwoFactor = x)
+                    .InvokeCommand(LoginCommand);
+            }
+            else
+            {
+                _alertDialogService
+                    .Alert("Unable to Login!", "Unable to login user " + Username + ": " + e.Message)
+                    .ToBackground();
+            }
         }
 
         private async Task Login()
         {
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
-                return;
-
             var apiUrl = Domain;
             if (apiUrl != null)
             {
@@ -68,20 +90,13 @@ namespace CodeHub.Core.ViewModels.Accounts
 
             try
             {
-                IsLoggingIn = true;
-                var account = await _application.LoginWithBasic(apiUrl, Username, Password, TwoFactor);
-                var client = await _application.LoginAccount(account);
-                _application.ActivateUser(account, client);
+                await _loginService.LoginWithBasic(apiUrl, Username, Password, TwoFactor);
                 MessageBus.Current.SendMessage(new LogoutMessage());
             }
-            catch (Exception)
+            catch
             {
                 TwoFactor = null;
                 throw;
-            }
-            finally
-            {
-                IsLoggingIn = false;
             }
         }
     }

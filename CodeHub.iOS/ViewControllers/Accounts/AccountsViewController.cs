@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
         private void SelectAccount(Account githubAccount)
         {
-            _applicationService.ActivateUser(githubAccount, null);
+            _applicationService.LoginAccount(githubAccount);
             MessageBus.Current.SendMessage(new LogoutMessage());
         }
 

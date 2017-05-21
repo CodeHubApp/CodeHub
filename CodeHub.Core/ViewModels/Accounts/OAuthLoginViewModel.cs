@@ -10,7 +10,7 @@ namespace CodeHub.Core.ViewModels.Accounts
     public class OAuthLoginViewModel : ReactiveObject
     {
         public static readonly string RedirectUri = "http://dillonbuchanan.com/";
-        private readonly IApplicationService _applicationService;
+        private readonly ILoginService _loginService;
         private readonly IAlertDialogService _alertDialogService;
 
         public string LoginUrl
@@ -31,17 +31,17 @@ namespace CodeHub.Core.ViewModels.Accounts
         public ReactiveCommand<string, Unit> LoginCommand { get; }
 
         public OAuthLoginViewModel(
-            IApplicationService applicationService = null,
+            ILoginService loginService = null,
             IAlertDialogService alertDialogService = null)
         {
-            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _loginService = loginService ?? Locator.Current.GetService<ILoginService>();
             _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
             LoginCommand = ReactiveCommand.CreateFromTask<string>(async code =>
             {
-                var login = await _applicationService.LoginWithToken(Secrets.GithubOAuthId, Secrets.GithubOAuthSecret,
+                await _loginService.LoginWithToken(
+                    Secrets.GithubOAuthId, Secrets.GithubOAuthSecret,
                     code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
-                _applicationService.ActivateUser(login.Item2, login.Item1);
                 MessageBus.Current.SendMessage(new LogoutMessage());
             });
 
