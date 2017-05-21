@@ -110,8 +110,8 @@ namespace CodeHub.iOS.ViewControllers
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            var cancelButton = new UIBarButtonItem { Image = Images.Buttons.CancelButton  };
-            var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton  };
+            var cancelButton = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
+            var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.LeftBarButtonItem = cancelButton;
             NavigationItem.RightBarButtonItem = saveButton;
 

@@ -24,7 +24,7 @@ namespace CodeHub.iOS.Views.Issues
 
             var vm = (IssueEditViewModel)ViewModel;
 
-            var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = saveButton;
 
             var title = new EntryElement("Title", string.Empty, string.Empty);

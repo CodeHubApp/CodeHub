@@ -265,7 +265,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void ProfileButtonClicked()
         {
             var vc = new AccountsViewController();
-            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);
         }

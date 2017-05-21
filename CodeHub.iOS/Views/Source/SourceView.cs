@@ -48,7 +48,7 @@ namespace CodeHub.iOS.Views.Source
             var vm = ((SourceViewModel)ViewModel);
             var vc = new EditSourceView();
             vc.ViewModel.Init(new EditSourceViewModel.NavObject { Path = vm.Path, Branch = vm.Branch, Username = vm.Username, Repository = vm.Repository });
-            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);
         }

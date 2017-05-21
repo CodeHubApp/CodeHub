@@ -28,9 +28,9 @@ namespace CodeHub.iOS.ViewControllers
             Title = "New Comment";
             EdgesForExtendedLayout = UIRectEdge.None;
 
-            var close = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            var close = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             NavigationItem.LeftBarButtonItem = close;
-            SendItem = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            SendItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = SendItem;
 
             TextView = new UITextView(ComputeComposerSize(CGRect.Empty));

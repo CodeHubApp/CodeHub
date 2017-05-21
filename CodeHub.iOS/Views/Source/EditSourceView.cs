@@ -35,7 +35,7 @@ namespace CodeHub.iOS.Views.Source
         {
             base.ViewDidLoad();
 
-            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
             _textView.Frame = ComputeComposerSize(CGRect.Empty);
             View.AddSubview(_textView);

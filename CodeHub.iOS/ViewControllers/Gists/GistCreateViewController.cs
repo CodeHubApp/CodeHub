@@ -25,7 +25,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             var ctrl = new GistCreateViewController();
             var weakVm = new WeakReference<GistCreateViewModel>(ctrl.ViewModel);
             ctrl.ViewModel.SaveCommand.Subscribe(_ => parent.DismissViewController(true, null));
-            ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            ctrl.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             ctrl.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => {
                 weakVm.Get()?.CancelCommand.Execute().Subscribe();
                 parent.DismissViewController(true, null);
@@ -41,7 +41,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
             OnActivation(d =>
             {

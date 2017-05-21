@@ -23,7 +23,7 @@ namespace CodeHub.iOS.Views.Issues
             TableView.EstimatedRowHeight = 44f;
 
             var vm = (IssueAddViewModel)ViewModel;
-            var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = saveButton;
 
             var title = new EntryElement("Title", string.Empty, string.Empty);

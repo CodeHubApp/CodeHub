@@ -5,13 +5,21 @@ namespace CodeHub.iOS
 {
     public static class Images
     {
-        public static UIImage LoginUserUnknown { get { return UIImageHelper.FromFileAuto("Images/login_user_unknown").ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate); } }
+        public static UIImage LoginUserUnknown
+        {
+            get 
+            {
+                var img = UIImage.FromBundle("UnknownUser");
+                img.AccessibilityLabel = "Unknown User";
+                return img;
+            } 
+        }
 
         public static UIImage Avatar
         {
             get
             {
-                var img = UIImageHelper.FromFileAuto("Images/avatar");
+                var img = UIImage.FromBundle("Avatar");
                 img.AccessibilityLabel = "Avatar";
                 return img;
             }
@@ -40,16 +48,6 @@ namespace CodeHub.iOS
                 get
                 {
                     var img = UIImageHelper.FromFileAuto("Images/Buttons/black_button");
-                    img.AccessibilityElementsHidden = true;
-                    return img;
-                } 
-            }
-
-            public static UIImage GreyButton
-            {
-                get
-                {
-                    var img = UIImageHelper.FromFileAuto("Images/Buttons/grey_button");
                     img.AccessibilityElementsHidden = true;
                     return img;
                 } 
@@ -85,32 +83,12 @@ namespace CodeHub.iOS
                 }
             }
 
-            public static UIImage CancelButton
-            {
-                get
-                {
-                    var img = UIImageHelper.FromFileAuto("Images/Buttons/cancel");
-                    img.AccessibilityLabel = "Cancel";
-                    return img;
-                }
-            }
-
             public static UIImage SortButton
             {
                 get
                 {
                     var img = UIImageHelper.FromFileAuto("Images/Buttons/sort");
                     img.AccessibilityLabel = "Sort";
-                    return img;
-                }
-            }
-
-            public static UIImage SaveButton
-            {
-                get
-                {
-                    var img = UIImageHelper.FromFileAuto("Images/Buttons/save");
-                    img.AccessibilityLabel = "Save";
                     return img;
                 }
             }

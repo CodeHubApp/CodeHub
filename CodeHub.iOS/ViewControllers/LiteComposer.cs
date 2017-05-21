@@ -30,7 +30,7 @@ namespace CodeHub.iOS.ViewControllers
 
             var close = new UIBarButtonItem { Image = Images.Buttons.BackButton };
             NavigationItem.LeftBarButtonItem = close;
-            _sendButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            _sendButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = _sendButton;
 
             OnActivation(d =>

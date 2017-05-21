@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         private void TellMeMore()
         {
             var view = new UpgradeViewController();
-            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             PresentViewController(new ThemedNavigationController(view), true, null);
         }

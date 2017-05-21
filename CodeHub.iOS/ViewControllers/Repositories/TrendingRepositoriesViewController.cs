@@ -75,7 +75,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             var vm = new WeakReference<RepositoriesTrendingViewModel>(ViewModel as RepositoriesTrendingViewModel);
             var view = new LanguagesViewController();
             view.SelectedLanguage = vm.Get()?.SelectedLanguage;
-            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem { Image = Images.Buttons.CancelButton };
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(_ => DismissViewController(true, null));
             view.Language.Subscribe(x => {
                 var viewModel = vm.Get();

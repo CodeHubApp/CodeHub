@@ -462,10 +462,6 @@
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png" />
     <Content Include="Images\Buttons\black_button.png" />
-    <Content Include="Images\Buttons\grey_button%402x.png" />
-    <Content Include="Images\Buttons\grey_button.png" />
-    <Content Include="Images\Buttons\save%402x.png" />
-    <Content Include="Images\Buttons\save.png" />
     <BundleResource Include="Resources\iTunesArtwork.png" />
     <BundleResource Include="Resources\iTunesArtwork%402x.png" />
     <BundleResource Include="Images\Web\back.png" />
@@ -474,22 +470,16 @@
     <BundleResource Include="Images\Web\forward%402x.png" />
     <BundleResource Include="Images\Buttons\back%402x.png" />
     <BundleResource Include="Images\Buttons\back.png" />
-    <BundleResource Include="Images\Buttons\cancel.png" />
-    <BundleResource Include="Images\Buttons\cancel%402x.png" />
     <BundleResource Include="Images\Buttons\three_lines.png" />
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <BundleResource Include="Images\login_user_unknown%402x.png" />
-    <BundleResource Include="Images\login_user_unknown.png" />
     <BundleResource Include="CodeHubLaunch.png" />
     <Content Include="Diff\app.js" />
     <Content Include="Diff\diffindex.html" />
     <Content Include="Diff\difflib.js" />
     <Content Include="Diff\diffview.css" />
     <Content Include="Diff\diffview.js" />
-    <BundleResource Include="Images\avatar.png" />
-    <BundleResource Include="Images\avatar%402x.png" />
     <BundleResource Include="Images\Logos\dotcom-mascot.png" />
     <BundleResource Include="Images\Logos\enterprise-mascot.png" />
     <BundleResource Include="octicons.ttf" />
@@ -602,6 +592,8 @@
     <Folder Include="TableViewSources\" />
     <Folder Include="ViewControllers\Search\" />
     <Folder Include="ViewControllers\Events\" />
+    <Folder Include="Resources\Images.xcassets\UnknownUser.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Avatar.imageset\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -629,6 +621,12 @@
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-40%403x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-60%403x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-167.png" />
+    <ImageAsset Include="Resources\Images.xcassets\UnknownUser.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\UnknownUser.imageset\login_user_unknown.png" />
+    <ImageAsset Include="Resources\Images.xcassets\UnknownUser.imageset\login_user_unknown%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\avatar.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\avatar%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\Contents.json" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="sdwebimage">

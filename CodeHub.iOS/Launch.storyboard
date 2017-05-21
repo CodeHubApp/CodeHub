@@ -46,8 +46,6 @@
         <image name="Images/branch.png" width="16" height="16"/>
         <image name="Images/Buttons/black_button.png" width="36" height="36"/>
         <image name="Images/Buttons/fork.png" width="21" height="24"/>
-        <image name="Images/Buttons/grey_button.png" width="36" height="36"/>
-        <image name="Images/Buttons/save.png" width="24" height="24"/>
         <image name="Images/Buttons/view.png" width="30" height="30"/>
         <image name="Images/cog.png" width="16" height="16"/>
         <image name="Images/comments.png" width="16" height="16"/>
@@ -102,7 +100,6 @@
         <image name="Images/Web/back.png" width="32" height="32"/>
         <image name="Images/Web/forward.png" width="32" height="32"/>
         <image name="Images/Buttons/back.png" width="32" height="24"/>
-        <image name="Images/Buttons/cancel.png" width="22" height="22"/>
         <image name="Images/Buttons/three_lines.png" width="24" height="24"/>
         <image name="Images/Buttons/sort.png" width="24" height="24"/>
         <image name="Icon-60.png" width="120" height="120"/>

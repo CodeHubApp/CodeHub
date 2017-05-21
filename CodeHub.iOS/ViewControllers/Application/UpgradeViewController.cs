@@ -139,8 +139,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             var nav = new ThemedNavigationController(vc);
 
             var navObj = new UIBarButtonItem(
-                Images.Buttons.CancelButton,
-                UIBarButtonItemStyle.Done,
+                UIBarButtonSystemItem.Cancel,
                 (_, __) => parent.DismissViewController(true, null));
 
             vc.Appearing.Subscribe(_ => vc.NavigationItem.LeftBarButtonItem = navObj);

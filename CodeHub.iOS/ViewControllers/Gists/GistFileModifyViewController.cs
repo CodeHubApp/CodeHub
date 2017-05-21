@@ -60,7 +60,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             Root.Add(new Section { titleElement, contentElement });
             TableView.TableFooterView = new UIView();
 
-            var saveButton = new UIBarButtonItem { Image = Images.Buttons.SaveButton };
+            var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = saveButton;
 
             OnActivation(d =>
