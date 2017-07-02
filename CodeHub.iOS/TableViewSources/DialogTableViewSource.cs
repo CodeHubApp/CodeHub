@@ -23,10 +23,12 @@ namespace CodeHub.iOS.TableViewSources
             get { return _root; }
         }
 
+        #if DEBUG
         ~DialogTableViewSource()
         {
             Console.WriteLine("Goodbye DialogTableViewSource");
         }
+        #endif
 
         public DialogTableViewSource(UITableView container)
         {

@@ -13,6 +13,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CoreGraphics;
 using CodeHub.iOS.ViewControllers.Search;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -28,6 +29,9 @@ namespace CodeHub.iOS.ViewControllers.Application
             get { return (MenuViewModel) base.ViewModel; }
             set { base.ViewModel = value; }
         }
+
+        private static bool IsAccountEnterprise
+            => Locator.Current.GetService<IApplicationService>().Account?.IsEnterprise ?? false;
 
         /// <summary>
         /// Gets or sets the title.
@@ -67,7 +71,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         {
 
             var appService = Mvx.Resolve<IApplicationService>();
-            if (appService.Account.IsEnterprise)
+            if (IsAccountEnterprise)
                 return;
 
             var featuresService = Mvx.Resolve<IFeaturesService>();
@@ -188,7 +192,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (ViewModel.ShouldShowUpgrades)
                 infoSection.Add(new MenuElement("Upgrades", GoToUpgrades, Octicon.Lock.ToImage()));
             
-            infoSection.Add(new MenuElement("Feedback & Support", PresentUserVoice, Octicon.CommentDiscussion.ToImage()));
+            infoSection.Add(new MenuElement("Feedback & Support", GoToSupport, Octicon.CommentDiscussion.ToImage()));
             infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, Octicon.Person.ToImage()));
 
             Root.Reset(sections);
@@ -206,6 +210,14 @@ namespace CodeHub.iOS.ViewControllers.Application
             GC.Collect();
             GC.Collect();
             #endif
+        }
+
+        private void GoToSupport()
+        {
+            var vc = IsAccountEnterprise 
+                ? (UIViewController)new EnterpriseSupportViewController() 
+                : new SupportViewController();
+            NavigationController?.PushViewController(vc, true);
         }
 
         private void GoToOwnedRepositories()
@@ -255,11 +267,6 @@ namespace CodeHub.iOS.ViewControllers.Application
         {
             base.DidRotate(fromInterfaceOrientation);
             UpdateProfilePicture();
-        }
-
-        private void PresentUserVoice()
-        {
-            ViewModel.GoToSupport.Execute(null);
         }
 
         private void ProfileButtonClicked()

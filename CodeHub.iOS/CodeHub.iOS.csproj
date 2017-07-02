@@ -331,6 +331,16 @@
     <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\RetryListView.cs" />
+    <Compile Include="ViewControllers\Application\SupportViewController.cs" />
+    <Compile Include="TableViewCells\FeedbackCellView.cs" />
+    <Compile Include="TableViewCells\FeedbackCellView.designer.cs">
+      <DependentUpon>FeedbackCellView.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="TableViewCells\FeedbackCellView.xib" />
+    <Compile Include="TableViewSources\FeedbackTableViewSource.cs" />
+    <Compile Include="ViewControllers\Application\FeedbackViewController.cs" />
+    <Compile Include="ViewControllers\Application\EnterpriseSupportViewController.cs" />
+    <Compile Include="ViewControllers\BaseDialogViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

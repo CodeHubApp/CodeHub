@@ -120,7 +120,7 @@ Global
 		$2.FileWidth = 120
 		$0.TextStylePolicy = $3
 		$3.scope = text/x-csharp
-		$3.FileWidth = 80
+		$3.FileWidth = 160
 		$3.TabsToSpaces = True
 		$0.CSharpFormattingPolicy = $4
 		$4.IndentSwitchBody = True

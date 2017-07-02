@@ -107,11 +107,6 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
         }
 
-        public ICommand GoToSupport
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = "https://codehub.uservoice.com/" })); }
-        }
-
         public ICommand GoToRepositoryCommand
         {
             get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
