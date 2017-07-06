@@ -331,6 +331,7 @@
     <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\RetryListView.cs" />
+    <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
