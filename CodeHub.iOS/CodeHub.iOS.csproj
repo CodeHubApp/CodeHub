@@ -341,6 +341,7 @@
     <Compile Include="ViewControllers\Application\FeedbackViewController.cs" />
     <Compile Include="ViewControllers\Application\EnterpriseSupportViewController.cs" />
     <Compile Include="ViewControllers\BaseDialogViewController.cs" />
+    <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -69,7 +69,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.11.0.0</string>
+	<string>2.11.0.2</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>NSAppTransportSecurity</key>
