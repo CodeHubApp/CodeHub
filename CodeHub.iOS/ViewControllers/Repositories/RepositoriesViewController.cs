@@ -92,7 +92,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                   .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
 
                 d(tableViewSource.RequestMore
-                  .InvokeCommand(ViewModel.LoadMoreCommand));
+                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
 
                 d(ViewModel.LoadCommand
                   .Select(_ => ViewModel.Items.Changed)
@@ -100,13 +100,13 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                   .Select(_ => Unit.Default)
                   .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
                   .Where(_ => TableView.LastItemVisible())
-                  .InvokeCommand(ViewModel.LoadMoreCommand));
+                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
 
                 d(ViewModel.LoadCommand.Merge(ViewModel.LoadMoreCommand)
                   .Select(_ => Unit.Default)
                   .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
                   .Where(_ => TableView.LastItemVisible())
-                  .InvokeCommand(ViewModel.LoadMoreCommand));
+                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
 			});
 		}
 

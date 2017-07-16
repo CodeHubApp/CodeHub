@@ -65,7 +65,8 @@ namespace CodeHub.Core.ViewModels.Accounts
                     .PromptTextBox("Authentication Error", "Please provide the two-factor authentication code for this account.", string.Empty, "Login")
                     .ToObservable()
                     .Do(x => TwoFactor = x)
-                    .InvokeCommand(LoginCommand);
+                    .Select(_ => Unit.Default)
+                    .InvokeReactiveCommand(LoginCommand);
             }
             else
             {

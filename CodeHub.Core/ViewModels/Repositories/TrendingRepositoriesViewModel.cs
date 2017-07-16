@@ -59,7 +59,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 .Skip(1)
                 .Select(_ => Unit.Default)
                 .Do(_ => Items = null)
-                .InvokeCommand(LoadCommand);
+                .InvokeReactiveCommand(LoadCommand);
         }
 
         private void LoadingError(Exception err)

@@ -91,6 +91,12 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IFeaturesService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<ILoginService>());
 
+            Locator.CurrentMutable.RegisterLazySingleton(
+                () => new ImgurService(), typeof(IImgurService));
+
+            Locator.CurrentMutable.RegisterLazySingleton(
+                () => new MediaPickerService(), typeof(IMediaPickerService));
+
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
             purchaseService.ThrownExceptions.Subscribe(ex => {

@@ -8,6 +8,7 @@ using MvvmCross.Core.ViewModels;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
 using System.Reactive;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -170,14 +171,18 @@ namespace CodeHub.Core.ViewModels.Issues
             return (GetService<IMarkdownService>().Convert(str));
         }
 
-        public IssueViewModel(IApplicationService applicationService,
-                              IFeaturesService featuresService,
-                              IMessageService messageService)
+        public IssueViewModel(IApplicationService applicationService = null,
+                              IFeaturesService featuresService = null,
+                              IMessageService messageService = null)
         {
-            _applicationService = applicationService;
-            _featuresService = featuresService;
-            _messageService = messageService;
-            this.Bind(x => x.Issue, true).Where(x => x != null).Select(x => string.Equals(x.State, "closed")).Subscribe(x => IsClosed = x);
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
+            _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
+
+            this.Bind(x => x.Issue, true)
+                .Where(x => x != null)
+                .Select(x => string.Equals(x.State, "closed"))
+                .Subscribe(x => IsClosed = x);
 
             GoToOwner = ReactiveUI.ReactiveCommand.Create(
                 () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),

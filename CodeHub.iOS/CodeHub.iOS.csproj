@@ -342,6 +342,10 @@
     <Compile Include="ViewControllers\Application\EnterpriseSupportViewController.cs" />
     <Compile Include="ViewControllers\BaseDialogViewController.cs" />
     <Compile Include="ViewControllers\Organizations\TeamsViewController.cs" />
+    <Compile Include="ViewControllers\Application\FeedbackComposerViewController.cs" />
+    <Compile Include="Views\MarkdownAccessoryView.cs" />
+    <Compile Include="Views\ButtonAccessoryView.cs" />
+    <Compile Include="Services\MediaPickerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

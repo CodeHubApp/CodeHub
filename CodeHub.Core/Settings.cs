@@ -11,6 +11,7 @@ namespace CodeHub.Core
         private const string HasSeenWelcomeKey = "HAS_SEEN_WELCOME_INTRO";
         private const string ProEditionKey = "com.dillonbuchanan.codehub.pro";
         private const string HasSeenOAuthKey = "HAS_SEEN_OAUTH_INFO";
+        private const string ImgurUploadWarn = "IMGUR_UPLOAD_WARN";
 
         private static ISettings AppSettings => CrossSettings.Current;
 
@@ -83,6 +84,18 @@ namespace CodeHub.Core
             set
             {
                 AppSettings.AddOrUpdateValue(HasSeenOAuthKey, value);
+            }
+        }
+
+        public static bool HasSeenImgurUploadWarn
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(ImgurUploadWarn, false);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(ImgurUploadWarn, value);
             }
         }
     }

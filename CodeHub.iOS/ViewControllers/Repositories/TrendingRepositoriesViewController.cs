@@ -36,7 +36,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             Appearing
                 .Take(1)
                 .Select(_ => Unit.Default)
-                .InvokeCommand(ViewModel.LoadCommand);
+                .InvokeReactiveCommand(ViewModel.LoadCommand);
 
             this.WhenActivated(d =>
             {

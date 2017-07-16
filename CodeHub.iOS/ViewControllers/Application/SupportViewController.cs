@@ -6,6 +6,7 @@ using UIKit;
 using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 using System.Reactive;
+using CodeHub.iOS.ViewControllers.Repositories;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -21,23 +22,39 @@ namespace CodeHub.iOS.ViewControllers.Application
             var contributors = split.AddButton("Contributors", "-");
             var lastCommit = split.AddButton("Last Commit", "-");
 
-            var addFeatureButton = new BigButtonElement("Suggest a feature", Octicon.LightBulb.ToImage());
-            var addBugButton = new BigButtonElement("Report a bug", Octicon.Bug.ToImage());
-            var featuresButton = new BigButtonElement("Submitted Work Items", Octicon.Clippy.ToImage());
+            var addFeatureButton = new BigButtonElement("Suggest a feature", Octicon.LightBulb);
+            var addBugButton = new BigButtonElement("Report a bug", Octicon.Bug);
+            var featuresButton = new BigButtonElement("Submitted Work Items", Octicon.Clippy);
 
             HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
             HeaderView.Image = UIImage.FromBundle("AppIcons60x60");
 
-            Root.Reset(new Section { split }, new Section { addFeatureButton, addBugButton }, new Section { featuresButton });
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
+
+            Root.Reset(
+                new Section { split },
+                new Section { addFeatureButton, addBugButton },
+                new Section { featuresButton });
 
             OnActivation(d =>
             {
-                //d(addFeatureButton.Clicked.InvokeCommand(ViewModel.GoToSuggestFeatureCommand));
-                //d(addBugButton.Clicked.InvokeCommand(ViewModel.GoToReportBugCommand));
+                d(addFeatureButton.Clicked
+                  .Select(_ => FeedbackComposerViewController.CreateAsFeature())
+                  .Select(viewCtrl => new ThemedNavigationController(viewCtrl))
+                  .Subscribe(viewCtrl => PresentViewController(viewCtrl, true, null)));
+
+                d(addBugButton.Clicked
+                  .Select(_ => FeedbackComposerViewController.CreateAsBug())
+                  .Select(viewCtrl => new ThemedNavigationController(viewCtrl))
+                  .Subscribe(viewCtrl => PresentViewController(viewCtrl, true, null)));
+
+                d(this.WhenAnyValue(x => x.ViewModel.Title)
+                  .Subscribe(title => Title = title));
+
                 d(featuresButton.Clicked
-                  .Subscribe(_ => NavigationController?.PushViewController(new FeedbackViewController(), true)));
-                
-                //d(HeaderView.Clicked.InvokeCommand(ViewModel.GoToRepositoryCommand));
+                  .Subscribe(_ => this.PushViewController(new FeedbackViewController())));
+
+                d(HeaderView.Clicked.Subscribe(_ => GoToRepository()));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Contributors)
                   .Where(x => x.HasValue)
@@ -51,12 +68,15 @@ namespace CodeHub.iOS.ViewControllers.Application
             Appearing
                 .Take(1)
                 .Select(_ => Unit.Default)
-                .InvokeCommand(ViewModel.LoadCommand);
+                .InvokeReactiveCommand(ViewModel.LoadCommand);
         }
+
+        private void GoToRepository()
+            => this.PushViewController(RepositoryViewController.CreateCodeHubViewController());
 
         private class BigButtonElement : ButtonElement, IElementSizing
         {
-            public BigButtonElement(string name, UIImage img) : base(name, img) { }
+            public BigButtonElement(string name, Octicon img) : base(name, img.ToImage()) { }
             public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath) => 58f;
         }
     }

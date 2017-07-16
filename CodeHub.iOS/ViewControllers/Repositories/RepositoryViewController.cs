@@ -173,6 +173,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         private readonly Lazy<StringElement> _readmeElement;
         private readonly Lazy<StringElement> _websiteElement;
 
+        public static RepositoryViewController CreateCodeHubViewController()
+            => new RepositoryViewController("thedillonb", "codehub");
+
         public RepositoryViewController(string owner, string repository)
             : this()
         {

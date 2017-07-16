@@ -2,6 +2,8 @@
 using UIKit;
 using CoreGraphics;
 using Foundation;
+using CodeHub.iOS.Views;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -81,5 +83,104 @@ namespace CodeHub.iOS.ViewControllers
             TableView.ScrollIndicatorInsets = inset;
         }
     }
+
+    //public class TableViewController<T> : TableViewController
+    //{
+    //    private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
+    //    private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
+
+    //    private readonly Lazy<UIView> _emptyView;
+    //    private readonly Lazy<UIView> _retryView;
+    //    private readonly Func<UITableView, UITableViewSource> _tableViewSource;
+
+    //    public TableViewController(
+    //        UITableViewStyle style,
+    //        Func<UITableView, UITableViewSource> tableViewSource,
+    //        Lazy<UIView> emptyView = null,
+    //        Lazy<UIView> retryView = null)
+    //        : base(style)
+    //    {
+    //        _tableViewSource = tableViewSource;
+    //        _emptyView = emptyView;
+    //        _retryView = retryView;
+    //    }
+
+    //    public override void ViewDidLoad()
+    //    {
+    //        base.ViewDidLoad();
+
+    //        TableView.Source = _tableViewSource(TableView);
+
+    //        Appearing
+    //            .Take(1)
+    //            .Subscribe(_ => LoadData());
+
+    //        this.WhenActivated(d =>
+    //        {
+    //            d(_repositorySearchBar.GetChangedObservable()
+    //              .Subscribe(x => ViewModel.SearchText = x));
+
+    //            d(ViewModel.RepositoryItemSelected
+    //              .Select(x => new RepositoryViewController(x.Owner, x.Name))
+    //              .Subscribe(x => NavigationController.PushViewController(x, true)));
+
+    //            d(ViewModel.WhenAnyValue(x => x.HasMore)
+    //              .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
+
+    //            //d(tableViewSource.RequestMore
+    //              //.InvokeCommand(ViewModel.LoadMoreCommand));
+
+    //            d(ViewModel.LoadCommand
+    //              .Select(_ => ViewModel.Items.Changed)
+    //              .Switch()
+    //              .Select(_ => Unit.Default)
+    //              .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
+    //              .Where(_ => TableView.LastItemVisible())
+    //              .InvokeCommand(ViewModel.LoadMoreCommand));
+
+    //            d(ViewModel.LoadCommand.Merge(ViewModel.LoadMoreCommand)
+    //              .Select(_ => Unit.Default)
+    //              .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
+    //              .Where(_ => TableView.LastItemVisible())
+    //              .InvokeCommand(ViewModel.LoadMoreCommand));
+    //        });
+    //    }
+
+    //    private void LoadData()
+    //    {
+    //        if (_emptyView.IsValueCreated)
+    //            _emptyView.Value.RemoveFromSuperview();
+    //        if (_retryView.IsValueCreated)
+    //            _retryView.Value.RemoveFromSuperview();
+
+    //        ViewModel.LoadCommand.Execute()
+    //            .Take(1)
+    //            .ObserveOn(RxApp.MainThreadScheduler)
+    //            .Subscribe(SetHasItems, setHasError);
+    //    }
+
+    //    private void setHasError(Exception error)
+    //    {
+    //        _retryView.Value.Alpha = 0;
+    //        _retryView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
+    //        View.Add(_retryView.Value);
+    //        UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+    //                       () => _retryView.Value.Alpha = 1, null);
+    //    }
+
+    //    private void SetHasItems(bool hasItems)
+    //    {
+    //        TableView.TableHeaderView = hasItems ? _repositorySearchBar : null;
+
+    //        if (!hasItems)
+    //        {
+    //            _emptyView.Value.Alpha = 0;
+    //            _emptyView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
+    //            View.Add(_emptyView.Value);
+    //            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+    //                           () => _emptyView.Value.Alpha = 1, null);
+    //        }
+    //    }
+    //}
 }
 

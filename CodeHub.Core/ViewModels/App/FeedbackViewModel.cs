@@ -3,6 +3,7 @@ using ReactiveUI;
 using CodeHub.Core.Services;
 using System.Reactive;
 using Splat;
+using Octokit;
 
 namespace CodeHub.Core.ViewModels.App
 {
@@ -11,7 +12,7 @@ namespace CodeHub.Core.ViewModels.App
         private const string CodeHubOwner = "thedillonb";
         private const string CodeHubName = "codehub";
 
-        public IReadOnlyReactiveList<FeedbackItemViewModel> Items { get; private set; }
+        public IReadOnlyReactiveList<FeedbackItemViewModel> Items { get; }
 
         private string _searchKeyword;
         public string SearchKeyword
@@ -20,23 +21,45 @@ namespace CodeHub.Core.ViewModels.App
             set { this.RaiseAndSetIfChanged(ref _searchKeyword, value); }
         }
 
-        public ReactiveCommand<Unit, bool> LoadCommand { get; private set; }
+        private bool? _isEmpty;
+        public bool? IsEmpty
+        {
+            get { return _isEmpty; }
+            set { this.RaiseAndSetIfChanged(ref _isEmpty, value); }
+        }
+
+        public string Title => "Feedback";
+
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; private set; }
 
         public FeedbackViewModel(IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-            var items = new ReactiveList<Octokit.Issue>();
-            Items = items.CreateDerivedCollection(
-                x => new FeedbackItemViewModel(x),
+            var items = new ReactiveList<Issue>(resetChangeThreshold: 1);
+            var feedbackItems = items.CreateDerivedCollection(
+                x => new FeedbackItemViewModel(CodeHubOwner, CodeHubName, x));
+
+            Items = feedbackItems.CreateDerivedCollection(
+                x => x,
                 x => x.Title.ContainsKeyword(SearchKeyword),
                 signalReset: this.WhenAnyValue(x => x.SearchKeyword));
 
             LoadCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
-                var issues = await applicationService.GitHubClient.Issue.GetAllForRepository(CodeHubOwner, CodeHubName);
-                items.Reset(issues);
-                return issues.Count > 0;
+                items.Clear();
+
+                var list = applicationService.GitHubClient.RetrieveList<Issue>(
+                    ApiUrls.Issues(CodeHubOwner, CodeHubName));
+
+                var issues = await list.Next();
+                IsEmpty = issues?.Count > 0;
+
+                while (issues != null)
+                {
+                    items.AddRange(issues);
+                    issues = await list.Next();
+                }
             });
         }
     }

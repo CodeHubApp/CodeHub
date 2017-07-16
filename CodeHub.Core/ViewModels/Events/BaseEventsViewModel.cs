@@ -138,6 +138,7 @@ namespace CodeHub.Core.ViewModels.Events
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
+            
             ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject
             {
                 Username = repo.Owner,

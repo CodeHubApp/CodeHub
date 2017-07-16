@@ -34,6 +34,17 @@ namespace CodeHub.iOS.Views.Issues
             set { base.ViewModel = value; }
         }
 
+        public IssueView(string owner, string repository, int id)
+            : this()
+        {
+            ViewModel = new IssueViewModel();
+            ViewModel.Init(new IssueViewModel.NavObject { Username = owner, Repository = repository, Id = id });
+        }
+
+        public IssueView()
+        {
+        }
+
         protected override void DidScroll(CoreGraphics.CGPoint p)
         {
             base.DidScroll(p);
@@ -108,7 +119,7 @@ namespace CodeHub.iOS.Views.Issues
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
                 d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
-                d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
+                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu(actionButton)));
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
 
                 d(ViewModel.Bind(x => x.IsCollaborator, true).Subscribe(x => {

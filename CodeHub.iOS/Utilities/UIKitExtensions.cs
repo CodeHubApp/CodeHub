@@ -29,9 +29,9 @@ namespace UIKit
             return Observable.FromEventPattern(t => @this.TouchUpInside += t, t => @this.TouchUpInside -= t).Select(_ => Unit.Default);
         }
 
-        public static IObservable<UIBarButtonItem> GetClickedObservable(this UIBarButtonItem @this)
+        public static IObservable<Unit> GetClickedObservable(this UIBarButtonItem @this)
         {
-            return Observable.FromEventPattern(t => @this.Clicked += t, t => @this.Clicked -= t).Select(_ => @this);
+            return Observable.FromEventPattern(t => @this.Clicked += t, t => @this.Clicked -= t).Select(_ => Unit.Default);
         }
 
         public static IObservable<Unit> GetChangedObservable(this UIRefreshControl @this)
@@ -94,6 +94,9 @@ namespace UIKit
             var indexPath = NSIndexPath.FromItemSection(rows - 1, sections - 1);
             return paths.Contains(indexPath);
         }
+
+        public static void PushViewController(this UIViewController This, UIViewController view)
+            => This.NavigationController?.PushViewController(view, true);
     }
 
     public static class UIFontExtensions

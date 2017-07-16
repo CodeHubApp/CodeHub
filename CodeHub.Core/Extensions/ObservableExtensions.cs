@@ -12,5 +12,10 @@ namespace System
         {
             return command == null ? Disposable.Empty : @this.Where(x => command.CanExecute(x)).Subscribe(x => command.Execute(x));
         }
+
+        public static IDisposable SubscribeError<T>(this IObservable<T> @this, Action<Exception> onError)
+        {
+            return @this.Subscribe(_ => { }, onError);
+        }
     }
 }

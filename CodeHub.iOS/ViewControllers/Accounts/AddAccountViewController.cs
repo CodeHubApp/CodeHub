@@ -81,7 +81,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                   .Subscribe(x => ViewModel.Domain = x));
                 
                 d(LoginButton.GetClickedObservable()
-                  .InvokeCommand(ViewModel.LoginCommand));
+                  .InvokeReactiveCommand(ViewModel.LoginCommand));
 
                 d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.IsExecuting)
                   .SubscribeStatus("Logging in..."));

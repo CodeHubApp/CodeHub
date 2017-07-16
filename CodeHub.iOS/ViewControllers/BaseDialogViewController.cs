@@ -80,12 +80,6 @@ namespace CodeHub.iOS.ViewControllers
             TableView.TableHeaderView = HeaderView;
         }
 
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            TableView.TableHeaderView = null;
-        }
-
         public override void DidRotate(UIInterfaceOrientation fromInterfaceOrientation)
         {
             base.DidRotate(fromInterfaceOrientation);

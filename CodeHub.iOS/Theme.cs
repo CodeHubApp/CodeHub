@@ -32,6 +32,8 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.BarTintColor = primaryColor;
             UINavigationBar.Appearance.SetTitleTextAttributes(new UITextAttributes { TextColor = UIColor.White, Font = UIFont.SystemFontOfSize(18f) });
             CodeHub.iOS.Utilities.Hud.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+            CodeHub.iOS.Services.AlertDialogService.BackgroundTint = UIColor.FromRGBA(228, 228, 228, 128);
+
             UINavigationBar.Appearance.BackIndicatorImage = Images.Buttons.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.Buttons.BackButton;
 

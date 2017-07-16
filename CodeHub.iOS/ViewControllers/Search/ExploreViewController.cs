@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Search
                   .Subscribe(x => ViewModel.SearchText = x));
                 
                 d(_repositorySearchBar.GetSearchObservable()
-                  .InvokeCommand(ViewModel.SearchCommand));
+                  .InvokeReactiveCommand(ViewModel.SearchCommand));
 
                 d(ViewModel.SearchCommand.IsExecuting
                   .Subscribe(Searching));

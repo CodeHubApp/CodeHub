@@ -157,6 +157,15 @@
     <Compile Include="ViewModels\App\FeedbackViewModel.cs" />
     <Compile Include="ViewModels\IProvidesSearchKeyword.cs" />
     <Compile Include="ViewModels\ILoadableViewModel.cs" />
+    <Compile Include="Extensions\GitHubClientExtensions.cs" />
+    <Compile Include="Utils\GitHubList.cs" />
+    <Compile Include="ViewModels\IListViewModel.cs" />
+    <Compile Include="ViewModels\App\FeedbackComposerViewModel.cs" />
+    <Compile Include="ViewModels\MarkdownAccessoryViewModel.cs" />
+    <Compile Include="Services\IImgurService.cs" />
+    <Compile Include="Services\ImgurService.cs" />
+    <Compile Include="Data\ImgurResponse.cs" />
+    <Compile Include="Services\IMediaPickerService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
