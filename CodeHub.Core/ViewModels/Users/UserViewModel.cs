@@ -71,7 +71,7 @@ namespace CodeHub.Core.ViewModels.User
 
         protected override Task Load()
         {
-            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), x => IsFollowing = x.Data).FireAndForget();
+            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), x => IsFollowing = x.Data).ToBackground();
             return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), response => User = response.Data);
         }
 

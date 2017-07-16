@@ -164,16 +164,16 @@ namespace CodeHub.Core.ViewModels.Repositories
             var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), response => Repository = response.Data);
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
-                response => Readme = response.Data).FireAndForget();
+                response => Readme = response.Data).ToBackground();
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
-                response => Branches = response.Data).FireAndForget();
+                response => Branches = response.Data).ToBackground();
 
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-                response => IsWatched = response.Data).FireAndForget();
+                response => IsWatched = response.Data).ToBackground();
          
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-                response => IsStarred = response.Data).FireAndForget();
+                response => IsStarred = response.Data).ToBackground();
 
             return t1;
         }

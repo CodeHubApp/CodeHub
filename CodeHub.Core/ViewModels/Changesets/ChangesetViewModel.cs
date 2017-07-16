@@ -108,7 +108,7 @@ namespace CodeHub.Core.ViewModels.Changesets
             }
 
             var t1 = this.RequestModel(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Get(), response => Changeset = response.Data);
-            Comments.SimpleCollectionLoad(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll()).FireAndForget();
+            Comments.SimpleCollectionLoad(_applicationService.Client.Users[User].Repositories[Repository].Commits[Node].Comments.GetAll()).ToBackground();
             return t1;
         }
 

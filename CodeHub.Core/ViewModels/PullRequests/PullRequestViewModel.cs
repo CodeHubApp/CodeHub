@@ -287,15 +287,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
             var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
             var t1 = this.RequestModel(pullRequest, response => PullRequest = response.Data);
-            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).FireAndForget();
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).FireAndForget();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data).FireAndForget();
+            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
+            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data).ToBackground();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), response => {
                 CanPush = response.Data.Permissions.Push;
                 ShouldShowPro = response.Data.Private && !_featuresService.IsProEnabled;
-            }).FireAndForget();
+            }).ToBackground();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
-                response => IsCollaborator = response.Data).FireAndForget();
+                response => IsCollaborator = response.Data).ToBackground();
             return t1;
         }
 
@@ -313,7 +313,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 this.AlertService.Alert("Unable to Merge!", e.Message).ToBackground();
             }
 
-            await Load().FireAndForget();
+            await Load();
         }
 
         public ICommand MergeCommand
