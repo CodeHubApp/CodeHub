@@ -134,7 +134,6 @@
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryItemViewModel.cs" />
