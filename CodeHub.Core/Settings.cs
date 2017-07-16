@@ -17,86 +17,44 @@ namespace CodeHub.Core
 
         public static string DefaultAccount
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault<string>(DefaultAccountKey);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(DefaultAccountKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(DefaultAccountKey, null);
+            set => AppSettings.AddOrUpdateValue(DefaultAccountKey, value);
         }
 
         public static bool ShouldStar
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(ShouldStarKey, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(ShouldStarKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(ShouldStarKey, false);
+            set => AppSettings.AddOrUpdateValue(ShouldStarKey, value);
         }
 
         public static bool ShouldWatch
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(ShouldWatchKey, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(ShouldWatchKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(ShouldWatchKey, false);
+            set => AppSettings.AddOrUpdateValue(ShouldWatchKey, value);
         }
 
         public static bool HasSeenWelcome
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(HasSeenWelcomeKey, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(HasSeenWelcomeKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(HasSeenWelcomeKey, false);
+            set => AppSettings.AddOrUpdateValue(HasSeenWelcomeKey, value);
         }
 
         public static bool IsProEnabled
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(ProEditionKey, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(ProEditionKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(ProEditionKey, false);
+            set => AppSettings.AddOrUpdateValue(ProEditionKey, value);
         }
 
         public static bool HasSeenOAuthWelcome
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(HasSeenOAuthKey, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(HasSeenOAuthKey, value);
-            }
+            get => AppSettings.GetValueOrDefault(HasSeenOAuthKey, false);
+            set => AppSettings.AddOrUpdateValue(HasSeenOAuthKey, value);
         }
 
         public static bool HasSeenImgurUploadWarn
         {
-            get
-            {
-                return AppSettings.GetValueOrDefault(ImgurUploadWarn, false);
-            }
-            set
-            {
-                AppSettings.AddOrUpdateValue(ImgurUploadWarn, value);
-            }
+            get => AppSettings.GetValueOrDefault(ImgurUploadWarn, false);
+            set => AppSettings.AddOrUpdateValue(ImgurUploadWarn, value);
         }
     }
 }
