@@ -163,7 +163,6 @@
     <Compile Include="Services\IImgurService.cs" />
     <Compile Include="Services\ImgurService.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
-    <Compile Include="Services\IMediaPickerService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -261,6 +260,12 @@
     </Reference>
     <Reference Include="Plugin.Settings">
       <HintPath>..\packages\Xam.Plugins.Settings.3.0.1\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using System.Reactive;
 using Splat;
+using Plugin.Media.Abstractions;
 
 namespace CodeHub.Core.ViewModels
 {
@@ -20,11 +21,11 @@ namespace CodeHub.Core.ViewModels
 
         public MarkdownAccessoryViewModel(
             IImgurService imgurService = null, 
-            IMediaPickerService mediaPicker = null, 
+            IMedia mediaPicker = null, 
             IAlertDialogService alertDialog = null)
         {
             imgurService = imgurService ?? Locator.Current.GetService<IImgurService>();
-            mediaPicker = mediaPicker ?? Locator.Current.GetService<IMediaPickerService>();
+            mediaPicker = mediaPicker ?? Plugin.Media.CrossMedia.Current;
             alertDialog = alertDialog ?? Locator.Current.GetService<IAlertDialogService>();
 
             PostToImgurCommand = ReactiveCommand.CreateFromTask(async _ => {
@@ -35,9 +36,14 @@ namespace CodeHub.Core.ViewModels
                     await alertDialog.Alert("Please Read!", IMGUR_UPLOAD_WARN_MESSAGE);
                 }
 
-                var photo = await mediaPicker.PickPhoto();
+                var photo = await mediaPicker.PickPhotoAsync(new PickMediaOptions
+                {
+                    CompressionQuality = 80
+                });
+
                 var memoryStream = new MemoryStream();
-                await photo.Save(CompressedBitmapFormat.Jpeg, 0.8f, memoryStream);
+                await photo.GetStream().CopyToAsync(memoryStream);
+                     
                 using (alertDialog.Activate("Uploading..."))
                 {
                     var model = await imgurService.SendImage(memoryStream.ToArray());

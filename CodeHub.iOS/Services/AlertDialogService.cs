@@ -120,6 +120,7 @@ namespace CodeHub.iOS.Services
         {
             ProgressHUD.Shared.HudBackgroundColour = BackgroundTint;
             BTProgressHUD.Show(text, maskType: ProgressHUD.MaskType.Gradient);
+            UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
         }
 
         public void ShowSuccess(string text)
@@ -135,6 +136,7 @@ namespace CodeHub.iOS.Services
         public void Hide()
         {
             BTProgressHUD.Dismiss();
+            UIApplication.SharedApplication.EndIgnoringInteractionEvents();
         }
     }
 }

@@ -345,7 +345,6 @@
     <Compile Include="ViewControllers\Application\FeedbackComposerViewController.cs" />
     <Compile Include="Views\MarkdownAccessoryView.cs" />
     <Compile Include="Views\ButtonAccessoryView.cs" />
-    <Compile Include="Services\MediaPickerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -472,6 +471,12 @@
     </Reference>
     <Reference Include="Plugin.Settings">
       <HintPath>..\packages\Xam.Plugins.Settings.3.0.1\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
