@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.iOS", "CodeHub.iOS\CodeHub.iOS.csproj", "{B061316A-F386-4FE2-93B7-555584234FF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core.iOS", "CodeHub.Core\CodeHub.Core.iOS.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core", "CodeHub.Core\CodeHub.Core.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
