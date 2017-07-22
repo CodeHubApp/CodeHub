@@ -95,7 +95,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
             else
             {
-                _messageService.Send(new SelectIssueLabelsMessage { Labels = SelectedLabels.Items.ToArray() });
+                _messageService.Send(new SelectIssueLabelsMessage(SelectedLabels.Items));
             }
 
             ChangePresentation(new MvxClosePresentationHint(this));

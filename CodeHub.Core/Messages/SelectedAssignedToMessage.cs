@@ -4,7 +4,12 @@ namespace CodeHub.Core.Messages
 {
     public class SelectedAssignedToMessage
     {
-        public BasicUserModel User;
+        public BasicUserModel User { get; }
+
+        public SelectedAssignedToMessage(BasicUserModel user)
+        {
+            User = user;
+        }
     }
 }
 

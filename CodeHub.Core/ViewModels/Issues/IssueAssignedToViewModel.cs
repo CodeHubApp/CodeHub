@@ -89,7 +89,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
             else
             {
-                _messageService.Send(new SelectedAssignedToMessage { User = x });
+                _messageService.Send(new SelectedAssignedToMessage(x));
             }
 
             ChangePresentation(new MvxClosePresentationHint(this));

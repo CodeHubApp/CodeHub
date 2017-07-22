@@ -195,7 +195,10 @@ namespace CodeHub.Core.ViewModels.Notifications
         {
             // Only update if we're looking at 
             if (!Notifications.Filter.All && !Notifications.Filter.Participating)
-                _messageService.Send<NotificationCountMessage>(new NotificationCountMessage { Count = Notifications.Items.Sum(x => x.Unread ? 1 : 0) });
+            {
+                var count = Notifications.Items.Sum(x => x.Unread ? 1 : 0);
+                _messageService.Send<NotificationCountMessage>(new NotificationCountMessage(count));
+            }
         }
     }
 }
