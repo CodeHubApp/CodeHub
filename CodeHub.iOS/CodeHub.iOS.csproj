@@ -183,7 +183,6 @@
     <Compile Include="TableViewCells\CommitCellView.cs" />
     <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
     <Compile Include="TableViewCells\CommitCellView.designer.cs" />
-    <Compile Include="ViewControllers\LiteComposer.cs" />
     <Compile Include="WebViews\SourceBrowserModel.cs" />
     <Compile Include="WebViews\UpgradeDetailsModel.cs" />
     <Compile Include="WebViews\DescriptionModel.cs" />

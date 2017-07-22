@@ -37,7 +37,7 @@ namespace CodeHub.iOS.Views.Source
 
             var saveButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save);
 
-            _textView.Frame = ComputeComposerSize(CGRect.Empty);
+            _textView.Frame = new CGRect(CGPoint.Empty, View.Bounds.Size);
             View.AddSubview(_textView);
 
             OnActivation(d =>
@@ -54,10 +54,10 @@ namespace CodeHub.iOS.Views.Source
 
         private void Commit()
         {
-            var composer = new LiteComposer { Title = "Commit Message" };
+            var composer = new Composer { Title = "Commit Message" };
             composer.Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
             var text = _textView.Text;
-            composer.ReturnAction += (s, e) => CommitThis(ViewModel, composer, text, e);
+            composer.ReturnAction += (message) => CommitThis(ViewModel, composer, text, message).ToBackground();
             _textView.BecomeFirstResponder ();
             NavigationController.PushViewController(composer, true);
         }
@@ -65,7 +65,7 @@ namespace CodeHub.iOS.Views.Source
         /// <summary>
         /// Need another function because Xamarin generates an Invalid IL if used inline above
         /// </summary>
-        private async Task CommitThis(EditSourceViewModel viewModel, LiteComposer composer, string content, string message)
+        private async Task CommitThis(EditSourceViewModel viewModel, Composer composer, string content, string message)
         {
             try
             {
@@ -79,34 +79,31 @@ namespace CodeHub.iOS.Views.Source
             }
         }
 
-        void KeyboardWillShow (NSNotification notification)
+        void KeyboardChange(NSNotification notification)
         {
-            var nsValue = notification.UserInfo.ObjectForKey (UIKeyboard.BoundsUserInfoKey) as NSValue;
+            var nsValue = notification.UserInfo.ObjectForKey(UIKeyboard.FrameEndUserInfoKey) as NSValue;
             if (nsValue == null) return;
+
             var kbdBounds = nsValue.RectangleFValue;
-            UIView.Animate(0.25f, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-                _textView.Frame = ComputeComposerSize(kbdBounds), null);
-        }
+            var keyboard = View.Window.ConvertRectToView(kbdBounds, View);
 
-        void KeyboardWillHide (NSNotification notification)
-        {
-            UIView.Animate(0.2, 0, UIViewAnimationOptions.BeginFromCurrentState | UIViewAnimationOptions.CurveEaseIn, () =>
-                _textView.Frame = ComputeComposerSize(CGRect.Empty), null);
-        }
-
-        CGRect ComputeComposerSize (CGRect kbdBounds)
-        {
-            var view = View.Bounds;
-            return new CGRect (0, 0, view.Width, view.Height-kbdBounds.Height);
+            UIView.Animate(
+                1.0f, 0, UIViewAnimationOptions.CurveEaseIn,
+                () => _textView.Frame = new CGRect(0, 0, View.Bounds.Width, keyboard.Top), null);
         }
 
         NSObject _hideNotification, _showNotification;
-        public override void ViewWillAppear (bool animated)
+        public override void ViewWillAppear(bool animated)
         {
-            base.ViewWillAppear (animated);
-            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillShowNotification"), KeyboardWillShow);
-            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UIKeyboardWillHideNotification"), KeyboardWillHide);
-            _textView.BecomeFirstResponder ();
+            base.ViewWillAppear(animated);
+
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                new NSString("UIKeyboardWillShowNotification"), KeyboardChange);
+
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                new NSString("UIKeyboardWillHideNotification"), KeyboardChange);
+
+            _textView.BecomeFirstResponder();
         }
 
         public override void ViewWillDisappear(bool animated)

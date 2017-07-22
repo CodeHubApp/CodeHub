@@ -2,7 +2,6 @@
 using ReactiveUI;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
-using System.Collections.Generic;
 using Foundation;
 
 namespace CodeHub.iOS.ViewControllers

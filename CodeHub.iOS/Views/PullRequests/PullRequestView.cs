@@ -185,15 +185,17 @@ namespace CodeHub.iOS.Views.PullRequests
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-            composer.NewComment(this, async text =>
+            composer.PresentAsModal(this, async () =>
             {
+                UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
+
                 var hud = this.CreateHud();
                 hud.Show("Posting Comment...");
-                if (await ViewModel.AddComment(text))
-                    composer.CloseComposer();
-
+                if (await ViewModel.AddComment(composer.Text))
+                    this.DismissViewController(true, null);
                 hud.Hide();
-                composer.EnableSendButton = true;
+
+                UIApplication.SharedApplication.EndIgnoringInteractionEvents();
             });
         }
 

@@ -202,10 +202,16 @@ namespace CodeHub.iOS.ViewControllers
 
         private void ChangeDescription()
         {
-            var composer = new Composer { Title = "Description", Text = _model.Description };
-            composer.NewComment(this, (text) => {
-                _model.Description = text;
-                composer.CloseComposer();
+            var composer = new Composer
+            {
+                Title = "Description",
+                Text = _model.Description
+            };
+
+            composer.PresentAsModal(this, () =>
+            {
+                _model.Description = composer.Text;
+                this.DismissViewController(true, null);
             });
         }
 

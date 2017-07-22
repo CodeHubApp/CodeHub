@@ -63,10 +63,16 @@ namespace CodeHub.iOS.Views.Issues
                 }));
 
                 d(content.Clicked.Subscribe(_ => {
-                    var composer = new MarkdownComposerViewController { Title = "Issue Description", Text = content.Details };
-                    composer.NewComment(this, (text) => {
-                        vm.Content = text;
-                        composer.CloseComposer();
+                    var composer = new MarkdownComposerViewController
+                    {
+                        Title = "Issue Description",
+                        Text = content.Details
+                    };
+
+                    composer.PresentAsModal(this, () =>
+                    {
+                        vm.Content = composer.Text;
+                        this.DismissViewController(true, null);
                     });
                 }));
             });

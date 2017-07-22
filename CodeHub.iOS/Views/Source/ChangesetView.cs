@@ -153,20 +153,21 @@ namespace CodeHub.iOS.Views.Source
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-            composer.NewComment(this, async (text) => {
+            composer.PresentAsModal(this, async () =>
+            {
+                UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
+
                 try
                 {
-                    await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(text));
-                    composer.CloseComposer();
+                    await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(composer.Text));
+                    DismissViewController(true, null);
                 }
                 catch (Exception e)
                 {
                     AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
                 }
-                finally
-                {
-                    composer.EnableSendButton = true;
-                }
+
+                UIApplication.SharedApplication.EndIgnoringInteractionEvents();
             });
         }
 

@@ -146,10 +146,16 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
         private void ChangeDescription()
         {
-            var composer = new Composer { Title = "Description", Text = ViewModel.Description };
-            composer.NewComment(this, (text) => {
-                ViewModel.Description = text;
-                composer.CloseComposer();
+            var composer = new Composer
+            {
+                Title = "Description",
+                Text = ViewModel.Description
+            };
+
+            composer.PresentAsModal(this, () =>
+            {
+                ViewModel.Description = composer.Text;
+                this.DismissViewController(true, null);
             });
         }
 
