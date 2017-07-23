@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}</ProjectGuid>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <UseMSBuildEngine>true</UseMSBuildEngine>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CodeHub</RootNamespace>
+    <AssemblyName>CodeHub</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebViews\UpgradeDetailsWebView.cs">
+      <DependentUpon>UpgradeDetailsWebView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\UpgradeDetailsModel.cs" />
+    <Compile Include="WebViews\SyntaxHighlighterModel.cs" />
+    <Compile Include="WebViews\SyntaxHighlighterWebView.cs">
+      <DependentUpon>SyntaxHighlighterWebView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\CommentsWebView.cs">
+      <DependentUpon>CommentsWebView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="WebViews\CommentsModel.cs" />
+    <Compile Include="WebViews\MarkdownModel.cs" />
+    <Compile Include="WebViews\MarkdownWebView.cs">
+      <DependentUpon>MarkdownWebView.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Octicons.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WebViews\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WebViews\UpgradeDetailsWebView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>UpgradeDetailsWebView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\SyntaxHighlighterWebView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>SyntaxHighlighterWebView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\CommentsWebView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>CommentsWebView.cs</LastGenOutput>
+    </None>
+    <None Include="WebViews\MarkdownWebView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>MarkdownWebView.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Humanizer">
+      <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\octicons.ttf" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+</Project>

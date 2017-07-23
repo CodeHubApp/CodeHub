@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.iOS", "CodeHub.iOS\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub.Core", "CodeHub.Core\CodeHub.Core.csproj", "{B7970173-9022-466B-B57A-7AB1E1F3145F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHub", "CodeHub\CodeHub.csproj", "{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AdHoc|Any CPU = AdHoc|Any CPU
@@ -108,6 +110,46 @@ Global
 		{B7970173-9022-466B-B57A-7AB1E1F3145F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{B7970173-9022-466B-B57A-7AB1E1F3145F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B7970173-9022-466B-B57A-7AB1E1F3145F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|Any CPU.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|iPhone.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|iPhone.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AdHoc|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Ad-Hoc|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.AppStore|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|iPhone.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

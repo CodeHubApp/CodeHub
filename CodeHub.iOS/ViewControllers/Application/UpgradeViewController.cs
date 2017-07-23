@@ -7,7 +7,7 @@ using System.Linq;
 using CodeHub.Core.Services;
 using BigTed;
 using System.Reactive.Disposables;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
@@ -57,7 +57,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                 var productData = response.Products.FirstOrDefault();
                 var enabled = _featuresService.IsProEnabled;
                 var model = new UpgradeDetailsModel(productData?.LocalizedPrice(), enabled);
-                var viewModel = new UpgradeDetailsRazorView { Model = model };
+                var viewModel = new UpgradeDetailsWebView { Model = model };
                 LoadContent(viewModel.GenerateString());
             }
             catch (Exception e)

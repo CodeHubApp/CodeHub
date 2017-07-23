@@ -1,4 +1,4 @@
-﻿namespace CodeHub.iOS.WebViews
+﻿namespace CodeHub.WebViews
 {
     public class UpgradeDetailsModel
     {

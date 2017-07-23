@@ -1,17 +1,17 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.PullRequests;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.Services;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.ViewControllers;
-using CodeHub.iOS.DialogElements;
-using UIKit;
-using System.Linq;
-using System.Collections.Generic;
-using Humanizer;
-using CodeHub.iOS.Services;
 using CodeHub.iOS.ViewControllers.Repositories;
-using System.Reactive.Linq;
+using CodeHub.WebViews;
+using Humanizer;
 using ReactiveUI;
-using CodeHub.iOS.WebViews;
+using UIKit;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -75,8 +75,8 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
 
-                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
-                var markdown = new MarkdownView { Model = model };
+                var model = new MarkdownModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
+                var markdown = new MarkdownWebView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
 
@@ -172,8 +172,8 @@ namespace CodeHub.iOS.Views.PullRequests
                 .Where(x => !string.IsNullOrEmpty(x.Body))
                 .OrderBy(x => x.Date)
                 .ToList();
-            var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
-            var razorView = new CommentsView { Model = commentModel };
+            var commentModel = new CommentsModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            var razorView = new CommentsWebView { Model = commentModel };
             var html = razorView.GenerateString();
 
             InvokeOnMainThread(() => {

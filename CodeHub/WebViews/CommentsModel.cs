@@ -1,18 +1,21 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using Humanizer;
 
-namespace CodeHub.iOS.WebViews
+namespace CodeHub.WebViews
 {
     public class Comment
     {
-        public string AvatarUrl { get; set; }
+        public string AvatarUrl { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset Date { get; }
 
-        public string Body { get; set; }
+        public string DateString => Date.Humanize();
+
+        public string Body { get; }
 
         public Comment(string avatar, string name, string body, DateTimeOffset date)
         {
@@ -23,13 +26,13 @@ namespace CodeHub.iOS.WebViews
         }
     }
 
-    public class CommentModel
+    public class CommentsModel
     {
-        public IList<Comment> Comments { get; set; }
+        public IList<Comment> Comments { get; }
 
-        public int FontSize { get; set; }
+        public int FontSize { get; }
 
-        public CommentModel(IEnumerable<Comment> comments, int fontSize)
+        public CommentsModel(IEnumerable<Comment> comments, int fontSize)
         {
             Comments = (comments ?? Enumerable.Empty<Comment>()).ToList();
             FontSize = fontSize;

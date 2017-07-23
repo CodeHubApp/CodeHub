@@ -154,7 +154,6 @@
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
     <Compile Include="Utilities\Graphics.cs" />
     <Compile Include="Utilities\EasyLayout.cs" />
-    <Compile Include="Octicons.cs" />
     <Compile Include="OcticonExtensions.cs" />
     <Compile Include="Views\ProfileButton.cs" />
     <Compile Include="TableViewCells\IssueCellView.cs" />
@@ -183,30 +182,6 @@
     <Compile Include="TableViewCells\CommitCellView.cs" />
     <InterfaceDefinition Include="TableViewCells\CommitCellView.xib" />
     <Compile Include="TableViewCells\CommitCellView.designer.cs" />
-    <Compile Include="WebViews\SourceBrowserModel.cs" />
-    <Compile Include="WebViews\UpgradeDetailsModel.cs" />
-    <Compile Include="WebViews\DescriptionModel.cs" />
-    <None Include="WebViews\UpgradeDetailsRazorView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>UpgradeDetailsRazorView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\UpgradeDetailsRazorView.cs">
-      <DependentUpon>UpgradeDetailsRazorView.cshtml</DependentUpon>
-    </Compile>
-    <None Include="WebViews\SyntaxHighlighterView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>SyntaxHighlighterView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\SyntaxHighlighterView.cs">
-      <DependentUpon>SyntaxHighlighterView.cshtml</DependentUpon>
-    </Compile>
-    <None Include="WebViews\MarkdownView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>MarkdownView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\MarkdownView.cs">
-      <DependentUpon>MarkdownView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="ViewControllers\Walkthrough\AboutViewController.cs" />
     <Compile Include="ViewControllers\Walkthrough\AboutViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Walkthrough\AboutViewController.xib" />
@@ -280,14 +255,6 @@
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Walkthrough\OrgViewController.xib" />
     <Compile Include="LinkerPleaseInclude.cs" />
-    <Compile Include="WebViews\CommentModel.cs" />
-    <None Include="WebViews\CommentsView.cshtml">
-      <Generator>RazorTemplatePreprocessor</Generator>
-      <LastGenOutput>CommentsView.cs</LastGenOutput>
-    </None>
-    <Compile Include="WebViews\CommentsView.cs">
-      <DependentUpon>CommentsView.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\EmptyListView.cs" />
@@ -493,7 +460,6 @@
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <BundleResource Include="CodeHubLaunch.png" />
     <Content Include="Diff\app.js" />
     <Content Include="Diff\diffindex.html" />
     <Content Include="Diff\difflib.js" />
@@ -501,15 +467,8 @@
     <Content Include="Diff\diffview.js" />
     <BundleResource Include="Images\Logos\dotcom-mascot.png" />
     <BundleResource Include="Images\Logos\enterprise-mascot.png" />
-    <BundleResource Include="octicons.ttf" />
-    <BundleResource Include="CodeHubRound.png" />
-    <BundleResource Include="Feedback.png" />
-    <BundleResource Include="Heart.png" />
-    <BundleResource Include="Rocket.png" />
-    <BundleResource Include="Briefcase.png" />
     <BundleResource Include="Images\down_chevron.png" />
     <BundleResource Include="Images\down_chevron%402x.png" />
-    <BundleResource Include="Organizations.png" />
     <Content Include="WebResources\marked.js" />
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
@@ -588,6 +547,16 @@
     <Content Include="WebResources\styles\vs.css" />
     <Content Include="WebResources\styles\xcode.css" />
     <Content Include="WebResources\styles\zenburn.css" />
+    <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
+      <Link>Resources\octicons.ttf</Link>
+    </BundleResource>
+    <BundleResource Include="Resources\Briefcase.png" />
+    <BundleResource Include="Resources\Feedback.png" />
+    <BundleResource Include="Resources\Heart.png" />
+    <BundleResource Include="Resources\Organizations.png" />
+    <BundleResource Include="Resources\Rocket.png" />
+    <BundleResource Include="Resources\CodeHubRound.png" />
+    <BundleResource Include="Resources\CodeHubLaunch.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -597,7 +566,6 @@
   <ItemGroup>
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\Logos\" />
-    <Folder Include="WebViews\" />
     <Folder Include="WebResources\" />
     <Folder Include="WebResources\styles\" />
     <Folder Include="ViewControllers\Application\" />
@@ -651,6 +619,10 @@
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">
       <Project>{B7970173-9022-466B-B57A-7AB1E1F3145F}</Project>
       <Name>CodeHub.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeHub\CodeHub.csproj">
+      <Project>{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}</Project>
+      <Name>CodeHub</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />

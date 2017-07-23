@@ -3,7 +3,7 @@ using UIKit;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using Foundation;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using WebKit;
 using CodeHub.iOS.Views;
 using ReactiveUI;
@@ -57,8 +57,8 @@ namespace CodeHub.iOS.ViewControllers
 
                 var markdownService = Mvx.Resolve<IMarkdownService>();
                 var markdownText = markdownService.Convert(Text);
-                var model = new DescriptionModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
-                var view = new MarkdownView { Model = model }.GenerateString();
+                var model = new MarkdownModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
+                var view = new MarkdownWebView { Model = model }.GenerateString();
                 _previewView.LoadHtmlString(view, NSBundle.MainBundle.BundleUrl);
             }
         }

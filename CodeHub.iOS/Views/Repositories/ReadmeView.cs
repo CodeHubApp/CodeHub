@@ -1,11 +1,10 @@
+using System;
+using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.iOS.Views;
+using CodeHub.iOS.Services;
+using CodeHub.WebViews;
 using UIKit;
 using WebKit;
-using System;
-using CodeHub.iOS.Services;
-using System.Reactive.Linq;
-using CodeHub.iOS.WebViews;
 
 namespace CodeHub.iOS.Views.Repositories
 {
@@ -29,10 +28,11 @@ namespace CodeHub.iOS.Views.Repositories
         {
             base.ViewDidLoad();
 
-            ViewModel.Bind(x => x.ContentText, true)
+            ViewModel
+                .Bind(x => x.ContentText, true)
                 .Where(x => x != null)
-                .Select(x => new DescriptionModel(x, (int)UIFont.PreferredSubheadline.PointSize))
-                .Select(x => new MarkdownView { Model = x }.GenerateString())
+                .Select(x => new MarkdownModel(x, (int)UIFont.PreferredSubheadline.PointSize))
+                .Select(x => new MarkdownWebView { Model = x }.GenerateString())
                 .Subscribe(LoadContent);
 
             ViewModel.LoadCommand.Execute(false);

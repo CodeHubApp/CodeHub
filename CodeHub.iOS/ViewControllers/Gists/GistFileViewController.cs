@@ -1,6 +1,6 @@
 using UIKit;
 using System;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using System.Threading.Tasks;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistFileViewController : CodeHub.iOS.Views.Source.FileSourceView
+    public class GistFileViewController : Views.Source.FileSourceView
     {
         public override void ViewDidLoad()
         {
@@ -29,15 +29,15 @@ namespace CodeHub.iOS.ViewControllers.Gists
             if (ViewModel.IsMarkdown)
             {
                 var markdownContent = await Mvx.Resolve<IApplicationService>().Client.Markdown.GetMarkdown(content);
-                var model = new DescriptionModel(markdownContent, fontSize);
-                var htmlContent = new MarkdownView { Model = model };
+                var model = new MarkdownModel(markdownContent, fontSize);
+                var htmlContent = new MarkdownWebView { Model = model };
                 LoadContent(htmlContent.GenerateString());
             }
             else
             {
                 var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
-                var model = new SourceBrowserModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
-                var contentView = new SyntaxHighlighterView { Model = model };
+                var model = new SyntaxHighlighterModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
+                var contentView = new SyntaxHighlighterWebView { Model = model };
                 LoadContent(contentView.GenerateString());
             }
         }

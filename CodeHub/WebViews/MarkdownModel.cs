@@ -1,6 +1,6 @@
-﻿namespace CodeHub.iOS.WebViews
+﻿namespace CodeHub.WebViews
 {
-    public class DescriptionModel
+    public class MarkdownModel
     {
         public string Body { get; }
 
@@ -8,7 +8,7 @@
 
         public bool ContinuousResize { get; }
 
-        public DescriptionModel(string body, int fontSize, bool continuousResize = false)
+        public MarkdownModel(string body, int fontSize, bool continuousResize = false)
         {
             Body = body;
             FontSize = fontSize;

@@ -11,7 +11,7 @@ using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Views.Issues
@@ -92,8 +92,8 @@ namespace CodeHub.iOS.Views.Issues
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
 
-                var model = new DescriptionModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
-                var markdown = new MarkdownView { Model = model };
+                var model = new MarkdownModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
+                var markdown = new MarkdownWebView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
 
@@ -159,8 +159,8 @@ namespace CodeHub.iOS.Views.Issues
                 .Where(x => !string.IsNullOrEmpty(x.Body))
                 .OrderBy(x => x.Date)
                 .ToList();
-            var commentModel = new CommentModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
-            var razorView = new CommentsView { Model = commentModel };
+            var commentModel = new CommentsModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            var razorView = new CommentsWebView { Model = commentModel };
             var html = razorView.GenerateString();
 
             InvokeOnMainThread(() => {

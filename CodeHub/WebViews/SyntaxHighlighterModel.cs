@@ -1,6 +1,6 @@
-﻿namespace CodeHub.iOS.WebViews
+﻿namespace CodeHub.WebViews
 {
-    public class SourceBrowserModel
+    public class SyntaxHighlighterModel
     {
         public string Content { get; }
         public string Theme { get; }
@@ -8,7 +8,7 @@
         public int FontSize { get; }
         public decimal Scale { get; }
 
-        public SourceBrowserModel(string content, string theme, int fontSize, bool shouldZoom, string file = null)
+        public SyntaxHighlighterModel(string content, string theme, int fontSize, bool shouldZoom, string file = null)
         {
             Content = content;
             Theme = theme;

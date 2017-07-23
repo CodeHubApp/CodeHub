@@ -4,7 +4,7 @@ using CodeHub.Core.ViewModels.Source;
 using System.Threading.Tasks;
 using MvvmCross.Platform;
 using CodeHub.Core.Services;
-using CodeHub.iOS.WebViews;
+using CodeHub.WebViews;
 using CodeHub.iOS.ViewControllers;
 
 namespace CodeHub.iOS.Views.Source
@@ -61,15 +61,15 @@ namespace CodeHub.iOS.Views.Source
             if (ViewModel.IsMarkdown)
             {
                 var markdownContent = await Mvx.Resolve<IApplicationService>().Client.Markdown.GetMarkdown(content);
-                var model = new DescriptionModel(markdownContent, fontSize);
-                var htmlContent = new MarkdownView { Model = model };
+                var model = new MarkdownModel(markdownContent, fontSize);
+                var htmlContent = new MarkdownWebView { Model = model };
                 LoadContent(htmlContent.GenerateString());
             }
             else
             {
                 var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
-                var model = new SourceBrowserModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
-                var contentView = new SyntaxHighlighterView { Model = model };
+                var model = new SyntaxHighlighterModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
+                var contentView = new SyntaxHighlighterWebView { Model = model };
                 LoadContent(contentView.GenerateString());
             }
         }
