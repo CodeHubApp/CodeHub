@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
 using System.Reactive;
 using CodeHub.Core.Services;
-using System.Reactive.Subjects;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
@@ -13,13 +12,7 @@ namespace CodeHub.Core.ViewModels.App
     public class FeedbackComposerViewModel : ReactiveObject
     {
         private const string CodeHubOwner = "thedillonb";
-        private const string CodeHubName = "TestTestTest";
-        private readonly ISubject<Octokit.Issue> _createdIssueSubject = new Subject<Octokit.Issue>();
-
-        public IObservable<Octokit.Issue> CreatedIssueObservable
-        {
-            get { return _createdIssueSubject; }
-        }
+        private const string CodeHubName = "codehub";
 
         private string _subject;
         public string Subject
@@ -69,16 +62,19 @@ namespace CodeHub.Core.ViewModels.App
                     throw new ArgumentException(string.Format("You must provide a title for this {0}!", IsFeature ? "feature" : "bug"));
 
                 var labels = await applicationService.GitHubClient.Issue.Labels.GetAllForRepository(CodeHubOwner, CodeHubName);
-                var createLabels = labels.Where(x => string.Equals(x.Name, IsFeature ? "feature request" : "bug", StringComparison.OrdinalIgnoreCase)).Select(x => x.Name).Distinct();
+                var labelName = IsFeature ? "enhancement" : "bug";
+
+                var createLabels = labels
+                    .Where(x => string.Equals(x.Name, labelName, StringComparison.OrdinalIgnoreCase))
+                    .Select(x => x.Name)
+                    .Distinct();
 
                 var createIssueRequest = new Octokit.NewIssue(Subject) { Body = Description };
+
                 foreach (var label in createLabels)
                     createIssueRequest.Labels.Add(label);
                 
-                var createdIssue = await applicationService
-                    .GitHubClient.Issue.Create(CodeHubOwner, CodeHubName, createIssueRequest);
-
-                _createdIssueSubject.OnNext(createdIssue);
+                await applicationService.GitHubClient.Issue.Create(CodeHubOwner, CodeHubName, createIssueRequest);
             }, this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x)));
 
             DismissCommand = ReactiveCommand.CreateFromTask(async t =>

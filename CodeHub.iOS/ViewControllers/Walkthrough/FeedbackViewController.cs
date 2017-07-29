@@ -1,6 +1,4 @@
 ﻿using UIKit;
-using CodeHub.Core.ViewModels;
-using CodeHub.iOS.ViewControllers;
 using System;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
@@ -20,13 +18,10 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             GitHubButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             GitHubButton.Layer.CornerRadius = 6f;
 
-            UserVoiceButton.BackgroundColor = UIColor.FromRGB(0x2c, 0x3e, 0x50);
-            UserVoiceButton.SetTitleColor(UIColor.White, UIControlState.Normal);
-            UserVoiceButton.Layer.CornerRadius = 6f;
-
-            OnActivation(d => {
-                d(GitHubButton.GetClickedObservable().Subscribe(_ => ShowWebPage("https://github.com/thedillonb/codehub")));
-                d(UserVoiceButton.GetClickedObservable().Subscribe(_ => ShowWebPage("https://codehub.uservoice.com")));
+            OnActivation(d =>
+            {
+                d(GitHubButton.GetClickedObservable()
+                  .Subscribe(_ => ShowWebPage("https://github.com/thedillonb/codehub")));
             });
         }
 

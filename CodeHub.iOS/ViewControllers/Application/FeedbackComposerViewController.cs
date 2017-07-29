@@ -7,6 +7,7 @@ using CodeHub.iOS.TableViewSources;
 using System.Reactive.Linq;
 using CodeHub.iOS.Views;
 using System.Reactive;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -83,7 +84,10 @@ namespace CodeHub.iOS.ViewControllers.Application
                   .Subscribe(_ => DismissViewController(true, null)));
 
                 d(this.WhenAnyObservable(x => x.ViewModel.SubmitCommand.CanExecute)
-                    .Subscribe(x => saveButton.Enabled = x));
+                  .Subscribe(x => saveButton.Enabled = x));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.SubmitCommand.IsExecuting)
+                  .SubscribeStatus("Submitting feedback"));
             });
         }
     }
