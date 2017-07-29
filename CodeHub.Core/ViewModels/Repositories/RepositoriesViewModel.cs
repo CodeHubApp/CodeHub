@@ -62,18 +62,22 @@ namespace CodeHub.Core.ViewModels.Repositories
             => new RepositoriesViewModel(ApiUrls.TeamRepositories(id));
 
         public static RepositoriesViewModel CreateMineViewModel()
-            => new RepositoriesViewModel(ApiUrls.Repositories(), false);
+            => new RepositoriesViewModel(ApiUrls.Repositories(), false, "owner,collaborator");
 
         public static RepositoriesViewModel CreateUsersViewModel(string username)
         {
             var applicationService = Locator.Current.GetService<IApplicationService>();
             var isCurrent = string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase);
-            return new RepositoriesViewModel(isCurrent ? ApiUrls.Repositories() : ApiUrls.Repositories(username));
+
+            return isCurrent
+                ? CreateMineViewModel()
+                : new RepositoriesViewModel(ApiUrls.Repositories(username));
         }
 
         public RepositoriesViewModel(
             Uri repositoriesUri,
             bool showOwner = true,
+            string affiliation = null,
             IApplicationService applicationService = null,
             IAlertDialogService dialogService = null)
         {
@@ -101,8 +105,16 @@ namespace CodeHub.Core.ViewModels.Repositories
             LoadCommand = ReactiveCommand.CreateFromTask(async t =>
             {
                 _internalItems.Clear();
-                var parameters = new Dictionary<string, string>();
-                parameters["per_page"] = 75.ToString();
+                var parameters = new Dictionary<string, string>
+                {
+                    ["per_page"] = 75.ToString()
+                };
+
+                if (affiliation != null)
+                {
+                    parameters["affiliation"] = affiliation;
+                }
+
                 var items = await RetrieveRepositories(repositoriesUri, parameters);
                 _internalItems.AddRange(items);
                 return items.Count > 0;
