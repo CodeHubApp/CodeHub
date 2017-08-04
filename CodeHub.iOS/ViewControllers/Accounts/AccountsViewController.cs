@@ -9,6 +9,7 @@ using System.Linq;
 using ReactiveUI;
 using CodeHub.Core.Messages;
 using Splat;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -37,9 +38,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             TableView.RowHeight = 74;
         }
 
-        private void SelectAccount(Account githubAccount)
+        private async Task SelectAccount(Account account)
         {
-            _applicationService.LoginAccount(githubAccount);
+            await _accountsService.SetActiveAccount(account);
             MessageBus.Current.SendMessage(new LogoutMessage());
         }
 
