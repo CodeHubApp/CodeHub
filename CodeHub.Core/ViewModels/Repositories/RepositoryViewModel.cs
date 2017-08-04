@@ -10,6 +10,7 @@ using System.Linq;
 using System;
 using CodeHub.Core.Services;
 using Splat;
+using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -56,6 +57,13 @@ namespace CodeHub.Core.ViewModels.Repositories
         {
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
+        }
+
+        private List<TagModel> _tags;
+        public List<TagModel> Tags
+        {
+            get { return _tags; }
+            private set { this.RaiseAndSetIfChanged(ref _tags, value); }
         }
 
         public RepositoryViewModel(IApplicationService applicationService = null)
@@ -106,7 +114,7 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         public ICommand GoToSourceCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<Source.BranchesAndTagsViewModel>(new Source.BranchesAndTagsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
+            get { return new MvxCommand(GoToSource); }
         }
 
         public ICommand GoToHtmlUrlCommand
@@ -116,15 +124,37 @@ namespace CodeHub.Core.ViewModels.Repositories
 
         private void ShowCommits()
         {
-            if (Branches != null && Branches.Count == 1)
+            if (Branches?.Count == 1)
                 ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositoryName});
             else
-                ShowViewModel<Source.ChangesetBranchesViewModel>(new Source.ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
+                ShowViewModel<ChangesetBranchesViewModel>(new ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
         }
 
         public ICommand PinCommand
         {
             get { return new MvxCommand(PinRepository, () => Repository != null); }
+        }
+
+        private void GoToSource()
+        {
+            if (Branches?.Count == 1 && Tags?.Count == 0)
+            {
+                ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject
+                {
+                    Username = Username,
+                    Repository = RepositoryName,
+                    Branch = Branches.First().Name,
+                    TrueBranch = true
+                });
+            }
+            else
+            {
+                ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
+                {
+                    Username = Username,
+                    Repository = RepositoryName
+                });
+            }
         }
 
         private void PinRepository()
@@ -174,6 +204,9 @@ namespace CodeHub.Core.ViewModels.Repositories
          
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
                 response => IsStarred = response.Data).ToBackground();
+
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetTags(perPage: 1),
+                response => Tags = response.Data).ToBackground();
 
             return t1;
         }
