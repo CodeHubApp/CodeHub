@@ -32,6 +32,8 @@ namespace CodeHub.iOS.ViewControllers
         public TableViewController(UITableViewStyle style)
         {
             _tableView = new Lazy<UITableView>(() => new UITableView(CGRect.Empty, style));
+
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = string.Empty };
         }
 
         public override void ViewDidLoad()
