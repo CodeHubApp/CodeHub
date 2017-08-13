@@ -54,28 +54,36 @@ namespace CodeHub.iOS.Views.Source
 
         private void Commit()
         {
-            var composer = new Composer { Title = "Commit Message" };
-            composer.Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1);
-            var text = _textView.Text;
-            composer.ReturnAction += (message) => CommitThis(ViewModel, composer, text, message).ToBackground();
-            _textView.BecomeFirstResponder ();
-            NavigationController.PushViewController(composer, true);
+            var content = _textView.Text;
+
+            var composer = new Composer
+            {
+                Title = "Commit Message",
+                Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1)
+            };
+
+            composer.PresentAsModal(this, () => CommitThis(composer, content, composer.Text).ToBackground());
         }
 
         /// <summary>
         /// Need another function because Xamarin generates an Invalid IL if used inline above
         /// </summary>
-        private async Task CommitThis(EditSourceViewModel viewModel, Composer composer, string content, string message)
+        private async Task CommitThis(Composer composer, string content, string message)
         {
             try
             {
-                await this.DoWorkAsync("Commiting...", () => viewModel.Commit(content, message));
-                NavigationController.DismissViewController(true, null);
+                UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
+                await this.DoWorkAsync("Commiting...", () => ViewModel.Commit(content, message));
+                this.PresentingViewController?.DismissViewController(true, null);
             }
             catch (Exception ex)
             {
                 AlertDialogService.ShowAlert("Error", ex.Message);
                 composer.EnableSendButton = true;
+            }
+            finally
+            {
+                UIApplication.SharedApplication.EndIgnoringInteractionEvents();
             }
         }
 
