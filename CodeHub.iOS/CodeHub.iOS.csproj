@@ -311,6 +311,8 @@
     <Compile Include="ViewControllers\Application\FeedbackComposerViewController.cs" />
     <Compile Include="Views\MarkdownAccessoryView.cs" />
     <Compile Include="Views\ButtonAccessoryView.cs" />
+    <Compile Include="ViewControllers\Search\RepositoryExploreViewController.cs" />
+    <Compile Include="ViewControllers\Search\UserExploreViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

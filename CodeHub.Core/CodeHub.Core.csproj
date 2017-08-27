@@ -142,7 +142,7 @@
     <Compile Include="Utils\OctokitClientFactory.cs" />
     <Compile Include="Utils\OctokitNetworkClient.cs" />
     <Compile Include="Services\INetworkActivityService.cs" />
-    <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
+    <Compile Include="ViewModels\Search\RepositoryExploreViewModel.cs" />
     <Compile Include="ViewModels\Repositories\TrendingRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Users\UsersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
@@ -163,6 +163,8 @@
     <Compile Include="Services\IImgurService.cs" />
     <Compile Include="Services\ImgurService.cs" />
     <Compile Include="Data\ImgurResponse.cs" />
+    <Compile Include="ViewModels\Search\UserExploreViewModel.cs" />
+    <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

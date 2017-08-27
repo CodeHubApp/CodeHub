@@ -1,84 +1,50 @@
 using System;
 using UIKit;
-using ReactiveUI;
-using CodeHub.iOS.TableViewSources;
-using CoreGraphics;
-using CodeHub.Core.ViewModels.Search;
 using System.Reactive.Linq;
-using CodeHub.iOS.Views;
-using CodeHub.iOS.ViewControllers.Repositories;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Search
 {
-    public class ExploreViewController : TableViewController
+    public class ExploreViewController : BaseViewController
     {
-        private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
-        private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
+        private readonly UISegmentedControl _viewSegment = new UISegmentedControl(new object[] { "Repositories", "Users" });
 
-        private readonly Lazy<UIView> emptyView = new Lazy<UIView>((() =>
-            new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories.")));
+        private Lazy<UIViewController> _repositoryViewController =
+            new Lazy<UIViewController>(() => new RepositoryExploreViewController());
 
-        public ExploreViewModel ViewModel { get; } = new ExploreViewModel();
+        private Lazy<UIViewController> _userViewController =
+            new Lazy<UIViewController>(() => new UserExploreViewController());
 
         public ExploreViewController()
-            : base(UITableViewStyle.Plain)
         {
             Title = "Explore";
-        }
 
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            TableView.TableHeaderView = _repositorySearchBar;
-            TableView.Source = new RepositoryTableViewSource(TableView, ViewModel.Items);
+            _viewSegment.SelectedSegment = 0;
+            NavigationItem.TitleView = _viewSegment;
 
             this.WhenActivated(d =>
             {
-                d(_repositorySearchBar.GetChangedObservable()
-                  .Subscribe(x => ViewModel.SearchText = x));
-                
-                d(_repositorySearchBar.GetSearchObservable()
-                  .InvokeReactiveCommand(ViewModel.SearchCommand));
-
-                d(ViewModel.SearchCommand.IsExecuting
-                  .Subscribe(Searching));
-
-                d(ViewModel.RepositoryItemSelected
-                  .Select(x => new RepositoryViewController(x.Owner, x.Name))
-                  .Subscribe(x => NavigationController.PushViewController(x, true)));
-
-                d(ViewModel.SearchCommand.Subscribe(_ => SearchComplete()));
+                d(_viewSegment.GetChangedObservable()
+                  .StartWith((int)_viewSegment.SelectedSegment)
+                  .Subscribe(HandleSegmentChange));
             });
         }
 
-        private void SearchComplete()
+        private void HandleSegmentChange(int segmentId)
         {
-            if (ViewModel.Items.Count == 0)
+            foreach (var childViewController in ChildViewControllers)
             {
-                TableView.BackgroundView = emptyView.Value;
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
+                childViewController.RemoveFromParentViewController();
+                childViewController.View.RemoveFromSuperview();
             }
-            else
-            {
-                TableView.BackgroundView = null;
-                TableView.SeparatorStyle = UITableViewCellSeparatorStyle.SingleLine;
-            }
-        }
 
-        private void Searching(bool searching)
-        {
-            _loading.SetLoading(searching);
+            var newViewController = segmentId == 0 ? _repositoryViewController.Value : _userViewController.Value;
+            AddChildViewController(newViewController);
 
-            if (searching)
-            {
-                TableView.TableFooterView = _loading;
-                TableView.BackgroundView = null;
-            }
-            else
-            {
-                TableView.TableFooterView = null;
-            }
+            var newView = newViewController.View;
+            newView.Frame = View.Bounds;
+            newView.AutoresizingMask = UIViewAutoresizing.All;
+            View.AddSubview(newView);
         }
     }
 }

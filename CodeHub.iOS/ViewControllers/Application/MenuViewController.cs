@@ -148,7 +148,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             repoSection.Add(new MenuElement("Owned", GoToOwnedRepositories, Octicon.Repo.ToImage()));
             repoSection.Add(new MenuElement("Starred", GoToStarredRepositories, Octicon.Star.ToImage()));
             repoSection.Add(new MenuElement("Trending", GoToTrendingRepositories, Octicon.Pulse.ToImage()));
-            repoSection.Add(new MenuElement("Explore", () => NavigationController.PushViewController(new ExploreViewController(), true), Octicon.Globe.ToImage()));
+            repoSection.Add(new MenuElement("Search", GoToSearch, Octicon.Search.ToImage()));
             sections.Add(repoSection);
             
             if (ViewModel.PinnedRepositories.Any())
@@ -210,6 +210,12 @@ namespace CodeHub.iOS.ViewControllers.Application
             GC.Collect();
             GC.Collect();
             #endif
+        }
+
+        private void GoToSearch()
+        {
+            var vc = new ExploreViewController();
+            NavigationController?.PushViewController(vc, true);
         }
 
         private void GoToSupport()
