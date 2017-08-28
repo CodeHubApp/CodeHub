@@ -62,28 +62,28 @@ header .navigation a
     {
         height: auto;
     }
-    
+
     header .navigation
     {
         float: none !important;
         text-align: center;
     }
-    
+
     header .logo {
         text-align: center;
     }
-    
+
     .hero .intro
     {
         text-align: center;
         max-width: 500px;
         margin: 0px auto;
     }
-    
+
     .container {
         width: 100%;
     }
-    
+
     .shots {
         text-align: center;
         max-width: 400px;
@@ -161,7 +161,6 @@ header .navigation a
     -o-transition: color 1s ease;
     -ms-transition: color 1s ease;
     transition: color 1s ease;
-    cursor: pointer;
 }
 
 .features .feat p {
@@ -251,6 +250,7 @@ footer
 footer .footer-link
 {
     padding-top: 15px;
+    text-align: center;
 }
 
 footer hr
@@ -290,8 +290,8 @@ footer .copy
     color: #888;
 }
 
-.contact .cont p 
+.contact .cont p
 {
-    margin-top: 15px;   
+    margin-top: 15px;
     margin-bottom: 15px;
 }
