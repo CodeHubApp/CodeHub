@@ -6,7 +6,7 @@ CodeHub is the best way to browse and maintain your GitHub repositories on any i
 
 Follow the project on twitter: [@CodeHubApp](http://www.twitter.com/CodeHubApp)<br />
 Feature requests can be made on [GitHub](https://github.com/CodeHubApp/CodeHub/issues)<br />
-Additional information can be found on the [project's webpage](http://codehub-app.com//)
+Additional information can be found on the [project's webpage](http://codehub-app.com/)
 
 ## Screenshots
 
