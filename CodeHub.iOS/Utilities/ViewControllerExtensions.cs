@@ -1,12 +1,17 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
+using CodeHub.iOS.Services;
 using UIKit;
 
 namespace CodeHub.iOS.Utilities
 {
     public static class ViewControllerExtensions
     {
+        public static void ShowError(this UIViewController viewController, string title, Exception exception)
+        {
+            AlertDialogService.ShowAlert(title, exception.Message);
+        }
+
         public static IHud CreateHud(this UIViewController controller)
         {
             return new Hud(controller.View);

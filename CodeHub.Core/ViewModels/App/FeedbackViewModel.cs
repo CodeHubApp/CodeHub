@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class FeedbackViewModel : ReactiveObject, IProvidesSearchKeyword
     {
-        private const string CodeHubOwner = "thedillonb";
+        private const string CodeHubOwner = "codehubapp";
         private const string CodeHubName = "codehub";
 
         public IReadOnlyReactiveList<FeedbackItemViewModel> Items { get; }

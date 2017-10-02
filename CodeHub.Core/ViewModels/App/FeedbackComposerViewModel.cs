@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class FeedbackComposerViewModel : ReactiveObject
     {
-        private const string CodeHubOwner = "thedillonb";
+        private const string CodeHubOwner = "codhubapp";
         private const string CodeHubName = "codehub";
 
         private string _subject;
@@ -73,9 +73,15 @@ namespace CodeHub.Core.ViewModels.App
 
                 foreach (var label in createLabels)
                     createIssueRequest.Labels.Add(label);
-                
+
                 await applicationService.GitHubClient.Issue.Create(CodeHubOwner, CodeHubName, createIssueRequest);
             }, this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x)));
+
+            SubmitCommand
+                .ThrownExceptions
+                .Select(x => new UserError("There was a problem trying to post your feedback: " + x.Message))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
 
             DismissCommand = ReactiveCommand.CreateFromTask(async t =>
             {

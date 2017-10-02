@@ -165,6 +165,7 @@
     <Compile Include="Data\ImgurResponse.cs" />
     <Compile Include="ViewModels\Search\UserExploreViewModel.cs" />
     <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
+    <Compile Include="Interactions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

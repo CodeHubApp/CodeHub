@@ -96,8 +96,18 @@ namespace CodeHub.iOS
 
             var features = Mvx.Resolve<IFeaturesService>();
             var purchaseService = Mvx.Resolve<IInAppPurchaseService>();
-            purchaseService.ThrownExceptions.Subscribe(ex => {
-                AlertDialogService.ShowAlert("Error Purchasing", ex.Message);
+
+            purchaseService.ThrownExceptions.Subscribe(ex =>
+            {
+                var error = new Core.UserError("Error Purchasing", ex.Message);
+                Core.Interactions.Errors.Handle(error).Subscribe();
+            });
+
+            Core.Interactions.Errors.RegisterHandler(interaction =>
+            {
+                var error = interaction.Input;
+                AlertDialogService.ShowAlert(error.Title, error.Message);
+                interaction.SetOutput(System.Reactive.Unit.Default);
             });
 
 //#if DEBUG
@@ -124,7 +134,7 @@ namespace CodeHub.iOS
             if (!Core.Settings.HasSeenWelcome)
             {
                 Core.Settings.HasSeenWelcome = true;
-                var welcomeViewController = new CodeHub.iOS.ViewControllers.Walkthrough.WelcomePageViewController();
+                var welcomeViewController = new ViewControllers.Walkthrough.WelcomePageViewController();
                 welcomeViewController.WantsToDimiss += GoToStartupView;
                 TransitionToViewController(welcomeViewController);
             }

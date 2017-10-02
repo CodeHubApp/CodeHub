@@ -9,7 +9,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class SupportViewModel : ReactiveObject, ILoadableViewModel
     {
-        public readonly static string CodeHubOwner = "thedillonb";
+        public readonly static string CodeHubOwner = "codehubapp";
         public readonly static string CodeHubName = "codehub";
 
         private int? _contributors;

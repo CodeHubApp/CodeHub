@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Foundation;
 using System.Collections.Generic;
 using System.Reactive.Subjects;
-using CodeHub.Core.Services;
 using System.Linq;
 using Splat;
 using Plugin.Settings;

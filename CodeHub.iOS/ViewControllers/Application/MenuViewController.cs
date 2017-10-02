@@ -69,7 +69,6 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private static async Task PromptPushNotifications()
         {
-
             var appService = Mvx.Resolve<IApplicationService>();
             if (IsAccountEnterprise)
                 return;

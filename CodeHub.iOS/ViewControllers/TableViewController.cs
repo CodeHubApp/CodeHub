@@ -44,6 +44,8 @@ namespace CodeHub.iOS.ViewControllers
             TableView.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin;
             TableView.AutosizesSubviews = true;
             TableView.CellLayoutMarginsFollowReadableWidth = false;
+            TableView.EstimatedSectionFooterHeight = 0;
+            TableView.EstimatedSectionHeaderHeight = 0;
             Add(TableView);
         }
 

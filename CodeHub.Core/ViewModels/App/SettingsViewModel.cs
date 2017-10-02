@@ -34,7 +34,7 @@ namespace CodeHub.Core.ViewModels.App
 
         public ICommand GoToSourceCodeCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "thedillonb" })); }
+            get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Repository = "codehub", Username = "codehubapp" })); }
         }
 
         private bool _isSaving;

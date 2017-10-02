@@ -119,7 +119,7 @@ namespace CodeHub.Core.ViewModels.App
 
                 _applicationService
                     .GitHubClient.Activity.Starring
-                    .StarRepo("thedillonb", "codehub")
+                    .StarRepo("codehubapp", "codehub")
                     .ToBackground();
             }
 
@@ -134,7 +134,7 @@ namespace CodeHub.Core.ViewModels.App
 
                 _applicationService
                     .GitHubClient.Activity.Watching
-                    .WatchRepo("thedillonb", "codehub", subscription)
+                    .WatchRepo("codehubapp", "codehub", subscription)
                     .ToBackground();
             }
         }

@@ -21,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             OnActivation(d =>
             {
                 d(GitHubButton.GetClickedObservable()
-                  .Subscribe(_ => ShowWebPage("https://github.com/thedillonb/codehub")));
+                  .Subscribe(_ => ShowWebPage("https://github.com/codehubapp/codehub")));
             });
         }
 
