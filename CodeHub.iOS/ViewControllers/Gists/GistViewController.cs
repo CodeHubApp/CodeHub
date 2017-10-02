@@ -12,6 +12,7 @@ using CodeHub.iOS.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Octokit;
+using Humanizer;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
@@ -87,10 +88,11 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
                 d(ViewModel.Bind(x => x.Gist, true).Where(x => x != null).Subscribe(gist =>
                 {
-                    Console.WriteLine(string.Join(", ", gist.Files.Keys));
+                    var daysOld = gist.CreatedAt.TotalDaysAgo();
+
                     _splitRow1.Button1.Text = gist.Public ? "Public" : "Private";
                     _splitRow1.Button2.Text = (gist.History?.Count ?? 0) + " Revisions";
-                    _splitRow2.Button1.Text = gist.CreatedAt.Day + " Days Old";
+                    _splitRow2.Button1.Text = daysOld == 0 ? "Created today" : "day".ToQuantity(daysOld) + " old";
                     _ownerElement.Value = gist.Owner?.Login ?? "Unknown";
                     files.Text = gist.Files?.Count.ToString() ?? "-";
                     comments.Text = gist.Comments.ToString();
