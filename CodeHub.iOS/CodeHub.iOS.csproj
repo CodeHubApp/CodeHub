@@ -610,6 +610,7 @@
     <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\avatar.png" />
     <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\avatar%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\appstore.png" />
   </ItemGroup>
   <ItemGroup>
     <XamarinComponentReference Include="sdwebimage">
