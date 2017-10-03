@@ -11,7 +11,7 @@ namespace CodeHub.Core.ViewModels.App
 {
     public class FeedbackComposerViewModel : ReactiveObject
     {
-        private const string CodeHubOwner = "codhubapp";
+        private const string CodeHubOwner = "codehubapp";
         private const string CodeHubName = "codehub";
 
         private string _subject;
