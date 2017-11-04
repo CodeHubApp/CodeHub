@@ -13,5 +13,9 @@ namespace ReactiveUI
         public static IDisposable InvokeReactiveCommand<TParam, TResult>(
             this IObservable<TParam> obs, ReactiveCommand<TParam, TResult> cmd)
             => obs.InvokeCommand(cmd);
+
+        public static IDisposable InvokeReactiveCommand<TParam, TResult>(
+            this IObservable<TParam> obs, CombinedReactiveCommand<TParam, TResult> cmd)
+            => obs.InvokeCommand(cmd);
     }
 }

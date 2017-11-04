@@ -97,6 +97,16 @@ namespace UIKit
 
         public static void PushViewController(this UIViewController This, UIViewController view)
             => This.NavigationController?.PushViewController(view, true);
+
+        public static void PresentModalViewController(this UIViewController This, UIViewController view)
+        {
+            view.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
+            view.NavigationItem.LeftBarButtonItem.GetClickedObservable().Subscribe(
+                _ => This.DismissViewController(true, null));
+                
+            var navController = new UINavigationController(view);
+            This.PresentViewController(navController, true, null);
+        }
     }
 
     public static class UIFontExtensions
