@@ -1,5 +1,6 @@
 using UIKit;
 using CodeHub.iOS.Views;
+using System;
 
 namespace CodeHub.iOS
 {
@@ -37,8 +38,12 @@ namespace CodeHub.iOS
             UINavigationBar.Appearance.BackIndicatorImage = Images.Buttons.BackButton;
             UINavigationBar.Appearance.BackIndicatorTransitionMaskImage = Images.Buttons.BackButton;
 
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -System.nfloat.MaxValue), UIBarMetrics.LandscapePhone);
-            UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -System.nfloat.MaxValue), UIBarMetrics.Default);
+            var version = new Version(UIDevice.CurrentDevice.SystemVersion);
+            if (version.Major < 11)
+            {
+                UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -System.nfloat.MaxValue), UIBarMetrics.LandscapePhone);
+                UIBarButtonItem.Appearance.SetBackButtonTitlePositionAdjustment(new UIOffset(0, -System.nfloat.MaxValue), UIBarMetrics.Default);
+            }
 
             UISegmentedControl.Appearance.TintColor = UIColor.FromRGB(110, 110, 117);
             UISegmentedControl.AppearanceWhenContainedIn(typeof(UINavigationBar)).TintColor = UIColor.White;
