@@ -148,7 +148,7 @@
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
-    <Compile Include="Views\SlideupTitleView.cs" />
+    <Compile Include="Views\SlideUpTitleView.cs" />
     <Compile Include="Utilities\Hud.cs" />
     <Compile Include="Utilities\UIImageExtensions.cs" />
     <Compile Include="Utilities\ViewControllerExtensions.cs" />
