@@ -189,9 +189,6 @@
     <Reference Include="GitHubSharp">
       <HintPath>..\packages\GitHubClient.1.0.15\lib\portable45-net45+win8+wpa81\GitHubSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="PCLStorage">
       <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
     </Reference>
@@ -231,9 +228,6 @@
     <Reference Include="System.Net.Http.Primitives">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Octokit">
-      <HintPath>..\packages\Octokit.0.24.0\lib\portable-net45+wp80+win+wpa81\Octokit.dll</HintPath>
-    </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
@@ -267,6 +261,13 @@
     <Reference Include="SQLitePCLRaw.batteries_v2">
       <HintPath>..\packages\SQLitePCLRaw.bundle_e_sqlite3.1.1.8\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
     </Reference>
+    <Reference Include="Octokit">
+      <HintPath>..\packages\Octokit.0.28.0\lib\netstandard1.1\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -281,4 +282,5 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets')" />
 </Project>

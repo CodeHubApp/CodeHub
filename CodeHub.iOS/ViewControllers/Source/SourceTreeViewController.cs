@@ -151,7 +151,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void GoToSubModule(Octokit.RepositoryContent content)
         {
-            var gitUrl = content.GitUrl.AbsolutePath;
+            var gitUrl = content.GitUrl;
             var nameAndSlug = gitUrl.Substring(gitUrl.IndexOf("/repos/", StringComparison.Ordinal) + 7);
             var indexOfGit = nameAndSlug.LastIndexOf("/git", StringComparison.Ordinal);
             indexOfGit = indexOfGit < 0 ? 0 : indexOfGit;

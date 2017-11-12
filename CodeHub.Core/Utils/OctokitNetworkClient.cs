@@ -2,6 +2,7 @@
 using Octokit;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
+using System;
 
 namespace CodeHub.Core.Utilities
 {
@@ -26,10 +27,9 @@ namespace CodeHub.Core.Utilities
                 return await _httpClient.Send(request, cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _httpClient.Dispose();
-        }
+        public void Dispose() => _httpClient.Dispose();
+
+        public void SetRequestTimeout(TimeSpan timeout) => _httpClient.SetRequestTimeout(timeout);
     }
 }
 

@@ -142,7 +142,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             var mime = string.Empty;
             using (var stream = new System.IO.FileStream(ContentSavePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                mime = await _applicationService.Client.DownloadRawResource2(Content.GitUrl.AbsoluteUri, stream) ?? string.Empty;
+                mime = await _applicationService.Client.DownloadRawResource2(Content.GitUrl, stream) ?? string.Empty;
 
             var isBinary = _forceBinary || !mime.Contains("charset");
             if (isBinary)
@@ -205,19 +205,19 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void Share(UIBarButtonItem barButtonItem)
         {
-            var url = Content?.HtmlUrl?.AbsoluteUri;
+            var url = Content?.HtmlUrl;
             if (url == null)
                 return;
 
             AlertDialogService.Share(
                 Title,
-                url: Content?.HtmlUrl?.AbsoluteUri,
+                url: Content?.HtmlUrl,
                 barButtonItem: barButtonItem);
         }
 
         private void ShowInBrowser()
         {
-            var url = Content?.HtmlUrl?.AbsoluteUri;
+            var url = Content?.HtmlUrl;
             if (url == null)
                 return;
             
