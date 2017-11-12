@@ -183,7 +183,17 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public ICommand GoToFilesCommand
         {
-            get { return new MvxCommand(() => ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
+            get {
+                return new MvxCommand(() =>
+                {
+                    ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject {
+                        Username = Username,
+                        Repository = Repository,
+                        PullRequestId = Id,
+                        Sha = PullRequest.Head?.Sha
+                    });   
+                });
+            }
         }
 
         private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();

@@ -46,6 +46,10 @@
       <DependentUpon>MarkdownWebView.cshtml</DependentUpon>
     </Compile>
     <Compile Include="Octicons.cs" />
+    <Compile Include="WebViews\DiffModel.cs" />
+    <Compile Include="WebViews\DiffWebView.cs">
+      <DependentUpon>DiffWebView.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebViews\" />
@@ -69,6 +73,10 @@
       <LastGenOutput>MarkdownWebView.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="WebViews\DiffWebView.cshtml">
+      <Generator>RazorTemplatePreprocessor</Generator>
+      <LastGenOutput>DiffWebView.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Humanizer">

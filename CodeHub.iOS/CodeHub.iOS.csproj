@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <MtouchArch>x86_64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
@@ -106,13 +106,10 @@
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
-    <Compile Include="Views\Source\SourceTreeView.cs" />
     <Compile Include="Views\Repositories\ReadmeView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Source\BranchesAndTagsView.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
-    <Compile Include="Views\Source\SourceView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\Source\ChangesetDiffView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
@@ -313,6 +310,14 @@
     <Compile Include="Views\ButtonAccessoryView.cs" />
     <Compile Include="ViewControllers\Search\RepositoryExploreViewController.cs" />
     <Compile Include="ViewControllers\Search\UserExploreViewController.cs" />
+    <Compile Include="ViewControllers\Source\BranchesAndTagsViewController.cs" />
+    <Compile Include="ViewControllers\Source\BranchesViewController.cs" />
+    <Compile Include="Views\SourceTitleView.cs" />
+    <Compile Include="ViewControllers\Source\TagsViewController.cs" />
+    <Compile Include="ViewControllers\Source\SourceTreeViewController.cs" />
+    <Compile Include="ViewControllers\Source\FileSourceViewController.cs" />
+    <Compile Include="Utilities\ShaType.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -462,11 +467,6 @@
     <BundleResource Include="Images\Buttons\three_lines%402x.png" />
     <BundleResource Include="Images\Buttons\sort%402x.png" />
     <BundleResource Include="Images\Buttons\sort.png" />
-    <Content Include="Diff\app.js" />
-    <Content Include="Diff\diffindex.html" />
-    <Content Include="Diff\difflib.js" />
-    <Content Include="Diff\diffview.css" />
-    <Content Include="Diff\diffview.js" />
     <BundleResource Include="Images\Logos\dotcom-mascot.png" />
     <BundleResource Include="Images\Logos\enterprise-mascot.png" />
     <BundleResource Include="Images\down_chevron.png" />
@@ -583,6 +583,8 @@
     <Folder Include="ViewControllers\Events\" />
     <Folder Include="Resources\Images.xcassets\UnknownUser.imageset\" />
     <Folder Include="Resources\Images.xcassets\Avatar.imageset\" />
+    <Folder Include="ViewControllers\Source\" />
+    <Folder Include="ViewControllers\PullRequests\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

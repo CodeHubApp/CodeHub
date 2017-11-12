@@ -48,7 +48,6 @@
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
     <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
     <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
-    <Compile Include="ViewModels\Source\SourceViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
@@ -67,8 +66,6 @@
     <Compile Include="ViewModels\Repositories\RepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Events\RepositoryEventsViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
-    <Compile Include="ViewModels\Source\SourceTreeViewModel.cs" />
-    <Compile Include="ViewModels\Source\BranchesAndTagsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistFileViewModel.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Source\ChangesetDiffViewModel.cs" />

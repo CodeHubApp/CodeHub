@@ -24,7 +24,7 @@ namespace CodeHub.iOS
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/$", typeof(CodeHub.Core.ViewModels.Changesets.CommitsViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/(?<Node>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Changesets.ChangesetViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Issues.IssueViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(CodeHub.Core.ViewModels.Source.SourceTreeViewModel)),
+            //new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/tree/(?<Branch>[^/]*)/(?<Path>.*)$", typeof(CodeHub.Core.ViewModels.Source.SourceTreeViewModel)),
         };
 
         public static bool Handle(string path)

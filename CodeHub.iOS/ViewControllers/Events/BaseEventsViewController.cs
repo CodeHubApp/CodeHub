@@ -5,11 +5,19 @@ using GitHubSharp.Models;
 using UIKit;
 using System.Collections.Generic;
 using CodeHub.Core.Utilities;
+using CodeHub.iOS.ViewControllers.Source;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Events
 {
     public abstract class BaseEventsViewController : ViewModelCollectionDrivenDialogViewController
     {
+        public new BaseEventsViewModel ViewModel
+        {
+            get { return (BaseEventsViewModel)base.ViewModel; }
+            set { base.ViewModel = value; }
+        }
+
         private static IDictionary<EventType, Octicon> _eventToImage 
         = new Dictionary<EventType, Octicon>
         {
@@ -42,7 +50,26 @@ namespace CodeHub.iOS.ViewControllers.Events
             base.ViewDidLoad();
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 64f;
-            BindCollection(((BaseEventsViewModel)ViewModel).Events, CreateElement);
+            BindCollection(ViewModel.Events, CreateElement);
+
+            this.OnActivation(d =>
+            {
+                d(ViewModel.GoToBranchCommand
+                  .Subscribe(branch =>
+                {
+                    var viewController = new SourceTreeViewController(
+                        branch.Item1.Owner, branch.Item1.Name, null, branch.Item2, Utilities.ShaType.Branch);
+                    this.PushViewController(viewController);
+                }));
+
+                d(ViewModel.GoToTagCommand
+                  .Subscribe(branch =>
+                  {
+                      var viewController = new SourceTreeViewController(
+                          branch.Item1.Owner, branch.Item1.Name, null, branch.Item2, Utilities.ShaType.Tag);
+                      this.PushViewController(viewController);
+                  }));
+            });
         }
 
         private static Element CreateElement(Tuple<EventModel, BaseEventsViewModel.EventBlock> e)

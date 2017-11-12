@@ -10,6 +10,8 @@ using ReactiveUI;
 using CodeHub.iOS.Services;
 using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers.Users;
+using CodeHub.iOS.ViewControllers.Source;
+using CodeHub.iOS.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -51,7 +53,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             OnActivation(d =>
             {
                 d(_watchers.Clicked
-				  .Select(_ => ViewModel)
+                  .Select(_ => ViewModel)
                   .Select(x => UsersViewController.CreateWatchersViewController(x.Username, x.RepositoryName))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
@@ -73,7 +75,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
                 d(_commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand));
                 d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
-                d(_sourceElement.Clicked.BindCommand(ViewModel.GoToSourceCommand));
+                d(_sourceElement.Clicked.Subscribe(_ => GoToSourceCode()));
 
                 d(ViewModel.Bind(x => x.Branches, true).Subscribe(_ => Render()));
                 d(ViewModel.Bind(x => x.Readme, true).Subscribe(_ => Render()));
@@ -181,6 +183,20 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             ViewModel = new RepositoryViewModel();
             ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repository });
+        }
+
+        private void GoToSourceCode()
+        {
+            var defaultBranch = ViewModel.Repository?.DefaultBranch;
+            if (string.IsNullOrEmpty(defaultBranch))
+                return;
+
+            this.PushViewController(new SourceTreeViewController(
+                ViewModel.Username,
+                ViewModel.RepositoryName,
+                null,
+                defaultBranch,
+                ShaType.Branch));
         }
 
         public RepositoryViewController()

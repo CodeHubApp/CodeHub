@@ -10,14 +10,12 @@ using WebKit;
 using CodeHub.iOS.Services;
 using Splat;
 using Newtonsoft.Json;
+using CodeHub.WebViews;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetDiffView : FileSourceView
     {
-        private bool _domLoaded = false;
-        private List<string> _toBeExecuted = new List<string>();
-
         public new ChangesetDiffViewModel ViewModel
         {
             get { return (ChangesetDiffViewModel)base.ViewModel; }
@@ -32,8 +30,14 @@ namespace CodeHub.iOS.Views.Source
             ViewModel.Bind(x => x.FilePath).Subscribe(x =>
             {
                 var data = System.IO.File.ReadAllText(x, System.Text.Encoding.UTF8);
-                var patch = JavaScriptStringEncode(data);
-                ExecuteJavascript("var a = \"" + patch + "\"; patch(a);");
+
+                var diffModel = new DiffModel(
+                    data.Split('\n'),
+                    Enumerable.Empty<DiffCommentModel>(),
+                    (int)UIFont.PreferredSubheadline.PointSize);
+                
+                var diffView = new DiffWebView { Model = diffModel };
+                LoadContent(diffView.GenerateString());
             });
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(e =>
@@ -49,27 +53,6 @@ namespace CodeHub.iOS.Views.Source
             });
         }
 
-        private bool _isLoaded;
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            if (!_isLoaded)
-            {
-                try 
-                {
-                    var path = System.IO.Path.Combine (NSBundle.MainBundle.BundlePath, "Diff", "diffindex.html");
-                    var uri = Uri.EscapeUriString ("file://" + path) + "#" + Environment.TickCount;
-                    Web.LoadRequest (new NSUrlRequest (new NSUrl (uri)));
-                    _isLoaded = true;
-                } 
-                catch (Exception e)
-                {
-                    this.Log().ErrorException("Unable to load ChangesetDiffView", e);
-                }
-            }
-        }
-
         private class JavascriptCommentModel
         {
             public int PatchLine { get; set; }
@@ -82,13 +65,7 @@ namespace CodeHub.iOS.Views.Source
             if(url.Scheme.Equals("app")) {
                 var func = url.Host;
 
-                if (func.Equals("ready"))
-                {
-                    _domLoaded = true;
-                    foreach (var e in _toBeExecuted)
-                        Web.EvaluateJavaScript(e, null);
-                }
-                else if(func.Equals("comment")) 
+                if(func.Equals("comment")) 
                 {
                     var commentModel = JsonConvert.DeserializeObject<JavascriptCommentModel>(UrlDecode(url.Fragment));
                     PromptForComment(commentModel);
@@ -102,10 +79,7 @@ namespace CodeHub.iOS.Views.Source
 
         private void ExecuteJavascript(string data)
         {
-            if (_domLoaded)
-                InvokeOnMainThread(() => Web.EvaluateJavaScript(data, null));
-            else
-                _toBeExecuted.Add(data);
+
         }
 
         private void PromptForComment(JavascriptCommentModel model)

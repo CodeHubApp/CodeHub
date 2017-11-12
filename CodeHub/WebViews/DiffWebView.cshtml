@@ -1,0 +1,236 @@
+﻿@model DiffModel
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <style>
+      head, body {
+        margin: 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Menlo,Consolas,monospace;
+        font-size: @(Model.FontSize)px;
+      }
+
+      td {
+        height: 20px;
+        line-height: 20px;
+      }
+
+      .content {
+        white-space: nowrap;
+        padding: 0 10px;
+        border-left: 1px solid #eee;
+      }
+
+      .code-line {
+        display: inline;
+        background: 0 0;
+        padding: 0;
+        word-wrap: normal;
+        white-space: pre;
+      }
+
+      .line-prefix {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        display: inline;
+        background: 0 0;
+        padding: 0;
+        word-wrap: normal;
+        white-space: pre;
+      }
+
+      tr.insert > td {
+        background-color: #dfd;
+        border-color: #b4e2b4;
+      }
+
+      tr.delete > td {
+        background-color: #fee8e9;
+        border-color: #e9aeae;
+      }
+
+      tr.info > td {
+        background-color: #f8fafd;
+        color: rgba(0,0,0,.3);
+        border-color: #d5e4f2;
+      }
+
+      .line-number {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        width: 40px;
+        color: rgba(0,0,0,.3);
+        text-align: right;
+        cursor: pointer;
+        padding: 0 10px 0 0;
+      }
+
+      .comment > td {
+        padding: 5px;
+        border-top: 1px solid #d5e4f2;
+        border-bottom: 1px solid #d5e4f2;
+      }
+
+      .comment-inner {
+        border: 1px solid #d5e4f2;
+        border-radius: 2px;
+      }
+
+      .reply-line {
+        border-top: 1px solid #d5e4f2;
+        padding: 0;
+      }
+
+      .reply-line button {
+        width: 100%;
+        background: #f6f8fa;
+        height: 32px;
+        border: none;
+        font-weight: 700;
+      }
+
+      .reply-line button:active {
+        background: #e6e8eb;
+        border: 1px solid #c4c4c4;
+      }
+
+      img.avatar {
+        margin-top: 4px;
+        border-radius: 2px;
+        float: left;
+      }
+
+      .comment-content {
+        margin-left: 44px;
+      }
+
+      .comment-line {
+        padding: 8px 8px
+      }
+
+      .comment-content h4 {
+        display: inline !important;
+        margin-top: 0;
+        margin-bottom: 0;
+        font-weight: 400;
+      }
+
+      .text-gray {
+        color: #586069 !important
+      }
+
+      .comment-body {
+        width: 100%;
+        padding: 0;
+        overflow: visible;
+      }
+    </style>
+	<script>
+    function invokeNative(functionName, args) {
+        try
+        {
+            var iframe = document.createElement('IFRAME');
+            iframe.setAttribute('src', 'app://' + functionName + '#' + JSON.stringify(args));
+            document.body.appendChild(iframe);
+            iframe.parentNode.removeChild(iframe);
+            iframe = null;  
+        }
+        catch (err)
+        {
+            alert(err.message);
+        }
+    }
+	</script>
+  </head>
+  <body>
+    <table>
+      <tbody>
+        @foreach (var comment in Model.FileComments)
+		{
+		}
+				
+        @foreach (var chunk in Model.Chunks)
+		{
+	        <tr class="info">
+              <td class="line-number">...</td>
+              <td class="line-number">...</td>
+              <td class="content">@chunk.Content</td>
+            </tr>
+
+    		foreach (var line in chunk.Lines)
+			{
+				if (line.LineEquality == DiffModel.LineEquality.Equal)
+				{
+			        <tr>
+                      <td class="line-number">@line.BaseLine</td>
+                      <td class="line-number">@line.NewLine</td>
+                      <td class="content">
+                        <span class="line-prefix">&nbsp;</span>
+                        <span class="code-line">@line.Content</span>
+                      </td>
+                    </tr>
+				}
+				else if (line.LineEquality == DiffModel.LineEquality.Insert)
+                {
+                    <tr class="insert">
+                      <td class="line-number"></td>
+                      <td class="line-number">@line.NewLine</td>
+                      <td class="content">
+                        <span class="line-prefix">+</span>
+                        <span class="code-line">@line.Content</span>
+                      </td>
+                    </tr>
+                }
+				else if (line.LineEquality == DiffModel.LineEquality.Delete)
+                {
+                    <tr class="delete">
+                      <td class="line-number">@line.BaseLine</td>
+                      <td class="line-number"></td>
+                      <td class="content">
+                        <span class="line-prefix">-</span>
+                        <span class="code-line">@line.Content</span>
+                      </td>
+                    </tr>
+                }
+
+				foreach (var comment in line.Comments)
+				{
+    		        <tr class="comment">
+                      <td colspan="3">
+                        <div class="comment-inner">
+                          <div class="comment-line">
+                            <img src="@comment.AvatarUrl" class="avatar" width="28" height="28" />
+                            <div class="comment-content">
+                              <h4><strong>@comment.Username</strong> <span class="text-gray">@comment.Date</span></h4>
+                              <div class="comment-body">
+                                @comment.Body
+                              </div>
+                            </div>
+                          </div>
+                          <div class="reply-line">
+                            <button>Reply</button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+				}
+			}
+		}
+      </tbody>
+    </table>
+  </body>
+</html>

@@ -45,24 +45,16 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return new MvxCommand(() => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = User, Repository = Repository })); }
         }
 
-        public ICommand GoToFileCommand
+        public ICommand GoToDiffCommand
         {
             get
-            { 
+            {
                 return new MvxCommand<CommitModel.CommitFileModel>(x =>
                 {
-                        if (x.Patch == null)
-                        {
-                            ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { GitUrl = x.ContentsUrl, HtmlUrl = x.BlobUrl, Name = x.Filename, Path = x.Filename, ForceBinary = true });
-                        }
-                        else
-                        {
-                            Mvx.Resolve<CodeHub.Core.Services.IViewModelTxService>().Add(x);
-                            ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
-                        }
-
+                        Mvx.Resolve<IViewModelTxService>().Add(x);
+                        ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = User, Repository = Repository, Branch = _commitModel.Sha, Filename = x.Filename });
                 });
-            }
+            } 
         }
 
         public ICommand GoToHtmlUrlCommand

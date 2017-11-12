@@ -59,13 +59,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
 
-        private List<TagModel> _tags;
-        public List<TagModel> Tags
-        {
-            get { return _tags; }
-            private set { this.RaiseAndSetIfChanged(ref _tags, value); }
-        }
-
         public RepositoryViewModel(IApplicationService applicationService = null)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
@@ -112,11 +105,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
         }
 
-        public ICommand GoToSourceCommand
-        {
-            get { return new MvxCommand(GoToSource); }
-        }
-
         public ICommand GoToHtmlUrlCommand
         {
             get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = Repository.HtmlUrl }), () => Repository != null); }
@@ -133,28 +121,6 @@ namespace CodeHub.Core.ViewModels.Repositories
         public ICommand PinCommand
         {
             get { return new MvxCommand(PinRepository, () => Repository != null); }
-        }
-
-        private void GoToSource()
-        {
-            if (Branches?.Count == 1 && Tags?.Count == 0)
-            {
-                ShowViewModel<SourceTreeViewModel>(new SourceTreeViewModel.NavObject
-                {
-                    Username = Username,
-                    Repository = RepositoryName,
-                    Branch = Branches.First().Name,
-                    TrueBranch = true
-                });
-            }
-            else
-            {
-                ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
-                {
-                    Username = Username,
-                    Repository = RepositoryName
-                });
-            }
         }
 
         private void PinRepository()
@@ -204,9 +170,6 @@ namespace CodeHub.Core.ViewModels.Repositories
          
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
                 response => IsStarred = response.Data).ToBackground();
-
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetTags(perPage: 1),
-                response => Tags = response.Data).ToBackground();
 
             return t1;
         }

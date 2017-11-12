@@ -1,10 +1,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CodeHub.Core.ViewModels;
-using GitHubSharp.Models;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Source;
+using GitHubSharp.Models;
 using MvvmCross.Core.ViewModels;
+using MvvmCross.Platform;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -23,14 +24,16 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Repository { get; private set; }
 
-        public ICommand GoToSourceCommand
+        public string Sha { get; private set; }
+
+        public ICommand GoToDiffCommand
         {
-            get 
-            { 
-                return new MvxCommand<CommitModel.CommitFileModel>(x => 
+            get
+            {
+                return new MvxCommand<CommitModel.CommitFileModel>(x =>
                 {
-                    var name = x.Filename.Substring(x.Filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
-                    ShowViewModel<SourceViewModel>(new SourceViewModel.NavObject { Name = name, Path = x.Filename, GitUrl = x.ContentsUrl, ForceBinary = x.Patch == null });
+                    Mvx.Resolve<IViewModelTxService>().Add(x);
+                    ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = Username, Repository = Repository, Branch = Sha, Filename = x.Filename });
                 });
             }
         }
@@ -40,6 +43,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
             Username = navObject.Username;
             Repository = navObject.Repository;
             PullRequestId = navObject.PullRequestId;
+            Sha = navObject.Sha;
 
             _files.GroupingFunction = (x) => x.GroupBy(y => {
                 var filename = "/" + y.Filename;
@@ -56,6 +60,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             public string Username { get; set; }
             public string Repository { get; set; }
+            public string Sha { get; set; }
             public long PullRequestId { get; set; }
         }
     }

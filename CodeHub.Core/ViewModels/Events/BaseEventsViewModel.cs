@@ -4,18 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.Core.ViewModels.Repositories;
-using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.User;
 using GitHubSharp;
 using GitHubSharp.Models;
 using CodeHub.Core.Utils;
 using CodeHub.Core.ViewModels.Changesets;
-using System.Dynamic;
+using System.Reactive;
+using System.Reactive.Subjects;
 
 namespace CodeHub.Core.ViewModels.Events
 {
@@ -23,16 +22,13 @@ namespace CodeHub.Core.ViewModels.Events
     {
         private readonly CollectionViewModel<Tuple<EventModel, EventBlock>> _events = new CollectionViewModel<Tuple<EventModel, EventBlock>>();
 
-        public CollectionViewModel<Tuple<EventModel, EventBlock>> Events
-        {
-            get { return _events; }
-        }
+        public readonly ISubject<Tuple<RepositoryIdentifier, string>> GoToTagCommand = new Subject<Tuple<RepositoryIdentifier, string>>();
 
-        public bool ReportRepository
-        {
-            get;
-            private set;
-        }
+        public readonly ISubject<Tuple<RepositoryIdentifier, string>> GoToBranchCommand = new Subject<Tuple<RepositoryIdentifier, string>>();
+
+        public CollectionViewModel<Tuple<EventModel, EventBlock>> Events => _events;
+
+        public bool ReportRepository { get; private set; }
 
         protected BaseEventsViewModel()
         {
@@ -105,28 +101,21 @@ namespace CodeHub.Core.ViewModels.Events
             ShowViewModel<UserViewModel>(new UserViewModel.NavObject {Username = username});
         }
 
-        private void GoToBranches(RepositoryIdentifier repoId)
+        private void GoToBranch(RepositoryIdentifier repoId, string branchName)
         {
-            ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
-            {
-                Username = repoId.Owner,
-                Repository = repoId.Name,
-                IsShowingBranches = true
-            });
+            if (repoId == null)
+                return;
+            
+            GoToBranchCommand.OnNext(Tuple.Create(repoId, branchName));
         }
 
-        private void GoToTags(EventModel.RepoModel eventModel)
+        private void GoToTag(EventModel.RepoModel eventModel, string tagName)
         {
             var repoId = RepositoryIdentifier.FromFullName(eventModel.Name);
             if (repoId == null)
                 return;
-            
-            ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject
-            {
-                Username = repoId?.Owner,
-                Repository = repoId?.Name,
-                IsShowingBranches = false
-            });
+
+            GoToTagCommand.OnNext(Tuple.Create(repoId, tagName));
         }
 
         public ICommand GoToGistCommand
@@ -226,7 +215,7 @@ namespace CodeHub.Core.ViewModels.Events
                 }
                 else if (createEvent.RefType.Equals("branch"))
                 {
-                    eventBlock.Tapped = () => GoToBranches(repoId);
+                    eventBlock.Tapped = () => GoToBranch(repoId, createEvent.Ref);
                     eventBlock.Header.Add(new TextBlock(" created branch "));
                     eventBlock.Header.Add(new AnchorBlock(createEvent.Ref, eventBlock.Tapped));
 
@@ -238,7 +227,7 @@ namespace CodeHub.Core.ViewModels.Events
                 }
                 else if (createEvent.RefType.Equals("tag"))
                 {
-                    eventBlock.Tapped = () => GoToTags(eventModel.Repo);
+                    eventBlock.Tapped = () => GoToTag(eventModel.Repo, createEvent.Ref);
                     eventBlock.Header.Add(new TextBlock(" created tag "));
                     eventBlock.Header.Add(new AnchorBlock(createEvent.Ref, eventBlock.Tapped));
 
@@ -256,12 +245,12 @@ namespace CodeHub.Core.ViewModels.Events
             {
                 if (deleteEvent.RefType.Equals("branch"))
                 {
-                    eventBlock.Tapped = () => GoToBranches(repoId);
+                    eventBlock.Tapped = () => GoToRepository(eventModel.Repo);
                     eventBlock.Header.Add(new TextBlock(" deleted branch "));
                 }
                 else if (deleteEvent.RefType.Equals("tag"))
                 {
-                    eventBlock.Tapped = () => GoToTags(eventModel.Repo);
+                    eventBlock.Tapped = () => GoToRepository(eventModel.Repo);
                     eventBlock.Header.Add(new TextBlock(" deleted tag "));
                 }
                 else
@@ -313,7 +302,7 @@ namespace CodeHub.Core.ViewModels.Events
                 eventBlock.Header.Add(new TextBlock(" applied fork to "));
                 eventBlock.Header.Add(CreateRepositoryTextBlock(eventModel.Repo));
                 eventBlock.Header.Add(new TextBlock(" on branch "));
-                eventBlock.Header.Add(new AnchorBlock(forkEvent.Head, () => GoToBranches(repoId)));
+                eventBlock.Header.Add(new AnchorBlock(forkEvent.Head, () => GoToBranch(repoId, forkEvent.Head)));
             }
             /*
              * GIST EVENT
@@ -497,7 +486,7 @@ namespace CodeHub.Core.ViewModels.Events
 
                 eventBlock.Header.Add(new TextBlock(" pushed to "));
                 if (branchRef != null)
-                    eventBlock.Header.Add(new AnchorBlock(branchRef, () => GoToBranches(repoId)));
+                    eventBlock.Header.Add(new AnchorBlock(branchRef, () => GoToBranch(repoId, branchRef)));
 
                 if (ReportRepository)
                 {

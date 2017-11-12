@@ -12,6 +12,7 @@ using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Repositories;
 
 namespace CodeHub.Core.ViewModels.Notifications
 {
@@ -86,7 +87,7 @@ namespace CodeHub.Core.ViewModels.Notifications
             else if (subject.Equals("release"))
             {
                 ReadCommand.Execute(x);
-                ShowViewModel<BranchesAndTagsViewModel>(new BranchesAndTagsViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, IsShowingBranches = false });
+                ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name });
             }
         }
 

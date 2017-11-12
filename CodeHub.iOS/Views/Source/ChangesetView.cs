@@ -11,12 +11,13 @@ using CodeHub.iOS.Services;
 using CodeHub.iOS.ViewControllers.Repositories;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using CodeHub.iOS.ViewControllers.Source;
 
 namespace CodeHub.iOS.Views.Source
 {
     public class ChangesetView : PrettyDialogViewController
     {
-        public new ChangesetViewModel ViewModel 
+        public new ChangesetViewModel ViewModel
         {
             get { return (ChangesetViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
@@ -36,7 +37,8 @@ namespace CodeHub.iOS.Views.Source
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            ViewModel.Bind(x => x.Changeset).Subscribe(x => {
+            ViewModel.Bind(x => x.Changeset).Subscribe(x =>
+            {
                 var msg = x.Commit.Message ?? string.Empty;
                 msg = msg.Split('\n')[0];
                 HeaderView.Text = msg.Split('\n')[0];
@@ -57,11 +59,29 @@ namespace CodeHub.iOS.Views.Source
             });
         }
 
+        private void FileClicked(GitHubSharp.Models.CommitModel.CommitFileModel file)
+        {
+            if (file.Patch == null)
+            {
+                var viewController = new FileSourceViewController(
+                    ViewModel.User, ViewModel.Repository, file.Filename,
+                    ViewModel.Changeset.Sha, ShaType.Hash);
+
+                this.PushViewController(viewController);
+            }
+            else
+            {
+                ViewModel.GoToDiffCommand.Execute(file);
+            }
+        }
+
         public void Render()
         {
             var commitModel = ViewModel.Changeset;
             if (commitModel == null)
                 return;
+
+            var weakReference = new WeakReference<ChangesetView>(this);
 
             ICollection<Section> sections = new LinkedList<Section>();
 
@@ -89,10 +109,11 @@ namespace CodeHub.iOS.Views.Source
 
             if (ViewModel.ShowRepository)
             {
-                var repo = new StringElement(ViewModel.Repository) { 
-                    Accessory = UITableViewCellAccessory.DisclosureIndicator, 
-                    Lines = 1, 
-                    Font = UIFont.PreferredSubheadline, 
+                var repo = new StringElement(ViewModel.Repository)
+                {
+                    Accessory = UITableViewCellAccessory.DisclosureIndicator,
+                    Lines = 1,
+                    Font = UIFont.PreferredSubheadline,
                     TextColor = StringElement.DefaultDetailColor,
                     Image = Octicon.Repo.ToImage()
                 };
@@ -100,7 +121,8 @@ namespace CodeHub.iOS.Views.Source
                 detailSection.Add(repo);
             }
 
-            var paths = commitModel.Files.GroupBy(y => {
+            var paths = commitModel.Files.GroupBy(y =>
+            {
                 var filename = "/" + y.Filename;
                 return filename.Substring(0, filename.LastIndexOf("/", System.StringComparison.Ordinal) + 1);
             }).OrderBy(y => y.Key);
@@ -113,23 +135,23 @@ namespace CodeHub.iOS.Views.Source
                     var y = x;
                     var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
                     var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-                    sse.Clicked.Subscribe(_ => ViewModel.GoToFileCommand.Execute(y));
+                    sse.Clicked.Subscribe(_ => weakReference.Get()?.FileClicked(y));
                     fileSection.Add(sse);
                 }
                 sections.Add(fileSection);
             }
-//
-//            var fileSection = new Section();
-//            commitModel.Files.ForEach(x => {
-//                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
-//                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
-//                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
-//                fileSection.Add(sse);
-//            });
+            //
+            //            var fileSection = new Section();
+            //            commitModel.Files.ForEach(x => {
+            //                var file = x.Filename.Substring(x.Filename.LastIndexOf('/') + 1);
+            //                var sse = new ChangesetElement(file, x.Status, x.Additions, x.Deletions);
+            //                sse.Tapped += () => ViewModel.GoToFileCommand.Execute(x);
+            //                fileSection.Add(sse);
+            //            });
 
-//            if (fileSection.Elements.Count > 0)
-//                root.Add(fileSection);
-//
+            //            if (fileSection.Elements.Count > 0)
+            //                root.Add(fileSection);
+            //
 
             var commentSection = new Section();
             foreach (var comment in ViewModel.Comments)
@@ -147,7 +169,7 @@ namespace CodeHub.iOS.Views.Source
             var addComment = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
             addComment.Clicked.Subscribe(_ => AddCommentTapped());
             sections.Add(new Section { addComment });
-            Root.Reset(sections); 
+            Root.Reset(sections);
         }
 
         void AddCommentTapped()
