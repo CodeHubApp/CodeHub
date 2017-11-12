@@ -31,13 +31,13 @@ namespace CodeHub.WebViews
         {
             int baseLine = 0;
             int newLine = 0;
-            var idx = 0;
             string contextLine = null;
             LinkedList<Line> lines = null;
 
-            foreach (var line in patchLines)
+            foreach (var patchLine in patchLines.Select((line, idx) => new { line, idx }))
             {
-                idx++;
+                var line = patchLine.line;
+                var idx = patchLine.idx;
 
                 if (line.StartsWith("@@", StringComparison.Ordinal))
                 {
@@ -60,12 +60,12 @@ namespace CodeHub.WebViews
             
                 if (line.StartsWith("+", StringComparison.Ordinal))
                 {
-                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Insert, line.Substring(1), lineComments));
+                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Insert, line.Substring(1), idx, lineComments));
                     newLine++;
                 }
                 else if (line.StartsWith("-", StringComparison.Ordinal))
                 {
-                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Delete, line.Substring(1), lineComments));
+                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Delete, line.Substring(1), idx, lineComments));
                     baseLine++;
                 }
                 else if (line.StartsWith("\\", StringComparison.Ordinal))
@@ -74,7 +74,7 @@ namespace CodeHub.WebViews
                 }
                 else
                 {
-                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Equal, line.Substring(1), lineComments));
+                    lines.AddLast(new Line(baseLine, newLine, LineEquality.Equal, line.Substring(1), idx, lineComments));
                     baseLine++;
                     newLine++;
                 }
@@ -102,15 +102,21 @@ namespace CodeHub.WebViews
             public int? NewLine { get; }
             public LineEquality LineEquality { get; }
             public string Content { get; }
-            public List<DiffCommentModel> Comments { get; }
+            public List<KeyValuePair<int, List<DiffCommentModel>>> CommentSets { get; }
+            public int Index { get; }
 
-            public Line(int? baseLine, int? newLine, LineEquality lineEquality, string content, IEnumerable<DiffCommentModel> comments)
+            public Line(int? baseLine, int? newLine, LineEquality lineEquality, string content, int index, IEnumerable<DiffCommentModel> comments)
             {
                 BaseLine = baseLine;
                 NewLine = newLine;
                 LineEquality = lineEquality;
                 Content = content;
-                Comments = (comments ?? Enumerable.Empty<DiffCommentModel>()).ToList();
+                Index = index;
+
+                CommentSets = (comments ?? Enumerable.Empty<DiffCommentModel>())
+                    .GroupBy(x => x.GroupId ?? index)
+                    .ToDictionary(x => x.Key, x => x.ToList())
+                    .ToList();
             }
         }
 
@@ -120,16 +126,5 @@ namespace CodeHub.WebViews
             Insert,
             Delete
         }
-    }
-
-    public class DiffCommentModel
-    {
-        public int Id;
-        public string Username;
-        public string AvatarUrl;
-        public int? LineTo;
-        public int? LineFrom;
-        public string Body;
-        public string Date;
     }
 }

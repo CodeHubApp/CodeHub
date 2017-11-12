@@ -168,7 +168,7 @@ namespace CodeHub.iOS.ViewControllers
                 NSNotificationCenter.DefaultCenter.RemoveObserver(_showNotification);
         }
 
-        public void PresentAsModal(UIViewController parent, Action onSave, Action onClose = null)
+        public void PresentAsModal(UIViewController parent, Action<string> onSave, Action onClose = null)
         {
             onClose = onClose ?? new Action(() => parent.DismissViewController(true, null));
 
@@ -181,7 +181,7 @@ namespace CodeHub.iOS.ViewControllers
                   .Subscribe(_ => onClose?.Invoke()));
 
                 d(SendItem.GetClickedObservable()
-                  .Subscribe(_ => onSave?.Invoke()));
+                  .Subscribe(_ => onSave?.Invoke(this.Text)));
             });
 
             var navigationController = new UINavigationController(this);

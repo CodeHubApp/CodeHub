@@ -205,13 +205,13 @@ namespace CodeHub.iOS.Views.Issues
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async () =>
+            composer.PresentAsModal(this, async text =>
             {
                 UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
 
                 var hud = this.CreateHud();
                 hud.Show("Posting Comment...");
-                if (await ViewModel.AddComment(composer.Text))
+                if (await ViewModel.AddComment(text))
                     this.DismissViewController(true, null);
                 hud.Hide();
 

@@ -71,7 +71,11 @@ namespace CodeHub.iOS.Views.Source
             }
             else
             {
-                ViewModel.GoToDiffCommand.Execute(file);
+                var viewController = new CommitDiffViewController(
+                    ViewModel.User, ViewModel.Repository, ViewModel.Changeset.Sha,
+                    file.Filename, file.Patch);
+
+                this.PushViewController(viewController);
             }
         }
 
@@ -175,21 +179,24 @@ namespace CodeHub.iOS.Views.Source
         void AddCommentTapped()
         {
             var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async () =>
+            composer.PresentAsModal(this, async text =>
             {
-                UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
-
-                try
+                var hud = composer.CreateHud();
+                
+                using (UIApplication.SharedApplication.DisableInteraction())
+                using (NetworkActivity.ActivateNetwork())
+                using (hud.Activate("Commenting..."))
                 {
-                    await composer.DoWorkAsync("Commenting...", () => ViewModel.AddComment(composer.Text));
-                    DismissViewController(true, null);
+                    try
+                    {
+                        await ViewModel.AddComment(text);
+                        composer.DismissViewController(true, null);
+                    }
+                    catch (Exception e)
+                    {
+                        AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
+                    }
                 }
-                catch (Exception e)
-                {
-                    AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
-                }
-
-                UIApplication.SharedApplication.EndIgnoringInteractionEvents();
             });
         }
 

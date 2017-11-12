@@ -1,4 +1,6 @@
-﻿using UIKit;
+﻿using System;
+using System.Reactive.Disposables;
+using UIKit;
 
 namespace CodeHub.iOS.Utilities
 {
@@ -36,6 +38,12 @@ namespace CodeHub.iOS.Utilities
                 if (_active == 0)
                     MainApp.NetworkActivityIndicatorVisible = false;
             }
+        }
+
+        public static IDisposable ActivateNetwork()
+        {
+            PushNetworkActive();
+            return Disposable.Create(PopNetworkActive);
         }
     }
 }

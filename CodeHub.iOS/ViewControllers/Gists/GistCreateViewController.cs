@@ -152,9 +152,9 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 Text = ViewModel.Description
             };
 
-            composer.PresentAsModal(this, () =>
+            composer.PresentAsModal(this, text =>
             {
-                ViewModel.Description = composer.Text;
+                ViewModel.Description = text;
                 this.DismissViewController(true, null);
             });
         }

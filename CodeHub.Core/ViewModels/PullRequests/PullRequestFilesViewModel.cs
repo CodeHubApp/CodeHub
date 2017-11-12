@@ -26,18 +26,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public string Sha { get; private set; }
 
-        public ICommand GoToDiffCommand
-        {
-            get
-            {
-                return new MvxCommand<CommitModel.CommitFileModel>(x =>
-                {
-                    Mvx.Resolve<IViewModelTxService>().Add(x);
-                    ShowViewModel<ChangesetDiffViewModel>(new ChangesetDiffViewModel.NavObject { Username = Username, Repository = Repository, Branch = Sha, Filename = x.Filename });
-                });
-            }
-        }
-
         public void Init(NavObject navObject)
         {
             Username = navObject.Username;

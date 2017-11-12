@@ -15,29 +15,27 @@ using Splat;
 using UIKit;
 using WebKit;
 
-namespace CodeHub.iOS.ViewControllers.PullRequests
+namespace CodeHub.iOS.ViewControllers.Source
 {
-    public class PullRequestDiffViewController : BaseWebViewController
+    public class CommitDiffViewController : BaseWebViewController
     {
         private readonly IApplicationService _applicationService;
         private readonly INetworkActivityService _networkActivityService;
         private readonly string _username;
         private readonly string _repository;
-        private readonly int _pullRequestId;
         private readonly string _path;
         private readonly string _patch;
         private readonly string _commit;
 
-        private readonly ReactiveList<Octokit.PullRequestReviewComment> _comments
-             = new ReactiveList<Octokit.PullRequestReviewComment>();
+        private readonly ReactiveList<Octokit.CommitComment> _comments
+            = new ReactiveList<Octokit.CommitComment>();
 
-        public PullRequestDiffViewController(
+        public CommitDiffViewController(
             string username,
             string repository,
-            int pullRequestId,
+            string commit,
             string path,
             string patch,
-            string commit,
             IApplicationService applicationService = null,
             INetworkActivityService networkActivityService = null)
             : base(false)
@@ -46,7 +44,6 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             _networkActivityService = networkActivityService ?? Locator.Current.GetService<INetworkActivityService>();
             _username = username;
             _repository = repository;
-            _pullRequestId = pullRequestId;
             _path = path;
             _patch = patch;
             _commit = commit;
@@ -54,7 +51,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             Title = string.IsNullOrEmpty(_path) ? "Diff" : System.IO.Path.GetFileName(_path);
 
             var loadComments = ReactiveCommand.CreateFromTask(
-                _ => _applicationService.GitHubClient.PullRequest.ReviewComment.GetAll(_username, _repository, _pullRequestId));
+                _ => _applicationService.GitHubClient.Repository.Comment.GetAllForCommit(_username, _repository, _commit));
 
             loadComments
                 .ThrownExceptions
@@ -91,7 +88,6 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
                 .Select(comment => new DiffCommentModel
                 {
                     Id = comment.Id,
-                    GroupId = comment.Id,
                     Username = comment.User.Login,
                     AvatarUrl = comment.User.AvatarUrl,
                     LineTo = comment.Position,
@@ -134,7 +130,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
                 else if (func.Equals("reply-to"))
                 {
                     var commentModel = JsonConvert.DeserializeObject<JavascriptReplyComment>(UrlDecode(url.Fragment));
-                    ShowReplyCommentComposer(commentModel.Id);
+                    ShowCommentComposer(commentModel.Id);
                 }
 
                 return false;
@@ -168,20 +164,14 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
         {
             ShowComposer(async text =>
             {
-                var commentOptions = new Octokit.PullRequestReviewCommentCreate(text, _commit, _path, line);
-                var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.Create(
-                     _username, _repository, _pullRequestId, commentOptions);
-                _comments.Add(comment);
-            });
-        }
+                var commentOptions = new Octokit.NewCommitComment(text)
+                {
+                    Path = _path,
+                    Position = line
+                };
 
-        private void ShowReplyCommentComposer(int replyToId)
-        {
-            ShowComposer(async text =>
-            {
-                var commentOptions = new Octokit.PullRequestReviewCommentReplyCreate(text, replyToId);
-                var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.CreateReply(
-                     _username, _repository, _pullRequestId, commentOptions);
+                var comment = await _applicationService.GitHubClient.Repository.Comment.Create(
+                    _username, _repository, _commit, commentOptions);
                 _comments.Add(comment);
             });
         }

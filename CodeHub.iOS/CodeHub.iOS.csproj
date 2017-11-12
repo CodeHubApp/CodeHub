@@ -111,7 +111,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
     <Compile Include="Views\Source\FileSourceView.cs" />
-    <Compile Include="Views\Source\ChangesetDiffView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
@@ -318,6 +317,7 @@
     <Compile Include="ViewControllers\Source\FileSourceViewController.cs" />
     <Compile Include="Utilities\ShaType.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
+    <Compile Include="ViewControllers\Source\CommitDiffViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -154,15 +154,17 @@
             alert(err.message);
         }
     }
+    function lineClick(fileLine, patchLine) {
+		invokeNative("comment", { fileLine, patchLine });
+	}
+	function replyTo(id) {
+		invokeNative("reply-to", { id });
+	}
 	</script>
   </head>
   <body>
     <table>
-      <tbody>
-        @foreach (var comment in Model.FileComments)
-		{
-		}
-				
+      <tbody>	
         @foreach (var chunk in Model.Chunks)
 		{
 	        <tr class="info">
@@ -175,7 +177,7 @@
 			{
 				if (line.LineEquality == DiffModel.LineEquality.Equal)
 				{
-			        <tr>
+			        <tr onclick="lineClick(@line.Index, @line.NewLine)">
                       <td class="line-number">@line.BaseLine</td>
                       <td class="line-number">@line.NewLine</td>
                       <td class="content">
@@ -186,7 +188,7 @@
 				}
 				else if (line.LineEquality == DiffModel.LineEquality.Insert)
                 {
-                    <tr class="insert">
+                    <tr class="insert" onclick="lineClick(@line.Index, @line.NewLine)">
                       <td class="line-number"></td>
                       <td class="line-number">@line.NewLine</td>
                       <td class="content">
@@ -197,7 +199,7 @@
                 }
 				else if (line.LineEquality == DiffModel.LineEquality.Delete)
                 {
-                    <tr class="delete">
+                    <tr class="delete" onclick="lineClick(@line.Index, @line.BaseLine)">
                       <td class="line-number">@line.BaseLine</td>
                       <td class="line-number"></td>
                       <td class="content">
@@ -207,11 +209,13 @@
                     </tr>
                 }
 
-				foreach (var comment in line.Comments)
+				foreach (var commentSet in line.CommentSets)
 				{
-    		        <tr class="comment">
-                      <td colspan="3">
-                        <div class="comment-inner">
+    		      <tr class="comment">
+                    <td colspan="3">
+                      <div class="comment-inner">
+                        @foreach (var comment in commentSet.Value)
+                        {
                           <div class="comment-line">
                             <img src="@comment.AvatarUrl" class="avatar" width="28" height="28" />
                             <div class="comment-content">
@@ -221,12 +225,13 @@
                               </div>
                             </div>
                           </div>
-                          <div class="reply-line">
-                            <button>Reply</button>
-                          </div>
+				        }
+                        <div class="reply-line">
+                          <button onclick="replyTo(@commentSet.Key)">Reply</button>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                    </td>
+                  </tr>
 				}
 			}
 		}

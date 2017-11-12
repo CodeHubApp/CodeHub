@@ -50,6 +50,7 @@
     <Compile Include="WebViews\DiffWebView.cs">
       <DependentUpon>DiffWebView.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="WebViews\DiffCommentModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebViews\" />

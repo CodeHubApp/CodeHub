@@ -62,13 +62,13 @@ namespace CodeHub.iOS.Views.Source
                 Text = "Update " + ViewModel.Path.Substring(ViewModel.Path.LastIndexOf('/') + 1)
             };
 
-            composer.PresentAsModal(this, () => CommitThis(composer, content, composer.Text).ToBackground());
+            composer.PresentAsModal(this, text => CommitThis(content, text).ToBackground());
         }
 
         /// <summary>
         /// Need another function because Xamarin generates an Invalid IL if used inline above
         /// </summary>
-        private async Task CommitThis(Composer composer, string content, string message)
+        private async Task CommitThis(string content, string message)
         {
             try
             {
@@ -79,7 +79,6 @@ namespace CodeHub.iOS.Views.Source
             catch (Exception ex)
             {
                 AlertDialogService.ShowAlert("Error", ex.Message);
-                composer.EnableSendButton = true;
             }
             finally
             {

@@ -65,6 +65,12 @@ namespace CodeHub.iOS.Utilities
 
             return new CompositeDisposable(d, d2);
         }
+
+        public static IDisposable Activate(this IHud hud, string text)
+        {
+            hud.Show(text);
+            return Disposable.Create(hud.Hide);
+        }
     }
 
     public interface IHud

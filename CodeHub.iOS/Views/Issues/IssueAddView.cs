@@ -69,9 +69,9 @@ namespace CodeHub.iOS.Views.Issues
                         Text = content.Details
                     };
 
-                    composer.PresentAsModal(this, () =>
+                    composer.PresentAsModal(this, text =>
                     {
-                        vm.Content = composer.Text;
+                        vm.Content = text;
                         this.DismissViewController(true, null);
                     });
                 }));

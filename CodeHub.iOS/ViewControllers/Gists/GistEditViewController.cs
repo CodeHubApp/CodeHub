@@ -208,9 +208,9 @@ namespace CodeHub.iOS.ViewControllers
                 Text = _model.Description
             };
 
-            composer.PresentAsModal(this, () =>
+            composer.PresentAsModal(this, text =>
             {
-                _model.Description = composer.Text;
+                _model.Description = text;
                 this.DismissViewController(true, null);
             });
         }

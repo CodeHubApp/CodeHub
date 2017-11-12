@@ -3,6 +3,7 @@ using ReactiveUI;
 using System.Reactive.Subjects;
 using System.Reactive.Linq;
 using Foundation;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -12,33 +13,24 @@ namespace CodeHub.iOS.ViewControllers
         private readonly ISubject<bool> _appearedSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearingSubject = new Subject<bool>();
         private readonly ISubject<bool> _disappearedSubject = new Subject<bool>();
+        private readonly ISubject<Unit> _loadedSubject = new Subject<Unit>();
 
-        #if DEBUG
+#if DEBUG
         ~BaseViewController()
         {
             Console.WriteLine("All done with " + GetType().Name);
         }
-        #endif
+#endif
 
-        public IObservable<bool> Appearing
-        {
-            get { return _appearingSubject.AsObservable(); }
-        }
+        public IObservable<Unit> Loaded => _loadedSubject.AsObservable();
 
-        public IObservable<bool> Appeared
-        {
-            get { return _appearedSubject.AsObservable(); }
-        }
+        public IObservable<bool> Appearing => _appearingSubject.AsObservable();
 
-        public IObservable<bool> Disappearing
-        {
-            get { return _disappearingSubject.AsObservable(); }
-        }
+        public IObservable<bool> Appeared => _appearedSubject.AsObservable();
 
-        public IObservable<bool> Disappeared
-        {
-            get { return _disappearedSubject.AsObservable(); }
-        }
+        public IObservable<bool> Disappearing => _disappearingSubject.AsObservable();
+
+        public IObservable<bool> Disappeared => _disappearedSubject.AsObservable();
 
         public void OnActivation(Action<Action<IDisposable>> d)
         {
@@ -83,6 +75,12 @@ namespace CodeHub.iOS.ViewControllers
         {
             base.ViewDidDisappear(animated);
             _disappearedSubject.OnNext(animated);
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            _loadedSubject.OnNext(Unit.Default);
         }
     }
 }

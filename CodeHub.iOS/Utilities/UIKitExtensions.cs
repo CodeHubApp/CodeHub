@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using Foundation;
 using System.Linq;
+using System.Reactive.Disposables;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -55,6 +56,12 @@ namespace UIKit
                 @this.StartAnimating();
             else
                 @this.StopAnimating();
+        }
+
+        public static IDisposable DisableInteraction(this UIApplication application)
+        {
+            application.BeginIgnoringInteractionEvents();
+            return Disposable.Create(application.EndIgnoringInteractionEvents);
         }
 
         public static string GetVersion(this UIApplication _) 
