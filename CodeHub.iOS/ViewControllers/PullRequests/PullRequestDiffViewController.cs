@@ -21,6 +21,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
     {
         private readonly IApplicationService _applicationService;
         private readonly INetworkActivityService _networkActivityService;
+        private readonly IMarkdownService _markdownService;
         private readonly string _username;
         private readonly string _repository;
         private readonly int _pullRequestId;
@@ -39,11 +40,13 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             string patch,
             string commit,
             IApplicationService applicationService = null,
-            INetworkActivityService networkActivityService = null)
+            INetworkActivityService networkActivityService = null,
+            IMarkdownService markdownService = null)
             : base(false)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _networkActivityService = networkActivityService ?? Locator.Current.GetService<INetworkActivityService>();
+            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
             _username = username;
             _repository = repository;
             _pullRequestId = pullRequestId;
@@ -96,7 +99,7 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
                     AvatarUrl = comment.User.AvatarUrl,
                     LineTo = comment.Position,
                     LineFrom = comment.Position,
-                    Body = comment.Body,
+                    Body = _markdownService.Convert(comment.Body),
                     Date = comment.CreatedAt.Humanize()
                 });
 

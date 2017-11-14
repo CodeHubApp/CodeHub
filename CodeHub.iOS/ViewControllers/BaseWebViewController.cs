@@ -14,7 +14,8 @@ namespace CodeHub.iOS.ViewControllers
 
         public WKWebView Web { get; private set; }
         private readonly bool _navigationToolbar;
-        private readonly  bool _showPageAsTitle;
+        private readonly bool _showPageAsTitle;
+        private bool _networkActivity;
    
         protected virtual void GoBack()
         {
@@ -100,10 +101,22 @@ namespace CodeHub.iOS.ViewControllers
             return true;
         }
 
+        private void ActivateLoadingIndicator()
+        {
+            if (!_networkActivity)
+                NetworkActivity.PushNetworkActive();
+            _networkActivity = true;
+        }
+
+        private void DeactivateLoadingIndicator()
+        {
+            if (_networkActivity)
+                NetworkActivity.PopNetworkActive();
+            _networkActivity = false;
+        }
+
         protected virtual void OnLoadError (NSError error)
         {
-            NetworkActivity.PopNetworkActive();
-
             if (BackButton != null)
             {
                 BackButton.Enabled = Web.CanGoBack;
@@ -114,7 +127,7 @@ namespace CodeHub.iOS.ViewControllers
 
         protected virtual void OnLoadStarted (object sender, EventArgs e)
         {
-            NetworkActivity.PushNetworkActive();
+            ActivateLoadingIndicator();
 
             if (RefreshButton != null)
                 RefreshButton.Enabled = false;
@@ -122,7 +135,7 @@ namespace CodeHub.iOS.ViewControllers
 
         protected virtual void OnLoadFinished(object sender, EventArgs e)
         {
-            NetworkActivity.PopNetworkActive();
+            DeactivateLoadingIndicator();
 
             if (BackButton != null)
             {

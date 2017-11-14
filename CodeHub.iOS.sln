@@ -203,8 +203,11 @@ Global
 		$9.inheritsSet = null
 		$9.scope = text/css
 		$0.TextStylePolicy = $10
-		$10.inheritsSet = null
-		$10.scope = text/css
+		$10.scope = text/x-cshtml
+		$10.FileWidth = 80
+		$10.TabsToSpaces = True
+		$10.TabWidth = 2
+		$10.IndentWidth = 2
 		$0.StandardHeader = $11
 		$0.NameConventionPolicy = $12
 		$12.Rules = $13

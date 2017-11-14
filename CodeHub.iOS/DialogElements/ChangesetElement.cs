@@ -54,7 +54,8 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
                 var addRemoveX = ContentView.Frame.Width - 90f;
-                AddRemoveView.Frame = new CoreGraphics.CGRect(addRemoveX, 12, 80f, 18f);
+                var addRemoveY = (ContentView.Frame.Height / 2) - 9f;
+                AddRemoveView.Frame = new CoreGraphics.CGRect(addRemoveX, addRemoveY, 80f, 18f);
 
                 var textFrame = TextLabel.Frame;
                 textFrame.Width = addRemoveX - textFrame.X - 5f;

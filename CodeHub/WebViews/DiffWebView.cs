@@ -84,26 +84,57 @@ WriteLiteral("px;\n      }\n\n      td {\n        height: 20px;\n        line-he
 " !important;\n        margin-top: 0;\n        margin-bottom: 0;\n        font-weigh" +
 "t: 400;\n      }\n\n      .text-gray {\n        color: #586069 !important\n      }\n\n " +
 "     .comment-body {\n        width: 100%;\n        padding: 0;\n        overflow: " +
-"visible;\n      }\n    </style>\n\t<script>\n    function invokeNative(functionName, " +
-"args) {\n        try\n        {\n            var iframe = document.createElement(\'I" +
-"FRAME\');\n            iframe.setAttribute(\'src\', \'app://\' + functionName + \'#\' + " +
-"JSON.stringify(args));\n            document.body.appendChild(iframe);\n          " +
-"  iframe.parentNode.removeChild(iframe);\n            iframe = null;  \n        }\n" +
-"        catch (err)\n        {\n            alert(err.message);\n        }\n    }\n  " +
-"  function lineClick(fileLine, patchLine) {\n\t\tinvokeNative(\"comment\", { fileLine" +
-", patchLine });\n\t}\n\tfunction replyTo(id) {\n\t\tinvokeNative(\"reply-to\", { id });\n\t" +
-"}\n\t</script>\n  </head>\n  <body>\n    <table>\n      <tbody>\t\n");
+"visible;\n      }\n      .comment-body > :first-child {\n        margin-top: 0 !imp" +
+"ortant;\n      }\n\t\t\t.comment-body > :last-child {\n  \t\t\tmargin-bottom: 0 !importan" +
+"t;\n\t\t\t}\n      .comment-body h1,\n      .comment-body h2,\n      .comment-body h3,\n" +
+"      .comment-body h4,\n      .comment-body h5,\n      .comment-body h6 {\n       " +
+" margin: 1em 0 15px;\n        padding: 0;\n        font-weight: bold;\n        line" +
+"-height: 1.7;\n        cursor: text;\n        position: relative;\n      }\n      .c" +
+"omment-body h1 {\n        font-size: 1.8em;\n        border-bottom: 1px solid #ddd" +
+";\n      }\n      .comment-body p,\n      .comment-body blockquote,\n      .comment-" +
+"body ul,\n      .comment-body ol,\n      .comment-body dl,\n      .comment-body tab" +
+"le,\n      .comment-body pre {\n        margin: 15px 0;\n      }\n      .comment-bod" +
+"y h2 {\n        font-size: 1.4em;\n        border-bottom: 1px solid #eee;\n      }\n" +
+"      .comment-body ul,\n      .comment-body ol {\n        padding-left: 20px;\n   " +
+"   }\n      .comment-body a {\n        color: #4183c4;\n        text-decoration: no" +
+"ne;\n        text-decoration: none;\n      }\n      .comment-body .highlight pre,\n " +
+"     .comment-body pre {\n        background-color: #f8f8f8;\n        border: 1px " +
+"solid #ddd;\n        line-height: 19px;\n        overflow: auto;\n        padding: " +
+"6px 10px;\n        border-radius: 3px;\n      }\n      .comment-body pre {\n        " +
+"word-wrap: normal;\n      }\n      .comment-body dl {\n        padding: 0;\n      }\n" +
+"      .comment-body dl dt {\n        font-weight: bold;\n        font-style: itali" +
+"c;\n        padding: 0;\n        margin-top: 15px;\n      }\n      .comment-body dl " +
+"dd {\n        margin-bottom: 15px;\n        padding: 0 15px;\n      }\n      .commen" +
+"t-body table {\n        width: 100%;\n        overflow: auto;\n        display: blo" +
+"ck;\n      }\n      .comment-body table tr {\n        border-top: 1px solid #ccc;\n " +
+"       background-color: #fff;\n      }\n      .comment-body table tr:nth-child(2n" +
+") {\n        background-color: #f8f8f8;\n      }\n      .comment-body table th,\n   " +
+"   .comment-body table td {\n        border: 1px solid #ddd;\n        padding: 6px" +
+" 13px;\n      }\n      .comment-body table th {\n        font-weight: bold;\n      }" +
+"\n      .comment-body img {\n        max-width: 100%;\n        -moz-box-sizing: bor" +
+"der-box;\n        box-sizing: border-box;\n      }\n      .comment-body ul.task-lis" +
+"t > li.task-list-item {\n        list-style-type: none;\n      }\n      .comment-bo" +
+"dy .task-list-item-checkbox {\n        margin-left: -20px;\n        vertical-align" +
+": middle;\n      }\n\n    </style>\n\t<script>\n    function invokeNative(functionName" +
+", args) {\n      try {\n        var iframe = document.createElement(\'IFRAME\');\n   " +
+"     iframe.setAttribute(\'src\', \'app://\' + functionName + \'#\' + JSON.stringify(a" +
+"rgs));\n        document.body.appendChild(iframe);\n        iframe.parentNode.remo" +
+"veChild(iframe);\n        iframe = null;  \n      } catch (err) {\n          alert(" +
+"err.message);\n      }\n    }\n    function lineClick(fileLine, patchLine) {\n  \t\tin" +
+"vokeNative(\"comment\", { fileLine, patchLine });\n  \t}\n  \tfunction replyTo(id) {\n " +
+" \t\tinvokeNative(\"reply-to\", { id });\n  \t}\n\t</script>\n  </head>\n  <body>\n    <tab" +
+"le>\n      <tbody>\t\n");
 
 
-#line 168 "DiffWebView.cshtml"
+#line 268 "DiffWebView.cshtml"
         
 
 #line default
 #line hidden
 
-#line 168 "DiffWebView.cshtml"
+#line 268 "DiffWebView.cshtml"
          foreach (var chunk in Model.Chunks)
-		{
+    		{
 
 
 #line default
@@ -112,301 +143,301 @@ WriteLiteral("\t        <tr");
 
 WriteLiteral(" class=\"info\"");
 
-WriteLiteral(">\n              <td");
+WriteLiteral(">\n            <td");
 
 WriteLiteral(" class=\"line-number\"");
 
-WriteLiteral(">...</td>\n              <td");
+WriteLiteral(">...</td>\n            <td");
 
 WriteLiteral(" class=\"line-number\"");
 
-WriteLiteral(">...</td>\n              <td");
+WriteLiteral(">...</td>\n            <td");
 
 WriteLiteral(" class=\"content\"");
 
 WriteLiteral(">");
 
 
-#line 173 "DiffWebView.cshtml"
-                             Write(chunk.Content);
+#line 273 "DiffWebView.cshtml"
+                           Write(chunk.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</td>\n            </tr>\n");
+WriteLiteral("</td>\n          </tr>\n");
 
 
-#line 175 "DiffWebView.cshtml"
+#line 275 "DiffWebView.cshtml"
 
     		foreach (var line in chunk.Lines)
-			{
-				if (line.LineEquality == DiffModel.LineEquality.Equal)
-				{
+  			{
+  				if (line.LineEquality == DiffModel.LineEquality.Equal)
+  				{
 
 
 #line default
 #line hidden
-WriteLiteral("\t\t\t        <tr");
+WriteLiteral("            <tr");
 
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 180 "DiffWebView.cshtml"
-    , Tuple.Create<string,object,bool> ("", line.Index
+#line 280 "DiffWebView.cshtml"
+, Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 180 "DiffWebView.cshtml"
-                , Tuple.Create<string,object,bool> (" ", line.NewLine
+#line 280 "DiffWebView.cshtml"
+        , Tuple.Create<string,object,bool> (" ", line.NewLine
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ")", true)
 );
-WriteLiteral(">\n                      <td");
+WriteLiteral(">\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
 WriteLiteral(">");
 
 
-#line 181 "DiffWebView.cshtml"
-                                         Write(line.BaseLine);
+#line 281 "DiffWebView.cshtml"
+                                 Write(line.BaseLine);
 
 
 #line default
 #line hidden
-WriteLiteral("</td>\n                      <td");
+WriteLiteral("</td>\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
 WriteLiteral(">");
 
 
-#line 182 "DiffWebView.cshtml"
-                                         Write(line.NewLine);
+#line 282 "DiffWebView.cshtml"
+                                 Write(line.NewLine);
 
 
 #line default
 #line hidden
-WriteLiteral("</td>\n                      <td");
+WriteLiteral("</td>\n              <td");
 
 WriteLiteral(" class=\"content\"");
 
-WriteLiteral(">\n                        <span");
+WriteLiteral(">\n                <span");
 
 WriteLiteral(" class=\"line-prefix\"");
 
-WriteLiteral(">&nbsp;</span>\n                        <span");
+WriteLiteral(">&nbsp;</span>\n                <span");
 
 WriteLiteral(" class=\"code-line\"");
 
 WriteLiteral(">");
 
 
-#line 185 "DiffWebView.cshtml"
-                                           Write(line.Content);
+#line 285 "DiffWebView.cshtml"
+                                   Write(line.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</span>\n                      </td>\n                    </tr>\n");
+WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 188 "DiffWebView.cshtml"
-				}
-				else if (line.LineEquality == DiffModel.LineEquality.Insert)
-                {
+#line 288 "DiffWebView.cshtml"
+  				}
+  				else if (line.LineEquality == DiffModel.LineEquality.Insert)
+          {
 
 
 #line default
 #line hidden
-WriteLiteral("                    <tr");
+WriteLiteral("            <tr");
 
 WriteLiteral(" class=\"insert\"");
 
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 191 "DiffWebView.cshtml"
-                   , Tuple.Create<string,object,bool> ("", line.Index
+#line 291 "DiffWebView.cshtml"
+           , Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 191 "DiffWebView.cshtml"
-                               , Tuple.Create<string,object,bool> (" ", line.NewLine
+#line 291 "DiffWebView.cshtml"
+                       , Tuple.Create<string,object,bool> (" ", line.NewLine
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ")", true)
 );
-WriteLiteral(">\n                      <td");
+WriteLiteral(">\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
-WriteLiteral("></td>\n                      <td");
+WriteLiteral("></td>\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
 WriteLiteral(">");
 
 
-#line 193 "DiffWebView.cshtml"
-                                         Write(line.NewLine);
+#line 293 "DiffWebView.cshtml"
+                                 Write(line.NewLine);
 
 
 #line default
 #line hidden
-WriteLiteral("</td>\n                      <td");
+WriteLiteral("</td>\n              <td");
 
 WriteLiteral(" class=\"content\"");
 
-WriteLiteral(">\n                        <span");
+WriteLiteral(">\n                <span");
 
 WriteLiteral(" class=\"line-prefix\"");
 
-WriteLiteral(">+</span>\n                        <span");
+WriteLiteral(">+</span>\n                <span");
 
 WriteLiteral(" class=\"code-line\"");
 
 WriteLiteral(">");
 
 
-#line 196 "DiffWebView.cshtml"
-                                           Write(line.Content);
+#line 296 "DiffWebView.cshtml"
+                                   Write(line.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</span>\n                      </td>\n                    </tr>\n");
+WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 199 "DiffWebView.cshtml"
-                }
-				else if (line.LineEquality == DiffModel.LineEquality.Delete)
-                {
+#line 299 "DiffWebView.cshtml"
+          }
+  				else if (line.LineEquality == DiffModel.LineEquality.Delete)
+          {
 
 
 #line default
 #line hidden
-WriteLiteral("                    <tr");
+WriteLiteral("            <tr");
 
 WriteLiteral(" class=\"delete\"");
 
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 202 "DiffWebView.cshtml"
-                   , Tuple.Create<string,object,bool> ("", line.Index
+#line 302 "DiffWebView.cshtml"
+           , Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 202 "DiffWebView.cshtml"
-                               , Tuple.Create<string,object,bool> (" ", line.BaseLine
+#line 302 "DiffWebView.cshtml"
+                       , Tuple.Create<string,object,bool> (" ", line.BaseLine
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ")", true)
 );
-WriteLiteral(">\n                      <td");
+WriteLiteral(">\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
 WriteLiteral(">");
 
 
-#line 203 "DiffWebView.cshtml"
-                                         Write(line.BaseLine);
+#line 303 "DiffWebView.cshtml"
+                                 Write(line.BaseLine);
 
 
 #line default
 #line hidden
-WriteLiteral("</td>\n                      <td");
+WriteLiteral("</td>\n              <td");
 
 WriteLiteral(" class=\"line-number\"");
 
-WriteLiteral("></td>\n                      <td");
+WriteLiteral("></td>\n              <td");
 
 WriteLiteral(" class=\"content\"");
 
-WriteLiteral(">\n                        <span");
+WriteLiteral(">\n                <span");
 
 WriteLiteral(" class=\"line-prefix\"");
 
-WriteLiteral(">-</span>\n                        <span");
+WriteLiteral(">-</span>\n                <span");
 
 WriteLiteral(" class=\"code-line\"");
 
 WriteLiteral(">");
 
 
-#line 207 "DiffWebView.cshtml"
-                                           Write(line.Content);
+#line 307 "DiffWebView.cshtml"
+                                   Write(line.Content);
 
 
 #line default
 #line hidden
-WriteLiteral("</span>\n                      </td>\n                    </tr>\n");
+WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 210 "DiffWebView.cshtml"
-                }
+#line 310 "DiffWebView.cshtml"
+          }
 
-				foreach (var commentSet in line.CommentSets)
-				{
+  				foreach (var commentSet in line.CommentSets)
+  				{
 
 
 #line default
 #line hidden
-WriteLiteral("    \t\t      <tr");
+WriteLiteral("  \t\t      <tr");
 
 WriteLiteral(" class=\"comment\"");
 
-WriteLiteral(">\n                    <td");
+WriteLiteral(">\n              <td");
 
 WriteLiteral(" colspan=\"3\"");
 
-WriteLiteral(">\n                      <div");
+WriteLiteral(">\n                <div");
 
 WriteLiteral(" class=\"comment-inner\"");
 
 WriteLiteral(">\n");
 
 
-#line 217 "DiffWebView.cshtml"
-                        
+#line 317 "DiffWebView.cshtml"
+                  
 
 #line default
 #line hidden
 
-#line 217 "DiffWebView.cshtml"
-                         foreach (var comment in commentSet.Value)
-                        {
+#line 317 "DiffWebView.cshtml"
+                   foreach (var comment in commentSet.Value)
+                  {
 
 
 #line default
 #line hidden
-WriteLiteral("                          <div");
+WriteLiteral("                    <div");
 
 WriteLiteral(" class=\"comment-line\"");
 
-WriteLiteral(">\n                            <img");
+WriteLiteral(">\n                      <img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 220 "DiffWebView.cshtml"
+#line 320 "DiffWebView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -419,15 +450,15 @@ WriteLiteral(" width=\"28\"");
 
 WriteLiteral(" height=\"28\"");
 
-WriteLiteral(" />\n                            <div");
+WriteLiteral(" />\n                      <div");
 
 WriteLiteral(" class=\"comment-content\"");
 
-WriteLiteral(">\n                              <h4><strong>");
+WriteLiteral(">\n                        <h4><strong>");
 
 
-#line 222 "DiffWebView.cshtml"
-                                     Write(comment.Username);
+#line 322 "DiffWebView.cshtml"
+                               Write(comment.Username);
 
 
 #line default
@@ -439,62 +470,65 @@ WriteLiteral(" class=\"text-gray\"");
 WriteLiteral(">");
 
 
-#line 222 "DiffWebView.cshtml"
-                                                                                        Write(comment.Date);
+#line 322 "DiffWebView.cshtml"
+                                                                                  Write(comment.Date);
 
 
 #line default
 #line hidden
-WriteLiteral("</span></h4>\n                              <div");
+WriteLiteral("</span></h4>\n                        <div");
 
 WriteLiteral(" class=\"comment-body\"");
 
 WriteLiteral(">\n");
 
-WriteLiteral("                                ");
+
+#line 324 "DiffWebView.cshtml"
+          								
+
+#line default
+#line hidden
+
+#line 324 "DiffWebView.cshtml"
+                                          WriteLiteral(comment.Body);
+
+#line default
+#line hidden
+WriteLiteral("\n                        </div>\n                      </div>\n                    " +
+"</div>\n");
 
 
-#line 224 "DiffWebView.cshtml"
-                           Write(comment.Body);
+#line 328 "DiffWebView.cshtml"
+  				        }
 
 
 #line default
 #line hidden
-WriteLiteral("\n                              </div>\n                            </div>\n        " +
-"                  </div>\n");
-
-
-#line 228 "DiffWebView.cshtml"
-				        }
-
-
-#line default
-#line hidden
-WriteLiteral("                        <div");
+WriteLiteral("                  <div");
 
 WriteLiteral(" class=\"reply-line\"");
 
-WriteLiteral(">\n                          <button");
+WriteLiteral(">\n                    <button");
 
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "replyTo(", true)
 
-#line 230 "DiffWebView.cshtml"
-            , Tuple.Create<string,object,bool> ("", commentSet.Key
+#line 330 "DiffWebView.cshtml"
+      , Tuple.Create<string,object,bool> ("", commentSet.Key
 
 #line default
 #line hidden
 , false)
 , Tuple.Create<string,object,bool> ("", ")", true)
 );
-WriteLiteral(">Reply</button>\n                        </div>\n                      </div>\n     " +
-"               </td>\n                  </tr>\n");
+WriteLiteral(">Reply</button>\n                  </div>\n                </div>\n              </t" +
+"d>\n            </tr>\n");
 
 
-#line 235 "DiffWebView.cshtml"
-				}
-			}
-		}
+#line 335 "DiffWebView.cshtml"
+  				}
+  			}
+  		}
 
 
 #line default

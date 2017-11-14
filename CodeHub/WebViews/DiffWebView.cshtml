@@ -138,103 +138,203 @@
         padding: 0;
         overflow: visible;
       }
+      .comment-body > :first-child {
+        margin-top: 0 !important;
+      }
+			.comment-body > :last-child {
+  			margin-bottom: 0 !important;
+			}
+      .comment-body h1,
+      .comment-body h2,
+      .comment-body h3,
+      .comment-body h4,
+      .comment-body h5,
+      .comment-body h6 {
+        margin: 1em 0 15px;
+        padding: 0;
+        font-weight: bold;
+        line-height: 1.7;
+        cursor: text;
+        position: relative;
+      }
+      .comment-body h1 {
+        font-size: 1.8em;
+        border-bottom: 1px solid #ddd;
+      }
+      .comment-body p,
+      .comment-body blockquote,
+      .comment-body ul,
+      .comment-body ol,
+      .comment-body dl,
+      .comment-body table,
+      .comment-body pre {
+        margin: 15px 0;
+      }
+      .comment-body h2 {
+        font-size: 1.4em;
+        border-bottom: 1px solid #eee;
+      }
+      .comment-body ul,
+      .comment-body ol {
+        padding-left: 20px;
+      }
+      .comment-body a {
+        color: #4183c4;
+        text-decoration: none;
+        text-decoration: none;
+      }
+      .comment-body .highlight pre,
+      .comment-body pre {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        line-height: 19px;
+        overflow: auto;
+        padding: 6px 10px;
+        border-radius: 3px;
+      }
+      .comment-body pre {
+        word-wrap: normal;
+      }
+      .comment-body dl {
+        padding: 0;
+      }
+      .comment-body dl dt {
+        font-weight: bold;
+        font-style: italic;
+        padding: 0;
+        margin-top: 15px;
+      }
+      .comment-body dl dd {
+        margin-bottom: 15px;
+        padding: 0 15px;
+      }
+      .comment-body table {
+        width: 100%;
+        overflow: auto;
+        display: block;
+      }
+      .comment-body table tr {
+        border-top: 1px solid #ccc;
+        background-color: #fff;
+      }
+      .comment-body table tr:nth-child(2n) {
+        background-color: #f8f8f8;
+      }
+      .comment-body table th,
+      .comment-body table td {
+        border: 1px solid #ddd;
+        padding: 6px 13px;
+      }
+      .comment-body table th {
+        font-weight: bold;
+      }
+      .comment-body img {
+        max-width: 100%;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      .comment-body ul.task-list > li.task-list-item {
+        list-style-type: none;
+      }
+      .comment-body .task-list-item-checkbox {
+        margin-left: -20px;
+        vertical-align: middle;
+      }
+
     </style>
 	<script>
     function invokeNative(functionName, args) {
-        try
-        {
-            var iframe = document.createElement('IFRAME');
-            iframe.setAttribute('src', 'app://' + functionName + '#' + JSON.stringify(args));
-            document.body.appendChild(iframe);
-            iframe.parentNode.removeChild(iframe);
-            iframe = null;  
-        }
-        catch (err)
-        {
-            alert(err.message);
-        }
+      try {
+        var iframe = document.createElement('IFRAME');
+        iframe.setAttribute('src', 'app://' + functionName + '#' + JSON.stringify(args));
+        document.body.appendChild(iframe);
+        iframe.parentNode.removeChild(iframe);
+        iframe = null;  
+      } catch (err) {
+          alert(err.message);
+      }
     }
     function lineClick(fileLine, patchLine) {
-		invokeNative("comment", { fileLine, patchLine });
-	}
-	function replyTo(id) {
-		invokeNative("reply-to", { id });
-	}
+  		invokeNative("comment", { fileLine, patchLine });
+  	}
+  	function replyTo(id) {
+  		invokeNative("reply-to", { id });
+  	}
 	</script>
   </head>
   <body>
     <table>
       <tbody>	
         @foreach (var chunk in Model.Chunks)
-		{
+    		{
 	        <tr class="info">
-              <td class="line-number">...</td>
-              <td class="line-number">...</td>
-              <td class="content">@chunk.Content</td>
-            </tr>
+            <td class="line-number">...</td>
+            <td class="line-number">...</td>
+            <td class="content">@chunk.Content</td>
+          </tr>
 
     		foreach (var line in chunk.Lines)
-			{
-				if (line.LineEquality == DiffModel.LineEquality.Equal)
-				{
-			        <tr onclick="lineClick(@line.Index, @line.NewLine)">
-                      <td class="line-number">@line.BaseLine</td>
-                      <td class="line-number">@line.NewLine</td>
-                      <td class="content">
-                        <span class="line-prefix">&nbsp;</span>
-                        <span class="code-line">@line.Content</span>
-                      </td>
-                    </tr>
-				}
-				else if (line.LineEquality == DiffModel.LineEquality.Insert)
-                {
-                    <tr class="insert" onclick="lineClick(@line.Index, @line.NewLine)">
-                      <td class="line-number"></td>
-                      <td class="line-number">@line.NewLine</td>
-                      <td class="content">
-                        <span class="line-prefix">+</span>
-                        <span class="code-line">@line.Content</span>
-                      </td>
-                    </tr>
-                }
-				else if (line.LineEquality == DiffModel.LineEquality.Delete)
-                {
-                    <tr class="delete" onclick="lineClick(@line.Index, @line.BaseLine)">
-                      <td class="line-number">@line.BaseLine</td>
-                      <td class="line-number"></td>
-                      <td class="content">
-                        <span class="line-prefix">-</span>
-                        <span class="code-line">@line.Content</span>
-                      </td>
-                    </tr>
-                }
+  			{
+  				if (line.LineEquality == DiffModel.LineEquality.Equal)
+  				{
+            <tr onclick="lineClick(@line.Index, @line.NewLine)">
+              <td class="line-number">@line.BaseLine</td>
+              <td class="line-number">@line.NewLine</td>
+              <td class="content">
+                <span class="line-prefix">&nbsp;</span>
+                <span class="code-line">@line.Content</span>
+              </td>
+            </tr>
+  				}
+  				else if (line.LineEquality == DiffModel.LineEquality.Insert)
+          {
+            <tr class="insert" onclick="lineClick(@line.Index, @line.NewLine)">
+              <td class="line-number"></td>
+              <td class="line-number">@line.NewLine</td>
+              <td class="content">
+                <span class="line-prefix">+</span>
+                <span class="code-line">@line.Content</span>
+              </td>
+            </tr>
+          }
+  				else if (line.LineEquality == DiffModel.LineEquality.Delete)
+          {
+            <tr class="delete" onclick="lineClick(@line.Index, @line.BaseLine)">
+              <td class="line-number">@line.BaseLine</td>
+              <td class="line-number"></td>
+              <td class="content">
+                <span class="line-prefix">-</span>
+                <span class="code-line">@line.Content</span>
+              </td>
+            </tr>
+          }
 
-				foreach (var commentSet in line.CommentSets)
-				{
-    		      <tr class="comment">
-                    <td colspan="3">
-                      <div class="comment-inner">
-                        @foreach (var comment in commentSet.Value)
-                        {
-                          <div class="comment-line">
-                            <img src="@comment.AvatarUrl" class="avatar" width="28" height="28" />
-                            <div class="comment-content">
-                              <h4><strong>@comment.Username</strong> <span class="text-gray">@comment.Date</span></h4>
-                              <div class="comment-body">
-                                @comment.Body
-                              </div>
-                            </div>
-                          </div>
-				        }
-                        <div class="reply-line">
-                          <button onclick="replyTo(@commentSet.Key)">Reply</button>
+  				foreach (var commentSet in line.CommentSets)
+  				{
+  		      <tr class="comment">
+              <td colspan="3">
+                <div class="comment-inner">
+                  @foreach (var comment in commentSet.Value)
+                  {
+                    <div class="comment-line">
+                      <img src="@comment.AvatarUrl" class="avatar" width="28" height="28" />
+                      <div class="comment-content">
+                        <h4><strong>@comment.Username</strong> <span class="text-gray">@comment.Date</span></h4>
+                        <div class="comment-body">
+          								@{WriteLiteral(comment.Body);}
                         </div>
                       </div>
-                    </td>
-                  </tr>
-				}
-			}
-		}
+                    </div>
+  				        }
+                  <div class="reply-line">
+                    <button onclick="replyTo(@commentSet.Key)">Reply</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+  				}
+  			}
+  		}
       </tbody>
     </table>
   </body>
