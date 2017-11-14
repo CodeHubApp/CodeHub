@@ -18,6 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
 
             Title = "New Account";
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem();
         }
 
         public override void ViewDidLoad()

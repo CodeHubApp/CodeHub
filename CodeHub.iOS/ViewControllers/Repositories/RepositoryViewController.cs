@@ -30,7 +30,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             base.ViewDidLoad();
 
-            Title = ViewModel.Username;
+            Title = ViewModel.RepositoryName;
             HeaderView.SetImage(null, Images.Avatar);
             HeaderView.Text = ViewModel.RepositoryName;
             HeaderView.SubImageView.TintColor = UIColor.FromRGB(243, 156, 18);
