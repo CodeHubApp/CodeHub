@@ -115,9 +115,9 @@ namespace CodeHub.iOS
 //            features.ActivateProDirect();
 //#endif 
 
-//            options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
-//                new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
-//
+            //options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
+                //new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));
+
             if (options != null)
             {
                 if (options.ContainsKey(UIApplication.LaunchOptionsRemoteNotificationKey)) 
@@ -229,6 +229,10 @@ namespace CodeHub.iOS
                 }
 
                 request.ParameterValues = parameters;
+                request.PresentationValues = new Dictionary<string, string>
+                {
+                    { Core.PresentationValues.SlideoutRootPresentation, string.Empty }
+                };
 
                 var username = data["u"].ToString();
 

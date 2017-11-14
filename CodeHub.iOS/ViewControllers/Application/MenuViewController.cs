@@ -204,6 +204,11 @@ namespace CodeHub.iOS.ViewControllers.Application
             UpdateProfilePicture();
             CreateMenuRoot();
 
+            // A user has been activated!
+            var appService = Mvx.Resolve<IApplicationService>();
+            appService.ActivationAction?.Invoke();
+            appService.ActivationAction = null;
+
             #if DEBUG
             GC.Collect();
             GC.Collect();
@@ -307,14 +312,6 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             ViewModel.LoadCommand.Execute(null);
 
-            var appService = Mvx.Resolve<IApplicationService> ();
-
-            // A user has been activated!
-            if (appService.ActivationAction != null)
-            {
-                appService.ActivationAction();
-                appService.ActivationAction = null;
-            }
         }
 
         private class PinnedRepoElement : MenuElement
