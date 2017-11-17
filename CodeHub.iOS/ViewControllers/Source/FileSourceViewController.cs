@@ -122,7 +122,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         private UserError HandleLoadError(Exception error)
         {
             LoadContent("");
-            return new UserError("Unable to load selected file.");
+            return new UserError("Unable to load selected file.", error);
         }
 
         private async Task Load(CancellationToken cancelToken)

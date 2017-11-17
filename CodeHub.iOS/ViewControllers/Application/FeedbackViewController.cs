@@ -15,7 +15,6 @@ namespace CodeHub.iOS.ViewControllers.Application
     public class FeedbackViewController : TableViewController 
     {
         private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
-        private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
 
         private readonly Lazy<UIView> _emptyView = new Lazy<UIView>((() =>
             new EmptyListView(Octicon.IssueOpened.ToEmptyListImage(), "There are no open issues.")));

@@ -13,7 +13,10 @@ namespace CodeHub.Core.Utilities
         public static readonly string[] Scopes = { "user", "repo", "gist", "notifications" };
         public static readonly ProductHeaderValue UserAgent = new ProductHeaderValue("CodeHub");
 
-        public static GitHubClient Create(Uri domain, Credentials credentials)
+        public static GitHubClient Create(
+            Uri domain,
+            Credentials credentials,
+            TimeSpan? requestTimeout = null)
         {
             var networkActivityService = Locator.Current.GetService<INetworkActivityService>();
             var client = new HttpClientAdapter(CreateMessageHandler);
@@ -25,7 +28,10 @@ namespace CodeHub.Core.Utilities
                 new InMemoryCredentialStore(credentials),
                 httpClient,
                 new SimpleJsonSerializer());
-            return new GitHubClient(connection);
+            
+            var gitHubClient = new GitHubClient(connection);
+            gitHubClient.SetRequestTimeout(requestTimeout ?? TimeSpan.FromSeconds(20));
+            return gitHubClient;
         }
     }
 }

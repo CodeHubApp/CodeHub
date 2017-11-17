@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using CodeHub.Core;
 using System.Linq;
 using System.Reactive;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -32,15 +33,19 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadBranches
                 .ThrownExceptions
-                .Select(error => new UserError("Unable to load branches: " + error.Message))
+                .Do(_ => TableView.TableFooterView = new UIView())
+                .Select(error => new UserError("Unable to load branches.", error))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 
-            loadBranches.Subscribe(ItemsLoaded);
+            loadBranches
+                .Do(_ => TableView.TableFooterView = null)
+                .Subscribe(ItemsLoaded);
 
             Appearing
                 .Take(1)
                 .Select(_ => Unit.Default)
+                .Do(_ => TableView.TableFooterView = new LoadingIndicatorView())
                 .InvokeReactiveCommand(loadBranches);
         }
 

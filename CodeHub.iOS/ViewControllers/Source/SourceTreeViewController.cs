@@ -59,6 +59,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadContents
                 .ThrownExceptions
+                .Do(_ => TableView.TableFooterView = new UIView())
                 .Select(HandleLoadError)
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
@@ -74,12 +75,27 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Select(_ => _sha)
                 .Where(x => !string.IsNullOrEmpty(x))
                 .DistinctUntilChanged()
+                .Do(_ => SetLoading(true))
                 .InvokeReactiveCommand(loadContents);
 
             loadContents
+                .Do(_ => SetLoading(false))
                 .Subscribe(SetElements);
 
             NavigationItem.TitleView = _titleView;
+        }
+
+        private void SetLoading(bool isLoading)
+        {
+            if (isLoading)
+            {
+                Root.Reset();
+                TableView.TableFooterView = new LoadingIndicatorView();
+            }
+            else
+            {
+                TableView.TableFooterView = null;
+            }
         }
 
         private UserError HandleLoadError(Exception error)
@@ -90,7 +106,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             if (apiException?.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return new UserError($"The current directory does not exist under the selected Git reference ({_sha})");
 
-            return new UserError("Unable to load source tree: " + error.Message);
+            return new UserError("Unable to load source tree.", error);
         }
 
         public override void ViewWillAppear(bool animated)

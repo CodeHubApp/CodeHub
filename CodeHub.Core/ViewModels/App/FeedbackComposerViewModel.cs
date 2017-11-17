@@ -79,7 +79,7 @@ namespace CodeHub.Core.ViewModels.App
 
             SubmitCommand
                 .ThrownExceptions
-                .Select(x => new UserError("There was a problem trying to post your feedback: " + x.Message))
+                .Select(ex => new UserError("There was a problem trying to post your feedback.", ex))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 

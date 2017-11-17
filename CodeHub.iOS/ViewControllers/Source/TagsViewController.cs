@@ -10,6 +10,7 @@ using CodeHub.Core;
 using System.Reactive;
 using System.Collections.Generic;
 using System.Linq;
+using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -32,15 +33,19 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadTags
                 .ThrownExceptions
-                .Select(error => new UserError("Unable to load tags: " + error.Message))
+                .Do(_ => TableView.TableFooterView = new UIView())
+                .Select(error => new UserError("Unable to load tags.", error))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 
-            loadTags.Subscribe(ItemsLoaded);
+            loadTags
+                .Do(_ => TableView.TableFooterView = null)
+                .Subscribe(ItemsLoaded);
 
             Appearing
                 .Take(1)
                 .Select(_ => Unit.Default)
+                .Do(_ => TableView.TableFooterView = new LoadingIndicatorView())
                 .InvokeReactiveCommand(loadTags);
         }
 

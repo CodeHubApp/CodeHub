@@ -58,7 +58,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadComments
                 .ThrownExceptions
-                .Select(error => new UserError("Unable to load comments: " + error.Message))
+                .Select(error => new UserError("Unable to load comments.", error))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 
