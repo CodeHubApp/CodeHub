@@ -16,6 +16,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 {
     public class SourceTreeViewController : DialogViewController
     {
+        private static string LoadErrorMessage = "Unable to load source tree.";
         private readonly SourceTitleView _titleView = new SourceTitleView();
         private bool _branchSelectorShowsBranches = true;
         private readonly string _username;
@@ -59,7 +60,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadContents
                 .ThrownExceptions
-                .Do(_ => TableView.TableFooterView = new UIView())
+                .Do(_ => SetErrorView())
                 .Select(HandleLoadError)
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
@@ -98,6 +99,20 @@ namespace CodeHub.iOS.ViewControllers.Source
             }
         }
 
+        private void SetErrorView()
+        {
+            var emptyListView = new EmptyListView(Octicon.Code.ToEmptyListImage(), LoadErrorMessage)
+            {
+                Alpha = 0
+            };
+
+            TableView.TableFooterView = new UIView();
+            TableView.BackgroundView = emptyListView;
+
+            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+                           () => emptyListView.Alpha = 1, null);
+        }
+
         private UserError HandleLoadError(Exception error)
         {
             Root.Reset();
@@ -106,7 +121,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             if (apiException?.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return new UserError($"The current directory does not exist under the selected Git reference ({_sha})");
 
-            return new UserError("Unable to load source tree.", error);
+            return new UserError(LoadErrorMessage, error);
         }
 
         public override void ViewWillAppear(bool animated)

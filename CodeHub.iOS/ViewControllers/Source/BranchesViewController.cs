@@ -16,6 +16,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 {
     public class BranchesViewController : DialogViewController
     {
+        private static string LoadErrorMessage = "Unable to load branches.";
         private readonly ISubject<Octokit.Branch> _branchSubject = new Subject<Octokit.Branch>();
 
         public IObservable<Octokit.Branch> BranchSelected => _branchSubject.AsObservable();
@@ -33,8 +34,8 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             loadBranches
                 .ThrownExceptions
-                .Do(_ => TableView.TableFooterView = new UIView())
-                .Select(error => new UserError("Unable to load branches.", error))
+                .Do(_ => SetErrorView())
+                .Select(error => new UserError(LoadErrorMessage, error))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 
@@ -47,6 +48,20 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Select(_ => Unit.Default)
                 .Do(_ => TableView.TableFooterView = new LoadingIndicatorView())
                 .InvokeReactiveCommand(loadBranches);
+        }
+
+        private void SetErrorView()
+        {
+            var emptyListView = new EmptyListView(Octicon.GitBranch.ToEmptyListImage(), LoadErrorMessage)
+            {
+                Alpha = 0
+            };
+
+            TableView.TableFooterView = new UIView();
+            TableView.BackgroundView = emptyListView;
+
+            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+                           () => emptyListView.Alpha = 1, null);
         }
 
         private void ItemsLoaded(IEnumerable<Octokit.Branch> branches)
