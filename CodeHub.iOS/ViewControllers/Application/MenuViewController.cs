@@ -152,9 +152,14 @@ namespace CodeHub.iOS.ViewControllers.Application
             
             if (ViewModel.PinnedRepositories.Any())
             {
-                _favoriteRepoSection = new Section() { HeaderView = new MenuSectionView("Favorite Repositories") };
+                _favoriteRepoSection = new Section { HeaderView = new MenuSectionView("Favorite Repositories") };
                 foreach (var pinnedRepository in ViewModel.PinnedRepositories)
-                    _favoriteRepoSection.Add(new PinnedRepoElement(pinnedRepository, ViewModel.GoToRepositoryCommand));
+                {
+                    var element = new PinnedRepoElement(pinnedRepository);
+                    element.Clicked.Subscribe(_ => GoToRepository(pinnedRepository.Owner, pinnedRepository.Name));
+                    _favoriteRepoSection.Add(element);
+                }
+
                 sections.Add(_favoriteRepoSection);
             }
             else
@@ -219,6 +224,12 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void GoToSearch()
         {
             var vc = new ExploreViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToRepository(string owner, string name)
+        {
+            var vc = new Repositories.RepositoryViewController(owner, name);
             NavigationController?.PushViewController(vc, true);
         }
 
@@ -316,14 +327,10 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private class PinnedRepoElement : MenuElement
         {
-            public CodeHub.Core.Data.PinnedRepository PinnedRepo
-            {
-                get;
-                private set; 
-            }
+            public Core.Data.PinnedRepository PinnedRepo { get; private set; }
 
-            public PinnedRepoElement(CodeHub.Core.Data.PinnedRepository pinnedRepo, System.Windows.Input.ICommand command)
-                : base(pinnedRepo.Name, () => command.Execute(new RepositoryIdentifier(pinnedRepo.Owner, pinnedRepo.Name)), Octicon.Repo.ToImage())
+            public PinnedRepoElement(Core.Data.PinnedRepository pinnedRepo)
+                : base(pinnedRepo.Name, null, Octicon.Repo.ToImage())
             {
                 PinnedRepo = pinnedRepo;
 

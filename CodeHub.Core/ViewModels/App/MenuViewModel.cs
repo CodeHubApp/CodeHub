@@ -4,10 +4,8 @@ using CodeHub.Core.Data;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Issues;
-using CodeHub.Core.ViewModels.Repositories;
 using CodeHub.Core.ViewModels.User;
 using System.Linq;
-using CodeHub.Core.Utils;
 using CodeHub.Core.Messages;
 using CodeHub.Core.ViewModels.Notifications;
 using GitHubSharp.Models;
@@ -105,11 +103,6 @@ namespace CodeHub.Core.ViewModels.App
         public ICommand GoToSettingsCommand
         {
             get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
-        }
-
-        public ICommand GoToRepositoryCommand
-        {
-            get { return new MvxCommand<RepositoryIdentifier>(x => ShowMenuViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner, Repository = x.Name }));}
         }
 
         public ICommand LoadCommand

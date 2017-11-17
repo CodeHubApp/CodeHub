@@ -34,14 +34,10 @@ namespace CodeHub.iOS.Views
             }
         }
 
-        public override CGSize SizeThatFits(CGSize size)
-        {
-            var h = _label.SizeThatFits(size);
-            return new CGSize(h.Width, base.SizeThatFits(size).Height);
-        }
+        private static nfloat GetWidth() => UIScreen.MainScreen.Bounds.Width - 180;
 
         public SlideUpTitleView(float height)
-            : base(new CGRect(0, 0, 10, height))
+            : base(new CGRect(0, 0, GetWidth(), height))
         {
             AutoresizingMask = UIViewAutoresizing.FlexibleHeight;
 
