@@ -88,15 +88,9 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void SetLoading(bool isLoading)
         {
-            if (isLoading)
-            {
-                Root.Reset();
-                TableView.TableFooterView = new LoadingIndicatorView();
-            }
-            else
-            {
-                TableView.TableFooterView = null;
-            }
+            Root.Reset();
+            TableView.BackgroundView = null;
+            TableView.TableFooterView = isLoading ? new LoadingIndicatorView() : null;
         }
 
         private void SetErrorView()

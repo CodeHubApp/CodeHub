@@ -220,8 +220,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             var url = Content?.HtmlUrl;
             if (url == null)
                 return;
-            
-            var viewController = new SafariServices.SFSafariViewController(new NSUrl(url));
+
+            var viewController = new WebBrowserViewController(url);
             PresentViewController(viewController, true, null);
         }
 

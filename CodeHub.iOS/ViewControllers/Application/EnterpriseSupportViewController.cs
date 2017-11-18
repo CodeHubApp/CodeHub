@@ -10,7 +10,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 {
     public class EnterpriseSupportViewController : BaseViewController
     {
-        private static string CodeHubUrl = "https://github.com/thedillonb/CodeHub";
+        private static string CodeHubUrl = "https://github.com/CodeHubApp/CodeHub";
 
         private readonly IAlertDialogService _alertDialogService;
         private readonly UIColor ComponentColor = UIColor.FromWhiteAlpha(0.9f, 1f);
@@ -42,8 +42,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private void GoToGitHub()
         {
-            var url = new NSUrl(CodeHubUrl);
-            var viewController = new SafariServices.SFSafariViewController(url);
+            var viewController = new WebBrowserViewController(CodeHubUrl);
             PresentViewController(viewController, true, null);
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive;
 using System.Threading.Tasks;
 using ReactiveUI;
@@ -19,15 +18,15 @@ namespace CodeHub.Core
         public UserError(string title, string message, Exception exception = null)
         {
             Title = title;
+            Message = exception == null ? message : $"{message} {ExceptionMessage(exception)}";
+        }
 
-            var messages = new List<string> { message };
-
+        private static string ExceptionMessage(Exception exception)
+        {
             if (exception is TaskCanceledException)
-                messages.Add("The request timed out waiting for the server to respond.");
+                return "The request timed out waiting for the server to respond.";
             else
-                messages.Add(exception.Message);
-
-            Message = string.Join(" ", messages);
+                return exception?.Message;
         }
     }
 

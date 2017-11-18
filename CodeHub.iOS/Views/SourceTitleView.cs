@@ -44,13 +44,8 @@ namespace CodeHub.iOS.Views
         }
 
         public SourceTitleView()
+            : base(new CoreGraphics.CGRect(0, 0, 200, 44f))
         {
-            var isLandscape = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone &&
-                (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.LandscapeLeft ||
-                 UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.LandscapeRight);
-
-            Frame = new CoreGraphics.CGRect(0, 0, 200, isLandscape ? 32f : 44f);
-
             AutosizesSubviews = true;
 
             _label.TextAlignment = UITextAlignment.Center;
@@ -69,7 +64,7 @@ namespace CodeHub.iOS.Views
             Add(_imageView);
 
             TintColor = UINavigationBar.Appearance.TintColor;
-            AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+            AutoresizingMask = UIViewAutoresizing.All;
         }
 
         public override void LayoutSubviews()
@@ -84,7 +79,7 @@ namespace CodeHub.iOS.Views
             var labelFrame = _label.Frame;
             labelFrame.Height = _label.Frame.Height > halfHeight ? halfHeight : _label.Frame.Height;
             _label.Frame = labelFrame;
-            _label.Center = new CoreGraphics.CGPoint(Frame.Width / 2f, _label.Frame.Height / 2f + (small ? 0f : 3f));
+            _label.Center = new CoreGraphics.CGPoint(Frame.Width / 2f, _label.Frame.Height / 2f + (small ? 2f : 3f));
 
             _subLabel.Font = UIFont.SystemFontOfSize(small ? 10f : 12f);
             _subLabel.SizeToFit();
