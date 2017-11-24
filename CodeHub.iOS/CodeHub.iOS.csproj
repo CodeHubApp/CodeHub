@@ -318,6 +318,11 @@
     <Compile Include="Utilities\ShaType.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
     <Compile Include="ViewControllers\Source\CommitDiffViewController.cs" />
+    <InterfaceDefinition Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginView.xib" />
+    <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginViewController.cs" />
+    <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginViewController.designer.cs">
+      <DependentUpon>EnterpriseOAuthTokenLoginViewController.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

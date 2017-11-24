@@ -78,7 +78,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             OnActivation(d =>
             {
-                d(editButton.GetClickedObservable().Subscribe(_ => ShareButtonTap(editButton)));
+                d(editButton.GetClickedObservable().Subscribe(ShareButtonTap));
                 d(_ownerElement.Clicked.BindCommand(ViewModel.GoToUserCommand));
 
                 d(ViewModel.Bind(x => x.IsStarred, true).Subscribe(isStarred => _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred"));

@@ -80,6 +80,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 d(SaveCommand.Subscribe(_ => ResignFirstResponder()));
 
                 d(saveButton.GetClickedObservable()
+                  .Select(_ => Unit.Default)
                   .InvokeReactiveCommand(SaveCommand));
 
                 d(SaveCommand.IsExecuting

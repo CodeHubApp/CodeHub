@@ -77,8 +77,9 @@ namespace CodeHub.iOS.ViewControllers.Application
                   .Subscribe(_ => DismissViewController(true, null)));
 
                 d(saveButton.GetClickedObservable()
-                    .Do(x => ResignFirstResponder())
-                    .InvokeReactiveCommand(ViewModel.SubmitCommand));
+                  .Do(x => ResignFirstResponder())
+                  .Select(_ => Unit.Default)
+                  .InvokeReactiveCommand(ViewModel.SubmitCommand));
 
                 d(ViewModel.SubmitCommand
                   .Subscribe(_ => DismissViewController(true, null)));

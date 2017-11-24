@@ -119,7 +119,7 @@ namespace CodeHub.iOS.Views.Issues
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
                 d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
-                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu(actionButton)));
+                d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
 
                 d(ViewModel.Bind(x => x.IsCollaborator, true).Subscribe(x => {

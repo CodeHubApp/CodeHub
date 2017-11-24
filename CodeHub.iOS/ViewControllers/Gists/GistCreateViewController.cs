@@ -51,6 +51,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 d(ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
 
 	            d(saveButton.GetClickedObservable()
+                  .Select(_ => Unit.Default)
 	              .InvokeReactiveCommand(ViewModel.SaveCommand));
             });
         }

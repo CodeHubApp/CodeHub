@@ -111,9 +111,9 @@ namespace CodeHub.iOS
                 interaction.SetOutput(System.Reactive.Unit.Default);
             });
 
-//#if DEBUG
-//            features.ActivateProDirect();
-//#endif 
+#if DEBUG
+            features.ActivateProDirect();
+#endif 
 
             //options = new NSDictionary (UIApplication.LaunchOptionsRemoteNotificationKey, 
                 //new NSDictionary ("r", "octokit/octokit.net", "i", "739", "u", "thedillonb"));

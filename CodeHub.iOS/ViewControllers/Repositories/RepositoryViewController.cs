@@ -62,7 +62,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                   .Select(x => UsersViewController.CreateStargazersViewController(x.Username, x.RepositoryName))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
-                d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
+                d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
 
                 d(_forks.Clicked.Subscribe(_ =>
                 {
@@ -110,7 +110,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             });
         }
 
-        private void ShowExtraMenu()
+        private void ShowExtraMenu(UIBarButtonItem barButtonItem)
         {
             var repoModel = ViewModel.Repository;
             if (repoModel == null || ViewModel.IsStarred == null || ViewModel.IsWatched == null)
@@ -154,7 +154,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 sheet.Dispose();
             };
 
-            sheet.ShowFrom(NavigationItem.RightBarButtonItem, true);
+            sheet.ShowFrom(barButtonItem, true);
         }
 
         SplitViewElement _split1 = new SplitViewElement(Octicon.Lock.ToImage(), Octicon.Package.ToImage());

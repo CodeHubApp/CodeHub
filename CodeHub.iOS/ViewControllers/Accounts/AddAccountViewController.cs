@@ -3,7 +3,6 @@ using CodeHub.Core.ViewModels.Accounts;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.Utilities;
-using CodeHub.Core.Services;
 using System;
 using ReactiveUI;
 using System.Reactive.Linq;
@@ -19,14 +18,26 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         public AddAccountViewController()
             : base("AddAccountView", null)
         {
+            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
+
+            NavigationItem.RightBarButtonItem = actionButton;
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem();
+
+            Title = "Login";
+
+            OnActivation(d =>
+            {
+                d(actionButton.GetClickedObservable()
+                  .Subscribe(ShowMoreMenu));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.IsExecuting)
+                  .SubscribeStatus("Logging in..."));
+            });
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-
-            Title = "Login";
-
 
             View.BackgroundColor = EnterpriseBackgroundColor;
             Logo.Image = Images.Logos.EnterpriseMascot;
@@ -37,7 +48,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             //Set some generic shadowing
             LoginButton.Layer.ShadowColor = UIColor.Black.CGColor;
             LoginButton.Layer.ShadowOffset = new CGSize(0, 1);
-            LoginButton.Layer.ShadowOpacity = 0.3f;
+            LoginButton.Layer.ShadowOpacity = 0.2f;
 
             var attributes = new UIStringAttributes {
                 ForegroundColor = UIColor.LightGray,
@@ -82,10 +93,28 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 
                 d(LoginButton.GetClickedObservable()
                   .InvokeReactiveCommand(ViewModel.LoginCommand));
-
-                d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.IsExecuting)
-                  .SubscribeStatus("Logging in..."));
             });
+        }
+
+        private void ShowMoreMenu(UIBarButtonItem barButtonItem)
+        {
+            var sheet = new UIActionSheet();
+            var addButton = sheet.AddButton("Via Token");
+            sheet.CancelButtonIndex = sheet.AddButton("Cancel");
+            sheet.Dismissed += (sender, e) =>
+            {
+                if (e.ButtonIndex == addButton)
+                    GoToTokenLogin();
+                sheet.Dispose();
+            };
+
+            sheet.ShowFrom(barButtonItem, true);
+        }
+
+        private void GoToTokenLogin()
+        {
+            var vc = new EnterpriseOAuthTokenLoginViewController();
+            this.PushViewController(vc);
         }
 
         NSObject _hideNotification, _showNotification;

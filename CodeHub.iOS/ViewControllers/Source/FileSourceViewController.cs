@@ -100,7 +100,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
                 d(actionButton
                   .GetClickedObservable()
-                  .Subscribe(_ => CreateActionSheet(actionButton)));
+                  .Subscribe(CreateActionSheet));
 
                 d(loadCommand
                   .IsExecuting

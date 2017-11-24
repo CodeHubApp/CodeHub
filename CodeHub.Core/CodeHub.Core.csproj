@@ -162,6 +162,7 @@
     <Compile Include="ViewModels\Search\UserExploreViewModel.cs" />
     <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
     <Compile Include="Interactions.cs" />
+    <Compile Include="ViewModels\Accounts\EnterpriseOAuthTokenLoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
