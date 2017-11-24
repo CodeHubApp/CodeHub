@@ -16,6 +16,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         private readonly Action _doneAction;
 
         private static readonly string[] _items = {
+            "News",
             "Organizations",
             "Trending Repositories",
             "Explore Repositories",
