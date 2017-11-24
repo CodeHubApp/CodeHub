@@ -6,30 +6,27 @@ using CodeHub.iOS.Utilities;
 using System;
 using ReactiveUI;
 using System.Reactive.Linq;
+using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
     public partial class AddAccountViewController : BaseViewController
     {
+        private readonly UIColor ComponentTextColor = UIColor.White;
         private readonly UIColor EnterpriseBackgroundColor = UIColor.FromRGB(50, 50, 50);
+        private readonly UIColor ComponentBackground = UIColor.FromRGB(0x3C, 0x3C, 0x3C);
 
         public AddAccountViewModel ViewModel { get; } = new AddAccountViewModel();
 
         public AddAccountViewController()
             : base("AddAccountView", null)
         {
-            var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
-
-            NavigationItem.RightBarButtonItem = actionButton;
             NavigationItem.BackBarButtonItem = new UIBarButtonItem();
 
             Title = "Login";
 
             OnActivation(d =>
             {
-                d(actionButton.GetClickedObservable()
-                  .Subscribe(ShowMoreMenu));
-
                 d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.IsExecuting)
                   .SubscribeStatus("Logging in..."));
             });
@@ -38,6 +35,12 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+
+            var scopes = string.Join(", ", OctokitClientFactory.Scopes);
+            DescriptionLabel.Text = string.Format("The provided Personal Access Token must allow access to the following scopes: {0}", scopes);
+            DescriptionLabel.TextColor = ComponentTextColor;
+
+            AuthenticationSelector.TintColor = ComponentTextColor.ColorWithAlpha(0.9f);
 
             View.BackgroundColor = EnterpriseBackgroundColor;
             Logo.Image = Images.Logos.EnterpriseMascot;
@@ -57,13 +60,16 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             Domain.AttributedPlaceholder = new NSAttributedString("Domain", attributes);
             User.AttributedPlaceholder = new NSAttributedString("Username", attributes);
             Password.AttributedPlaceholder = new NSAttributedString("Password", attributes);
+            TokenTextField.AttributedPlaceholder = new NSAttributedString("Token", attributes);
 
-            foreach (var i in new [] { Domain, User, Password })
+            foreach (var i in new [] { Domain, User, Password, TokenTextField })
             {
                 i.Layer.BorderColor = UIColor.Black.CGColor;
                 i.Layer.BorderWidth = 1;
                 i.Layer.CornerRadius = 4;
             }
+
+            SelectAuthenticationScheme(0);
 
             Domain.ShouldReturn = delegate {
                 User.BecomeFirstResponder();
@@ -74,6 +80,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 Password.BecomeFirstResponder();
                 return true;
             };
+
             Password.ShouldReturn = delegate {
                 Password.ResignFirstResponder();
                 LoginButton.SendActionForControlEvents(UIControlEvent.TouchUpInside);
@@ -90,31 +97,45 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 
                 d(Domain.GetChangedObservable()
                   .Subscribe(x => ViewModel.Domain = x));
+
+                d(TokenTextField.GetChangedObservable()
+                  .Subscribe(x => ViewModel.Token = x));
                 
                 d(LoginButton.GetClickedObservable()
                   .InvokeReactiveCommand(ViewModel.LoginCommand));
+
+                d(AuthenticationSelector.GetChangedObservable()
+                  .Do(x => ViewModel.TokenAuthentication = x == 1)
+                  .Subscribe(SelectAuthenticationScheme));
+
+                d(this.WhenAnyObservable(x => x.ViewModel.LoginCommand.CanExecute)
+                  .Subscribe(x => LoginButton.Enabled = x));
+
+                d(this.WhenAnyValue(x => x.ViewModel.TokenAuthentication)
+                  .Subscribe(x => AuthenticationSelector.SelectedSegment = x ? 1 : 0));
             });
         }
 
-        private void ShowMoreMenu(UIBarButtonItem barButtonItem)
+        private void SelectAuthenticationScheme(int scheme)
         {
-            var sheet = new UIActionSheet();
-            var addButton = sheet.AddButton("Via Token");
-            sheet.CancelButtonIndex = sheet.AddButton("Cancel");
-            sheet.Dismissed += (sender, e) =>
+            UIView.Animate(0.3, () =>
             {
-                if (e.ButtonIndex == addButton)
-                    GoToTokenLogin();
-                sheet.Dispose();
-            };
+                if (scheme == 0)
+                {
+                    TokenTextField.Hidden = true;
+                    User.Hidden = false;
+                    Password.Hidden = false;
+                }
+                else
+                {
+                    TokenTextField.Hidden = false;
+                    User.Hidden = true;
+                    Password.Hidden = true;
+                }
+            });
 
-            sheet.ShowFrom(barButtonItem, true);
-        }
-
-        private void GoToTokenLogin()
-        {
-            var vc = new EnterpriseOAuthTokenLoginViewController();
-            this.PushViewController(vc);
+            UIView.Animate(0.3, 0, UIViewAnimationOptions.TransitionCrossDissolve,
+                           () => DescriptionLabel.Alpha = scheme == 0 ? 0 : 1, null);
         }
 
         NSObject _hideNotification, _showNotification;

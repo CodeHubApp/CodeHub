@@ -318,16 +318,10 @@
     <Compile Include="Utilities\ShaType.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
     <Compile Include="ViewControllers\Source\CommitDiffViewController.cs" />
-    <InterfaceDefinition Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginView.xib" />
-    <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginViewController.cs" />
-    <Compile Include="ViewControllers\Accounts\EnterpriseOAuthTokenLoginViewController.designer.cs">
-      <DependentUpon>EnterpriseOAuthTokenLoginViewController.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Web.Services" />
     <Reference Include="MonoTouch.Slideout">
@@ -390,12 +384,6 @@
     <Reference Include="MvvmCross.Localization">
       <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
     <Reference Include="FabricSdk">
       <HintPath>..\packages\Fabric.1.4\lib\Xamarin.iOS10\FabricSdk.dll</HintPath>
     </Reference>
@@ -457,6 +445,7 @@
     <Reference Include="Plugin.Settings">
       <HintPath>..\packages\Xam.Plugins.Settings.3.1.1\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png" />
