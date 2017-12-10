@@ -11,6 +11,7 @@ using System.Linq;
 using System.Collections.Generic;
 using CodeHub.Core.Utils;
 using CodeHub.iOS.Utilities;
+using Humanizer;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -137,7 +138,12 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void SetElements(IEnumerable<Octokit.RepositoryContent> items)
         {
-            var elements = items.Select(CreateElement);
+            var elements = items
+                .OrderByDescending(x => x.Type.Value != Octokit.ContentType.File || 
+                                   (x.Type.Value == Octokit.ContentType.File && x.DownloadUrl == null))
+                .ThenBy(x => x.Name)
+                .Select(CreateElement);
+            
             Root.Reset(new Section { elements });
         }
 
@@ -217,6 +223,8 @@ namespace CodeHub.iOS.ViewControllers.Source
                 if (content.DownloadUrl != null)
                 {
                     var e = new StringElement(content.Name, Octicon.FileCode.ToImage());
+                    e.Style = UITableViewCellStyle.Subtitle;
+                    e.Value = content.Size.Bytes().ToString("#.#");
                     e.Clicked.Subscribe(_ => weakRef.Get()?.GoToFile(content));
                     return e;
                 }
