@@ -267,7 +267,7 @@
     <Compile Include="DialogElements\DummyInputElement.cs" />
     <Compile Include="Views\ExtendedUITextView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileModifyViewController.cs" />
-    <None Include="WebResources\LICENSE" />
+    <None Include="WebResources\highlight-LICENSE" />
     <Compile Include="ViewControllers\Users\UserViewController.cs" />
     <Compile Include="AkavacheSqliteLinkerOverride.cs" />
     <Compile Include="TableViewSources\RepositoryTableViewSource.cs" />
@@ -318,6 +318,7 @@
     <Compile Include="Utilities\ShaType.cs" />
     <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
     <Compile Include="ViewControllers\Source\CommitDiffViewController.cs" />
+    <None Include="WebResources\highlight-line-numbers-LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -470,6 +471,16 @@
     <BundleResource Include="Images\Buttons\check%402x.png" />
     <BundleResource Include="Images\Buttons\check.png" />
     <Content Include="WebResources\highlight.pack.js" />
+    <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
+      <Link>Resources\octicons.ttf</Link>
+    </BundleResource>
+    <BundleResource Include="Resources\Briefcase.png" />
+    <BundleResource Include="Resources\Feedback.png" />
+    <BundleResource Include="Resources\Heart.png" />
+    <BundleResource Include="Resources\Organizations.png" />
+    <BundleResource Include="Resources\Rocket.png" />
+    <BundleResource Include="Resources\CodeHubRound.png" />
+    <BundleResource Include="Resources\CodeHubLaunch.png" />
     <Content Include="WebResources\styles\agate.css" />
     <Content Include="WebResources\styles\androidstudio.css" />
     <Content Include="WebResources\styles\arduino-light.css" />
@@ -495,10 +506,13 @@
     <Content Include="WebResources\styles\atelier-seaside-light.css" />
     <Content Include="WebResources\styles\atelier-sulphurpool-dark.css" />
     <Content Include="WebResources\styles\atelier-sulphurpool-light.css" />
+    <Content Include="WebResources\styles\atom-one-dark.css" />
+    <Content Include="WebResources\styles\atom-one-light.css" />
     <Content Include="WebResources\styles\brown-paper.css" />
     <Content Include="WebResources\styles\brown-papersq.png" />
     <Content Include="WebResources\styles\codepen-embed.css" />
     <Content Include="WebResources\styles\color-brewer.css" />
+    <Content Include="WebResources\styles\darcula.css" />
     <Content Include="WebResources\styles\dark.css" />
     <Content Include="WebResources\styles\darkula.css" />
     <Content Include="WebResources\styles\default.css" />
@@ -523,14 +537,17 @@
     <Content Include="WebResources\styles\monokai-sublime.css" />
     <Content Include="WebResources\styles\monokai.css" />
     <Content Include="WebResources\styles\obsidian.css" />
+    <Content Include="WebResources\styles\ocean.css" />
     <Content Include="WebResources\styles\paraiso-dark.css" />
     <Content Include="WebResources\styles\paraiso-light.css" />
     <Content Include="WebResources\styles\pojoaque.css" />
     <Content Include="WebResources\styles\pojoaque.jpg" />
+    <Content Include="WebResources\styles\purebasic.css" />
     <Content Include="WebResources\styles\qtcreator_dark.css" />
     <Content Include="WebResources\styles\qtcreator_light.css" />
     <Content Include="WebResources\styles\railscasts.css" />
     <Content Include="WebResources\styles\rainbow.css" />
+    <Content Include="WebResources\styles\routeros.css" />
     <Content Include="WebResources\styles\school-book.css" />
     <Content Include="WebResources\styles\school-book.png" />
     <Content Include="WebResources\styles\solarized-dark.css" />
@@ -542,18 +559,11 @@
     <Content Include="WebResources\styles\tomorrow-night.css" />
     <Content Include="WebResources\styles\tomorrow.css" />
     <Content Include="WebResources\styles\vs.css" />
+    <Content Include="WebResources\styles\vs2015.css" />
     <Content Include="WebResources\styles\xcode.css" />
+    <Content Include="WebResources\styles\xt256.css" />
     <Content Include="WebResources\styles\zenburn.css" />
-    <BundleResource Include="..\CodeHub\Resources\octicons.ttf">
-      <Link>Resources\octicons.ttf</Link>
-    </BundleResource>
-    <BundleResource Include="Resources\Briefcase.png" />
-    <BundleResource Include="Resources\Feedback.png" />
-    <BundleResource Include="Resources\Heart.png" />
-    <BundleResource Include="Resources\Organizations.png" />
-    <BundleResource Include="Resources\Rocket.png" />
-    <BundleResource Include="Resources\CodeHubRound.png" />
-    <BundleResource Include="Resources\CodeHubLaunch.png" />
+    <Content Include="WebResources\highlight-line-numbers.min.js" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork" />
@@ -564,7 +574,6 @@
     <Folder Include="ViewControllers\" />
     <Folder Include="Images\Logos\" />
     <Folder Include="WebResources\" />
-    <Folder Include="WebResources\styles\" />
     <Folder Include="ViewControllers\Application\" />
     <Folder Include="ViewControllers\Repositories\" />
     <Folder Include="DialogElements\" />
@@ -580,6 +589,7 @@
     <Folder Include="Resources\Images.xcassets\Avatar.imageset\" />
     <Folder Include="ViewControllers\Source\" />
     <Folder Include="ViewControllers\PullRequests\" />
+    <Folder Include="WebResources\styles\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
