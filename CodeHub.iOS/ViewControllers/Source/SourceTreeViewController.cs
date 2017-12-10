@@ -47,16 +47,18 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             var loadContents = ReactiveCommand.CreateFromTask((string shaRef) =>
             {
+                var encodedShaRef = System.Web.HttpUtility.UrlEncode(shaRef);
+
                 if (string.IsNullOrEmpty(path))
                 {
                     return applicationService
                         .GitHubClient.Repository.Content
-                        .GetAllContentsByRef(username, repository, shaRef);
+                        .GetAllContentsByRef(username, repository, encodedShaRef);
                 }
 
                 return applicationService
                     .GitHubClient.Repository.Content
-                    .GetAllContentsByRef(username, repository, path, shaRef);
+                    .GetAllContentsByRef(username, repository, path, encodedShaRef);
             });
 
             loadContents
