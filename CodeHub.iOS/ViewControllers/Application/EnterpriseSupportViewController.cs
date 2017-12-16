@@ -29,15 +29,25 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private void SubmitFeedback()
         {
-            var ctrl = new MFMailComposeViewController();
-            ctrl.SetSubject("CodeHub Support");
-            ctrl.SetToRecipients(new[] { "codehubapp@gmail.com" });
-            ctrl.Finished += (sender, e) => DismissViewController(true, () =>
+            if (!MFMailComposeViewController.CanSendMail)
             {
-                if (e.Result == MFMailComposeResult.Sent)
-                    _alertDialogService.Alert("Sent!", "Thanks for your feedback!");
-            });
-            PresentViewController(ctrl, true, null);
+                _alertDialogService.Alert(
+                    "No Email Setup",
+                    "Looks like you don't have email setup on this device. " +
+                    "Add a mail provider and try again.").ToBackground();
+            }
+            else
+            {
+                var ctrl = new MFMailComposeViewController();
+                ctrl.SetSubject("CodeHub Support");
+                ctrl.SetToRecipients(new[] { "codehubapp@gmail.com" });
+                ctrl.Finished += (sender, e) => DismissViewController(true, () =>
+                {
+                    if (e.Result == MFMailComposeResult.Sent)
+                        _alertDialogService.Alert("Sent!", "Thanks for your feedback!");
+                });
+                PresentViewController(ctrl, true, null);
+            }
         }
 
         private void GoToGitHub()
