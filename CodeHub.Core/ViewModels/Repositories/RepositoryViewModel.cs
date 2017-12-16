@@ -90,16 +90,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
         }
 
-        public ICommand GoToReadmeCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<ReadmeViewModel>(new ReadmeViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToCommitsCommand
-        {
-            get { return new MvxCommand(ShowCommits);}
-        }
-
         public ICommand GoToPullRequestsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
@@ -108,14 +98,6 @@ namespace CodeHub.Core.ViewModels.Repositories
         public ICommand GoToHtmlUrlCommand
         {
             get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = Repository.HtmlUrl }), () => Repository != null); }
-        }
-
-        private void ShowCommits()
-        {
-            if (Branches?.Count == 1)
-                ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject {Username = Username, Repository = RepositoryName});
-            else
-                ShowViewModel<ChangesetBranchesViewModel>(new ChangesetBranchesViewModel.NavObject {Username = Username, Repository = RepositoryName});
         }
 
         public ICommand PinCommand

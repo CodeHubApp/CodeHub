@@ -104,9 +104,7 @@
     <Compile Include="Views\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Source\ChangesetBranchesView.cs" />
     <Compile Include="Views\Source\ChangesetView.cs" />
-    <Compile Include="Views\Repositories\ReadmeView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
@@ -116,9 +114,6 @@
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Views\Source\CommitsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
-    <Compile Include="Views\Filters\IssueMilestonesFilterViewController.cs" />
-    <Compile Include="Views\Filters\IssuesFilterViewController.cs" />
-    <Compile Include="Views\Filters\MyIssuesFilterViewController.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
@@ -319,6 +314,10 @@
     <Compile Include="ViewControllers\PullRequests\PullRequestDiffViewController.cs" />
     <Compile Include="ViewControllers\Source\CommitDiffViewController.cs" />
     <None Include="WebResources\highlight-line-numbers-LICENSE" />
+    <Compile Include="ViewControllers\Filters\IssueMilestonesFilterViewController.cs" />
+    <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
+    <Compile Include="ViewControllers\Filters\MyIssuesFilterViewController.cs" />
+    <Compile Include="ViewControllers\Repositories\ReadmeViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -590,6 +589,7 @@
     <Folder Include="ViewControllers\Source\" />
     <Folder Include="ViewControllers\PullRequests\" />
     <Folder Include="WebResources\styles\" />
+    <Folder Include="ViewControllers\Filters\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

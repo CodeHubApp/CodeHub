@@ -48,12 +48,6 @@ namespace CodeHub.iOS.DialogElements
             return -1;
         }
 
-        /// <summary>
-        /// Adds a new section to this RootElement
-        /// </summary>
-        /// <param name="section">
-        /// The section to add, if the root is visible, the section is inserted with no animation
-        /// </param>
         public void Add (Section section)
         {
             if (section == null)
@@ -163,33 +157,6 @@ namespace CodeHub.iOS.DialogElements
         {
             Reset((IEnumerable<Section>)sections);
         }
-
-//        public void Reload (Section section, UITableViewRowAnimation animation = UITableViewRowAnimation.Automatic)
-//        {
-//            if (section == null)
-//                throw new ArgumentNullException ("section");
-//            if (section.Root == null || section.Root != this)
-//                throw new ArgumentException ("Section is not attached to this root");
-//
-//            int idx = 0;
-//            foreach (var sect in _sections)
-//            {
-//                if (sect == section)
-//                {
-//                    try
-//                    {
-//                        _tableView.Get()?.BeginUpdates();
-//                        _tableView.Get()?.ReloadSections (new NSIndexSet ((uint) idx), animation);
-//                    }
-//                    finally
-//                    {
-//                        _tableView.Get()?.EndUpdates();
-//                    }
-//                    return;
-//                }
-//                idx++;
-//            }
-//        }
 
         public void Reload (Element element)
         {

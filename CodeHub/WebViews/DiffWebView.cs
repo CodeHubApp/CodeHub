@@ -43,12 +43,22 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n    <style>\n      head, body {\n        margin: 0;\n      }\n\n      table {\n     " +
-"   width: 100%;\n        border-collapse: collapse;\n        font-family: Menlo,Co" +
-"nsolas,monospace;\n        font-size: ");
+WriteLiteral(@"/>
+    <style>
+      head, body {
+        margin: 0;
+        -webkit-text-size-adjust: none;
+        -moz-text-size-adjust: none;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Menlo,Consolas,monospace;
+        font-size: ");
 
 
-#line 17 "DiffWebView.cshtml"
+#line 19 "DiffWebView.cshtml"
                Write(Model.FontSize);
 
 
@@ -126,13 +136,13 @@ WriteLiteral("px;\n      }\n\n      td {\n        height: 20px;\n        line-he
 "le>\n      <tbody>\t\n");
 
 
-#line 268 "DiffWebView.cshtml"
+#line 270 "DiffWebView.cshtml"
         
 
 #line default
 #line hidden
 
-#line 268 "DiffWebView.cshtml"
+#line 270 "DiffWebView.cshtml"
          foreach (var chunk in Model.Chunks)
     		{
 
@@ -158,7 +168,7 @@ WriteLiteral(" class=\"content\"");
 WriteLiteral(">");
 
 
-#line 273 "DiffWebView.cshtml"
+#line 275 "DiffWebView.cshtml"
                            Write(chunk.Content);
 
 
@@ -167,7 +177,7 @@ WriteLiteral(">");
 WriteLiteral("</td>\n          </tr>\n");
 
 
-#line 275 "DiffWebView.cshtml"
+#line 277 "DiffWebView.cshtml"
 
     		foreach (var line in chunk.Lines)
   			{
@@ -182,7 +192,7 @@ WriteLiteral("            <tr");
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 280 "DiffWebView.cshtml"
+#line 282 "DiffWebView.cshtml"
 , Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
@@ -190,7 +200,7 @@ WriteAttribute ("onclick", " onclick=\"", "\""
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 280 "DiffWebView.cshtml"
+#line 282 "DiffWebView.cshtml"
         , Tuple.Create<string,object,bool> (" ", line.NewLine
 
 #line default
@@ -205,7 +215,7 @@ WriteLiteral(" class=\"line-number\"");
 WriteLiteral(">");
 
 
-#line 281 "DiffWebView.cshtml"
+#line 283 "DiffWebView.cshtml"
                                  Write(line.BaseLine);
 
 
@@ -218,7 +228,7 @@ WriteLiteral(" class=\"line-number\"");
 WriteLiteral(">");
 
 
-#line 282 "DiffWebView.cshtml"
+#line 284 "DiffWebView.cshtml"
                                  Write(line.NewLine);
 
 
@@ -239,7 +249,7 @@ WriteLiteral(" class=\"code-line\"");
 WriteLiteral(">");
 
 
-#line 285 "DiffWebView.cshtml"
+#line 287 "DiffWebView.cshtml"
                                    Write(line.Content);
 
 
@@ -248,7 +258,7 @@ WriteLiteral(">");
 WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 288 "DiffWebView.cshtml"
+#line 290 "DiffWebView.cshtml"
   				}
   				else if (line.LineEquality == DiffModel.LineEquality.Insert)
           {
@@ -263,7 +273,7 @@ WriteLiteral(" class=\"insert\"");
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 291 "DiffWebView.cshtml"
+#line 293 "DiffWebView.cshtml"
            , Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
@@ -271,7 +281,7 @@ WriteAttribute ("onclick", " onclick=\"", "\""
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 291 "DiffWebView.cshtml"
+#line 293 "DiffWebView.cshtml"
                        , Tuple.Create<string,object,bool> (" ", line.NewLine
 
 #line default
@@ -290,7 +300,7 @@ WriteLiteral(" class=\"line-number\"");
 WriteLiteral(">");
 
 
-#line 293 "DiffWebView.cshtml"
+#line 295 "DiffWebView.cshtml"
                                  Write(line.NewLine);
 
 
@@ -311,7 +321,7 @@ WriteLiteral(" class=\"code-line\"");
 WriteLiteral(">");
 
 
-#line 296 "DiffWebView.cshtml"
+#line 298 "DiffWebView.cshtml"
                                    Write(line.Content);
 
 
@@ -320,7 +330,7 @@ WriteLiteral(">");
 WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 299 "DiffWebView.cshtml"
+#line 301 "DiffWebView.cshtml"
           }
   				else if (line.LineEquality == DiffModel.LineEquality.Delete)
           {
@@ -335,7 +345,7 @@ WriteLiteral(" class=\"delete\"");
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "lineClick(", true)
 
-#line 302 "DiffWebView.cshtml"
+#line 304 "DiffWebView.cshtml"
            , Tuple.Create<string,object,bool> ("", line.Index
 
 #line default
@@ -343,7 +353,7 @@ WriteAttribute ("onclick", " onclick=\"", "\""
 , false)
 , Tuple.Create<string,object,bool> ("", ",", true)
 
-#line 302 "DiffWebView.cshtml"
+#line 304 "DiffWebView.cshtml"
                        , Tuple.Create<string,object,bool> (" ", line.BaseLine
 
 #line default
@@ -358,7 +368,7 @@ WriteLiteral(" class=\"line-number\"");
 WriteLiteral(">");
 
 
-#line 303 "DiffWebView.cshtml"
+#line 305 "DiffWebView.cshtml"
                                  Write(line.BaseLine);
 
 
@@ -383,7 +393,7 @@ WriteLiteral(" class=\"code-line\"");
 WriteLiteral(">");
 
 
-#line 307 "DiffWebView.cshtml"
+#line 309 "DiffWebView.cshtml"
                                    Write(line.Content);
 
 
@@ -392,7 +402,7 @@ WriteLiteral(">");
 WriteLiteral("</span>\n              </td>\n            </tr>\n");
 
 
-#line 310 "DiffWebView.cshtml"
+#line 312 "DiffWebView.cshtml"
           }
 
   				foreach (var commentSet in line.CommentSets)
@@ -416,13 +426,13 @@ WriteLiteral(" class=\"comment-inner\"");
 WriteLiteral(">\n");
 
 
-#line 317 "DiffWebView.cshtml"
+#line 319 "DiffWebView.cshtml"
                   
 
 #line default
 #line hidden
 
-#line 317 "DiffWebView.cshtml"
+#line 319 "DiffWebView.cshtml"
                    foreach (var comment in commentSet.Value)
                   {
 
@@ -437,7 +447,7 @@ WriteLiteral(">\n                      <img");
 
 WriteAttribute ("src", " src=\"", "\""
 
-#line 320 "DiffWebView.cshtml"
+#line 322 "DiffWebView.cshtml"
 , Tuple.Create<string,object,bool> ("", comment.AvatarUrl
 
 #line default
@@ -457,7 +467,7 @@ WriteLiteral(" class=\"comment-content\"");
 WriteLiteral(">\n                        <h4><strong>");
 
 
-#line 322 "DiffWebView.cshtml"
+#line 324 "DiffWebView.cshtml"
                                Write(comment.Username);
 
 
@@ -470,7 +480,7 @@ WriteLiteral(" class=\"text-gray\"");
 WriteLiteral(">");
 
 
-#line 322 "DiffWebView.cshtml"
+#line 324 "DiffWebView.cshtml"
                                                                                   Write(comment.Date);
 
 
@@ -483,13 +493,13 @@ WriteLiteral(" class=\"comment-body\"");
 WriteLiteral(">\n");
 
 
-#line 324 "DiffWebView.cshtml"
+#line 326 "DiffWebView.cshtml"
           								
 
 #line default
 #line hidden
 
-#line 324 "DiffWebView.cshtml"
+#line 326 "DiffWebView.cshtml"
                                           WriteLiteral(comment.Body);
 
 #line default
@@ -498,7 +508,7 @@ WriteLiteral("\n                        </div>\n                      </div>\n  
 "</div>\n");
 
 
-#line 328 "DiffWebView.cshtml"
+#line 330 "DiffWebView.cshtml"
   				        }
 
 
@@ -513,7 +523,7 @@ WriteLiteral(">\n                    <button");
 WriteAttribute ("onclick", " onclick=\"", "\""
 , Tuple.Create<string,object,bool> ("", "replyTo(", true)
 
-#line 330 "DiffWebView.cshtml"
+#line 332 "DiffWebView.cshtml"
       , Tuple.Create<string,object,bool> ("", commentSet.Key
 
 #line default
@@ -525,7 +535,7 @@ WriteLiteral(">Reply</button>\n                  </div>\n                </div>\
 "d>\n            </tr>\n");
 
 
-#line 335 "DiffWebView.cshtml"
+#line 337 "DiffWebView.cshtml"
   				}
   			}
   		}

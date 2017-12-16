@@ -2,9 +2,9 @@
 {
     public class UpgradeDetailsModel
     {
-        public string Price { get; private set; }
+        public string Price { get; }
 
-        public bool IsPurchased { get; private set; }
+        public bool IsPurchased { get; }
 
         public UpgradeDetailsModel(string price, bool isPurchased)
         {

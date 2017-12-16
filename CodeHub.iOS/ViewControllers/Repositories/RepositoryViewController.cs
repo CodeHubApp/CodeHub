@@ -12,6 +12,8 @@ using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers.Users;
 using CodeHub.iOS.ViewControllers.Source;
 using CodeHub.iOS.Utilities;
+using CodeHub.iOS.Views.Source;
+using System.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -73,7 +75,8 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
                 d(_ownerElement.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
 
-                d(_commitsElement.Clicked.BindCommand(ViewModel.GoToCommitsCommand));
+                d(_commitsElement.Clicked.Subscribe(_ => GoToCommits()));
+
                 d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
                 d(_sourceElement.Clicked.Subscribe(_ => GoToSourceCode()));
 
@@ -82,7 +85,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
                 d(_forkElement.Value.Clicked.Select(x => ViewModel.Repository.Parent).BindCommand(ViewModel.GoToForkParentCommand));
                 d(_issuesElement.Value.Clicked.BindCommand(ViewModel.GoToIssuesCommand));
-                d(_readmeElement.Value.Clicked.BindCommand(ViewModel.GoToReadmeCommand));
+                d(_readmeElement.Value.Clicked.Subscribe(_ => GoToReadme()));
                 d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
 
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
@@ -197,6 +200,31 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 null,
                 defaultBranch,
                 ShaType.Branch));
+        }
+
+        private void GoToReadme()
+        {
+            this.PushViewController(
+                new ReadmeViewController(ViewModel.Username, ViewModel.RepositoryName));
+        }
+
+        private void GoToCommits()
+        {
+            var owner = ViewModel.Username;
+            var repo = ViewModel.RepositoryName;
+            var branches = ViewModel.Branches;
+            if (branches?.Count == 1)
+            {
+                var viewController = new ChangesetsView(owner, repo, branches.First().Name);
+                this.PushViewController(viewController);
+            }
+            else
+            {
+                var viewController = new BranchesViewController(owner, repo);
+                viewController.BranchSelected.Subscribe(
+                    branch => viewController.PushViewController(new ChangesetsView(owner, repo, branch.Name)));
+                this.PushViewController(viewController);
+            }
         }
 
         public RepositoryViewController()

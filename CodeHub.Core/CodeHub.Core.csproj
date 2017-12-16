@@ -46,8 +46,6 @@
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\ReadmeViewModel.cs" />
-    <Compile Include="ViewModels\Source\ChangesetBranchesViewModel.cs" />
     <Compile Include="ViewModels\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\Events\BaseEventsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistsViewModel.cs" />

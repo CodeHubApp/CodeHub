@@ -39,39 +39,42 @@ WriteLiteral(" name=\"viewport\"");
 WriteLiteral(" content=\"width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable" +
 "=0\"");
 
-WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -webkit-text-size-adjust" +
-": none;\n}\n\nbody {\n    color: #333;\n    font-family: Helvetica, Arial, sans-serif" +
-";\n    line-height: 1.42;\n    font-size: 16px;\n    line-height: 1.7;\n    word-wra" +
-"p: break-word;\n}\nh1, h2, h3, h4, h5, h6 {\nmargin: 1em 0 15px;\npadding: 0;\nfont-w" +
-"eight: bold;\nline-height: 1.7;\ncursor: text;\nposition: relative;\n}\nh1 {\nfont-siz" +
-"e: 1.8em;\nborder-bottom: 1px solid #ddd;\n}\np, blockquote, ul, ol, dl, table, pre" +
-" {\nmargin: 15px 0;\n}\nh2 {\nfont-size: 1.4em;\nborder-bottom: 1px solid #eee;\n}\nul," +
-" ol {\npadding-left: 20px;\n}\na {\ncolor: #4183c4;\ntext-decoration: none;\ntext-deco" +
-"ration: none;\n}\n.highlight pre, pre {\nbackground-color: #f8f8f8;\nborder: 1px sol" +
-"id #ddd;\nline-height: 19px;\noverflow: auto;\npadding: 6px 10px;\nborder-radius: 3p" +
-"x;\n}\npre {\nword-wrap: normal;\n}\ndl {\npadding: 0;\n}\ndl dt {\nfont-weight: bold;\nfo" +
-"nt-style: italic;\npadding: 0;\nmargin-top: 15px;\n}\ndl dd {\nmargin-bottom: 15px;\np" +
-"adding: 0 15px;\n}\ntable {\nwidth: 100%;\noverflow: auto;\ndisplay: block;\n}\ntable t" +
-"r {\nborder-top: 1px solid #ccc;\nbackground-color: #fff;\n}\ntable tr:nth-child(2n)" +
-" {\nbackground-color: #f8f8f8;\n}\ntable th, table td {\nborder: 1px solid #ddd;\npad" +
-"ding: 6px 13px;\n}\ntable th {\nfont-weight: bold;\n}\nimg {\nmax-width: 100%;\n-moz-bo" +
-"x-sizing: border-box;\nbox-sizing: border-box;\n}\nul.task-list > li.task-list-item" +
-" {\n  list-style-type: none;\n}\n.task-list-item-checkbox {\n  margin-left: -20px;\n " +
-" vertical-align: middle;\n}\n.btn {\n    margin-top: 1.50em;\n    margin-bottom: 1em" +
-";\n    padding: 1em 2em;\n    text-align: center;\n    display: inline-block;\n    b" +
-"order-radius: 15px;\n    border: none;\n    transform: translateY(1px);\n    color:" +
-" #fff;\n}\n#buy {\n    background-color: #2ecc71;\n    box-shadow: 0 3px #27ae60;\n}\n" +
-"#purchased {\n    background-color: #34495e;\n    box-shadow: 0 3px #2c3e50;\n}\n");
+WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\nhtml {\n    -webkit-text-size-adjust:" +
+" none;\n}\nbody {\n    color: #333;\n    font-family: Helvetica, Arial, sans-serif;\n" +
+"    line-height: 1.42;\n    font-size: 16px;\n    line-height: 1.7;\n    word-wrap:" +
+" break-word;\n}\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n    margin: 1em 0 15px;\n    padding: 0;\n" +
+"    font-weight: bold;\n    line-height: 1.7;\n    cursor: text;\n    position: rel" +
+"ative;\n}\nh1 {\n    font-size: 1.8em;\n    border-bottom: 1px solid #ddd;\n}\np,\nbloc" +
+"kquote,\nul,\nol,\ndl,\ntable,\npre {\n    margin: 15px 0;\n}\nh2 {\n    font-size: 1.4em" +
+";\n    border-bottom: 1px solid #eee;\n}\nul,\nol {\n    padding-left: 20px;\n}\na {\n  " +
+"  color: #4183c4;\n    text-decoration: none;\n    text-decoration: none;\n}\n.highl" +
+"ight pre,\npre {\n    background-color: #f8f8f8;\n    border: 1px solid #ddd;\n    l" +
+"ine-height: 19px;\n    overflow: auto;\n    padding: 6px 10px;\n    border-radius: " +
+"3px;\n}\npre {\n    word-wrap: normal;\n}\ndl {\n    padding: 0;\n}\ndl dt {\n    font-we" +
+"ight: bold;\n    font-style: italic;\n    padding: 0;\n    margin-top: 15px;\n}\ndl d" +
+"d {\n    margin-bottom: 15px;\n    padding: 0 15px;\n}\ntable {\n    width: 100%;\n   " +
+" overflow: auto;\n    display: block;\n}\ntable tr {\n    border-top: 1px solid #ccc" +
+";\n    background-color: #fff;\n}\ntable tr:nth-child(2n) {\n    background-color: #" +
+"f8f8f8;\n}\ntable th,\ntable td {\n    border: 1px solid #ddd;\n    padding: 6px 13px" +
+";\n}\ntable th {\n    font-weight: bold;\n}\nimg {\n    max-width: 100%;\n    -moz-box-" +
+"sizing: border-box;\n    box-sizing: border-box;\n}\nul.task-list > li.task-list-it" +
+"em {\n    list-style-type: none;\n}\n.task-list-item-checkbox {\n    margin-left: -2" +
+"0px;\n    vertical-align: middle;\n}\n.btn {\n    margin-top: 1.50em;\n    margin-bot" +
+"tom: 1em;\n    padding: 1em 2em;\n    text-align: center;\n    display: inline-bloc" +
+"k;\n    border-radius: 15px;\n    border: none;\n    transform: translateY(1px);\n  " +
+"  color: #fff;\n}\n#buy {\n    background-color: #2ecc71;\n    box-shadow: 0 3px #27" +
+"ae60;\n}\n#purchased {\n    background-color: #34495e;\n    box-shadow: 0 3px #2c3e5" +
+"0;\n}\n");
 
 WriteLiteral(@"@media (max-width: 640px) {
-    .btn, #restore {
+    .btn,
+    #restore {
         display: block;
     }
     #restore {
         text-align: center;
     }
 }
-
 </style>
     <title>Pro Version</title>
 </head>
@@ -107,13 +110,13 @@ WriteLiteral(" target=\"_blank\"");
 WriteLiteral(">contact me</a>!\n    </p>\n\n");
 
 
-#line 151 "UpgradeDetailsWebView.cshtml"
+#line 163 "UpgradeDetailsWebView.cshtml"
     
 
 #line default
 #line hidden
 
-#line 151 "UpgradeDetailsWebView.cshtml"
+#line 163 "UpgradeDetailsWebView.cshtml"
      if (Model.IsPurchased)
     {
 
@@ -129,7 +132,7 @@ WriteLiteral(" class=\"btn\"");
 WriteLiteral(">Pro Already Enabled!</a>\n        </p>\n");
 
 
-#line 156 "UpgradeDetailsWebView.cshtml"
+#line 168 "UpgradeDetailsWebView.cshtml"
     }
     else
     {
@@ -150,7 +153,7 @@ WriteLiteral(" class=\"btn\"");
 WriteLiteral(">Purchase CodeHub Pro for ");
 
 
-#line 162 "UpgradeDetailsWebView.cshtml"
+#line 174 "UpgradeDetailsWebView.cshtml"
                                                                              Write(Model.Price);
 
 
@@ -169,7 +172,7 @@ WriteLiteral(" href=\"app://restore\"");
 WriteLiteral(">Click here</a> to restore a previous purchase.\n            </p>\n");
 
 
-#line 167 "UpgradeDetailsWebView.cshtml"
+#line 179 "UpgradeDetailsWebView.cshtml"
         }
     }
 

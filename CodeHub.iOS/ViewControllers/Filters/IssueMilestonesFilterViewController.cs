@@ -1,12 +1,11 @@
 using System;
 using GitHubSharp.Models;
-using CodeHub.iOS.ViewControllers;
 using System.Linq;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Views.Filters
+namespace CodeHub.iOS.ViewControllers.Filters
 {
     public class IssueMilestonesFilterViewController : DialogViewController
     {

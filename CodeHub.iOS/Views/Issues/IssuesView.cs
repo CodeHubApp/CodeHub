@@ -4,7 +4,7 @@ using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
-using CodeHub.iOS.Views.Filters;
+using CodeHub.iOS.ViewControllers.Filters;
 
 namespace CodeHub.iOS.Views.Issues
 {

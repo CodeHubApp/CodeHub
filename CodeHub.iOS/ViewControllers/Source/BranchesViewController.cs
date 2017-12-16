@@ -21,6 +21,8 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         public IObservable<Octokit.Branch> BranchSelected => _branchSubject.AsObservable();
 
+        private ReactiveCommand<Unit, IReadOnlyList<Octokit.Branch>> LoadBranches { get; }
+
         public BranchesViewController(
             string username,
             string repository,
@@ -29,17 +31,19 @@ namespace CodeHub.iOS.ViewControllers.Source
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
 
-            var loadBranches = ReactiveCommand.CreateFromTask(
+            Title = "Branches";
+
+            LoadBranches = ReactiveCommand.CreateFromTask(
                 () => applicationService.GitHubClient.Repository.Branch.GetAll(username, repository));
 
-            loadBranches
+            LoadBranches
                 .ThrownExceptions
                 .Do(_ => SetErrorView())
                 .Select(error => new UserError(LoadErrorMessage, error))
                 .SelectMany(Interactions.Errors.Handle)
                 .Subscribe();
 
-            loadBranches
+            LoadBranches
                 .Do(_ => TableView.TableFooterView = null)
                 .Subscribe(ItemsLoaded);
 
@@ -47,7 +51,7 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Take(1)
                 .Select(_ => Unit.Default)
                 .Do(_ => TableView.TableFooterView = new LoadingIndicatorView())
-                .InvokeReactiveCommand(loadBranches);
+                .InvokeReactiveCommand(LoadBranches);
         }
 
         private void SetErrorView()

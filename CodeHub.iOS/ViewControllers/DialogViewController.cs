@@ -29,15 +29,7 @@ namespace CodeHub.iOS.ViewControllers
         private UISearchBar _searchBar;
         bool pushing;
 
-        /// <summary>
-        /// The root element displayed by the DialogViewController, the value can be changed during runtime to update the contents.
-        /// </summary>
-        public RootElement Root {
-            get 
-            {
-                return _rootElement.Value;
-            }
-        } 
+        public RootElement Root => _rootElement.Value;
 
         public bool EnableSearch { get; set; }
 
@@ -173,12 +165,8 @@ namespace CodeHub.iOS.ViewControllers
 
         public class Source : UITableViewSource {
             private readonly WeakReference<DialogViewController> _container;
-            private readonly RootElement _root;
 
-            public RootElement Root
-            {
-                get { return _root; }
-            }
+            public RootElement Root => _container.Get()?.Root;
 
             public DialogViewController Container
             {
@@ -188,7 +176,6 @@ namespace CodeHub.iOS.ViewControllers
             public Source (DialogViewController container)
             {
                 _container = new WeakReference<DialogViewController>(container);
-                _root = container.Root;
             }
 
             public override nint RowsInSection (UITableView tableview, nint section)

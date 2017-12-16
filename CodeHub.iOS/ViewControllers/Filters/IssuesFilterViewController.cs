@@ -1,11 +1,10 @@
 using System;
 using UIKit;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels;
 using CodeHub.Core.Filters;
 using CodeHub.iOS.DialogElements;
 
-namespace CodeHub.iOS.Views.Filters
+namespace CodeHub.iOS.ViewControllers.Filters
 {
     public class IssuesFilterViewController : FilterViewController
     {

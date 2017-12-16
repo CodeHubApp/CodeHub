@@ -1,5 +1,3 @@
-using System;
-using CodeHub.Core.ViewModels;
 using GitHubSharp.Models;
 using System.Windows.Input;
 using System.Threading.Tasks;
@@ -7,6 +5,7 @@ using GitHubSharp;
 using System.Collections.Generic;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Changesets
 {
@@ -45,10 +44,12 @@ namespace CodeHub.Core.ViewModels.Changesets
             get { return _commits; }
         }
 
-        protected CommitsViewModel(IApplicationService applicationService, IFeaturesService featuresService)
+        protected CommitsViewModel(
+            IApplicationService applicationService = null,
+            IFeaturesService featuresService = null)
         {
-            _applicationService = applicationService;
-            _featuresService = featuresService;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
         }
 
         public void Init(NavObject navObject)

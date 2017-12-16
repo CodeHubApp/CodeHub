@@ -85,8 +85,8 @@ body {
     margin: 0; 
     min-height: 100%; 
     min-width: 100%;
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
     font-size: ");
 
 

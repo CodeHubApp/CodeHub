@@ -28,7 +28,7 @@ namespace CodeHub.iOS.Views.Issues
 
                 if (x == 2 && goodVm != null)
                 {
-                    var filter = new CodeHub.iOS.Views.Filters.MyIssuesFilterViewController(goodVm.Issues);
+                    var filter = new ViewControllers.Filters.MyIssuesFilterViewController(goodVm.Issues);
                     var nav = new UINavigationController(filter);
                     PresentViewController(nav, true, null);
                 }
