@@ -6,14 +6,17 @@
         public string Theme { get; }
         public string Language { get; }
         public int FontSize { get; }
-        public decimal Scale { get; }
+        public string Viewport { get; }
 
-        public SyntaxHighlighterModel(string content, string theme, int fontSize, bool shouldZoom, string file = null)
+        public SyntaxHighlighterModel(string content, string theme, int fontSize, bool shouldZoom, bool lockWidth = false, string file = null)
         {
             Content = content;
             Theme = theme;
             FontSize = fontSize;
-            Scale = shouldZoom ? 1.0m : 0.4m;
+
+            var scale = shouldZoom ? 1.0m : 0.4m;
+            var width = lockWidth ? "width=device-width" : string.Empty;
+            Viewport = $"minimum-scale={scale} maximum-scale=4.0 {width}";
 
             if (file != null)
                 Language = CalculateLanguage(System.IO.Path.GetExtension(file));

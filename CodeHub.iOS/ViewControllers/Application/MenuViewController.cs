@@ -1,19 +1,19 @@
-using CodeHub.iOS.Views;
-using CodeHub.Core.ViewModels.App;
-using UIKit;
-using System.Linq;
-using CodeHub.Core.Utils;
-using CodeHub.Core.Services;
 using System;
-using MvvmCross.Platform;
-using CodeHub.iOS.DialogElements;
 using System.Collections.Generic;
-using CodeHub.iOS.ViewControllers.Accounts;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using CoreGraphics;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.App;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.ViewControllers.Accounts;
 using CodeHub.iOS.ViewControllers.Search;
+using CodeHub.iOS.ViewControllers.Settings;
+using CodeHub.iOS.Views;
+using CoreGraphics;
+using MvvmCross.Platform;
 using Splat;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -188,10 +188,10 @@ namespace CodeHub.iOS.ViewControllers.Application
             gistsSection.Add(new MenuElement("Starred", GoToStarredGists, Octicon.Star.ToImage()));
             gistsSection.Add(new MenuElement("Public", GoToPublicGists, Octicon.Globe.ToImage()));
             sections.Add(gistsSection);
-//
+
             var infoSection = new Section() { HeaderView = new MenuSectionView("Info & Preferences") };
             sections.Add(infoSection);
-            infoSection.Add(new MenuElement("Settings", () => ViewModel.GoToSettingsCommand.Execute(null), Octicon.Gear.ToImage()));
+            infoSection.Add(new MenuElement("Settings", GoToSettings, Octicon.Gear.ToImage()));
 
             if (ViewModel.ShouldShowUpgrades)
                 infoSection.Add(new MenuElement("Upgrades", GoToUpgrades, Octicon.Lock.ToImage()));
@@ -224,6 +224,12 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void GoToSearch()
         {
             var vc = new ExploreViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToSettings()
+        {
+            var vc = new SettingsViewController();
             NavigationController?.PushViewController(vc, true);
         }
 

@@ -41,15 +41,13 @@ WriteLiteral(">\n<meta");
 WriteLiteral(" name=\"viewport\"");
 
 WriteAttribute ("content", " content=\"", "\""
-, Tuple.Create<string,object,bool> ("", "minimum-scale=", true)
 
 #line 6 "SyntaxHighlighterWebView.cshtml"
-       , Tuple.Create<string,object,bool> ("", Model.Scale
+, Tuple.Create<string,object,bool> (" ", Model.Viewport
 
 #line default
 #line hidden
 , false)
-, Tuple.Create<string,object,bool> (" ", "maximum-scale=4.0", true)
 );
 WriteLiteral(">\n<link");
 
@@ -80,7 +78,10 @@ WriteLiteral(@"></script>
   hljs.initLineNumbersOnLoad();
 </script>
 <style>
-html { height: 100%; width: 100%; }
+html {
+    height: 100%;
+    width: 100%;
+}
 body { 
     margin: 0; 
     min-height: 100%; 
@@ -90,7 +91,7 @@ body {
     font-size: ");
 
 
-#line 22 "SyntaxHighlighterWebView.cshtml"
+#line 25 "SyntaxHighlighterWebView.cshtml"
            Write(Model.FontSize);
 
 
@@ -112,7 +113,8 @@ body > pre * {
 
 .hljs { 
     width: 100%;
-    min-width: 100%; min-height: 100%; 
+    min-width: 100%;
+    min-height: 100%; 
     box-sizing: border-box; 
     overflow: none;
 }
@@ -154,7 +156,7 @@ WriteLiteral(" id=\"code\"");
 
 WriteAttribute ("class", " class=\"", "\""
 
-#line 74 "SyntaxHighlighterWebView.cshtml"
+#line 78 "SyntaxHighlighterWebView.cshtml"
 , Tuple.Create<string,object,bool> ("", Model.Language
 
 #line default
@@ -164,7 +166,7 @@ WriteAttribute ("class", " class=\"", "\""
 WriteLiteral(">");
 
 
-#line 74 "SyntaxHighlighterWebView.cshtml"
+#line 78 "SyntaxHighlighterWebView.cshtml"
                                             Write(Model.Content);
 
 

@@ -189,7 +189,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             else
             {
                 var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
-                var model = new SyntaxHighlighterModel(content, "idea", fontSize, zoom, filename);
+                var theme = _applicationService.Account.CodeEditTheme;
+                var model = new SyntaxHighlighterModel(content, theme, fontSize, zoom, file: filename);
                 var contentView = new SyntaxHighlighterWebView { Model = model };
                 LoadContent(contentView.GenerateString());
             }

@@ -100,11 +100,6 @@ namespace CodeHub.Core.ViewModels.App
             get { return new MvxCommand(() => ShowMenuViewModel<NewsViewModel>(null));}
         }
 
-        public ICommand GoToSettingsCommand
-        {
-            get { return new MvxCommand(() => ShowMenuViewModel<SettingsViewModel>(null));}
-        }
-
         public ICommand LoadCommand
         {
             get { return new MvxCommand(Load);}    

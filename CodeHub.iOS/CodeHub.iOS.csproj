@@ -196,7 +196,6 @@
     <Compile Include="ViewControllers\WebBrowserViewController.cs" />
     <Compile Include="ViewControllers\Walkthrough\PromoteViewController.cs" />
     <Compile Include="ViewControllers\Walkthrough\PromoteViewController.designer.cs" />
-    <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
     <Compile Include="Services\InAppPurchaseService.cs" />
     <Compile Include="Utilities\UIWindowExtensions.cs" />
     <Compile Include="Utilities\NetworkActivity.cs" />
@@ -252,9 +251,7 @@
     <Compile Include="ViewControllers\Organizations\OrganizationsViewController.cs" />
     <Compile Include="ViewControllers\Organizations\OrganizationViewController.cs" />
     <Compile Include="ViewControllers\Application\MenuViewController.cs" />
-    <Compile Include="ViewControllers\Application\SettingsViewController.cs" />
     <Compile Include="ViewControllers\Application\StartupViewController.cs" />
-    <Compile Include="ViewControllers\Application\DefaultStartupViewController.cs" />
     <Compile Include="Views\LoadingIndicatorView.cs" />
     <Compile Include="ViewControllers\Gists\GistFileViewController.cs" />
     <Compile Include="DialogElements\MenuElement.cs" />
@@ -318,6 +315,10 @@
     <Compile Include="ViewControllers\Filters\IssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\Filters\MyIssuesFilterViewController.cs" />
     <Compile Include="ViewControllers\Repositories\ReadmeViewController.cs" />
+    <Compile Include="ViewControllers\Settings\SettingsViewController.cs" />
+    <Compile Include="ViewControllers\Settings\SyntaxHighlighterViewController.cs" />
+    <Compile Include="ViewControllers\Settings\DefaultStartupViewController.cs" />
+    <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -590,6 +591,7 @@
     <Folder Include="ViewControllers\PullRequests\" />
     <Folder Include="WebResources\styles\" />
     <Folder Include="ViewControllers\Filters\" />
+    <Folder Include="ViewControllers\Settings\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -634,6 +636,9 @@
       <Project>{B01CF3C6-51DF-4CAE-A07C-E4BC907833D7}</Project>
       <Name>CodeHub</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewControllers\Settings\SyntaxHighlightExample" />
   </ItemGroup>
   <Import Project="..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets" Condition="Exists('..\packages\SQLitePCL.raw_basic.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw_basic.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

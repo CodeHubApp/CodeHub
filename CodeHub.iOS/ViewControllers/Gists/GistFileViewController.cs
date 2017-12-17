@@ -11,6 +11,8 @@ namespace CodeHub.iOS.ViewControllers.Gists
 {
     public class GistFileViewController : Views.Source.FileSourceView
     {
+        private readonly IApplicationService _applicationService = Mvx.Resolve<IApplicationService>();
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -28,7 +30,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             if (ViewModel.IsMarkdown)
             {
-                var markdownContent = await Mvx.Resolve<IApplicationService>().Client.Markdown.GetMarkdown(content);
+                var markdownContent = await _applicationService.Client.Markdown.GetMarkdown(content);
                 var model = new MarkdownModel(markdownContent, fontSize);
                 var htmlContent = new MarkdownWebView { Model = model };
                 LoadContent(htmlContent.GenerateString());
@@ -36,7 +38,8 @@ namespace CodeHub.iOS.ViewControllers.Gists
             else
             {
                 var zoom = UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone;
-                var model = new SyntaxHighlighterModel(content, "idea", fontSize, zoom, fileUri.LocalPath);
+                var theme = _applicationService.Account.CodeEditTheme;
+                var model = new SyntaxHighlighterModel(content, theme, fontSize, zoom, file: fileUri.LocalPath);
                 var contentView = new SyntaxHighlighterWebView { Model = model };
                 LoadContent(contentView.GenerateString());
             }

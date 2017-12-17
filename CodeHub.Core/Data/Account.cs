@@ -31,6 +31,8 @@ namespace CodeHub.Core.Data
 
         public string DefaultStartupView { get; set; }
 
+        public string CodeEditTheme { get; set; } = "idea";
+
         private List<PinnedRepository> _pinnedRepositories = new List<PinnedRepository>();
         public List<PinnedRepository> PinnedRepositories
         {

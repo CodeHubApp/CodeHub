@@ -42,7 +42,6 @@
     <Compile Include="Services\ApplicationService.cs" />
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
-    <Compile Include="ViewModels\App\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Events\OrganizationEventsViewModel.cs" />
     <Compile Include="ViewModels\Events\UserEventsViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />

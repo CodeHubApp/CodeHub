@@ -8,7 +8,7 @@ using CodeHub.Core.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 
-namespace CodeHub.iOS.ViewControllers.Application
+namespace CodeHub.iOS.ViewControllers.Settings
 {
     public class DefaultStartupViewController : TableViewController
     {
