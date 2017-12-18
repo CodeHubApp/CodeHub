@@ -76,6 +76,12 @@ WriteLiteral(@"></script>
 <script>
   hljs.initHighlightingOnLoad();
   hljs.initLineNumbersOnLoad();
+
+  window.onload = function() {
+    var elem = document.querySelector('.hljs');
+    var style = getComputedStyle(elem);
+    document.body.style.backgroundColor = style.backgroundColor;
+  }
 </script>
 <style>
 html {
@@ -91,7 +97,7 @@ body {
     font-size: ");
 
 
-#line 25 "SyntaxHighlighterWebView.cshtml"
+#line 31 "SyntaxHighlighterWebView.cshtml"
            Write(Model.FontSize);
 
 
@@ -156,7 +162,7 @@ WriteLiteral(" id=\"code\"");
 
 WriteAttribute ("class", " class=\"", "\""
 
-#line 78 "SyntaxHighlighterWebView.cshtml"
+#line 84 "SyntaxHighlighterWebView.cshtml"
 , Tuple.Create<string,object,bool> ("", Model.Language
 
 #line default
@@ -166,7 +172,7 @@ WriteAttribute ("class", " class=\"", "\""
 WriteLiteral(">");
 
 
-#line 78 "SyntaxHighlighterWebView.cshtml"
+#line 84 "SyntaxHighlighterWebView.cshtml"
                                             Write(Model.Content);
 
 
