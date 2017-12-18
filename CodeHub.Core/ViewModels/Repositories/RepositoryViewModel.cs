@@ -38,22 +38,22 @@ namespace CodeHub.Core.ViewModels.Repositories
             private set { this.RaiseAndSetIfChanged(ref _watched, value); }
         }
 
-        private RepositoryModel _repository;
-        public RepositoryModel Repository
+        private Octokit.Repository _repository;
+        public Octokit.Repository Repository
         {
             get { return _repository; }
-            private set { this.RaiseAndSetIfChanged(ref _repository, value); }
+            set { this.RaiseAndSetIfChanged(ref _repository, value); }
         }
 
-        private ContentModel _readme;
-        public ContentModel Readme
+        private Octokit.Readme _readme;
+        public Octokit.Readme Readme
         {
             get { return _readme; }
             private set { this.RaiseAndSetIfChanged(ref _readme, value); }
         }
 
-        private List<BranchModel> _branches;
-        public List<BranchModel> Branches
+        private IReadOnlyList<Octokit.Branch> _branches;
+        public IReadOnlyList<Octokit.Branch> Branches
         {
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
@@ -137,23 +137,26 @@ namespace CodeHub.Core.ViewModels.Repositories
         }
 
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Get(), response => Repository = response.Data);
+            _applicationService.GitHubClient.Repository.Content
+                 .GetReadme(Username, RepositoryName).ToBackground(x => Readme = x);
 
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetReadme(), 
-                response => Readme = response.Data).ToBackground();
+            _applicationService.GitHubClient.Repository.Branch
+                 .GetAll(Username, RepositoryName).ToBackground(x => Branches = x);
 
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].GetBranches(), 
-                response => Branches = response.Data).ToBackground();
+            _applicationService.GitHubClient.Activity.Starring
+                .CheckStarred(Username, RepositoryName).ToBackground(x => IsStarred = x);
 
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsWatching(), 
-                response => IsWatched = response.Data).ToBackground();
-         
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].IsStarred(), 
-                response => IsStarred = response.Data).ToBackground();
+            _applicationService.GitHubClient.Activity.Watching
+                .CheckWatched(Username, RepositoryName).ToBackground(x => IsWatched = x);
 
-            return t1;
+            var retrieveRepository = _applicationService.GitHubClient.Repository.Get(Username, RepositoryName);
+
+            if (Repository == null)
+                Repository = await retrieveRepository;
+            else
+                retrieveRepository.ToBackground(repo => Repository = repo);
         }
 
         public ICommand ToggleWatchCommand

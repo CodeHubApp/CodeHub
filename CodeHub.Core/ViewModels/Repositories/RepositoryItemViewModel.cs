@@ -9,19 +9,21 @@ namespace CodeHub.Core.ViewModels.Repositories
     [DebuggerDisplay("{Owner}/{Name}")]
     public class RepositoryItemViewModel : ReactiveObject, ICanGoToViewModel
     {
-        public string Name { get; }
+        public string Name => Repository.Name;
 
-        public string Owner { get; }
+        public string Owner => Repository.Owner?.Login ?? string.Empty;
 
-        public GitHubAvatar Avatar { get; }
+        public GitHubAvatar Avatar => new GitHubAvatar(Repository.Owner?.AvatarUrl);
 
         public string Description { get; }
 
-        public string Stars { get; }
+        public string Stars => Repository.StargazersCount.ToString();
 
-        public string Forks { get; }
-
+        public string Forks => Repository.ForksCount.ToString();
+            
         public bool ShowOwner { get; }
+
+        public Octokit.Repository Repository { get; }
 
         public ReactiveCommand<Unit, Unit> GoToCommand { get; }
 
@@ -39,11 +41,7 @@ namespace CodeHub.Core.ViewModels.Repositories
                 Description = null;
             }
 
-            Name = repository.Name;
-            Owner = repository.Owner?.Login ?? string.Empty;
-            Avatar = new GitHubAvatar(repository.Owner?.AvatarUrl);
-            Stars = repository.StargazersCount.ToString();
-            Forks = repository.ForksCount.ToString();
+            Repository = repository;
             ShowOwner = showOwner;
             GoToCommand = ReactiveCommand.Create(() => gotoCommand?.Invoke(this));
         }

@@ -11,6 +11,7 @@ using CodeHub.Core;
 using System.Linq;
 using System.Reactive;
 using CodeHub.iOS.Views;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -26,6 +27,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         public BranchesViewController(
             string username,
             string repository,
+            IReadOnlyList<Octokit.Branch> branches = null,
             IApplicationService applicationService = null)
             : base(UITableViewStyle.Plain)
         {
@@ -33,8 +35,12 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             Title = "Branches";
 
-            LoadBranches = ReactiveCommand.CreateFromTask(
-                () => applicationService.GitHubClient.Repository.Branch.GetAll(username, repository));
+            LoadBranches = ReactiveCommand.CreateFromTask(() =>
+            {
+                if (branches != null)
+                    return Task.FromResult(branches);
+                return applicationService.GitHubClient.Repository.Branch.GetAll(username, repository);
+            });
 
             LoadBranches
                 .ThrownExceptions

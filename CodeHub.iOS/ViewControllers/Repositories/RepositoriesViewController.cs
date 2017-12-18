@@ -85,7 +85,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 				  .Subscribe(x => ViewModel.SearchText = x));
 
 				d(ViewModel.RepositoryItemSelected
-				  .Select(x => new RepositoryViewController(x.Owner, x.Name))
+                  .Select(x => new RepositoryViewController(x.Owner, x.Name, x.Repository))
 				  .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(ViewModel.WhenAnyValue(x => x.HasMore)

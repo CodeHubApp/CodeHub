@@ -14,6 +14,7 @@ using CodeHub.iOS.ViewControllers.Source;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Views.Source;
 using System.Linq;
+using Humanizer;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -181,11 +182,15 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public static RepositoryViewController CreateCodeHubViewController()
             => new RepositoryViewController("codehubapp", "codehub");
 
-        public RepositoryViewController(string owner, string repository)
+        public RepositoryViewController(
+            string owner,
+            string repositoryName,
+            Octokit.Repository repository = null)
             : this()
         {
             ViewModel = new RepositoryViewModel();
-            ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repository });
+            ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repositoryName });
+            ViewModel.Repository = repository;
         }
 
         private void GoToSourceCode()
@@ -205,7 +210,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         private void GoToReadme()
         {
             this.PushViewController(
-                new ReadmeViewController(ViewModel.Username, ViewModel.RepositoryName));
+                new ReadmeViewController(ViewModel.Username, ViewModel.RepositoryName, ViewModel.Readme));
         }
 
         private void GoToCommits()
@@ -220,7 +225,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             }
             else
             {
-                var viewController = new BranchesViewController(owner, repo);
+                var viewController = new BranchesViewController(owner, repo, branches);
                 viewController.BranchSelected.Subscribe(
                     branch => viewController.PushViewController(new ChangesetsView(owner, repo, branch.Name)));
                 this.PushViewController(viewController);
@@ -254,25 +259,16 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             sections.Add(new Section { _split });
             var sec1 = new Section();
 
-            //Calculate the best representation of the size
-            string size;
-            if (model.Size / 1024f < 1)
-                size = string.Format("{0:0.##}KB", model.Size);
-            else if ((model.Size / 1024f / 1024f) < 1)
-                size = string.Format("{0:0.##}MB", model.Size / 1024f);
-            else
-                size = string.Format("{0:0.##}GB", model.Size / 1024f / 1024f);
-
             _split1.Button1.Text = model.Private ? "Private" : "Public";
             _split1.Button2.Text = model.Language ?? "N/A";
             sec1.Add(_split1);
 
-            _split2.Button1.Text = model.OpenIssues + (model.OpenIssues == 1 ? " Issue" : " Issues");
-            _split2.Button2.Text = branches + (branches == 1 ? " Branch" : " Branches");
+            _split2.Button1.Text = "Issue".ToQuantity(model.OpenIssuesCount);
+            _split2.Button2.Text = "Branch".ToQuantity(branches);
             sec1.Add(_split2);
 
             _split3.Button1.Text = (model.CreatedAt).ToString("MM/dd/yy");
-            _split3.Button2.Text = size;
+            _split3.Button2.Text = model.Size.Bytes().ToString("#.#");
             sec1.Add(_split3);
 
             _ownerElement.Value = model.Owner.Login;

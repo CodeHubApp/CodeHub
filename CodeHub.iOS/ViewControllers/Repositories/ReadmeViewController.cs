@@ -29,6 +29,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public ReadmeViewController(
             string owner,
             string repository,
+            Octokit.Readme readme = null,
             IApplicationService applicationService = null,
             IMarkdownService markdownService = null)
             : base(false, false)
@@ -40,8 +41,12 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             Title = "Readme";
 
-            var loadCommand = ReactiveCommand.CreateFromTask(
-                () => _applicationService.GitHubClient.Repository.Content.GetReadme(owner, repository));
+            var loadCommand = ReactiveCommand.CreateFromTask(() =>
+            {
+                if (readme != null)
+                    return Task.FromResult(readme);
+                return _applicationService.GitHubClient.Repository.Content.GetReadme(owner, repository);
+            });
 
             loadCommand
                 .ThrownExceptions

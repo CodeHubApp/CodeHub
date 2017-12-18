@@ -21,6 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Search
 
             _viewSegment.SelectedSegment = 0;
             NavigationItem.TitleView = _viewSegment;
+            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
 
             this.WhenActivated(d =>
             {
