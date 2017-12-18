@@ -41,16 +41,6 @@ namespace CodeHub.Core.ViewModels.Gists
             get { return new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Gist.Owner.Login }), () => Gist != null && Gist.Owner != null); }
         }
 
-        public ICommand GoToFileSourceCommand
-        {
-            get { 
-                return new MvxCommand<GistFile>(x => {
-                    GetService<Services.IViewModelTxService>().Add(x);
-                    ShowViewModel<GistFileViewModel>(new GistFileViewModel.NavObject { GistId = Id, Filename = x.Filename });
-                });
-            }
-        }
-
         public ICommand GoToHtmlUrlCommand
         {
             get { return new MvxCommand(() => GoToUrlCommand.Execute(_gist.HtmlUrl), () => _gist != null); }

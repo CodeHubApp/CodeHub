@@ -108,7 +108,6 @@
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Source\ChangesetsView.cs" />
-    <Compile Include="Views\Source\FileSourceView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
@@ -133,7 +132,6 @@
     <Compile Include="Views\ProgressBarView.cs" />
     <Compile Include="Views\ScrollingToolbarView.cs" />
     <Compile Include="Views\UILabelWithLinks.cs" />
-    <Compile Include="Views\WebView.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
     <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />

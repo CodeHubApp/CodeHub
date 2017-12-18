@@ -127,7 +127,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
                 var fileSaved = file;
                 var gistFileModel = model.Files[fileSaved];
-                sse.Clicked.Subscribe(MakeCallback(weakVm, gistFileModel));
+                sse.Clicked.Subscribe(_ => GoToGist(gistFileModel));
                 sec2.Add(sse);
             }
 
@@ -141,9 +141,14 @@ namespace CodeHub.iOS.ViewControllers.Gists
             Root.Reset(sections);
         }
 
-        private static Action<object> MakeCallback(WeakReference<GistViewModel> weakVm, GistFile model)
+        private void GoToGist(GistFile model)
         {
-            return new Action<object>(_ => weakVm.Get()?.GoToFileSourceCommand.Execute(model));
+            var viewCtrl = new GistFileViewController(
+                ViewModel.Gist.Id,
+                model.Filename,
+                ViewModel.Gist);
+
+            this.PushViewController(viewCtrl);
         }
 
         private async Task Fork()
