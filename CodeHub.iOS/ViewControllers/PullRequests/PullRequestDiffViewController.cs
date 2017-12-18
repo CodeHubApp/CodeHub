@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -83,15 +84,16 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             Observable
                 .Return(Unit.Default)
                 .Merge(_comments.Changed.Select(_ => Unit.Default))
-                .Do(_ => Render())
+                .Do(_ => Render().ToBackground())
                 .Subscribe();
         }
 
-        private void Render()
+        private async Task Render()
         {
-            var comments = _comments
-                .Where(x => string.Equals(x.Path, _path))
-                .Select(comment => new DiffCommentModel
+            var comments = new List<DiffCommentModel>();
+            foreach (var comment in _comments.Where(x => string.Equals(x.Path, _path)))
+            {
+                comments.Add(new DiffCommentModel
                 {
                     Id = comment.Id,
                     GroupId = comment.Id,
@@ -99,9 +101,10 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
                     AvatarUrl = comment.User.AvatarUrl,
                     LineTo = comment.Position,
                     LineFrom = comment.Position,
-                    Body = _markdownService.Convert(comment.Body),
+                    Body = await _markdownService.Convert(comment.Body),
                     Date = comment.CreatedAt.Humanize()
                 });
+            }
 
             var diffModel = new DiffModel(
                 _patch.Split('\n'),

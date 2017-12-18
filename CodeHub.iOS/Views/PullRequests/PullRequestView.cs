@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Services;
@@ -12,11 +14,13 @@ using CodeHub.WebViews;
 using Humanizer;
 using ReactiveUI;
 using UIKit;
+using Splat;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
     public class PullRequestView : PrettyDialogViewController
     {
+        private readonly IMarkdownService _markdownService = Locator.Current.GetService<IMarkdownService>();
         private readonly HtmlElement _descriptionElement = new HtmlElement("description");
         private readonly HtmlElement _commentsElement = new HtmlElement("comments");
         private readonly SplitViewElement _split1 = new SplitViewElement(Octicon.Gear.ToImage(), Octicon.GitMerge.ToImage());
@@ -118,8 +122,8 @@ namespace CodeHub.iOS.Views.PullRequests
                 _milestoneElement.Accessory = ViewModel.GoToMilestoneCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
             };
 
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
-            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
+            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments().ToBackground());
 
             OnActivation(d =>
             {
@@ -164,15 +168,25 @@ namespace CodeHub.iOS.Views.PullRequests
             return string.Empty;
         }
 
-        public void RenderComments()
+        public async Task RenderComments()
         {
-            var comments = ViewModel.Comments
-                .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, ViewModel.ConvertToMarkdown(x.Body), x.CreatedAt))
-                .Concat(ViewModel.Events.Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt)))
+            var comments = new List<Comment>();
+            foreach (var x in ViewModel.Comments)
+            {
+                var body = await _markdownService.Convert(x.Body);
+                comments.Add(new Comment(x.User.AvatarUrl, x.User.Login, body, x.CreatedAt));
+            }
+
+            var events = ViewModel.Events
+                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt));
+
+            var items = comments
+                .Concat(events)
                 .Where(x => !string.IsNullOrEmpty(x.Body))
                 .OrderBy(x => x.Date)
                 .ToList();
-            var commentModel = new CommentsModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
+            
+            var commentModel = new CommentsModel(items, (int)UIFont.PreferredSubheadline.PointSize);
             var razorView = new CommentsWebView { Model = commentModel };
             var html = razorView.GenerateString();
 

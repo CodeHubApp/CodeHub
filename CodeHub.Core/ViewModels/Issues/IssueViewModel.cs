@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
 using System.Reactive;
 using Splat;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -18,6 +19,7 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly IFeaturesService _featuresService;
         private readonly IApplicationService _applicationService;
         private readonly IMessageService _messageService;
+        private readonly IMarkdownService _markdownService;
 
         public long Id 
         { 
@@ -37,14 +39,11 @@ namespace CodeHub.Core.ViewModels.Issues
             private set; 
         }
 
+        private string _markdownDescription;
         public string MarkdownDescription
         {
-            get
-            {
-                if (Issue == null)
-                    return string.Empty;
-                return (GetService<IMarkdownService>().Convert(Issue.Body));
-            }
+            get { return _markdownDescription; }
+            private set { this.RaiseAndSetIfChanged(ref _markdownDescription, value); }
         }
 
         private bool? _isClosed;
@@ -166,23 +165,25 @@ namespace CodeHub.Core.ViewModels.Issues
             return t1;
         }
 
-        public string ConvertToMarkdown(string str)
-        {
-            return (GetService<IMarkdownService>().Convert(str));
-        }
-
-        public IssueViewModel(IApplicationService applicationService = null,
-                              IFeaturesService featuresService = null,
-                              IMessageService messageService = null)
+        public IssueViewModel(
+            IApplicationService applicationService = null,
+            IFeaturesService featuresService = null,
+            IMessageService messageService = null,
+            IMarkdownService markdownService = null)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
             _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
+            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
             this.Bind(x => x.Issue, true)
                 .Where(x => x != null)
                 .Select(x => string.Equals(x.State, "closed"))
                 .Subscribe(x => IsClosed = x);
+
+            this.Bind(x => x.Issue, true)
+                .SelectMany(issue => _markdownService.Convert(issue?.Body).ToObservable())
+                .Subscribe(x => MarkdownDescription = x);
 
             GoToOwner = ReactiveUI.ReactiveCommand.Create(
                 () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),

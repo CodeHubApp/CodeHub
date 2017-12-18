@@ -1,10 +1,10 @@
-using System;
+using System.Threading.Tasks;
 
 namespace CodeHub.Core.Services
 {
     public interface IMarkdownService
     {
-        string Convert(string s);
+        Task<string> Convert(string s);
     }
 }
 

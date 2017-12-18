@@ -1,6 +1,7 @@
 using JavaScriptCore;
 using Foundation;
 using CodeHub.Core.Services;
+using System.Threading.Tasks;
 
 namespace CodeHub.iOS.Services
 {
@@ -18,11 +19,11 @@ namespace CodeHub.iOS.Services
             _val = _ctx[new NSString("marked")];
         }
 
-        public string Convert(string c)
+        public Task<string> Convert(string c)
         {
             if (string.IsNullOrEmpty(c))
-                return string.Empty;
-            return _val.Call(JSValue.From(c, _ctx)).ToString();
+                return Task.FromResult(string.Empty);
+            return Task.Run(() => _val.Call(JSValue.From(c, _ctx)).ToString());
         }
     }
 }

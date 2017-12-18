@@ -9,6 +9,7 @@ using CodeHub.Core.Messages;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
 using System.Reactive;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -18,6 +19,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         private IDisposable _issueEditSubscription;
         private IDisposable _pullRequestEditSubscription;
         private readonly IFeaturesService _featuresService;
+        private readonly IMarkdownService _markdownService;
 
         public long Id
         { 
@@ -37,9 +39,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             private set; 
         }
 
+        private string _markdownDescription;
         public string MarkdownDescription
         {
-            get { return PullRequest == null ? string.Empty : (GetService<IMarkdownService>().Convert(PullRequest.Body)); }
+            get { return _markdownDescription; }
+            private set { this.RaiseAndSetIfChanged(ref _markdownDescription, value); }
         }
 
         private bool _canPush;
@@ -210,20 +214,23 @@ namespace CodeHub.Core.ViewModels.PullRequests
             get { return _events; }
         }
 
-        public string ConvertToMarkdown(string str)
-        {
-            return (GetService<IMarkdownService>().Convert(str));
-        }
-
-        public PullRequestViewModel(IFeaturesService featuresService, IMessageService messageService)
+        public PullRequestViewModel(
+            IFeaturesService featuresService,
+            IMessageService messageService,
+            IMarkdownService markdownService)
         {
             _featuresService = featuresService;
             _messageService = messageService;
+            _markdownService = markdownService;
 
             this.Bind(x => x.PullRequest, true)
                 .Where(x => x != null)
                 .Select(x => string.Equals(x.State, "closed"))
                 .Subscribe(x => IsClosed = x);
+
+            this.Bind(x => x.Issue, true)
+                .SelectMany(issue => _markdownService.Convert(issue?.Body).ToObservable())
+                .Subscribe(x => MarkdownDescription = x);
             
             GoToOwner = ReactiveUI.ReactiveCommand.Create(
                 () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),

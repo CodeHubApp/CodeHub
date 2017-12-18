@@ -1,22 +1,26 @@
 using System;
 using UIKit;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using Foundation;
 using CodeHub.WebViews;
 using WebKit;
 using CodeHub.iOS.Views;
 using ReactiveUI;
+using System.Threading.Tasks;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public class MarkdownComposerViewController : Composer
     {
         private readonly UISegmentedControl _viewSegment;
+        private readonly IMarkdownService _markdownService;
         private WKWebView _previewView;
 
-        public MarkdownComposerViewController()
+        public MarkdownComposerViewController(IMarkdownService markdownService = null)
         {
+            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+
             _viewSegment = new UISegmentedControl(new[] { "Compose", "Preview" })
             {
                 SelectedSegment = 0
@@ -55,12 +59,16 @@ namespace CodeHub.iOS.ViewControllers
                 TextView.RemoveFromSuperview();
                 Add(_previewView);
 
-                var markdownService = Mvx.Resolve<IMarkdownService>();
-                var markdownText = markdownService.Convert(Text);
-                var model = new MarkdownModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
-                var view = new MarkdownWebView { Model = model }.GenerateString();
-                _previewView.LoadHtmlString(view, NSBundle.MainBundle.BundleUrl);
+                LoadPreview(_previewView).ToBackground();
             }
+        }
+
+        private async Task LoadPreview(WKWebView previewView)
+        {
+            var markdownText = await _markdownService.Convert(Text);
+            var model = new MarkdownModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
+            var view = new MarkdownWebView { Model = model }.GenerateString();
+            previewView.LoadHtmlString(view, NSBundle.MainBundle.BundleUrl);
         }
     }
 }

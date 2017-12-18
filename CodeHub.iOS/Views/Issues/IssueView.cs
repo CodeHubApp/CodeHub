@@ -13,11 +13,14 @@ using System.Reactive.Linq;
 using ReactiveUI;
 using CodeHub.WebViews;
 using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.iOS.Views.Issues
 {
     public class IssueView : PrettyDialogViewController
     {
+        private readonly IMarkdownService _markdownService = Locator.Current.GetService<IMarkdownService>();
         private readonly HtmlElement _descriptionElement = new HtmlElement("description");
         private readonly HtmlElement _commentsElement = new HtmlElement("comments");
         private StringElement _milestoneElement;
@@ -105,8 +108,8 @@ namespace CodeHub.iOS.Views.Issues
                 Render();
             });
 
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments());
-            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments());
+            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
+            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments().ToBackground());
             ViewModel.Bind(x => x.ShouldShowPro).Subscribe(x => {
                 if (x) this.ShowPrivateView(); 
             });
@@ -151,14 +154,24 @@ namespace CodeHub.iOS.Views.Issues
             return string.Empty;
         }
 
-        public void RenderComments()
+        public async Task RenderComments()
         {
-            var comments = ViewModel.Comments
-                .Select(x => new Comment(x.User.AvatarUrl, x.User.Login, ViewModel.ConvertToMarkdown(x.Body), x.CreatedAt))
-                .Concat(ViewModel.Events.Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt)))
+            var comments = new List<Comment>();
+            foreach (var x in ViewModel.Comments)
+            {
+                var body = await _markdownService.Convert(x.Body);
+                comments.Add(new Comment(x.User.AvatarUrl, x.User.Login, body, x.CreatedAt));
+            }
+
+            var events = ViewModel.Events
+                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt));
+
+            var items = comments
+                .Concat(events)
                 .Where(x => !string.IsNullOrEmpty(x.Body))
                 .OrderBy(x => x.Date)
                 .ToList();
+            
             var commentModel = new CommentsModel(comments, (int)UIFont.PreferredSubheadline.PointSize);
             var razorView = new CommentsWebView { Model = commentModel };
             var html = razorView.GenerateString();

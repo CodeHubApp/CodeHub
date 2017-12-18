@@ -2,6 +2,7 @@
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CodeHub.Core;
 using CodeHub.Core.Services;
 using CodeHub.iOS.Services;
@@ -59,9 +60,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
             this.WhenAnyValue(x => x.Readme)
                 .Where(x => x != null)
-                .ObserveOn(Scheduler.Default)
-                .Select(ConvertToWebView)
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(ConvertToWebView)
                 .Subscribe(LoadContent);
 
             this.WhenAnyValue(x => x.Readme)
@@ -91,9 +90,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                            () => emptyListView.Alpha = 1, null);
         }
 
-        private string ConvertToWebView(Octokit.Readme readme)
+        private async Task<string> ConvertToWebView(Octokit.Readme readme)
         {
-            var content = _markdownService.Convert(readme.Content);
+            var content = await _markdownService.Convert(readme.Content);
             var model = new MarkdownModel(content, (int)UIFont.PreferredSubheadline.PointSize);
             return new MarkdownWebView { Model = model }.GenerateString();
         }
