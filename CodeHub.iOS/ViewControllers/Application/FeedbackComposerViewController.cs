@@ -15,20 +15,6 @@ namespace CodeHub.iOS.ViewControllers.Application
     {
         public FeedbackComposerViewModel ViewModel { get; } = new FeedbackComposerViewModel();
 
-        public static FeedbackComposerViewController CreateAsFeature()
-        {
-            var viewController = new FeedbackComposerViewController();
-            viewController.ViewModel.IsFeature = true;
-            return viewController;
-        }
-
-        public static FeedbackComposerViewController CreateAsBug()
-        {
-            var viewController = new FeedbackComposerViewController();
-            viewController.ViewModel.IsFeature = false;
-            return viewController;
-        }
-
         public FeedbackComposerViewController() : base(UITableViewStyle.Plain)
         {
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)

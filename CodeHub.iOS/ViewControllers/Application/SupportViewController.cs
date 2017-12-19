@@ -7,11 +7,16 @@ using ReactiveUI;
 using CodeHub.iOS.DialogElements;
 using System.Reactive;
 using CodeHub.iOS.ViewControllers.Repositories;
+using MessageUI;
+using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
     public class SupportViewController : BaseDialogViewController
     {
+        private readonly IAlertDialogService _alertDialogService = Locator.Current.GetService<IAlertDialogService>();
+
         public SupportViewModel ViewModel { get; } = new SupportViewModel();
 
         public override void ViewDidLoad()
@@ -22,9 +27,9 @@ namespace CodeHub.iOS.ViewControllers.Application
             var contributors = split.AddButton("Contributors", "-");
             var lastCommit = split.AddButton("Last Commit", "-");
 
-            var addFeatureButton = new BigButtonElement("Suggest a feature", Octicon.LightBulb);
-            var addBugButton = new BigButtonElement("Report a bug", Octicon.Bug);
-            var featuresButton = new BigButtonElement("Submitted Work Items", Octicon.Clippy);
+            var openIssue = new BigButtonElement("Open an Issue on GitHub", Octicon.Bug);
+            var sendEmail = new BigButtonElement("Email Support", Octicon.Mail);
+            var openIssues = new BigButtonElement("Existing Issues", Octicon.IssueOpened);
 
             HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
             HeaderView.Image = UIImage.FromBundle("AppIcons60x60");
@@ -33,25 +38,23 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             Root.Reset(
                 new Section { split },
-                new Section { addFeatureButton, addBugButton },
-                new Section { featuresButton });
+                new Section(null, "Opening an issue on the GitHub project page is the fastest way to get a response.") { openIssue, openIssues },
+                new Section(),
+                new Section(null, "Emails are answered as quickly as possible but there is only one person answering them so expect a delay.") { sendEmail });
 
             OnActivation(d =>
             {
-                d(addFeatureButton.Clicked
-                  .Select(_ => FeedbackComposerViewController.CreateAsFeature())
+                d(openIssue.Clicked
+                  .Select(_ => new FeedbackComposerViewController())
                   .Select(viewCtrl => new ThemedNavigationController(viewCtrl))
                   .Subscribe(viewCtrl => PresentViewController(viewCtrl, true, null)));
 
-                d(addBugButton.Clicked
-                  .Select(_ => FeedbackComposerViewController.CreateAsBug())
-                  .Select(viewCtrl => new ThemedNavigationController(viewCtrl))
-                  .Subscribe(viewCtrl => PresentViewController(viewCtrl, true, null)));
+                d(sendEmail.Clicked.Subscribe(_ => SendEmail()));
 
                 d(this.WhenAnyValue(x => x.ViewModel.Title)
                   .Subscribe(title => Title = title));
 
-                d(featuresButton.Clicked
+                d(openIssues.Clicked
                   .Subscribe(_ => this.PushViewController(new FeedbackViewController())));
 
                 d(HeaderView.Clicked.Subscribe(_ => GoToRepository()));
@@ -71,13 +74,37 @@ namespace CodeHub.iOS.ViewControllers.Application
                 .InvokeReactiveCommand(ViewModel.LoadCommand);
         }
 
+        private void SendEmail()
+        {
+            if (!MFMailComposeViewController.CanSendMail)
+            {
+                _alertDialogService.Alert(
+                    "No Email Setup",
+                    "Looks like you don't have email setup on this device. " +
+                    "Add a mail provider and try again.").ToBackground();
+            }
+            else
+            {
+                var ctrl = new MFMailComposeViewController();
+                ctrl.SetSubject("CodeHub Support");
+                ctrl.SetToRecipients(new[] { "codehubapp@gmail.com" });
+                ctrl.Finished += (sender, e) => DismissViewController(true, () =>
+                {
+                    if (e.Result == MFMailComposeResult.Sent)
+                        _alertDialogService.Alert("Sent!", "Thanks for your feedback!");
+                });
+                PresentViewController(ctrl, true, null);
+            }
+        }
+
+
         private void GoToRepository()
             => this.PushViewController(RepositoryViewController.CreateCodeHubViewController());
 
         private class BigButtonElement : ButtonElement, IElementSizing
         {
             public BigButtonElement(string name, Octicon img) : base(name, img.ToImage()) { }
-            public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath) => 58f;
+            public nfloat GetHeight(UITableView tableView, Foundation.NSIndexPath indexPath) => 60f;
         }
     }
 }

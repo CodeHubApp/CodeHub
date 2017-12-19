@@ -28,19 +28,7 @@ namespace CodeHub.Core.ViewModels.App
             set { this.RaiseAndSetIfChanged(ref _description, value); }
         }
 
-        private bool _isFeature;
-        public bool IsFeature
-        {
-            get { return _isFeature; }
-            set { this.RaiseAndSetIfChanged(ref _isFeature, value); }
-        }
-
-        private string _title;
-        public string Title
-        {
-            get { return _title; }
-            set { this.RaiseAndSetIfChanged(ref _title, value); }
-        }
+        public string Title => "Open Issue";
 
         public ReactiveCommand<Unit, Unit> SubmitCommand { get; private set; }
 
@@ -53,26 +41,12 @@ namespace CodeHub.Core.ViewModels.App
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
-            this.WhenAnyValue(x => x.IsFeature)
-                .Subscribe(x => Title = x ? "New Feature" : "Bug Report");
-
             SubmitCommand = ReactiveCommand.CreateFromTask(async _ =>
             {
                 if (string.IsNullOrEmpty(Subject))
-                    throw new ArgumentException(string.Format("You must provide a title for this {0}!", IsFeature ? "feature" : "bug"));
-
-                var labels = await applicationService.GitHubClient.Issue.Labels.GetAllForRepository(CodeHubOwner, CodeHubName);
-                var labelName = IsFeature ? "enhancement" : "bug";
-
-                var createLabels = labels
-                    .Where(x => string.Equals(x.Name, labelName, StringComparison.OrdinalIgnoreCase))
-                    .Select(x => x.Name)
-                    .Distinct();
+                    throw new ArgumentException("You must provide a title for this issue!");
 
                 var createIssueRequest = new Octokit.NewIssue(Subject) { Body = Description };
-
-                foreach (var label in createLabels)
-                    createIssueRequest.Labels.Add(label);
 
                 await applicationService.GitHubClient.Issue.Create(CodeHubOwner, CodeHubName, createIssueRequest);
             }, this.WhenAnyValue(x => x.Subject).Select(x => !string.IsNullOrEmpty(x)));
@@ -88,11 +62,9 @@ namespace CodeHub.Core.ViewModels.App
                 if (string.IsNullOrEmpty(Description) && string.IsNullOrEmpty(Subject))
                     return true;
                 
-                var itemType = IsFeature ? "feature" : "bug";
-
                 return await alertDialogService.PromptYesNo(
-                    "Discard " + itemType.Transform(To.TitleCase) + "?",
-                    "Are you sure you want to discard this " + itemType + "?");
+                    "Discard Issue?",
+                    "Are you sure you want to discard this issue?");
             });
         }
     }
