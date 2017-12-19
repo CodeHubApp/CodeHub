@@ -45,7 +45,7 @@ namespace CodeHub.iOS.ViewControllers.Search
                   .Subscribe(Searching));
 
                 d(ViewModel.RepositoryItemSelected
-                  .Select(x => new UserViewController(x.Login))
+                  .Select(x => new UserViewController(x.User))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(ViewModel.SearchCommand.Subscribe(_ => SearchComplete()));

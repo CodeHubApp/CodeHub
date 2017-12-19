@@ -1,21 +1,24 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
+using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Events;
 using CodeHub.Core.ViewModels.Organizations;
-using GitHubSharp.Models;
 using MvvmCross.Core.ViewModels;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.User
 {
     public class UserViewModel : LoadableViewModel
     {
+        private readonly IApplicationService _applicationService = Locator.Current.GetService<IApplicationService>();
+
         public string Username { get; private set; }
 
-        private UserModel _user;
-        public UserModel User
+        private Octokit.User _user;
+        public Octokit.User User
         {
             get { return _user; }
-            private set { this.RaiseAndSetIfChanged(ref _user, value); }
+            set { this.RaiseAndSetIfChanged(ref _user, value); }
         }
 
         private bool _isFollowing;
@@ -53,9 +56,9 @@ namespace CodeHub.Core.ViewModels.User
             try
             {
                 if (IsFollowing)
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Unfollow(Username));
+                    await _applicationService.GitHubClient.User.Followers.Unfollow(Username);
                 else
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.AuthenticatedUser.Follow(Username));
+                    await _applicationService.GitHubClient.User.Followers.Follow(Username);
                 IsFollowing = !IsFollowing;
             }
             catch
@@ -69,10 +72,15 @@ namespace CodeHub.Core.ViewModels.User
             Title = Username = navObject.Username;
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            this.RequestModel(this.GetApplication().Client.AuthenticatedUser.IsFollowing(Username), x => IsFollowing = x.Data).ToBackground();
-            return this.RequestModel(this.GetApplication().Client.Users[Username].Get(), response => User = response.Data);
+            _applicationService.GitHubClient.User.Followers
+                .IsFollowingForCurrent(Username).ToBackground(x => IsFollowing = x);
+
+            if (User != null)
+                _applicationService.GitHubClient.User.Get(Username).ToBackground(x => User = x);
+            else
+                User = await _applicationService.GitHubClient.User.Get(Username);
         }
 
         public class NavObject

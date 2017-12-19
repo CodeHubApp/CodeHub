@@ -15,6 +15,7 @@ using CodeHub.iOS.Utilities;
 using CodeHub.iOS.Views.Source;
 using System.Linq;
 using Humanizer;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -74,7 +75,6 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 }));
 
                 d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
-                d(_ownerElement.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
 
                 d(_commitsElement.Clicked.Subscribe(_ => GoToCommits()));
 
@@ -89,7 +89,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(_readmeElement.Value.Clicked.Subscribe(_ => GoToReadme()));
                 d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
 
-                d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwnerCommand));
+                d(HeaderView.Clicked.Merge(_ownerElement.Clicked.Select(_ => Unit.Default))
+                  .Select(_ => new UserViewController(ViewModel.Username, ViewModel.Repository.Owner))
+                  .Subscribe(x => this.PushViewController(x)));
 
                 d(ViewModel.Bind(x => x.Repository, true).Where(x => x != null).Subscribe(x =>
                 {

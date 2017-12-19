@@ -18,10 +18,17 @@ namespace CodeHub.iOS.ViewControllers.Users
             set { base.ViewModel = value; }
         }
 
-        public UserViewController(string username) : this()
+        public UserViewController(string username, Octokit.User user = null)
+            : this()
         {
             ViewModel = new UserViewModel();
             ViewModel.Init(new UserViewModel.NavObject { Username = username });
+            ViewModel.User = user;
+        }
+
+        public UserViewController(Octokit.User user)
+            : this(user.Login, user)
+        {
         }
 
         public UserViewController()

@@ -91,7 +91,7 @@ namespace CodeHub.iOS.ViewControllers.Users
                   .Subscribe(x => ViewModel.SearchText = x));
 
                 d(ViewModel.ItemSelected
-                  .Select(x => new UserViewController(x.Login))
+                  .Select(x => new UserViewController(x.User))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(ViewModel.WhenAnyValue(x => x.HasMore)
