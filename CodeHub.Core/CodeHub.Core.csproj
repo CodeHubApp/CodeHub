@@ -102,7 +102,6 @@
     <Compile Include="Utils\RepositoryIdentifier.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\CollectionViewModel.cs" />
-    <Compile Include="ViewModels\FileSourceViewModel.cs" />
     <Compile Include="ViewModels\FilterableCollectionViewModel.cs" />
     <Compile Include="ViewModels\FilterGroup.cs" />
     <Compile Include="ViewModels\FilterModel.cs" />
