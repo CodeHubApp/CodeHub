@@ -79,17 +79,21 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
 
-                var model = new MarkdownModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
-                var markdown = new MarkdownWebView { Model = model };
-                var html = markdown.GenerateString();
-                _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
-
+  
 
                 HeaderView.Text = x.Title ?? Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
                 Render();
+            });
+
+            ViewModel.Bind(x => x.MarkdownDescription).Subscribe(description =>
+            {
+                var model = new MarkdownModel(description, (int)UIFont.PreferredSubheadline.PointSize, true);
+                var markdown = new MarkdownWebView { Model = model };
+                var html = markdown.GenerateString();
+                _descriptionElement.SetValue(string.IsNullOrEmpty(description) ? null : html);
             });
 
             var actionButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };

@@ -95,17 +95,21 @@ namespace CodeHub.iOS.Views.Issues
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
                 _labelsElement.Value = x.Labels.Count == 0 ? "None" : string.Join(", ", x.Labels.Select(i => i.Name));
 
-                var model = new MarkdownModel(ViewModel.MarkdownDescription, (int)UIFont.PreferredSubheadline.PointSize, true);
-                var markdown = new MarkdownWebView { Model = model };
-                var html = markdown.GenerateString();
-                _descriptionElement.SetValue(string.IsNullOrEmpty(ViewModel.MarkdownDescription) ? null : html);
-
                 HeaderView.Text = x.Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
                 RefreshHeaderView();
 
                 Render();
+            });
+
+            ViewModel.Bind(x => x.MarkdownDescription).Subscribe(description =>
+            {
+                var model = new MarkdownModel(description, (int)UIFont.PreferredSubheadline.PointSize, true);
+                var markdown = new MarkdownWebView { Model = model };
+                var html = markdown.GenerateString();
+                _descriptionElement.SetValue(string.IsNullOrEmpty(description) ? null : html);
+
             });
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
