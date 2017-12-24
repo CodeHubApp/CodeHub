@@ -72,9 +72,8 @@ namespace CodeHub.iOS.Views.PullRequests
 
             ViewModel.Bind(x => x.PullRequest).Subscribe(x =>
             {
-                var merged = (x.Merged != null && x.Merged.Value);
-                _split1.Button1.Text = x.State;
-                _split1.Button2.Text = merged ? "Merged" : "Not Merged";
+                _split1.Button1.Text = x.State.StringValue;
+                _split1.Button2.Text = x.Merged ? "Merged" : "Not Merged";
                 _split2.Button1.Text = x.User.Login;
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
@@ -309,8 +308,8 @@ namespace CodeHub.iOS.Views.PullRequests
 
             sections.Add(new Section { commits, files });
 
-            var isClosed = string.Equals(ViewModel.PullRequest.State, "closed", StringComparison.OrdinalIgnoreCase);
-            var isMerged = ViewModel.PullRequest.Merged.GetValueOrDefault();
+            var isClosed = ViewModel.PullRequest.State.Value == Octokit.ItemState.Closed;
+            var isMerged = ViewModel.PullRequest.Merged;
 
             if (ViewModel.CanPush && !isClosed && !isMerged)
             {

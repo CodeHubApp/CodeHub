@@ -1,18 +1,21 @@
-using GitHubSharp.Models;
 using System.Threading.Tasks;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class TeamsViewModel : LoadableViewModel
     {
-        public CollectionViewModel<TeamShortModel> Teams { get; }
+        private readonly IApplicationService _applicationService;
+
+        public CollectionViewModel<Octokit.Team> Teams { get; } = new CollectionViewModel<Octokit.Team>();
 
         public string OrganizationName { get; private set; }
 
-        public TeamsViewModel()
+        public TeamsViewModel(IApplicationService applicationService)
         {
+            _applicationService = applicationService;
+
             Title = "Teams";
-            Teams = new CollectionViewModel<TeamShortModel>();
         }
 
         public void Init(NavObject navObject)
@@ -20,9 +23,10 @@ namespace CodeHub.Core.ViewModels.Organizations
             OrganizationName = navObject.Name;
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            return Teams.SimpleCollectionLoad(this.GetApplication().Client.Organizations[OrganizationName].GetTeams());
+            var teams = await _applicationService.GitHubClient.Organization.Team.GetAll(OrganizationName);
+            Teams.Items.Reset(teams);
         }
 
         public class NavObject

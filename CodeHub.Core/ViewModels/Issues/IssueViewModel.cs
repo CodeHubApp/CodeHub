@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly IMessageService _messageService;
         private readonly IMarkdownService _markdownService;
 
-        public long Id 
+        public int Id 
         { 
             get; 
             private set; 
@@ -67,8 +67,8 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
-        private IssueModel _issueModel;
-        public IssueModel Issue
+        private Octokit.Issue _issueModel;
+        public Octokit.Issue Issue
         {
             get { return _issueModel; }
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
@@ -147,7 +147,7 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return _events; }
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
@@ -158,11 +158,13 @@ namespace CodeHub.Core.ViewModels.Issues
                     .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
             }
 
-            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data);
+            var issue = _applicationService.GitHubClient.Issue.Get(Username, Repository, Id);
+
             Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
             Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), response => IsCollaborator = response.Data).ToBackground();
-            return t1;
+
+            Issue = await issue;
         }
 
         public IssueViewModel(
@@ -178,8 +180,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
             this.Bind(x => x.Issue, true)
                 .Where(x => x != null)
-                .Select(x => string.Equals(x.State, "closed"))
-                .Subscribe(x => IsClosed = x);
+                .Subscribe(x => IsClosed = x.State.Value == Octokit.ItemState.Closed);
 
             this.Bind(x => x.Issue, true)
                 .SelectMany(issue => _markdownService.Convert(issue?.Body).ToObservable())
@@ -224,8 +225,12 @@ namespace CodeHub.Core.ViewModels.Issues
             try
             {
                 IsModifying = true;
-                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].UpdateState(closed ? "closed" : "open")); 
-                _messageService.Send(new IssueEditMessage(data.Data));
+
+
+                var state = closed ? Octokit.ItemState.Closed : Octokit.ItemState.Open;
+                var issueUpdate = new Octokit.IssueUpdate { State = state };
+                var issue = await _applicationService.GitHubClient.Issue.Update(Username, Repository, Id, issueUpdate);
+                _messageService.Send(new IssueEditMessage(issue));
             }
             catch (Exception e)
             {
@@ -241,7 +246,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public long Id { get; set; }
+            public int Id { get; set; }
         }
     }
 }

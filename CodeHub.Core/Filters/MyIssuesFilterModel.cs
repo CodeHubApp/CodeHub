@@ -19,6 +19,19 @@ namespace CodeHub.Core.Filters
             FilterType = Filter.All;
         }
 
+        public Octokit.IssueFilter GetIssueFilter()
+        {
+            if (FilterType == Filter.Assigned)
+                return Octokit.IssueFilter.Assigned;
+            if (FilterType == Filter.Created)
+                return Octokit.IssueFilter.Created;
+            if (FilterType == Filter.Mentioned)
+                return Octokit.IssueFilter.Mentioned;
+            if (FilterType == Filter.Subscribed)
+                return Octokit.IssueFilter.Subscribed;
+            return Octokit.IssueFilter.All;
+        }
+
         /// <summary>
         /// Predefined 'Open' filter
         /// </summary>

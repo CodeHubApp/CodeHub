@@ -1,14 +1,16 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CodeHub.Core.ViewModels;
-using GitHubSharp.Models;
+using CodeHub.Core.Services;
 using MvvmCross.Core.ViewModels;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : LoadableViewModel
     {
-        public CollectionViewModel<BasicUserModel> Organizations { get; }
+        private readonly IApplicationService _applicationService;
+
+        public CollectionViewModel<Octokit.Organization> Organizations { get; } = new CollectionViewModel<Octokit.Organization>();
 
         public string Username { get; private set; }
 
@@ -17,20 +19,23 @@ namespace CodeHub.Core.ViewModels.Organizations
             Username = navObject.Username;
         }
 
-        public OrganizationsViewModel()
+        public OrganizationsViewModel(
+            IApplicationService applicationService = null)
         {
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
             Title = "Organizations";
-            Organizations = new CollectionViewModel<BasicUserModel>();
         }
 
         public ICommand GoToOrganizationCommand
         {
-            get { return new MvxCommand<BasicUserModel>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
+            get { return new MvxCommand<Octokit.Organization>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations());
+            var organizations = await _applicationService.GitHubClient.Organization.GetAllForUser(Username);
+            Organizations.Items.Reset(organizations);
         }
 
         public class NavObject

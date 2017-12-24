@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using CodeHub.Core.Messages;
 using System.Linq;
@@ -12,7 +11,8 @@ namespace CodeHub.Core.ViewModels.Issues
     public class IssueLabelsViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
-        private IEnumerable<LabelModel> _originalLables;
+        private readonly IApplicationService _applicationService;
+        private IEnumerable<Octokit.Label> _originalLables;
 
         private bool _isSaving;
         public bool IsSaving
@@ -24,14 +24,14 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
-        public CollectionViewModel<LabelModel> Labels
+        private readonly CollectionViewModel<Octokit.Label> _labels = new CollectionViewModel<Octokit.Label>();
+        public CollectionViewModel<Octokit.Label> Labels
         {
             get { return _labels; }
         }
 
-        private readonly CollectionViewModel<LabelModel> _selectedLabels = new CollectionViewModel<LabelModel>();
-        public CollectionViewModel<LabelModel> SelectedLabels
+        private readonly CollectionViewModel<Octokit.Label> _selectedLabels = new CollectionViewModel<Octokit.Label>();
+        public CollectionViewModel<Octokit.Label> SelectedLabels
         {
             get { return _selectedLabels; }
         }
@@ -40,7 +40,7 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
-        public long Id { get; private set; }
+        public int Id { get; private set; }
 
         public bool SaveOnSelect { get; private set; }
 
@@ -51,7 +51,7 @@ namespace CodeHub.Core.ViewModels.Issues
             Id = navObject.Id;
             SaveOnSelect = navObject.SaveOnSelect;
 
-            _originalLables = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IEnumerable<LabelModel>;
+            _originalLables = GetService<IViewModelTxService>().Get() as IEnumerable<Octokit.Label>;
             SelectedLabels.Items.Reset(_originalLables);
         }
 
@@ -60,12 +60,13 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return new MvxCommand(() => SelectLabels(SelectedLabels)); }
         }
 
-        public IssueLabelsViewModel(IMessageService messageService)
+        public IssueLabelsViewModel(IMessageService messageService, IApplicationService applicationService)
         {
             _messageService = messageService;
+            _applicationService = applicationService;
         }
 
-        private async Task SelectLabels(IEnumerable<LabelModel> x)
+        private async Task SelectLabels(IEnumerable<Octokit.Label> x)
         {
             //If nothing has changed, dont do anything...
             if (_originalLables != null && _originalLables.Count() == x.Count() && _originalLables.Intersect(x).Count() == x.Count())
@@ -79,10 +80,13 @@ namespace CodeHub.Core.ViewModels.Issues
                 try
                 {
                     IsSaving = true;
-                    var labels = x != null ? x.Select(y => y.Name).ToArray() : null;
-                    var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateLabels(labels);
-                    var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-                    _messageService.Send(new IssueEditMessage(newIssue.Data));
+
+                    var issueUpdate = new Octokit.IssueUpdate();
+                    foreach (var label in x.Select(y => y.Name))
+                        issueUpdate.AddLabel(label);
+
+                    var newIssue = await _applicationService.GitHubClient.Issue.Update(Username, Repository, Id, issueUpdate);
+                    _messageService.Send(new IssueEditMessage(newIssue));
                 }
                 catch
                 {
@@ -101,16 +105,17 @@ namespace CodeHub.Core.ViewModels.Issues
             ChangePresentation(new MvxClosePresentationHint(this));
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            return Labels.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Labels.GetAll());
+            var labels = await _applicationService.GitHubClient.Issue.Labels.GetAllForRepository(Username, Repository);
+            Labels.Items.Reset(labels);
         }
 
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public long Id { get; set; }
+            public int Id { get; set; }
             public bool SaveOnSelect { get; set; }
         }
     }

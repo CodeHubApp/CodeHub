@@ -2,22 +2,29 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.ViewModels.Events;
-using GitHubSharp.Models;
+using CodeHub.Core.Services;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationViewModel : LoadableViewModel
     {
-        private UserModel _userModel;
+        private readonly IApplicationService _applicationService;
+
+        private Octokit.Organization _userModel;
 
         public string Name { get; private set; }
+
+        public OrganizationViewModel(IApplicationService applicationService)
+        {
+            _applicationService = applicationService;
+        }
 
         public void Init(NavObject navObject)
         {
             Name = navObject.Name;
         }
 
-        public UserModel Organization
+        public Octokit.Organization Organization
         {
             get { return _userModel; }
             private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
@@ -33,9 +40,9 @@ namespace CodeHub.Core.ViewModels.Organizations
             get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Name })); }
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), response => Organization = response.Data);
+            Organization = await _applicationService.GitHubClient.Organization.Get(Name);
         }
 
         public class NavObject
