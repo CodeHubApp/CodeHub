@@ -6,7 +6,6 @@ using System.Reactive;
 using ReactiveUI;
 using Splat;
 using System.Reactive.Linq;
-using GitHubSharp;
 using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Accounts

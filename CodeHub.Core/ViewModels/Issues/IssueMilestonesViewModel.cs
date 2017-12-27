@@ -1,17 +1,19 @@
 using System.Threading.Tasks;
-using GitHubSharp.Models;
 using CodeHub.Core.Messages;
 using System;
 using CodeHub.Core.Services;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueMilestonesViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
+        private readonly IApplicationService _applicationService;
 
-        private MilestoneModel _selectedMilestone;
-        public MilestoneModel SelectedMilestone
+        private Octokit.Milestone _selectedMilestone;
+        public Octokit.Milestone SelectedMilestone
         {
             get
             {
@@ -34,8 +36,8 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        private readonly CollectionViewModel<MilestoneModel> _milestones = new CollectionViewModel<MilestoneModel>();
-        public CollectionViewModel<MilestoneModel> Milestones
+        private readonly CollectionViewModel<Octokit.Milestone> _milestones = new CollectionViewModel<Octokit.Milestone>();
+        public CollectionViewModel<Octokit.Milestone> Milestones
         {
             get { return _milestones; }
         }
@@ -44,13 +46,14 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
-        public long Id { get; private set; }
+        public int Id { get; private set; }
 
         public bool SaveOnSelect { get; private set; }
 
-        public IssueMilestonesViewModel(IMessageService messageService)
+        public IssueMilestonesViewModel(IMessageService messageService, IApplicationService applicationService)
         {
             _messageService = messageService;
+            _applicationService = applicationService;
         }
 
         public void Init(NavObject navObject)
@@ -59,23 +62,24 @@ namespace CodeHub.Core.ViewModels.Issues
             Repository = navObject.Repository;
             Id = navObject.Id;
             SaveOnSelect = navObject.SaveOnSelect;
-            SelectedMilestone = TxSevice.Get() as MilestoneModel;
+            SelectedMilestone = TxSevice.Get() as Octokit.Milestone;
 
-            this.Bind(x => x.SelectedMilestone).Subscribe(x => SelectMilestone(x));
+            this.Bind(x => x.SelectedMilestone)
+                .SelectMany(x => SelectMilestone(x).ToObservable())
+                .Subscribe();
         }
 
-        private async Task SelectMilestone(MilestoneModel x)
+        private async Task SelectMilestone(Octokit.Milestone x)
         {
             if (SaveOnSelect)
             {
                 try
                 {
                     IsSaving = true;
-                    int? milestone = null;
-                    if (x != null) milestone = x.Number;
-                    var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateMilestone(milestone);
-                    var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
-                    _messageService.Send(new IssueEditMessage(newIssue.Data));
+
+                    var issueUpdate = new Octokit.IssueUpdate { Milestone = x?.Number };
+                    var newIssue = await _applicationService.GitHubClient.Issue.Update(Username, Repository, Id, issueUpdate);
+                    _messageService.Send(new IssueEditMessage(newIssue));
                 }
                 catch
                 {
@@ -94,16 +98,17 @@ namespace CodeHub.Core.ViewModels.Issues
             ChangePresentation(new MvvmCross.Core.ViewModels.MvxClosePresentationHint(this));
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            return Milestones.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Milestones.GetAll());
+            var milestones = await _applicationService.GitHubClient.Issue.Milestone.GetAllForRepository(Username, Repository);
+            Milestones.Items.Reset(milestones);
         }
 
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public long Id { get; set; }
+            public int Id { get; set; }
             public bool SaveOnSelect { get; set; }
         }
     }

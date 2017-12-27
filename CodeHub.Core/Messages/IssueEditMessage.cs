@@ -1,12 +1,10 @@
-using GitHubSharp.Models;
-
 namespace CodeHub.Core.Messages
 {
     public class IssueEditMessage
     {
-        public IssueModel Issue { get; }
+        public Octokit.Issue Issue { get; }
 
-        public IssueEditMessage(IssueModel issue)
+        public IssueEditMessage(Octokit.Issue issue)
         {
             Issue = issue;
         }

@@ -14,6 +14,16 @@ namespace CodeHub.Core.Filters
             Ascending = false;
         }
 
+        public Octokit.IssueSort GetSort()
+        {
+            if (SortType == Sort.Updated)
+                return Octokit.IssueSort.Updated;
+            if (SortType == Sort.Comments)
+                return Octokit.IssueSort.Comments;
+            return Octokit.IssueSort.Created;
+        }
+
+
         public enum Sort
         {
             None,

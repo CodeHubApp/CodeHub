@@ -5,7 +5,6 @@ using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels.Notifications;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
@@ -44,7 +43,13 @@ namespace CodeHub.iOS.Views
 
             BindCollection(vm.Notifications, x =>
             {
-                var el = new StringElement(x.Subject.Title, x.UpdatedAt.Humanize(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                if (!DateTimeOffset.TryParse(x.UpdatedAt, out DateTimeOffset updatedAt))
+                    updatedAt = DateTimeOffset.Now;
+
+                var el = new StringElement(x.Subject.Title, updatedAt.Humanize(), UITableViewCellStyle.Subtitle)
+                {
+                    Accessory = UITableViewCellAccessory.DisclosureIndicator
+                };
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
@@ -74,7 +79,7 @@ namespace CodeHub.iOS.Views
             });
         }
 
-        private static Action<object> MakeCallback(WeakReference<NotificationsViewModel> weakVm, NotificationModel model)
+        private static Action<object> MakeCallback(WeakReference<NotificationsViewModel> weakVm, Octokit.Notification model)
         {
             return new Action<object>(_ => weakVm.Get()?.GoToNotificationCommand.Execute(model));
         }
@@ -97,7 +102,6 @@ namespace CodeHub.iOS.Views
                 {
                     _button = new UIButton(UIButtonType.RoundedRect);
                     _button.SetImage(Images.Buttons.CheckButton, UIControlState.Normal);
-                    //_button.Frame = new System.Drawing.RectangleF(320f - 42f, 1f, 26f, 26f);
                     _button.TintColor = UIColor.FromRGB(50, 50, 50);
                     _button.TouchUpInside += (sender, e) => weakVm.Get()?.ReadRepositoriesCommand.Execute(text);
                     Add(_button);

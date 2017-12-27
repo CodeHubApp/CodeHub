@@ -3,7 +3,6 @@ using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
 using CodeHub.iOS.DialogElements;
 using System;
-using GitHubSharp.Models;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -40,7 +39,7 @@ namespace CodeHub.iOS.Views.PullRequests
             });
         }
 
-        private static Action MakeCallback(WeakReference<PullRequestsViewModel> weakVm, PullRequestModel model)
+        private static Action MakeCallback(WeakReference<PullRequestsViewModel> weakVm, Octokit.PullRequest model)
         {
             return new Action(() => weakVm.Get()?.GoToPullRequestCommand.Execute(model));
         }
