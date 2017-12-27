@@ -15,6 +15,7 @@ using Humanizer;
 using ReactiveUI;
 using UIKit;
 using Splat;
+using CodeHub.iOS.ViewControllers.Source;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -301,7 +302,7 @@ namespace CodeHub.iOS.Views.PullRequests
             sections.Add(secDetails);
 
             var commits = new StringElement("Commits", Octicon.GitCommit.ToImage());
-            commits.Clicked.Subscribe(_ => ViewModel.GoToCommitsCommand.Execute(null));
+            commits.Clicked.Subscribe(_ => GoToCommits());
 
             var files = new StringElement("Files", Octicon.FileCode.ToImage());
             files.Clicked.Subscribe(_ => ViewModel.GoToFilesCommand.Execute(null));
@@ -348,6 +349,13 @@ namespace CodeHub.iOS.Views.PullRequests
 
             Root.Reset(sections);
 
+        }
+
+        private void GoToCommits()
+        {
+            var viewCtrl = CommitsViewController.CreatePullRequestCommitsViewController(
+                ViewModel.Username, ViewModel.Repository, ViewModel.Id);
+            this.PushViewController(viewCtrl);
         }
     }
 }

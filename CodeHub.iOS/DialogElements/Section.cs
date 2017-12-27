@@ -3,6 +3,7 @@ using UIKit;
 using CoreGraphics;
 using Foundation;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
@@ -89,58 +90,36 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
-        /// <summary>
-        /// Adds a new child Element to the Section
-        /// </summary>
-        /// <param name="element">
-        /// An element to add to the section.
-        /// </param>
         public void Add (Element element)
         {
             if (element == null)
                 return;
 
-            _elements.Add (element);
+            Root?.TableView?.BeginUpdates();
+
+            _elements.Add(element);
             element.SetSection(this);
 
-            if (Root != null)
-                InsertVisual (_elements.Count-1, UITableViewRowAnimation.None, 1);
+            InsertVisual (_elements.Count - 1, UITableViewRowAnimation.Automatic, 1);
+            Root?.TableView?.EndUpdates();
         }
 
         public void Add(IEnumerable<Element> elements)
         {
-            AddAll(elements);
-        }
+            Root?.TableView?.BeginUpdates();
 
-        /// <summary>
-        ///    Add version that can be used with LINQ
-        /// </summary>
-        /// <param name="elements">
-        /// An enumerable list that can be produced by something like:
-        ///    from x in ... select (Element) new MyElement (...)
-        /// </param>
-        public int AddAll(IEnumerable<Element> elements)
-        {
-            int count = 0;
-            foreach (var e in elements){
-                Add (e);
+            var count = 0;
+            foreach (var e in elements.Where(x => x != null))
+            {
+                _elements.Add(e);
+                e.SetSection(this);
                 count++;
             }
-            return count;
+
+            InsertVisual (_elements.Count - count, UITableViewRowAnimation.Automatic, count);
+            Root?.TableView?.EndUpdates();
         }
 
-        /// <summary>
-        /// Inserts a series of elements into the Section using the specified animation
-        /// </summary>
-        /// <param name="idx">
-        /// The index where the elements are inserted
-        /// </param>
-        /// <param name="anim">
-        /// The animation to use
-        /// </param>
-        /// <param name="newElements">
-        /// A series of elements.
-        /// </param>
         public void Insert (int idx, UITableViewRowAnimation anim, params Element [] newElements)
         {
             if (newElements == null)
@@ -156,7 +135,7 @@ namespace CodeHub.iOS.DialogElements
             if (Root != null && Root.TableView != null)
             {
                 if (anim == UITableViewRowAnimation.None)
-                    Root.TableView.ReloadData ();
+                    Root.TableView.ReloadData();
                 else
                     InsertVisual (idx, anim, newElements.Length);
             }

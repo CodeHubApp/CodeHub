@@ -222,14 +222,17 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             var branches = ViewModel.Branches;
             if (branches?.Count == 1)
             {
-                var viewController = new ChangesetsView(owner, repo, branches.First().Name);
+                var viewController = CommitsViewController.CreateBranchCommitsViewController(
+                    owner, repo, branches.First().Name);
                 this.PushViewController(viewController);
             }
             else
             {
                 var viewController = new BranchesViewController(owner, repo, branches);
-                viewController.BranchSelected.Subscribe(
-                    branch => viewController.PushViewController(new ChangesetsView(owner, repo, branch.Name)));
+                viewController
+                    .BranchSelected
+                    .Select(branch => CommitsViewController.CreateBranchCommitsViewController(owner, repo, branch.Name))
+                    .Subscribe(viewCtrl => viewController.PushViewController(viewCtrl));
                 this.PushViewController(viewController);
             }
         }

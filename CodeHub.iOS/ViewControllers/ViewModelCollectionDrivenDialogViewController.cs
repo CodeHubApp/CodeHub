@@ -117,7 +117,7 @@ namespace CodeHub.iOS.ViewControllers
         {
             items = items ?? Enumerable.Empty<T>();
             var sec = new Section();
-            sec.AddAll(items.Select(item =>
+            sec.Add(items.Select(item =>
             {
                 try
                 {

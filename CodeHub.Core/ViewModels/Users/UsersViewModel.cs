@@ -23,7 +23,7 @@ namespace CodeHub.Core.ViewModels.Users
 
         public IReadOnlyReactiveList<UserItemViewModel> Items { get; private set; }
 
-        public ReactiveCommand<UserItemViewModel, UserItemViewModel> ItemSelected { get; }
+        public ReactiveCommand<UserItemViewModel, Octokit.User> ItemSelected { get; }
 
         private ObservableAsPropertyHelper<bool> _hasMore;
         public bool HasMore => _hasMore.Value;
@@ -78,7 +78,7 @@ namespace CodeHub.Core.ViewModels.Users
 
             var showDescription = _applicationService.Account.ShowRepositoryDescriptionInList;
 
-            ItemSelected = ReactiveCommand.Create<UserItemViewModel, UserItemViewModel>(x => x);
+            ItemSelected = ReactiveCommand.Create<UserItemViewModel, Octokit.User>(x => x.User);
 
             var userItems = _internalItems.CreateDerivedCollection(
                 x => new UserItemViewModel(x, GoToUser));

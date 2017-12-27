@@ -58,7 +58,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             var sec = new Section();
 
             langs.Insert(0, new Language("All Languages", null));
-            sec.AddAll(langs.Select(x =>
+            sec.Add(langs.Select(x =>
             {
                 var el = new StringElement(x.Name) { Accessory = UITableViewCellAccessory.None };
                 el.Clicked.Subscribe(_ => _languageSubject.OnNext(x));

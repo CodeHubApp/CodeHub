@@ -164,7 +164,8 @@ namespace CodeHub.iOS.Views.Source
                 if (!string.IsNullOrEmpty(comment.Path))
                     continue;
 
-                commentSection.Add(new CommentElement(comment.User.Login, comment.Body, comment.CreatedAt, comment.User.AvatarUrl));
+                // TODO: FIX THIS
+                //commentSection.Add(new CommentElement(comment.User.Login, comment.Body, comment.CreatedAt, comment.User.AvatarUrl));
             }
 
             if (commentSection.Elements.Count > 0)

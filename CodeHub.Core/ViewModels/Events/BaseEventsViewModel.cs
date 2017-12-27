@@ -26,6 +26,8 @@ namespace CodeHub.Core.ViewModels.Events
 
         public readonly ISubject<Tuple<RepositoryIdentifier, string>> GoToBranchCommand = new Subject<Tuple<RepositoryIdentifier, string>>();
 
+        public readonly ISubject<Tuple<RepositoryIdentifier, string>> GoToCommitsCommand = new Subject<Tuple<RepositoryIdentifier, string>>();
+
         public CollectionViewModel<Tuple<EventModel, EventBlock>> Events => _events;
 
         public bool ReportRepository { get; private set; }
@@ -67,13 +69,8 @@ namespace CodeHub.Core.ViewModels.Events
             var repoId = RepositoryIdentifier.FromFullName(repoModel.Name);
             if (repoId == null)
                 return;
-            
-            ShowViewModel<ChangesetsViewModel>(new ChangesetsViewModel.NavObject
-            {
-                Username = repoId?.Owner,
-                Repository = repoId?.Name,
-                Branch = branch
-            });
+
+            GoToCommitsCommand.OnNext(Tuple.Create(repoId, branch));
         }
 
         public ICommand GoToRepositoryCommand

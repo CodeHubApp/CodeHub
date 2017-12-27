@@ -5,18 +5,22 @@ using System.Reactive.Subjects;
 using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.iOS.TableViewSources
 {
     public class DialogTableViewSource : UITableViewSource
     {
         private readonly RootElement _root;
+        private readonly Subject<Unit> _requestMoreSubject = new Subject<Unit>();
         private readonly Subject<CGPoint> _scrolledSubject = new Subject<CGPoint>();
         private readonly Subject<Element> _selectedSubject = new Subject<Element>();
 
-        public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject.AsObservable(); } }
+        public IObservable<CGPoint> ScrolledObservable => _scrolledSubject.AsObservable();
 
-        public IObservable<Element> SelectedObservable { get { return _selectedSubject.AsObservable(); } }
+        public IObservable<Element> SelectedObservable => _selectedSubject.AsObservable();
+
+        public IObservable<Unit> RequestMoreObservable => _requestMoreSubject.AsObservable();
 
         public RootElement Root
         {
@@ -107,12 +111,29 @@ namespace CodeHub.iOS.TableViewSources
             _scrolledSubject.OnNext(Root.TableView.ContentOffset);
         }
 
+        public override void WillDisplay(UITableView tableView, UITableViewCell cell, Foundation.NSIndexPath indexPath)
+        {
+            if (indexPath.Section == (NumberOfSections(tableView) - 1) &&
+                indexPath.Row == (RowsInSection(tableView, indexPath.Section) - 1))
+            {
+                // We need to skip an event loop to stay out of trouble
+                BeginInvokeOnMainThread(() => _requestMoreSubject.OnNext(Unit.Default));
+            }
+        }
+
         public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
         {
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
             var sizable = element as IElementSizing;
             return sizable == null ? tableView.RowHeight : sizable.GetHeight(tableView, indexPath);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _requestMoreSubject.Dispose();
+            _scrolledSubject.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

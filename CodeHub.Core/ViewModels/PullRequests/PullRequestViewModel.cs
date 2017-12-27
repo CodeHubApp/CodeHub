@@ -181,11 +181,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public ReactiveUI.ReactiveCommand<Unit, bool> GoToOwner { get; }
 
-        public ICommand GoToCommitsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<PullRequestCommitsViewModel>(new PullRequestCommitsViewModel.NavObject { Username = Username, Repository = Repository, PullRequestId = Id })); }
-        }
-
         public ICommand GoToFilesCommand
         {
             get {

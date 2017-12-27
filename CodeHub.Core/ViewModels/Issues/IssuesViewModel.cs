@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Filters;
-using GitHubSharp.Models;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
@@ -77,19 +76,11 @@ namespace CodeHub.Core.ViewModels.Issues
             request.Mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
             request.Creator = string.IsNullOrEmpty(_issues.Filter.Creator) ? null : _issues.Filter.Creator;
 
-            var labels = string.IsNullOrEmpty(_issues.Filter.Labels) ? Enumerable.Empty<string>() : _issues.Filter.Labels.Split(' ');
-            foreach (var label in labels)
+            foreach (var label in _issues.Filter.Labels?.Split(' '))
                 request.Labels.Add(label);
 
             if (_issues.Filter.SortType != IssuesFilterModel.Sort.None)
-            {
-                if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Comments)
-                    request.SortProperty = Octokit.IssueSort.Comments;
-                else if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Created)
-                    request.SortProperty = Octokit.IssueSort.Created;
-                else if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Updated)
-                    request.SortProperty = Octokit.IssueSort.Updated;
-            }
+                request.SortProperty = _issues.Filter.GetSort();
 
             var issues = await _applicationService.GitHubClient.Issue.GetAllForRepository(Username, Repository, request);
             Issues.Items.Reset(issues);
