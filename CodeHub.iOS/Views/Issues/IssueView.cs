@@ -109,7 +109,7 @@ namespace CodeHub.iOS.Views.Issues
                 var markdown = new MarkdownWebView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(description) ? null : html);
-
+                Render();
             });
 
             ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
@@ -203,7 +203,6 @@ namespace CodeHub.iOS.Views.Issues
             var secDetails = new Section();
             if (_descriptionElement.HasValue)
                 secDetails.Add(_descriptionElement);
-
 
             secDetails.Add(_assigneeElement);
             secDetails.Add(_milestoneElement);

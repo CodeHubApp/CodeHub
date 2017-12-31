@@ -78,9 +78,6 @@ namespace CodeHub.iOS.Views.PullRequests
                 _split2.Button1.Text = x.User.Login;
                 _split2.Button2.Text = x.CreatedAt.ToString("MM/dd/yy");
 
-
-  
-
                 HeaderView.Text = x.Title ?? Title;
                 HeaderView.SubText = "Updated " + x.UpdatedAt.Humanize();
                 HeaderView.SetImage(x.User?.AvatarUrl, Images.Avatar);
@@ -94,6 +91,7 @@ namespace CodeHub.iOS.Views.PullRequests
                 var markdown = new MarkdownWebView { Model = model };
                 var html = markdown.GenerateString();
                 _descriptionElement.SetValue(string.IsNullOrEmpty(description) ? null : html);
+                Render();
             });
 
             var actionButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
