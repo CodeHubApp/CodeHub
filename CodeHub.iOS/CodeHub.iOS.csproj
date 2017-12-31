@@ -107,9 +107,12 @@
     <Compile Include="Views\Source\ChangesetView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Source\ChangesetsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
+    <Compile Include="Views\Source\CommitsView.cs" />
+    <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
@@ -205,12 +208,14 @@
     <Compile Include="DialogElements\Section.cs" />
     <Compile Include="DialogElements\BooleanElement.cs" />
     <Compile Include="DialogElements\StringElement.cs" />
+    <Compile Include="DialogElements\CommitElement.cs" />
     <Compile Include="DialogElements\ChangesetElement.cs" />
     <Compile Include="DialogElements\MilestoneElement.cs" />
     <Compile Include="DialogElements\LabelElement.cs" />
     <Compile Include="DialogElements\SplitButtonElement.cs" />
     <Compile Include="DialogElements\PullRequestElement.cs" />
     <Compile Include="DialogElements\SplitViewElement.cs" />
+    <Compile Include="DialogElements\CommentElement.cs" />
     <Compile Include="DialogElements\IssueElement.cs" />
     <Compile Include="DialogElements\UserElement.cs" />
     <Compile Include="DialogElements\NewsFeedElement.cs" />
@@ -312,9 +317,6 @@
     <Compile Include="ViewControllers\Settings\SyntaxHighlighterViewController.cs" />
     <Compile Include="ViewControllers\Settings\DefaultStartupViewController.cs" />
     <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
-    <Compile Include="TableViewSources\CommitsTableViewSource.cs" />
-    <Compile Include="ViewControllers\Source\CommitsViewController.cs" />
-    <Compile Include="ViewControllers\TableListViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

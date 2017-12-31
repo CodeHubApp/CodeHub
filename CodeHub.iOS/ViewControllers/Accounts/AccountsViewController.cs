@@ -52,7 +52,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             var accountSection = new Section();
 
             var activeAccount = _accountsService.GetActiveAccount().Result;
-            accountSection.Add(_accountsService.GetAccounts().Result.Select(account =>
+            accountSection.AddAll(_accountsService.GetAccounts().Result.Select(account =>
             {
                 var isEqual = account.Id == activeAccount?.Id;
                 var t = new AccountElement(account, isEqual);

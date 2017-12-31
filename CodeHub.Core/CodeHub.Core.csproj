@@ -56,6 +56,7 @@
     <Compile Include="ViewModels\Events\NewsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
+    <Compile Include="ViewModels\PullRequests\PullRequestCommitsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Services\IFeaturesService.cs" />
     <Compile Include="ViewModels\Gists\GistCreateViewModel.cs" />
     <Compile Include="Messages\GistAddMessage.cs" />
+    <Compile Include="ViewModels\Changesets\ChangesetsViewModel.cs" />
     <Compile Include="ViewModels\Changesets\ChangesetViewModel.cs" />
     <Compile Include="ViewModels\Changesets\CommitsViewModel.cs" />
     <Compile Include="ViewModels\Notifications\NotificationsViewModel.cs" />
@@ -155,8 +157,6 @@
     <Compile Include="ViewModels\Search\UserExploreViewModel.cs" />
     <Compile Include="ViewModels\Search\ExploreViewModel.cs" />
     <Compile Include="Interactions.cs" />
-    <Compile Include="ViewModels\Changesets\CommitItemViewModel.cs" />
-    <Compile Include="Utils\Paginator.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -134,8 +134,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             if (ViewModel.Comments.Items.Count > 0)
             {
                 var sec3 = new Section("Comments");
-                // TODO: FIX THIS
-                //sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
+                sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
                 sections.Add(sec3);
             }
 

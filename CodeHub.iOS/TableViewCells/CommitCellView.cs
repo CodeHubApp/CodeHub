@@ -1,9 +1,9 @@
+using System;
 using Foundation;
 using UIKit;
-using Humanizer;
+using CodeHub.Core.Utilities;
 using ObjCRuntime;
-using CodeHub.Core.ViewModels.Changesets;
-using System;
+using Humanizer;
 
 namespace CodeHub.iOS.TableViewCells
 {
@@ -11,11 +11,10 @@ namespace CodeHub.iOS.TableViewCells
     {
         public static readonly UINib Nib = UINib.FromName("CommitCellView", NSBundle.MainBundle);
         public static readonly NSString Key = new NSString("CommitCellView");
-        public static readonly UIStringAttributes BoldAttribute;
+        private static nfloat DefaultContentConstraintSize = 0.0f;
 
-        static CommitCellView()
+        public CommitCellView()
         {
-            BoldAttribute = new UIStringAttributes { Font = UIFont.PreferredSubheadline.MakeBold() };
         }
 
         public CommitCellView(IntPtr handle) 
@@ -25,8 +24,9 @@ namespace CodeHub.iOS.TableViewCells
 
         public static CommitCellView Create()
         {
-            var views = NSBundle.MainBundle.LoadNib(Key, null, null);
-            return Runtime.GetNSObject<CommitCellView>(views.ValueAt(0));
+            var cell = new CommitCellView();
+            var views = NSBundle.MainBundle.LoadNib("CommitCellView", cell, null);
+            return Runtime.GetNSObject( views.ValueAt(0) ) as CommitCellView;
         }
 
         public override void AwakeFromNib()
@@ -39,22 +39,17 @@ namespace CodeHub.iOS.TableViewCells
 
             TitleLabel.TextColor = Theme.CurrentTheme.MainTitleColor;
             TimeLabel.TextColor = UIColor.Gray;
+            ContentLabel.TextColor = Theme.CurrentTheme.MainTextColor;
+            DefaultContentConstraintSize = ContentConstraint.Constant;
         }
 
-        public void Set(CommitItemViewModel viewModel)
+        public void Set(string title, string description, DateTimeOffset time, GitHubAvatar avatar)
         {
-            TitleLabel.Text = viewModel.Title;
-            MainImageView.SetAvatar(viewModel.Avatar);
-
-            var prettyDate = viewModel.Date?.Humanize();
-            var prettyString = new NSMutableAttributedString($"{viewModel.Name} commited {prettyDate}");
-            prettyString.SetAttributes(
-                BoldAttribute.Dictionary,
-                new NSRange(0, viewModel.Name.Length));
-            prettyString.SetAttributes(
-                BoldAttribute.Dictionary,
-                new NSRange(prettyString.Length - prettyDate.Length, prettyDate.Length));
-            TimeLabel.AttributedText = prettyString;
+            ContentConstraint.Constant = string.IsNullOrEmpty(description) ? 0f : DefaultContentConstraintSize;
+            TitleLabel.Text = title;
+            ContentLabel.Text = description;
+            TimeLabel.Text = time.Humanize();
+            MainImageView.SetAvatar(avatar);
         }
 
         protected override void Dispose(bool disposing)
