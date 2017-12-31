@@ -6,7 +6,9 @@ using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Filters;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.ViewModels.PullRequests;
+using GitHubSharp.Models;
 using CodeHub.Core.Messages;
+using CodeHub.Core.ViewModels.Source;
 using CodeHub.Core.ViewModels.Changesets;
 using CodeHub.Core.Utils;
 using CodeHub.Core.Services;
@@ -17,15 +19,14 @@ namespace CodeHub.Core.ViewModels.Notifications
     public class NotificationsViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
-        private readonly FilterableCollectionViewModel<Octokit.Notification, NotificationsFilterModel> _notifications;
+        private readonly FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> _notifications;
         private ICommand _readAllCommand;
         private ICommand _readCommand;
         private ICommand _readReposCommand;
         private int _shownIndex;
         private bool _isMarking;
 
-        public FilterableCollectionViewModel<Octokit.Notification, NotificationsFilterModel> Notifications
+        public FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel> Notifications
         {
             get { return _notifications; }
         }
@@ -44,7 +45,7 @@ namespace CodeHub.Core.ViewModels.Notifications
 
         public ICommand ReadCommand
         {
-            get { return _readCommand ?? (_readCommand = new MvxCommand<Octokit.Notification>(x => Read(x)));}
+            get { return _readCommand ?? (_readCommand = new MvxCommand<NotificationModel>(x => Read(x)));}
         }
 
         public ICommand ReadRepositoriesCommand
@@ -59,23 +60,23 @@ namespace CodeHub.Core.ViewModels.Notifications
 
         public ICommand GoToNotificationCommand
         {
-            get { return new MvxCommand<Octokit.Notification>(GoToNotification); }
+            get { return new MvxCommand<NotificationModel>(GoToNotification); }
         }
         
-        private void GoToNotification(Octokit.Notification x)
+        private void GoToNotification(NotificationModel x)
         {
             var subject = x.Subject.Type.ToLower();
             if (subject.Equals("issue"))
             {
                 ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = x.Repository.Owner.Login,Repository = x.Repository.Name, Id = int.Parse(node) });
+                ShowViewModel<IssueViewModel>(new IssueViewModel.NavObject { Username = x.Repository.Owner.Login,Repository = x.Repository.Name, Id = long.Parse(node) });
             }
             else if (subject.Equals("pullrequest"))
             {
                 ReadCommand.Execute(x);
                 var node = x.Subject.Url.Substring(x.Subject.Url.LastIndexOf('/') + 1);
-                ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, Id = int.Parse(node) });
+                ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = x.Repository.Owner.Login, Repository = x.Repository.Name, Id = long.Parse(node) });
             }
             else if (subject.Equals("commit"))
             {
@@ -90,14 +91,10 @@ namespace CodeHub.Core.ViewModels.Notifications
             }
         }
 
-        public NotificationsViewModel(
-            IMessageService messageService = null,
-            IApplicationService applicationService = null)
+        public NotificationsViewModel(IMessageService messageService = null)
         {
             _messageService = messageService ?? GetService<IMessageService>();
-            _applicationService = applicationService ?? GetService<IApplicationService>();
-
-            _notifications = new FilterableCollectionViewModel<Octokit.Notification, NotificationsFilterModel>("Notifications");
+            _notifications = new FilterableCollectionViewModel<NotificationModel, NotificationsFilterModel>("Notifications");
             _notifications.GroupingFunction = (n) => n.GroupBy(x => x.Repository.FullName);
             _notifications.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
@@ -118,20 +115,15 @@ namespace CodeHub.Core.ViewModels.Notifications
 
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
-            var request = new Octokit.NotificationsRequest
-            {
-                All = Notifications.Filter.All,
-                Participating = Notifications.Filter.Participating
-            };
-
-            var notifications = await _applicationService.GitHubClient.Activity.Notifications.GetAllForCurrent(request);
-            Notifications.Items.Reset(notifications);
-            UpdateAccountNotificationsCount();
+            return this.RequestModel(this.GetApplication().Client.Notifications.GetAll(all: Notifications.Filter.All, participating: Notifications.Filter.Participating), response => {
+                Notifications.Items.Reset(response.Data);
+                UpdateAccountNotificationsCount();
+            });
         }
 
-        private async Task Read(Octokit.Notification model)
+        private async Task Read(NotificationModel model)
         {
             // If its already read, ignore it
             if (!model.Unread)
@@ -139,11 +131,16 @@ namespace CodeHub.Core.ViewModels.Notifications
 
             try
             {
-                await _applicationService.GitHubClient.Activity.Notifications.MarkAsRead(int.Parse(model.Id));
-
-                //Update the notifications count on the account
-                Notifications.Items.Remove(model);
-                UpdateAccountNotificationsCount();
+                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Notifications[model.Id].MarkAsRead());
+                if (response.Data) 
+                {
+                    //We just read it
+                    model.Unread = false;
+     
+                    //Update the notifications count on the account
+                    Notifications.Items.Remove(model);
+                    UpdateAccountNotificationsCount();
+                }
             }
             catch
             {
@@ -201,7 +198,7 @@ namespace CodeHub.Core.ViewModels.Notifications
             if (!Notifications.Filter.All && !Notifications.Filter.Participating)
             {
                 var count = Notifications.Items.Sum(x => x.Unread ? 1 : 0);
-                _messageService.Send(new NotificationCountMessage(count));
+                _messageService.Send<NotificationCountMessage>(new NotificationCountMessage(count));
             }
         }
     }

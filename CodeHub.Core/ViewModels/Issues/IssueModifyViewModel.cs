@@ -1,4 +1,5 @@
 using System;
+using GitHubSharp.Models;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
@@ -12,9 +13,9 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly IMessageService _messageService;
         private string _title;
         private string _content;
-        private Octokit.User _assignedTo;
-        private readonly CollectionViewModel<Octokit.Label> _labels = new CollectionViewModel<Octokit.Label>();
-        private Octokit.Milestone _milestone;
+        private BasicUserModel _assignedTo;
+        private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
+        private MilestoneModel _milestone;
         private IDisposable _labelsToken, _milestoneToken, _assignedToken;
         private bool _isSaving;
 
@@ -30,18 +31,18 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        public Octokit.Milestone Milestone
+        public MilestoneModel Milestone
         {
             get { return _milestone; }
             set { this.RaiseAndSetIfChanged(ref _milestone, value); }
         }
 
-        public CollectionViewModel<Octokit.Label> Labels
+        public CollectionViewModel<LabelModel> Labels
         {
             get { return _labels; }
         }
 
-        public Octokit.User AssignedTo
+        public BasicUserModel AssignedTo
         {
             get { return _assignedTo; }
             set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
@@ -62,7 +63,7 @@ namespace CodeHub.Core.ViewModels.Issues
             get 
             { 
                 return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Labels);
+                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Labels);
                     ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository });
                 }); 
             }
@@ -73,7 +74,7 @@ namespace CodeHub.Core.ViewModels.Issues
             get 
             { 
                 return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Milestone);
+                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Milestone);
                     ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
                 });
             }
@@ -84,7 +85,7 @@ namespace CodeHub.Core.ViewModels.Issues
             get 
             { 
                 return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(AssignedTo);
+                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(AssignedTo);
                     ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
                 }); 
             }

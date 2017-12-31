@@ -1,5 +1,6 @@
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
+using GitHubSharp.Models;
 using System;
 using CodeHub.Core.Messages;
 using System.Linq;
@@ -10,8 +11,7 @@ namespace CodeHub.Core.ViewModels.Issues
     public class IssueEditViewModel : IssueModifyViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
-        private Octokit.Issue _issue;
+        private IssueModel _issue;
         private bool _open;
 
         public bool IsOpen
@@ -20,7 +20,7 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _open, value); }
         }
 
-        public Octokit.Issue Issue
+        public IssueModel Issue
         {
             get { return _issue; }
             set { this.RaiseAndSetIfChanged(ref _issue, value); }
@@ -28,11 +28,10 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public long Id { get; private set; }
 
-        public IssueEditViewModel(IMessageService messageService, IApplicationService applicationService)
+        public IssueEditViewModel(IMessageService messageService)
             : base(messageService)
         {
             _messageService = messageService;
-            _applicationService = applicationService;
         }
 
         protected override async Task Save()
@@ -42,6 +41,13 @@ namespace CodeHub.Core.ViewModels.Issues
                 if (string.IsNullOrEmpty(IssueTitle))
                     throw new Exception("Issue must have a title!");
 
+                string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+                int? milestone = null;
+                if (Milestone != null) 
+                    milestone = Milestone.Number;
+                string[] labels = Labels.Items.Select(x => x.Name).ToArray();
+                var content = Content ?? string.Empty;
+                var state = IsOpen ? "open" : "closed";
                 var retried = false;
 
                 IsSaving = true;
@@ -51,21 +57,8 @@ namespace CodeHub.Core.ViewModels.Issues
 
                 try
                 {
-                    var issueUpdate = new Octokit.IssueUpdate
-                    {
-                        State = IsOpen ? Octokit.ItemState.Open : Octokit.ItemState.Closed,
-                        Body = Content ?? string.Empty,
-                        Milestone = Milestone?.Number
-                    };
-
-                    if (AssignedTo != null)
-                        issueUpdate.AddAssignee(AssignedTo.Login);
-
-                    foreach (var label in Labels.Items.Select(x => x.Name))
-                        issueUpdate.AddLabel(label);
-
-                    var issue = await _applicationService.GitHubClient.Issue.Update(Username, Repository, Issue.Number, issueUpdate);
-                    _messageService.Send(new IssueEditMessage(issue));
+                    var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].Update(IssueTitle, content, state, assignedTo, milestone, labels)); 
+                    _messageService.Send(new IssueEditMessage(data.Data));
                 }
                 catch (GitHubSharp.InternalServerException)
                 {
@@ -115,8 +108,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             base.Init(navObject.Username, navObject.Repository);
             Id = navObject.Id;
-
-            Issue = GetService<IViewModelTxService>().Get() as Octokit.Issue;
+            Issue = GetService<CodeHub.Core.Services.IViewModelTxService>().Get() as IssueModel;
             if (Issue != null)
             {
                 IssueTitle = Issue.Title;
@@ -124,7 +116,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 Milestone = Issue.Milestone;
                 Labels.Items.Reset(Issue.Labels);
                 Content = Issue.Body;
-                IsOpen = Issue.State.Value == Octokit.ItemState.Open;
+                IsOpen = string.Equals(Issue.State, "open");
             }
         }
 

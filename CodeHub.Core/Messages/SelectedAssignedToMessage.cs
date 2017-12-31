@@ -1,10 +1,12 @@
+using GitHubSharp.Models;
+
 namespace CodeHub.Core.Messages
 {
     public class SelectedAssignedToMessage
     {
-        public Octokit.User User { get; }
+        public BasicUserModel User { get; }
 
-        public SelectedAssignedToMessage(Octokit.User user)
+        public SelectedAssignedToMessage(BasicUserModel user)
         {
             User = user;
         }

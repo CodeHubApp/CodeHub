@@ -1,4 +1,5 @@
 ﻿using System;
+using GitHubSharp.Models;
 using Foundation;
 using CodeHub.iOS.Cells;
 using UIKit;
@@ -9,9 +10,9 @@ namespace CodeHub.iOS.DialogElements
     public class PullRequestElement : Element
     {   
         private readonly Action _action;    
-        private readonly Octokit.PullRequest _model;
+        private readonly PullRequestModel _model;
 
-        public PullRequestElement(Octokit.PullRequest model, Action action)
+        public PullRequestElement(PullRequestModel model, Action action)
         {
             _model = model;
             _action = action;

@@ -1,20 +1,18 @@
 using System;
+using GitHubSharp.Models;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Services;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssueAssignedToViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
 
-        private Octokit.User _selectedUser;
-        public Octokit.User SelectedUser
+        private BasicUserModel _selectedUser;
+        public BasicUserModel SelectedUser
         {
             get
             {
@@ -37,8 +35,8 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        private readonly CollectionViewModel<Octokit.User> _users = new CollectionViewModel<Octokit.User>();
-        public CollectionViewModel<Octokit.User> Users
+        private readonly CollectionViewModel<BasicUserModel> _users = new CollectionViewModel<BasicUserModel>();
+        public CollectionViewModel<BasicUserModel> Users
         {
             get { return _users; }
         }
@@ -47,15 +45,13 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
-        public int Id { get; private set; }
+        public long Id { get; private set; }
 
         public bool SaveOnSelect { get; private set; }
 
-
-        public IssueAssignedToViewModel(IMessageService messageService, IApplicationService applicationService)
+        public IssueAssignedToViewModel(IMessageService messageService)
         {
             _messageService = messageService;
-            _applicationService = applicationService;
         }
 
         public void Init(NavObject navObject) 
@@ -65,30 +61,21 @@ namespace CodeHub.Core.ViewModels.Issues
             Id = navObject.Id;
             SaveOnSelect = navObject.SaveOnSelect;
 
-            SelectedUser = TxSevice.Get() as Octokit.User;
-
-            this.Bind(x => x.SelectedUser)
-                .SelectMany(x => SelectUser(x).ToObservable())
-                .Subscribe();
+            SelectedUser = TxSevice.Get() as BasicUserModel;
+            this.Bind(x => x.SelectedUser).Subscribe(x => SelectUser(x));
         }
-       
-        private async Task SelectUser(Octokit.User x)
+
+        private async Task SelectUser(BasicUserModel x)
         {
             if (SaveOnSelect)
             {
                 try
                 {
                     IsSaving = true;
-
-                    var issueUpdate = new Octokit.IssueUpdate();
-
-                    if (x == null)
-                        issueUpdate.ClearAssignees();
-                    else
-                        issueUpdate.AddAssignee(x.Login);
-
-                    var newIssue = await _applicationService.GitHubClient.Issue.Update(Username, Repository, Id, issueUpdate);
-                    _messageService.Send(new IssueEditMessage(newIssue));
+                    var assignee = x != null ? x.Login : null;
+                    var updateReq = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].UpdateAssignee(assignee);
+                    var newIssue = await this.GetApplication().Client.ExecuteAsync(updateReq);
+                    _messageService.Send(new IssueEditMessage(newIssue.Data));
         
                 }
                 catch
@@ -108,17 +95,16 @@ namespace CodeHub.Core.ViewModels.Issues
             ChangePresentation(new MvxClosePresentationHint(this));
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
-            var users = await _applicationService.GitHubClient.Issue.Assignee.GetAllForRepository(Username, Repository);
-            Users.Items.Reset(users);
+            return Users.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].GetAssignees());
         }
 
         public class NavObject
         {
             public string Username { get; set; }
             public string Repository { get; set; }
-            public int Id { get; set; }
+            public long Id { get; set; }
             public bool SaveOnSelect { get; set; }
         }
     }

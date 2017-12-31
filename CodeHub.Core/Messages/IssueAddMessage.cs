@@ -4,9 +4,9 @@ namespace CodeHub.Core.Messages
 {
     public class IssueAddMessage
     {
-        public Octokit.Issue Issue { get; }
+        public IssueModel Issue { get; }
 
-        public IssueAddMessage(Octokit.Issue issue)
+        public IssueAddMessage(IssueModel issue)
         {
             Issue = issue;
         }

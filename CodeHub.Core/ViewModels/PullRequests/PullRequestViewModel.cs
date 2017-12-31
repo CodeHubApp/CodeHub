@@ -16,13 +16,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
     public class PullRequestViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
         private IDisposable _issueEditSubscription;
         private IDisposable _pullRequestEditSubscription;
         private readonly IFeaturesService _featuresService;
         private readonly IMarkdownService _markdownService;
 
-        public int Id
+        public long Id
         { 
             get; 
             private set; 
@@ -68,15 +67,15 @@ namespace CodeHub.Core.ViewModels.PullRequests
             set { this.RaiseAndSetIfChanged(ref _merged, value); }
         }
 
-        private Octokit.Issue _issueModel;
-        public Octokit.Issue Issue
+        private IssueModel _issueModel;
+        public IssueModel Issue
         {
             get { return _issueModel; }
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
-        private Octokit.PullRequest _model;
-        public Octokit.PullRequest PullRequest
+        private PullRequestModel _model;
+        public PullRequestModel PullRequest
         { 
             get { return _model; }
             private set { this.RaiseAndSetIfChanged(ref _model, value); }
@@ -218,17 +217,16 @@ namespace CodeHub.Core.ViewModels.PullRequests
         public PullRequestViewModel(
             IFeaturesService featuresService,
             IMessageService messageService,
-            IMarkdownService markdownService,
-            IApplicationService applicationService)
+            IMarkdownService markdownService)
         {
             _featuresService = featuresService;
             _messageService = messageService;
             _markdownService = markdownService;
-            _applicationService = applicationService;
 
             this.Bind(x => x.PullRequest, true)
                 .Where(x => x != null)
-                .Subscribe(x => IsClosed = x.State.Value == Octokit.ItemState.Closed);
+                .Select(x => string.Equals(x.State, "closed"))
+                .Subscribe(x => IsClosed = x);
 
             this.Bind(x => x.Issue, true)
                 .SelectMany(issue => _markdownService.Convert(issue?.Body).ToObservable())
@@ -264,7 +262,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             try
             {
-                var comment = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
+                var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
                 Comments.Items.Add(comment.Data);
                 return true;
             }
@@ -280,10 +278,8 @@ namespace CodeHub.Core.ViewModels.PullRequests
             try
             {
                 IsModifying = true;
-                var state = closed ? Octokit.ItemState.Closed : Octokit.ItemState.Open;
-                var pullRequestUpdate = new Octokit.PullRequestUpdate { State = state };
-                var pullRequest = await _applicationService.GitHubClient.PullRequest.Update(Username, Repository, Id, pullRequestUpdate);
-                _messageService.Send(new PullRequestEditMessage(pullRequest));
+                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].UpdateState(closed ? "closed" : "open")); 
+                _messageService.Send(new PullRequestEditMessage(data.Data));
             }
             catch (Exception e)
             {
@@ -302,34 +298,29 @@ namespace CodeHub.Core.ViewModels.PullRequests
             protected set { this.RaiseAndSetIfChanged(ref _shouldShowPro, value); }
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
             ShouldShowPro = false;
 
-            var pullRequest = _applicationService.GitHubClient.PullRequest.Get(Username, Repository, Id);
-            var issue = _applicationService.GitHubClient.Issue.Get(Username, Repository, Id);
-
-            Events.SimpleCollectionLoad(_applicationService.Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
-            Comments.SimpleCollectionLoad(_applicationService.Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
-
-            this.RequestModel(_applicationService.Client.Users[Username].Repositories[Repository].Get(), response => {
+            var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
+            var t1 = this.RequestModel(pullRequest, response => PullRequest = response.Data);
+            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
+            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data).ToBackground();
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), response => {
                 CanPush = response.Data.Permissions.Push;
                 ShouldShowPro = response.Data.Private && !_featuresService.IsProEnabled;
             }).ToBackground();
-
-            this.RequestModel(_applicationService.Client.Users[Username].Repositories[Repository].IsCollaborator(_applicationService.Account.Username), 
+            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
                 response => IsCollaborator = response.Data).ToBackground();
-
-
-            PullRequest = await pullRequest;
-            Issue = await issue;
+            return t1;
         }
 
         public async Task Merge()
         {
             try
             {
-                var response = await _applicationService.Client.ExecuteAsync(_applicationService.Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge(string.Empty));
+                var response = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Merge(string.Empty));
                 if (!response.Data.Merged)
                     throw new Exception(response.Data.Message);
 
@@ -351,17 +342,20 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             if (PullRequest == null)
                 return false;
+            
+            var isClosed = string.Equals(PullRequest.State, "closed", StringComparison.OrdinalIgnoreCase);
+            var isMerged = PullRequest.Merged.GetValueOrDefault();
 
-            var isClosed = PullRequest.State.Value == Octokit.ItemState.Closed;
-            var isMerged = PullRequest.Merged;
             return CanPush && !isClosed && !isMerged;
         }
 
         public class NavObject
         {
             public string Username { get; set; }
+
             public string Repository { get; set; }
-            public int Id { get; set; }
+
+            public long Id { get; set; }
         }
     }
 }

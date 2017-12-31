@@ -123,7 +123,7 @@ namespace CodeHub.Core.ViewModels.Events
             get { return new MvxCommand<EventModel.GistEvent>(x => ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = x.Gist.Id }), x => x != null && x.Gist != null); }
         }
 
-        private void GoToIssue(RepositoryIdentifier repo, int id)
+        private void GoToIssue(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
@@ -136,11 +136,10 @@ namespace CodeHub.Core.ViewModels.Events
             });
         }
 
-        private void GoToPullRequest(RepositoryIdentifier repo, int id)
+        private void GoToPullRequest(RepositoryIdentifier repo, long id)
         {
             if (repo == null || string.IsNullOrEmpty(repo.Name) || string.IsNullOrEmpty(repo.Owner))
                 return;
-            
             ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject
             {
                 Username = repo.Owner,
@@ -353,12 +352,12 @@ namespace CodeHub.Core.ViewModels.Events
 
                 if (commentEvent.Issue.PullRequest != null && !string.IsNullOrEmpty(commentEvent.Issue.PullRequest.HtmlUrl))
                 {
-                    eventBlock.Tapped = () => GoToPullRequest(repoId, (int)commentEvent.Issue.Number);
+                    eventBlock.Tapped = () => GoToPullRequest(repoId, commentEvent.Issue.Number);
                     eventBlock.Header.Add(new TextBlock(" commented on pull request "));
                 }
                 else
                 {
-                    eventBlock.Tapped = () => GoToIssue(repoId, (int)commentEvent.Issue.Number);
+                    eventBlock.Tapped = () => GoToIssue(repoId, commentEvent.Issue.Number);
                     eventBlock.Header.Add(new TextBlock(" commented on issue "));
                 }
 
@@ -374,7 +373,7 @@ namespace CodeHub.Core.ViewModels.Events
             else if (eventModel.PayloadObject is EventModel.IssuesEvent)
             {
                 var issueEvent = (EventModel.IssuesEvent)eventModel.PayloadObject;
-                eventBlock.Tapped  = () => GoToIssue(repoId, (int)issueEvent.Issue.Number);
+                eventBlock.Tapped  = () => GoToIssue(repoId, issueEvent.Issue.Number);
 
                 if (string.Equals(issueEvent.Action, "opened", StringComparison.OrdinalIgnoreCase))
                     eventBlock.Header.Add(new TextBlock(" opened issue "));
@@ -435,7 +434,7 @@ namespace CodeHub.Core.ViewModels.Events
             else if (eventModel.PayloadObject is EventModel.PullRequestEvent)
             {
                 var pullEvent = (EventModel.PullRequestEvent)eventModel.PayloadObject;
-                eventBlock.Tapped = () => GoToPullRequest(repoId, (int)pullEvent.Number);
+                eventBlock.Tapped = () => GoToPullRequest(repoId, pullEvent.Number);
 
                 if (pullEvent.Action.Equals("closed"))
                     eventBlock.Header.Add(new TextBlock(" closed pull request "));

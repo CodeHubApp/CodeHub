@@ -11,7 +11,6 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public class MyIssuesViewModel : BaseIssuesViewModel<MyIssuesFilterModel>
     {
-        private readonly IApplicationService _applicationService;
         private IDisposable _editToken;
 
         private int _selectedFilter;
@@ -25,14 +24,11 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        public MyIssuesViewModel(
-            IMessageService messageService = null,
-            IApplicationService applicationService = null)
+        public MyIssuesViewModel(IMessageService messageService = null)
         {
             messageService = messageService ?? GetService<IMessageService>();
-            _applicationService = applicationService ?? GetService<IApplicationService>();
             
-            _issues = new FilterableCollectionViewModel<Octokit.Issue, MyIssuesFilterModel>("MyIssues");
+            _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
             _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
@@ -63,7 +59,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected override List<IGrouping<string, Octokit.Issue>> Group(IEnumerable<Octokit.Issue> model)
+        protected override List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
         {
             var group = base.Group(model);
             if (group == null)
@@ -82,23 +78,16 @@ namespace CodeHub.Core.ViewModels.Issues
             return group;
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
-            var labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? Enumerable.Empty<string>() : Issues.Filter.Labels.Split(' ');
+            string filter = Issues.Filter.FilterType.ToString().ToLower();
+            string direction = Issues.Filter.Ascending ? "asc" : "desc";
+            string state = Issues.Filter.Open ? "open" : "closed";
+            string sort = Issues.Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Issues.Filter.SortType.ToString().ToLower();
+            string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
 
-            var request = new Octokit.IssueRequest
-            {
-                SortDirection = Issues.Filter.Ascending ? Octokit.SortDirection.Ascending : Octokit.SortDirection.Descending,
-                State = Issues.Filter.Open ? Octokit.ItemStateFilter.Open : Octokit.ItemStateFilter.Closed,
-                Filter = Issues.Filter.GetIssueFilter(),
-                SortProperty = Issues.Filter.GetSort()
-            };
-
-            foreach (var label in labels)
-                request.Labels.Add(label);
-
-            var issues = await _applicationService.GitHubClient.Issue.GetAllForCurrent();
-            Issues.Items.Reset(issues);
+            var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
+            return Issues.SimpleCollectionLoad(request);
         }
     }
 }

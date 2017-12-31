@@ -1,10 +1,12 @@
+using GitHubSharp.Models;
+
 namespace CodeHub.Core.Messages
 {
     public class SelectedMilestoneMessage
     {
-        public Octokit.Milestone Milestone { get; }
+        public MilestoneModel Milestone { get; }
 
-        public SelectedMilestoneMessage(Octokit.Milestone milestone)
+        public SelectedMilestoneMessage(MilestoneModel milestone)
         {
             Milestone = milestone;
         }

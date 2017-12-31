@@ -1,10 +1,12 @@
+using GitHubSharp.Models;
+
 namespace CodeHub.Core.Messages
 {
     public class PullRequestEditMessage
     {
-        public Octokit.PullRequest PullRequest { get; }
+        public PullRequestModel PullRequest { get; }
 
-        public PullRequestEditMessage(Octokit.PullRequest pullRequest)
+        public PullRequestEditMessage(PullRequestModel pullRequest)
         {
             PullRequest = pullRequest;
         }

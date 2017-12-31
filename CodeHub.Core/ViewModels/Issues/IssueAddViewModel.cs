@@ -1,3 +1,4 @@
+using System;
 using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
@@ -9,13 +10,11 @@ namespace CodeHub.Core.ViewModels.Issues
     public class IssueAddViewModel : IssueModifyViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
 
-        public IssueAddViewModel(IMessageService messageService, IApplicationService applicationService)
+        public IssueAddViewModel(IMessageService messageService)
             : base(messageService)
         {
             _messageService = messageService;
-            _applicationService = applicationService;
         }
 
         protected override async Task Save()
@@ -28,19 +27,16 @@ namespace CodeHub.Core.ViewModels.Issues
 
             try
             {
-                var newIssue = new Octokit.NewIssue(IssueTitle);
-                newIssue.Body = Content ?? string.Empty;
-                newIssue.Milestone = Milestone?.Number;
-
-                if (AssignedTo != null)
-                    newIssue.Assignees.Add(AssignedTo.Login);
-
-                foreach (var label in Labels.Items.Select(x => x.Name))
-                    newIssue.Labels.Add(label);
+                string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
+                int? milestone = null;
+                if (Milestone != null) 
+                    milestone = Milestone.Number;
+                string[] labels = Labels.Items.Select(x => x.Name).ToArray();
+                var content = Content ?? string.Empty;
 
                 IsSaving = true;
-                var data = await _applicationService.GitHubClient.Issue.Create(Username, Repository, newIssue);
-                _messageService.Send(new IssueAddMessage(data));
+                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(IssueTitle, content, assignedTo, milestone, labels));
+                _messageService.Send(new IssueAddMessage(data.Data));
                 ChangePresentation(new MvxClosePresentationHint(this));
             }
             catch

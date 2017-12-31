@@ -13,7 +13,6 @@ namespace CodeHub.Core.ViewModels.Issues
     public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
         private IDisposable _addToken, _editToken;
 
         public string Username { get; private set; }
@@ -25,17 +24,16 @@ namespace CodeHub.Core.ViewModels.Issues
             get { return new MvxCommand(() => ShowViewModel<IssueAddViewModel>(new IssueAddViewModel.NavObject { Username = Username, Repository = Repository })); }
         }
 
-        public IssuesViewModel(IMessageService messageService, IApplicationService applicationService)
+        public IssuesViewModel(IMessageService messageService)
         {
             _messageService = messageService;
-            _applicationService = applicationService;;
         }
 
         public void Init(NavObject nav)
         {
             Username = nav.Username;
             Repository = nav.Repository;
-            _issues = new FilterableCollectionViewModel<Octokit.Issue, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
+            _issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
             _issues.GroupingFunction = Group;
             _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(true));
 
@@ -65,44 +63,30 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
+            string direction = _issues.Filter.Ascending ? "asc" : "desc";
+            string state = _issues.Filter.Open ? "open" : "closed";
             string sort = _issues.Filter.SortType == IssuesFilterModel.Sort.None ? null : _issues.Filter.SortType.ToString().ToLower();
+            string labels = string.IsNullOrEmpty(_issues.Filter.Labels) ? null : _issues.Filter.Labels;
+            string assignee = string.IsNullOrEmpty(_issues.Filter.Assignee) ? null : _issues.Filter.Assignee;
+            string creator = string.IsNullOrEmpty(_issues.Filter.Creator) ? null : _issues.Filter.Creator;
+            string mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
+            string milestone = _issues.Filter.Milestone == null ? null : _issues.Filter.Milestone.Value;
 
-            var request = new Octokit.RepositoryIssueRequest();
-            request.Assignee = string.IsNullOrEmpty(_issues.Filter.Assignee) ? null : _issues.Filter.Assignee;
-            request.SortDirection = _issues.Filter.Ascending ? Octokit.SortDirection.Ascending : Octokit.SortDirection.Descending;
-            request.State = _issues.Filter.Open ? Octokit.ItemStateFilter.Open : Octokit.ItemStateFilter.Closed;
-            request.Milestone = _issues.Filter.Milestone?.Value;
-            request.Mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
-            request.Creator = string.IsNullOrEmpty(_issues.Filter.Creator) ? null : _issues.Filter.Creator;
-
-            var labels = string.IsNullOrEmpty(_issues.Filter.Labels) ? Enumerable.Empty<string>() : _issues.Filter.Labels.Split(' ');
-            foreach (var label in labels)
-                request.Labels.Add(label);
-
-            if (_issues.Filter.SortType != IssuesFilterModel.Sort.None)
-            {
-                if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Comments)
-                    request.SortProperty = Octokit.IssueSort.Comments;
-                else if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Created)
-                    request.SortProperty = Octokit.IssueSort.Created;
-                else if (_issues.Filter.SortType == BaseIssuesFilterModel<IssuesFilterModel>.Sort.Updated)
-                    request.SortProperty = Octokit.IssueSort.Updated;
-            }
-
-            var issues = await _applicationService.GitHubClient.Issue.GetAllForRepository(Username, Repository, request);
-            Issues.Items.Reset(issues);
+            var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
+                                                                                          assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
+            return Issues.SimpleCollectionLoad(request);
         }
 
-        public void CreateIssue(Octokit.Issue issue)
+        public void CreateIssue(IssueModel issue)
         {
             if (!DoesIssueBelong(issue))
                 return;
             Issues.Items.Add(issue);
         }
 
-        private bool DoesIssueBelong(Octokit.Issue model)
+        private bool DoesIssueBelong(IssueModel model)
         {
             if (Issues.Filter == null)
                 return true;

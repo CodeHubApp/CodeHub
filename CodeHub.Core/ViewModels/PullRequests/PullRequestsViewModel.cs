@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
+using GitHubSharp.Models;
 using CodeHub.Core.Messages;
 using System.Linq;
 using CodeHub.Core.Services;
@@ -11,11 +12,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
     public class PullRequestsViewModel : LoadableViewModel
     {
         private readonly IMessageService _messageService;
-        private readonly IApplicationService _applicationService;
         private IDisposable _pullRequestEditSubscription;
 
-        private readonly CollectionViewModel<Octokit.PullRequest> _pullrequests = new CollectionViewModel<Octokit.PullRequest>();
-        public CollectionViewModel<Octokit.PullRequest> PullRequests
+        private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
+        public CollectionViewModel<PullRequestModel> PullRequests
         {
             get { return _pullrequests; }
         }
@@ -37,13 +37,12 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public ICommand GoToPullRequestCommand
         {
-            get { return new MvxCommand<Octokit.PullRequest>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
+            get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
         }
 
-        public PullRequestsViewModel(IMessageService messageService, IApplicationService applicationService)
+        public PullRequestsViewModel(IMessageService messageService)
         {
             _messageService = messageService;
-            _applicationService = applicationService;
             this.Bind(x => x.SelectedFilter).Subscribe(_ => LoadCommand.Execute(null));
         }
 
@@ -70,15 +69,11 @@ namespace CodeHub.Core.ViewModels.PullRequests
             });
         }
 
-        protected override async Task Load()
+        protected override Task Load()
         {
-            var request = new Octokit.PullRequestRequest
-            {
-                State = SelectedFilter == 0 ? Octokit.ItemStateFilter.Open : Octokit.ItemStateFilter.Closed
-            };
-
-            var pullRequests = await _applicationService.GitHubClient.PullRequest.GetAllForRepository(Username, Repository, request);
-            PullRequests.Items.Reset(pullRequests);
+            var state = SelectedFilter == 0 ? "open" : "closed";
+            var request = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
+            return PullRequests.SimpleCollectionLoad(request);
         }
 
         public class NavObject

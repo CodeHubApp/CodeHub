@@ -1,4 +1,6 @@
 using System;
+using CodeHub.Core.ViewModels;
+using GitHubSharp.Models;
 using CodeHub.Core.Filters;
 using System.Windows.Input;
 using MvvmCross.Core.ViewModels;
@@ -11,9 +13,9 @@ namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class BaseIssuesViewModel<TFilterModel> : LoadableViewModel, IBaseIssuesViewModel where TFilterModel : BaseIssuesFilterModel<TFilterModel>, new()
     {
-        protected FilterableCollectionViewModel<Octokit.Issue, TFilterModel> _issues;
+        protected FilterableCollectionViewModel<IssueModel, TFilterModel> _issues;
 
-        public FilterableCollectionViewModel<Octokit.Issue, TFilterModel> Issues
+        public FilterableCollectionViewModel<IssueModel, TFilterModel> Issues
         {
             get { return _issues; }
         }
@@ -22,7 +24,7 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             get 
             { 
-                return new MvxCommand<Octokit.Issue>(x => {
+                return new MvxCommand<IssueModel>(x => {
                     var isPullRequest = x.PullRequest != null && !(string.IsNullOrEmpty(x.PullRequest.HtmlUrl));
                     var s1 = x.Url.Substring(x.Url.IndexOf("/repos/") + 7);
                     var issuesIndex = s1.LastIndexOf("/issues");
@@ -40,7 +42,7 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        protected virtual List<IGrouping<string, Octokit.Issue>> Group(IEnumerable<Octokit.Issue> model)
+        protected virtual List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
         {
             var order = Issues.Filter.SortType;
             if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Comments)
@@ -52,7 +54,7 @@ namespace CodeHub.Core.ViewModels.Issues
             if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Updated)
             {
                 var a = Issues.Filter.Ascending ? model.OrderBy(x => x.UpdatedAt) : model.OrderByDescending(x => x.UpdatedAt);
-                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt?.TotalDaysAgo()));
+                var g = a.GroupBy(x => FilterGroup.IntegerCeilings.First(r => r > x.UpdatedAt.TotalDaysAgo()));
                 return FilterGroup.CreateNumberedGroup(g, "Days Ago", "Updated");
             }
             if (order == BaseIssuesFilterModel<TFilterModel>.Sort.Created)
