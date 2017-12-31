@@ -70,11 +70,6 @@ namespace CodeHub.Core.ViewModels.Repositories
             Title = RepositoryName = navObject.Repository;
         }
 
-        public ICommand GoToForkParentCommand
-        {
-            get { return new MvxCommand<RepositoryModel>(x => ShowViewModel<RepositoryViewModel>(new RepositoryViewModel.NavObject { Username = x.Owner.Login, Repository = x.Name })); }
-        }
-
         public ICommand GoToEventsCommand
         {
             get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }

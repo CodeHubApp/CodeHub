@@ -84,7 +84,16 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(ViewModel.Bind(x => x.Branches, true).Subscribe(_ => Render()));
                 d(ViewModel.Bind(x => x.Readme, true).Subscribe(_ => Render()));
 
-                d(_forkElement.Value.Clicked.Select(x => ViewModel.Repository.Parent).BindCommand(ViewModel.GoToForkParentCommand));
+                d(ViewModel.Bind(x => x.Repository)
+                  .Select(x => x?.Parent)
+                  .Where(x => x != null)
+                  .Subscribe(x => _forkElement.Value.Value = x.FullName));
+
+                d(_forkElement
+                  .Value.Clicked
+                  .Select(x => ViewModel.Repository?.Parent)
+                  .Subscribe(GoToForkedRepository));
+
                 d(_issuesElement.Value.Clicked.BindCommand(ViewModel.GoToIssuesCommand));
                 d(_readmeElement.Value.Clicked.Subscribe(_ => GoToReadme()));
                 d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
@@ -184,6 +193,11 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public static RepositoryViewController CreateCodeHubViewController()
             => new RepositoryViewController("codehubapp", "codehub");
 
+        public RepositoryViewController(Octokit.Repository repository)
+            : this(repository.Owner.Login, repository.Name, repository)
+        {
+        }
+
         public RepositoryViewController(
             string owner,
             string repositoryName,
@@ -213,6 +227,14 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             this.PushViewController(
                 new ReadmeViewController(ViewModel.Username, ViewModel.RepositoryName, ViewModel.Readme));
+        }
+
+        private void GoToForkedRepository(Octokit.Repository repo)
+        {
+            if (repo == null)
+                return;
+
+            this.PushViewController(new RepositoryViewController(repo));
         }
 
         private void GoToCommits()
