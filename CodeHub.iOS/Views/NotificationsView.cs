@@ -5,7 +5,6 @@ using CodeHub.iOS.Utilities;
 using CodeHub.Core.ViewModels.Notifications;
 using Humanizer;
 using CodeHub.iOS.DialogElements;
-using GitHubSharp.Models;
 using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
@@ -44,7 +43,10 @@ namespace CodeHub.iOS.Views
 
             BindCollection(vm.Notifications, x =>
             {
-                var el = new StringElement(x.Subject.Title, x.UpdatedAt.Humanize(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
+                if (!DateTimeOffset.TryParse(x.UpdatedAt, out DateTimeOffset dt))
+                    dt = DateTimeOffset.Now;
+
+                var el = new StringElement(x.Subject.Title, dt.Humanize(), UITableViewCellStyle.Subtitle) { Accessory = UITableViewCellAccessory.DisclosureIndicator };
 
                 var subject = x.Subject.Type.ToLower();
                 if (subject.Equals("issue"))
@@ -74,7 +76,7 @@ namespace CodeHub.iOS.Views
             });
         }
 
-        private static Action<object> MakeCallback(WeakReference<NotificationsViewModel> weakVm, NotificationModel model)
+        private static Action<object> MakeCallback(WeakReference<NotificationsViewModel> weakVm, Octokit.Notification model)
         {
             return new Action<object>(_ => weakVm.Get()?.GoToNotificationCommand.Execute(model));
         }
