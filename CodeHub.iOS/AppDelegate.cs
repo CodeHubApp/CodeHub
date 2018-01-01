@@ -1,9 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <summary>
-//    Defines the AppDelegate type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
 using System.Collections.Generic;
 using System;
 using MvvmCross.Core.ViewModels;
@@ -29,11 +23,6 @@ using Splat;
 
 namespace CodeHub.iOS
 {
-    /// <summary>
-    /// The UIApplicationDelegate for the application. This class is responsible for launching the 
-    /// User Interface of the application, as well as listening (and optionally responding) to 
-    /// application events from iOS.
-    /// </summary>
     [Register("AppDelegate")]
     public class AppDelegate : MvxApplicationDelegate
     {
@@ -42,6 +31,8 @@ namespace CodeHub.iOS
         public override UIWindow Window { get; set; }
 
         public IosViewPresenter Presenter { get; private set; }
+
+        public static AppDelegate Instance => UIApplication.SharedApplication.Delegate as AppDelegate;
 
         /// <summary>
         /// This is the main entry point of the application.
@@ -161,14 +152,16 @@ namespace CodeHub.iOS
 
         private void GoToStartupView()
         {
-            var startup = new CodeHub.iOS.ViewControllers.Application.StartupViewController();
+            var startup = new ViewControllers.Application.StartupViewController();
             TransitionToViewController(startup);
-            MessageBus.Current.Listen<LogoutMessage>()
+
+            MessageBus
+                .Current.Listen<LogoutMessage>()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => startup.DismissViewController(true, null));
+                .Subscribe(_ => TransitionToViewController(startup));
         }
 
-        private void TransitionToViewController(UIViewController viewController)
+        public void TransitionToViewController(UIViewController viewController)
         {
             UIView.Transition(Window, 0.35, UIViewAnimationOptions.TransitionCrossDissolve, () => 
                 Window.RootViewController = viewController, null);

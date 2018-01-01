@@ -86,7 +86,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             slideoutController.SetMainViewController(mainNavigationController, false);
 
             slideoutController.ModalTransitionStyle = UIModalTransitionStyle.CrossDissolve;
-            PresentViewController(slideoutController, true, null);
+            AppDelegate.Instance.TransitionToViewController(slideoutController);
         }
 
         private UIViewController GetInitialMenuViewController()
