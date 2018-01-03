@@ -153,9 +153,10 @@ namespace CodeHub.iOS
 
         private void GoToStartupView()
         {
+            TransitionToViewController(new ViewControllers.Application.StartupViewController());
+
             MessageBus
                 .Current.Listen<LogoutMessage>()
-                .StartWith(new LogoutMessage())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Select(_ => new ViewControllers.Application.StartupViewController())
                 .Subscribe(TransitionToViewController);
