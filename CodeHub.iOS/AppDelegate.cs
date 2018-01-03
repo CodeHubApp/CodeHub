@@ -82,6 +82,7 @@ namespace CodeHub.iOS
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IFeaturesService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<ILoginService>());
             Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IMarkdownService>());
+            Locator.CurrentMutable.RegisterConstant(Mvx.Resolve<IPushNotificationsService>());
 
             Locator.CurrentMutable.RegisterLazySingleton(
                 () => new ImgurService(), typeof(IImgurService));
