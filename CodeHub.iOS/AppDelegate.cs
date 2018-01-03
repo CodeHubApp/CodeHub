@@ -152,13 +152,12 @@ namespace CodeHub.iOS
 
         private void GoToStartupView()
         {
-            var startup = new ViewControllers.Application.StartupViewController();
-            TransitionToViewController(startup);
-
             MessageBus
                 .Current.Listen<LogoutMessage>()
+                .StartWith(new LogoutMessage())
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => TransitionToViewController(startup));
+                .Select(_ => new ViewControllers.Application.StartupViewController())
+                .Subscribe(TransitionToViewController);
         }
 
         public void TransitionToViewController(UIViewController viewController)
