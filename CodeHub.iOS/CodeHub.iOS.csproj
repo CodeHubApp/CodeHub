@@ -383,24 +383,6 @@
     <Reference Include="MvvmCross.Localization">
       <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
     </Reference>
-    <Reference Include="FabricSdk">
-      <HintPath>..\packages\Fabric.1.4\lib\Xamarin.iOS10\FabricSdk.dll</HintPath>
-    </Reference>
-    <Reference Include="FabricSdk.Platform">
-      <HintPath>..\packages\Fabric.1.4\lib\Xamarin.iOS10\FabricSdk.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="AnswersKit">
-      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\AnswersKit.dll</HintPath>
-    </Reference>
-    <Reference Include="AnswersKit.Platform">
-      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\AnswersKit.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="CrashlyticsKit">
-      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\CrashlyticsKit.dll</HintPath>
-    </Reference>
-    <Reference Include="CrashlyticsKit.Platform">
-      <HintPath>..\packages\Crashlytics.1.4\lib\Xamarin.iOS10\CrashlyticsKit.Platform.dll</HintPath>
-    </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
@@ -445,6 +427,24 @@
       <HintPath>..\packages\Xam.Plugins.Settings.3.1.1\lib\Xamarin.iOS10\Plugin.Settings.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="Microsoft.AppCenter">
+      <HintPath>..\packages\Microsoft.AppCenter.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.iOS.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.iOS.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes.iOS.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.iOS.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics.iOS.Bindings">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.4.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.iOS.Bindings.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\Buttons\black_button%402x.png" />

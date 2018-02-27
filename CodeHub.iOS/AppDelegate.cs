@@ -17,9 +17,10 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using CodeHub.iOS.XCallback;
 using System.Reactive.Linq;
-using CrashlyticsKit;
-using FabricSdk;
 using Splat;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace CodeHub.iOS
 {
@@ -51,12 +52,7 @@ namespace CodeHub.iOS
         /// <returns>True or false.</returns>
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            Crashlytics.Instance.Initialize();
-            Fabric.Instance.Initialize();
-
-#if DEBUG
-            Fabric.Instance.Debug = true;
-#endif
+            AppCenter.Start("eef367be-437c-4c67-abe0-79779b3b8392", typeof(Analytics), typeof(Crashes));
 
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
             Presenter = new IosViewPresenter(this.Window);
