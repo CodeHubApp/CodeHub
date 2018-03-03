@@ -10,6 +10,8 @@ using CodeHub.Core.ViewModels.User;
 using System.Reactive;
 using Splat;
 using System.Reactive.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -81,6 +83,27 @@ namespace CodeHub.Core.ViewModels.Issues
             set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
 
+        private int? _participants;
+        public int? Participants
+        {
+            get { return _participants; }
+            set { this.RaiseAndSetIfChanged(ref _participants, value); }
+        }
+
+        private IReadOnlyList<Octokit.IssueComment> _comments;
+        public IReadOnlyList<Octokit.IssueComment> Comments
+        {
+            get { return _comments ?? new List<Octokit.IssueComment>(); }
+            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
+        }
+
+        private IReadOnlyList<Octokit.EventInfo> _events;
+        public IReadOnlyList<Octokit.EventInfo> Events
+        {
+            get { return _events ?? new List<Octokit.EventInfo>(); }
+            private set { this.RaiseAndSetIfChanged(ref _events, value); }
+        }
+
         public ReactiveUI.ReactiveCommand<Unit, bool> GoToOwner { get; }
 
         public ICommand GoToAssigneeCommand
@@ -135,34 +158,34 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
-        public CollectionViewModel<IssueCommentModel> Comments
-        {
-            get { return _comments; }
-        }
-
-        private readonly CollectionViewModel<IssueEventModel> _events = new CollectionViewModel<IssueEventModel>();
-        public CollectionViewModel<IssueEventModel> Events
-        {
-            get { return _events; }
-        }
-
         protected override Task Load()
         {
             if (_featuresService.IsProEnabled)
                 ShouldShowPro = false;
             else
             {
-                var request = _applicationService.Client.Users[Username].Repositories[Repository].Get();
-                _applicationService.Client.ExecuteAsync(request)
-                    .ToBackground(x => ShouldShowPro = x.Data.Private && !_featuresService.IsProEnabled);
+                _applicationService
+                    .GitHubClient.Repository.Get(Username, Repository)
+                    .ToBackground(x => ShouldShowPro = x.Private && !_featuresService.IsProEnabled);
             }
 
-            var t1 = this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data);
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
-            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), response => IsCollaborator = response.Data).ToBackground();
-            return t1;
+            _applicationService
+                .GitHubClient.Issue.Comment.GetAllForIssue(Username, Repository, (int)Id)
+                .ToBackground(x => Comments = x);
+
+            _applicationService
+                .GitHubClient.Issue.Events.GetAllForIssue(Username, Repository, (int)Id)
+                .ToBackground(events =>
+                {
+                    Events = events;
+                    Participants = events.Select(x => x.Actor.Login).Distinct().Count();
+                });
+
+            _applicationService
+                .GitHubClient.Repository.Collaborator.IsCollaborator(Username, Repository, _applicationService.Account.Username)
+                .ToBackground(x => IsCollaborator = x);
+
+            return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data);
         }
 
         public IssueViewModel(
@@ -208,8 +231,9 @@ namespace CodeHub.Core.ViewModels.Issues
         {
             try
             {
-                var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
-                Comments.Items.Add(comment.Data);
+                var comment = await _applicationService.GitHubClient.Issue.Comment.Create(Username, Repository, (int)Id, text);
+                var newCommentList = new List<Octokit.IssueComment>(Comments) { comment };
+                Comments = newCommentList;
                 return true;
             }
             catch (Exception e)

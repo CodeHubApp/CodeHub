@@ -15,6 +15,7 @@ using Humanizer;
 using ReactiveUI;
 using UIKit;
 using Splat;
+using System.Reactive;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -29,7 +30,6 @@ namespace CodeHub.iOS.Views.PullRequests
         private StringElement _assigneeElement;
         private StringElement _labelsElement;
         private StringElement _addCommentElement;
-
 
         public new PullRequestViewModel ViewModel
         {
@@ -124,8 +124,11 @@ namespace CodeHub.iOS.Views.PullRequests
                 _milestoneElement.Accessory = ViewModel.GoToMilestoneCommand.CanExecute(null) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
             };
 
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
-            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments().ToBackground());
+            ViewModel
+                .Bind(x => x.Comments)
+                .Select(_ => Unit.Default)
+                .Merge(ViewModel.Bind(x => x.Events).Select(_ => Unit.Default))
+                .Subscribe(_ => RenderComments().ToBackground());
 
             OnActivation(d =>
             {
@@ -179,8 +182,9 @@ namespace CodeHub.iOS.Views.PullRequests
                 comments.Add(new Comment(x.User.AvatarUrl, x.User.Login, body, x.CreatedAt));
             }
 
-            var events = ViewModel.Events
-                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt));
+            var events = ViewModel
+                .Events
+                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event.StringValue, x.CommitId), x.CreatedAt));
 
             var items = comments
                 .Concat(events)

@@ -15,6 +15,7 @@ using CodeHub.WebViews;
 using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using Splat;
+using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -112,11 +113,20 @@ namespace CodeHub.iOS.Views.Issues
                 Render();
             });
 
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => RenderComments().ToBackground());
-            ViewModel.BindCollection(x => x.Events).Subscribe(_ => RenderComments().ToBackground());
-            ViewModel.Bind(x => x.ShouldShowPro).Subscribe(x => {
-                if (x) this.ShowPrivateView(); 
-            });
+            ViewModel
+                .Bind(x => x.Comments)
+                .Select(_ => Unit.Default)
+                .Merge(ViewModel.Bind(x => x.Events).Select(_ => Unit.Default))
+                .Subscribe(_ => RenderComments().ToBackground());
+
+            ViewModel
+                .Bind(x => x.Participants)
+                .Subscribe(x => _splitButton2.Text = x.HasValue ? x.Value.ToString() : "-");
+
+            ViewModel
+                .Bind(x => x.ShouldShowPro)
+                .Where(x => x)
+                .Subscribe(x => this.ShowPrivateView());
 
             OnActivation(d =>
             {
@@ -161,14 +171,16 @@ namespace CodeHub.iOS.Views.Issues
         public async Task RenderComments()
         {
             var comments = new List<Comment>();
+
             foreach (var x in ViewModel.Comments)
             {
                 var body = await _markdownService.Convert(x.Body);
                 comments.Add(new Comment(x.User.AvatarUrl, x.User.Login, body, x.CreatedAt));
             }
 
-            var events = ViewModel.Events
-                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event, x.CommitId), x.CreatedAt));
+            var events = ViewModel
+                .Events
+                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event.StringValue, x.CommitId), x.CreatedAt));
 
             var items = comments
                 .Concat(events)
@@ -192,10 +204,7 @@ namespace CodeHub.iOS.Views.Issues
             if (ViewModel.Issue == null)
                 return;
 
-            var participants = ViewModel.Events.Select(x => x.Actor.Login).Distinct().Count();
-
             _splitButton1.Text = ViewModel.Issue.Comments.ToString();
-            _splitButton2.Text = participants.ToString();
 
             ICollection<Section> sections = new LinkedList<Section>();
             sections.Add(new Section { _split });

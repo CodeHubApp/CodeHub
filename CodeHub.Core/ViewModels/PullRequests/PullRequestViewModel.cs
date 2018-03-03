@@ -10,11 +10,13 @@ using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.User;
 using System.Reactive;
 using System.Reactive.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
     public class PullRequestViewModel : LoadableViewModel
     {
+        private readonly IApplicationService _applicationService;
         private readonly IMessageService _messageService;
         private IDisposable _issueEditSubscription;
         private IDisposable _pullRequestEditSubscription;
@@ -93,6 +95,20 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             get { return _isClosed; }
             private set { this.RaiseAndSetIfChanged(ref _isClosed, value); }
+        }
+
+        private IReadOnlyList<Octokit.IssueComment> _comments;
+        public IReadOnlyList<Octokit.IssueComment> Comments
+        {
+            get { return _comments ?? new List<Octokit.IssueComment>(); }
+            private set { this.RaiseAndSetIfChanged(ref _comments, value); }
+        }
+
+        private IReadOnlyList<Octokit.EventInfo> _events;
+        public IReadOnlyList<Octokit.EventInfo> Events
+        {
+            get { return _events ?? new List<Octokit.EventInfo>(); }
+            private set { this.RaiseAndSetIfChanged(ref _events, value); }
         }
 
         private ICommand _goToAssigneeCommand;
@@ -200,25 +216,13 @@ namespace CodeHub.Core.ViewModels.PullRequests
             }
         }
 
-        private readonly CollectionViewModel<IssueCommentModel> _comments = new CollectionViewModel<IssueCommentModel>();
-
-        public CollectionViewModel<IssueCommentModel> Comments
-        {
-            get { return _comments; }
-        }
-
-        private readonly CollectionViewModel<IssueEventModel> _events = new CollectionViewModel<IssueEventModel>();
-
-        public CollectionViewModel<IssueEventModel> Events
-        {
-            get { return _events; }
-        }
-
         public PullRequestViewModel(
+            IApplicationService applicationService,
             IFeaturesService featuresService,
             IMessageService messageService,
             IMarkdownService markdownService)
         {
+            _applicationService = applicationService;
             _featuresService = featuresService;
             _messageService = messageService;
             _markdownService = markdownService;
@@ -262,8 +266,9 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             try
             {
-                var comment = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].CreateComment(text));
-                Comments.Items.Add(comment.Data);
+                var comment = await _applicationService.GitHubClient.Issue.Comment.Create(Username, Repository, (int)Id, text);
+                var newCommentList = new List<Octokit.IssueComment>(Comments) { comment };
+                Comments = newCommentList;
                 return true;
             }
             catch (Exception e)
@@ -302,17 +307,30 @@ namespace CodeHub.Core.ViewModels.PullRequests
         {
             ShouldShowPro = false;
 
+            _applicationService
+                .GitHubClient.Issue.Comment.GetAllForIssue(Username, Repository, (int)Id)
+                .ToBackground(x => Comments = x);
+
+            _applicationService
+                .GitHubClient.Issue.Events.GetAllForIssue(Username, Repository, (int)Id)
+                .ToBackground(x => Events = x);
+
             var pullRequest = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests[Id].Get();
             var t1 = this.RequestModel(pullRequest, response => PullRequest = response.Data);
-            Events.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetEvents()).ToBackground();
-            Comments.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].GetComments()).ToBackground();
             this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data).ToBackground();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Get(), response => {
-                CanPush = response.Data.Permissions.Push;
-                ShouldShowPro = response.Data.Private && !_featuresService.IsProEnabled;
-            }).ToBackground();
-            this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].IsCollaborator(this.GetApplication().Account.Username), 
-                response => IsCollaborator = response.Data).ToBackground();
+
+            _applicationService
+                .GitHubClient.Repository.Get(Username, Repository)
+                .ToBackground(x => 
+                {
+                    CanPush = x.Permissions.Push;
+                    ShouldShowPro = x.Private && !_featuresService.IsProEnabled;
+                });
+
+            _applicationService
+                .GitHubClient.Repository.Collaborator.IsCollaborator(Username, Repository, _applicationService.Account.Username)
+                .ToBackground(x => IsCollaborator = x);
+            
             return t1;
         }
 
