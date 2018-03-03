@@ -228,12 +228,6 @@
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.7.4.0\lib\Xamarin.iOS10\ReactiveUI.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.Media.Abstractions">
-      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Media">
-      <HintPath>..\packages\Xam.Plugin.Media.3.0.1\lib\Xamarin.iOS10\Plugin.Media.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
@@ -261,6 +255,18 @@
     </Reference>
     <Reference Include="Octokit">
       <HintPath>..\packages\Octokit.0.29.0\lib\netstandard1.1\Octokit.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Permissions.Abstractions">
+      <HintPath>..\packages\Plugin.Permissions.2.2.1\lib\Xamarin.iOS10\Plugin.Permissions.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Permissions">
+      <HintPath>..\packages\Plugin.Permissions.2.2.1\lib\Xamarin.iOS10\Plugin.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Media.3.1.3\lib\Xamarin.iOS10\Plugin.Media.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\packages\Xam.Plugin.Media.3.1.3\lib\Xamarin.iOS10\Plugin.Media.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />
