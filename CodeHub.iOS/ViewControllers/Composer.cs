@@ -9,7 +9,7 @@ namespace CodeHub.iOS.ViewControllers
 {
     public class Composer : BaseViewController
     {
-        protected UIBarButtonItem SendItem;
+        public UIBarButtonItem SendItem;
         public Action<string> ReturnAction;
         protected readonly UITextView TextView;
         protected UIView ScrollingToolbarView;

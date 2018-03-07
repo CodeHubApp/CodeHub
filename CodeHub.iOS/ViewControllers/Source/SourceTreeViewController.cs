@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using CodeHub.Core.Utils;
 using CodeHub.iOS.Utilities;
 using Humanizer;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
@@ -24,7 +25,23 @@ namespace CodeHub.iOS.ViewControllers.Source
         private readonly string _repository;
         private readonly string _path;
         private string _sha;
+
+        private readonly ReactiveCommand<Unit, Unit> _addFileCommand;
+        private readonly ReactiveCommand<string, IReadOnlyList<Octokit.RepositoryContent>> _loadContents;
+
+        private bool _canAddFile;
+        private bool CanAddFile
+        {
+            get { return _canAddFile; }
+            set { this.RaiseAndSetIfChanged(ref _canAddFile, value); }
+        }
+
         private ShaType _shaType;
+        private ShaType ShaType
+        {
+            get { return _shaType; }
+            set { this.RaiseAndSetIfChanged(ref _shaType, value); }
+        }
 
         public SourceTreeViewController(
             string username,
@@ -42,26 +59,44 @@ namespace CodeHub.iOS.ViewControllers.Source
             _sha = sha;
             _shaType = shaType;
 
+            _addFileCommand = ReactiveCommand.Create(
+                ShowAddSource, 
+                this.WhenAnyValue(x => x.CanAddFile, x => x.ShaType)
+                    .Select(x => x.Item1 && x.Item2 == ShaType.Branch));
+
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
 
-            var loadContents = ReactiveCommand.CreateFromTask((string shaRef) =>
+            _loadContents = ReactiveCommand.CreateFromTask(async (string shaRef) =>
             {
+                if (ShaType == ShaType.Branch)
+                {
+                    var repo = await applicationService.GitHubClient.Repository.Get(username, repository);
+                    CanAddFile = repo.Permissions.Push;
+                }
+                else
+                {
+                    CanAddFile = false;
+                }
+
                 var encodedShaRef = System.Web.HttpUtility.UrlEncode(shaRef);
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    return applicationService
+                    return await applicationService
                         .GitHubClient.Repository.Content
                         .GetAllContentsByRef(username, repository, encodedShaRef);
                 }
 
-                return applicationService
+                return await applicationService
                     .GitHubClient.Repository.Content
                     .GetAllContentsByRef(username, repository, path, encodedShaRef);
             });
 
-            loadContents
+            var addFileButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
+            NavigationItem.RightBarButtonItem = addFileButton;
+
+            _loadContents
                 .ThrownExceptions
                 .Do(_ => SetErrorView())
                 .Select(HandleLoadError)
@@ -73,6 +108,15 @@ namespace CodeHub.iOS.ViewControllers.Source
                 d(_titleView
                   .GetClickedObservable()
                   .Subscribe(_ => ShowBranchSelector()));
+
+                d(_addFileCommand
+                  .CanExecute
+                  .Subscribe(x => addFileButton.Enabled = x));
+
+                d(addFileButton
+                  .GetClickedObservable()
+                  .Select(_ => Unit.Default)
+                  .InvokeReactiveCommand(_addFileCommand));
             });
 
             Appearing
@@ -80,9 +124,9 @@ namespace CodeHub.iOS.ViewControllers.Source
                 .Where(x => !string.IsNullOrEmpty(x))
                 .DistinctUntilChanged()
                 .Do(_ => SetLoading(true))
-                .InvokeReactiveCommand(loadContents);
+                .InvokeReactiveCommand(_loadContents);
 
-            loadContents
+            _loadContents
                 .Do(_ => SetLoading(false))
                 .Subscribe(SetElements);
 
@@ -125,7 +169,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         {
             base.ViewWillAppear(animated);
 
-            _titleView.SubText = _shaType == ShaType.Hash
+            _titleView.SubText = ShaType == ShaType.Hash
                 ? _sha.Substring(0, Math.Min(_sha.Length, 7))
                 : _sha;
 
@@ -160,7 +204,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             viewController.TagSelected.Take(1).Subscribe(tag =>
             {
                 _sha = tag.Name;
-                _shaType = ShaType.Tag;
+                ShaType = ShaType.Tag;
                 _branchSelectorShowsBranches = false;
                 this.DismissViewController(true, null);
             });
@@ -168,7 +212,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             viewController.BranchSelected.Take(1).Subscribe(branch =>
             {
                 _sha = branch.Name;
-                _shaType = ShaType.Branch;
+                ShaType = ShaType.Branch;
                 _branchSelectorShowsBranches = true;
                 this.DismissViewController(true, null);
             });
@@ -179,7 +223,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         private void GoToSourceTree(Octokit.RepositoryContent content)
         {
             this.PushViewController(new SourceTreeViewController(
-                _username, _repository, content.Path, _sha, _shaType));
+                _username, _repository, content.Path, _sha, ShaType));
         }
 
         private void GoToSubModule(Octokit.RepositoryContent content)
@@ -201,12 +245,25 @@ namespace CodeHub.iOS.ViewControllers.Source
         private void GoToFile(Octokit.RepositoryContent content)
         {
             var viewController = new FileSourceViewController(
-                _username, _repository, content.Path, _sha, _shaType)
+                _username, _repository, content.Path, _sha, ShaType)
             {
                 Content = content
             };
 
             this.PushViewController(viewController);
+        }
+
+        private void ShowAddSource()
+        {
+            var viewController = new AddSourceViewController(
+                _username, _repository, _path, _sha);
+
+            viewController
+                .Success
+                .Select(_ => _sha)
+                .InvokeReactiveCommand(_loadContents);
+
+            this.PresentModalViewController(viewController);
         }
 
         private Element CreateElement(Octokit.RepositoryContent content)

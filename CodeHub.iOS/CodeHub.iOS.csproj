@@ -317,6 +317,9 @@
     <Compile Include="ViewControllers\Settings\SyntaxHighlighterViewController.cs" />
     <Compile Include="ViewControllers\Settings\DefaultStartupViewController.cs" />
     <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
+    <Compile Include="ViewControllers\Source\AddSourceViewController.cs" />
+    <Compile Include="ViewControllers\MessageComposerViewController.cs" />
+    <Compile Include="Utilities\ReactiveCommandExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
