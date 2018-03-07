@@ -3,4 +3,4 @@
 *.suo
 *.userprefs
 packages
-Components/
+.vs

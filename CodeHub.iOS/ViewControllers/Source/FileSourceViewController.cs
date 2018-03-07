@@ -139,6 +139,9 @@ namespace CodeHub.iOS.ViewControllers.Source
                 Content = items.First();
             }
 
+            var repo = await _applicationService
+                .GitHubClient.Repository.Get(_username, _repository);
+
             var fileName = System.IO.Path.GetFileName(Content.Name);
             ContentSavePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
 
@@ -149,12 +152,11 @@ namespace CodeHub.iOS.ViewControllers.Source
             var isBinary = _forceBinary || !mime.Contains("charset");
             if (isBinary)
             {
-                CanEdit = false;
                 LoadFile(ContentSavePath);
             }
             else
             {
-                CanEdit = _shaType == ShaType.Branch; 
+                CanEdit = repo.Permissions.Push && _shaType == ShaType.Branch; 
                 await LoadSource(new Uri("file://" + ContentSavePath), _isMarkdown);
             }
         }
