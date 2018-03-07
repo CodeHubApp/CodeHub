@@ -44,7 +44,7 @@
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchUseThumb>true</MtouchUseThumb>
-    <MtouchArch>ARMv7</MtouchArch>
+    <MtouchArch>ARM64</MtouchArch>
     <MtouchDebug>true</MtouchDebug>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>
@@ -624,12 +624,6 @@
     <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\avatar%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\Avatar.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\appstore.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <XamarinComponentReference Include="sdwebimage">
-      <Version>3.7.5</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeHub.Core\CodeHub.Core.csproj">

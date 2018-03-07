@@ -100,10 +100,7 @@ WriteLiteral(">Push Notifications</a></li>\n    </ul>\n\n    <p>\n        Before
 "e a look at the detailed description for each feature below. \n        If you\'re " +
 "unsure about any aspect of the Pro version, please feel free to \n        <a");
 
-WriteLiteral(" href=\"#\"");
-
-WriteLiteral(" onclick=\"window.location=\'mailto://codehubapp@gmail.com?Subject=CodeHub%20Pro%20" +
-"Question\'; return false;\"");
+WriteLiteral(" href=\"mailto:codehubapp@gmail.com?Subject=CodeHub%20Pro%20Question\"");
 
 WriteLiteral(" target=\"_blank\"");
 
