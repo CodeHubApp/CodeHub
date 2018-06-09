@@ -178,7 +178,7 @@ namespace CodeHub.Core.ViewModels.Issues
                 .ToBackground(events =>
                 {
                     Events = events;
-                    Participants = events.Select(x => x.Actor.Login).Distinct().Count();
+                    Participants = events.Select(x => x.Actor?.Login).Distinct().Count();
                 });
 
             _applicationService

@@ -323,7 +323,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 .GitHubClient.Repository.Get(Username, Repository)
                 .ToBackground(x => 
                 {
-                    CanPush = x.Permissions.Push;
+                    CanPush = x.Permissions?.Push == true;
                     ShouldShowPro = x.Private && !_featuresService.IsProEnabled;
                 });
 
