@@ -1,16 +1,12 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using GitHubSharp.Models;
-using CodeHub.Core.ViewModels.User;
-using CodeHub.Core.ViewModels.Events;
-using CodeHub.Core.ViewModels.Changesets;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CodeHub.Core.Services;
+using ReactiveUI;
 using Splat;
-using CodeHub.Core.ViewModels.Source;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {
@@ -58,44 +54,55 @@ namespace CodeHub.Core.ViewModels.Repositories
             get { return _branches; }
             private set { this.RaiseAndSetIfChanged(ref _branches, value); }
         }
+ 
+        public ReactiveCommand<Unit, Unit> ToggleWatchCommand { get; }
 
-        public RepositoryViewModel(IApplicationService applicationService = null)
+        public ReactiveCommand<Unit, Unit> ToggleStarCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> PinCommand { get; }
+
+        public RepositoryViewModel(
+            string username,
+            string repository,
+            IApplicationService applicationService = null)
         {
+            Username = username;
+            RepositoryName = repository;
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+
+            ToggleWatchCommand = ReactiveCommand.CreateFromTask(
+                ToggleWatch,
+                this.WhenAnyValue(x => x.IsWatched).Select(x => x != null));
+
+            ToggleStarCommand = ReactiveCommand.CreateFromTask(
+                ToggleStar,
+                this.WhenAnyValue(x => x.IsStarred).Select(x => x != null));
+
+            ToggleStarCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Unable to " + (IsStarred.GetValueOrDefault() ? "unstar" : "star") + " this repository! Please try again.", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
+
+            ToggleWatchCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Unable to toggle repository as " + (IsWatched.GetValueOrDefault() ? "unwatched" : "watched") + "! Please try again.", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
+
+            PinCommand = ReactiveCommand.CreateFromTask(
+                PinRepository,
+                this.WhenAnyValue(x => x.Repository).Select(x => x != null));
+
+            PinCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Failed to pin repository!", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
         }
 
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Title = RepositoryName = navObject.Repository;
-        }
 
-        public ICommand GoToEventsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<RepositoryEventsViewModel>(new RepositoryEventsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToIssuesCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<Issues.IssuesViewModel>(new Issues.IssuesViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToPullRequestsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<PullRequests.PullRequestsViewModel>(new PullRequests.PullRequestsViewModel.NavObject { Username = Username, Repository = RepositoryName })); }
-        }
-
-        public ICommand GoToHtmlUrlCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<WebBrowserViewModel>(new WebBrowserViewModel.NavObject { Url = Repository.HtmlUrl }), () => Repository != null); }
-        }
-
-        public ICommand PinCommand
-        {
-            get { return new MvxCommand(PinRepository, () => Repository != null); }
-        }
-
-        private void PinRepository()
+        private async Task PinRepository()
         {
             var repoOwner = Repository.Owner.Login;
             var repoName = Repository.Name;
@@ -116,13 +123,12 @@ namespace CodeHub.Core.ViewModels.Repositories
                     Slug = repoName
                 });
 
-                _applicationService.UpdateActiveAccount().ToBackground();
-                
+                await _applicationService.UpdateActiveAccount();
             }
             else
             {
                 account.PinnedRepositories.Remove(pinnedRepository);
-                _applicationService.UpdateActiveAccount().ToBackground();
+                await _applicationService.UpdateActiveAccount();
             }
         }
 
@@ -149,33 +155,23 @@ namespace CodeHub.Core.ViewModels.Repositories
                 retrieveRepository.ToBackground(repo => Repository = repo);
         }
 
-        public ICommand ToggleWatchCommand
-        {
-            get { return new MvxCommand(() => ToggleWatch(), () => IsWatched != null); }
-        }
-
         private async Task ToggleWatch()
         {
             if (IsWatched == null)
                 return;
 
-            try
+            if (IsWatched.Value)
+                await this.GetApplication().GitHubClient.Activity.Watching.UnwatchRepo(Username, RepositoryName);
+            else
             {
-                if (IsWatched.Value)
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].StopWatching());
-                else
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Watch());
-                IsWatched = !IsWatched;
-            }
-            catch
-            {
-                DisplayAlert("Unable to toggle repository as " + (IsWatched.Value ? "unwatched" : "watched") + "! Please try again.");
-            }
-        }
+                var subscription = new Octokit.NewSubscription()
+                {
+                    Subscribed = true
+                };
 
-        public ICommand ToggleStarCommand
-        {
-            get { return new MvxCommand(() => ToggleStar(), () => IsStarred != null); }
+                await this.GetApplication().GitHubClient.Activity.Watching.WatchRepo(Username, RepositoryName, subscription);
+            }
+            IsWatched = !IsWatched;
         }
 
         public bool IsPinned
@@ -193,24 +189,11 @@ namespace CodeHub.Core.ViewModels.Repositories
             if (IsStarred == null)
                 return;
 
-            try
-            {
-                if (IsStarred.Value)
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Unstar());
-                else
-                    await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[RepositoryName].Star());
-                IsStarred = !IsStarred;
-            }
-            catch
-            {
-                DisplayAlert("Unable to " + (IsStarred.Value ? "unstar" : "star") + " this repository! Please try again.");
-            }
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            if (IsStarred.Value)
+                await this.GetApplication().GitHubClient.Activity.Starring.RemoveStarFromRepo(Username, RepositoryName);
+            else
+                await this.GetApplication().GitHubClient.Activity.Starring.StarRepo(Username, RepositoryName);
+            IsStarred = !IsStarred;
         }
     }
 }

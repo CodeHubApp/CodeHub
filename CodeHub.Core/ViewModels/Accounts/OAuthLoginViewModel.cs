@@ -26,7 +26,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             }
         }
 
-        public string WebDomain { get; set; } = GitHubSharp.Client.AccessTokenUri;
+        public string WebDomain { get; set; } = "https://github.com";
 
         public ReactiveCommand<string, Unit> LoginCommand { get; }
 
@@ -41,7 +41,7 @@ namespace CodeHub.Core.ViewModels.Accounts
             {
                 await _loginService.LoginWithToken(
                     Secrets.GithubOAuthId, Secrets.GithubOAuthSecret,
-                    code, RedirectUri, WebDomain, GitHubSharp.Client.DefaultApi);
+                    code, RedirectUri, WebDomain, "https://api.github.com");
                 MessageBus.Current.SendMessage(new LogoutMessage());
             });
 

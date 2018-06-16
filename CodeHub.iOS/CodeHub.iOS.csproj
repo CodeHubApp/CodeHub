@@ -93,7 +93,6 @@
     <Compile Include="Images\Images.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Services\MarkdownService.cs" />
-    <Compile Include="Setup.cs" />
     <Compile Include="Theme.cs" />
     <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
@@ -104,15 +103,11 @@
     <Compile Include="Views\NotificationsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestView.cs" />
-    <Compile Include="Views\Source\ChangesetView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Source\ChangesetsView.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
-    <Compile Include="Views\Source\CommitsView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestCommitsView.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
     <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
@@ -133,7 +128,6 @@
     <Compile Include="Views\ScrollingToolbarView.cs" />
     <Compile Include="Views\UILabelWithLinks.cs" />
     <Compile Include="XCallback\XCallbackQuery.cs" />
-    <Compile Include="TouchViewPresenter.cs" />
     <Compile Include="ViewControllers\DialogViewController.cs" />
     <InterfaceDefinition Include="Launch.storyboard" />
     <Compile Include="Views\ImageAndTitleHeaderView.cs" />
@@ -242,7 +236,6 @@
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.cs" />
     <Compile Include="ViewControllers\Walkthrough\OrgViewController.designer.cs" />
     <InterfaceDefinition Include="ViewControllers\Walkthrough\OrgViewController.xib" />
-    <Compile Include="LinkerPleaseInclude.cs" />
     <Compile Include="DialogElements\HtmlElement.cs" />
     <Compile Include="Views\BlurredAlertView.cs" />
     <Compile Include="Views\EmptyListView.cs" />
@@ -276,11 +269,6 @@
     <Compile Include="ViewControllers\Gists\GistCreateViewController.cs" />
     <Compile Include="ViewControllers\Gists\GistEditViewController.cs" />
     <Compile Include="TableViewSources\DialogTableViewSource.cs" />
-    <Compile Include="ViewControllers\Events\BaseEventsViewController.cs" />
-    <Compile Include="ViewControllers\Events\NewsViewController.cs" />
-    <Compile Include="ViewControllers\Events\OrganizationEventsViewController.cs" />
-    <Compile Include="ViewControllers\Events\RepositoryEventsViewController.cs" />
-    <Compile Include="ViewControllers\Events\UserEventsViewController.cs" />
     <Compile Include="Views\Issues\IssueLabelsView.cs" />
     <Compile Include="Views\RetryListView.cs" />
     <Compile Include="ViewControllers\Application\SupportViewController.cs" />
@@ -320,6 +308,11 @@
     <Compile Include="ViewControllers\Source\AddSourceViewController.cs" />
     <Compile Include="ViewControllers\MessageComposerViewController.cs" />
     <Compile Include="Utilities\ReactiveCommandExtensions.cs" />
+    <Compile Include="ViewControllers\Events\EventsViewController.cs" />
+    <Compile Include="ViewControllers\Commits\CommitsViewController.cs" />
+    <Compile Include="ViewControllers\Commits\CommitViewController.cs" />
+    <Compile Include="ViewControllers\GitHubListViewController.cs" />
+    <Compile Include="ViewControllers\ItemDetailsViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -347,9 +340,6 @@
     <Reference Include="Splat">
       <HintPath>..\packages\Splat.1.6.2\lib\Xamarin.iOS10\Splat.dll</HintPath>
     </Reference>
-    <Reference Include="GitHubSharp">
-      <HintPath>..\packages\GitHubClient.1.0.15\lib\portable45-net45+win8+wpa81\GitHubSharp.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.TTTAttributedLabel">
       <HintPath>lib\Xamarin.TTTAttributedLabel.dll</HintPath>
     </Reference>
@@ -364,27 +354,6 @@
     </Reference>
     <Reference Include="Akavache.Sqlite3">
       <HintPath>..\packages\akavache.sqlite3.5.0.0\lib\Portable-Net45+Win8+WP8+Wpa81\Akavache.Sqlite3.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform">
-      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Platform.iOS">
-      <HintPath>..\packages\MvvmCross.Platform.4.4.0\lib\Xamarin.iOS10\MvvmCross.Platform.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Core">
-      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.iOS">
-      <HintPath>..\packages\MvvmCross.Core.4.4.0\lib\Xamarin.iOS10\MvvmCross.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding">
-      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Binding.iOS">
-      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Binding.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="MvvmCross.Localization">
-      <HintPath>..\packages\MvvmCross.Binding.4.4.0\lib\Xamarin.iOS10\MvvmCross.Localization.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
@@ -593,6 +562,7 @@
     <Folder Include="WebResources\styles\" />
     <Folder Include="ViewControllers\Filters\" />
     <Folder Include="ViewControllers\Settings\" />
+    <Folder Include="ViewControllers\Commits\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -1,9 +1,8 @@
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
-using CodeHub.iOS.DialogElements;
 using System;
-using GitHubSharp.Models;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
@@ -31,19 +30,19 @@ namespace CodeHub.iOS.Views.PullRequests
 
             var vm = (PullRequestsViewModel)ViewModel;
             var weakVm = new WeakReference<PullRequestsViewModel>(vm);
-            BindCollection(vm.PullRequests, s => new PullRequestElement(s, MakeCallback(weakVm, s)));
+            //BindCollection(vm.PullRequests, s => new PullRequestElement(s, MakeCallback(weakVm, s)));
 
             OnActivation(d =>
             {
-                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(vm.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
                 d(_viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = x));
             });
         }
 
-        private static Action MakeCallback(WeakReference<PullRequestsViewModel> weakVm, PullRequestModel model)
-        {
-            return new Action(() => weakVm.Get()?.GoToPullRequestCommand.Execute(model));
-        }
+        //private static Action MakeCallback(WeakReference<PullRequestsViewModel> weakVm, Octokit.PullRequest model)
+        //{
+        //    return new Action(() => weakVm.Get()?.GoToPullRequestCommand.Execute(model));
+        //}
     }
 }
 

@@ -8,8 +8,9 @@ namespace CodeHub.Core.Utils
     public class GitHubList<T>
     {
         private readonly GitHubClient _client;
-        private Uri _uri;
         private readonly IDictionary<string, string> _parameters;
+        private readonly Uri _uri;
+        private Uri _currentUri;
 
         public GitHubList(
             GitHubClient client,
@@ -18,18 +19,23 @@ namespace CodeHub.Core.Utils
         {
             _client = client;
             _uri = uri;
+            _currentUri = uri;
             _parameters = parameters;
         }
 
+        public bool HasMore => _currentUri != null;
+
+        public void Reset() => _currentUri = _uri;
+
         public async Task<IReadOnlyList<T>> Next() 
         {
-            if (_uri == null)
-                return null;
+            if (!HasMore)
+                return new List<T>().AsReadOnly();
 
             var ret = await _client.Connection.Get<IReadOnlyList<T>>(
-                _uri, _parameters, "application/json");
+                _currentUri, _parameters, "application/json");
 
-            _uri = ret.HttpResponse.ApiInfo.Links.ContainsKey("next")
+            _currentUri = ret.HttpResponse.ApiInfo.Links.ContainsKey("next")
 				? ret.HttpResponse.ApiInfo.Links["next"]
 				: null;
 

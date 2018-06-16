@@ -1,13 +1,13 @@
-using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using Octokit;
+using ReactiveUI;
 using Splat;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Linq;
 
 namespace CodeHub.Core.ViewModels.Repositories
 {

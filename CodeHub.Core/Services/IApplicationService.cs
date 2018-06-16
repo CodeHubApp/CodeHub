@@ -6,8 +6,6 @@ namespace CodeHub.Core.Services
 {
     public interface IApplicationService
     {
-        GitHubSharp.Client Client { get; }
-
         Octokit.GitHubClient GitHubClient { get; }
  
         Account Account { get; }

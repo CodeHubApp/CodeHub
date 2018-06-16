@@ -6,6 +6,7 @@ using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.iOS.Utilities;
 using CodeHub.Core.Utilities;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -23,25 +24,25 @@ namespace CodeHub.iOS.Views.Issues
             base.ViewDidLoad();
 
             var vm = (IssueAssignedToViewModel)ViewModel;
-            BindCollection(vm.Users, x =>
-            {
-                var avatar = new GitHubAvatar(x.AvatarUrl);
-                var el = new UserElement(x.Login, string.Empty, string.Empty, avatar);
-                el.Clicked.Subscribe(_ => {
-                    if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
-                        vm.SelectedUser = null;
-                    else
-                        vm.SelectedUser = x;
-                });
+            //BindCollection(vm.Users, x =>
+            //{
+            //    var avatar = new GitHubAvatar(x.AvatarUrl);
+            //    var el = new UserElement(x.Login, string.Empty, string.Empty, avatar);
+            //    el.Clicked.Subscribe(_ => {
+            //        if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login))
+            //            vm.SelectedUser = null;
+            //        else
+            //            vm.SelectedUser = x;
+            //    });
 
-                if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
-                    el.Accessory = UITableViewCellAccessory.Checkmark;
-                else
-                    el.Accessory = UITableViewCellAccessory.None;
-                return el;
-            });
+            //    if (vm.SelectedUser != null && string.Equals(vm.SelectedUser.Login, x.Login, StringComparison.OrdinalIgnoreCase))
+            //        el.Accessory = UITableViewCellAccessory.Checkmark;
+            //    else
+            //        el.Accessory = UITableViewCellAccessory.None;
+            //    return el;
+            //});
 
-            vm.Bind(x => x.SelectedUser).Subscribe(x =>
+            vm.WhenAnyValue(x => x.SelectedUser).Subscribe(x =>
             {
                 if (Root.Count == 0)
                     return;
@@ -50,7 +51,7 @@ namespace CodeHub.iOS.Views.Issues
                                      UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
             });
 
-            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
+            //vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
         }
     }
 }

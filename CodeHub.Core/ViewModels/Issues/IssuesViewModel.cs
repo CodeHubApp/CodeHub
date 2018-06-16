@@ -1,41 +1,46 @@
 using System;
 using System.Threading.Tasks;
 using CodeHub.Core.Filters;
-using GitHubSharp.Models;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using CodeHub.Core.Messages;
 using System.Linq;
 using CodeHub.Core.Services;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public class IssuesViewModel : BaseIssuesViewModel<IssuesFilterModel>
     {
         private readonly IMessageService _messageService;
-        private IDisposable _addToken, _editToken;
+        private readonly IDisposable _addToken, _editToken;
 
-        public string Username { get; private set; }
+        public string Username { get; }
 
-        public string Repository { get; private set; }
+        public string Repository { get; }
 
-        public ICommand GoToNewIssueCommand
+        public ReactiveCommand<Unit, IssueAddViewModel> NewIssueCommand { get; }
+
+        public IssuesViewModel(
+            string username,
+            string repository,
+            IMessageService messageService)
         {
-            get { return new MvxCommand(() => ShowViewModel<IssueAddViewModel>(new IssueAddViewModel.NavObject { Username = Username, Repository = Repository })); }
-        }
-
-        public IssuesViewModel(IMessageService messageService)
-        {
+            Username = username;
+            Repository = repository;
             _messageService = messageService;
-        }
 
-        public void Init(NavObject nav)
-        {
-            Username = nav.Username;
-            Repository = nav.Repository;
-            _issues = new FilterableCollectionViewModel<IssueModel, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository);
-            _issues.GroupingFunction = Group;
-            _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(true));
+            NewIssueCommand = ReactiveCommand.Create(
+                () => new IssueAddViewModel(Username, Repository));
+
+            _issues = new FilterableCollectionViewModel<Octokit.Issue, IssuesFilterModel>("IssuesViewModel:" + Username + "/" + Repository)
+            {
+                GroupingFunction = Group
+            };
+
+            _issues.WhenAnyValue(x => x.Filter)
+                   .Select(_ => Unit.Default)
+                   .InvokeReactiveCommand(LoadCommand);
 
             _addToken = _messageService.Listen<IssueAddMessage>(x =>
             {
@@ -48,7 +53,7 @@ namespace CodeHub.Core.ViewModels.Issues
             {
                 if (x.Issue == null || !DoesIssueBelong(x.Issue))
                     return;
-                
+
                 var item = Issues.Items.FirstOrDefault(y => y.Number == x.Issue.Number);
                 if (item == null)
                     return;
@@ -74,31 +79,29 @@ namespace CodeHub.Core.ViewModels.Issues
             string mentioned = string.IsNullOrEmpty(_issues.Filter.Mentioned) ? null : _issues.Filter.Mentioned;
             string milestone = _issues.Filter.Milestone == null ? null : _issues.Filter.Milestone.Value;
 
-            var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
-                                                                                          assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
-            return Issues.SimpleCollectionLoad(request);
+
+            // TODO: Pagination!
+            //var request = this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, 
+            //                                                                              assignee: assignee, creator: creator, mentioned: mentioned, milestone: milestone);
+            ////return Issues.SimpleCollectionLoad(request);
+
+            return Task.Delay(1);
         }
 
-        public void CreateIssue(IssueModel issue)
+        public void CreateIssue(Octokit.Issue issue)
         {
             if (!DoesIssueBelong(issue))
                 return;
             Issues.Items.Add(issue);
         }
 
-        private bool DoesIssueBelong(IssueModel model)
+        private bool DoesIssueBelong(Octokit.Issue model)
         {
             if (Issues.Filter == null)
                 return true;
-            if (Issues.Filter.Open != model.State.Equals("open"))
+            if (Issues.Filter.Open != model.State.StringValue.Equals("open"))
                 return false;
             return true;
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
         }
     }
 }

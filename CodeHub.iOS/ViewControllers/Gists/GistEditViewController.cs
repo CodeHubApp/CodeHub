@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UIKit;
 using System.Linq;
@@ -8,6 +8,7 @@ using CodeHub.iOS.DialogElements;
 using System.Threading.Tasks;
 using CodeHub.iOS.ViewControllers.Gists;
 using Octokit;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -44,7 +45,7 @@ namespace CodeHub.iOS.ViewControllers
                 return;
             }
 
-            var app = MvvmCross.Platform.Mvx.Resolve<Core.Services.IApplicationService>();
+            var app = Locator.Current.GetService<Core.Services.IApplicationService>();
             var hud = this.CreateHud();
             NetworkActivity.PushNetworkActive();
 

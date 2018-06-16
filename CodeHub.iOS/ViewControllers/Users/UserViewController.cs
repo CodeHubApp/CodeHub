@@ -1,10 +1,10 @@
-using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.User;
 using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
 using CodeHub.iOS.ViewControllers.Gists;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
@@ -18,21 +18,17 @@ namespace CodeHub.iOS.ViewControllers.Users
             set { base.ViewModel = value; }
         }
 
-        public UserViewController(string username, Octokit.User user = null)
-            : this()
-        {
-            ViewModel = new UserViewModel();
-            ViewModel.Init(new UserViewModel.NavObject { Username = username });
-            ViewModel.User = user;
-        }
-
         public UserViewController(Octokit.User user)
             : this(user.Login, user)
         {
         }
 
-        public UserViewController()
+        public UserViewController(
+            string username,
+            Octokit.User user = null)
         {
+            ViewModel = new UserViewModel(username) { User = user };
+
             _actionButton = new Lazy<UIBarButtonItem>(() =>
                 new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
         }
@@ -54,7 +50,8 @@ namespace CodeHub.iOS.ViewControllers.Users
             var gists = new StringElement("Gists", Octicon.Gist.ToImage());
             Root.Add(new [] { new Section { split }, new Section { events, organizations, repos, gists } });
 
-            ViewModel.Bind(x => x.User).Subscribe(x => {
+            ViewModel.WhenAnyValue(x => x.User).Subscribe(x =>
+            {
                 followers.Text = x?.Followers.ToString() ?? "-";
                 following.Text = x?.Following.ToString() ?? "-";
                 HeaderView.SubText = string.IsNullOrWhiteSpace(x?.Name) ? null : x.Name;
@@ -72,14 +69,14 @@ namespace CodeHub.iOS.ViewControllers.Users
                   .Select(x => UsersViewController.CreateFollowingViewController(ViewModel.Username))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
                
-                d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
-                d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
+                //d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
+                //d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
 
                 d(gists.Clicked
                   .Select(x => GistsViewController.CreateUserGistsViewController(ViewModel.Username))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
-                d(ViewModel.Bind(x => x.Title, true).Subscribe(x => Title = x));
+                d(ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => Title = x));
 
                 d(repos.Clicked.Subscribe(_ =>
                 {
@@ -113,7 +110,7 @@ namespace CodeHub.iOS.ViewControllers.Users
                 {
                     if (e.ButtonIndex == followButton)
                     {
-                        ViewModel.ToggleFollowingCommand.Execute(null);
+                        ViewModel.ToggleFollowingCommand.ExecuteNow();
                     }
                 });
 

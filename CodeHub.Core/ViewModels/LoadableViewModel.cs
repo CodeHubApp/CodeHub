@@ -1,23 +1,15 @@
-using GitHubSharp;
 using System.Threading.Tasks;
-using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels;
-using System.Windows.Input;
 using System.Net;
 using System;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels
 {
     public abstract class LoadableViewModel : BaseViewModel
     {
-        public ICommand LoadCommand { get; }
-
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get { return _isLoading; }
-            private set { this.RaiseAndSetIfChanged(ref _isLoading, value); }
-        }
+        public ReactiveCommand<Unit, Unit> LoadCommand { get; }
 
         private async Task LoadResource()
         {
@@ -42,46 +34,27 @@ namespace CodeHub.Core.ViewModels
             }
         }
 
-        protected async Task ExecuteLoadResource()
-        {
-            try
-            {
-                await LoadResource();
-            }
-            catch (System.IO.IOException)
-            {
-                DisplayAlert("Unable to communicate with GitHub as the transmission was interrupted! Please try again.");
-            }
-            catch (StatusCodeException e)
-            {
-                DisplayAlert(e.Message);
-            }
-        }
-
         protected LoadableViewModel()
         {
-            LoadCommand = new MvxCommand<bool?>(x => HandleLoadCommand(), _ => !IsLoading);
+            LoadCommand = ReactiveCommand.CreateFromTask(HandleLoadCommand);
+
+            LoadCommand
+                .ThrownExceptions
+                .Select(err => new UserError("There was a problem loading the data from GitHub!", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
         }
 
         private async Task HandleLoadCommand()
         {
             try
             {
-                IsLoading = true;
-                await ExecuteLoadResource();
+                await LoadResource();
             }
             catch (OperationCanceledException e)
             {
                 // The operation was canceled... Don't worry
                 System.Diagnostics.Debug.WriteLine("The operation was canceled: " + e.Message);
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("The request to load this item did not complete successfuly! " + e.Message);
-            }
-            finally
-            {
-                IsLoading = false;
             }
         }
 

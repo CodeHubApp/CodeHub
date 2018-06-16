@@ -1,10 +1,10 @@
-using System;
-using MvvmCross.Platform;
+﻿using System;
 using CodeHub.Core.Filters;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.iOS.ViewControllers.Filters;
+using Splat;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -30,11 +30,11 @@ namespace CodeHub.iOS.Views.Issues
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
             _segmentBarButton.Width = View.Frame.Width - 10f;
             ToolbarItems = new [] { new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace), _segmentBarButton, new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace) };
-            BindCollection(ViewModel.Issues, CreateElement);
+            //BindCollection(ViewModel.Issues, CreateElement);
 
             OnActivation(d =>
             {
-                d(addButton.GetClickedObservable().BindCommand(ViewModel.GoToNewIssueCommand));
+                //d(addButton.GetClickedObservable().BindCommand(ViewModel.GoToNewIssueCommand));
             });
         }
 
@@ -47,7 +47,7 @@ namespace CodeHub.iOS.Views.Issues
             //Before we select which one, make sure we detach the event handler or silly things will happen
             _viewSegment.ValueChanged -= SegmentValueChanged;
 
-            var application = Mvx.Resolve<IApplicationService>();
+            var application = Locator.Current.GetService<IApplicationService>();
 
             //Select which one is currently selected
             if (ViewModel.Issues.Filter.Equals(IssuesFilterModel.CreateOpenFilter()))
@@ -64,7 +64,7 @@ namespace CodeHub.iOS.Views.Issues
 
         void SegmentValueChanged (object sender, EventArgs e)
         {
-            var application = Mvx.Resolve<IApplicationService>();
+            var application = Locator.Current.GetService<IApplicationService>();
 
             // If there is searching going on. Finish it.
             FinishSearch();

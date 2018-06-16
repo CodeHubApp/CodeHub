@@ -1,12 +1,12 @@
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels;
-using MvvmCross.Platform;
+using Splat;
 
 public static class ViewModelExtensions
 {
     public static IApplicationService GetApplication(this BaseViewModel vm)
     {
-        return Mvx.Resolve<IApplicationService>();
+        return Locator.Current.GetService<IApplicationService>();
     }
 }
 

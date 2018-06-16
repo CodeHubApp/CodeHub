@@ -18,9 +18,7 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
         public OrganizationsViewController(string username) : this()
         {
-            var viewModel = new OrganizationsViewModel();
-            viewModel.Init(new OrganizationsViewModel.NavObject { Username = username });
-            ViewModel = viewModel;
+            ViewModel = new OrganizationsViewModel(username);
         }
 
         public override void ViewDidLoad()
@@ -29,13 +27,13 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
             var vm = (OrganizationsViewModel) ViewModel;
             var weakVm = new WeakReference<OrganizationsViewModel>(vm);
-            BindCollection(vm.Organizations, x =>
-            {
-                var avatar = new GitHubAvatar(x.AvatarUrl);
-                var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
-                e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
-                return e;
-            });
+            //BindCollection(vm.Organizations, x =>
+            //{
+            //    var avatar = new GitHubAvatar(x.AvatarUrl);
+            //    var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
+            //    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
+            //    return e;
+            //});
         }
     }
 }

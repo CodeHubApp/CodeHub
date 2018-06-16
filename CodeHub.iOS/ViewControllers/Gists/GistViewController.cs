@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeHub.Core.ViewModels.Gists;
 using UIKit;
 using CodeHub.iOS.Utilities;
@@ -6,13 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using CodeHub.iOS.DialogElements;
 using CodeHub.Core.Services;
-using MvvmCross.Platform;
 using System.Collections.Generic;
 using CodeHub.iOS.Services;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Octokit;
 using Humanizer;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
@@ -21,7 +21,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
         private SplitViewElement _splitRow1, _splitRow2;
         private StringElement _ownerElement;
         private SplitButtonElement _split;
-        private readonly IAlertDialogService _alertDialogService = Mvx.Resolve<IAlertDialogService>();
+        private readonly IAlertDialogService _alertDialogService = Locator.Current.GetService<IAlertDialogService>();
 
         public new GistViewModel ViewModel
         {
@@ -56,9 +56,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
                 .Switch()
-                .Select(_ => ViewModel.Bind(x => x.IsStarred, true))
+                .Select(_ => ViewModel.WhenAnyValue(x => x.IsStarred))
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(x => x.GetValueOrDefault())
                 .Subscribe(x => HeaderView.SetSubImage(x ? Octicon.Star.ToImage() : null));
 
             TableView.RowHeight = UITableView.AutomaticDimension;
@@ -81,12 +82,15 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 d(editButton.GetClickedObservable().Subscribe(ShareButtonTap));
                 d(_ownerElement.Clicked.BindCommand(ViewModel.GoToUserCommand));
 
-                d(ViewModel.Bind(x => x.IsStarred, true).Subscribe(isStarred => _splitRow2.Button2.Text = isStarred ? "Starred" : "Not Starred"));
+                d(ViewModel.WhenAnyValue(x => x.IsStarred)
+                  .Where(x => x.HasValue)
+                  .Select(x => x.GetValueOrDefault())
+                  .Subscribe(x => _splitRow2.Button2.Text = x ? "Starred" : "Not Starred"));
 
-                d(ViewModel.BindCollection(x => x.Comments, true).Subscribe(_ => RenderGist()));
+                //d(ViewModel.BindCollection(x => x.Comments, true).Subscribe(_ => RenderGist()));
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToUserCommand));
 
-                d(ViewModel.Bind(x => x.Gist, true).Where(x => x != null).Subscribe(gist =>
+                d(ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null).Subscribe(gist =>
                 {
                     var daysOld = gist.CreatedAt.TotalDaysAgo();
 
@@ -131,7 +135,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 sec2.Add(sse);
             }
 
-            if (ViewModel.Comments.Items.Count > 0)
+            if (ViewModel.Comments.Count > 0)
             {
                 var sec3 = new Section("Comments");
                 sec3.AddAll(ViewModel.Comments.Select(x => new CommentElement(x.User?.Login ?? "Anonymous", x.Body, x.CreatedAt, x.User?.AvatarUrl)));
@@ -167,7 +171,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
         {
             try
             {
-                var app = Mvx.Resolve<IApplicationService>();
+                var app = Locator.Current.GetService<IApplicationService>();
                 var data = await this.DoWorkAsync("Loading...", () => app.GitHubClient.Gist.Get(ViewModel.Id));
                 var gistController = new GistEditViewController(data);
                 gistController.Created = editedGist => ViewModel.Gist = editedGist;
@@ -185,13 +189,13 @@ namespace CodeHub.iOS.ViewControllers.Gists
             if (ViewModel.Gist == null)
                 return;
 
-            var app = Mvx.Resolve<IApplicationService>();
+            var app = Locator.Current.GetService<IApplicationService>();
             var isOwner = string.Equals(app.Account.Username, ViewModel.Gist?.Owner?.Login, StringComparison.OrdinalIgnoreCase);
             var gist = ViewModel.Gist;
 
             var sheet = new UIActionSheet();
             var editButton = sheet.AddButton(isOwner ? "Edit" : "Fork");
-            var starButton = sheet.AddButton(ViewModel.IsStarred ? "Unstar" : "Star");
+            var starButton = sheet.AddButton(ViewModel.IsStarred.GetValueOrDefault() ? "Unstar" : "Star");
             var shareButton = sheet.AddButton("Share");
             var showButton = sheet.AddButton("Show in GitHub");
             var cancelButton = sheet.AddButton("Cancel");
@@ -211,10 +215,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
                                 gist.HtmlUrl,
                                 sender as UIBarButtonItem);
                         }
-                        else if (e.ButtonIndex == showButton)
-                            ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        //else if (e.ButtonIndex == showButton)
+                            //ViewModel.GoToHtmlUrlCommand.ExecuteNow();
                         else if (e.ButtonIndex == starButton)
-                            ViewModel.ToggleStarCommand.Execute(null);
+                            ViewModel.ToggleStarCommand.ExecuteNow();
                         else if (e.ButtonIndex == editButton)
                             Compose().ToBackground();
                     }

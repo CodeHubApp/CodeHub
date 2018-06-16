@@ -23,15 +23,15 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             var vm = (TeamsViewModel)ViewModel;
             var weakVm = new WeakReference<TeamsViewController>(this);
 
-            this.BindCollection(vm.Teams, x =>
-            {
-                var e = new StringElement(x.Name);
-                e.Clicked.Subscribe(_ => {
-                    var vc = UsersViewController.CreateTeamMembersViewController((int)x.Id);
-                    weakVm.Get()?.NavigationController.PushViewController(vc, true);
-                });
-                return e;
-            });
+            //this.BindCollection(vm.Teams, x =>
+            //{
+            //    var e = new StringElement(x.Name);
+            //    e.Clicked.Subscribe(_ => {
+            //        var vc = UsersViewController.CreateTeamMembersViewController((int)x.Id);
+            //        weakVm.Get()?.NavigationController.PushViewController(vc, true);
+            //    });
+            //    return e;
+            //});
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using SDWebImage;
 using Foundation;
@@ -7,6 +7,7 @@ using MonoTouch.SlideoutNavigation;
 using CodeHub.iOS.ViewControllers.Accounts;
 using CodeHub.Core.Utilities;
 using System.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -54,12 +55,12 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             OnActivation(d =>
             {
-                d(ViewModel.Bind(x => x.ImageUrl).Subscribe(UpdatedImage));
-                d(ViewModel.Bind(x => x.Status).Subscribe(x => _statusLabel.Text = x));
+                d(ViewModel.WhenAnyValue(x => x.ImageUrl).Subscribe(UpdatedImage));
+                d(ViewModel.WhenAnyValue(x => x.Status).Subscribe(x => _statusLabel.Text = x));
                 d(ViewModel.GoToMenu.Subscribe(_ => GoToMenu()));
                 d(ViewModel.GoToAccounts.Subscribe(_ => GoToAccounts()));
                 d(ViewModel.GoToNewAccount.Subscribe(_ => GoToNewAccount()));
-                d(ViewModel.Bind(x => x.IsLoggingIn).Subscribe(x =>
+                d(ViewModel.WhenAnyValue(x => x.IsLoggingIn).Subscribe(x =>
                 {
                     if (x)
                         _activityView.StartAnimating();
@@ -77,10 +78,6 @@ namespace CodeHub.iOS.ViewControllers.Application
             var slideoutController = new SlideoutNavigationController();
             slideoutController.MenuViewController = new MenuNavigationController(vc, slideoutController);
 
-            var appDelegate = UIApplication.SharedApplication.Delegate as AppDelegate;
-            if (appDelegate != null)
-                appDelegate.Presenter.SlideoutNavigationController = slideoutController;
-            
             var openButton = new UIBarButtonItem { Image = Images.Buttons.ThreeLinesButton };
             var mainNavigationController = new MainNavigationController(GetInitialMenuViewController(), slideoutController, openButton);
             slideoutController.SetMainViewController(mainNavigationController, false);
@@ -113,13 +110,13 @@ namespace CodeHub.iOS.ViewControllers.Application
                 case "Profile":
                     return new Users.UserViewController(username);
                 case "My Events":
-                    return new Events.UserEventsViewController(username);
+                    return Events.EventsViewController.ForUser(username);
                 case "My Issues":
                     return Views.Issues.MyIssuesView.Create();
                 case "Notifications":
                     return Views.NotificationsView.Create();
                 default:
-                    return Events.NewsViewController.Create();
+                    return Events.EventsViewController.ForNews();
                     
             }
         }
@@ -187,7 +184,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);
-            ViewModel.StartupCommand.Execute(null);
+            ViewModel.StartupCommand.ExecuteNow();
         }
 
         public override bool ShouldAutorotate()

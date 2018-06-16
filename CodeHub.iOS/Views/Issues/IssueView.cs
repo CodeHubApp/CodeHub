@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using CodeHub.iOS.ViewControllers;
@@ -41,8 +41,7 @@ namespace CodeHub.iOS.Views.Issues
         public IssueView(string owner, string repository, int id)
             : this()
         {
-            ViewModel = new IssueViewModel();
-            ViewModel.Init(new IssueViewModel.NavObject { Username = owner, Repository = repository, Id = id });
+            ViewModel = new IssueViewModel(owner, repository, id);
         }
 
         public IssueView()
@@ -72,7 +71,7 @@ namespace CodeHub.iOS.Views.Issues
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.2f)))
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Select(_ => ViewModel.Bind(x => x.IsClosed, true).Where(x => x.HasValue).Select(x => x.Value))
+                .Select(_ => ViewModel.WhenAnyValue(x => x.IsClosed).Where(x => x.HasValue).Select(x => x.Value))
                 .Switch()
                 .Subscribe(x => 
                 {
@@ -88,9 +87,9 @@ namespace CodeHub.iOS.Views.Issues
             var actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
             NavigationItem.RightBarButtonItem = actionButton;
 
-            ViewModel.Bind(x => x.IsModifying).SubscribeStatus("Loading...");
+            //ViewModel.WhenAnyValue(x => x.IsModifying).SubscribeStatus("Loading...");
 
-            ViewModel.Bind(x => x.Issue).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Issue).Subscribe(x =>
             {
                 _assigneeElement.Value = x.Assignee != null ? x.Assignee.Login : "Unassigned";
                 _milestoneElement.Value = x.Milestone != null ? x.Milestone.Title : "No Milestone";
@@ -104,7 +103,7 @@ namespace CodeHub.iOS.Views.Issues
                 Render();
             });
 
-            ViewModel.Bind(x => x.MarkdownDescription).Subscribe(description =>
+            ViewModel.WhenAnyValue(x => x.MarkdownDescription).Subscribe(description =>
             {
                 var model = new MarkdownModel(description, (int)UIFont.PreferredSubheadline.PointSize, true);
                 var markdown = new MarkdownWebView { Model = model };
@@ -114,17 +113,17 @@ namespace CodeHub.iOS.Views.Issues
             });
 
             ViewModel
-                .Bind(x => x.Comments)
+                .WhenAnyValue(x => x.Comments)
                 .Select(_ => Unit.Default)
-                .Merge(ViewModel.Bind(x => x.Events).Select(_ => Unit.Default))
+                .Merge(ViewModel.WhenAnyValue(x => x.Events).Select(_ => Unit.Default))
                 .Subscribe(_ => RenderComments().ToBackground());
 
             ViewModel
-                .Bind(x => x.Participants)
+                .WhenAnyValue(x => x.Participants)
                 .Subscribe(x => _splitButton2.Text = x.HasValue ? x.Value.ToString() : "-");
 
             ViewModel
-                .Bind(x => x.ShouldShowPro)
+                .WhenAnyValue(x => x.ShouldShowPro)
                 .Where(x => x)
                 .Subscribe(x => this.ShowPrivateView());
 
@@ -134,17 +133,17 @@ namespace CodeHub.iOS.Views.Issues
                 d(_assigneeElement.Clicked.BindCommand(ViewModel.GoToAssigneeCommand));
                 d(_labelsElement.Clicked.BindCommand(ViewModel.GoToLabelsCommand));
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
-                d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
-                d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                //d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
+                //d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
 
-                d(ViewModel.Bind(x => x.IsCollaborator, true).Subscribe(x => {
+                d(ViewModel.WhenAnyValue(x => x.IsCollaborator).Subscribe(x => {
                     foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })
                         i.Accessory = x ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
                 }));
 
-                d(ViewModel.Bind(x => x.IsLoading).Subscribe(x => actionButton.Enabled = !x));
+                //d(ViewModel.WhenAnyValue(x => x.IsLoading).Subscribe(x => actionButton.Enabled = !x));
             });
         }
 
@@ -273,9 +272,9 @@ namespace CodeHub.iOS.Views.Issues
                 BeginInvokeOnMainThread(() =>
                 {
                     if (e.ButtonIndex == editButton)
-                        ViewModel.GoToEditCommand.Execute(null);
+                        ViewModel.GoToEditCommand.ExecuteNow();
                     else if (e.ButtonIndex == openButton)
-                        ViewModel.ToggleStateCommand.Execute(null);
+                        ViewModel.ToggleStateCommand.ExecuteNow();
                     else if (e.ButtonIndex == shareButton)
                     {
                         AlertDialogService.Share(
@@ -284,8 +283,8 @@ namespace CodeHub.iOS.Views.Issues
                             issue.HtmlUrl,
                             NavigationItem.RightBarButtonItem);
                     }
-                    else if (e.ButtonIndex == showButton)
-                        ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
+                    //else if (e.ButtonIndex == showButton)
+                        //ViewModel.GoToUrlCommand.Execute(ViewModel.Issue.HtmlUrl);
                     else if (e.ButtonIndex == commentButton)
                         AddCommentTapped();
                 });

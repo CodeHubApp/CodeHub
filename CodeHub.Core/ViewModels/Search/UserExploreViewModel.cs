@@ -1,11 +1,11 @@
 ﻿using System;
-using CodeHub.Core.Services;
-using ReactiveUI;
-using Octokit;
-using CodeHub.Core.ViewModels.Users;
 using System.Reactive;
 using System.Reactive.Linq;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.Users;
 using Humanizer;
+using Octokit;
+using ReactiveUI;
 using Splat;
 
 namespace CodeHub.Core.ViewModels.Search
@@ -52,6 +52,12 @@ namespace CodeHub.Core.ViewModels.Search
                     throw new Exception(msg, e);
                 }
             }, canSearch);
+
+            SearchCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Unable to complete search!", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
         }
     }
 }

@@ -121,7 +121,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             if (isMarkdown)
             {
-                var markdownContent = await _applicationService.Client.Markdown.GetMarkdown(content);
+                var markdownContent = await _applicationService.GitHubClient.Miscellaneous.RenderRawMarkdown(content);
                 var model = new MarkdownModel(markdownContent, fontSize);
                 var htmlContent = new MarkdownWebView { Model = model };
                 LoadContent(htmlContent.GenerateString());

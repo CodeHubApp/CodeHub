@@ -65,7 +65,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             OnActivation(d =>
             {
-                d(this.Bind(x => x.Filename, true).Subscribe(x =>
+                d(this.WhenAnyValue(x => x.Filename).Subscribe(x =>
                 {
                     Title = string.IsNullOrEmpty(x) ? "Gist File" : x;
                     titleElement.Value = x;
@@ -73,7 +73,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
                 d(titleElement.Changed.Subscribe(x => Filename = x));
 
-                d(this.Bind(x => x.Content, true).Subscribe(x => contentElement.Value = x));
+                d(this.WhenAnyValue(x => x.Content).Subscribe(x => contentElement.Value = x));
 
                 d(contentElement.Changed.Subscribe(x => Content = x));
 

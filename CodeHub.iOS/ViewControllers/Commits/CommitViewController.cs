@@ -1,25 +1,33 @@
-using System;
-using CodeHub.iOS.ViewControllers;
-using UIKit;
-using CodeHub.iOS.Utilities;
-using System.Linq;
-using Foundation;
-using CodeHub.Core.ViewModels.Changesets;
-using CodeHub.iOS.DialogElements;
-using Humanizer;
-using CodeHub.iOS.Services;
-using CodeHub.iOS.ViewControllers.Repositories;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
+using CodeHub.Core.ViewModels.Commits;
+using CodeHub.iOS.DialogElements;
+using CodeHub.iOS.Services;
+using CodeHub.iOS.Utilities;
+using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.ViewControllers.Source;
+using Foundation;
+using Humanizer;
+using ReactiveUI;
+using UIKit;
 
-namespace CodeHub.iOS.Views.Source
+namespace CodeHub.iOS.ViewControllers.Commits
 {
-    public class ChangesetView : PrettyDialogViewController
+    public class CommitViewController : PrettyDialogViewController
     {
-        public new ChangesetViewModel ViewModel
+        private Octokit.GitHubCommit _commit;
+        private Octokit.GitHubCommit Commit
         {
-            get { return (ChangesetViewModel)base.ViewModel; }
+            get => _commit;
+            set => this.RaiseAndSetIfChanged(ref _commit, value);
+        }
+
+
+        public new CommitViewModel ViewModel
+        {
+            get { return (CommitViewModel)base.ViewModel; }
             set { base.ViewModel = value; }
         }
 
@@ -37,7 +45,7 @@ namespace CodeHub.iOS.Views.Source
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            ViewModel.Bind(x => x.Changeset).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Changeset).Subscribe(x =>
             {
                 var msg = x.Commit.Message ?? string.Empty;
                 msg = msg.Split('\n')[0];
@@ -47,19 +55,19 @@ namespace CodeHub.iOS.Views.Source
                 RefreshHeaderView();
             });
 
-            ViewModel.Bind(x => x.Changeset).Subscribe(_ => Render());
-            ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
-            ViewModel.Bind(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
+            ViewModel.WhenAnyValue(x => x.Changeset).Subscribe(_ => Render());
+            //ViewModel.BindCollection(x => x.Comments).Subscribe(_ => Render());
+            ViewModel.WhenAnyValue(x => x.ShouldShowPro).Where(x => x).Subscribe(_ => this.ShowPrivateView());
 
             OnActivation(d =>
             {
                 d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
-                d(ViewModel.Bind(x => x.Title).Subscribe(x => Title = x));
+                d(ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => Title = x));
                 d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
             });
         }
 
-        private void FileClicked(GitHubSharp.Models.CommitModel.CommitFileModel file)
+        private void FileClicked(Octokit.GitHubCommitFile file)
         {
             if (file.Patch == null)
             {
@@ -85,7 +93,7 @@ namespace CodeHub.iOS.Views.Source
             if (commitModel == null)
                 return;
 
-            var weakReference = new WeakReference<ChangesetView>(this);
+            var weakReference = new WeakReference<CommitViewController>(this);
 
             ICollection<Section> sections = new LinkedList<Section>();
 
@@ -121,7 +129,7 @@ namespace CodeHub.iOS.Views.Source
                     TextColor = StringElement.DefaultDetailColor,
                     Image = Octicon.Repo.ToImage()
                 };
-                repo.Clicked.Subscribe(_ => ViewModel.GoToRepositoryCommand.Execute(null));
+                repo.Clicked.Subscribe(_ => ViewModel.GoToRepositoryCommand.ExecuteNow());
                 detailSection.Add(repo);
             }
 
@@ -238,7 +246,7 @@ namespace CodeHub.iOS.Views.Source
                         }
                         //                else if (e.ButtonIndex == showButton)
                         //                {
-                        //                    ViewModel.GoToHtmlUrlCommand.Execute(null);
+                        //                    ViewModel.GoToHtmlUrlCommand.ExecuteNow();
                         //                }
                     }
                     catch

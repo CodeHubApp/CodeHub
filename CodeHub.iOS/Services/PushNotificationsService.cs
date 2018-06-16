@@ -4,8 +4,8 @@ using UIKit;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MvvmCross.Platform;
 using ObjCRuntime;
+using Splat;
 
 namespace CodeHub.iOS.Services
 {
@@ -34,7 +34,7 @@ namespace CodeHub.iOS.Services
             if (string.IsNullOrEmpty(appDelegate.DeviceToken))
                 throw new InvalidOperationException("Unable to activate push notifications. Please check your iOS notifications settings.");
 
-            var applicationService = Mvx.Resolve<IApplicationService>();
+            var applicationService = Locator.Current.GetService<IApplicationService>();
             var user = applicationService.Account;
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
@@ -61,7 +61,7 @@ namespace CodeHub.iOS.Services
             if (string.IsNullOrEmpty(del.DeviceToken))
                 return;
 
-            var user = Mvx.Resolve<IApplicationService>().Account;
+            var user = Locator.Current.GetService<IApplicationService>().Account;
             if (user.IsEnterprise)
                 throw new InvalidOperationException("Push notifications are for GitHub.com accounts only!");
 

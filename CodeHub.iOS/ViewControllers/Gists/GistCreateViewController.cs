@@ -45,10 +45,10 @@ namespace CodeHub.iOS.ViewControllers.Gists
 
             OnActivation(d =>
             {
-                d(ViewModel.Bind(x => x.Description).Subscribe(_ => UpdateView()));
-                d(ViewModel.Bind(x => x.Files).Subscribe(_ => UpdateView()));
-                d(ViewModel.Bind(x => x.Public).Subscribe(_ => UpdateView()));
-                d(ViewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
+                d(ViewModel.WhenAnyValue(x => x.Description).Subscribe(_ => UpdateView()));
+                d(ViewModel.WhenAnyValue(x => x.Files).Subscribe(_ => UpdateView()));
+                d(ViewModel.WhenAnyValue(x => x.Public).Subscribe(_ => UpdateView()));
+                d(ViewModel.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving..."));
 
 	            d(saveButton.GetClickedObservable()
                   .Select(_ => Unit.Default)

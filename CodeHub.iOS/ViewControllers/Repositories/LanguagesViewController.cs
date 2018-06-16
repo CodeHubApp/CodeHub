@@ -6,9 +6,7 @@ using CodeHub.iOS.DialogElements;
 using System.Reactive.Subjects;
 using System;
 using System.Reactive.Linq;
-using Foundation;
 using CodeHub.iOS.Utilities;
-using System.Net;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -16,10 +14,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
     {
         private readonly ISubject<Language> _languageSubject = new Subject<Language>();
 
-        public IObservable<Language> Language
-        {
-            get { return _languageSubject.AsObservable(); }
-        }
+        public IObservable<Language> Language => _languageSubject.AsObservable();
 
         public Language SelectedLanguage { get; set; }
 
@@ -38,16 +33,8 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
         private async Task Load()
         {
-            NetworkActivity.PushNetworkActive();
-
-            try
-            {
+            using (NetworkActivity.ActivateNetwork())
                 await LoadLanguages();
-            }
-            finally
-            {
-                NetworkActivity.PopNetworkActive();
-            }
         }
 
         private async Task LoadLanguages()

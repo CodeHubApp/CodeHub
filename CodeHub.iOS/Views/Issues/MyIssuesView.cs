@@ -1,5 +1,6 @@
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
+using ReactiveUI;
 using System;
 
 namespace CodeHub.iOS.Views.Issues
@@ -22,7 +23,7 @@ namespace CodeHub.iOS.Views.Issues
             var vm = (MyIssuesViewModel)ViewModel;
             var weakVm = new WeakReference<MyIssuesViewModel>(vm);
 
-            vm.Bind(x => x.SelectedFilter).Subscribe(x =>
+            vm.WhenAnyValue(x => x.SelectedFilter).Subscribe(x =>
             {
                 var goodVm = weakVm.Get();
 
@@ -37,11 +38,11 @@ namespace CodeHub.iOS.Views.Issues
                 FinishSearch();
             });
 
-            this.BindCollection(vm.Issues, CreateElement);
+            //this.BindCollection(vm.Issues, CreateElement);
 
             OnActivation(d =>
             {
-                d(vm.Bind(x => x.SelectedFilter, true).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
+                d(vm.WhenAnyValue(x => x.SelectedFilter).Subscribe(x => _viewSegment.SelectedSegment = (nint)x));
                 d(_viewSegment.GetChangedObservable().Subscribe(x => vm.SelectedFilter = x));
             });
         }
