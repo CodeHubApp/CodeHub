@@ -1,46 +1,27 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using CodeHub.Core.ViewModels.Events;
-using GitHubSharp.Models;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationViewModel : LoadableViewModel
     {
-        private UserModel _userModel;
+        public string Name { get; }
 
-        public string Name { get; private set; }
-
-        public void Init(NavObject navObject)
+        private Octokit.Organization _organization;
+        public Octokit.Organization Organization
         {
-            Name = navObject.Name;
+            get { return _organization; }
+            private set { this.RaiseAndSetIfChanged(ref _organization, value); }
         }
 
-        public UserModel Organization
+        public OrganizationViewModel(string name)
         {
-            get { return _userModel; }
-            private set { this.RaiseAndSetIfChanged(ref _userModel, value); }
+            Name = name;
         }
 
-        public ICommand GoToTeamsCommand
+        protected override async Task Load()
         {
-            get { return new MvxCommand(() => ShowViewModel<TeamsViewModel>(new TeamsViewModel.NavObject { Name = Name })); }
-        }
-
-        public ICommand GoToEventsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Name })); }
-        }
-
-        protected override Task Load()
-        {
-            return this.RequestModel(this.GetApplication().Client.Organizations[Name].Get(), response => Organization = response.Data);
-        }
-
-        public class NavObject
-        {
-            public string Name { get; set; }
+            Organization = await this.GetApplication().GitHubClient.Organization.Get(Name);
         }
     }
 }

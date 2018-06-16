@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Source;
 using UIKit;
@@ -7,6 +7,7 @@ using Foundation;
 using CodeHub.iOS.Utilities;
 using System.Threading.Tasks;
 using CodeHub.iOS.Services;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Source
 {
@@ -16,9 +17,9 @@ namespace CodeHub.iOS.Views.Source
 
         public EditSourceViewModel ViewModel { get; }
     
-        public EditSourceView()
+        public EditSourceView(string username, string repository, string path, string branch)
         {
-            ViewModel = new EditSourceViewModel();
+            ViewModel = new EditSourceViewModel(username, repository, path, branch);
             EdgesForExtendedLayout = UIRectEdge.None;
             Title = "Edit";
 
@@ -43,13 +44,13 @@ namespace CodeHub.iOS.Views.Source
             OnActivation(d =>
             {
                 d(saveButton.GetClickedObservable().Subscribe(_ => Commit()));
-                d(ViewModel.Bind(x => x.Text).Subscribe(x => {
+                d(ViewModel.WhenAnyValue(x => x.Text).Subscribe(x => {
                     _textView.Text = x;
                     _textView.SelectedRange = new NSRange(0, 0);
                 }));
             });
 
-            ViewModel.LoadCommand.Execute(null);
+            ViewModel.LoadCommand.ExecuteNow();
         }
 
         private void Commit()

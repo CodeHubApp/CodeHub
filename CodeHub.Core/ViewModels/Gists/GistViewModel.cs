@@ -1,111 +1,98 @@
 using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CodeHub.Core.ViewModels.User;
-using MvvmCross.Core.ViewModels;
 using Octokit;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Gists
 {
     public class GistViewModel : LoadableViewModel
     {
-        private readonly CollectionViewModel<GistComment> _comments = new CollectionViewModel<GistComment>();
+        public string Id { get; }
+
         private Gist _gist;
-        private bool _starred;
-
-        public string Id
-        {
-            get;
-            private set;
-        }
-
         public Gist Gist
         {
             get { return _gist; }
             set { this.RaiseAndSetIfChanged(ref _gist, value); }
         }
 
-        public bool IsStarred
+        private bool? _starred;
+        public bool? IsStarred
         {
             get { return _starred; }
             private set { this.RaiseAndSetIfChanged(ref _starred, value); }
         }
 
-        public CollectionViewModel<GistComment> Comments
-        {
-            get { return _comments; }
-        }
+        public ReactiveList<GistComment> Comments { get; } = new ReactiveList<GistComment>();
 
-        public ICommand GoToUserCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Gist.Owner.Login }), () => Gist != null && Gist.Owner != null); }
-        }
+        public ReactiveCommand<Unit, UserViewModel> GoToUserCommand { get; }
 
-        public ICommand GoToHtmlUrlCommand
-        {
-            get { return new MvxCommand(() => GoToUrlCommand.Execute(_gist.HtmlUrl), () => _gist != null); }
-        }
+        public ReactiveCommand<Unit, string> GoToHtmlCommand { get; }
 
-        public ICommand ForkCommand
-        {
-            get
-            {
-                return new MvxCommand(() => ForkGist());
-            }
-        }
+        public ReactiveCommand<Unit, Unit> ToggleStarCommand { get; }
 
-        public ICommand ToggleStarCommand
-        {
-            get
-            {
-                return new MvxCommand(() => ToggleStarred(), () => Gist != null);
-            }
-        }
+        public ReactiveCommand<Unit, Gist> ForkCommand { get; }
 
         public static GistViewModel FromGist(Gist gist)
         {
-            return new GistViewModel
-            {
-                Gist = gist,
-                Id = gist.Id
-            };
+            return new GistViewModel(gist.Id) { Gist = gist };
         }
 
-        public void Init(NavObject navObject)
+        public GistViewModel(string id)
         {
-            Id = navObject.Id;
+            Id = id;
+
+            ToggleStarCommand = ReactiveCommand.CreateFromTask(
+                ToggleStar,
+                this.WhenAnyValue(x => x.IsStarred).Select(x => x != null));
+
+            ToggleStarCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Unable to " + (IsStarred.GetValueOrDefault() ? "unstar" : "star") + " this gist! Please try again.", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
+
+            ForkCommand = ReactiveCommand.CreateFromTask(ForkGist);
+
+            GoToUserCommand = ReactiveCommand.Create(
+                () => new UserViewModel(Gist.Owner.Login),
+                this.WhenAnyValue(x => x.Gist.Owner.Login).Select(x => x != null));
+
+            GoToHtmlCommand = ReactiveCommand.Create(
+                () => Gist.HtmlUrl,
+                this.WhenAnyValue(x => x.Gist).Select(x => x != null));
         }
 
-        private async Task ToggleStarred()
+        private async Task ToggleStar()
         {
-            try
-            {
-                var request = IsStarred ? this.GetApplication().Client.Gists[Id].Unstar() : this.GetApplication().Client.Gists[Id].Star();
-                await this.GetApplication().Client.ExecuteAsync(request);
-                IsStarred = !IsStarred;
-            }
-            catch
-            {
-                DisplayAlert("Unable to start gist. Please try again.");
-            }
+            if (IsStarred == null)
+                return;
+
+            var application = this.GetApplication();
+
+            if (IsStarred.Value)
+                await application.GitHubClient.Gist.Unstar(Id);
+            else
+                await application.GitHubClient.Gist.Star(Id);
+
+            IsStarred = !IsStarred;
         }
 
-        public async Task ForkGist()
+        public Task<Gist> ForkGist()
         {
-            var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Gists[Id].ForkGist());
-            var forkedGist = data.Data;
-            ShowViewModel<GistViewModel>(new GistViewModel.NavObject { Id = forkedGist.Id });
+            return this.GetApplication().GitHubClient.Gist.Fork(Id);
         }
 
         protected override async Task Load()
         {
-            Comments.Items.Clear();
-
             this.GetApplication().GitHubClient.Gist.IsStarred(Id)
                 .ToBackground(x => IsStarred = x);
 
             this.GetApplication().GitHubClient.Gist.Comment.GetAllForGist(Id)
-                .ToBackground(Comments.Items.AddRange);
+                .ToBackground(Comments.Reset);
 
             Gist = await this.GetApplication().GitHubClient.Gist.Get(Id);
         }
@@ -113,11 +100,6 @@ namespace CodeHub.Core.ViewModels.Gists
         public async Task Edit(GistUpdate editModel)
         {
             Gist = await this.GetApplication().GitHubClient.Gist.Edit(Id, editModel);
-        }
-
-        public class NavObject
-        {
-            public string Id { get; set; }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using CoreGraphics;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.iOS.TableViewSources
 {
@@ -13,10 +14,13 @@ namespace CodeHub.iOS.TableViewSources
         private readonly RootElement _root;
         private readonly Subject<CGPoint> _scrolledSubject = new Subject<CGPoint>();
         private readonly Subject<Element> _selectedSubject = new Subject<Element>();
+        private readonly Subject<Unit> _endSubject = new Subject<Unit>();
 
-        public IObservable<CGPoint> ScrolledObservable { get { return _scrolledSubject.AsObservable(); } }
+        public IObservable<CGPoint> ScrolledObservable => _scrolledSubject.AsObservable();
 
-        public IObservable<Element> SelectedObservable { get { return _selectedSubject.AsObservable(); } }
+        public IObservable<Element> SelectedObservable => _selectedSubject.AsObservable();
+
+        public IObservable<Unit> EndReachedObservable => _endSubject.AsObservable();
 
         public RootElement Root
         {
@@ -60,6 +64,10 @@ namespace CodeHub.iOS.TableViewSources
         {
             var section = Root[indexPath.Section];
             var element = section[indexPath.Row];
+
+            if (indexPath.Section == Root.Count - 1 && indexPath.Row == section.Count - 1)
+                _endSubject.OnNext(Unit.Default);
+
             return element.GetCell(tableView);
         }
 

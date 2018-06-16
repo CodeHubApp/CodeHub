@@ -89,27 +89,14 @@ namespace CodeHub.iOS.DialogElements
             }
         }
 
-        /// <summary>
-        /// Adds a new child Element to the Section
-        /// </summary>
-        /// <param name="element">
-        /// An element to add to the section.
-        /// </param>
-        public void Add (Element element)
+        public void Add (Element element, UITableViewRowAnimation anim = UITableViewRowAnimation.None)
         {
-            if (element == null)
-                return;
-
-            _elements.Add (element);
-            element.SetSection(this);
-
-            if (Root != null)
-                InsertVisual (_elements.Count-1, UITableViewRowAnimation.None, 1);
+            AddAll(new[] { element }, anim);
         }
 
-        public void Add(IEnumerable<Element> elements)
+        public void Add(IEnumerable<Element> elements, UITableViewRowAnimation anim = UITableViewRowAnimation.None)
         {
-            AddAll(elements);
+            AddAll(elements, anim);
         }
 
         /// <summary>
@@ -119,13 +106,26 @@ namespace CodeHub.iOS.DialogElements
         /// An enumerable list that can be produced by something like:
         ///    from x in ... select (Element) new MyElement (...)
         /// </param>
-        public int AddAll(IEnumerable<Element> elements)
+        public int AddAll(IEnumerable<Element> elements, UITableViewRowAnimation anim = UITableViewRowAnimation.None)
         {
+            var start = this.Count;
             int count = 0;
-            foreach (var e in elements){
-                Add (e);
+
+            foreach (var e in elements)
+            {
+                _elements.Add(e);
+                e.SetSection(this);
                 count++;
             }
+
+            if (Root != null && Root.TableView != null)
+            {
+                if (anim == UITableViewRowAnimation.None)
+                    Root.TableView.ReloadData();
+                else
+                    InsertVisual(start, anim, count);
+            }
+
             return count;
         }
 

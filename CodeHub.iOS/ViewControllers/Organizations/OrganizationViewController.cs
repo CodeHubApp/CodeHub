@@ -1,17 +1,22 @@
-using CodeHub.iOS.ViewControllers;
-using CodeHub.Core.ViewModels.Organizations;
-using UIKit;
-using CoreGraphics;
-using CodeHub.iOS.DialogElements;
 using System;
 using System.Reactive.Linq;
-using CodeHub.iOS.ViewControllers.Users;
+using CodeHub.Core.ViewModels.Organizations;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers.Gists;
+using CodeHub.iOS.ViewControllers.Users;
+using CoreGraphics;
+using ReactiveUI;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
     public class OrganizationViewController : PrettyDialogViewController
     {
+        public OrganizationViewController(string org)
+        {
+            ViewModel = new OrganizationViewModel(org);
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -32,8 +37,8 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
             OnActivation(d =>
             {
-                d(teams.Clicked.BindCommand(vm.GoToTeamsCommand));
-                d(events.Clicked.BindCommand(vm.GoToEventsCommand));
+                //d(teams.Clicked.BindCommand(vm.GoToTeamsCommand));
+                //d(events.Clicked.BindCommand(vm.GoToEventsCommand));
 
                 d(members.Clicked
                   .Select(_ => UsersViewController.CreateOrganizationMembersViewController(vm.Name))
@@ -52,7 +57,7 @@ namespace CodeHub.iOS.ViewControllers.Organizations
                   .Select(x => GistsViewController.CreateUserGistsViewController(vm.Name))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
-                d(vm.Bind(x => x.Organization, true).Where(x => x != null).Subscribe(x =>
+                d(vm.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
                 {
                     HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
                     HeaderView.SetImage(x.AvatarUrl, Images.Avatar);

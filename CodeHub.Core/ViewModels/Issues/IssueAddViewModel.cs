@@ -1,5 +1,4 @@
 using System;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using System.Linq;
@@ -11,53 +10,33 @@ namespace CodeHub.Core.ViewModels.Issues
     {
         private readonly IMessageService _messageService;
 
-        public IssueAddViewModel(IMessageService messageService)
-            : base(messageService)
+        public IssueAddViewModel(
+            string username,
+            string repository,
+            IMessageService messageService = null)
+            : base(username, repository, messageService)
         {
-            _messageService = messageService;
         }
 
         protected override async Task Save()
         {
             if (string.IsNullOrEmpty(IssueTitle))
-            {
-                DisplayAlert("Unable to save the issue: you must provide a title!");
-                return;
-            }
+                throw new Exception("Unable to save the issue: you must provide a title!");
 
-            try
+            var newIssue = new Octokit.NewIssue(IssueTitle)
             {
-                string assignedTo = AssignedTo == null ? null : AssignedTo.Login;
-                int? milestone = null;
-                if (Milestone != null) 
-                    milestone = Milestone.Number;
-                string[] labels = Labels.Items.Select(x => x.Name).ToArray();
-                var content = Content ?? string.Empty;
+                Body = Content ?? string.Empty,
+                Milestone = Milestone?.Number
+            };
 
-                IsSaving = true;
-                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues.Create(IssueTitle, content, assignedTo, milestone, labels));
-                _messageService.Send(new IssueAddMessage(data.Data));
-                ChangePresentation(new MvxClosePresentationHint(this));
-            }
-            catch
-            {
-                DisplayAlert("Unable to save new issue! Please try again.");
-            }
-            finally
-            {
-                IsSaving = false;
-            }
-        }
+            if (AssignedTo != null)
+                newIssue.Assignees.Add(AssignedTo.Login);
 
-        public void Init(NavObject navObject)
-        {
-            base.Init(navObject.Username, navObject.Repository);
-        }
+            foreach (var label in Labels.Select(x => x.Name))
+                newIssue.Labels.Add(label);
 
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            var result = await this.GetApplication().GitHubClient.Issue.Create(Username, Repository, newIssue);
+            MessageService.Send(new IssueAddMessage(result));
         }
     }
 }

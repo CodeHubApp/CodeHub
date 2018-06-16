@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using CodeHub.Core.Utils;
-using MvvmCross.Core.ViewModels;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels
 {
-    public class CollectionViewModel<TItem> : MvxViewModel, IEnumerable<TItem>, INotifyCollectionChanged
+    public class CollectionViewModel<TItem> : ReactiveObject, IEnumerable<TItem>, INotifyCollectionChanged
     {
         private readonly CustomObservableCollection<TItem> _source = new CustomObservableCollection<TItem>();
         private Func<IEnumerable<TItem>, IEnumerable<IGrouping<string, TItem>>> _groupingFunction;
@@ -38,7 +38,7 @@ namespace CodeHub.Core.ViewModels
             {
                 _moreItems = value;
                 if (!IsDefering)
-                    RaisePropertyChanged(() => MoreItems);
+                    this.RaisePropertyChanged();
             }
         }
 
@@ -49,7 +49,7 @@ namespace CodeHub.Core.ViewModels
             {
                 _sortingFunction = value;
                 if (!IsDefering)
-                    RaisePropertyChanged(() => SortingFunction);
+                    this.RaisePropertyChanged();
             }
         }
 
@@ -60,7 +60,7 @@ namespace CodeHub.Core.ViewModels
             {
                 _filteringFunction = value;
                 if (!IsDefering)
-                    RaisePropertyChanged(() => FilteringFunction);
+                    this.RaisePropertyChanged();
             }
         }
 
@@ -71,7 +71,7 @@ namespace CodeHub.Core.ViewModels
             {
                 _groupingFunction = value;
                 if (!IsDefering)
-                    RaisePropertyChanged(() => GroupingFunction);
+                    this.RaisePropertyChanged();
             }
         }
 

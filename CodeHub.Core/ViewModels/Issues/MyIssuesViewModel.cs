@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using CodeHub.Core.Filters;
-using GitHubSharp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Services;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -16,23 +18,22 @@ namespace CodeHub.Core.ViewModels.Issues
         private int _selectedFilter;
         public int SelectedFilter
         {
-            get { return _selectedFilter; }
-            set 
-            {
-                _selectedFilter = value;
-                RaisePropertyChanged(() => SelectedFilter);
-            }
+            get => _selectedFilter;
+            set => this.RaiseAndSetIfChanged(ref _selectedFilter, value);
         }
 
         public MyIssuesViewModel(IMessageService messageService = null)
         {
             messageService = messageService ?? GetService<IMessageService>();
             
-            _issues = new FilterableCollectionViewModel<IssueModel, MyIssuesFilterModel>("MyIssues");
+            _issues = new FilterableCollectionViewModel<Octokit.Issue, MyIssuesFilterModel>("MyIssues");
             _issues.GroupingFunction = Group;
-            _issues.Bind(x => x.Filter).Subscribe(_ => LoadCommand.Execute(false));
 
-            this.Bind(x => x.SelectedFilter).Subscribe(x =>
+            _issues.WhenAnyValue(x => x.Filter)
+                   .Select(_ => Unit.Default)
+                   .InvokeReactiveCommand(LoadCommand);
+
+            this.WhenAnyValue(x => x.SelectedFilter).Subscribe(x =>
             {
                 if (x == 0)
                     _issues.Filter = MyIssuesFilterModel.CreateOpenFilter();
@@ -59,7 +60,7 @@ namespace CodeHub.Core.ViewModels.Issues
             });
         }
 
-        protected override List<IGrouping<string, IssueModel>> Group(IEnumerable<IssueModel> model)
+        protected override List<IGrouping<string, Octokit.Issue>> Group(IEnumerable<Octokit.Issue> model)
         {
             var group = base.Group(model);
             if (group == null)
@@ -86,8 +87,9 @@ namespace CodeHub.Core.ViewModels.Issues
             string sort = Issues.Filter.SortType == MyIssuesFilterModel.Sort.None ? null : Issues.Filter.SortType.ToString().ToLower();
             string labels = string.IsNullOrEmpty(Issues.Filter.Labels) ? null : Issues.Filter.Labels;
 
-            var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
-            return Issues.SimpleCollectionLoad(request);
+            //var request = this.GetApplication().Client.AuthenticatedUser.Issues.GetAll(sort: sort, labels: labels, state: state, direction: direction, filter: filter);
+            //return Issues.SimpleCollectionLoad(request);
+            return Task.Delay(1);
         }
     }
 }

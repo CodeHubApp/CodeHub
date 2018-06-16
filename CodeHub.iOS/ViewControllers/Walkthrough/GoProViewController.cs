@@ -1,8 +1,8 @@
 ﻿using UIKit;
 using System;
 using CodeHub.iOS.ViewControllers.Application;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
+using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -28,7 +28,7 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
         {
             base.ViewWillAppear(animated);
 
-            var features = Mvx.Resolve<IFeaturesService>();
+            var features = Locator.Current.GetService<IFeaturesService>();
             if (features.IsProEnabled)
             {
                 TitleLabel.Text = "Pro Enabled!";

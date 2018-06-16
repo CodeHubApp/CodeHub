@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
@@ -11,9 +11,9 @@ using CodeHub.iOS.ViewControllers.Search;
 using CodeHub.iOS.ViewControllers.Settings;
 using CodeHub.iOS.Views;
 using CoreGraphics;
-using MvvmCross.Platform;
 using Splat;
 using UIKit;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -69,21 +69,21 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private static async Task PromptPushNotifications()
         {
-            var appService = Mvx.Resolve<IApplicationService>();
+            var appService = Locator.Current.GetService<IApplicationService>();
             if (IsAccountEnterprise)
                 return;
 
-            var featuresService = Mvx.Resolve<IFeaturesService>();
+            var featuresService = Locator.Current.GetService<IFeaturesService>();
             if (!featuresService.IsProEnabled)
                 return;
 
-            var alertDialogService = Mvx.Resolve<IAlertDialogService>();
-            var pushNotifications = Mvx.Resolve<IPushNotificationsService>();
+            var alertDialogService = Locator.Current.GetService<IAlertDialogService>();
+            var pushNotifications = Locator.Current.GetService<IPushNotificationsService>();
 
             if (appService.Account.IsPushNotificationsEnabled == null)
             {
                 var result = await alertDialogService.PromptYesNo("Push Notifications", "Would you like to enable push notifications for this account?");
-                var accountsService = Mvx.Resolve<IAccountsService>();
+                var accountsService = Locator.Current.GetService<IAccountsService>();
                 appService.Account.IsPushNotificationsEnabled = result;
                 await accountsService.Save(appService.Account);
 
@@ -122,23 +122,23 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             sections.Add(new Section
             {
-                new MenuElement("Profile", () => ViewModel.GoToProfileCommand.Execute(null), Octicon.Person.ToImage()),
-                (_notifications = new MenuElement("Notifications", () => ViewModel.GoToNotificationsCommand.Execute(null), Octicon.Inbox.ToImage()) { NotificationNumber = ViewModel.Notifications }),
-                new MenuElement("News", () => ViewModel.GoToNewsCommand.Execute(null), Octicon.RadioTower.ToImage()),
-                new MenuElement("Issues", () => ViewModel.GoToMyIssuesCommand.Execute(null), Octicon.IssueOpened.ToImage())
+                new MenuElement("Profile", GoToProfile, Octicon.Person.ToImage()),
+                (_notifications = new MenuElement("Notifications", GoToNotifications, Octicon.Inbox.ToImage()) { NotificationNumber = ViewModel.Notifications }),
+                new MenuElement("News", GoToNews, Octicon.RadioTower.ToImage()),
+                new MenuElement("Issues", GoToMyIssues, Octicon.IssueOpened.ToImage())
             });
 
             Uri avatarUri;
             Uri.TryCreate(ViewModel.Account.AvatarUrl, UriKind.Absolute, out avatarUri);
 
             var eventsSection = new Section { HeaderView = new MenuSectionView("Events") };
-            eventsSection.Add(new MenuElement(username, () => ViewModel.GoToMyEvents.Execute(null), Octicon.Rss.ToImage(), avatarUri));
+            eventsSection.Add(new MenuElement(username, GoToMyEvents, Octicon.Rss.ToImage(), avatarUri));
             if (ViewModel.Organizations != null && ViewModel.Account.ShowOrganizationsInEvents)
             {
                 foreach (var org in ViewModel.Organizations)
                 {
                     Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
-                    eventsSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationEventsCommand.Execute(org.Login), Octicon.Rss.ToImage(), avatarUri));
+                    eventsSection.Add(new MenuElement(org.Login, () => GoToOrganizationEvents(org.Login), Octicon.Rss.ToImage(), avatarUri));
                 }
             }
             sections.Add(eventsSection);
@@ -173,11 +173,11 @@ namespace CodeHub.iOS.ViewControllers.Application
                 foreach (var org in ViewModel.Organizations)
                 {
                     Uri.TryCreate(org.AvatarUrl, UriKind.Absolute, out avatarUri);
-                    orgSection.Add(new MenuElement(org.Login, () => ViewModel.GoToOrganizationCommand.Execute(org.Login), Images.Avatar, avatarUri));
+                    orgSection.Add(new MenuElement(org.Login, () => GoToOrganization(org.Login), Images.Avatar, avatarUri));
                 }
             }
             else
-                orgSection.Add(new MenuElement("Organizations", () => ViewModel.GoToOrganizationsCommand.Execute(null), Octicon.Organization.ToImage()));
+                orgSection.Add(new MenuElement("Organizations", GoToOrganizations, Octicon.Organization.ToImage()));
 
             //There should be atleast 1 thing...
             if (orgSection.Elements.Count > 0)
@@ -210,7 +210,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             CreateMenuRoot();
 
             // A user has been activated!
-            var appService = Mvx.Resolve<IApplicationService>();
+            var appService = Locator.Current.GetService<IApplicationService>();
             appService.ActivationAction?.Invoke();
             appService.ActivationAction = null;
 
@@ -221,11 +221,26 @@ namespace CodeHub.iOS.ViewControllers.Application
             #endif
         }
 
-        private void GoToSearch()
-        {
-            var vc = new ExploreViewController();
-            NavigationController?.PushViewController(vc, true);
-        }
+        private void GoToProfile() =>
+            this.PushViewController(new Users.UserViewController(ViewModel.Account.Username));
+    
+        private void GoToNotifications() =>
+            this.PushViewController(new NotificationsView());
+
+        private void GoToSearch() =>
+            this.PushViewController(new ExploreViewController());
+
+        private void GoToOrganizationEvents(string org) =>
+            this.PushViewController(Events.EventsViewController.ForOrganization(org));
+
+        private void GoToMyEvents() =>
+            this.PushViewController(Events.EventsViewController.ForUser(ViewModel.Account.Username));
+
+        private void GoToNews() =>
+            this.PushViewController(Events.EventsViewController.ForNews());
+
+        private void GoToMyIssues() =>
+            this.PushViewController(Views.Issues.MyIssuesView.Create());
 
         private void GoToSettings()
         {
@@ -250,6 +265,18 @@ namespace CodeHub.iOS.ViewControllers.Application
         private void GoToOwnedRepositories()
         {
             var vc = Repositories.RepositoriesViewController.CreateMineViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToOrganizations()
+        {
+            var vc = new Organizations.OrganizationsViewController();
+            NavigationController?.PushViewController(vc, true);
+        }
+
+        private void GoToOrganization(string org)
+        {
+            var vc = new Organizations.OrganizationViewController(org);
             NavigationController?.PushViewController(vc, true);
         }
 
@@ -317,7 +344,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             if (!string.IsNullOrEmpty(ViewModel.Account.AvatarUrl))
                 _profileButton.Uri = new Uri(ViewModel.Account.AvatarUrl);
 
-            ViewModel.Bind(x => x.Notifications).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.Notifications).Subscribe(x =>
             {
                 if (_notifications != null)
                 {
@@ -325,9 +352,9 @@ namespace CodeHub.iOS.ViewControllers.Application
                 }
             });
 
-            ViewModel.Bind(x => x.Organizations).Subscribe(x => CreateMenuRoot());
+            ViewModel.WhenAnyValue(x => x.Organizations).Subscribe(x => CreateMenuRoot());
 
-            ViewModel.LoadCommand.Execute(null);
+            ViewModel.LoadCommand.ExecuteNow();
 
         }
 

@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Linq;
 using CodeHub.iOS.ViewControllers;
 using UIKit;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.DialogElements;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -38,34 +39,34 @@ namespace CodeHub.iOS.Views.Issues
 
             OnActivation(d =>
             {
-                d(vm.Bind(x => x.IssueTitle, true).Subscribe(x => title.Value = x));
+                d(vm.WhenAnyValue(x => x.IssueTitle).Subscribe(x => title.Value = x));
                 d(title.Changed.Subscribe(x => vm.IssueTitle = x));
 
-                d(assignedTo.Clicked.BindCommand(vm.GoToAssigneeCommand));
-                d(milestone.Clicked.BindCommand(vm.GoToMilestonesCommand));
-                d(labels.Clicked.BindCommand(vm.GoToLabelsCommand));
+                //d(assignedTo.Clicked.BindCommand(vm.GoToAssigneeCommand));
+                //d(milestone.Clicked.BindCommand(vm.GoToMilestonesCommand));
+                //d(labels.Clicked.BindCommand(vm.GoToLabelsCommand));
 
-                d(vm.Bind(x => x.IsOpen, true).Subscribe(x => state.Value = x));
-                d(vm.Bind(x => x.IsSaving).SubscribeStatus("Updating..."));
+                d(vm.WhenAnyValue(x => x.IsOpen).Subscribe(x => state.Value = x));
+                d(vm.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Updating..."));
 
                 d(state.Changed.Subscribe(x => vm.IsOpen = x));
-                d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
+                d(vm.WhenAnyValue(x => x.Content).Subscribe(x => content.Details = x));
 
-                d(vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
+                d(vm.WhenAnyValue(x => x.AssignedTo).Subscribe(x => {
                     assignedTo.Value = x == null ? "Unassigned" : x.Login;
                 }));
 
-                d(vm.Bind(x => x.Milestone, true).Subscribe(x => {
+                d(vm.WhenAnyValue(x => x.Milestone).Subscribe(x => {
                     milestone.Value = x == null ? "None" : x.Title;
                 }));
 
-                d(vm.BindCollection(x => x.Labels, true).Subscribe(x => {
-                    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
-                }));
+                //d(vm.BindCollection(x => x.Labels, true).Subscribe(x => {
+                //    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
+                //}));
 
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
-                    vm.SaveCommand.Execute(null);
+                    vm.SaveCommand.ExecuteNow();
                 }));
 
                 d(content.Clicked.Subscribe(_ => {

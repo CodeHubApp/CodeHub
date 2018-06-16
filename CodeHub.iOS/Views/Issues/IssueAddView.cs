@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using UIKit;
 using System.Linq;
 using CodeHub.iOS.Utilities;
 using CodeHub.iOS.DialogElements;
+using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -36,30 +37,30 @@ namespace CodeHub.iOS.Views.Issues
 
             OnActivation(d =>
             {
-                d(vm.Bind(x => x.IssueTitle, true).Subscribe(x => title.Value = x));
+                d(vm.WhenAnyValue(x => x.IssueTitle).Subscribe(x => title.Value = x));
                 d(title.Changed.Subscribe(x => vm.IssueTitle = x));
 
-                d(vm.Bind(x => x.Content, true).Subscribe(x => content.Details = x));
-                d(labels.Clicked.Subscribe(_ => vm.GoToLabelsCommand.Execute(null)));
-                d(milestone.Clicked.Subscribe(_ => vm.GoToMilestonesCommand.Execute(null)));
-                d(assignedTo.Clicked.Subscribe(_ => vm.GoToAssigneeCommand.Execute(null)));
-                d(vm.Bind(x => x.IsSaving).SubscribeStatus("Saving..."));
+                d(vm.WhenAnyValue(x => x.Content).Subscribe(x => content.Details = x));
+                //d(labels.Clicked.Subscribe(_ => vm.GoToLabelsCommand.Execute(null)));
+                //d(milestone.Clicked.Subscribe(_ => vm.GoToMilestonesCommand.Execute(null)));
+                //d(assignedTo.Clicked.Subscribe(_ => vm.GoToAssigneeCommand.Execute(null)));
+                d(vm.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving..."));
 
-                d(vm.Bind(x => x.AssignedTo, true).Subscribe(x => {
+                d(vm.WhenAnyValue(x => x.AssignedTo).Subscribe(x => {
                     assignedTo.Value = x == null ? "Unassigned" : x.Login;
                 }));
 
-                d(vm.Bind(x => x.Milestone, true).Subscribe(x => {
+                d(vm.WhenAnyValue(x => x.Milestone).Subscribe(x => {
                     milestone.Value = x == null ? "None" : x.Title;
                 }));
 
-                d(vm.BindCollection(x => x.Labels, true).Subscribe(_ => {
-                    labels.Value = vm.Labels.Items.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
-                }));
+                //d(vm.BindCollection(x => x.Labels, true).Subscribe(_ => {
+                //    labels.Value = vm.Labels.Count == 0 ? "None" : string.Join(", ", vm.Labels.Items.Select(i => i.Name));
+                //}));
 
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
-                    vm.SaveCommand.Execute(null);
+                    vm.SaveCommand.ExecuteNow();
                 }));
 
                 d(content.Clicked.Subscribe(_ => {

@@ -1,11 +1,12 @@
 using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
-using GitHubSharp.Models;
-using CodeHub.Core.Messages;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using CodeHub.Core.Messages;
 using CodeHub.Core.Services;
+using ReactiveUI;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -14,72 +15,60 @@ namespace CodeHub.Core.ViewModels.PullRequests
         private readonly IMessageService _messageService;
         private IDisposable _pullRequestEditSubscription;
 
-        private readonly CollectionViewModel<PullRequestModel> _pullrequests = new CollectionViewModel<PullRequestModel>();
-        public CollectionViewModel<PullRequestModel> PullRequests
-        {
-            get { return _pullrequests; }
-        }
+        public ReactiveList<Octokit.PullRequest> PullRequests { get; } = new ReactiveList<Octokit.PullRequest>();
 
-        public string Username { get; private set; }
+        public string Username { get; }
 
-        public string Repository { get; private set; }
+        public string Repository { get; }
 
         private int _selectedFilter;
         public int SelectedFilter
         {
-            get { return _selectedFilter; }
-            set 
-            {
-                _selectedFilter = value;
-                RaisePropertyChanged(() => SelectedFilter);
-            }
+            get => _selectedFilter;
+            set => this.RaiseAndSetIfChanged(ref _selectedFilter, value);
         }
 
-        public ICommand GoToPullRequestCommand
-        {
-            get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
-        }
+        //public ICommand GoToPullRequestCommand
+        //{
+        //    get { return new MvxCommand<PullRequestModel>(x => ShowViewModel<PullRequestViewModel>(new PullRequestViewModel.NavObject { Username = Username, Repository = Repository, Id = x.Number })); }
+        //}
 
-        public PullRequestsViewModel(IMessageService messageService)
+        public PullRequestsViewModel(
+            string username,
+            string repository,
+            IMessageService messageService = null)
         {
-            _messageService = messageService;
-            this.Bind(x => x.SelectedFilter).Subscribe(_ => LoadCommand.Execute(null));
-        }
+            Username = username;
+            Repository = repository;
 
-        public void Init(NavObject navObject) 
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
+            _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
 
-            PullRequests.FilteringFunction = x => {
-                var state = SelectedFilter == 0 ? "open" : "closed";
-                return x.Where(y => y.State == state);
-            };
+            this.WhenAnyValue(x => x.SelectedFilter)
+                .Select(_ => Unit.Default)
+                .InvokeReactiveCommand(LoadCommand);
 
             _pullRequestEditSubscription = _messageService.Listen<PullRequestEditMessage>(x =>
             {
                 if (x.PullRequest == null)
                     return;
-          
-                var index = PullRequests.Items.IndexOf(x.PullRequest);
+
+                var index = PullRequests.IndexOf(x.PullRequest);
                 if (index < 0)
                     return;
-                PullRequests.Items[index] = x.PullRequest;
-                PullRequests.Refresh();
+                
+                PullRequests[index] = x.PullRequest;
             });
         }
 
-        protected override Task Load()
+        protected override async Task Load()
         {
-            var state = SelectedFilter == 0 ? "open" : "closed";
-            var request = this.GetApplication().Client.Users[Username].Repositories[Repository].PullRequests.GetAll(state: state);
-            return PullRequests.SimpleCollectionLoad(request);
-        }
+            var request = new Octokit.PullRequestRequest
+            {
+                State = SelectedFilter == 0 ? Octokit.ItemStateFilter.Open : Octokit.ItemStateFilter.Closed
+            };
 
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
+            var result = await this.GetApplication().GitHubClient.PullRequest.GetAllForRepository(Username, Repository, request);
+            PullRequests.Reset(result);
         }
     }
 }

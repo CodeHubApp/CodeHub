@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using CodeHub.Core.ViewModels.Repositories;
 using UIKit;
 using CodeHub.iOS.DialogElements;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
 using System.Reactive.Linq;
@@ -16,6 +15,8 @@ using CodeHub.iOS.Views.Source;
 using System.Linq;
 using Humanizer;
 using System.Reactive;
+using Splat;
+using CodeHub.iOS.ViewControllers.Commits;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
@@ -42,10 +43,10 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             Appeared.Take(1)
                 .Select(_ => Observable.Timer(TimeSpan.FromSeconds(0.35f)).Take(1))
                 .Switch()
-                .Select(_ => ViewModel.Bind(x => x.IsStarred, true).Where(x => x.HasValue))
+                .Select(_ => ViewModel.WhenAnyValue(x => x.IsStarred).Where(x => x.HasValue))
                 .Switch()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => HeaderView.SetSubImage(x.Value ? Octicon.Star.ToImage() : null));
+                .Subscribe(x => HeaderView.SetSubImage(x.GetValueOrDefault() ? Octicon.Star.ToImage() : null));
 
             var actionButton = NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Action) { Enabled = false };
 
@@ -74,17 +75,17 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                     NavigationController?.PushViewController(vc, true);
                 }));
 
-                d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
+                //d(_eventsElement.Clicked.BindCommand(ViewModel.GoToEventsCommand));
 
                 d(_commitsElement.Clicked.Subscribe(_ => GoToCommits()));
 
-                d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
+                //d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
                 d(_sourceElement.Clicked.Subscribe(_ => GoToSourceCode()));
 
-                d(ViewModel.Bind(x => x.Branches, true).Subscribe(_ => Render()));
-                d(ViewModel.Bind(x => x.Readme, true).Subscribe(_ => Render()));
+                d(ViewModel.WhenAnyValue(x => x.Branches).Subscribe(_ => Render()));
+                d(ViewModel.WhenAnyValue(x => x.Readme).Subscribe(_ => Render()));
 
-                d(ViewModel.Bind(x => x.Repository)
+                d(ViewModel.WhenAnyValue(x => x.Repository)
                   .Select(x => x?.Parent)
                   .Where(x => x != null)
                   .Subscribe(x => _forkElement.Value.Value = x.FullName));
@@ -94,15 +95,17 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                   .Select(x => ViewModel.Repository?.Parent)
                   .Subscribe(GoToForkedRepository));
 
-                d(_issuesElement.Value.Clicked.BindCommand(ViewModel.GoToIssuesCommand));
+                //d(_issuesElement.Value.Clicked.BindCommand(ViewModel.GoToIssuesCommand));
                 d(_readmeElement.Value.Clicked.Subscribe(_ => GoToReadme()));
-                d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
+                //d(_websiteElement.Value.Clicked.Select(x => ViewModel.Repository.Homepage).BindCommand(ViewModel.GoToUrlCommand));
 
                 d(HeaderView.Clicked.Merge(_ownerElement.Clicked.Select(_ => Unit.Default))
-                  .Select(_ => new UserViewController(ViewModel.Username, ViewModel.Repository.Owner))
+                  .Select(_ => new UserViewController(ViewModel.Username, ViewModel.Repository?.Owner))
                   .Subscribe(x => this.PushViewController(x)));
 
-                d(ViewModel.Bind(x => x.Repository, true).Where(x => x != null).Subscribe(x =>
+                d(ViewModel
+                  .WhenAnyValue(x => x.Repository)
+                  .Where(x => x != null).Subscribe(x =>
                 {
                     if (x.Private && !_featuresService.IsProEnabled)
                     {
@@ -143,19 +146,20 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 // Pin to menu
                 if (e.ButtonIndex == pinButton)
                 {
-                    ViewModel.PinCommand.Execute(null);
+                    ViewModel.PinCommand.ExecuteNow();
                 }
                 else if (e.ButtonIndex == starButton)
                 {
-                    ViewModel.ToggleStarCommand.Execute(null);
+                    ViewModel.ToggleStarCommand.ExecuteNow();
                 }
                 else if (e.ButtonIndex == watchButton)
                 {
-                    ViewModel.ToggleWatchCommand.Execute(null);
+                    ViewModel.ToggleWatchCommand.ExecuteNow();
                 }
                 else if (e.ButtonIndex == showButton)
                 {
-                    ViewModel.GoToHtmlUrlCommand.Execute(null);
+                    //TODO: FIX
+                    //ViewModel.GoToHtmlUrlCommand.ExecuteNow();
                 }
                 else if (e.ButtonIndex == shareButton)
                 {
@@ -204,9 +208,10 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             Octokit.Repository repository = null)
             : this()
         {
-            ViewModel = new RepositoryViewModel();
-            ViewModel.Init(new RepositoryViewModel.NavObject { Username = owner, Repository = repositoryName });
-            ViewModel.Repository = repository;
+            ViewModel = new RepositoryViewModel(owner, repositoryName)
+            {
+                Repository = repository
+            };
         }
 
         private void GoToSourceCode()
@@ -244,21 +249,22 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             var branches = ViewModel.Branches;
             if (branches?.Count == 1)
             {
-                var viewController = new ChangesetsView(owner, repo, branches.First().Name);
+                var viewController = CommitsViewController.RepositoryCommits(owner, repo, branches.First().Name);
                 this.PushViewController(viewController);
             }
             else
             {
                 var viewController = new BranchesViewController(owner, repo, branches);
                 viewController.BranchSelected.Subscribe(
-                    branch => viewController.PushViewController(new ChangesetsView(owner, repo, branch.Name)));
+                    branch => viewController.PushViewController(
+                        CommitsViewController.RepositoryCommits(owner, repo, branch.Name)));
                 this.PushViewController(viewController);
             }
         }
 
         public RepositoryViewController()
         {
-            _featuresService = Mvx.Resolve<IFeaturesService>();
+            _featuresService = Locator.Current.GetService<IFeaturesService>();
 
             _forkElement = new Lazy<StringElement>(() => new StringElement("Forked From", string.Empty) { Image = Octicon.RepoForked.ToImage() });
             _issuesElement = new Lazy<StringElement>(() => new StringElement("Issues", Octicon.IssueOpened.ToImage()));

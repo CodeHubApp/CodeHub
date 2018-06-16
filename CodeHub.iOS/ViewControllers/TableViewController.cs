@@ -9,6 +9,7 @@ namespace CodeHub.iOS.ViewControllers
     {
         private readonly Lazy<UITableView> _tableView;
         private UIRefreshControl _refreshControl;
+        private NSObject _hideNotification, _showNotification;
 
         public UITableView TableView => _tableView.Value;
 
@@ -27,7 +28,7 @@ namespace CodeHub.iOS.ViewControllers
             }
         }
 
-        public TableViewController(UITableViewStyle style)
+        public TableViewController(UITableViewStyle style = UITableViewStyle.Plain)
         {
             _tableView = new Lazy<UITableView>(() => new UITableView(CGRect.Empty, style));
 
@@ -47,12 +48,15 @@ namespace CodeHub.iOS.ViewControllers
             Add(TableView);
         }
 
-        NSObject _hideNotification, _showNotification;
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillHideNotification, OnKeyboardHideNotification);
-            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(UIKeyboard.WillShowNotification, OnKeyboardNotification);
+
+            _hideNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                UIKeyboard.WillHideNotification, OnKeyboardHideNotification);
+            
+            _showNotification = NSNotificationCenter.DefaultCenter.AddObserver(
+                UIKeyboard.WillShowNotification, OnKeyboardNotification);
 
             var index = TableView.IndexPathForSelectedRow;
             if (ClearSelectionOnAppear && index != null)

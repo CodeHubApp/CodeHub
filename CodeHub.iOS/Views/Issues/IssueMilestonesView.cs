@@ -3,8 +3,10 @@ using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.Issues;
 using System.Linq;
 using UIKit;
-using CodeHub.iOS.Utilities;
 using CodeHub.iOS.DialogElements;
+using ReactiveUI;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
@@ -26,21 +28,20 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = 80f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
 
-            var vm = (IssueMilestonesViewModel)ViewModel;
-            BindCollection(vm.Milestones, x => {
-                var e = new MilestoneElement(x.Number, x.Title, x.OpenIssues, x.ClosedIssues, x.DueOn);
-                e.Tapped += () => {
-                    if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
-                        vm.SelectedMilestone = null;
-                    else
-                        vm.SelectedMilestone = x;
-                };
-                if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == x.Number)
-                    e.Accessory = UITableViewCellAccessory.Checkmark;
-                return e;
-            });
+            var viewModel = (IssueMilestonesViewModel)ViewModel;
 
-            vm.Bind(x => x.SelectedMilestone).Subscribe(x =>
+            viewModel
+                .Milestones.Changed
+                .Select(_ => Unit.Default)
+                .StartWith(Unit.Default)
+                .Subscribe(_ =>
+                {
+                    var section = new Section();
+                    section.AddAll(viewModel.Milestones.Select(CreateElement));
+                    Root.Reset(section);
+                });
+
+            viewModel.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x =>
             {
                 if (Root.Count == 0)
                     return;
@@ -48,7 +49,27 @@ namespace CodeHub.iOS.Views.Issues
                     m.Accessory = (x != null && m.Number == x.Number) ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
             });
 
-            vm.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
+            //viewModel.Bind(x => x.IsSaving).SubscribeStatus("Saving...");
+        }
+
+        public MilestoneElement CreateElement(Octokit.Milestone milestone)
+        {
+            var e = new MilestoneElement(
+                milestone.Number, milestone.Title, milestone.OpenIssues, milestone.ClosedIssues, milestone.DueOn);
+
+            var vm = (IssueMilestonesViewModel)ViewModel;
+
+            e.Tapped += () => {
+                if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == milestone.Number)
+                    vm.SelectedMilestone = null;
+                else
+                    vm.SelectedMilestone = milestone;
+            };
+
+            if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == milestone.Number)
+                e.Accessory = UITableViewCellAccessory.Checkmark;
+            
+            return e;    
         }
     }
 }

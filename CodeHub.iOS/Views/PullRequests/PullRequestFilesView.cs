@@ -29,18 +29,19 @@ namespace CodeHub.iOS.Views.PullRequests
 
             var weakVm = new WeakReference<PullRequestFilesViewModel>(ViewModel);
             var weakVc = new WeakReference<PullRequestFilesView>(this);
-            BindCollection(ViewModel.Files, x =>
-            {
-                var name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
-                var el = new StringElement(name, x.Status, UITableViewCellStyle.Subtitle);
-                el.Image = Octicon.FileCode.ToImage();
-                el.Accessory = UITableViewCellAccessory.DisclosureIndicator;
-                el.Clicked.Subscribe(_ => weakVc.Get()?.GoToFile(x));
-                return el;
-            });
+
+            //BindCollection(ViewModel.Files, x =>
+            //{
+            //    var name = x.Filename.Substring(x.Filename.LastIndexOf("/", StringComparison.Ordinal) + 1);
+            //    var el = new StringElement(name, x.Status, UITableViewCellStyle.Subtitle);
+            //    el.Image = Octicon.FileCode.ToImage();
+            //    el.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+            //    el.Clicked.Subscribe(_ => weakVc.Get()?.GoToFile(x));
+            //    return el;
+            //});
         }
 
-        private void GoToFile(GitHubSharp.Models.CommitModel.CommitFileModel file)
+        private void GoToFile(Octokit.GitHubCommitFile file)
         {
             if (file.Patch == null)
             {

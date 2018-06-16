@@ -1,15 +1,10 @@
 using System;
-using MvvmCross.Core.ViewModels;
-using CodeHub.iOS.ViewControllers;
 using UIKit;
 using CodeHub.Core.ViewModels;
 using CodeHub.iOS.Views;
-using MvvmCross.Platform.iOS.Views;
-using MvvmCross.iOS.Views;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Platform.Core;
 using CodeHub.iOS.Utilities;
 using System.Linq;
+using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -112,14 +107,15 @@ namespace CodeHub.iOS.ViewControllers
         }
     }
 
-    public abstract class ViewModelDrivenDialogViewController : DialogViewController, IMvxIosView, IMvxEventSourceViewController
+    public abstract class ViewModelDrivenDialogViewController : DialogViewController
     {
+        public ReactiveObject ViewModel { get; protected set; }
+
         private bool _manualRefreshRequested;
   
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            ViewDidLoadCalled.Raise(this);
 
             var loadableViewModel = ViewModel as LoadableViewModel;
             if (loadableViewModel != null)
@@ -127,7 +123,7 @@ namespace CodeHub.iOS.ViewControllers
                 RefreshControl = new UIRefreshControl();
                 OnActivation(d =>
                 {
-                    d(loadableViewModel.Bind(x => x.IsLoading, true).Subscribe(x =>
+                    d(loadableViewModel.LoadCommand.IsExecuting.Subscribe(x =>
                     {
                         if (x)
                         {
@@ -174,7 +170,6 @@ namespace CodeHub.iOS.ViewControllers
         protected ViewModelDrivenDialogViewController(bool push = true, UITableViewStyle style = UITableViewStyle.Grouped)
             : base(style, push)
         {
-            this.AdaptForBinding();
         }
 
         private void HandleRefreshRequested(object sender, EventArgs e)
@@ -183,7 +178,7 @@ namespace CodeHub.iOS.ViewControllers
             if (loadableViewModel != null)
             {
                 _manualRefreshRequested = true;
-                loadableViewModel.LoadCommand.Execute(true);
+                loadableViewModel.LoadCommand.ExecuteNow();
             }
         }
 
@@ -191,13 +186,12 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-            ViewWillAppearCalled.Raise(this, animated);
 
             if (!_isLoaded)
             {
                 var loadableViewModel = ViewModel as LoadableViewModel;
                 if (loadableViewModel != null)
-                    loadableViewModel.LoadCommand.Execute(false);
+                    loadableViewModel.LoadCommand.ExecuteNow();
                 _isLoaded = true;
             }
 
@@ -205,65 +199,13 @@ namespace CodeHub.iOS.ViewControllers
                 RefreshControl.ValueChanged += HandleRefreshRequested;
         }
 
-        public override void ViewWillDisappear(bool animated)
-        {
-            base.ViewWillDisappear(animated);
-            ViewWillDisappearCalled.Raise(this, animated);
-        }
-
-        public object DataContext
-        {
-            get { return BindingContext.DataContext; }
-            set { BindingContext.DataContext = value; }
-        }
-
-        public IMvxViewModel ViewModel
-        {
-            get { return DataContext as IMvxViewModel;  }
-            set { DataContext = value; }
-        }
-
-        public IMvxBindingContext BindingContext { get; set; }
-
-        public MvxViewModelRequest Request { get; set; }
-
         public override void ViewDidDisappear(bool animated)
         {
             base.ViewDidDisappear(animated);
-            ViewDidDisappearCalled.Raise(this, animated);
 
             if (RefreshControl != null)
                 RefreshControl.ValueChanged -= HandleRefreshRequested;
         }
-
-        public override void ViewDidAppear(bool animated)
-        {
-            base.ViewDidAppear(animated);
-            ViewDidAppearCalled.Raise(this, animated);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                DisposeCalled.Raise(this);
-            }
-            base.Dispose(disposing);
-        }
-
-        public override void ViewDidLayoutSubviews()
-        {
-            base.ViewDidLayoutSubviews();
-            ViewDidLayoutSubviewsCalled.Raise(this);
-        }
-
-        public event EventHandler DisposeCalled;
-        public event EventHandler ViewDidLoadCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewWillAppearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewDidAppearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewDidDisappearCalled;
-        public event EventHandler<MvxValueEventArgs<bool>> ViewWillDisappearCalled;
-        public event EventHandler ViewDidLayoutSubviewsCalled;
     }
 }
 

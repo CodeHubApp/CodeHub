@@ -1,53 +1,49 @@
 using System;
-using GitHubSharp.Models;
-using System.Windows.Input;
-using MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using CodeHub.Core.Messages;
 using CodeHub.Core.Services;
+using Splat;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
     public abstract class IssueModifyViewModel : BaseViewModel
     {
-        private readonly IMessageService _messageService;
-        private string _title;
-        private string _content;
-        private BasicUserModel _assignedTo;
-        private readonly CollectionViewModel<LabelModel> _labels = new CollectionViewModel<LabelModel>();
-        private MilestoneModel _milestone;
         private IDisposable _labelsToken, _milestoneToken, _assignedToken;
-        private bool _isSaving;
 
+        private string _title;
         public string IssueTitle
         {
             get { return _title; }
             set { this.RaiseAndSetIfChanged(ref _title, value); }
         }
 
+        private string _content;
         public string Content
         {
             get { return _content; }
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        public MilestoneModel Milestone
+        private Octokit.Milestone _milestone;
+        public Octokit.Milestone Milestone
         {
             get { return _milestone; }
             set { this.RaiseAndSetIfChanged(ref _milestone, value); }
         }
 
-        public CollectionViewModel<LabelModel> Labels
-        {
-            get { return _labels; }
-        }
+        public ReactiveList<Octokit.Label> Labels { get; } = new ReactiveList<Octokit.Label>();
 
-        public BasicUserModel AssignedTo
+        private Octokit.User _assignedTo;
+        public Octokit.User AssignedTo
         {
             get { return _assignedTo; }
             set { this.RaiseAndSetIfChanged(ref _assignedTo, value); }
         }
 
+        private bool _isSaving;
         public bool IsSaving
         {
             get { return _isSaving; }
@@ -58,57 +54,30 @@ namespace CodeHub.Core.ViewModels.Issues
 
         public string Repository { get; private set; }
 
-        public ICommand GoToLabelsCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Labels);
-                    ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository });
-                }); 
-            }
-        }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
-        public ICommand GoToMilestonesCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(Milestone);
-                    ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository });
-                });
-            }
-        }
+        protected IMessageService MessageService { get; }
 
-        public ICommand GoToAssigneeCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<CodeHub.Core.Services.IViewModelTxService>().Add(AssignedTo);
-                    ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository });
-                }); 
-            }
-        }
-
-        public ICommand SaveCommand
-        {
-            get { return new MvxCommand(() => Save()); }
-        }
-
-        public IssueModifyViewModel(IMessageService messageService)
-        {
-            _messageService = messageService;
-        }
-
-        protected void Init(string username, string repository)
+        protected IssueModifyViewModel(
+            string username,
+            string repository,
+            IMessageService messageService = null)
         {
             Username = username;
             Repository = repository;
+            MessageService = messageService ?? Locator.Current.GetService<IMessageService>();
 
-            _labelsToken = _messageService.Listen<SelectIssueLabelsMessage>(x => Labels.Items.Reset(x.Labels));
-            _milestoneToken = _messageService.Listen<SelectedMilestoneMessage>(x => Milestone = x.Milestone);
-            _assignedToken = _messageService.Listen<SelectedAssignedToMessage>(x => AssignedTo = x.User);
+            _labelsToken = MessageService.Listen<SelectIssueLabelsMessage>(x => Labels.Reset(x.Labels));
+            _milestoneToken = MessageService.Listen<SelectedMilestoneMessage>(x => Milestone = x.Milestone);
+            _assignedToken = MessageService.Listen<SelectedAssignedToMessage>(x => AssignedTo = x.User);
+
+            SaveCommand = ReactiveCommand.CreateFromTask(Save);
+
+            SaveCommand
+                .ThrownExceptions
+                .Select(err => new UserError(err.Message))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
         }
 
         protected abstract Task Save();

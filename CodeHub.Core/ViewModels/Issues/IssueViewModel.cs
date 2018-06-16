@@ -1,17 +1,15 @@
-using System.Threading.Tasks;
-using GitHubSharp.Models;
-using System.Windows.Input;
-using CodeHub.Core.Messages;
-using CodeHub.Core.Services;
 using System;
-using MvvmCross.Core.ViewModels;
-using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.User;
-using System.Reactive;
-using Splat;
-using System.Reactive.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
+using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
+using CodeHub.Core.ViewModels.User;
+using ReactiveUI;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Issues
 {
@@ -23,23 +21,11 @@ namespace CodeHub.Core.ViewModels.Issues
         private readonly IMessageService _messageService;
         private readonly IMarkdownService _markdownService;
 
-        public long Id 
-        { 
-            get; 
-            private set; 
-        }
+        public int Id { get; }
 
-        public string Username 
-        { 
-            get; 
-            private set; 
-        }
+        public string Username { get; }
 
-        public string Repository 
-        { 
-            get; 
-            private set; 
-        }
+        public string Repository { get; }
 
         private string _markdownDescription;
         public string MarkdownDescription
@@ -69,18 +55,11 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _isCollaborator, value); }
         }
 
-        private IssueModel _issueModel;
-        public IssueModel Issue
+        private Octokit.Issue _issueModel;
+        public Octokit.Issue Issue
         {
             get { return _issueModel; }
             private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
-        }
-
-        private bool _isModifying;
-        public bool IsModifying
-        {
-            get { return _isModifying; }
-            set { this.RaiseAndSetIfChanged(ref _isModifying, value); }
         }
 
         private int? _participants;
@@ -104,59 +83,17 @@ namespace CodeHub.Core.ViewModels.Issues
             private set { this.RaiseAndSetIfChanged(ref _events, value); }
         }
 
-        public ReactiveUI.ReactiveCommand<Unit, bool> GoToOwner { get; }
+        public ReactiveCommand<Unit, UserViewModel> GoToOwner { get; }
 
-        public ICommand GoToAssigneeCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Issue.Assignee);
-                    ShowViewModel<IssueAssignedToViewModel>(new IssueAssignedToViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                }, () =>  IsCollaborator); 
-            }
-        }
+        public ReactiveCommand<Unit, IssueEditViewModel> GoToEditCommand { get; }
 
-        public ICommand GoToMilestoneCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Issue.Milestone);
-                    ShowViewModel<IssueMilestonesViewModel>(new IssueMilestonesViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                }, () =>  IsCollaborator); 
-            }
-        }
+        public ReactiveCommand<Unit, IssueLabelsViewModel> GoToLabelsCommand { get; }
 
-        public ICommand GoToLabelsCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Issue.Labels);
-                    ShowViewModel<IssueLabelsViewModel>(new IssueLabelsViewModel.NavObject { Username = Username, Repository = Repository, Id = Id, SaveOnSelect = true });
-                }, () =>  IsCollaborator); 
-            }
-        }
+        public ReactiveCommand<Unit, IssueMilestonesViewModel> GoToMilestoneCommand { get; }
 
-        public ICommand GoToEditCommand
-        {
-            get 
-            { 
-                return new MvxCommand(() => {
-                    GetService<IViewModelTxService>().Add(Issue);
-                    ShowViewModel<IssueEditViewModel>(new IssueEditViewModel.NavObject { Username = Username, Repository = Repository, Id = Id });
-                }, () => Issue != null && IsCollaborator); 
-            }
-        }
+        public ReactiveCommand<Unit, IssueAssignedToViewModel> GoToAssigneeCommand { get; }
 
-        public ICommand ToggleStateCommand
-        {
-            get 
-            {
-                return new MvxCommand(() => ToggleState(Issue.State == "open"), () => Issue != null);
-            }
-        }
+        public ReactiveCommand<Unit, Unit> ToggleStateCommand { get; }
 
         protected override Task Load()
         {
@@ -168,6 +105,9 @@ namespace CodeHub.Core.ViewModels.Issues
                     .GitHubClient.Repository.Get(Username, Repository)
                     .ToBackground(x => ShouldShowPro = x.Private && !_featuresService.IsProEnabled);
             }
+
+            var issue = this.GetApplication().GitHubClient.Issue.Get(Username, Repository, Id)
+                            .ContinueWith(r => Issue = r.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             _applicationService
                 .GitHubClient.Issue.Comment.GetAllForIssue(Username, Repository, (int)Id)
@@ -185,39 +125,65 @@ namespace CodeHub.Core.ViewModels.Issues
                 .GitHubClient.Repository.Collaborator.IsCollaborator(Username, Repository, _applicationService.Account.Username)
                 .ToBackground(x => IsCollaborator = x);
 
-            return this.RequestModel(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Id].Get(), response => Issue = response.Data);
+            return issue;
         }
 
         public IssueViewModel(
+            string username,
+            string repository,
+            int id,
             IApplicationService applicationService = null,
             IFeaturesService featuresService = null,
             IMessageService messageService = null,
             IMarkdownService markdownService = null)
         {
+            Username = username;
+            Repository = repository;
+            Id = id;
+
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
             _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
             _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
-            this.Bind(x => x.Issue, true)
+            this.WhenAnyValue(x => x.Issue)
                 .Where(x => x != null)
-                .Select(x => string.Equals(x.State, "closed"))
+                .Select(x => x.State.Value == Octokit.ItemState.Closed)
                 .Subscribe(x => IsClosed = x);
 
-            this.Bind(x => x.Issue, true)
+            this.WhenAnyValue(x => x.Issue)
                 .SelectMany(issue => _markdownService.Convert(issue?.Body).ToObservable())
                 .Subscribe(x => MarkdownDescription = x);
 
-            GoToOwner = ReactiveUI.ReactiveCommand.Create(
-                () => ShowViewModel<UserViewModel>(new UserViewModel.NavObject { Username = Issue?.User?.Login }),
-                this.Bind(x => x.Issue, true).Select(x => x != null));
-        }
+            GoToOwner = ReactiveCommand.Create(
+                () => new UserViewModel(Issue.User.Login),
+                this.WhenAnyValue(x => x.Issue.User.Login).Select(x => x != null));
 
-        public void Init(NavObject navObject)
-        {
-            Username = navObject.Username;
-            Repository = navObject.Repository;
-            Id = navObject.Id;
+            ToggleStateCommand = ReactiveCommand.CreateFromTask(ToggleState);
+
+            ToggleStateCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Failed to adjust pull request state!", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
+
+            var canEdit = this.WhenAnyValue(x => x.IsCollaborator).Select(x => x);
+
+            GoToEditCommand = ReactiveCommand.Create<Unit, IssueEditViewModel>(
+                _ => new IssueEditViewModel(username, repository, Issue),
+                canEdit);
+
+            GoToLabelsCommand = ReactiveCommand.Create<Unit, IssueLabelsViewModel>(
+                _ => new IssueLabelsViewModel(username, repository, id, Issue.Labels),
+                canEdit);
+
+            GoToAssigneeCommand = ReactiveCommand.Create<Unit, IssueAssignedToViewModel>(
+                _ => new IssueAssignedToViewModel(username, repository, id, Issue.Assignee),
+                canEdit);
+
+            GoToMilestoneCommand = ReactiveCommand.Create<Unit, IssueMilestonesViewModel>(
+                _ => new IssueMilestonesViewModel(username, repository, id, Issue.Milestone),
+                canEdit);
 
             _editToken = _messageService.Listen<IssueEditMessage>(x =>
             {
@@ -243,29 +209,15 @@ namespace CodeHub.Core.ViewModels.Issues
             }
         }
 
-        private async Task ToggleState(bool closed)
+        private async Task ToggleState()
         {
-            try
+            var update = new Octokit.IssueUpdate
             {
-                IsModifying = true;
-                var data = await this.GetApplication().Client.ExecuteAsync(this.GetApplication().Client.Users[Username].Repositories[Repository].Issues[Issue.Number].UpdateState(closed ? "closed" : "open")); 
-                _messageService.Send(new IssueEditMessage(data.Data));
-            }
-            catch (Exception e)
-            {
-                DisplayAlert("Unable to " + (closed ? "close" : "open") + " the item. " + e.Message);
-            }
-            finally
-            {
-                IsModifying = false;
-            }
-        }
+                State = Issue.State.Value == Octokit.ItemState.Closed ? Octokit.ItemState.Open : Octokit.ItemState.Closed
+            };
 
-        public class NavObject
-        {
-            public string Username { get; set; }
-            public string Repository { get; set; }
-            public long Id { get; set; }
+            var result = await this.GetApplication().GitHubClient.Issue.Update(Username, Repository, Id, update);
+            _messageService.Send(new IssueEditMessage(result));
         }
     }
 }

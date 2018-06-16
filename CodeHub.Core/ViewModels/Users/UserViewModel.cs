@@ -1,9 +1,9 @@
+using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CodeHub.Core.Services;
-using CodeHub.Core.ViewModels.Events;
-using CodeHub.Core.ViewModels.Organizations;
-using MvvmCross.Core.ViewModels;
+using ReactiveUI;
 using Splat;
 
 namespace CodeHub.Core.ViewModels.User
@@ -36,40 +36,30 @@ namespace CodeHub.Core.ViewModels.User
             }
         }
 
-        public ICommand GoToEventsCommand
-        {
-            get { return new MvxCommand(() => ShowViewModel<UserEventsViewModel>(new UserEventsViewModel.NavObject { Username = Username })); }
-        }
+        public ReactiveCommand<Unit, Unit> ToggleFollowingCommand { get; }
 
-        public ICommand GoToOrganizationsCommand
+        public UserViewModel(string username)
         {
-            get { return new MvxCommand(() => ShowViewModel<OrganizationsViewModel>(new OrganizationsViewModel.NavObject { Username = Username })); }
-        }
+            Username = username;
 
-        public ICommand ToggleFollowingCommand
-        {
-            get { return new MvxCommand(() => ToggleFollowing().ToBackground()); }
+            Title = username;
+
+            ToggleFollowingCommand = ReactiveCommand.CreateFromTask(ToggleFollowing);
+
+            ToggleFollowingCommand
+                .ThrownExceptions
+                .Select(err => new UserError("Error attempting to follow user! Please try again.", err))
+                .SelectMany(Interactions.Errors.Handle)
+                .Subscribe();
         }
 
         private async Task ToggleFollowing()
         {
-            try
-            {
-                if (IsFollowing)
-                    await _applicationService.GitHubClient.User.Followers.Unfollow(Username);
-                else
-                    await _applicationService.GitHubClient.User.Followers.Follow(Username);
-                IsFollowing = !IsFollowing;
-            }
-            catch
-            {
-                DisplayAlert("Unable to follow user! Please try again.");
-            }
-        }
-  
-        public void Init(NavObject navObject)
-        {
-            Title = Username = navObject.Username;
+            if (IsFollowing)
+                await _applicationService.GitHubClient.User.Followers.Unfollow(Username);
+            else
+                await _applicationService.GitHubClient.User.Followers.Follow(Username);
+            IsFollowing = !IsFollowing;
         }
 
         protected override async Task Load()
@@ -81,11 +71,6 @@ namespace CodeHub.Core.ViewModels.User
                 _applicationService.GitHubClient.User.Get(Username).ToBackground(x => User = x);
             else
                 User = await _applicationService.GitHubClient.User.Get(Username);
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
         }
     }
 }

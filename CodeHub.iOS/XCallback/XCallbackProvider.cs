@@ -1,11 +1,11 @@
 using System;
-using MvvmCross.Platform;
 using CodeHub.Core.Services;
 using System.Collections.Generic;
 using UIKit;
 using Foundation;
 using System.Reactive.Linq;
 using CodeHub.iOS.ViewControllers.Gists;
+using Splat;
 
 namespace CodeHub.iOS.XCallback
 {
@@ -13,7 +13,7 @@ namespace CodeHub.iOS.XCallback
     {
         public static bool Handle(XCallbackQuery query)
         {
-            var appService = Mvx.Resolve<IApplicationService>();
+            var appService = Locator.Current.GetService<IApplicationService>();
 
             if (query.Url == "/gist/create")
             {

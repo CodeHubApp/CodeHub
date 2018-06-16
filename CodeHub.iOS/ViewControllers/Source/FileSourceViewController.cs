@@ -146,8 +146,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             ContentSavePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), fileName);
 
             var mime = string.Empty;
-            using (var stream = new System.IO.FileStream(ContentSavePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
-                mime = await _applicationService.Client.DownloadRawResource2(Content.GitUrl, stream) ?? string.Empty;
+            //using (var stream = new System.IO.FileStream(ContentSavePath, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                //mime = await _applicationService.Client.DownloadRawResource2(Content.GitUrl, stream) ?? string.Empty;
 
             var isBinary = _forceBinary || !mime.Contains("charset");
             if (isBinary)
@@ -163,8 +163,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void EditSource()
         {
-            var vc = new EditSourceView();
-            vc.ViewModel.Init(new EditSourceViewModel.NavObject { Path = _path, Branch = _sha, Username = _username, Repository = _repository });
+            var vc = new EditSourceView(_username, _repository, _path, _sha);
             vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);
@@ -183,7 +182,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             if (isMarkdown)
             {
-                var markdownContent = await _applicationService.Client.Markdown.GetMarkdown(content);
+                var markdownContent = await _applicationService.GitHubClient.Miscellaneous.RenderRawMarkdown(content);
                 var model = new MarkdownModel(markdownContent, fontSize);
                 var htmlContent = new MarkdownWebView { Model = model };
                 LoadContent(htmlContent.GenerateString());

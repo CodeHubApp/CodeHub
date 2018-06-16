@@ -1,13 +1,13 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ReactiveUI;
-using CodeHub.Core.Services;
-using System.Reactive;
 using System;
-using Octokit;
+using System.Collections.Generic;
+using System.Reactive;
 using System.Reactive.Linq;
-using Splat;
+using System.Threading.Tasks;
 using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
+using Octokit;
+using ReactiveUI;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.Gists
 {

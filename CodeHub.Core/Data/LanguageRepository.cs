@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http;
-using GitHubSharp;
 
 namespace CodeHub.Core.Data
 {
@@ -13,7 +12,7 @@ namespace CodeHub.Core.Data
         public async Task<List<Language>> GetLanguages()
         {
             var client = new HttpClient();
-            var serializer = new SimpleJsonSerializer();
+            var serializer = new Octokit.Internal.SimpleJsonSerializer();
             var msg = await client.GetAsync(LanguagesUrl).ConfigureAwait(false);
             var content = await msg.Content.ReadAsStringAsync().ConfigureAwait(false);
             return serializer.Deserialize<List<Language>>(content);

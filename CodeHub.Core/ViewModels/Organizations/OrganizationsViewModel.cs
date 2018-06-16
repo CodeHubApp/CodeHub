@@ -1,41 +1,34 @@
 using System.Threading.Tasks;
-using System.Windows.Input;
-using CodeHub.Core.ViewModels;
-using GitHubSharp.Models;
-using MvvmCross.Core.ViewModels;
+using ReactiveUI;
 
 namespace CodeHub.Core.ViewModels.Organizations
 {
     public class OrganizationsViewModel : LoadableViewModel
     {
-        public CollectionViewModel<BasicUserModel> Organizations { get; }
+        public ReactiveList<Octokit.Organization> Organizations { get; } = new ReactiveList<Octokit.Organization>();
 
         public string Username { get; private set; }
 
-        public void Init(NavObject navObject)
+        public OrganizationsViewModel(string username)
         {
-            Username = navObject.Username;
-        }
-
-        public OrganizationsViewModel()
-        {
+            Username = username;
             Title = "Organizations";
-            Organizations = new CollectionViewModel<BasicUserModel>();
         }
 
-        public ICommand GoToOrganizationCommand
+        protected override async Task Load()
         {
-            get { return new MvxCommand<BasicUserModel>(x => ShowViewModel<OrganizationViewModel>(new OrganizationViewModel.NavObject { Name = x.Login }));}
-        }
+            var application = this.GetApplication();
 
-        protected override Task Load()
-        {
-            return Organizations.SimpleCollectionLoad(this.GetApplication().Client.Users[Username].GetOrganizations());
-        }
-
-        public class NavObject
-        {
-            public string Username { get; set; }
+            if (Username == application.Account.Username)
+            {
+                var result = await application.GitHubClient.Organization.GetAllForCurrent();
+                Organizations.Reset(result);
+            }
+            else
+            {
+                var result = await application.GitHubClient.Organization.GetAllForUser(Username);
+                Organizations.Reset(result);
+            }
         }
     }
 }

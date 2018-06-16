@@ -1,8 +1,6 @@
 using System;
 using CodeHub.Core.Services;
 using System.Linq;
-using System.Windows.Input;
-using Dumb = MvvmCross.Core.ViewModels;
 using System.Threading.Tasks;
 using ReactiveUI;
 using System.Reactive.Threading.Tasks;
@@ -36,11 +34,6 @@ namespace CodeHub.Core.ViewModels.App
             private set { this.RaiseAndSetIfChanged(ref _imageUrl, value); }
         }
 
-        public ICommand StartupCommand
-        {
-            get { return new Dumb.MvxAsyncCommand(Startup); }
-        }
-
         public Data.Account Account => _applicationService.Account;
 
         public ReactiveCommand<Unit, Unit> GoToMenu { get; } = ReactiveCommand.Create(() => { });
@@ -49,12 +42,16 @@ namespace CodeHub.Core.ViewModels.App
 
         public ReactiveCommand<Unit, Unit> GoToNewAccount { get; } = ReactiveCommand.Create(() => { });
 
+        public ReactiveCommand<Unit, Unit> StartupCommand { get; }
+
         public StartupViewModel(
             IApplicationService applicationService = null,
             IAccountsService accountsService = null)
         {
             _applicationService = applicationService ?? GetService<IApplicationService>();
             _accountsService = accountsService ?? GetService<IAccountsService>();
+
+            StartupCommand = ReactiveCommand.CreateFromTask(Startup);
         }
 
         protected async Task Startup()
