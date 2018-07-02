@@ -9,22 +9,24 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueLabelsView : ViewModelCollectionDrivenDialogViewController
+    public class IssueLabelsView : DialogViewController
     {
+        public IssueLabelsViewModel ViewModel { get; }
+
         public IssueLabelsView()
         {
             EnableSearch = false;
             Title = "Labels";
           
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
+            //EmptyView = new Lazy<UIView>(() =>
+                //new EmptyListView(Octicon.Tag.ToEmptyListImage(), "There are no labels."));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var vm = (IssueLabelsViewModel)ViewModel;
+            var vm = ViewModel;
             NavigationItem.LeftBarButtonItem = new UIBarButtonItem(
                 Images.Buttons.BackButton, UIBarButtonItemStyle.Plain, (s, e) => vm.SelectLabelsCommand.ExecuteNow());
 

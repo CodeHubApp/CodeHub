@@ -14,21 +14,18 @@ using CoreGraphics;
 using Splat;
 using UIKit;
 using ReactiveUI;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class MenuViewController : ViewModelDrivenDialogViewController
+    public class MenuViewController : DialogViewController
     {
         private readonly ProfileButton _profileButton = new ProfileButton();
         private readonly UILabel _title;
         private MenuElement _notifications;
         private Section _favoriteRepoSection;
 
-        public new MenuViewModel ViewModel
-        {
-            get { return (MenuViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public MenuViewModel ViewModel { get; } = new MenuViewModel();
 
         private static bool IsAccountEnterprise
             => Locator.Current.GetService<IApplicationService>().Account?.IsEnterprise ?? false;
@@ -49,9 +46,7 @@ namespace CodeHub.iOS.ViewControllers.Application
         }
 
         public MenuViewController()
-            : base(false, UITableViewStyle.Plain)
         {
-            ViewModel = new MenuViewModel();
             Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
 
             _title = new UILabel(new CGRect(0, 40, 320, 40));
@@ -240,7 +235,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             this.PushViewController(Events.EventsViewController.ForNews());
 
         private void GoToMyIssues() =>
-            this.PushViewController(Views.Issues.MyIssuesView.Create());
+            this.PushViewController(new Issues.MyIssuesViewController());
 
         private void GoToSettings()
         {
@@ -270,7 +265,8 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         private void GoToOrganizations()
         {
-            var vc = new Organizations.OrganizationsViewController();
+            var username = ViewModel.Account.Username;
+            var vc = new Organizations.OrganizationsViewController(username);
             NavigationController?.PushViewController(vc, true);
         }
 
@@ -394,18 +390,19 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
         }
 
-        public override DialogViewController.Source CreateSizingSource()
+        public override UITableViewSource CreateSizingSource()
         {
             return new EditSource(this);
         }
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
         {
             private readonly WeakReference<MenuViewController> _parent;
+
             public EditSource(MenuViewController dvc) 
-                : base (dvc)
+                : base (dvc.TableView)
             {
-                _parent = new WeakReference<MenuViewController>(dvc);
+                    _parent = new WeakReference<MenuViewController>(dvc);
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)

@@ -15,7 +15,7 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Settings
 {
-    public class SettingsViewController : BaseDialogViewController
+    public class SettingsViewController : ItemDetailsViewController
     {
         private static string RegisterNotificationsError = "Unable to register for push notifications!";
         private readonly IFeaturesService _featuresService = Locator.Current.GetService<IFeaturesService>();

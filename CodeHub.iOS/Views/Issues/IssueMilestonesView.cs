@@ -10,15 +10,17 @@ using System.Reactive;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueMilestonesView : ViewModelCollectionDrivenDialogViewController
+    public class IssueMilestonesView : DialogViewController
     {
+        public IssueMilestonesViewModel ViewModel { get; }
+
         public IssueMilestonesView()
         {
             Title = "Milestones";
             EnableSearch = false;
 
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
+            //EmptyView = new Lazy<UIView>(() =>
+                //new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));
         }
 
         public override void ViewDidLoad()
@@ -28,20 +30,18 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = 80f;
             TableView.SeparatorInset = new UIEdgeInsets(0, 0, 0, 0);
 
-            var viewModel = (IssueMilestonesViewModel)ViewModel;
-
-            viewModel
+            ViewModel
                 .Milestones.Changed
                 .Select(_ => Unit.Default)
                 .StartWith(Unit.Default)
                 .Subscribe(_ =>
                 {
                     var section = new Section();
-                    section.AddAll(viewModel.Milestones.Select(CreateElement));
+                    section.AddAll(ViewModel.Milestones.Select(CreateElement));
                     Root.Reset(section);
                 });
 
-            viewModel.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.SelectedMilestone).Subscribe(x =>
             {
                 if (Root.Count == 0)
                     return;
@@ -57,16 +57,14 @@ namespace CodeHub.iOS.Views.Issues
             var e = new MilestoneElement(
                 milestone.Number, milestone.Title, milestone.OpenIssues, milestone.ClosedIssues, milestone.DueOn);
 
-            var vm = (IssueMilestonesViewModel)ViewModel;
-
             e.Tapped += () => {
-                if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == milestone.Number)
-                    vm.SelectedMilestone = null;
+                if (ViewModel.SelectedMilestone != null && ViewModel.SelectedMilestone.Number == milestone.Number)
+                    ViewModel.SelectedMilestone = null;
                 else
-                    vm.SelectedMilestone = milestone;
+                    ViewModel.SelectedMilestone = milestone;
             };
 
-            if (vm.SelectedMilestone != null && vm.SelectedMilestone.Number == milestone.Number)
+            if (ViewModel.SelectedMilestone != null && ViewModel.SelectedMilestone.Number == milestone.Number)
                 e.Accessory = UITableViewCellAccessory.Checkmark;
             
             return e;    

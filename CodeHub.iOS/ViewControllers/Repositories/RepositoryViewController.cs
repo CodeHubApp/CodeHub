@@ -11,25 +11,21 @@ using CodeHub.Core.Utilities;
 using CodeHub.iOS.ViewControllers.Users;
 using CodeHub.iOS.ViewControllers.Source;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.Views.Source;
 using System.Linq;
 using Humanizer;
 using System.Reactive;
 using Splat;
 using CodeHub.iOS.ViewControllers.Commits;
+using CodeHub.iOS.ViewControllers.PullRequests;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
-    public class RepositoryViewController : PrettyDialogViewController
+    public class RepositoryViewController : ItemDetailsViewController
     {
         private readonly IFeaturesService _featuresService;
         private IDisposable _privateView;
 
-        public new RepositoryViewModel ViewModel
-        {
-            get { return (RepositoryViewModel)base.ViewModel; }
-            protected set { base.ViewModel = value; }
-        }
+        public RepositoryViewModel ViewModel { get; }
 
         public override void ViewDidLoad()
         {
@@ -79,7 +75,11 @@ namespace CodeHub.iOS.ViewControllers.Repositories
 
                 d(_commitsElement.Clicked.Subscribe(_ => GoToCommits()));
 
-                //d(_pullRequestsElement.Clicked.BindCommand(ViewModel.GoToPullRequestsCommand));
+                d(_pullRequestsElement
+                  .Clicked
+                  .Select(_ => new PullRequestsViewController(ViewModel.Username, ViewModel.RepositoryName))
+                  .Subscribe(this.PushViewController));
+
                 d(_sourceElement.Clicked.Subscribe(_ => GoToSourceCode()));
 
                 d(ViewModel.WhenAnyValue(x => x.Branches).Subscribe(_ => Render()));

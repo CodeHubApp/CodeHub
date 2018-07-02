@@ -48,10 +48,7 @@
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueViewModel.cs" />
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
-    <Compile Include="ViewModels\Organizations\OrganizationsViewModel.cs" />
-    <Compile Include="ViewModels\Organizations\OrganizationViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
-    <Compile Include="ViewModels\PullRequests\PullRequestsViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
@@ -107,7 +104,6 @@
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\ReactiveListExtensions.cs" />
-    <Compile Include="ViewModels\Organizations\TeamsViewModel.cs" />
     <Compile Include="Secrets.cs" />
     <Compile Include="Extensions\CommandExtensions.cs" />
     <Compile Include="ViewModels\Users\UserViewModel.cs" />
@@ -123,7 +119,6 @@
     <Compile Include="Services\INetworkActivityService.cs" />
     <Compile Include="ViewModels\Search\RepositoryExploreViewModel.cs" />
     <Compile Include="ViewModels\Repositories\TrendingRepositoriesViewModel.cs" />
-    <Compile Include="ViewModels\Users\UsersViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />

@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Events
 {
-    public class EventsViewController : ViewModelCollectionDrivenDialogViewController
+    public class EventsViewController : DialogViewController
     {
         private static IDictionary<EventType, Octicon> _eventToImage 
             = new Dictionary<EventType, Octicon>

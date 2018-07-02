@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using CodeHub.Core.Services;
 using CodeHub.Core.ViewModels.Issues;
 using CodeHub.Core.Messages;
@@ -9,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Threading.Tasks;
 using System.Collections.Generic;
 using ReactiveUI;
+using Splat;
 
 namespace CodeHub.Core.ViewModels.PullRequests
 {
@@ -21,7 +21,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
         private readonly IFeaturesService _featuresService;
         private readonly IMarkdownService _markdownService;
 
-        public int Id { get; }
+        public long Id { get; }
 
         public string Username { get; }
 
@@ -107,21 +107,6 @@ namespace CodeHub.Core.ViewModels.PullRequests
 
         public ReactiveCommand<Unit, Unit> ToggleStateCommand { get; }
 
-        //public ICommand GoToFilesCommand
-        //{
-        //    get {
-        //        return new MvxCommand(() =>
-        //        {
-        //            ShowViewModel<PullRequestFilesViewModel>(new PullRequestFilesViewModel.NavObject {
-        //                Username = Username,
-        //                Repository = Repository,
-        //                PullRequestId = Id,
-        //                Sha = PullRequest.Head?.Sha
-        //            });   
-        //        });
-        //    }
-        //}
-
         private bool _shouldShowPro;
         public bool ShouldShowPro
         {
@@ -133,18 +118,18 @@ namespace CodeHub.Core.ViewModels.PullRequests
             string username,
             string repository,
             int id,
-            IApplicationService applicationService,
-            IFeaturesService featuresService,
-            IMessageService messageService,
-            IMarkdownService markdownService)
+            IApplicationService applicationService = null,
+            IFeaturesService featuresService = null,
+            IMessageService messageService = null,
+            IMarkdownService markdownService = null)
         {
             Username = username;
             Repository = repository;
             Id = id;
-            _applicationService = applicationService;
-            _featuresService = featuresService;
-            _messageService = messageService;
-            _markdownService = markdownService;
+            _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            _featuresService = featuresService ?? Locator.Current.GetService<IFeaturesService>();
+            _messageService = messageService ?? Locator.Current.GetService<IMessageService>();
+            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
             this.WhenAnyValue(x => x.PullRequest)
                 .Where(x => x != null)
@@ -235,7 +220,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 State = (PullRequest.State == "open" ? Octokit.ItemState.Closed : Octokit.ItemState.Open)
             };
 
-            var result = await this.GetApplication().GitHubClient.PullRequest.Update(Username, Repository, Id, update);
+            var result = await this.GetApplication().GitHubClient.PullRequest.Update(Username, Repository, (int)Id, update);
             _messageService.Send(new PullRequestEditMessage(result));
         }
 
@@ -251,10 +236,10 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 .GitHubClient.Issue.Events.GetAllForIssue(Username, Repository, (int)Id)
                 .ToBackground(x => Events = x);
 
-            var pullRequest = this.GetApplication().GitHubClient.PullRequest.Get(Username, Repository, Id)
+            var pullRequest = this.GetApplication().GitHubClient.PullRequest.Get(Username, Repository, (int)Id)
                 .ContinueWith(r => PullRequest = r.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
 
-            var issue = this.GetApplication().GitHubClient.Issue.Get(Username, Repository, Id)
+            var issue = this.GetApplication().GitHubClient.Issue.Get(Username, Repository, (int)Id)
                 .ContinueWith(r => Issue = r.Result, TaskContinuationOptions.OnlyOnRanToCompletion);
 
             _applicationService
@@ -279,7 +264,7 @@ namespace CodeHub.Core.ViewModels.PullRequests
                 CommitMessage = string.Empty
             };
 
-            var response = await this.GetApplication().GitHubClient.PullRequest.Merge(Username, Repository, Id, merge);
+            var response = await this.GetApplication().GitHubClient.PullRequest.Merge(Username, Repository, (int)Id, merge);
             if (!response.Merged)
                 throw new Exception(response.Message);
 

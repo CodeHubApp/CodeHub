@@ -1,39 +1,39 @@
-using CodeHub.Core.ViewModels.Organizations;
-using CodeHub.iOS.DialogElements;
 using System;
-using UIKit;
-using CodeHub.iOS.Views;
+using System.Reactive.Linq;
+using CodeHub.Core.Services;
 using CodeHub.Core.Utilities;
+using CodeHub.iOS.DialogElements;
+using Octokit;
+using Splat;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class OrganizationsViewController : ViewModelCollectionDrivenDialogViewController
+    public class OrganizationsViewController : GitHubListViewController<Organization>
     {
-        public OrganizationsViewController()
+        public OrganizationsViewController(
+            string username,
+            IApplicationService applicationService = null)
+            : base(DetermineUri(username, applicationService), Octicon.Organization)
         {
             Title = "Organizations";
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no organizations."));
         }
 
-        public OrganizationsViewController(string username) : this()
+        public static Uri DetermineUri(string username, IApplicationService applicationService = null)
         {
-            ViewModel = new OrganizationsViewModel(username);
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            var isCurrent = string.Equals(username, applicationService.Account.Username);
+            return isCurrent ? ApiUrls.UserOrganizations() : ApiUrls.UserOrganizations(username);
         }
 
-        public override void ViewDidLoad()
+        protected override Element ConvertToElement(Organization item)
         {
-            base.ViewDidLoad();
-
-            var vm = (OrganizationsViewModel) ViewModel;
-            var weakVm = new WeakReference<OrganizationsViewModel>(vm);
-            //BindCollection(vm.Organizations, x =>
-            //{
-            //    var avatar = new GitHubAvatar(x.AvatarUrl);
-            //    var e = new UserElement(x.Login, string.Empty, string.Empty, avatar);
-            //    e.Clicked.Subscribe(_ => weakVm.Get()?.GoToOrganizationCommand.Execute(x));
-            //    return e;
-            //});
+            var avatar = new GitHubAvatar(item.AvatarUrl);
+            var e = new UserElement(item.Login, item.Name, avatar);
+            e.Clicked
+             .Select(_ => new OrganizationViewController(item))
+             .Subscribe(this.PushViewController);
+            return e;
         }
     }
 }

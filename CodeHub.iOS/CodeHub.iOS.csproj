@@ -98,11 +98,7 @@
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueMilestonesView.cs" />
     <Compile Include="Views\Issues\IssuesView.cs" />
-    <Compile Include="Views\Issues\IssueView.cs" />
-    <Compile Include="Views\Issues\MyIssuesView.cs" />
     <Compile Include="Views\NotificationsView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestsView.cs" />
-    <Compile Include="Views\PullRequests\PullRequestView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\PullRequests\PullRequestFilesView.cs" />
@@ -119,8 +115,6 @@
     <Compile Include="ViewControllers\Composer.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelCollectionDrivenDialogViewController.cs" />
-    <Compile Include="ViewControllers\ViewModelDrivenDialogViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
     <Compile Include="Views\MenuSectionView.cs" />
     <Compile Include="Views\MilestoneView.cs" />
@@ -312,7 +306,13 @@
     <Compile Include="ViewControllers\Commits\CommitsViewController.cs" />
     <Compile Include="ViewControllers\Commits\CommitViewController.cs" />
     <Compile Include="ViewControllers\GitHubListViewController.cs" />
-    <Compile Include="ViewControllers\ItemDetailsViewController.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestListViewController.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestViewController.cs" />
+    <Compile Include="ViewControllers\PullRequests\PullRequestsViewController.cs" />
+    <Compile Include="ViewControllers\SegmentViewController.cs" />
+    <Compile Include="ViewControllers\Issues\IssueListViewController.cs" />
+    <Compile Include="ViewControllers\Issues\IssueViewController.cs" />
+    <Compile Include="ViewControllers\Issues\MyIssuesViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -563,6 +563,7 @@
     <Folder Include="ViewControllers\Filters\" />
     <Folder Include="ViewControllers\Settings\" />
     <Folder Include="ViewControllers\Commits\" />
+    <Folder Include="ViewControllers\Issues\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

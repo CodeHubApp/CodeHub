@@ -25,7 +25,7 @@ namespace CodeHub.iOS.ViewControllers.Commits
                     x.GenerateCommiterAvatarUrl(),
                     x.Commit.Message,
                     x.Commit.Committer.Date,
-                    () => vc.PushViewController(new CommitViewController()));
+                    () => vc.PushViewController(CommitViewController.FromCommit(x)));
             });
         }
 
@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Commits
                     x.GenerateCommiterAvatarUrl(),
                     x.Commit.Message,
                     x.Commit.Committer.Date,
-                    () => vc.PushViewController(new CommitViewController()));
+                    () => vc.PushViewController(CommitViewController.FromCommit(x)));
             });
         }
     }
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.ViewControllers.Commits
             Func<T, CommitsViewController<T>, Element> convertToElement,
             IApplicationService applicationService = null,
             IFeaturesService featuresService = null)
-            : base(uri, applicationService)
+            : base(uri, Octicon.GitCommit, applicationService: applicationService)
         {
             _username = username;
             _repository = repository;

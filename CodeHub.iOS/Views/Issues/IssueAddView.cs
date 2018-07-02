@@ -9,8 +9,10 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAddView : ViewModelDrivenDialogViewController
+    public class IssueAddView : DialogViewController
     {
+        public IssueAddViewModel ViewModel { get; }
+
         public IssueAddView()
         {
             Title = "New Issue";
@@ -23,7 +25,6 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            var vm = (IssueAddViewModel)ViewModel;
             var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = saveButton;
 
@@ -37,20 +38,20 @@ namespace CodeHub.iOS.Views.Issues
 
             OnActivation(d =>
             {
-                d(vm.WhenAnyValue(x => x.IssueTitle).Subscribe(x => title.Value = x));
-                d(title.Changed.Subscribe(x => vm.IssueTitle = x));
+                d(ViewModel.WhenAnyValue(x => x.IssueTitle).Subscribe(x => title.Value = x));
+                d(title.Changed.Subscribe(x => ViewModel.IssueTitle = x));
 
-                d(vm.WhenAnyValue(x => x.Content).Subscribe(x => content.Details = x));
+                d(ViewModel.WhenAnyValue(x => x.Content).Subscribe(x => content.Details = x));
                 //d(labels.Clicked.Subscribe(_ => vm.GoToLabelsCommand.Execute(null)));
                 //d(milestone.Clicked.Subscribe(_ => vm.GoToMilestonesCommand.Execute(null)));
                 //d(assignedTo.Clicked.Subscribe(_ => vm.GoToAssigneeCommand.Execute(null)));
-                d(vm.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving..."));
+                d(ViewModel.WhenAnyValue(x => x.IsSaving).SubscribeStatus("Saving..."));
 
-                d(vm.WhenAnyValue(x => x.AssignedTo).Subscribe(x => {
+                d(ViewModel.WhenAnyValue(x => x.AssignedTo).Subscribe(x => {
                     assignedTo.Value = x == null ? "Unassigned" : x.Login;
                 }));
 
-                d(vm.WhenAnyValue(x => x.Milestone).Subscribe(x => {
+                d(ViewModel.WhenAnyValue(x => x.Milestone).Subscribe(x => {
                     milestone.Value = x == null ? "None" : x.Title;
                 }));
 
@@ -60,7 +61,7 @@ namespace CodeHub.iOS.Views.Issues
 
                 d(saveButton.GetClickedObservable().Subscribe(_ => {
                     View.EndEditing(true);
-                    vm.SaveCommand.ExecuteNow();
+                    ViewModel.SaveCommand.ExecuteNow();
                 }));
 
                 d(content.Clicked.Subscribe(_ => {
@@ -72,7 +73,7 @@ namespace CodeHub.iOS.Views.Issues
 
                     composer.PresentAsModal(this, text =>
                     {
-                        vm.Content = text;
+                        ViewModel.Content = text;
                         this.DismissViewController(true, null);
                     });
                 }));

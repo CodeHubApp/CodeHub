@@ -13,7 +13,7 @@ using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class SupportViewController : BaseDialogViewController
+    public class SupportViewController : ItemDetailsViewController
     {
         private readonly IAlertDialogService _alertDialogService = Locator.Current.GetService<IAlertDialogService>();
 

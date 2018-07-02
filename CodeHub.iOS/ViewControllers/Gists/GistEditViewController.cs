@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CodeHub.iOS.ViewControllers.Gists;
 using Octokit;
 using Splat;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -19,7 +20,7 @@ namespace CodeHub.iOS.ViewControllers
         private Gist _originalGist;
 
         public GistEditViewController(Gist gist)
-            : base(UITableViewStyle.Grouped, true)
+            : base(UITableViewStyle.Grouped)
         {
             Title = "Edit Gist";
             _originalGist = gist;
@@ -216,12 +217,12 @@ namespace CodeHub.iOS.ViewControllers
             });
         }
 
-        public override DialogViewController.Source CreateSizingSource()
+        public override UITableViewSource CreateSizingSource()
         {
             return new EditSource(this);
         }
 
-        private void Delete(Element element, Section section)
+        private void Delete(Element element)
         {
             var fileEl = element as FileElement;
             if (fileEl == null)
@@ -233,7 +234,7 @@ namespace CodeHub.iOS.ViewControllers
             else
                 _model.Files.Remove(key);
 
-            section.Remove(element);
+            element.Section.Remove(element);
         }
 
         private class FileElement : StringElement
@@ -250,11 +251,14 @@ namespace CodeHub.iOS.ViewControllers
             }
         }
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
         {
+            private readonly WeakReference<GistEditViewController> _container;
+
             public EditSource(GistEditViewController dvc) 
-                : base (dvc)
+                : base (dvc.TableView)
             {
+                _container = new WeakReference<GistEditViewController>(dvc);
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
@@ -276,7 +280,7 @@ namespace CodeHub.iOS.ViewControllers
                     case UITableViewCellEditingStyle.Delete:
                         var section = Root?[indexPath.Section];
                         var element = section?[indexPath.Row];
-                        (Container as GistEditViewController)?.Delete(element, section);
+                        _container.Get()?.Delete(element);
                         break;
                 }
             }

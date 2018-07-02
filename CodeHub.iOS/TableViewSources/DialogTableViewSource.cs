@@ -22,10 +22,7 @@ namespace CodeHub.iOS.TableViewSources
 
         public IObservable<Unit> EndReachedObservable => _endSubject.AsObservable();
 
-        public RootElement Root
-        {
-            get { return _root; }
-        }
+        public RootElement Root => _root;
 
         #if DEBUG
         ~DialogTableViewSource()

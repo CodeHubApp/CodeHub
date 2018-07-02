@@ -1,11 +1,8 @@
 using CodeHub.iOS.ViewControllers;
-using CodeHub.Core.ViewModels.Issues;
-using CodeHub.iOS.DialogElements;
-using System;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public abstract class BaseIssuesView : ViewModelCollectionDrivenDialogViewController
+    public abstract class BaseIssuesView : DialogViewController
     {
         //public new IBaseIssuesViewModel ViewModel
         //{

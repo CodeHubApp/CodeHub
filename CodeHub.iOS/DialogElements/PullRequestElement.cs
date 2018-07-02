@@ -3,18 +3,21 @@ using Foundation;
 using CodeHub.iOS.Cells;
 using UIKit;
 using CodeHub.Core.Utilities;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class PullRequestElement : Element
     {   
-        private readonly Action _action;    
+        private readonly Subject<PullRequestElement> _tapped = new Subject<PullRequestElement>();
         private readonly Octokit.PullRequest _model;
 
-        public PullRequestElement(Octokit.PullRequest model, Action action)
+        public IObservable<object> Clicked => _tapped.AsObservable();
+
+        public PullRequestElement(Octokit.PullRequest model)
         {
             _model = model;
-            _action = action;
         }
 
         public override UITableViewCell GetCell (UITableView tv)
@@ -32,7 +35,7 @@ namespace CodeHub.iOS.DialogElements
         public override void Selected(UITableView tableView, NSIndexPath path)
         {
             base.Selected(tableView, path);
-            _action?.Invoke();
+            _tapped.OnNext(this);
         }
     }
 }

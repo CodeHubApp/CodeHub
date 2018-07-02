@@ -19,8 +19,10 @@ namespace CodeHub.iOS.ViewControllers
     public abstract class GitHubListViewController<T> : TableViewController
     {
         private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
+        private readonly UIView _emptyView = new UIView();
         private readonly GitHubList<T> _list;
         private readonly Section _section = new Section();
+        private readonly Octicon _icon;
         private DialogTableViewSource _source;
 
         private bool _hasMore = true;
@@ -34,10 +36,13 @@ namespace CodeHub.iOS.ViewControllers
 
         protected GitHubListViewController(
             Uri uri,
+            Octicon icon = null,
+            IDictionary<string, string> parameters = null,
             IApplicationService applicationService = null)
         {
             applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
-            _list = new GitHubList<T>(applicationService.GitHubClient, uri);
+            _list = new GitHubList<T>(applicationService.GitHubClient, uri, parameters);
+            _icon = icon ?? Octicon.Octoface;
 
             LoadMoreCommand = ReactiveCommand.CreateFromTask(
                 LoadMore,
@@ -63,7 +68,7 @@ namespace CodeHub.iOS.ViewControllers
                   .InvokeReactiveCommand(LoadMoreCommand));
 
                 d(LoadMoreCommand.IsExecuting
-                  .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
+                  .Subscribe(x => TableView.TableFooterView = x ? _loading : _emptyView));
             });
         }
 
@@ -92,6 +97,11 @@ namespace CodeHub.iOS.ViewControllers
                 .Where(x => x != null);
 
             _section.AddAll(convertedItems, UITableViewRowAnimation.Automatic);
+
+            if (_section.Count == 0 && !HasMore)
+            {
+                SetEmptyView();
+            }
         }
 
         protected abstract Element ConvertToElement(T item);
@@ -106,6 +116,19 @@ namespace CodeHub.iOS.ViewControllers
             TableView.EstimatedRowHeight = 64f;
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.Source = _source;
+        }
+
+        private void SetEmptyView()
+        {
+            var emptyListView = new EmptyListView(
+                _icon.ToEmptyListImage(),
+                "There are no items!") { Alpha = 0 };
+
+            TableView.TableFooterView = new UIView();
+            TableView.BackgroundView = emptyListView;
+
+            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
+                           () => emptyListView.Alpha = 1, null);
         }
     }
 }

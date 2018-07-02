@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace CodeHub.iOS.Views
 {
-    public class NotificationsView : ViewModelCollectionDrivenDialogViewController
+    public class NotificationsView : DialogViewController
     {
         private readonly UISegmentedControl _viewSegment;
         private readonly UIBarButtonItem _segmentBarButton;
@@ -22,8 +22,8 @@ namespace CodeHub.iOS.Views
             _viewSegment = new UISegmentedControl(new object[] { "Unread", "Participating", "All" });
             _segmentBarButton = new UIBarButtonItem(_viewSegment);
 
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
+            //EmptyView = new Lazy<UIView>(() =>
+                //new EmptyListView(Octicon.Inbox.ToEmptyListImage(), "No new notifications."));
         }
 
         //public override void ViewDidLoad()

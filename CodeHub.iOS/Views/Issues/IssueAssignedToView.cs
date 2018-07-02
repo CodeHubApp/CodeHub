@@ -10,20 +10,21 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueAssignedToView : ViewModelCollectionDrivenDialogViewController
+    public class IssueAssignedToView : DialogViewController
     {
+        public IssueAssignedToViewModel ViewModel { get; }
+
         public IssueAssignedToView()
         {
             Title = "Assignees";
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Person.ToEmptyListImage(), "There are no assignees."));
+            //EmptyView = new Lazy<UIView>(() =>
+                //new EmptyListView(Octicon.Person.ToEmptyListImage(), "There are no assignees."));
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            var vm = (IssueAssignedToViewModel)ViewModel;
             //BindCollection(vm.Users, x =>
             //{
             //    var avatar = new GitHubAvatar(x.AvatarUrl);
@@ -42,12 +43,12 @@ namespace CodeHub.iOS.Views.Issues
             //    return el;
             //});
 
-            vm.WhenAnyValue(x => x.SelectedUser).Subscribe(x =>
+            ViewModel.WhenAnyValue(x => x.SelectedUser).Subscribe(x =>
             {
                 if (Root.Count == 0)
                     return;
                 foreach (var m in Root[0].Elements.Cast<UserElement>())
-                    m.Accessory = (x != null && string.Equals(vm.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
+                    m.Accessory = (x != null && string.Equals(ViewModel.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
                                      UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
             });
 

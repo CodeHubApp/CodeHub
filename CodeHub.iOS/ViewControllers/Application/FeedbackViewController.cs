@@ -4,8 +4,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using CodeHub.Core.ViewModels.App;
 using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.ViewControllers.Issues;
 using CodeHub.iOS.Views;
-using CodeHub.iOS.Views.Issues;
 using CoreGraphics;
 using ReactiveUI;
 using UIKit;
@@ -59,7 +59,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                   .Select(_ => ViewModel.Items.Select(x => x.GoToCommand.Select(__ => x)))
                   .Select(x => Observable.Merge(x))
                   .Switch()
-                  .Select(x => new IssueView(x.RepositoryOwner, x.RepositoryName, x.IssueId))
+                  .Select(x => new IssueViewController(x.RepositoryOwner, x.RepositoryName, x.IssueId))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
             });
         }

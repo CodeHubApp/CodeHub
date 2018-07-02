@@ -33,7 +33,7 @@ namespace CodeHub.Core.ViewModels.Issues
             : base(username, repository, messageService)
         {
             Issue = issue;
-            Id = issue.Id;
+            Id = issue.Number;
 
             IssueTitle = Issue.Title;
             AssignedTo = Issue.Assignee;
@@ -61,7 +61,7 @@ namespace CodeHub.Core.ViewModels.Issues
             foreach (var label in Labels.Select(x => x.Name))
                 issue.Labels.Add(label);
 
-            var result = await this.GetApplication().GitHubClient.Issue.Update(Username, Repository, Issue.Id, issue);
+            var result = await this.GetApplication().GitHubClient.Issue.Update(Username, Repository, Issue.Number, issue);
             MessageService.Send(new IssueEditMessage(result));
         }
     }
