@@ -1,22 +1,20 @@
-using CodeHub.Core.ViewModels.User;
+﻿using CodeHub.Core.ViewModels.User;
 using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
 using System.Reactive.Linq;
 using CodeHub.iOS.ViewControllers.Gists;
 using ReactiveUI;
+using CodeHub.iOS.ViewControllers.Organizations;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
-    public class UserViewController : PrettyDialogViewController
+    public class UserViewController : ItemDetailsViewController
     {
         private readonly Lazy<UIBarButtonItem> _actionButton;
 
-        public new UserViewModel ViewModel
-        {
-            get { return (UserViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public UserViewModel ViewModel { get; }
 
         public UserViewController(Octokit.User user)
             : this(user.Login, user)
@@ -31,6 +29,11 @@ namespace CodeHub.iOS.ViewControllers.Users
 
             _actionButton = new Lazy<UIBarButtonItem>(() =>
                 new UIBarButtonItem(UIBarButtonSystemItem.Action, (s, e) => ShowExtraMenu()));
+
+            Appearing
+                .Take(1)
+                .Select(_ => Unit.Default)
+                .InvokeReactiveCommand(ViewModel.LoadCommand);
         }
             
         public override void ViewDidLoad()
@@ -70,7 +73,10 @@ namespace CodeHub.iOS.ViewControllers.Users
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
                
                 //d(events.Clicked.BindCommand(ViewModel.GoToEventsCommand));
-                //d(organizations.Clicked.BindCommand(ViewModel.GoToOrganizationsCommand));
+
+                d(organizations.Clicked
+                  .Select(_ => new OrganizationsViewController(ViewModel.Username))
+                  .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(gists.Clicked
                   .Select(x => GistsViewController.CreateUserGistsViewController(ViewModel.Username))

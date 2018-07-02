@@ -112,7 +112,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                 case "My Events":
                     return Events.EventsViewController.ForUser(username);
                 case "My Issues":
-                    return Views.Issues.MyIssuesView.Create();
+                    return new Issues.MyIssuesViewController();
                 case "Notifications":
                     return Views.NotificationsView.Create();
                 default:

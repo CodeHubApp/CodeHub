@@ -1,139 +1,58 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
-using CodeHub.Core.ViewModels.Users;
-using CodeHub.iOS.TableViewSources;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views;
 using CoreGraphics;
-using ReactiveUI;
+using Octokit;
 using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Users
 {
-    public class UsersViewController : TableViewController
+    public class UsersViewController : GitHubListViewController<User>
     {
         private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
         private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
 
-        private readonly Lazy<UIView> emptyView = new Lazy<UIView>((() =>
-            new EmptyListView(Octicon.Person.ToEmptyListImage(), "There are no users.")));
-
-        public UsersViewModel ViewModel { get; }
-
         public static UsersViewController CreateWatchersViewController(string owner, string name)
-        {
-            var viewModel = UsersViewModel.CreateWatchersViewModel(owner, name);
-            return new UsersViewController(viewModel) { Title = "Watchers" };
-        }
+            => new UsersViewController(ApiUrls.Watchers(owner, name)) { Title = "Watchers" };
 
         public static UsersViewController CreateFollowersViewController(string username)
-        {
-            var viewModel = UsersViewModel.CreateFollowersViewModel(username);
-            return new UsersViewController(viewModel) { Title = "Followers" };
-        }
+            => new UsersViewController(ApiUrls.Followers(username)) { Title = "Followers" };
 
         public static UsersViewController CreateFollowingViewController(string username)
-        {
-            var viewModel = UsersViewModel.CreateFollowingViewModel(username);
-            return new UsersViewController(viewModel) { Title = "Following" };
-        }
+            => new UsersViewController(ApiUrls.Following(username)) { Title = "Following" };
 
-        public static UsersViewController CreateOrganizationMembersViewController(string organization)
-        {
-            var viewModel = UsersViewModel.CreateOrgMembersViewModel(organization);
-            return new UsersViewController(viewModel) { Title = "Members" };
-        }
+        public static UsersViewController CreateOrganizationMembersViewController(string org)
+            => new UsersViewController(ApiUrls.Members(org)) { Title = "Members" };
 
         public static UsersViewController CreateStargazersViewController(string username, string repository)
-        {
-            var viewModel = UsersViewModel.CreateStargazersViewModel(username, repository);
-            return new UsersViewController(viewModel) { Title = "Stargazers" };
-        }
+            => new UsersViewController(ApiUrls.Stargazers(username, repository)) { Title = "Stargazers" };
 
         public static UsersViewController CreateTeamMembersViewController(int id)
-        {
-            var viewModel = UsersViewModel.CreateTeamMembersViewModel(id);
-            return new UsersViewController(viewModel) { Title = "Members" };
-        }
+            => new UsersViewController(ApiUrls.TeamMembers(id)) { Title = "Members" };
 
         public static UsersViewController CreateCollaboratorsViewController(string username, string repository)
-        {
-            var viewModel = UsersViewModel.CreateCollaboratorsViewModel(username, repository);
-            return new UsersViewController(viewModel) { Title = "Collaborators" };
-        }
+            => new UsersViewController(ApiUrls.RepoCollaborators(username, repository)) { Title = "Collaborators" };
 
-        public UsersViewController(UsersViewModel viewModel)
-            : base(UITableViewStyle.Plain)
+        private UsersViewController(Uri uri)
+            : base(uri, Octicon.Person)
         {
-            ViewModel = viewModel;
             Title = "Users";
         }
 
-        public override void ViewDidLoad()
+        protected override Element ConvertToElement(User item)
         {
-            base.ViewDidLoad();
+            var element = new UserElement(
+                item.Login, 
+                item.Name, 
+                new Core.Utilities.GitHubAvatar(item.AvatarUrl));
+            
+            element
+                .Clicked
+                .Select(_ => new UserViewController(item))
+                .Subscribe(this.PushViewController);
 
-            var tableViewSource = new UserTableViewSource(TableView, ViewModel.Items);
-            TableView.Source = tableViewSource;
-
-            Appearing
-                .Take(1)
-                .Select(_ => ViewModel.LoadCommand.Execute())
-                .Switch()
-                .Take(1)
-                .Catch(Observable.Return(false))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(SetItemsPresent);
-
-            this.WhenActivated(d =>
-            {
-                d(_repositorySearchBar.GetChangedObservable()
-                  .Subscribe(x => ViewModel.SearchText = x));
-
-                d(ViewModel.ItemSelected
-                  .Select(x => new UserViewController(x.User))
-                  .Subscribe(x => NavigationController.PushViewController(x, true)));
-
-                d(ViewModel.WhenAnyValue(x => x.HasMore)
-                  .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
-
-                d(tableViewSource.RequestMore
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-
-                d(ViewModel.LoadCommand
-                  .Select(_ => ViewModel.Items.Changed)
-                  .Switch()
-                  .Select(_ => Unit.Default)
-                  .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
-                  .Where(_ => TableView.LastItemVisible())
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-
-                d(ViewModel.LoadCommand.Merge(ViewModel.LoadMoreCommand)
-                  .Select(_ => Unit.Default)
-                  .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
-                  .Where(_ => TableView.LastItemVisible())
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-            });
-        }
-
-        private void SetItemsPresent(bool hasItems)
-        {
-            TableView.TableHeaderView = hasItems ? _repositorySearchBar : null;
-            TableView.SeparatorStyle = hasItems 
-                ? UITableViewCellSeparatorStyle.SingleLine 
-                : UITableViewCellSeparatorStyle.None;
-
-            if (hasItems)
-            {
-                TableView.BackgroundView = null;
-            }
-            else
-            {
-                emptyView.Value.Alpha = 0;
-                TableView.BackgroundView = emptyView.Value;
-                UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
-                               () => emptyView.Value.Alpha = 1, null);
-            }
+            return element;
         }
     }
 }

@@ -10,12 +10,13 @@ using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.ViewControllers.Source;
 using Foundation;
 using Humanizer;
+using Octokit;
 using ReactiveUI;
 using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Commits
 {
-    public class CommitViewController : PrettyDialogViewController
+    public class CommitViewController : ItemDetailsViewController
     {
         private Octokit.GitHubCommit _commit;
         private Octokit.GitHubCommit Commit
@@ -24,11 +25,26 @@ namespace CodeHub.iOS.ViewControllers.Commits
             set => this.RaiseAndSetIfChanged(ref _commit, value);
         }
 
+        public CommitViewModel ViewModel { get; }
 
-        public new CommitViewModel ViewModel
+        public static CommitViewController FromCommit(GitHubCommit commit)
         {
-            get { return (CommitViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
+            var repo = commit.Commit.Repository;
+            return new CommitViewController(repo.Owner.Login, repo.Name, commit.Sha);
+        }
+
+        public static CommitViewController FromCommit(PullRequestCommit commit)
+        {
+            var repo = commit.Commit.Repository;
+            return new CommitViewController(repo.Owner.Login, repo.Name, commit.Sha);
+        }
+
+        public CommitViewController(
+            string username,
+            string repository,
+            string node)
+        {
+            ViewModel = new CommitViewModel(username, repository, node);
         }
 
         public override void ViewDidLoad()

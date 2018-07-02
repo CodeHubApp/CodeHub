@@ -10,17 +10,20 @@ using ReactiveUI;
 using CodeHub.Core.Messages;
 using Splat;
 using System.Threading.Tasks;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class AccountsViewController : DialogViewController
+    public class AccountsViewController : TableViewController
     {
         private readonly IAccountsService _accountsService = Locator.Current.GetService<IAccountsService>();
         private readonly IApplicationService _applicationService = Locator.Current.GetService<IApplicationService>();
+        private readonly EditSource _source;
 
         public AccountsViewController() : base(UITableViewStyle.Plain)
         {
             Title = "Accounts";
+            _source = new EditSource(this);
 
             var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
             NavigationItem.RightBarButtonItem = addButton;
@@ -30,12 +33,6 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         private void AddAccount()
         {
             NavigationController.PushViewController(new NewAccountViewController(), true);
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-            TableView.RowHeight = 74;
         }
 
         private async Task SelectAccount(Account account)
@@ -59,14 +56,10 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 t.Tapped += () => weakVm.Get()?.SelectAccount(account);
                 return t;
             }));
-            Root.Reset(accountSection);
+
+            _source.Root.Reset(accountSection);
 
             SetCancelButton();
-        }
-
-        public override DialogViewController.Source CreateSizingSource()
-        {
-            return new EditSource(this);
         }
 
         private void Delete(Element element)
@@ -91,14 +84,20 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         {
             if (NavigationItem.LeftBarButtonItem != null)
             {
-                NavigationItem.LeftBarButtonItem.Enabled = Root.Sum(x => x.Elements.Count) > 0 && _applicationService.Account != null;
+                NavigationItem.LeftBarButtonItem.Enabled = 
+                    _source.Root.Sum(x => x.Elements.Count) > 0 && 
+                    _applicationService.Account != null;
             }
         }
 
-        private class EditSource : DialogViewController.Source
+        private class EditSource : DialogTableViewSource
         {
-            public EditSource(AccountsViewController dvc) : base (dvc)
+            private readonly WeakReference<AccountsViewController> _viewCtrl;
+
+            public EditSource(AccountsViewController viewCtrl)
+                : base (viewCtrl.TableView)
             {
+                _viewCtrl = new WeakReference<AccountsViewController>(viewCtrl);
             }
 
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
@@ -119,10 +118,10 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = Container.Root[indexPath.Section];
+                        var section = Root[indexPath.Section];
                         var element = section[indexPath.Row];
                         section.Remove(element);
-                        (Container as AccountsViewController)?.Delete(element);
+                        _viewCtrl.Get()?.Delete(element);
                         break;
                 }
             }
@@ -156,9 +155,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 return cell;
             }
 
-            public override void Selected (UITableView tableView, NSIndexPath indexPath)
+            public override void Selected (UITableView tableView, NSIndexPath path)
             {
-                base.Selected(tableView, indexPath);
+                base.Selected(tableView, path);
                 Tapped?.Invoke();
             }
         }

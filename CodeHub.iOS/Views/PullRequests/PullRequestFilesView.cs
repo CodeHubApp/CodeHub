@@ -1,26 +1,24 @@
-using CodeHub.iOS.ViewControllers;
+﻿using CodeHub.iOS.ViewControllers;
 using CodeHub.Core.ViewModels.PullRequests;
 using UIKit;
 using System;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers.Source;
 using CodeHub.iOS.ViewControllers.PullRequests;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.Views.PullRequests
 {
-    public class PullRequestFilesView : ViewModelCollectionDrivenDialogViewController
+    public class PullRequestFilesView : DialogViewController
     {
-        public new PullRequestFilesViewModel ViewModel
-        {
-            get { return (PullRequestFilesViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public PullRequestFilesViewModel ViewModel { get; }
 
         public PullRequestFilesView()
         {
             Title = "Files";
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.FileCode.ToEmptyListImage(), "There are no files."));
+
+            //EmptyView = new Lazy<UIView>(() =>
+                //new EmptyListView(Octicon.FileCode.ToEmptyListImage(), "There are no files."));
         }
 
         public override void ViewDidLoad()
@@ -58,15 +56,15 @@ namespace CodeHub.iOS.Views.PullRequests
             }
         }
 
-        public override DialogViewController.Source CreateSizingSource()
+        public override UITableViewSource CreateSizingSource()
         {
             return new CustomSource(this);
         }
     
-        private class CustomSource : DialogViewController.Source
+        private class CustomSource : DialogTableViewSource
         {
             public CustomSource(PullRequestFilesView parent)
-                : base(parent)
+                : base(parent.TableView)
             {
             }
 

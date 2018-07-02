@@ -8,7 +8,6 @@ using CodeHub.Core.ViewModels.PullRequests;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Services;
 using CodeHub.iOS.Utilities;
-using CodeHub.iOS.ViewControllers;
 using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.WebViews;
 using Humanizer;
@@ -16,10 +15,11 @@ using ReactiveUI;
 using UIKit;
 using Splat;
 using System.Reactive;
+using Octokit;
 
-namespace CodeHub.iOS.Views.PullRequests
+namespace CodeHub.iOS.ViewControllers.PullRequests
 {
-    public class PullRequestView : PrettyDialogViewController
+    public class PullRequestViewController : ItemDetailsViewController
     {
         private readonly IMarkdownService _markdownService = Locator.Current.GetService<IMarkdownService>();
         private readonly HtmlElement _descriptionElement = new HtmlElement("description");
@@ -31,19 +31,24 @@ namespace CodeHub.iOS.Views.PullRequests
         private StringElement _labelsElement;
         private StringElement _addCommentElement;
 
-        public new PullRequestViewModel ViewModel
+        public PullRequestViewModel ViewModel { get; }
+
+        public PullRequestViewController(
+            string username,
+            string repository,
+            PullRequest pullRequest)
         {
-            get { return (PullRequestViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
+            ViewModel = new PullRequestViewModel(
+                username, repository, (int)pullRequest.Id);
         }
 
-        protected override void DidScroll(CoreGraphics.CGPoint p)
-        {
-            base.DidScroll(p);
+        //protected override void DidScroll(CoreGraphics.CGPoint p)
+        //{
+        //    base.DidScroll(p);
 
-            _descriptionElement.SetLayout();
-            _commentsElement.SetLayout();
-        }
+        //    _descriptionElement.SetLayout();
+        //    _commentsElement.SetLayout();
+        //}
 
         public override void ViewDidLoad()
         {
@@ -70,7 +75,10 @@ namespace CodeHub.iOS.Views.PullRequests
             _labelsElement = new StringElement("Labels", "None", UITableViewCellStyle.Value1) { Image = Octicon.Tag.ToImage() };
             _addCommentElement = new StringElement("Add Comment") { Image = Octicon.Pencil.ToImage() };
 
-            ViewModel.WhenAnyValue(x => x.PullRequest).Subscribe(x =>
+            ViewModel
+                .WhenAnyValue(x => x.PullRequest)
+                .Where(x => x != null)
+                .Subscribe(x =>
             {
                 var merged = x.Merged;
                 _split1.Button1.Text = x.State.StringValue;

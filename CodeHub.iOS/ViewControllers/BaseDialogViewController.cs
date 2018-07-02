@@ -7,7 +7,7 @@ using CodeHub.iOS.Views;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class BaseDialogViewController : TableViewController
+    public abstract class ItemDetailsViewController : TableViewController
     {
         protected readonly SlideUpTitleView SlideUpTitle;
         protected readonly ImageAndTitleHeaderView HeaderView;
@@ -50,7 +50,7 @@ namespace CodeHub.iOS.ViewControllers
             }
         }
 
-        protected BaseDialogViewController()
+        protected ItemDetailsViewController()
             : base(UITableViewStyle.Grouped)
         {
             SlideUpTitle = new SlideUpTitleView(44f) { Offset = 100f };

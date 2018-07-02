@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UIKit;
 using CodeHub.Core.ViewModels.Gists;
 using CodeHub.iOS.Utilities;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using ReactiveUI;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
@@ -160,7 +161,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             });
         }
 
-        public override DialogViewController.Source CreateSizingSource()
+        public override UITableViewSource CreateSizingSource()
         {
             return new EditSource(this);
         }
@@ -172,11 +173,14 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 ViewModel.Files.Remove(e.Caption);
         }
 
-        private class EditSource : Source
+        private class EditSource : DialogTableViewSource
         {
+            private readonly WeakReference<GistCreateViewController> _container;
+
             public EditSource(GistCreateViewController dvc) 
-                : base (dvc)
+                : base (dvc.TableView)
             {
+                _container = new WeakReference<GistCreateViewController>(dvc);
             }
 
             public override bool CanEditRow(UITableView tableView, Foundation.NSIndexPath indexPath)
@@ -198,7 +202,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                     case UITableViewCellEditingStyle.Delete:
                         var section = Root?[indexPath.Section];
                         var element = section?[indexPath.Row];
-                        (Container as GistCreateViewController)?.Delete(element);
+                        _container.Get()?.Delete(element);
                         section?.Remove(element);
                         break;
                 }

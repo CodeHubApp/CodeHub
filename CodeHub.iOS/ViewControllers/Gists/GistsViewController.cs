@@ -101,7 +101,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                 }
 
                 d(ViewModel.ItemSelected
-                  .Select(x => GistViewController.FromGist(x.Gist))
+                  .Select(x => new GistViewController(x.Gist))
                   .Subscribe(x => NavigationController.PushViewController(x, true)));
 
                 d(ViewModel.WhenAnyValue(x => x.HasMore)

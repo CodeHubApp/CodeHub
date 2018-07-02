@@ -9,8 +9,10 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.Views.Issues
 {
-    public class IssueEditView : ViewModelDrivenDialogViewController
+    public class IssueEditView : DialogViewController
     {
+        public IssueEditViewModel ViewModel { get; set; }
+
         public IssueEditView()
         {
             Title = "Edit Issue";
@@ -23,7 +25,7 @@ namespace CodeHub.iOS.Views.Issues
             TableView.RowHeight = UITableView.AutomaticDimension;
             TableView.EstimatedRowHeight = 44f;
 
-            var vm = (IssueEditViewModel)ViewModel;
+            var vm = ViewModel;
 
             var saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
             NavigationItem.RightBarButtonItem = saveButton;

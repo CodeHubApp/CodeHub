@@ -59,7 +59,7 @@ namespace CodeHub.Core.ViewModels.Issues
         public Octokit.Issue Issue
         {
             get { return _issueModel; }
-            private set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
+            set { this.RaiseAndSetIfChanged(ref _issueModel, value); }
         }
 
         private int? _participants;

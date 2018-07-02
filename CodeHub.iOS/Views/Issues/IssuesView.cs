@@ -13,11 +13,7 @@ namespace CodeHub.iOS.Views.Issues
         private UISegmentedControl _viewSegment;
         private UIBarButtonItem _segmentBarButton;
 
-        public new IssuesViewModel ViewModel
-        {
-            get { return (IssuesViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public IssuesViewModel ViewModel { get; }
 
         public override void ViewDidLoad()
         {

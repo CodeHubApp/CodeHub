@@ -16,29 +16,21 @@ using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistViewController : PrettyDialogViewController
+    public class GistViewController : ItemDetailsViewController
     {
+        private readonly IAlertDialogService _alertDialogService = Locator.Current.GetService<IAlertDialogService>();
         private SplitViewElement _splitRow1, _splitRow2;
         private StringElement _ownerElement;
         private SplitButtonElement _split;
-        private readonly IAlertDialogService _alertDialogService = Locator.Current.GetService<IAlertDialogService>();
 
-        public new GistViewModel ViewModel
-        {
-            get { return (GistViewModel)base.ViewModel; }
-            set { base.ViewModel = value; }
-        }
+        public GistViewModel ViewModel { get; }
 
-        public static GistViewController FromGist(Gist gist)
+        public GistViewController(Gist gist)
         {
-            return new GistViewController
+            ViewModel = new GistViewModel(gist.Id)
             {
-                ViewModel = GistViewModel.FromGist(gist)
+                Gist = gist
             };
-        }
-
-        public GistViewController()
-        {
         }
 
         public override void ViewDidLoad()

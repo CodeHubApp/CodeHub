@@ -1,18 +1,15 @@
-using System;
 using UIKit;
-using CodeHub.iOS;
 using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.DialogElements
 {
     public class UserElement : StringElement
     {
-        public UserElement(string username, string firstName, string lastName, GitHubAvatar avatar)
+        public UserElement(string username, string name, GitHubAvatar avatar)
             : base (username, string.Empty, UITableViewCellStyle.Subtitle)
         {
-            var realName = firstName ?? "" + " " + (lastName ?? "");
-             if (!string.IsNullOrWhiteSpace(realName))
-                Value = realName;
+             if (!string.IsNullOrWhiteSpace(name))
+                Value = name;
             Accessory = UITableViewCellAccessory.DisclosureIndicator;
             Image = Images.Avatar;
             ImageUri = avatar.ToUri(64);
@@ -31,8 +28,9 @@ namespace CodeHub.iOS.DialogElements
         {
             public PinnedImageTableViewCell(UITableViewCellStyle style, string key) 
                 : base(style, key) 
-            { 
-                this.SeparatorInset = new UIKit.UIEdgeInsets(0, 48f, 0, 0); 
+            {
+                SeparatorInset = new UIEdgeInsets(0, 48f, 0, 0);
+
                 ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
                 ImageView.Layer.CornerRadius = 16f;
                 ImageView.Layer.MasksToBounds = true;

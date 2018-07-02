@@ -1,14 +1,3 @@
-//
-// DialogViewController.cs: drives MonoTouch.Dialog
-//
-// Author:
-//   Miguel de Icaza
-//
-// Code to support pull-to-refresh based on Martin Bowling's TweetTableView
-// which is based in turn in EGOTableViewPullRefresh code which was created
-// by Devin Doty and is Copyrighted 2009 enormego and released under the
-// MIT X11 license
-//
 using System;
 using UIKit;
 using CoreGraphics;
@@ -16,18 +5,14 @@ using System.Collections.Generic;
 using Foundation;
 using CodeHub.iOS.DialogElements;
 using System.Linq;
+using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    /// <summary>
-    ///   The DialogViewController is the main entry point to use MonoTouch.Dialog,
-    ///   it provides a simplified API to the UITableViewController.
-    /// </summary>
     public class DialogViewController : TableViewController
     {
         private readonly Lazy<RootElement> _rootElement;
         private UISearchBar _searchBar;
-        bool pushing;
 
         public RootElement Root => _rootElement.Value;
 
@@ -163,99 +148,6 @@ namespace CodeHub.iOS.ViewControllers
         {
         }
 
-        public class Source : UITableViewSource {
-            private readonly WeakReference<DialogViewController> _container;
-
-            public RootElement Root => _container.Get()?.Root;
-
-            public DialogViewController Container
-            {
-                get { return _container.Get(); }
-            }
-
-            public Source (DialogViewController container)
-            {
-                _container = new WeakReference<DialogViewController>(container);
-            }
-
-            public override nint RowsInSection (UITableView tableview, nint section)
-            {
-                var s = Root?[(int)section];
-                var count = s?.Elements.Count;
-                return count ?? 0;
-            }
-
-            public override nint NumberOfSections (UITableView tableView)
-            {
-                return Root?.Count ?? 0;
-            }
-
-            public override string TitleForHeader (UITableView tableView, nint section)
-            {
-                return Root?[(int)section]?.Header;
-            }
-
-            public override string TitleForFooter (UITableView tableView, nint section)
-            {
-                return Root?[(int)section]?.Footer;
-            }
-
-            public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
-            {
-                var section = Root?[indexPath.Section];
-                var element = section?[indexPath.Row];
-                return element?.GetCell (tableView);
-            }
-
-            public override void RowDeselected (UITableView tableView, NSIndexPath indexPath)
-            {
-                _container.Get()?.Deselected (indexPath);
-            }
-
-            public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
-            {
-                _container.Get()?.Selected (indexPath);
-            }            
-
-            public override UIView GetViewForHeader (UITableView tableView, nint sectionIdx)
-            {
-                var section = Root?[(int)sectionIdx];
-                return section?.HeaderView;
-            }
-
-            public override nfloat GetHeightForHeader (UITableView tableView, nint sectionIdx)
-            {
-                var section = Root?[(int)sectionIdx];
-                return section?.HeaderView?.Frame.Height ?? -1;
-            }
-
-            public override UIView GetViewForFooter (UITableView tableView, nint sectionIdx)
-            {
-                var section = Root?[(int)sectionIdx];
-                return section?.FooterView;
-            }
-
-            public override nfloat GetHeightForFooter (UITableView tableView, nint sectionIdx)
-            {
-                var section = Root?[(int)sectionIdx];
-                return section?.FooterView?.Frame.Height ?? -1;
-            }
-
-            public override void Scrolled (UIScrollView scrollView)
-            {
-                _container.Get()?.DidScroll(Root.TableView.ContentOffset);
-            }
-
-            public override nfloat GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
-            {
-                var section = Root?[indexPath.Section];
-                var element = section?[indexPath.Row];
-
-                var sizable = element as IElementSizing;
-                return sizable?.GetHeight(tableView, indexPath) ?? tableView.RowHeight;
-            }
-        }
-
         protected virtual IUISearchBarDelegate CreateSearchDelegate()
         {
             return new SearchDelegate(this);
@@ -292,11 +184,10 @@ namespace CodeHub.iOS.ViewControllers
             element.Selected (TableView, indexPath);
         }
 
-        public virtual Source CreateSizingSource()
+        public virtual UITableViewSource CreateSizingSource()
         {
-            return new Source (this);
+            return new DialogTableViewSource(TableView);
         }
-
 
         public override void LoadView ()
         {
@@ -308,19 +199,7 @@ namespace CodeHub.iOS.ViewControllers
         public override void ViewWillAppear (bool animated)
         {
             base.ViewWillAppear (animated);
-            NavigationItem.HidesBackButton = !pushing;
-            TableView.ReloadData ();
-        }
-
-        public bool Pushing {
-            get {
-                return pushing;
-            }
-            set {
-                pushing = value;
-                if (NavigationItem != null)
-                    NavigationItem.HidesBackButton = !pushing;
-            }
+            TableView.ReloadData();
         }
 
         public void ReloadData ()
@@ -328,7 +207,7 @@ namespace CodeHub.iOS.ViewControllers
             TableView.ReloadData();
         }
 
-        public DialogViewController (UITableViewStyle style, bool pushing = true) 
+        public DialogViewController (UITableViewStyle style = UITableViewStyle.Plain) 
             : base (style)
         {
             _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
@@ -336,7 +215,6 @@ namespace CodeHub.iOS.ViewControllers
             EdgesForExtendedLayout = UIRectEdge.None;
             SearchPlaceholder = "Search";
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
-            this.pushing = pushing;
         }
     }
 }

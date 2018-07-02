@@ -17,9 +17,9 @@ using CodeHub.Core.Services;
 using Splat;
 using System.Reactive;
 
-namespace CodeHub.iOS.Views.Issues
+namespace CodeHub.iOS.ViewControllers.Issues
 {
-    public class IssueView : PrettyDialogViewController
+    public class IssueViewController : ItemDetailsViewController
     {
         private readonly IMarkdownService _markdownService = Locator.Current.GetService<IMarkdownService>();
         private readonly HtmlElement _descriptionElement = new HtmlElement("description");
@@ -32,29 +32,29 @@ namespace CodeHub.iOS.Views.Issues
         private SplitButtonElement.Button _splitButton1;
         private SplitButtonElement.Button _splitButton2;
 
-        public new IssueViewModel ViewModel
+        public IssueViewModel ViewModel { get; }
+
+        public IssueViewController(Octokit.Issue issue)
         {
-            get { return (IssueViewModel) base.ViewModel; }
-            set { base.ViewModel = value; }
+            ViewModel = new IssueViewModel(
+                issue.Repository.Owner.Login, issue.Repository.Name, issue.Number)
+            {
+                Issue = issue
+            };
         }
 
-        public IssueView(string owner, string repository, int id)
-            : this()
+        public IssueViewController(string owner, string repository, int id)
         {
             ViewModel = new IssueViewModel(owner, repository, id);
         }
 
-        public IssueView()
-        {
-        }
+        //protected override void DidScroll(CoreGraphics.CGPoint p)
+        //{
+        //    base.DidScroll(p);
 
-        protected override void DidScroll(CoreGraphics.CGPoint p)
-        {
-            base.DidScroll(p);
-
-            _descriptionElement.SetLayout();
-            _commentsElement.SetLayout();
-        }
+        //    _descriptionElement.SetLayout();
+        //    _commentsElement.SetLayout();
+        //}
 
         public override void ViewDidLoad()
         {

@@ -36,11 +36,6 @@ namespace CodeHub.Core.ViewModels.Gists
 
         public ReactiveCommand<Unit, Gist> ForkCommand { get; }
 
-        public static GistViewModel FromGist(Gist gist)
-        {
-            return new GistViewModel(gist.Id) { Gist = gist };
-        }
-
         public GistViewModel(string id)
         {
             Id = id;

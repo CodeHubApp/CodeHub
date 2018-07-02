@@ -15,7 +15,7 @@ namespace CodeHub.iOS
             //new Route("^[^/]*/stars/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoriesStarredViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/$", typeof(CodeHub.Core.ViewModels.User.UserViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/$", typeof(CodeHub.Core.ViewModels.Repositories.RepositoryViewModel)),
-            new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),
+            //new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pulls/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestsViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/pull/(?<Id>[^/]*)/$", typeof(CodeHub.Core.ViewModels.PullRequests.PullRequestViewModel)),
             new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/issues/$", typeof(CodeHub.Core.ViewModels.Issues.IssuesViewModel)),
             //new Route("^[^/]*/(?<Username>[^/]*)/(?<Repository>[^/]*)/commits/$", typeof(CodeHub.Core.ViewModels.Commits.CommitsViewModel)),

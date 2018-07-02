@@ -1,37 +1,29 @@
 ﻿using System;
-using CodeHub.Core.ViewModels.Organizations;
+using System.Reactive.Linq;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers.Users;
-using CodeHub.iOS.Views;
+using Octokit;
 using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Organizations
 {
-    public class TeamsViewController : ViewModelCollectionDrivenDialogViewController
+    public class TeamsViewController : GitHubListViewController<Team>
     {
-        public TeamsViewController()
+        public static TeamsViewController OrganizationTeams(string org)
+            => new TeamsViewController(ApiUrls.OrganizationTeams(org));
+
+        private TeamsViewController(Uri uri) : base(uri, Octicon.Organization)
         {
             Title = "Teams";
-            EmptyView = new Lazy<UIView>(() =>
-                new EmptyListView(Octicon.Organization.ToEmptyListImage(), "There are no teams."));
         }
 
-        public override void ViewDidLoad()
+        protected override Element ConvertToElement(Team item)
         {
-            base.ViewDidLoad();
-
-            var vm = (TeamsViewModel)ViewModel;
-            var weakVm = new WeakReference<TeamsViewController>(this);
-
-            //this.BindCollection(vm.Teams, x =>
-            //{
-            //    var e = new StringElement(x.Name);
-            //    e.Clicked.Subscribe(_ => {
-            //        var vc = UsersViewController.CreateTeamMembersViewController((int)x.Id);
-            //        weakVm.Get()?.NavigationController.PushViewController(vc, true);
-            //    });
-            //    return e;
-            //});
+            var e = new StringElement(item.Name);
+            e.Clicked
+             .Select(_ => UsersViewController.CreateTeamMembersViewController(item.Id))
+             .Subscribe(this.PushViewController);
+            return e;
         }
     }
 }
