@@ -14,8 +14,8 @@ namespace CodeHub.iOS.Views.Issues
         public IssueLabelsViewModel ViewModel { get; }
 
         public IssueLabelsView()
+            : base(searchEnabled: false)
         {
-            EnableSearch = false;
             Title = "Labels";
           
             //EmptyView = new Lazy<UIView>(() =>

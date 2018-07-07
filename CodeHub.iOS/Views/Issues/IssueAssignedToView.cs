@@ -47,7 +47,7 @@ namespace CodeHub.iOS.Views.Issues
             {
                 if (Root.Count == 0)
                     return;
-                foreach (var m in Root[0].Elements.Cast<UserElement>())
+                foreach (var m in Root[0].Elements.Cast<ProfileElement>())
                     m.Accessory = (x != null && string.Equals(ViewModel.SelectedUser.Login, m.Caption, StringComparison.OrdinalIgnoreCase)) ? 
                                      UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
             });

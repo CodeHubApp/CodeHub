@@ -12,30 +12,18 @@ namespace CodeHub.iOS.DialogElements
         private readonly List<Section> _sections = new List<Section>();
         private readonly WeakReference<UITableView> _tableView;
 
-        public UITableView TableView
-        {
-            get { return _tableView.Get(); }
-        }
+        public UITableView TableView => _tableView.Get();
 
-        public IReadOnlyList<Section> Sections
-        {
-            get { return new ReadOnlyCollection<Section>(_sections); }
-        }
+        public IReadOnlyList<Section> Sections => new ReadOnlyCollection<Section>(_sections);
 
         public RootElement(UITableView tableView)
         {
             _tableView = new WeakReference<UITableView>(tableView);
         }
 
-        public int Count 
-        { 
-            get { return _sections.Count; }
-        }
+        public int Count => _sections.Count;
 
-        public Section this [int idx] 
-        {
-            get { return _sections[idx]; }
-        }
+        public Section this [int idx] => _sections[idx];
 
         internal int IndexOf (Section target)
         {

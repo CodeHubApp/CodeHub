@@ -72,7 +72,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             OnActivation(d =>
             {
                 d(editButton.GetClickedObservable().Subscribe(ShareButtonTap));
-                d(_ownerElement.Clicked.BindCommand(ViewModel.GoToUserCommand));
+                d(_ownerElement.Clicked.InvokeReactiveCommand(ViewModel.GoToUserCommand));
 
                 d(ViewModel.WhenAnyValue(x => x.IsStarred)
                   .Where(x => x.HasValue)
@@ -80,7 +80,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
                   .Subscribe(x => _splitRow2.Button2.Text = x ? "Starred" : "Not Starred"));
 
                 //d(ViewModel.BindCollection(x => x.Comments, true).Subscribe(_ => RenderGist()));
-                d(HeaderView.Clicked.BindCommand(ViewModel.GoToUserCommand));
+                d(HeaderView.Clicked.InvokeReactiveCommand(ViewModel.GoToUserCommand));
 
                 d(ViewModel.WhenAnyValue(x => x.Gist).Where(x => x != null).Subscribe(gist =>
                 {

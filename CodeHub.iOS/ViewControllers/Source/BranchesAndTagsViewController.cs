@@ -23,8 +23,8 @@ namespace CodeHub.iOS.ViewControllers.Source
             SelectedView selectedView = SelectedView.Branches)
             : base(new string[] { "Branches", "Tags" }, (int)selectedView)
         {
-            _branchesViewController = new BranchesViewController(username, repository);
-            _tagsViewController = new TagsViewController(username, repository);
+            _branchesViewController = BranchesViewController.FromGitHub(username, repository);
+            _tagsViewController = TagsViewController.FromGitHub(username, repository);
         }
 
         protected override void SegmentValueChanged(int id)

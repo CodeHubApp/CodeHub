@@ -205,7 +205,7 @@
     <Compile Include="DialogElements\SplitViewElement.cs" />
     <Compile Include="DialogElements\CommentElement.cs" />
     <Compile Include="DialogElements\IssueElement.cs" />
-    <Compile Include="DialogElements\UserElement.cs" />
+    <Compile Include="DialogElements\ProfileElement.cs" />
     <Compile Include="DialogElements\NewsFeedElement.cs" />
     <Compile Include="DialogElements\EntryElement.cs" />
     <Compile Include="DialogElements\IElementSizing.cs" />
@@ -257,7 +257,6 @@
     <Compile Include="TableViewSources\UserTableViewSource.cs" />
     <Compile Include="TableViewCells\UserTableViewCell.cs" />
     <Compile Include="ViewControllers\Users\UsersViewController.cs" />
-    <Compile Include="TableViewSources\GistTableViewSource.cs" />
     <Compile Include="ViewControllers\Gists\GistsViewController.cs" />
     <Compile Include="ViewControllers\Gists\GistViewController.cs" />
     <Compile Include="ViewControllers\Gists\GistCreateViewController.cs" />
@@ -313,6 +312,8 @@
     <Compile Include="ViewControllers\Issues\IssueListViewController.cs" />
     <Compile Include="ViewControllers\Issues\IssueViewController.cs" />
     <Compile Include="ViewControllers\Issues\MyIssuesViewController.cs" />
+    <Compile Include="ViewControllers\ListViewController.cs" />
+    <Compile Include="DialogElements\GistElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

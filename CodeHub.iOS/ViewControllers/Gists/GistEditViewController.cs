@@ -10,6 +10,7 @@ using CodeHub.iOS.ViewControllers.Gists;
 using Octokit;
 using Splat;
 using CodeHub.iOS.TableViewSources;
+using System.Reactive;
 
 namespace CodeHub.iOS.ViewControllers
 {
@@ -166,10 +167,10 @@ namespace CodeHub.iOS.ViewControllers
             Root.Reset(sections);
         }
 
-        private static Action<object> MakeCallback(GistEditViewController ctrl, string key)
+        private static Action<Unit> MakeCallback(GistEditViewController ctrl, string key)
         {
             var weakCtrl = new WeakReference<GistEditViewController>(ctrl);
-            return new Action<object>(_ =>
+            return new Action<Unit>(_ =>
             {
                 var model = weakCtrl.Get()?._model;
                 if (model == null || !model.Files.ContainsKey(key))
@@ -217,7 +218,7 @@ namespace CodeHub.iOS.ViewControllers
             });
         }
 
-        public override UITableViewSource CreateSizingSource()
+        public override DialogTableViewSource CreateTableViewSource()
         {
             return new EditSource(this);
         }

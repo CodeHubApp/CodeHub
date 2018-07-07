@@ -212,6 +212,11 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             {
                 Repository = repository
             };
+
+            Appearing
+                .Take(1)
+                .Select(_ => Unit.Default)
+                .InvokeReactiveCommand(ViewModel.LoadCommand);
         }
 
         private void GoToSourceCode()
@@ -254,10 +259,14 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             }
             else
             {
-                var viewController = new BranchesViewController(owner, repo, branches);
-                viewController.BranchSelected.Subscribe(
-                    branch => viewController.PushViewController(
-                        CommitsViewController.RepositoryCommits(owner, repo, branch.Name)));
+                var viewController = branches?.Count > 0
+                    ? BranchesViewController.FromStaticList(branches)
+                    : BranchesViewController.FromGitHub(owner, repo);
+
+                viewController
+                    .BranchSelected
+                    .Select(branch => CommitsViewController.RepositoryCommits(owner, repo, branch.Name))
+                    .Subscribe(viewController.PushViewController);
                 this.PushViewController(viewController);
             }
         }
