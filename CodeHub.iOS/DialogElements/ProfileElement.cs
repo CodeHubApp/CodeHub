@@ -3,9 +3,9 @@ using CodeHub.Core.Utilities;
 
 namespace CodeHub.iOS.DialogElements
 {
-    public class UserElement : StringElement
+    public class ProfileElement : StringElement
     {
-        public UserElement(string username, string name, GitHubAvatar avatar)
+        public ProfileElement(string username, string name, GitHubAvatar avatar)
             : base (username, string.Empty, UITableViewCellStyle.Subtitle)
         {
              if (!string.IsNullOrWhiteSpace(name))
@@ -14,16 +14,16 @@ namespace CodeHub.iOS.DialogElements
             Image = Images.Avatar;
             ImageUri = avatar.ToUri(64);
         }
-        
-        // We need to create our own cell so we can position the image view appropriately
-        protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
-        {
-            return new PinnedImageTableViewCell(style, key);
-        }
 
-        /// <summary>
-        /// This class is to make sure the imageview is of a specific size... :(
-        /// </summary>
+        public static ProfileElement FromUser(Octokit.User user)
+            => new ProfileElement(user.Login, user.Name, new GitHubAvatar(user.AvatarUrl));
+
+        public static ProfileElement FromOrganization(Octokit.Organization org)
+            => new ProfileElement(org.Login, org.Name, new GitHubAvatar(org.AvatarUrl));
+        
+        protected override UITableViewCell CreateTableViewCell(UITableViewCellStyle style, string key)
+            => new PinnedImageTableViewCell(style, key);
+
         private class PinnedImageTableViewCell : UITableViewCell
         {
             public PinnedImageTableViewCell(UITableViewCellStyle style, string key) 
@@ -34,8 +34,6 @@ namespace CodeHub.iOS.DialogElements
                 ImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
                 ImageView.Layer.CornerRadius = 16f;
                 ImageView.Layer.MasksToBounds = true;
-//                ImageView.Layer.ShouldRasterize = true;
-//                ImageView.Layer.RasterizationScale = UIScreen.MainScreen.Scale;
             }
 
             public override void LayoutSubviews()

@@ -42,7 +42,6 @@
     <Compile Include="Services\IApplicationService.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\App\MenuViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistsViewModel.cs" />
     <Compile Include="ViewModels\Gists\GistViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueMilestonesViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssuesViewModel.cs" />
@@ -120,7 +119,6 @@
     <Compile Include="ViewModels\Search\RepositoryExploreViewModel.cs" />
     <Compile Include="ViewModels\Repositories\TrendingRepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Users\UserItemViewModel.cs" />
-    <Compile Include="ViewModels\Gists\GistItemViewModel.cs" />
     <Compile Include="ViewModels\Issues\IssueLabelsViewModel.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Services\LoginService.cs" />

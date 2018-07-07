@@ -38,13 +38,7 @@ namespace CodeHub.iOS.DialogElements
         private Uri _imageUri;
         private string _value;
         private UITableViewCellAccessory _accessory = UITableViewCellAccessory.DisclosureIndicator;
-        private readonly Subject<object> _tapped = new Subject<object>();
         private UITableViewCellSelectionStyle _selectionStyle = UITableViewCellSelectionStyle.Default;
-
-        public IObservable<object> Clicked
-        {
-            get { return _tapped.AsObservable(); }
-        }
 
         public UITableViewCellSelectionStyle SelectionStyle
         {
@@ -237,12 +231,6 @@ namespace CodeHub.iOS.DialogElements
                 cell.DetailTextLabel.TextColor = DefaultDetailColor;
             }
             return cell;
-        }
-
-        public override void Selected (UITableView tableView, NSIndexPath indexPath)
-        {
-            base.Selected(tableView, indexPath);
-            _tapped.OnNext(this);
         }
 
         public override bool Matches (string text)

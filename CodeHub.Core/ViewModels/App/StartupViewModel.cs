@@ -95,7 +95,7 @@ namespace CodeHub.Core.ViewModels.App
             {
                 DisplayAlertAsync("The credentials for the selected account are not valid. " + e.Message)
                     .ToObservable()
-                    .BindCommand(GoToAccounts);
+                    .InvokeReactiveCommand(GoToAccounts);
             }
             catch (Exception e)
             {

@@ -18,10 +18,11 @@ using CodeHub.iOS.TableViewSources;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class MenuViewController : DialogViewController
+    public class MenuViewController : TableViewController
     {
         private readonly ProfileButton _profileButton = new ProfileButton();
         private readonly UILabel _title;
+        private readonly DialogTableViewSource _source;
         private MenuElement _notifications;
         private Section _favoriteRepoSection;
 
@@ -47,6 +48,9 @@ namespace CodeHub.iOS.ViewControllers.Application
 
         public MenuViewController()
         {
+            _source = new EditSource(this);
+            TableView.Source = _source;
+
             Appeared.Take(1).Subscribe(_ => PromptPushNotifications());
 
             _title = new UILabel(new CGRect(0, 40, 320, 40));
@@ -194,7 +198,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             infoSection.Add(new MenuElement("Feedback & Support", GoToSupport, Octicon.CommentDiscussion.ToImage()));
             infoSection.Add(new MenuElement("Accounts", ProfileButtonClicked, Octicon.Person.ToImage()));
 
-            Root.Reset(sections);
+            _source.Root.Reset(sections);
         }
 
         public override void ViewWillAppear(bool animated)
@@ -238,16 +242,10 @@ namespace CodeHub.iOS.ViewControllers.Application
             this.PushViewController(new Issues.MyIssuesViewController());
 
         private void GoToSettings()
-        {
-            var vc = new SettingsViewController();
-            NavigationController?.PushViewController(vc, true);
-        }
+            => this.PushViewController(new SettingsViewController());
 
         private void GoToRepository(string owner, string name)
-        {
-            var vc = new Repositories.RepositoryViewController(owner, name);
-            NavigationController?.PushViewController(vc, true);
-        }
+            => this.PushViewController(new Repositories.RepositoryViewController(owner, name));
 
         private void GoToSupport()
         {
@@ -381,18 +379,13 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             if (_favoriteRepoSection.Elements.Count == 1)
             {
-                Root.Remove(_favoriteRepoSection);
+                _source.Root.Remove(_favoriteRepoSection);
                 _favoriteRepoSection = null;
             }
             else
             {
                 _favoriteRepoSection.Remove(el);
             }
-        }
-
-        public override UITableViewSource CreateSizingSource()
-        {
-            return new EditSource(this);
         }
 
         private class EditSource : DialogTableViewSource
@@ -413,7 +406,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
                 if (view._favoriteRepoSection == null)
                     return false;
-                if (view.Root[indexPath.Section] == view._favoriteRepoSection)
+                if (Root[indexPath.Section] == view._favoriteRepoSection)
                     return true;
                 return false;
             }
@@ -424,7 +417,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                 if (view == null)
                     return UITableViewCellEditingStyle.None;
 
-                if (view._favoriteRepoSection != null && view.Root[indexPath.Section] == view._favoriteRepoSection)
+                if (view._favoriteRepoSection != null && Root[indexPath.Section] == view._favoriteRepoSection)
                     return UITableViewCellEditingStyle.Delete;
                 return UITableViewCellEditingStyle.None;
             }
@@ -438,7 +431,7 @@ namespace CodeHub.iOS.ViewControllers.Application
                 switch (editingStyle)
                 {
                     case UITableViewCellEditingStyle.Delete:
-                        var section = view.Root[indexPath.Section];
+                        var section = Root[indexPath.Section];
                         var element = section[indexPath.Row];
                         view.DeletePinnedRepo(element as PinnedRepoElement);
                         break;

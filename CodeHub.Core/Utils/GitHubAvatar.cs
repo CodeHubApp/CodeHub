@@ -7,10 +7,7 @@ namespace CodeHub.Core.Utilities
     {
         public string AvatarUrl { get; }
 
-        public static GitHubAvatar Empty
-        {
-            get { return new GitHubAvatar((string)null); }
-        }
+        public static GitHubAvatar Empty => new GitHubAvatar((string)null);
 
         public GitHubAvatar(string avatarUrl)
         {

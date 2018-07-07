@@ -1,22 +1,19 @@
 using System;
-using UIKit;
-using CoreGraphics;
 using System.Collections.Generic;
-using Foundation;
-using CodeHub.iOS.DialogElements;
 using System.Linq;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
+using CoreGraphics;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
     public class DialogViewController : TableViewController
     {
-        private readonly Lazy<RootElement> _rootElement;
+        private readonly DialogTableViewSource _source;
         private UISearchBar _searchBar;
 
-        public RootElement Root => _rootElement.Value;
-
-        public bool EnableSearch { get; set; }
+        public RootElement Root => _source.Root;
 
         public string SearchPlaceholder { get; set; }
 
@@ -148,52 +145,9 @@ namespace CodeHub.iOS.ViewControllers
         {
         }
 
-        protected virtual IUISearchBarDelegate CreateSearchDelegate()
-        {
-            return new SearchDelegate(this);
-        }
-
-        void SetupSearch ()
-        {
-            if (EnableSearch){
-                _searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
-                    Delegate = CreateSearchDelegate()
-                };
-                if (SearchPlaceholder != null)
-                    _searchBar.Placeholder = this.SearchPlaceholder;
-                TableView.TableHeaderView = _searchBar;                    
-            } else {
-                // Does not work with current Monotouch, will work with 3.0
-                // tableView.TableHeaderView = null;
-            }
-        }
-
-        public virtual void Deselected (NSIndexPath indexPath)
-        {
-            var section = Root[indexPath.Section];
-            var element = section[indexPath.Row];
-
-            element.Deselected (TableView, indexPath);
-        }
-
-        public virtual void Selected (NSIndexPath indexPath)
-        {
-            var section = Root[indexPath.Section];
-            var element = section[indexPath.Row];
-
-            element.Selected (TableView, indexPath);
-        }
-
-        public virtual UITableViewSource CreateSizingSource()
+        public virtual DialogTableViewSource CreateTableViewSource()
         {
             return new DialogTableViewSource(TableView);
-        }
-
-        public override void LoadView ()
-        {
-            base.LoadView();
-            SetupSearch ();
-            TableView.Source = CreateSizingSource();
         }
 
         public override void ViewWillAppear (bool animated)
@@ -207,14 +161,30 @@ namespace CodeHub.iOS.ViewControllers
             TableView.ReloadData();
         }
 
-        public DialogViewController (UITableViewStyle style = UITableViewStyle.Plain) 
+        public DialogViewController (
+            UITableViewStyle style = UITableViewStyle.Plain,
+            bool searchEnabled = true,
+            string searchPlaceholder = null,
+            DialogTableViewSource tableViewSource = null) 
             : base (style)
         {
-            _rootElement = new Lazy<RootElement>(() => new RootElement(TableView));
+            _source = tableViewSource ?? new DialogTableViewSource(TableView);
+            TableView.Source = _source;
+
+            if (searchEnabled)
+            {
+                _searchBar = new UISearchBar (new CGRect (0, 0, TableView.Bounds.Width, 44)) {
+                    Delegate = new SearchDelegate(this)
+                };
+
+                if (SearchPlaceholder != null)
+                    _searchBar.Placeholder = this.SearchPlaceholder;
+                
+                TableView.TableHeaderView = _searchBar;   
+            }
 
             EdgesForExtendedLayout = UIRectEdge.None;
             SearchPlaceholder = "Search";
-            NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
         }
     }
 }

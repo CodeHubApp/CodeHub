@@ -14,14 +14,7 @@ namespace CodeHub.iOS.ViewControllers
         private readonly UIView _backgroundHeaderView;
         private DialogTableViewSource _dialogSource;
 
-        protected DialogTableViewSource DialogSource
-        {
-            get { return _dialogSource; }
-        }
-
-        protected RootElement Root{
-            get { return _dialogSource.Root; }
-        }
+        protected RootElement Root => _dialogSource.Root;
 
         public override string Title
         {

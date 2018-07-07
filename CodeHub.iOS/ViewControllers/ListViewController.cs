@@ -16,13 +16,13 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public abstract class GitHubListViewController<T> : TableViewController
+    public abstract class ListViewController<T> : TableViewController
     {
         private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
+        private readonly Lazy<EmptyListView> _emptyListView;
         private readonly UIView _emptyView = new UIView();
         private readonly IDataRetriever<T> _list;
         private readonly Section _section = new Section();
-        private readonly Octicon _icon;
         private DialogTableViewSource _source;
 
         private bool _hasMore = true;
@@ -34,21 +34,17 @@ namespace CodeHub.iOS.ViewControllers
 
         public ReactiveCommand<Unit, IReadOnlyList<T>> LoadMoreCommand { get; }
 
-        protected GitHubListViewController(
-            Uri uri,
-            Octicon icon = null,
-            IDictionary<string, string> parameters = null,
-            IDataRetriever<T> dataRetriever = null,
-            IApplicationService applicationService = null)
+        protected ListViewController(
+            IDataRetriever<T> dataRetriever,
+            Func<EmptyListView> emptyListViewFactory)
         {
-            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
-            _list = dataRetriever ?? new GitHubList<T>(applicationService.GitHubClient, uri, parameters);
-            _icon = icon ?? Octicon.Octoface;
+            _list = dataRetriever;
+            _emptyListView = new Lazy<EmptyListView>(emptyListViewFactory);
 
             LoadMoreCommand = ReactiveCommand.CreateFromTask(
                 LoadMore,
                 this.WhenAnyValue(x => x.HasMore));
-            
+
             LoadMoreCommand
               .ThrownExceptions
               .Select(error => new UserError("Failed To Load More", error))
@@ -121,9 +117,8 @@ namespace CodeHub.iOS.ViewControllers
 
         private void SetEmptyView()
         {
-            var emptyListView = new EmptyListView(
-                _icon.ToEmptyListImage(),
-                "There are no items!") { Alpha = 0 };
+            var emptyListView = _emptyListView.Value;
+            emptyListView.Alpha = 0;
 
             TableView.TableFooterView = new UIView();
             TableView.BackgroundView = emptyListView;

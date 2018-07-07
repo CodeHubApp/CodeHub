@@ -1,7 +1,6 @@
 using System;
 using System.Reactive.Linq;
 using CodeHub.Core.Services;
-using CodeHub.Core.Utilities;
 using CodeHub.iOS.DialogElements;
 using Octokit;
 using Splat;
@@ -28,11 +27,15 @@ namespace CodeHub.iOS.ViewControllers.Organizations
 
         protected override Element ConvertToElement(Organization item)
         {
-            var avatar = new GitHubAvatar(item.AvatarUrl);
-            var e = new UserElement(item.Login, item.Name, avatar);
+            var e = new ProfileElement(
+                item.Login,
+                item.Name,
+                new Core.Utilities.GitHubAvatar(item.AvatarUrl));
+            
             e.Clicked
              .Select(_ => new OrganizationViewController(item))
              .Subscribe(this.PushViewController);
+            
             return e;
         }
     }

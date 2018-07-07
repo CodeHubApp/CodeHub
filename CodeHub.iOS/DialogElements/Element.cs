@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Foundation;
 using UIKit;
 
@@ -7,8 +10,11 @@ namespace CodeHub.iOS.DialogElements
     public abstract class Element 
     {
         private WeakReference<Section> _weakSection;
+        private readonly Subject<Unit> _tapped = new Subject<Unit>();
 
         public Section Section => _weakSection?.Get();
+
+        public IObservable<Unit> Clicked => _tapped.AsObservable();
 
         internal void SetSection(Section section)
         {
@@ -27,6 +33,7 @@ namespace CodeHub.iOS.DialogElements
 
         public virtual void Selected (UITableView tableView, NSIndexPath path)
         {
+            _tapped.OnNext(Unit.Default);
             tableView.DeselectRow (path, true);
         }
 

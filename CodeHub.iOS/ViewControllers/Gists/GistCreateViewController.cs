@@ -161,7 +161,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             });
         }
 
-        public override UITableViewSource CreateSizingSource()
+        public override DialogTableViewSource CreateTableViewSource()
         {
             return new EditSource(this);
         }

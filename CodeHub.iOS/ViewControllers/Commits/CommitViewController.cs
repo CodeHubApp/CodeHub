@@ -77,7 +77,7 @@ namespace CodeHub.iOS.ViewControllers.Commits
 
             OnActivation(d =>
             {
-                d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
+                d(HeaderView.Clicked.InvokeReactiveCommand(ViewModel.GoToOwner));
                 d(ViewModel.WhenAnyValue(x => x.Title).Subscribe(x => Title = x));
                 d(actionButton.GetClickedObservable().Subscribe(_ => ShowExtraMenu()));
             });

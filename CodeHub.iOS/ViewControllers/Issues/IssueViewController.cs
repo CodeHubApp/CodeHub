@@ -129,14 +129,14 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
             OnActivation(d =>
             {
-                d(_milestoneElement.Clicked.BindCommand(ViewModel.GoToMilestoneCommand));
-                d(_assigneeElement.Clicked.BindCommand(ViewModel.GoToAssigneeCommand));
-                d(_labelsElement.Clicked.BindCommand(ViewModel.GoToLabelsCommand));
+                d(_milestoneElement.Clicked.InvokeReactiveCommand(ViewModel.GoToMilestoneCommand));
+                d(_assigneeElement.Clicked.InvokeReactiveCommand(ViewModel.GoToAssigneeCommand));
+                d(_labelsElement.Clicked.InvokeReactiveCommand(ViewModel.GoToLabelsCommand));
                 d(_addCommentElement.Clicked.Subscribe(_ => AddCommentTapped()));
                 //d(_descriptionElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 //d(_commentsElement.UrlRequested.BindCommand(ViewModel.GoToUrlCommand));
                 d(actionButton.GetClickedObservable().Subscribe(ShowExtraMenu));
-                d(HeaderView.Clicked.BindCommand(ViewModel.GoToOwner));
+                d(HeaderView.Clicked.InvokeReactiveCommand(ViewModel.GoToOwner));
 
                 d(ViewModel.WhenAnyValue(x => x.IsCollaborator).Subscribe(x => {
                     foreach (var i in new [] { _assigneeElement, _milestoneElement, _labelsElement })

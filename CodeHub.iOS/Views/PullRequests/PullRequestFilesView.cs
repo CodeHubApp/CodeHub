@@ -56,7 +56,7 @@ namespace CodeHub.iOS.Views.PullRequests
             }
         }
 
-        public override UITableViewSource CreateSizingSource()
+        public override DialogTableViewSource CreateTableViewSource()
         {
             return new CustomSource(this);
         }

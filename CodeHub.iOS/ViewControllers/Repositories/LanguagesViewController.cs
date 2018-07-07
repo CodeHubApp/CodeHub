@@ -19,10 +19,9 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         public Language SelectedLanguage { get; set; }
 
         public LanguagesViewController()
-            : base(UITableViewStyle.Plain)
+            : base(UITableViewStyle.Plain, searchEnabled: false)
         {
             Title = "Languages";
-            EnableSearch = true;
         }
 
         public override void ViewDidLoad()

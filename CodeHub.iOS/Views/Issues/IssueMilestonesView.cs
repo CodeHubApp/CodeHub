@@ -15,9 +15,9 @@ namespace CodeHub.iOS.Views.Issues
         public IssueMilestonesViewModel ViewModel { get; }
 
         public IssueMilestonesView()
+            : base(searchEnabled: false)
         {
             Title = "Milestones";
-            EnableSearch = false;
 
             //EmptyView = new Lazy<UIView>(() =>
                 //new EmptyListView(Octicon.Milestone.ToEmptyListImage(), "There are no milestones."));

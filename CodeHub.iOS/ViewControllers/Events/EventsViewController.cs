@@ -10,7 +10,7 @@ using ReactiveUI;
 
 namespace CodeHub.iOS.ViewControllers.Events
 {
-    public class EventsViewController : DialogViewController
+    public class EventsViewController : TableViewController
     {
         private static IDictionary<EventType, Octicon> _eventToImage 
             = new Dictionary<EventType, Octicon>
@@ -89,7 +89,7 @@ namespace CodeHub.iOS.ViewControllers.Events
 
         public EventsViewController()
         {
-            EnableSearch = false;
+            //EnableSearch = false;
             ReportRepository = false;
         }
 
