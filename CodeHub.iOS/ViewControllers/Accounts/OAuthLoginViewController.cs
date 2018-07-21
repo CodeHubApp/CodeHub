@@ -13,7 +13,7 @@ using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
-    public class OAuthLoginViewController : BaseWebViewController
+    public class OAuthLoginViewController : WebBrowserViewController
     {
         private readonly IAlertDialogService _alertDialogService;
 
@@ -24,8 +24,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
 
         public OAuthLoginViewModel ViewModel { get; } = new OAuthLoginViewModel();
 
-        public OAuthLoginViewController(IAlertDialogService alertDialogService = null) 
-            : base(true)
+        public OAuthLoginViewController(IAlertDialogService alertDialogService = null)
         {
             _alertDialogService = alertDialogService ?? Locator.Current.GetService<IAlertDialogService>();
 
@@ -94,7 +93,9 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         private void LoadRequest()
         {
             //Remove all cookies & cache
-            WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(WKWebsiteDataStore.AllWebsiteDataTypes, NSDate.FromTimeIntervalSince1970(0), 
+            WKWebsiteDataStore.DefaultDataStore.RemoveDataOfTypes(
+                WKWebsiteDataStore.AllWebsiteDataTypes,
+                NSDate.FromTimeIntervalSince1970(0), 
                 () => Web.LoadRequest(new NSUrlRequest(new NSUrl(ViewModel.LoginUrl))));
         }
     }

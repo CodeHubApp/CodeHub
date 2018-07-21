@@ -4,19 +4,33 @@ using UIKit;
 using CodeHub.Core.ViewModels.Repositories;
 using ReactiveUI;
 using System.Reactive.Linq;
+using CodeHub.Core.Utilities;
+using ObjCRuntime;
 
 namespace CodeHub.iOS.TableViewCells
 {
-    public partial class RepositoryCellView : ReactiveTableViewCell<RepositoryItemViewModel>
+    public partial class RepositoryCellView : UITableViewCell
     {
         public static readonly UINib Nib = UINib.FromName("RepositoryCellView", NSBundle.MainBundle);
         public static NSString Key = new NSString("RepositoryCellView");
         private static nfloat DefaultConstraintSize = 0.0f;
 
+        public RepositoryCellView()
+        {
+            SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
+        }
+
         public RepositoryCellView(IntPtr handle)
             : base(handle)
         {
             SeparatorInset = new UIEdgeInsets(0, 56f, 0, 0);
+        }
+
+        public static RepositoryCellView Create()
+        {
+            var cell = new RepositoryCellView();
+            var views = NSBundle.MainBundle.LoadNib("RepositoryCellView", cell, null);
+            return Runtime.GetNSObject(views.ValueAt(0)) as RepositoryCellView;
         }
 
         public override void AwakeFromNib()
@@ -39,22 +53,20 @@ namespace CodeHub.iOS.TableViewCells
             OwnerImageView.ContentMode = UIViewContentMode.ScaleAspectFill;
 
             DefaultConstraintSize = ContentConstraint.Constant;
+        }
 
-            this.WhenAnyValue(x => x.ViewModel)
-                .Where(x => x != null)
-                .Subscribe(x =>
-                {
-                    CaptionLabel.Text = x.Name;
-                    FollowersLabel.Text = x.Stars;
-                    ForksLabel.Text = x.Forks;
-                    ContentLabel.Hidden = string.IsNullOrEmpty(x.Description);
-                    ContentLabel.Text = x.Description ?? string.Empty;
-                    UserLabel.Hidden = !x.ShowOwner || string.IsNullOrEmpty(x.Owner);
-                    UserImageView.Hidden = UserLabel.Hidden;
-                    UserLabel.Text = x.Owner ?? string.Empty;
-                    ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
-                    OwnerImageView.SetAvatar(x.Avatar);
-                });
+        public void Set(string name, int stars, int forks, string description, string user, GitHubAvatar avatar, bool showOwner = true)
+        {
+            CaptionLabel.Text = name;
+            FollowersLabel.Text = stars.ToString();
+            ForksLabel.Text = forks.ToString();
+            ContentLabel.Hidden = string.IsNullOrEmpty(description);
+            ContentLabel.Text = description ?? string.Empty;
+            UserLabel.Hidden = !showOwner || string.IsNullOrEmpty(user);
+            UserImageView.Hidden = UserLabel.Hidden;
+            UserLabel.Text = user ?? string.Empty;
+            ContentConstraint.Constant = string.IsNullOrEmpty(ContentLabel.Text) ? 0f : DefaultConstraintSize;
+            OwnerImageView.SetAvatar(avatar);
         }
 
         protected override void Dispose(bool disposing)

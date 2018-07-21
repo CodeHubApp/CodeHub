@@ -7,7 +7,6 @@ namespace CodeHub.iOS
 {
     public static class Graphics 
     {
-
         public static UIImage ImageFromFont(UIFont font, char character, UIColor fillColor)
         {
             var s = new NSString("" + character);
@@ -25,6 +24,17 @@ namespace CodeHub.iOS
             var img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return img;
+        }
+
+        public static UIImage ImageFromColor(UIColor color)
+        {
+            UIGraphics.BeginImageContext(new CGSize(1, 1));
+            var context = UIGraphics.GetCurrentContext();
+            context.SetFillColor(color.CGColor);
+            context.FillRect(new CGRect(0, 0, 1, 1));
+            var image = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return image;
         }
         
         /// <summary>

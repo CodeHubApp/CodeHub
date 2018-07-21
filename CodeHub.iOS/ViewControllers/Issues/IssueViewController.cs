@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using CodeHub.Core.Services;
 using Splat;
 using System.Reactive;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.iOS.ViewControllers.Issues
 {
@@ -228,19 +229,29 @@ namespace CodeHub.iOS.ViewControllers.Issues
 
         void AddCommentTapped()
         {
-            var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async text =>
+            var composer = new MarkdownComposerViewController
             {
-                UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
+                Title = "Add Comment"
+            };
 
-                var hud = this.CreateHud();
-                hud.Show("Posting Comment...");
-                if (await ViewModel.AddComment(text))
-                    this.DismissViewController(true, null);
-                hud.Hide();
+            composer
+                .Saved
+                .SelectMany(x => AddComment(composer).ToObservable())
+                .Subscribe(
+                    _ => this.DismissViewController(true, null),
+                    e => AlertDialogService.ShowAlert("Unable to post comment!", e.Message));
 
-                UIApplication.SharedApplication.EndIgnoringInteractionEvents();
-            });
+            this.PresentModalViewController(composer);
+        }
+
+        private async Task AddComment(MarkdownComposerViewController composer)
+        {
+            var hud = composer.CreateHud();
+
+            using (UIApplication.SharedApplication.DisableInteraction())
+            using (NetworkActivity.ActivateNetwork())
+            using (hud.Activate("Posting Comment..."))
+                await ViewModel.AddComment(composer.Text);
         }
 
         public override UIView InputAccessoryView

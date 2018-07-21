@@ -78,11 +78,13 @@ namespace CodeHub.iOS.Views.Issues
                         Text = content.Details
                     };
 
-                    composer.PresentAsModal(this, text =>
+                    composer.Saved.Subscribe(__ =>
                     {
-                        vm.Content = text;
+                        ViewModel.Content = composer.Text;
                         this.DismissViewController(true, null);
                     });
+
+                    this.PresentModalViewController(composer);
                 }));
             });
         }

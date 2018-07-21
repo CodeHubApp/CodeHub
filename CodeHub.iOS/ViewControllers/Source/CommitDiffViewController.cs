@@ -18,7 +18,7 @@ using WebKit;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
-    public class CommitDiffViewController : BaseWebViewController
+    public class CommitDiffViewController : WebViewController
     {
         private readonly IApplicationService _applicationService;
         private readonly INetworkActivityService _networkActivityService;
@@ -41,7 +41,6 @@ namespace CodeHub.iOS.ViewControllers.Source
             IApplicationService applicationService = null,
             INetworkActivityService networkActivityService = null,
             IMarkdownService markdownService = null)
-            : base(false)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _networkActivityService = networkActivityService ?? Locator.Current.GetService<INetworkActivityService>();
@@ -185,27 +184,46 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void ShowComposer(Func<string, Task> workFn)
         {
-            var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async text =>
-            {
-                var hud = composer.CreateHud();
+            //var composer = new MarkdownComposerViewController
+            //{
+            //    Title = "Add Comment"
+            //};
 
-                using (UIApplication.SharedApplication.DisableInteraction())
-                using (_networkActivityService.ActivateNetwork())
-                using (hud.Activate("Commenting..."))
-                {
-                    try
-                    {
-                        await workFn(text);
-                        composer.DismissViewController(true, null);
-                    }
-                    catch (Exception e)
-                    {
-                        AlertDialogService.ShowAlert("Unable to Comment", e.Message);
-                    }
-                }
-            });
+            //composer
+            //    .Saved
+            //    .SelectMany(x => workFn(composer.Text).ToObservable())
+            //    .Subscribe(
+            //        _ => this.DismissViewController(true, null),
+            //        e => AlertDialogService.ShowAlert("Unable to post comment!", e.Message));
+
+            //this.PresentModalViewController(composer);
         }
+
+        //private async Task 
+
+
+        //    composer.PresentAsModal(this, async text =>
+        //    {
+        //        var hud = composer.CreateHud();
+
+        //        using (UIApplication.SharedApplication.DisableInteraction())
+        //        using (_networkActivityService.ActivateNetwork())
+        //        using (hud.Activate("Commenting..."))
+        //        {
+        //            try
+        //            {
+        //                await workFn(text);
+        //                composer.DismissViewController(true, null);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                AlertDialogService.ShowAlert("Unable to Comment", e.Message);
+        //            }
+        //        }
+        //    });
+        //}
+
+
     }
 }
 

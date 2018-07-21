@@ -4,6 +4,7 @@ using System.Reactive;
 using Foundation;
 using System.Linq;
 using System.Reactive.Disposables;
+using CodeHub.iOS.ViewControllers;
 
 // Analysis disable once CheckNamespace
 namespace UIKit
@@ -113,6 +114,15 @@ namespace UIKit
                 
             var navController = new UINavigationController(view);
             This.PresentViewController(navController, true, null);
+        }
+
+        public static void PresentSafari(this UIViewController This, string url)
+            => This.PresentSafari(new NSUrl(url));
+
+        public static void PresentSafari(this UIViewController This, NSUrl url)
+        {
+            var viewController = new SafariViewController(url);
+            This.PresentViewController(viewController, true, null);
         }
     }
 

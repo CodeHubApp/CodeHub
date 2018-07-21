@@ -49,7 +49,6 @@
     <Compile Include="ViewModels\Issues\MyIssuesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestFilesViewModel.cs" />
     <Compile Include="ViewModels\PullRequests\PullRequestViewModel.cs" />
-    <Compile Include="ViewModels\Repositories\RepositoriesViewModel.cs" />
     <Compile Include="ViewModels\Repositories\RepositoryViewModel.cs" />
     <Compile Include="Utils\ViewModelExtensions.cs" />
     <Compile Include="ViewModels\App\StartupViewModel.cs" />

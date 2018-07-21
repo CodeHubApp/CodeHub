@@ -17,7 +17,7 @@ using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.iOS.ViewControllers.Settings
 {
-    public class SyntaxHighlighterViewController : BaseWebViewController
+    public class SyntaxHighlighterViewController : WebViewController
     {
         private static string LoadErrorMessage = "Unable to load code example.";
         const string _resourceName = "CodeHub.iOS.ViewControllers.Settings.SyntaxHighlightExample";
@@ -35,7 +35,6 @@ namespace CodeHub.iOS.ViewControllers.Settings
 
         public SyntaxHighlighterViewController(
             IApplicationService applicationService = null)
-            : base(false, false)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _pickerView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;

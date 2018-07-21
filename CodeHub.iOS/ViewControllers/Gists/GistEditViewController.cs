@@ -205,17 +205,19 @@ namespace CodeHub.iOS.ViewControllers
 
         private void ChangeDescription()
         {
-            var composer = new Composer
+            var composer = new ComposerViewController
             {
                 Title = "Description",
                 Text = _model.Description
             };
 
-            composer.PresentAsModal(this, text =>
+            composer.Saved.Subscribe(_ =>
             {
-                _model.Description = text;
+                _model.Description = composer.Text;
                 this.DismissViewController(true, null);
             });
+
+            this.PresentModalViewController(composer);
         }
 
         public override DialogTableViewSource CreateTableViewSource()

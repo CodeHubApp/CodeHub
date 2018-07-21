@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using MessageUI;
 using CodeHub.Core.Services;
 using Splat;
-using Foundation;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
@@ -50,12 +49,6 @@ namespace CodeHub.iOS.ViewControllers.Application
             }
         }
 
-        private void GoToGitHub()
-        {
-            var viewController = new WebBrowserViewController(CodeHubUrl);
-            PresentViewController(viewController, true, null);
-        }
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -75,11 +68,20 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             var webButton = new UIButton(UIButtonType.Custom);
             webButton.SetTitle("CodeHub on GitHub", UIControlState.Normal);
-            webButton.TouchUpInside += (sender, e) => GoToGitHub();
 
             var button = new UIButton(UIButtonType.Custom);
             button.SetTitle("Email Me!", UIControlState.Normal);
-            button.TouchUpInside += (sender, e) => SubmitFeedback();
+
+            this.OnActivation(d =>
+            {
+                d(webButton
+                  .GetClickedObservable()
+                  .Subscribe(_ => this.PresentSafari(CodeHubUrl)));
+
+                d(button
+                  .GetClickedObservable()
+                  .Subscribe(_ => SubmitFeedback()));
+            });
 
             foreach (var b in new[] { webButton, button })
             {

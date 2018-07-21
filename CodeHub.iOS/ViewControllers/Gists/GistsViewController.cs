@@ -4,7 +4,6 @@ using CodeHub.Core.Services;
 using CodeHub.Core.Utils;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views;
-using CoreGraphics;
 using Octokit;
 using ReactiveUI;
 using Splat;
@@ -14,9 +13,6 @@ namespace CodeHub.iOS.ViewControllers.Gists
 {
     public class GistsViewController : ListViewController<Gist>
     {
-        private readonly Lazy<UISearchBar> _searchBar
-            = new Lazy<UISearchBar>(() => new UISearchBar(new CGRect(0, 0, 320, 44)));
-
         public static GistsViewController CreatePublicGistsViewController()
             => FromGitHub(ApiUrls.PublicGists(), "Public Gists", false);
 
@@ -63,28 +59,9 @@ namespace CodeHub.iOS.ViewControllers.Gists
         private static EmptyListView CreateEmptyListView()
             => new EmptyListView(Octicon.Gist.ToEmptyListImage(), "There are no gists!");
 
-        private string _searchText;
-        private string SearchText
-        {
-            get => _searchText;
-            set => this.RaiseAndSetIfChanged(ref _searchText, value);
-        }
-
-        public bool ShowSearchBar { get; private set; } = true;
-
         public GistsViewController(IDataRetriever<Gist> dataRetriever)
             : base(dataRetriever, CreateEmptyListView)
         {
-            Title = "Gists";
-
-            this.WhenActivated(d =>
-            {
-                if (ShowSearchBar)
-                {
-                    d(_searchBar.Value.GetChangedObservable()
-                        .Subscribe(x => SearchText = x));
-                }
-            });
         }
 
         protected override Element ConvertToElement(Gist item)

@@ -1,5 +1,6 @@
 ﻿using UIKit;
 using System;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -20,15 +21,11 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
 
             OnActivation(d =>
             {
-                d(GitHubButton.GetClickedObservable()
-                  .Subscribe(_ => ShowWebPage("https://github.com/codehubapp/codehub")));
+                d(GitHubButton
+                  .GetClickedObservable()
+                  .Select(_ => "https://github.com/codehubapp/codehub")
+                  .Subscribe(this.PresentSafari));
             });
-        }
-
-        private void ShowWebPage(string url)
-        {
-            var view = new WebBrowserViewController(url);
-            PresentViewController(view, true, null);
         }
     }
 }

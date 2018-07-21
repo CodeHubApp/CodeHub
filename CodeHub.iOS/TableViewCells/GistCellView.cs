@@ -1,11 +1,8 @@
 using System;
-using Foundation;
-using UIKit;
-using ReactiveUI;
-using CodeHub.Core.ViewModels.Gists;
-using System.Reactive.Linq;
-using ObjCRuntime;
 using CodeHub.Core.Utilities;
+using Foundation;
+using ObjCRuntime;
+using UIKit;
 
 namespace CodeHub.iOS.TableViewCells
 {

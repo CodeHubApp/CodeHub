@@ -53,7 +53,7 @@ namespace CodeHub.iOS.ViewControllers.Accounts
             {
                 var isEqual = account.Id == activeAccount?.Id;
                 var t = new AccountElement(account, isEqual);
-                t.Tapped += () => weakVm.Get()?.SelectAccount(account);
+                t.Clicked.Subscribe(_ => weakVm.Get()?.SelectAccount(account));
                 return t;
             }));
 
@@ -132,8 +132,6 @@ namespace CodeHub.iOS.ViewControllers.Accounts
         /// </summary>
         protected class AccountElement : Element
         {
-            public event Action Tapped;
-
             private readonly bool _currentAccount;
 
             public Account Account { get; private set; }
@@ -154,18 +152,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                 cell.ImageView.SetAvatar(new CodeHub.Core.Utilities.GitHubAvatar(Account.AvatarUrl));
                 return cell;
             }
-
-            public override void Selected (UITableView tableView, NSIndexPath path)
-            {
-                base.Selected(tableView, path);
-                Tapped?.Invoke();
-            }
         }
 
         public class AccountCellView : UITableViewCell
         {
             public static NSString Key = new NSString("ProfileCell");
-
 
             public AccountCellView()
                 : base(UITableViewCellStyle.Subtitle, Key)

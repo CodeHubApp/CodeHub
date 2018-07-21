@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Threading.Tasks;
 using CodeHub.Core.ViewModels.Commits;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Services;
@@ -202,26 +204,29 @@ namespace CodeHub.iOS.ViewControllers.Commits
 
         void AddCommentTapped()
         {
-            var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async text =>
+            var composer = new MarkdownComposerViewController
             {
-                var hud = composer.CreateHud();
-                
-                using (UIApplication.SharedApplication.DisableInteraction())
-                using (NetworkActivity.ActivateNetwork())
-                using (hud.Activate("Commenting..."))
-                {
-                    try
-                    {
-                        await ViewModel.AddComment(text);
-                        composer.DismissViewController(true, null);
-                    }
-                    catch (Exception e)
-                    {
-                        AlertDialogService.ShowAlert("Unable to post comment!", e.Message);
-                    }
-                }
-            });
+                Title = "Add Comment"
+            };
+
+            composer
+                .Saved
+                .SelectMany(_ => AddComment(composer).ToObservable())
+                .Subscribe(
+                    _ => this.DismissViewController(true, null),
+                    e => AlertDialogService.ShowAlert("Unable to post comment!", e.Message));
+
+            this.PresentModalViewController(composer);
+        }
+
+        private async Task AddComment(MarkdownComposerViewController composer)
+        {
+            var hud = composer.CreateHud();
+
+            using (UIApplication.SharedApplication.DisableInteraction())
+            using (NetworkActivity.ActivateNetwork())
+            using (hud.Activate("Commenting..."))
+                await ViewModel.AddComment(composer.Text);
         }
 
         private void ShowExtraMenu()

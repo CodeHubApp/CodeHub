@@ -23,7 +23,12 @@ namespace CodeHub.iOS.Services
         {
             if (string.IsNullOrEmpty(c))
                 return Task.FromResult(string.Empty);
-            return Task.Run(() => _val.Call(JSValue.From(c, _ctx)).ToString());
+
+            return Task.Run(() =>
+            {
+                var value = JSValue.From(c, _ctx);
+                return _val.Call(value).ToString();
+            });
         }
     }
 }
