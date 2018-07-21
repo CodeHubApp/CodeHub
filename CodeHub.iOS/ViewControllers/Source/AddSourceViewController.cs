@@ -82,15 +82,14 @@ namespace CodeHub.iOS.ViewControllers.Source
         {
             var content = _descriptionElement.Value;
 
-            var composer = new Composer
+            var composer = new ComposerViewController
             {
                 Title = "Commit Message",
                 Text = "Create " + _titleElement.Value
             };
 
             composer
-                .SendItem
-                .GetClickedObservable()
+                .Saved
                 .Subscribe(_ => CommitThis(composer.Text).ToBackground());
 
             this.PushViewController(composer);

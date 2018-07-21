@@ -16,6 +16,7 @@ using UIKit;
 using Splat;
 using System.Reactive;
 using Octokit;
+using System.Reactive.Threading.Tasks;
 
 namespace CodeHub.iOS.ViewControllers.PullRequests
 {
@@ -33,13 +34,12 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
 
         public PullRequestViewModel ViewModel { get; }
 
-        public PullRequestViewController(
-            string username,
-            string repository,
-            PullRequest pullRequest)
+        public PullRequestViewController(PullRequest pullRequest)
         {
             ViewModel = new PullRequestViewModel(
-                username, repository, (int)pullRequest.Id);
+                pullRequest.Base.Repository.Owner.Login,
+                pullRequest.Base.Repository.Name,
+                (int)pullRequest.Id);
         }
 
         //protected override void DidScroll(CoreGraphics.CGPoint p)
@@ -212,18 +212,29 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
 
         void AddCommentTapped()
         {
-            var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async text =>
+            var composer = new MarkdownComposerViewController
             {
-                using (UIApplication.SharedApplication.DisableInteraction())
-                {
-                    var hud = this.CreateHud();
-                    hud.Show("Posting Comment...");
-                    if (await ViewModel.AddComment(text))
-                        this.DismissViewController(true, null);
-                    hud.Hide();
-                }
-            });
+                Title = "Add Comment"
+            };
+
+            composer
+                .Saved
+                .SelectMany(_ => AddComment(composer).ToObservable())
+                .Subscribe(
+                    _ => this.DismissViewController(true, null),
+                    e => AlertDialogService.ShowAlert("Unable to post comment!", e.Message));
+
+            this.PresentModalViewController(composer);
+        }
+
+        private async Task AddComment(MarkdownComposerViewController composer)
+        {
+            var hud = composer.CreateHud();
+
+            using (UIApplication.SharedApplication.DisableInteraction())
+            using (NetworkActivity.ActivateNetwork())
+            using (hud.Activate("Commenting..."))
+                await ViewModel.AddComment(composer.Text);
         }
 
         public override UIView InputAccessoryView

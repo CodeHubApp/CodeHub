@@ -39,7 +39,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         protected override Element ConvertToElement(RepositoryTag item)
         {
             var e = new StringElement(item.Name);
-            e.Clicked.Subscribe(_ => _tagSubject.OnNext(item));
+            e.Clicked.Select(_ => item).Subscribe(_tagSubject.OnNext);
             return e;
         }
     }

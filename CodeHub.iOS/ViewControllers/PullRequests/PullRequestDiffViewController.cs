@@ -18,7 +18,7 @@ using WebKit;
 
 namespace CodeHub.iOS.ViewControllers.PullRequests
 {
-    public class PullRequestDiffViewController : BaseWebViewController
+    public class PullRequestDiffViewController : WebViewController
     {
         private readonly IApplicationService _applicationService;
         private readonly INetworkActivityService _networkActivityService;
@@ -43,7 +43,6 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             IApplicationService applicationService = null,
             INetworkActivityService networkActivityService = null,
             IMarkdownService markdownService = null)
-            : base(false)
         {
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _networkActivityService = networkActivityService ?? Locator.Current.GetService<INetworkActivityService>();
@@ -172,49 +171,50 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
 
         private void ShowCommentComposer(int line)
         {
-            ShowComposer(async text =>
-            {
-                var commentOptions = new Octokit.PullRequestReviewCommentCreate(text, _commit, _path, line);
-                var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.Create(
-                     _username, _repository, _pullRequestId, commentOptions);
-                _comments.Add(comment);
-            });
+            //ShowComposer(async text =>
+            //{
+            //    var commentOptions = new Octokit.PullRequestReviewCommentCreate(text, _commit, _path, line);
+            //    var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.Create(
+            //         _username, _repository, _pullRequestId, commentOptions);
+            //    _comments.Add(comment);
+            //});
         }
 
         private void ShowReplyCommentComposer(int replyToId)
         {
-            ShowComposer(async text =>
-            {
-                var commentOptions = new Octokit.PullRequestReviewCommentReplyCreate(text, replyToId);
-                var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.CreateReply(
-                     _username, _repository, _pullRequestId, commentOptions);
-                _comments.Add(comment);
-            });
+            //ShowComposer(async text =>
+            //{
+            //    var commentOptions = new Octokit.PullRequestReviewCommentReplyCreate(text, replyToId);
+            //    var comment = await _applicationService.GitHubClient.PullRequest.ReviewComment.CreateReply(
+            //         _username, _repository, _pullRequestId, commentOptions);
+            //    _comments.Add(comment);
+            //});
         }
 
-        private void ShowComposer(Func<string, Task> workFn)
-        {
-            var composer = new MarkdownComposerViewController();
-            composer.PresentAsModal(this, async text =>
-            {
-                var hud = composer.CreateHud();
+        //private void ShowComposer(Func<string, Task> workFn)
+        //{
+        //    var composer = new MarkdownComposerViewController();
 
-                using (UIApplication.SharedApplication.DisableInteraction())
-                using (_networkActivityService.ActivateNetwork())
-                using (hud.Activate("Commenting..."))
-                {
-                    try
-                    {
-                        await workFn(text);
-                        composer.DismissViewController(true, null);
-                    }
-                    catch (Exception e)
-                    {
-                        AlertDialogService.ShowAlert("Unable to Comment", e.Message);
-                    }
-                }
-            });
-        }
+        //    composer.PresentAsModal(this, async text =>
+        //    {
+        //        var hud = composer.CreateHud();
+
+        //        using (UIApplication.SharedApplication.DisableInteraction())
+        //        using (_networkActivityService.ActivateNetwork())
+        //        using (hud.Activate("Commenting..."))
+        //        {
+        //            try
+        //            {
+        //                await workFn(text);
+        //                composer.DismissViewController(true, null);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                AlertDialogService.ShowAlert("Unable to Comment", e.Message);
+        //            }
+        //        }
+        //    });
+        //}
     }
 }
 

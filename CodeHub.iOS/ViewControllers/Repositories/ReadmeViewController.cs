@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reactive;
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core;
@@ -14,59 +13,74 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
-    public class ReadmeViewController : BaseWebViewController
+    public class ReadmeViewController : WebViewController
     {
         private static string LoadErrorMessage = "Unable to load readme.";
         private readonly UIBarButtonItem _actionButton = new UIBarButtonItem(UIBarButtonSystemItem.Action);
         private readonly IApplicationService _applicationService;
         private readonly IMarkdownService _markdownService;
-        private readonly ObservableAsPropertyHelper<Octokit.Readme> _readme;
         private readonly string _owner;
-        private readonly string _repository;
+        private readonly string _repositoryName;
 
-        private Octokit.Readme Readme => _readme.Value;
+        private Octokit.Readme _readme;
+        private Octokit.Readme Readme
+        {
+            get => _readme;
+            set => this.RaiseAndSetIfChanged(ref _readme, value);
+        }
+
+        private Octokit.Repository _repository;
+        private Octokit.Repository Repository
+        {
+            get => _repository;
+            set => this.RaiseAndSetIfChanged(ref _repository, value);
+        }
 
         public ReadmeViewController(
             string owner,
-            string repository,
+            string repositoryName,
             Octokit.Readme readme = null,
+            Octokit.Repository repository = null,
             IApplicationService applicationService = null,
             IMarkdownService markdownService = null)
-            : base(false, false)
         {
             _owner = owner;
-            _repository = repository;
+            _repositoryName = repositoryName;
             _applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
             _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
 
             Title = "Readme";
 
-            var loadCommand = ReactiveCommand.CreateFromTask(() =>
+            var loadCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (readme != null)
-                    return Task.FromResult(readme);
-                return _applicationService.GitHubClient.Repository.Content.GetReadme(owner, repository);
+                var readmeTask = readme != null
+                    ? Task.FromResult(readme)
+                    : _applicationService.GitHubClient.Repository.Content.GetReadme(owner, repositoryName);
+
+                var repoTask = repository != null
+                    ? Task.FromResult(repository)
+                    : _applicationService.GitHubClient.Repository.Get(owner, repositoryName);
+
+                await Task.WhenAll(readmeTask, repoTask);
+
+                Readme = readmeTask.Result;
+                Repository = repoTask.Result;
             });
 
             loadCommand
                 .ThrownExceptions
-                .Do(_ => SetErrorView())
-                .Select(error => new UserError(LoadErrorMessage, error))
-                .SelectMany(Interactions.Errors.Handle)
+                .SelectMany(SetError)
                 .Subscribe();
-
-            loadCommand
-                .ToProperty(this, x => x.Readme, out _readme);
 
             Appearing
                 .Take(1)
                 .Select(_ => Unit.Default)
                 .InvokeReactiveCommand(loadCommand);
 
-            this.WhenAnyValue(x => x.Readme)
-                .Where(x => x != null)
-                .SelectMany(ConvertToWebView)
-                .Subscribe(LoadContent);
+            this.WhenAnyValue(x => x.Readme, x => x.Repository)
+                .Where(x => x.Item1 != null && x.Item2 != null)
+                .SelectMany(x => ConvertToWebView(x.Item1, x.Item2))
+                .Subscribe(LoadContent, err => SetError(err).Subscribe());
 
             this.WhenAnyValue(x => x.Readme)
                 .Select(x => x != null)
@@ -79,6 +93,13 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 d(_actionButton.GetClickedObservable()
                   .Subscribe(ShareButtonPress));
             });
+        }
+
+        private IObservable<Unit> SetError(Exception ex)
+        {
+            SetErrorView();
+            var error = new UserError(LoadErrorMessage, ex);
+            return Interactions.Errors.Handle(error);
         }
 
         private void SetErrorView()
@@ -95,10 +116,12 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                            () => emptyListView.Alpha = 1, null);
         }
 
-        private async Task<string> ConvertToWebView(Octokit.Readme readme)
+        private async Task<string> ConvertToWebView(Octokit.Readme readme, Octokit.Repository repository)
         {
+            var branch = System.Net.WebUtility.UrlDecode(repository.DefaultBranch);
+            var baseUrl = $"{repository.HtmlUrl}/blob/{branch}/";
             var content = await _markdownService.Convert(readme.Content);
-            var model = new MarkdownModel(content, (int)UIFont.PreferredSubheadline.PointSize);
+            var model = new MarkdownModel(content, (int)UIFont.PreferredSubheadline.PointSize, baseUrl: baseUrl);
             return new MarkdownWebView { Model = model }.GenerateString();
         }
 
@@ -106,8 +129,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         {
             if (!navigationAction.Request.Url.AbsoluteString.StartsWith("file://", StringComparison.Ordinal))
             {
-                var viewController = new WebBrowserViewController(navigationAction.Request.Url.AbsoluteString);
-                PresentViewController(viewController, true, null);
+                this.PresentSafari(navigationAction.Request.Url.AbsoluteString);
                 return false;
             }
 
@@ -128,8 +150,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
                 {
                     if (e.ButtonIndex == showButton)
                     {
-                        var viewController = new WebBrowserViewController(Readme.HtmlUrl);
-                        PresentViewController(viewController, true, null);
+                        this.PresentSafari(Readme.HtmlUrl);
                     }
                     else if (e.ButtonIndex == shareButton)
                     {

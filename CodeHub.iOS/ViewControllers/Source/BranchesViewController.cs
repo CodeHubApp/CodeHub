@@ -43,7 +43,7 @@ namespace CodeHub.iOS.ViewControllers.Source
         protected override Element ConvertToElement(Branch item)
         {
             var e = new StringElement(item.Name);
-            e.Clicked.Subscribe(_ => _branchSubject.OnNext(item));
+            e.Clicked.Select(_ => item).Subscribe(_branchSubject.OnNext);
             return e;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using UIKit;
 using System;
+using System.Reactive.Linq;
 
 namespace CodeHub.iOS.ViewControllers.Walkthrough
 {
@@ -17,14 +18,13 @@ namespace CodeHub.iOS.ViewControllers.Walkthrough
             TellMeMoreButton.SetTitleColor(UIColor.White, UIControlState.Normal);
             TellMeMoreButton.Layer.CornerRadius = 6f;
 
-            OnActivation(d => d(TellMeMoreButton.GetClickedObservable().Subscribe(_ => TellMeMore())));
-        }
-
-        private void TellMeMore()
-        {
-            const string url = "https://help.github.com/articles/about-third-party-application-restrictions/";
-            var view = new WebBrowserViewController(url);
-            PresentViewController(view, true, null);
+            OnActivation(d => 
+            {
+                d(TellMeMoreButton
+                  .GetClickedObservable()
+                  .Select(_ => "https://help.github.com/articles/about-third-party-application-restrictions/")
+                  .Subscribe(this.PresentSafari));
+            });
         }
     }
 }

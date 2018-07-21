@@ -236,7 +236,11 @@ namespace CodeHub.iOS.ViewControllers.Repositories
         private void GoToReadme()
         {
             this.PushViewController(
-                new ReadmeViewController(ViewModel.Username, ViewModel.RepositoryName, ViewModel.Readme));
+                new ReadmeViewController(
+                    ViewModel.Username,
+                    ViewModel.RepositoryName,
+                    ViewModel.Readme,
+                    ViewModel.Repository));
         }
 
         private void GoToForkedRepository(Octokit.Repository repo)

@@ -5,11 +5,11 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CodeHub.Core;
-using CodeHub.Core.Services;
 using CodeHub.Core.Utils;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
 using CodeHub.iOS.Views;
+using CoreGraphics;
 using ReactiveUI;
 using Splat;
 using UIKit;
@@ -24,6 +24,8 @@ namespace CodeHub.iOS.ViewControllers
         private readonly IDataRetriever<T> _list;
         private readonly Section _section = new Section();
         private DialogTableViewSource _source;
+        private readonly Lazy<UISearchBar> _searchBar
+            = new Lazy<UISearchBar>(() => new UISearchBar(new CGRect(0, 0, 320, 44)));
 
         private bool _hasMore = true;
         public bool HasMore
@@ -31,6 +33,15 @@ namespace CodeHub.iOS.ViewControllers
             get => _hasMore;
             private set => this.RaiseAndSetIfChanged(ref _hasMore, value);
         }
+
+        private string _searchText;
+        private string SearchText
+        {
+            get => _searchText;
+            set => this.RaiseAndSetIfChanged(ref _searchText, value);
+        }
+
+        public bool ShowSearchBar { get; set; } = true;
 
         public ReactiveCommand<Unit, IReadOnlyList<T>> LoadMoreCommand { get; }
 
@@ -66,6 +77,12 @@ namespace CodeHub.iOS.ViewControllers
 
                 d(LoadMoreCommand.IsExecuting
                   .Subscribe(x => TableView.TableFooterView = x ? _loading : _emptyView));
+
+                if (ShowSearchBar)
+                {
+                    d(_searchBar.Value.GetChangedObservable()
+                        .Subscribe(x => SearchText = x));
+                }
             });
         }
 

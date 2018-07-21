@@ -97,7 +97,6 @@
     <Compile Include="Views\Issues\BaseIssuesView.cs" />
     <Compile Include="Views\Issues\IssueEditView.cs" />
     <Compile Include="Views\Issues\IssueMilestonesView.cs" />
-    <Compile Include="Views\Issues\IssuesView.cs" />
     <Compile Include="Views\NotificationsView.cs" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,14 +104,13 @@
     <Compile Include="Views\Issues\IssueAddView.cs" />
     <Compile Include="Views\Issues\IssueAssignedToView.cs" />
     <Compile Include="Services\PushNotificationsService.cs" />
-    <Compile Include="Views\Source\EditSourceView.cs" />
     <Compile Include="Services\FeaturesService.cs" />
     <Compile Include="UrlRouterProvider.cs" />
     <None Include="Entitlements.plist" />
     <Compile Include="ViewControllers\MarkdownComposerViewController.cs" />
     <None Include="packages.config" />
     <Compile Include="Services\AlertDialogService.cs" />
-    <Compile Include="ViewControllers\Composer.cs" />
+    <Compile Include="ViewControllers\ComposerViewController.cs" />
     <Compile Include="ViewControllers\FilterViewController.cs" />
     <Compile Include="ViewControllers\MultipleChoiceViewController.cs" />
     <Compile Include="Views\AddRemoveView.cs" />
@@ -217,7 +215,7 @@
     <Compile Include="ViewControllers\Repositories\LanguagesViewController.cs" />
     <Compile Include="Views\TrendingTitleButton.cs" />
     <Compile Include="ViewControllers\Accounts\NewAccountViewController.cs" />
-    <Compile Include="ViewControllers\BaseWebViewController.cs" />
+    <Compile Include="ViewControllers\WebViewController.cs" />
     <Compile Include="ViewControllers\Accounts\OAuthLoginViewController.cs" />
     <Compile Include="ViewControllers\Accounts\AccountsViewController.cs" />
     <InterfaceDefinition Include="ViewControllers\Accounts\AddAccountView.xib" />
@@ -299,8 +297,6 @@
     <Compile Include="ViewControllers\Settings\DefaultStartupViewController.cs" />
     <Compile Include="ViewControllers\Application\UpgradeViewController.cs" />
     <Compile Include="ViewControllers\Source\AddSourceViewController.cs" />
-    <Compile Include="ViewControllers\MessageComposerViewController.cs" />
-    <Compile Include="Utilities\ReactiveCommandExtensions.cs" />
     <Compile Include="ViewControllers\Events\EventsViewController.cs" />
     <Compile Include="ViewControllers\Commits\CommitsViewController.cs" />
     <Compile Include="ViewControllers\Commits\CommitViewController.cs" />
@@ -314,6 +310,10 @@
     <Compile Include="ViewControllers\Issues\MyIssuesViewController.cs" />
     <Compile Include="ViewControllers\ListViewController.cs" />
     <Compile Include="DialogElements\GistElement.cs" />
+    <Compile Include="DialogElements\RepositoryElement.cs" />
+    <Compile Include="ViewControllers\Source\EditSourceViewController.cs" />
+    <Compile Include="ViewControllers\TextViewController.cs" />
+    <Compile Include="ViewControllers\SafariViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

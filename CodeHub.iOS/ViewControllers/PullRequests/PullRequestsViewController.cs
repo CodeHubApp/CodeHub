@@ -13,8 +13,10 @@ namespace CodeHub.iOS.ViewControllers.PullRequests
             ItemState state = ItemState.Open)
             : base(new string[] { "Open", "Closed" }, state == ItemState.Open ? 0 : 1)
         {
-            _openViewController = new PullRequestListViewController(username, repository, ItemState.Open);
-            _closedViewController = new PullRequestListViewController(username, repository, ItemState.Closed);
+            _openViewController = PullRequestListViewController.FromGitHub(username, repository, ItemState.Open);
+            _closedViewController = PullRequestListViewController.FromGitHub(username, repository, ItemState.Closed);
+
+            Title = "Pull Requests";
         }
 
         protected override void SegmentValueChanged(int id)

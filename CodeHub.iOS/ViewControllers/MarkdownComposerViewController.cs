@@ -1,74 +1,85 @@
 using System;
-using UIKit;
-using CodeHub.Core.Services;
-using Foundation;
-using CodeHub.WebViews;
-using WebKit;
-using CodeHub.iOS.Views;
-using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CodeHub.Core.Services;
+using CodeHub.iOS.Views;
+using CodeHub.WebViews;
 using Splat;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers
 {
-    public class MarkdownComposerViewController : Composer
+    public class MarkdownComposerViewController : SegmentViewController
     {
-        private readonly UISegmentedControl _viewSegment;
+        private readonly UIBarButtonItem _saveButton = new UIBarButtonItem(UIBarButtonSystemItem.Save);
         private readonly IMarkdownService _markdownService;
-        private WKWebView _previewView;
+        private readonly TextViewController _textViewController;
+        private readonly Lazy<WebViewController> _previewViewController;
 
-        public MarkdownComposerViewController(IMarkdownService markdownService = null)
+        public IObservable<Unit> Saved => _saveButton.GetClickedObservable().Select(_ => Unit.Default);
+
+        public bool EnableSendButton
         {
-            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
-
-            _viewSegment = new UISegmentedControl(new[] { "Compose", "Preview" })
-            {
-                SelectedSegment = 0
-            };
-
-            NavigationItem.TitleView = _viewSegment;
-
-            TextView.InputAccessoryView = new MarkdownAccessoryView(TextView);
-
-            this.WhenActivated(d =>
-            {
-                d(_viewSegment.GetChangedObservable()
-                  .Subscribe(_ => SegmentValueChanged()));
-            });
+            get => _saveButton.Enabled;
+            set => _saveButton.Enabled = value;
         }
 
-        void SegmentValueChanged()
+        public string Text
         {
-            if (_viewSegment.SelectedSegment == 0)
-            {
-                if (_previewView != null)
-                {
-                    _previewView.RemoveFromSuperview();
-                    _previewView.Dispose();
-                    _previewView = null;
-                }
+            get => _textViewController.Text;
+            set => _textViewController.Text = value;
+        }
 
-                Add(TextView);
-                TextView.BecomeFirstResponder();
+        public MarkdownComposerViewController(
+            IMarkdownService markdownService = null)
+            : base(new [] { "Compose", "Preview" })
+        {
+            _markdownService = markdownService ?? Locator.Current.GetService<IMarkdownService>();
+            _textViewController = new TextViewController();
+            _previewViewController = new Lazy<WebViewController>();
+
+            _textViewController.TextView.InputAccessoryView =
+                new MarkdownAccessoryView(_textViewController.TextView);
+        }
+
+        protected override void SegmentValueChanged(int id)
+        {
+            if (id == 0)
+            {
+                AddTable(_textViewController);
+
+                if (_previewViewController.IsValueCreated)
+                    RemoveIfLoaded(_previewViewController.Value);
+
+                _textViewController.TextView.BecomeFirstResponder();
             }
             else
             {
-                if (_previewView == null)
-                    _previewView = new WKWebView(this.View.Bounds, new WKWebViewConfiguration());
-
-                TextView.RemoveFromSuperview();
-                Add(_previewView);
-
-                LoadPreview(_previewView).ToBackground();
+                AddTable(_previewViewController.Value);
+                RemoveIfLoaded(_textViewController);
+                LoadPreview().ToBackground();
             }
         }
 
-        private async Task LoadPreview(WKWebView previewView)
+        private async Task LoadPreview()
         {
-            var markdownText = await _markdownService.Convert(Text);
+            var markdownText = await _markdownService.Convert(_textViewController.Text);
             var model = new MarkdownModel(markdownText, (int)UIFont.PreferredSubheadline.PointSize);
             var view = new MarkdownWebView { Model = model }.GenerateString();
-            previewView.LoadHtmlString(view, NSBundle.MainBundle.BundleUrl);
+            _previewViewController.Value.LoadContent(view);
+        }
+
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationItem.RightBarButtonItem = _saveButton;
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            NavigationItem.RightBarButtonItem = null;
         }
     }
 }

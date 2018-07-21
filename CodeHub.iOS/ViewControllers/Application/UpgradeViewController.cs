@@ -12,7 +12,7 @@ using Splat;
 
 namespace CodeHub.iOS.ViewControllers.Application
 {
-    public class UpgradeViewController : BaseWebViewController
+    public class UpgradeViewController : WebViewController
     {
         private readonly IFeaturesService _featuresService 
             = Locator.Current.GetService<IFeaturesService>();
@@ -20,7 +20,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             = Locator.Current.GetService<IInAppPurchaseService>();
         private UIActivityIndicatorView _activityView;
 
-        public UpgradeViewController() : base(false, false)
+        public UpgradeViewController()
         {
             Title = "Pro Upgrade";
         }
@@ -110,8 +110,7 @@ namespace CodeHub.iOS.ViewControllers.Application
 
             if (url.Scheme.Equals("http") || url.Scheme.Equals("https"))
             {
-                var view = new WebBrowserViewController(url.AbsoluteString);
-                PresentViewController(view, true, null);
+                this.PresentSafari(url);
                 return false;
             }
 

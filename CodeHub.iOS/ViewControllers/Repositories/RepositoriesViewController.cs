@@ -1,150 +1,89 @@
 ﻿using System;
-using UIKit;
-using ReactiveUI;
-using CodeHub.iOS.TableViewSources;
-using CoreGraphics;
+using System.Collections.Generic;
 using System.Reactive.Linq;
+using CodeHub.Core.Services;
+using CodeHub.Core.Utils;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.Views;
-using CodeHub.Core.ViewModels.Repositories;
-using System.Reactive;
+using Octokit;
+using Splat;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Repositories
 {
-	public class RepositoriesViewController : TableViewController
+    public class RepositoriesViewController : ListViewController<Repository>
 	{
-		private readonly UISearchBar _repositorySearchBar = new UISearchBar(new CGRect(0, 0, 320, 44));
-		private readonly LoadingIndicatorView _loading = new LoadingIndicatorView();
-
-        private readonly Lazy<UIView> _emptyView = new Lazy<UIView>((() =>
-            new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories.")));
-
-        private readonly Lazy<UIView> _retryView;
-
-        public RepositoriesViewModel ViewModel { get; }
+        public static RepositoriesViewController CreateTeamViewController(int id)
+            => FromGitHub(ApiUrls.TeamRepositories(id));
 
         public static RepositoriesViewController CreateMineViewController()
-        {
-            var viewModel = RepositoriesViewModel.CreateMineViewModel();
-            return new RepositoriesViewController(viewModel);
-        }
+            => FromGitHub(ApiUrls.Repositories(), showOwner: false, affiliation: "owner,collaborator");
 
         public static RepositoriesViewController CreateUserViewController(string username)
         {
-            var viewModel = RepositoriesViewModel.CreateUsersViewModel(username);
-            return new RepositoriesViewController(viewModel);
+            var applicationService = Locator.Current.GetService<IApplicationService>();
+            var isCurrent = string.Equals(applicationService.Account.Username, username, StringComparison.OrdinalIgnoreCase);
+
+            return isCurrent
+                ? CreateMineViewController()
+                : FromGitHub(ApiUrls.Repositories(username));
         }
 
         public static RepositoriesViewController CreateStarredViewController()
-        {
-            var viewModel = RepositoriesViewModel.CreateStarredViewModel();
-            return new RepositoriesViewController(viewModel) { Title = "Starred" };
-        }
+            => FromGitHub(ApiUrls.Starred(), "Starred");
 
         public static RepositoriesViewController CreateWatchedViewController()
-        {
-            var viewModel = RepositoriesViewModel.CreateWatchedViewModel();
-            return new RepositoriesViewController(viewModel) { Title = "Watched" };
-        }
+            => FromGitHub(ApiUrls.Watched(), "Watched");
 
         public static RepositoriesViewController CreateForkedViewController(string username, string repository)
-        {
-            var viewModel = RepositoriesViewModel.CreateForkedViewModel(username, repository);
-            return new RepositoriesViewController(viewModel) { Title = "Forks" };
-        }
+            => FromGitHub(ApiUrls.RepositoryForks(username, repository), "Forks");
 
         public static RepositoriesViewController CreateOrganizationViewController(string org)
+            => FromGitHub(ApiUrls.OrganizationRepositories(org));
+
+        private static RepositoriesViewController FromGitHub(
+            Uri uri,
+            string title = null,
+            bool showOwner = true,
+            bool showSearchBar = true,
+            string affiliation = null,
+            IApplicationService applicationService = null)
         {
-            var viewModel = RepositoriesViewModel.CreateOrganizationViewModel(org);
-            return new RepositoriesViewController(viewModel);
-        }
+            var parameters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(affiliation))
+                parameters["affiliation"] = affiliation;
 
-        public RepositoriesViewController(RepositoriesViewModel viewModel)
-			: base(UITableViewStyle.Plain)
-		{
-            ViewModel = viewModel;
-            Title = "Repositories";
+            applicationService = applicationService ?? Locator.Current.GetService<IApplicationService>();
+            var dataRetriever = new GitHubList<Repository>(applicationService.GitHubClient, uri, parameters);
 
-            _retryView = new Lazy<UIView>((() =>
-                new RetryListView(Octicon.Repo.ToEmptyListImage(), "Error loading repositories.", LoadData)));
-		}
-
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
-
-            var tableViewSource = new RepositoryTableViewSource(TableView, ViewModel.Items);
-            TableView.Source = tableViewSource;
-
-            Appearing
-                .Take(1)
-                .Subscribe(_ => LoadData());
-
-			this.WhenActivated(d =>
-			{
-				d(_repositorySearchBar.GetChangedObservable()
-				  .Subscribe(x => ViewModel.SearchText = x));
-
-				d(ViewModel.RepositoryItemSelected
-                  .Select(x => new RepositoryViewController(x.Owner, x.Name, x.Repository))
-				  .Subscribe(x => NavigationController.PushViewController(x, true)));
-
-                d(ViewModel.WhenAnyValue(x => x.HasMore)
-                  .Subscribe(x => TableView.TableFooterView = x ? _loading : null));
-
-                d(tableViewSource.RequestMore
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-
-                d(ViewModel.LoadCommand
-                  .Select(_ => ViewModel.Items.Changed)
-                  .Switch()
-                  .Select(_ => Unit.Default)
-                  .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
-                  .Where(_ => TableView.LastItemVisible())
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-
-                d(ViewModel.LoadCommand.Merge(ViewModel.LoadMoreCommand)
-                  .Select(_ => Unit.Default)
-                  .Throttle(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
-                  .Where(_ => TableView.LastItemVisible())
-                  .InvokeReactiveCommand(ViewModel.LoadMoreCommand));
-			});
-		}
-
-        private void LoadData()
-        {
-            if (_emptyView.IsValueCreated)
-                _emptyView.Value.RemoveFromSuperview();
-            if (_retryView.IsValueCreated)
-                _retryView.Value.RemoveFromSuperview();
-
-            ViewModel.LoadCommand.Execute()
-                .Take(1)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(SetHasItems, setHasError);
-        }
-
-        private void setHasError(Exception error)
-        {
-            _retryView.Value.Alpha = 0;
-            _retryView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
-            View.Add(_retryView.Value);
-            UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
-                           () => _retryView.Value.Alpha = 1, null);
-        }
-
-        private void SetHasItems(bool hasItems)
-        {
-            TableView.TableHeaderView = hasItems ? _repositorySearchBar : null;
-
-            if (!hasItems)
+            return new RepositoriesViewController(dataRetriever)
             {
-                _emptyView.Value.Alpha = 0;
-                _emptyView.Value.Frame = new CGRect(0, 0, View.Bounds.Width, View.Bounds.Height);
-                View.Add(_emptyView.Value);
-                UIView.Animate(0.8, 0, UIViewAnimationOptions.CurveEaseIn,
-                               () => _emptyView.Value.Alpha = 1, null);
-            }
+                Title = title ?? "Repositories",
+                ShowSearchBar = showSearchBar,
+                ShowOwner = showOwner
+            };
         }
-	}
+
+        private static EmptyListView CreateEmptyListView()
+            => new EmptyListView(Octicon.Repo.ToEmptyListImage(), "There are no repositories!");
+
+        public bool ShowOwner { get; set; } = true;
+
+        public RepositoriesViewController(IDataRetriever<Repository> dataRetriever)
+            : base(dataRetriever, CreateEmptyListView)
+        {
+        }
+
+        protected override Element ConvertToElement(Repository item)
+        {
+            var e = new RepositoryElement(item, ShowOwner);
+
+            e.Clicked
+             .Select(_ => new RepositoryViewController(item))
+             .Subscribe(this.PushViewController);
+
+            return e;
+        }
+    }
 }
 

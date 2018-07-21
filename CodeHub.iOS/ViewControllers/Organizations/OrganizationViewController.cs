@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.ViewControllers.Gists;
+using CodeHub.iOS.ViewControllers.Repositories;
 using CodeHub.iOS.ViewControllers.Users;
 using CoreGraphics;
 using ReactiveUI;
@@ -44,41 +45,39 @@ namespace CodeHub.iOS.ViewControllers.Organizations
             var events = new StringElement("Events", Octicon.Rss.ToImage());
             var repos = new StringElement("Repositories", Octicon.Repo.ToImage());
             var gists = new StringElement("Gists", Octicon.Gist.ToImage());
+
             Root.Reset(
                 new Section(new UIView(new CGRect(0, 0, 0, 20f))) { members, teams },
                 new Section { events, followers },
                 new Section { repos, gists });
 
-            OnActivation(d =>
+            teams.Clicked
+              .Select(_ => TeamsViewController.OrganizationTeams(OrgName))
+              .Subscribe(this.PushViewController);
+
+            //d(events.Clicked.BindCommand(vm.GoToEventsCommand));
+
+            members.Clicked
+              .Select(_ => UsersViewController.CreateOrganizationMembersViewController(OrgName))
+              .Subscribe(this.PushViewController);
+
+            followers.Clicked
+              .Select(_ => UsersViewController.CreateFollowersViewController(OrgName))
+              .Subscribe(this.PushViewController);
+
+            repos.Clicked
+              .Select(_ => RepositoriesViewController.CreateOrganizationViewController(OrgName))
+              .Subscribe(this.PushViewController);
+
+            gists.Clicked
+              .Select(x => GistsViewController.CreateUserGistsViewController(OrgName))
+              .Subscribe(this.PushViewController);
+
+            this.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
             {
-                d(teams.Clicked
-                  .Select(_ => TeamsViewController.OrganizationTeams(OrgName))
-                  .Subscribe(this.PushViewController));
-
-                //d(events.Clicked.BindCommand(vm.GoToEventsCommand));
-
-                d(members.Clicked
-                  .Select(_ => UsersViewController.CreateOrganizationMembersViewController(OrgName))
-                  .Subscribe(this.PushViewController));
-                
-                d(followers.Clicked
-                  .Select(_ => UsersViewController.CreateFollowersViewController(OrgName))
-                  .Subscribe(this.PushViewController));
-
-                d(repos.Clicked
-                  .Select(_ => Repositories.RepositoriesViewController.CreateOrganizationViewController(OrgName))
-                  .Subscribe(this.PushViewController));
-
-                d(gists.Clicked
-                  .Select(x => GistsViewController.CreateUserGistsViewController(OrgName))
-                  .Subscribe(this.PushViewController));
-
-                d(this.WhenAnyValue(x => x.Organization).Where(x => x != null).Subscribe(x =>
-                {
-                    HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
-                    HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
-                    RefreshHeaderView();
-                }));
+                HeaderView.SubText = string.IsNullOrWhiteSpace(x.Name) ? x.Login : x.Name;
+                HeaderView.SetImage(x.AvatarUrl, Images.Avatar);
+                RefreshHeaderView();
             });
         }
     }

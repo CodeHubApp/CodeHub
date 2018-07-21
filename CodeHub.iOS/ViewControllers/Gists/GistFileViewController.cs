@@ -14,7 +14,7 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Gists
 {
-    public class GistFileViewController : BaseWebViewController
+    public class GistFileViewController : WebViewController
     {
         private readonly IApplicationService _applicationService;
         private readonly IAlertDialogService _alertDialogService;
@@ -42,7 +42,6 @@ namespace CodeHub.iOS.ViewControllers.Gists
             IApplicationService applicationService = null,
             IAlertDialogService alertDialogService = null,
             IMessageService messageService = null)
-            : base(false)
         {
             _gistId = gistId;
             _filename = filename;
@@ -164,8 +163,7 @@ namespace CodeHub.iOS.ViewControllers.Gists
             if (url == null)
                 return;
 
-            var viewController = new WebBrowserViewController(url);
-            PresentViewController(viewController, true, null);
+            this.PresentSafari(url);
         }
 
         private void CreateActionSheet(UIBarButtonItem barButtonItem)

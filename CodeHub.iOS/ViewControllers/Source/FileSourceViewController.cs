@@ -18,7 +18,7 @@ using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Source
 {
-    public class FileSourceViewController : BaseWebViewController
+    public class FileSourceViewController : WebViewController
     {
         private static readonly string[] MarkdownExtensions = { ".markdown", ".mdown", ".mkdn", ".md", ".mkd", ".mdwn", ".mdtxt", ".mdtext", ".text" };
 
@@ -64,7 +64,6 @@ namespace CodeHub.iOS.ViewControllers.Source
             IApplicationService applicationService = null,
             IAlertDialogService alertDialogService = null,
             IMessageService messageService = null)
-            : base(false)
         {
             _username = username;
             _repository = repository;
@@ -164,7 +163,7 @@ namespace CodeHub.iOS.ViewControllers.Source
 
         private void EditSource()
         {
-            var vc = new EditSourceView(_username, _repository, _path, _sha);
+            var vc = new EditSourceViewController(_username, _repository, _path, _sha);
             vc.NavigationItem.LeftBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Cancel);
             vc.NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => DismissViewController(true, null);
             PresentViewController(new ThemedNavigationController(vc), true, null);
@@ -226,8 +225,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             if (url == null)
                 return;
 
-            var viewController = new WebBrowserViewController(url);
-            PresentViewController(viewController, true, null);
+            this.PresentSafari(url);
         }
 
         private void CreateActionSheet(UIBarButtonItem barButtonItem)

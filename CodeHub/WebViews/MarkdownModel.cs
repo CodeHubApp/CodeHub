@@ -8,11 +8,14 @@
 
         public bool ContinuousResize { get; }
 
-        public MarkdownModel(string body, int fontSize, bool continuousResize = false)
+        public string BaseUrl { get; }
+
+        public MarkdownModel(string body, int fontSize, bool continuousResize = false, string baseUrl = null)
         {
             Body = body;
             FontSize = fontSize;
             ContinuousResize = continuousResize;
+            BaseUrl = baseUrl;
         }
     }
 }
