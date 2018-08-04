@@ -1,16 +1,18 @@
-using CodeHub.Core.Services;
-using UIKit;
-using Foundation;
 using System;
-using CodeHub.Core.Data;
-using CoreGraphics;
-using CodeHub.iOS.DialogElements;
 using System.Linq;
-using ReactiveUI;
-using CodeHub.Core.Messages;
-using Splat;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using CodeHub.Core.Data;
+using CodeHub.Core.Messages;
+using CodeHub.Core.Services;
+using CodeHub.iOS.DialogElements;
 using CodeHub.iOS.TableViewSources;
+using CoreGraphics;
+using Foundation;
+using ReactiveUI;
+using Splat;
+using UIKit;
 
 namespace CodeHub.iOS.ViewControllers.Accounts
 {
@@ -18,66 +20,78 @@ namespace CodeHub.iOS.ViewControllers.Accounts
     {
         private readonly IAccountsService _accountsService = Locator.Current.GetService<IAccountsService>();
         private readonly IApplicationService _applicationService = Locator.Current.GetService<IApplicationService>();
+        private readonly ReactiveCommand<Unit, Unit> _loadCommand;
+        private readonly ReactiveCommand<Account, Unit> _selectCommand;
+        private readonly ReactiveCommand<Account, Unit> _deleteCommand;
         private readonly EditSource _source;
 
-        public AccountsViewController() : base(UITableViewStyle.Plain)
+        public AccountsViewController()
         {
             Title = "Accounts";
             _source = new EditSource(this);
 
+            _selectCommand = ReactiveCommand.CreateFromTask<Account>(async (account) =>
+            {
+                await _accountsService.SetActiveAccount(account);
+                MessageBus.Current.SendMessage(new LogoutMessage());
+            });
+
+            _loadCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var activeAccount = await _accountsService.GetActiveAccount();
+                var accounts = await _accountsService.GetAccounts();
+
+                var elements = accounts.Select(account =>
+                {
+                    var isEqual = account.Id == activeAccount?.Id;
+                    var element = new AccountElement(account, isEqual);
+
+                    element
+                        .Clicked
+                        .Select(_ => account)
+                        .InvokeReactiveCommand(_selectCommand);
+
+                    return element;
+                });
+
+                _source.Root.Reset(new Section { elements });
+            });
+
+            _deleteCommand = ReactiveCommand.CreateFromTask<Account>(async (account) =>
+            {
+                await _accountsService.Remove(account);
+                var activeAccount = await _accountsService.GetActiveAccount();
+
+                if (activeAccount != null && activeAccount.Equals(account))
+                    _applicationService.DeactivateUser();
+            });
+
             var addButton = new UIBarButtonItem(UIBarButtonSystemItem.Add);
             NavigationItem.RightBarButtonItem = addButton;
-            OnActivation(d => d(addButton.GetClickedObservable().Subscribe(_ => AddAccount())));
-        }
 
-        private void AddAccount()
-        {
-            NavigationController.PushViewController(new NewAccountViewController(), true);
-        }
-
-        private async Task SelectAccount(Account account)
-        {
-            await _accountsService.SetActiveAccount(account);
-            MessageBus.Current.SendMessage(new LogoutMessage());
-        }
-
-        public override void ViewWillAppear(bool animated)
-        {
-            base.ViewWillAppear(animated);
-
-            var weakVm = new WeakReference<AccountsViewController>(this);
-            var accountSection = new Section();
-
-            var activeAccount = _accountsService.GetActiveAccount().Result;
-            accountSection.AddAll(_accountsService.GetAccounts().Result.Select(account =>
+            OnActivation(d => 
             {
-                var isEqual = account.Id == activeAccount?.Id;
-                var t = new AccountElement(account, isEqual);
-                t.Clicked.Subscribe(_ => weakVm.Get()?.SelectAccount(account));
-                return t;
-            }));
+                d(addButton
+                  .GetClickedObservable()
+                  .Select(_ => new NewAccountViewController())
+                  .Subscribe(this.PushViewController));
 
-            _source.Root.Reset(accountSection);
+                d(_deleteCommand
+                  .Merge(_loadCommand)
+                  .Subscribe(_ => SetCancelButton()));
+            });
 
-            SetCancelButton();
+            Appearing
+                .Select(_ => Unit.Default)
+                .InvokeReactiveCommand(_loadCommand);
         }
 
-        private void Delete(Element element)
+        public override void ViewDidLoad()
         {
-            var accountElement = element as AccountElement;
-            if (accountElement == null)
-                return;
+            base.ViewDidLoad();
 
-            //Remove the designated username
-            _accountsService.Remove(accountElement.Account);
-            var activeAccount = _accountsService.GetActiveAccount().Result;
-
-            if (activeAccount != null && activeAccount.Equals(accountElement.Account))
-            {
-                _applicationService.DeactivateUser();   
-            }
-
-            SetCancelButton();
+            TableView.Source = _source;
+            TableView.RowHeight = 74;
         }
 
         private void SetCancelButton()
@@ -121,7 +135,11 @@ namespace CodeHub.iOS.ViewControllers.Accounts
                         var section = Root[indexPath.Section];
                         var element = section[indexPath.Row];
                         section.Remove(element);
-                        _viewCtrl.Get()?.Delete(element);
+
+                        var accountElement = element as AccountElement;
+                        if (accountElement != null)
+                            _viewCtrl.Get()._deleteCommand.ExecuteNow(accountElement.Account);
+
                         break;
                 }
             }

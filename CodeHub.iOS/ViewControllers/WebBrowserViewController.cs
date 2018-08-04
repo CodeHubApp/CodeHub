@@ -1,5 +1,4 @@
-﻿using CodeHub.iOS.Services;
-using Foundation;
+﻿using Foundation;
 using UIKit;
 using System;
 
@@ -7,9 +6,6 @@ namespace CodeHub.iOS.ViewControllers
 {
     public class WebBrowserViewController : WebViewController
     {
-        private readonly string _url;
-        private UIStatusBarStyle _statusBarStyle;
-
         protected UIBarButtonItem BackButton;
         protected UIBarButtonItem RefreshButton;
         protected UIBarButtonItem ForwardButton;
@@ -24,40 +20,31 @@ namespace CodeHub.iOS.ViewControllers
             ForwardButton.TintColor = Theme.CurrentTheme.WebButtonTint;
             RefreshButton.TintColor = Theme.CurrentTheme.WebButtonTint;
 
+            ToolbarItems = new[]
+{
+                BackButton,
+                new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
+                ForwardButton,
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                RefreshButton
+            };
+
             OnActivation(d =>
             {
-                d(BackButton.GetClickedObservable().Subscribe(_ => GoBack()));
-                d(ForwardButton.GetClickedObservable().Subscribe(_ => GoForward()));
-                d(RefreshButton.GetClickedObservable().Subscribe(_ => Refresh()));
+                d(BackButton.GetClickedObservable()
+                  .Subscribe(_ => Web.GoBack()));
+                
+                d(ForwardButton.GetClickedObservable()
+                  .Subscribe(_ => Web.GoForward()));
+                
+                d(RefreshButton.GetClickedObservable()
+                  .Subscribe(_ => Web.Reload()));
             });
-        }
-
-        protected virtual void GoBack()
-        {
-            Web.GoBack();
-        }
-
-        protected virtual void Refresh()
-        {
-            Web.Reload();
-        }
-
-        protected virtual void GoForward()
-        {
-            Web.GoForward();
-        }
-
-        public WebBrowserViewController(string url) : this()
-        {
-            _url = url;
         }
 
         public override void ViewWillAppear(bool animated)
         {
             base.ViewWillAppear(animated);
-
-            _statusBarStyle = UIApplication.SharedApplication.StatusBarStyle;
-            UIApplication.SharedApplication.SetStatusBarStyle(UIStatusBarStyle.Default, animated);
 
             if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
             {
@@ -72,35 +59,17 @@ namespace CodeHub.iOS.ViewControllers
             bounds.Height -= NavigationController.Toolbar.Frame.Height;
             Web.Frame = bounds;
 
-            ToolbarItems = new[]
-            {
-                BackButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FixedSpace) { Width = 40f },
-                ForwardButton,
-                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
-                RefreshButton
-            };
-
             BackButton.Enabled = Web.CanGoBack;
             ForwardButton.Enabled = Web.CanGoForward;
             RefreshButton.Enabled = !Web.IsLoading;
 
-            Web.EvaluateJavaScript("document.title", (o, _) => Title = o as NSString);
-
             NavigationController.SetToolbarHidden(false, animated);
-        }
-
-        public override void ViewDidDisappear(bool animated)
-        {
-            base.ViewDidDisappear(animated);
-            ToolbarItems = null;
         }
 
         public override void ViewWillDisappear(bool animated)
         {
             base.ViewWillDisappear(animated);
-            UIApplication.SharedApplication.SetStatusBarStyle(_statusBarStyle, animated);
-            UIApplication.SharedApplication.SetStatusBarHidden(false, UIStatusBarAnimation.Slide);
+            NavigationController.SetToolbarHidden(true, animated);
         }
 
         public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
@@ -139,31 +108,6 @@ namespace CodeHub.iOS.ViewControllers
             BackButton.Enabled = Web.CanGoBack;
             ForwardButton.Enabled = Web.CanGoForward;
             RefreshButton.Enabled = true;
-
-            Web.EvaluateJavaScript("document.title", (o, _) => {
-                Title = o as NSString;
-            });
-        }
-
-        public override void ViewDidLoad()
-        {
-            base.ViewDidLoad();
-
-            System.Uri uri;
-            if (!System.Uri.TryCreate(_url, System.UriKind.Absolute, out uri))
-            {
-                AlertDialogService.ShowAlert("Error", "Unable to display webpage as the provided link (" + _url + ") was invalid");
-            }
-            else
-            {
-                var safariBrowser = new SafariServices.SFSafariViewController(new NSUrl(_url), new SafariServices.SFSafariViewControllerConfiguration {
-                    
-                });
-                safariBrowser.View.Frame = View.Bounds;
-                safariBrowser.View.AutoresizingMask = UIViewAutoresizing.All;
-                AddChildViewController(safariBrowser);
-                Add(safariBrowser.View);
-            }
         }
     }
 }
