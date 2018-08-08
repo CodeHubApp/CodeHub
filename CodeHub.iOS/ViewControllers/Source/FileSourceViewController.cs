@@ -131,11 +131,12 @@ namespace CodeHub.iOS.ViewControllers.Source
 
             if (Content == null)
             {
-                var encodedShaRef = System.Web.HttpUtility.UrlEncode(_sha);
+                var encodedShaRef = System.Net.WebUtility.UrlEncode(_sha);
+                var encodedPath = _path == null ? null : System.Net.WebUtility.UrlEncode(_path);
 
                 var items = await _applicationService
                     .GitHubClient.Repository.Content
-                    .GetAllContentsByRef(_username, _repository, _path, encodedShaRef);
+                    .GetAllContentsByRef(_username, _repository, encodedPath, encodedShaRef);
                 Content = items.First();
             }
 

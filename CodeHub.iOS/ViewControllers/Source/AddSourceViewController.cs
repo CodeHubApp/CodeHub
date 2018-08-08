@@ -109,8 +109,10 @@ namespace CodeHub.iOS.ViewControllers.Source
                 UIApplication.SharedApplication.BeginIgnoringInteractionEvents();
                 NetworkActivity.PushNetworkActive();
 
+                var encodedPath = path == null ? null : System.Net.WebUtility.UrlEncode(path);
+
                 var result = await _applicationService.GitHubClient.Repository.Content.CreateFile(
-                    _username, _repository, path, new Octokit.CreateFileRequest(message, content, _branch));
+                    _username, _repository, encodedPath, new Octokit.CreateFileRequest(message, content, _branch));
 
                 this.PresentingViewController?.DismissViewController(true, null);
 
