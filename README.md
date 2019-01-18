@@ -1,4 +1,4 @@
-<a href="http://thedillonb.github.io/CodeHub/"><img alt="CodeHub" src="https://raw.githubusercontent.com/thedillonb/CodeHub/gh-pages/assets/CodeHubTitle.jpg" width="100%"></a>
+<a href="http://codehub-app.com/"><img alt="CodeHub" src="https://raw.githubusercontent.com/thedillonb/CodeHub/gh-pages/assets/CodeHubTitle.jpg" width="100%"></a>
 
 [![Gitter](https://badges.gitter.im/thedillonb/CodeHub.svg)](https://gitter.im/thedillonb/CodeHub?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
