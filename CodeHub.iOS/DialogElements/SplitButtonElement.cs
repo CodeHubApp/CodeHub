@@ -168,11 +168,13 @@ namespace CodeHub.iOS.DialogElements
                 _caption = new UILabel();
                 _caption.TextColor = CaptionColor;
                 _caption.Font = CaptionFont;
+                _caption.TextAlignment = UITextAlignment.Center;
                 this.Add(_caption);
 
                 _text = new UILabel();
                 _text.TextColor = TextColor;
                 _text.Font = TextFont;
+                _text.TextAlignment = UITextAlignment.Center;
                 this.Add(_text);
 
                 this.TouchUpInside += (sender, e) => Touch?.Invoke();
