@@ -150,8 +150,8 @@ namespace CodeHub.iOS.DialogElements
             {
                 base.LayoutSubviews();
 
-                var offset = IsPad ? 24f : 18f;
-                var rightOffset = IsPad ? 16f : 14f;
+                var offset = IsPad ? 18f : 16f;
+                var rightOffset = IsPad ? 16f : 18f;
 
                 var height = (this.Bounds.Height - 24f);
                 _image.Frame = new CGRect(offset, 12, height, height);
