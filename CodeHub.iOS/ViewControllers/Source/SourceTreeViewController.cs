@@ -88,7 +88,7 @@ namespace CodeHub.iOS.ViewControllers.Source
                         .GetAllContentsByRef(username, repository, encodedShaRef);
                 }
 
-                var encodedPath = path == null ? null : System.Net.WebUtility.UrlEncode(path);
+                var encodedPath = path == null ? null : Uri.EscapeDataString(path);
 
                 return await applicationService
                     .GitHubClient.Repository.Content

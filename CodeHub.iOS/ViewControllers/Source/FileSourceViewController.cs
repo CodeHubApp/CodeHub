@@ -132,7 +132,7 @@ namespace CodeHub.iOS.ViewControllers.Source
             if (Content == null)
             {
                 var encodedShaRef = System.Net.WebUtility.UrlEncode(_sha);
-                var encodedPath = _path == null ? null : System.Net.WebUtility.UrlEncode(_path);
+                var encodedPath = _path == null ? null : Uri.EscapeDataString(_path);
 
                 var items = await _applicationService
                     .GitHubClient.Repository.Content
