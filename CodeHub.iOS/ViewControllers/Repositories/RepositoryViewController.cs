@@ -292,7 +292,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             sec1.Add(_split2);
 
             _split3.Button1.Text = (model.CreatedAt).ToString("MM/dd/yy");
-            _split3.Button2.Text = model.Size.Bytes().ToString("#.#");
+            _split3.Button2.Text = model.Size.Kilobytes().ToString("#.#");
             sec1.Add(_split3);
 
             _ownerElement.Value = model.Owner.Login;
