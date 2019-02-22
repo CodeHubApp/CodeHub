@@ -180,7 +180,7 @@ namespace CodeHub.iOS.Views.Issues
 
             var events = ViewModel
                 .Events
-                .Select(x => new Comment(x.Actor.AvatarUrl, x.Actor.Login, CreateEventBody(x.Event.StringValue, x.CommitId), x.CreatedAt));
+                .Select(x => new Comment(x.Actor?.AvatarUrl, x.Actor?.Login, CreateEventBody(x.Event.StringValue, x.CommitId), x.CreatedAt));
 
             var items = comments
                 .Concat(events)
