@@ -78,6 +78,7 @@ namespace CodeHub.iOS.Views
             _label.SizeToFit();
             var labelFrame = _label.Frame;
             labelFrame.Height = _label.Frame.Height > halfHeight ? halfHeight : _label.Frame.Height;
+            labelFrame.Width = labelFrame.Width >= Frame.Width ? Frame.Width - 16f : labelFrame.Width;
             _label.Frame = labelFrame;
             _label.Center = new CoreGraphics.CGPoint(Frame.Width / 2f, _label.Frame.Height / 2f + (small ? 2f : 3f));
 
