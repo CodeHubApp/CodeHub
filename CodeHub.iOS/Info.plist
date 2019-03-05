@@ -91,5 +91,7 @@
 	<string>Photos can be uploaded to comments created within the app.</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Calendar is never used within this app.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Photos can be saved from readable content within the app.</string>
 </dict>
 </plist>
