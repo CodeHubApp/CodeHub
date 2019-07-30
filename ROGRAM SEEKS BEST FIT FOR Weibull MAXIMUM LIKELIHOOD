@@ -1,0 +1,131 @@
+! _________________________________________________________________________________ !
+! _________________PROGRAM SEEKS BEST FIT FOR Weibull MAXIMUM LIKELIHOOD _____________ !
+! _________________________________________________________________________________ !
+! _________________Correct solution k=4.47213591911582, Lam=93.718459114903____________ !
+program Best_Fit
+implicit none
+integer, parameter ::  ikind=selected_real_kind(p=15)
+! ________________Number of specimens_______________________________________________!
+integer :: nospec=26 
+real (kind=ikind):: x1, TOL
+real (kind=ikind)::Ak, Bk, Ck, Dk, k1, k2
+real (kind=ikind)::ALam, BLam, CLam, DLam, La1, La2
+real, PARAMETER :: R=1.61803399
+integer :: i, j, jm, iio, n=50 ! n iteration number
+real (kind=ikind) :: wres1
+real, dimension(26) :: ulist1
+real (kind=ikind), dimension(4) :: klist,Lamlist
+real (kind=8), dimension(4,4) :: LLL
+real (kind=ikind) :: pdfx, mpdf
+ulist1 = (/45, 58, 59, 60, 65, 67, 68, 71, 72, 82, 85, 87, 88, 90, 91, 92, 94, 97, 102, 103, 104, 104, 104, 113, 120, 126/)
+!______Those above are specimens ulist1___________________!
+! __________La1, La2 ___Range for Lambda___
+La1=60.
+La2=120.
+! __________k1, k2 ___range for k___
+k1=2.
+k2=6.
+!__________________________________________
+TOL=1.d-6
+
+!____________________________inital searching range _________________!
+  Ak=MIN(k1,k2)  		!At any given time we will keep trace of 4 k points:
+  Dk=MAX(k1,k2) 		! Ak, Bk, Ck, Dk
+  Bk=Dk-(Dk-Ak)/R
+  Ck=Ak+(Dk-Ak)/R
+klist =(/Ak, Bk, Ck, Dk/)
+print *,' klist= ',klist 
+!!!______________________________________________________________-!
+  ALam=MIN(La1,La2)  	!At any given time we will keep trace of 4 Lam points:
+  DLam=MAX(La1,La2) 	! ALam, BLam, CLam, DLam
+  BLam=DLam-(DLam-ALam)/R
+  CLam=ALam+(DLam-ALam)/R
+Lamlist=(/ALam, BLam, CLam, DLam/)
+print *,' Lamlist= ',Lamlist 
+!!!______________________________________________________________-!
+mpdf=0._ikind
+do jm=1,4,1 !____Lamlist
+do j=1, 4,1 !____klist
+do i=1, nospec,1
+x1=ulist1(i)
+ call weibull(x1, Lamlist(jm), klist(j), wres1)
+pdfx=wres1
+mpdf=mpdf+log10(pdfx)
+print *, 'x=', x1, 'Log10(Weib_pdf)=', mpdf, 'pdf:',pdfx
+ end do
+
+LLL(jm,j)=mpdf
+print *, 'Log10(Weib_pdf)=', mpdf, 'LLL(jm,j)=',LLL(jm,j)
+mpdf=0._ikind
+ end do
+end do
+
+!____________________________iterations start here _________________!
+
+!____________________________iterations start here _________________!
+do iio=1,n,1
+!______________________________________________________________
+
+!______________________________________________________________
+IF(LLL(2,2)<LLL(2,3)) THEN
+print *,' LLL= ',LLL
+klist(1)=klist(2)
+klist(2)=klist(4)-(klist(4)-klist(1))/R
+klist(3)=klist(1)+(klist(4)-klist(1))/R
+print *,'klist= ',klist
+    ELSE
+klist(4)=klist(3)
+klist(2)=klist(4)-(klist(4)-klist(1))/R
+klist(3)=klist(1)+(klist(4)-klist(1))/R
+print *,'klist= ',klist
+ENDIF
+!____________________
+IF(LLL(2,2)<LLL(3,2)) THEN
+print *,' LLL= ',LLL
+Lamlist(1)=Lamlist(2)
+Lamlist(2)=Lamlist(4)-(Lamlist(4)-Lamlist(1))/R
+Lamlist(3)=Lamlist(1)+(Lamlist(4)-Lamlist(1))/R
+print *,'Lamlist= ',Lamlist
+    ELSE
+Lamlist(4)=Lamlist(3)
+Lamlist(2)=Lamlist(4)-(Lamlist(4)-Lamlist(1))/R
+Lamlist(3)=Lamlist(1)+(Lamlist(4)-Lamlist(1))/R
+print *,'Lamlist= ',Lamlist
+ENDIF
+!____________________
+!______________
+mpdf=0._ikind
+do jm=1,4,1 !____Lamlist
+do j=1, 4,1 !____klist
+do i=1, nospec,1
+x1=ulist1(i)
+ call weibull(x1, Lamlist(jm), klist(j), wres1)
+pdfx=wres1
+mpdf=mpdf+log10(pdfx)
+print *, 'x=', x1, 'Log10(Weib_pdf)=', mpdf, 'pdf:',pdfx
+ end do
+LLL(jm,j)=mpdf
+print *, 'Log10(Weib_pdf)=', mpdf, 'LLL(jm,j)=',LLL(jm,j)
+mpdf=0._ikind
+end do
+end do
+print *,' LLL= ',LLL
+!_______   iterations n continues here
+
+
+write(*,*) "iteration iio=",iio
+print *,' klist= ',klist 
+print *,' Lamlist= ',Lamlist 
+enddo
+stop
+  !_____________________________________________
+  !_____________________________________________
+contains
+subroutine weibull (a, b, c, wer)
+integer, parameter ::  ikind=selected_real_kind(p=15)
+real (kind=ikind), intent(in) :: a, b, c
+real (kind=ikind), intent(out):: wer
+wer = (c/b)*(a/b)**(c-1._ikind)*exp(-1._ikind*(a/b)**c)
+return
+end subroutine weibull
+end program Best_Fit
