@@ -149,9 +149,9 @@ namespace CodeHub.iOS.ViewControllers.Application
                 var avatarSizes = new [] { avatar.ToUri(), avatar.ToUri(64) };
                 foreach (var avatarUrl in avatarSizes.Select(x => new NSUrl(x.AbsoluteUri)) )
                 {
-                    var cacheKey = SDWebImageManager.SharedManager.CacheKey(avatarUrl);
+                    var cacheKey = SDWebImageManager.SharedManager.GetCacheKey(avatarUrl);
                     if (cacheKey != null)
-                        SDWebImageManager.SharedManager.ImageCache.RemoveImage(cacheKey);
+                        SDWebImageManager.SharedManager.ImageCache.RemoveImage(cacheKey, null);
                 }
 
                 _imgView.SetImage(new NSUrl(uri.AbsoluteUri), Images.LoginUserUnknown, (img, err, cache, _) => {

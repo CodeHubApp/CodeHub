@@ -24,9 +24,9 @@ namespace CodeHub.Core.ViewModels
             IMedia mediaPicker = null, 
             IAlertDialogService alertDialog = null)
         {
-            imgurService = imgurService ?? Locator.Current.GetService<IImgurService>();
-            mediaPicker = mediaPicker ?? Plugin.Media.CrossMedia.Current;
-            alertDialog = alertDialog ?? Locator.Current.GetService<IAlertDialogService>();
+            imgurService ??= Locator.Current.GetService<IImgurService>();
+            mediaPicker ??= Plugin.Media.CrossMedia.Current;
+            alertDialog ??= Locator.Current.GetService<IAlertDialogService>();
 
             PostToImgurCommand = ReactiveCommand.CreateFromTask(async _ => {
                 
