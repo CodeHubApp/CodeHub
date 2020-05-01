@@ -52,7 +52,6 @@ WriteLiteral("/>\n<style>\n* {\n    box-sizing: border-box;\n}\n\nhtml {\n    -w
 #line hidden
 WriteLiteral(@"px;
     line-height: 1.7;
-    overflow: hidden;
     word-wrap: break-word;
 }
 h1, h2, h3, h4, h5, h6 {
@@ -141,7 +140,7 @@ ul.task-list > li.task-list-item {
 ");
 
 
-#line 105 "MarkdownWebView.cshtml"
+#line 104 "MarkdownWebView.cshtml"
  if (Model.ContinuousResize) {
 
 
@@ -155,7 +154,7 @@ WriteLiteral(@"    <script>
 ");
 
 
-#line 111 "MarkdownWebView.cshtml"
+#line 110 "MarkdownWebView.cshtml"
 }
 
 
@@ -164,7 +163,7 @@ WriteLiteral(@"    <script>
 WriteLiteral("<title>Readme</title></head>\n<body>");
 
 
-#line 113 "MarkdownWebView.cshtml"
+#line 112 "MarkdownWebView.cshtml"
         WriteLiteral(Model.Body);
 
 #line default
