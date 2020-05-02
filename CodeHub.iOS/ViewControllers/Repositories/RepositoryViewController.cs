@@ -291,7 +291,7 @@ namespace CodeHub.iOS.ViewControllers.Repositories
             _split2.Button2.Text = "Branch".ToQuantity(branches);
             sec1.Add(_split2);
 
-            _split3.Button1.Text = (model.CreatedAt).ToString("MM/dd/yy");
+            _split3.Button1.Text = model.CreatedAt.ToString("MM/dd/yy");
             _split3.Button2.Text = model.Size.Kilobytes().ToString("#.#");
             sec1.Add(_split3);
 
