@@ -88,7 +88,7 @@ namespace CodeHub.iOS.DialogElements
                 if (b.Tapped != null)
                     color = LinkColor;
 
-                color ??= primaryColor;
+                color = color ?? primaryColor;
 
                 var str = new NSAttributedString(b.Value, new CoreText.CTStringAttributes() { ForegroundColor = color.CGColor, Font = ctFont });
                 attributedString.Append(str);
