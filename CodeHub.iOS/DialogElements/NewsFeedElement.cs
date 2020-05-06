@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CoreGraphics;
-using System.Linq;
 using Foundation;
 using UIKit;
 using CodeHub.iOS.TableViewCells;
@@ -23,8 +22,6 @@ namespace CodeHub.iOS.DialogElements
         private readonly List<NewsCellView.Link> _bodyLinks;
 
         public static UIColor LinkColor = Theme.CurrentTheme.MainTitleColor;
-
-        private UIImage LittleImage { get; set; }
 
         public Action<NSUrl> WebLinkClicked;
 
@@ -74,15 +71,25 @@ namespace CodeHub.iOS.DialogElements
             nint lengthCounter = 0;
             int i = 0;
 
+            CoreText.CTFont ctFont;
+
+            try
+            {
+                ctFont = new CoreText.CTFont(font.FamilyName, font.PointSize);
+            }
+            catch
+            {
+                ctFont = CGFont.CreateWithFontName(font.Name).ToCTFont(font.PointSize);
+            }
+            
             foreach (var b in blocks)
             {
                 UIColor color = null;
                 if (b.Tapped != null)
                     color = LinkColor;
 
-                color = color ?? primaryColor; 
+                color ??= primaryColor;
 
-                var ctFont = new CoreText.CTFont(font.Name, font.PointSize);
                 var str = new NSAttributedString(b.Value, new CoreText.CTStringAttributes() { ForegroundColor = color.CGColor, Font = ctFont });
                 attributedString.Append(str);
                 var strLength = str.Length;
