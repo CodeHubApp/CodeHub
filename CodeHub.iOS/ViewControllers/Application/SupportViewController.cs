@@ -31,7 +31,7 @@ namespace CodeHub.iOS.ViewControllers.Application
             var sendEmail = new BigButtonElement("Email Support", Octicon.Mail);
             var openIssues = new BigButtonElement("Existing Issues", Octicon.IssueOpened);
 
-            HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all whom provide feedback!";
+            HeaderView.SubText = "This app is the product of hard work and great suggestions! Thank you to all who provide feedback!";
             HeaderView.Image = UIImage.FromBundle("AppIcons60x60");
 
             NavigationItem.BackBarButtonItem = new UIBarButtonItem { Title = "" };
